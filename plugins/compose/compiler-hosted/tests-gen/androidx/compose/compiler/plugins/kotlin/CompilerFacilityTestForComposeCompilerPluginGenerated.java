@@ -28,4 +28,10 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   public void testConstExprInitializer() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/constExprInitializer.kt");
   }
+
+  @Test
+  @TestMetadata("multiModulesWithComposableFunction.kt")
+  public void testMultiModulesWithComposableFunction() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/multiModulesWithComposableFunction.kt");
+  }
 }

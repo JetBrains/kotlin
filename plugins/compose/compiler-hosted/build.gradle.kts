@@ -58,10 +58,6 @@ kotlin {
     jvmToolchain(8)
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
 val generationRoot = projectDir.resolve("tests-gen")
 sourceSets {
     "main" {
@@ -87,7 +83,7 @@ publish {
 }
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
+    dependsOn(":dist", "jar")
     workingDir = rootDir
     useJUnitPlatform()
 }

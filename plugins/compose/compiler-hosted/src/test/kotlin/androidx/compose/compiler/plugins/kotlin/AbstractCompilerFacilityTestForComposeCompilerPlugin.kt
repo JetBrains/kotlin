@@ -9,9 +9,10 @@ import androidx.compose.compiler.plugins.kotlin.services.ComposeExtensionRegistr
 import androidx.compose.compiler.plugins.kotlin.services.ComposePluginAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory.createConfigurator
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import java.io.File
 
 abstract class AbstractCompilerFacilityTestForComposeCompilerPlugin : AbstractCompilerFacilityTest() {
     override val configurator: AnalysisApiTestConfigurator
@@ -32,12 +33,31 @@ abstract class AbstractCompilerFacilityTestForComposeCompilerPlugin : AbstractCo
 
 fun TestConfigurationBuilder.composeCompilerPluginConfiguration() {
     defaultDirectives {
-        +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
-        +FirDiagnosticsDirectives.FIR_DUMP
+        flagToEnableComposeCompilerPlugin().let { TestModuleCompiler.Directives.COMPILER_ARGUMENTS + it }
     }
 
     useConfigurators(
         ::ComposeExtensionRegistrarConfigurator,
         ::ComposePluginAnnotationsProvider,
     )
+}
+
+// TODO(KT-68111): Integrate this hard-coded path into compiler-tests-convention.
+private const val COMPOSE_COMPILER_JAR_DIR = "plugins/compose/compiler-hosted/build/libs/"
+
+private fun flagToEnableComposeCompilerPlugin(): String {
+    val libDir = File(COMPOSE_COMPILER_JAR_DIR)
+    if (!libDir.exists() || !libDir.isDirectory) {
+        error("No directory \"$COMPOSE_COMPILER_JAR_DIR\" is found")
+    }
+
+    return libDir.listFiles { _, name -> name.startsWith("compiler-hosted") && name.endsWith(".jar") && !name.contains("tests") }
+        .let { files ->
+            when {
+                files == null -> error("Can't read the directory $libDir")
+                files.isEmpty() -> error("Missing jar file started with \"compiler\" under $COMPOSE_COMPILER_JAR_DIR")
+                files.size > 1 -> error("Multiple jar files found ${files.joinToString { it.path }}")
+                else -> files.single()
+            }
+        }.let { "-Xplugin=${it.absolutePath}" }
 }
