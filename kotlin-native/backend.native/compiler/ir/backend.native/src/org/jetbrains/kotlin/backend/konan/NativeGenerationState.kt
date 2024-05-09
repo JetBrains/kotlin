@@ -63,7 +63,7 @@ internal class NativeGenerationState(
         val llvmModuleSpecification: LlvmModuleSpecification,
         val outputFiles: OutputFiles,
         val llvmModuleName: String,
-) : BasicPhaseContext(config), BackendContextHolder<Context>, LlvmIrHolder, BitcodePostProcessingContext {
+) : BasicPhaseContext(config), BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 
     var klibHash: FingerprintHash = FingerprintHash(Hash128Bits(0U, 0U))
@@ -139,7 +139,7 @@ internal class NativeGenerationState(
         isDisposed = true
     }
 
-    override val backendContext: Context
+    override val heldBackendContext: Context
         get() = context
 
     override val llvmModule: LLVMModuleRef

@@ -177,12 +177,6 @@ open class IrValidationAfterLoweringPhase<Context : CommonBackendContext>(contex
     }
 }
 
-fun <Context> findBackendContext(context: Context): CommonBackendContext? = when (context) {
-    is CommonBackendContext -> context
-    is BackendContextHolder<*> -> context.backendContext
-    else -> null
-}
-
 fun <Context, Data> findKotlinBackendIr(context: Context, data: Data): IrElement? = when {
     data is IrElement -> data
     data is KotlinBackendIrHolder -> data.kotlinIr
@@ -193,9 +187,7 @@ fun <Context, Data> findKotlinBackendIr(context: Context, data: Data): IrElement
 fun <Context : ErrorReportingContext, Data> getIrValidator(checkTypes: Boolean): Action<Data, Context> =
     fun(state: ActionState, data: Data, context: Context) {
         if (!state.isValidationNeeded()) return
-
-        val backendContext: CommonBackendContext? = findBackendContext(context)
-        if (backendContext == null) {
+        if (context !is BackendContextHolder) {
             context.messageCollector.report(
                 CompilerMessageSeverity.LOGGING,
                 "Cannot verify IR ${state.beforeOrAfter} ${state.phase}: insufficient context."
@@ -210,14 +202,13 @@ fun <Context : ErrorReportingContext, Data> getIrValidator(checkTypes: Boolean):
             )
             return
         }
-        validationCallback(backendContext, element, checkTypes = checkTypes)
+        validationCallback(context.heldBackendContext, element, checkTypes = checkTypes)
     }
 
 fun <Data, Context : ErrorReportingContext> getIrDumper(): Action<Data, Context> =
     fun(state: ActionState, data: Data, context: Context) {
         if (!state.isDumpNeeded()) return
-        val backendContext: CommonBackendContext? = findBackendContext(context)
-        if (backendContext == null) {
+        if (context !is BackendContextHolder) {
             context.messageCollector.report(
                 CompilerMessageSeverity.WARNING,
                 "Cannot dump IR ${state.beforeOrAfter} ${state.phase}: insufficient context."
@@ -232,5 +223,5 @@ fun <Data, Context : ErrorReportingContext> getIrDumper(): Action<Data, Context>
             )
             return
         }
-        defaultDumper(state, element, backendContext)
+        defaultDumper(state, element, context.heldBackendContext)
     }
