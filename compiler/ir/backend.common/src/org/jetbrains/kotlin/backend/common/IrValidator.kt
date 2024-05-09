@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.util.DeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
@@ -109,4 +113,42 @@ class CheckDeclarationParentsVisitor : DeclarationParentsVisitor() {
             errors.add(Error(declaration, actualParent, null))
         }
     }
+}
+
+/**
+ * Verifies common IR invariants that should hold in all the backends.
+ */
+fun performBasicIrValidation(
+    context: CommonBackendContext,
+    fragment: IrElement,
+    mode: IrVerificationMode = IrVerificationMode.ERROR,
+    checkProperties: Boolean = false,
+    checkTypes: Boolean = false,
+) {
+    val validatorConfig = IrValidatorConfig(
+        abortOnError = mode == IrVerificationMode.ERROR,
+        ensureAllNodesAreDifferent = true,
+        checkTypes = checkTypes,
+        checkDescriptors = false,
+        checkProperties = checkProperties,
+    )
+    val validator = IrValidator(context.irBuiltIns, validatorConfig) { file, element, message ->
+        try {
+            // TODO: render all element's parents.
+            context.reportWarning(
+                "[IR VALIDATION] ${"$message\n" + element.render()}", file,
+                element
+            )
+        } catch (e: Throwable) {
+            println("an error trying to print a warning message: $e")
+            e.printStackTrace()
+        }
+        // TODO: throw an exception after fixing bugs leading to invalid IR.
+
+        if (mode == IrVerificationMode.ERROR) {
+            error("Validation failed in file ${file?.name ?: "???"} : ${message}\n${element.render()}")
+        }
+    }
+    fragment.acceptVoid(validator)
+    fragment.checkDeclarationParents()
 }
