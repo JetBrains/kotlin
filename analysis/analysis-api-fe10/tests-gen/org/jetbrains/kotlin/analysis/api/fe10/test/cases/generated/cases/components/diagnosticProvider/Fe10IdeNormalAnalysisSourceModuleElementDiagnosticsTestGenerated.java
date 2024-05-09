@@ -50,4 +50,10 @@ public class Fe10IdeNormalAnalysisSourceModuleElementDiagnosticsTestGenerated ex
   public void testHiddenFromObjectiveC() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics/hiddenFromObjectiveC.kt");
   }
+
+  @Test
+  @TestMetadata("javaScriptStableName.kt")
+  public void testJavaScriptStableName() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics/javaScriptStableName.kt");
+  }
 }
