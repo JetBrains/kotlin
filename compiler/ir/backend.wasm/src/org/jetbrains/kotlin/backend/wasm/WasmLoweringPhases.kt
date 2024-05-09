@@ -763,7 +763,7 @@ val wasmPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = loweringList.toCompilerPhase(),
-    actions = setOf(defaultDumper, validationAction),
+    actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )
 

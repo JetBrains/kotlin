@@ -63,8 +63,8 @@ private fun <Context : CommonBackendContext> createFilePhase(
     return createSimpleNamedCompilerPhase(
         name = annotation.name,
         description = annotation.description,
-        preactions = defaultConditions,
-        postactions = defaultConditions,
+        preactions = DEFAULT_IR_ACTIONS,
+        postactions = DEFAULT_IR_ACTIONS,
         prerequisite = emptySet(),
         outputIfNotEnabled = { _, _, _, irFile -> irFile },
         op = { context, irFile ->
