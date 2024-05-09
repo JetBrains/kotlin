@@ -128,7 +128,7 @@ val jvmLoweringPhases = SameTypeNamedCompilerPhase(
     name = "IrLowering",
     description = "IR lowering",
     nlevels = 1,
-    actions = setOf(defaultDumper, validationAction),
+    actions = defaultIrActions,
     lower = buildModuleLoweringsPhase(
         ::ExternalPackageParentPatcherLowering,
         ::FragmentSharedVariablesLowering,
