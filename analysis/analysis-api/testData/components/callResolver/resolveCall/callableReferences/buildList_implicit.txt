@@ -1,0 +1,35 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtReceiverParameterSymbol:
+          annotationsList: []
+          origin: SOURCE
+          owningCallableSymbol: KtAnonymousFunctionSymbol(<local>/<no name provided>)
+          type: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: [
+              KtUsualClassType:
+                annotationsList: []
+                ownTypeArguments: []
+                type: kotlin/String
+            ]
+            type: kotlin/collections/MutableList<kotlin/String>
+        type = kotlin.collections.MutableList<kotlin.String>
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/collections/MutableList.add(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Boolean
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.String
+            symbol = element: E
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/collections/MutableList.add
+    typeArgumentsMapping = {}
+    argumentMapping = {}
