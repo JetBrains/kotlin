@@ -37,6 +37,9 @@ FILE fqName:<root> fileName:/Derived.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.BaseJava
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] kotlin.String? declared in <root>.BaseJava
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:first type:kotlin.String [val]

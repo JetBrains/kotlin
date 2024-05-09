@@ -376,6 +376,9 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-a> (): kotlin.Int declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final a: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open b: kotlin.Int declared in <root>.Java2
@@ -390,6 +393,9 @@ FILE fqName:<root> fileName:/1.kt
           public open fun <set-b> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+    PROPERTY FAKE_OVERRIDE name:c visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final c: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:c visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open c: kotlin.Int declared in <root>.Java2
@@ -398,6 +404,9 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-c> (): kotlin.Int declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final d: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:d visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open d: kotlin.Int declared in <root>.Java2
@@ -420,6 +429,9 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public final fun <get-e> (): kotlin.Int declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    PROPERTY FAKE_OVERRIDE name:e visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final e: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:f visibility:protected modality:FINAL [fake_override,var]
       overridden:
         protected final f: kotlin.Int declared in <root>.Java2
@@ -434,6 +446,12 @@ FILE fqName:<root> fileName:/1.kt
           protected final fun <set-f> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+    PROPERTY FAKE_OVERRIDE name:f visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final f: kotlin.Int declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:g visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final g: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:h visibility:internal modality:FINAL [fake_override,var]
       overridden:
         internal final h: kotlin.Int declared in <root>.Java2
@@ -448,6 +466,9 @@ FILE fqName:<root> fileName:/1.kt
           internal final fun <set-h> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+    PROPERTY FAKE_OVERRIDE name:h visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final h: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:i visibility:protected modality:FINAL [fake_override,var]
       overridden:
         protected final i: kotlin.Int declared in <root>.Java2
@@ -456,6 +477,9 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           protected final fun <get-i> (): kotlin.Int declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    PROPERTY FAKE_OVERRIDE name:i visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final i: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:j visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open j: kotlin.Int declared in <root>.Java2
@@ -464,6 +488,9 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-j> (): kotlin.Int declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    PROPERTY FAKE_OVERRIDE name:j visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final j: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:k visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open k: kotlin.Int declared in <root>.Java2
@@ -478,6 +505,9 @@ FILE fqName:<root> fileName:/1.kt
           protected open fun <set-k> (value: kotlin.Int): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
+    PROPERTY FAKE_OVERRIDE name:k visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final k: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:l visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open l: kotlin.Boolean declared in <root>.Java2
@@ -492,6 +522,9 @@ FILE fqName:<root> fileName:/1.kt
           public open fun <set-l> (<set-?>: kotlin.Boolean): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Boolean
+    PROPERTY FAKE_OVERRIDE name:l visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final l: kotlin.Boolean declared in <root>.Java2
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     PROPERTY name:b visibility:public modality:OPEN [var]
@@ -562,6 +595,15 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final a: kotlin.Int declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:c visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final c: kotlin.Int declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final d: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
       overridden:
         public final e: kotlin.Int declared in <root>.Java2
@@ -570,6 +612,9 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public final fun <get-e> (): kotlin.Int declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    PROPERTY FAKE_OVERRIDE name:e visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final e: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:f visibility:protected modality:FINAL [fake_override,var]
       overridden:
         protected final f: kotlin.Int declared in <root>.Java2
@@ -584,6 +629,12 @@ FILE fqName:<root> fileName:/1.kt
           protected final fun <set-f> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+    PROPERTY FAKE_OVERRIDE name:f visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final f: kotlin.Int declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:g visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final g: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:h visibility:internal modality:FINAL [fake_override,var]
       overridden:
         internal final h: kotlin.Int declared in <root>.Java2
@@ -598,6 +649,9 @@ FILE fqName:<root> fileName:/1.kt
           internal final fun <set-h> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+    PROPERTY FAKE_OVERRIDE name:h visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final h: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:i visibility:protected modality:FINAL [fake_override,var]
       overridden:
         protected final i: kotlin.Int declared in <root>.Java2
@@ -606,6 +660,9 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           protected final fun <get-i> (): kotlin.Int declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    PROPERTY FAKE_OVERRIDE name:i visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final i: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:j visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open j: kotlin.Int declared in <root>.Java2
@@ -614,6 +671,9 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public open fun <get-j> (): kotlin.Int declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    PROPERTY FAKE_OVERRIDE name:j visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final j: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:k visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open k: kotlin.Int declared in <root>.Java2
@@ -628,6 +688,9 @@ FILE fqName:<root> fileName:/1.kt
           protected open fun <set-k> (value: kotlin.Int): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
+    PROPERTY FAKE_OVERRIDE name:k visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final k: kotlin.Int declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:l visibility:public modality:OPEN [fake_override,var]
       overridden:
         public open l: kotlin.Boolean declared in <root>.Java2
@@ -642,6 +705,9 @@ FILE fqName:<root> fileName:/1.kt
           public open fun <set-l> (<set-?>: kotlin.Boolean): kotlin.Unit declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Boolean
+    PROPERTY FAKE_OVERRIDE name:l visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final l: kotlin.Boolean declared in <root>.Java2
     PROPERTY name:a visibility:public modality:OPEN [val]
       overridden:
         public open a: kotlin.Int declared in <root>.Java2
