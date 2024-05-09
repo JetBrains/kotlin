@@ -116,6 +116,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDecl
     }
 
     @Test
+    @TestMetadata("onLocalFunction.kt")
+    public void testOnLocalFunction() {
+      runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onLocalFunction.kt");
+    }
+
+    @Test
     @TestMetadata("onProperty.kt")
     public void testOnProperty() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onProperty.kt");

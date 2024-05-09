@@ -1,0 +1,5 @@
+KtDeclaration: KtNamedFunction local
+annotations: [
+  Anno(value = LocalClass::class)
+    psi: KtAnnotationEntry
+]
