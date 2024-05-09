@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.DeclarationParentsVisitor
@@ -25,18 +26,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-private fun CommonBackendContext.reportIrValidationError(message: String, irFile: IrFile?, irElement: IrElement) {
-    try {
-        this.reportWarning("[IR VALIDATION] $message", irFile, irElement)
-    } catch (e: Throwable) {
-        println("an error trying to print a warning message: $e")
-        e.printStackTrace()
-    }
-    // TODO: throw an exception after fixing bugs leading to invalid IR.
-}
-
 data class IrValidatorConfig(
-    val abortOnError: Boolean,
+    val abortOnError: Boolean, // TODO: This property is unused, remove it
     val ensureAllNodesAreDifferent: Boolean,
     val checkTypes: Boolean = true,
     val checkDescriptors: Boolean = true,
@@ -44,9 +35,12 @@ data class IrValidatorConfig(
     val checkScopes: Boolean = false,
 )
 
-class IrValidator(val context: CommonBackendContext, val config: IrValidatorConfig) : IrElementVisitorVoid {
+class IrValidator(
+    val irBuiltIns: IrBuiltIns,
+    val config: IrValidatorConfig,
+    val reportError: (IrFile?, IrElement, String) -> Unit
+) : IrElementVisitorVoid {
 
-    val irBuiltIns = context.irBuiltIns
     var currentFile: IrFile? = null
 
     override fun visitFile(declaration: IrFile) {
@@ -58,16 +52,7 @@ class IrValidator(val context: CommonBackendContext, val config: IrValidatorConf
     }
 
     private fun error(element: IrElement, message: String) {
-        // TODO: render all element's parents.
-        context.reportIrValidationError(
-            "$message\n" + element.render(),
-            currentFile,
-            element
-        )
-
-        if (config.abortOnError) {
-            error("Validation failed in file ${currentFile?.name ?: "???"} : ${message}\n${element.render()}")
-        }
+        reportError(currentFile, element, message)
     }
 
     private val elementChecker = CheckIrElementVisitor(irBuiltIns, this::error, config)

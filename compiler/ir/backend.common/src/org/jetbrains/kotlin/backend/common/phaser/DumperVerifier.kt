@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -93,7 +94,24 @@ fun validationCallback(
         checkDescriptors = false,
         checkProperties = checkProperties,
     )
-    fragment.accept(IrValidator(context, validatorConfig), null)
+    val validator = IrValidator(context.irBuiltIns, validatorConfig) { file, element, message ->
+        try {
+            // TODO: render all element's parents.
+            context.reportWarning(
+                "[IR VALIDATION] ${"$message\n" + element.render()}", file,
+                element
+            )
+        } catch (e: Throwable) {
+            println("an error trying to print a warning message: $e")
+            e.printStackTrace()
+        }
+        // TODO: throw an exception after fixing bugs leading to invalid IR.
+
+        if (mode == IrVerificationMode.ERROR) {
+            error("Validation failed in file ${file?.name ?: "???"} : ${message}\n${element.render()}")
+        }
+    }
+    fragment.acceptVoid(validator)
     fragment.checkDeclarationParents()
 }
 
