@@ -1,14 +1,14 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.performBasicIrValidation
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.backend.common.phaser.validationCallback
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
@@ -27,7 +27,7 @@ internal class JvmIrValidationBeforeLoweringPhase(
     context: JvmBackendContext
 ) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
     override fun validate(irModule: IrModuleFragment) {
-        validationCallback(context, irModule, checkProperties = true)
+        performBasicIrValidation(context, irModule, checkProperties = true)
     }
 }
 
@@ -45,7 +45,7 @@ internal class JvmIrValidationAfterLoweringPhase(
     context: JvmBackendContext
 ) : IrValidationAfterLoweringPhase<JvmBackendContext>(context) {
     override fun validate(irModule: IrModuleFragment) {
-        validationCallback(context, irModule, checkProperties = true)
+        performBasicIrValidation(context, irModule, checkProperties = true)
 
         checkAllFileLevelDeclarationsAreClasses(irModule)
         val validator = object : IrElementVisitorVoid {

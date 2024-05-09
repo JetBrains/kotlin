@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.ErrorReportingContext
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.performBasicIrValidation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.IrVerificationMode
@@ -14,7 +17,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -80,41 +82,6 @@ private fun dumpIrElement(actionState: ActionState, data: IrElement): String {
     return title + dumpText
 }
 
-fun validationCallback(
-    context: CommonBackendContext,
-    fragment: IrElement,
-    mode: IrVerificationMode = IrVerificationMode.ERROR,
-    checkProperties: Boolean = false,
-    checkTypes: Boolean = false,
-) {
-    val validatorConfig = IrValidatorConfig(
-        abortOnError = mode == IrVerificationMode.ERROR,
-        ensureAllNodesAreDifferent = true,
-        checkTypes = checkTypes,
-        checkDescriptors = false,
-        checkProperties = checkProperties,
-    )
-    val validator = IrValidator(context.irBuiltIns, validatorConfig) { file, element, message ->
-        try {
-            // TODO: render all element's parents.
-            context.reportWarning(
-                "[IR VALIDATION] ${"$message\n" + element.render()}", file,
-                element
-            )
-        } catch (e: Throwable) {
-            println("an error trying to print a warning message: $e")
-            e.printStackTrace()
-        }
-        // TODO: throw an exception after fixing bugs leading to invalid IR.
-
-        if (mode == IrVerificationMode.ERROR) {
-            error("Validation failed in file ${file?.name ?: "???"} : ${message}\n${element.render()}")
-        }
-    }
-    fragment.acceptVoid(validator)
-    fragment.checkDeclarationParents()
-}
-
 abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Context) : ModuleLoweringPass {
 
     final override fun lower(irModule: IrModuleFragment) {
@@ -128,13 +95,13 @@ abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Co
 
 open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
     override fun validate(irModule: IrModuleFragment) {
-        validationCallback(context, irModule)
+        performBasicIrValidation(context, irModule)
     }
 }
 
 open class IrValidationAfterLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
     override fun validate(irModule: IrModuleFragment) {
-        validationCallback(context, irModule)
+        performBasicIrValidation(context, irModule)
     }
 }
 
@@ -163,7 +130,7 @@ fun <Context : ErrorReportingContext, Data> getIrValidator(checkTypes: Boolean):
             )
             return
         }
-        validationCallback(context.heldBackendContext, element, checkTypes = checkTypes)
+        performBasicIrValidation(context.heldBackendContext, element, checkTypes = checkTypes)
     }
 
 fun <Data, Context : ErrorReportingContext> getIrDumper(): Action<Data, Context> =
