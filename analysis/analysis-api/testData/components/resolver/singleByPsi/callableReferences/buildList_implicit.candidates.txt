@@ -1,0 +1,38 @@
+KtCallableReferenceExpression(102,107): '::add'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: [
+                KaUsualClassType:
+                  annotations: []
+                  typeArguments: []
+                  type: kotlin/String
+              ]
+              type: kotlin/collections/MutableList<kotlin/String>
+          type = kotlin.collections.MutableList<kotlin.String>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/MutableList.add(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = element
+              receiverType = null
+              returnType = kotlin.String
+              symbol = element: E
+              callableId = null
+          ]
+          callableId = kotlin/collections/MutableList.add
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

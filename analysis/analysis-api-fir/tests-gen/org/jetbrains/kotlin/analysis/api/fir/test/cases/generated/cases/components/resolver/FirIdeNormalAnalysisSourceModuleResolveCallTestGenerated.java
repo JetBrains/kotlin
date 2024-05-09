@@ -1630,6 +1630,30 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("buildList_implicit.kt")
+    public void testBuildList_implicit() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences/buildList_implicit.kt");
+    }
+
+    @Test
+    @TestMetadata("buildList_let.kt")
+    public void testBuildList_let() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences/buildList_let.kt");
+    }
+
+    @Test
+    @TestMetadata("buildList_otherList.kt")
+    public void testBuildList_otherList() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences/buildList_otherList.kt");
+    }
+
+    @Test
+    @TestMetadata("buildList_this.kt")
+    public void testBuildList_this() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences/buildList_this.kt");
+    }
+
+    @Test
     @TestMetadata("constructor.kt")
     public void testConstructor() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences/constructor.kt");

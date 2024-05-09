@@ -1,0 +1,25 @@
+KtCallableReferenceExpression(102,111): 'this::add'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.String>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/MutableList.add(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = element
+              receiverType = null
+              returnType = kotlin.String
+              symbol = element: E
+              callableId = null
+          ]
+          callableId = kotlin/collections/MutableList.add
+      typeArgumentsMapping = {}
