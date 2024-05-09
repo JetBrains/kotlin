@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.fir.backend.utils
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.utils.UseSiteKind.*
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
@@ -78,18 +75,34 @@ fun FirReference.extractDeclarationSiteSymbol(c: Fir2IrComponents): FirCallableS
     symbol = symbol.unwrapCallRepresentative(c)
     return symbol
 }
+private enum class UseSiteKind {
+    GetCall,
+    SetCall,
+    Reference;
+}
 
 fun FirCallableSymbol<*>.toIrSymbolForCall(
     c: Fir2IrComponents,
     dispatchReceiver: FirExpression?,
     explicitReceiver: FirExpression?,
-): IrSymbol? = toIrSymbol(
-    c,
+): IrSymbol? = c.toIrSymbol(
+    this,
     dispatchReceiver,
     explicitReceiver,
-    preferGetter = true,
+    useSite = GetCall,
     isDelegate = false,
-    isReference = false
+)
+
+fun FirCallableSymbol<*>.toIrSymbolForSetCall(
+    c: Fir2IrComponents,
+    dispatchReceiver: FirExpression?,
+    explicitReceiver: FirExpression?,
+): IrSymbol? = c.toIrSymbol(
+    this,
+    dispatchReceiver,
+    explicitReceiver,
+    useSite = SetCall,
+    isDelegate = false,
 )
 
 fun FirCallableSymbol<*>.toIrSymbolForCallableReference(
@@ -97,40 +110,25 @@ fun FirCallableSymbol<*>.toIrSymbolForCallableReference(
     dispatchReceiver: FirExpression?,
     lhs: FirExpression?,
     isDelegate: Boolean,
-): IrSymbol? = toIrSymbol(
-    c,
+): IrSymbol? = c.toIrSymbol(
+    this,
     dispatchReceiver,
     lhs,
-    preferGetter = true,
+    useSite = Reference,
     isDelegate = isDelegate,
-    isReference = true
 )
 
-fun FirCallableSymbol<*>.toIrSymbolForSetCall(
-    c: Fir2IrComponents,
-    dispatchReceiver: FirExpression?,
-    explicitReceiver: FirExpression?,
-): IrSymbol? = toIrSymbol(
-    c,
-    dispatchReceiver,
-    explicitReceiver,
-    preferGetter = false,
-    isDelegate = false,
-    isReference = false
-)
-
-private fun FirCallableSymbol<*>.toIrSymbol(
-    c: Fir2IrComponents,
+private fun Fir2IrComponents.toIrSymbol(
+    symbol: FirCallableSymbol<*>,
     dispatchReceiver: FirExpression?,
     // Note: in fact LHS for callable references and explicit receiver for normal qualified accesses
     explicitReceiver: FirExpression?,
-    preferGetter: Boolean,
+    useSite: UseSiteKind,
     isDelegate: Boolean,
-    isReference: Boolean
-): IrSymbol? = with(c) {
+): IrSymbol? {
     val fakeOverrideOwnerLookupTag = when {
         // Static fake overrides
-        isStatic -> {
+        symbol.isStatic -> {
             (dispatchReceiver as? FirResolvedQualifier)?.toLookupTag(session)
         }
         // Member fake override or bound callable reference
@@ -139,7 +137,7 @@ private fun FirCallableSymbol<*>.toIrSymbol(
                 is FirSmartCastExpression -> dispatchReceiver.smartcastTypeWithoutNullableNothing?.coneType ?: dispatchReceiver.resolvedType
                 else -> dispatchReceiver.resolvedType
             }
-            val declarationSiteDispatchReceiverType = dispatchReceiverType
+            val declarationSiteDispatchReceiverType = symbol.dispatchReceiverType
             val type = if (callSiteDispatchReceiverType is ConeDynamicType && declarationSiteDispatchReceiverType != null) {
                 declarationSiteDispatchReceiverType
             } else {
@@ -148,30 +146,30 @@ private fun FirCallableSymbol<*>.toIrSymbol(
             type.findClassRepresentation(type, declarationStorage.session)
         }
         // Unbound callable reference to member (non-extension)
-        isReference && fir.receiverParameter == null -> {
+        useSite == Reference && symbol.fir.receiverParameter == null -> {
             (explicitReceiver as? FirResolvedQualifier)?.toLookupTag(session)
         }
         else -> null
     }
-    return when (val symbol = this@toIrSymbol) {
+    return when (symbol) {
         is FirSimpleSyntheticPropertySymbol -> {
             when {
                 isDelegate -> declarationStorage.getIrPropertySymbol(symbol)
-                isReference -> declarationStorage.getIrPropertySymbol(symbol, fakeOverrideOwnerLookupTag)
+                useSite == Reference -> declarationStorage.getIrPropertySymbol(symbol, fakeOverrideOwnerLookupTag)
                 else -> {
                     val syntheticProperty = symbol.syntheticProperty
-                    val delegateSymbol = if (preferGetter) {
+                    val delegateSymbol = if (useSite == GetCall) {
                         syntheticProperty.getter.delegate.symbol
                     } else {
                         syntheticProperty.setter?.delegate?.symbol ?: error("Written synthetic property must have a setter")
                     }
-                    delegateSymbol.unwrapCallRepresentative(c).toIrSymbol(
-                        c,
+                    val unwrappedSymbol = delegateSymbol.unwrapCallRepresentative(this)
+                    toIrSymbol(
+                        unwrappedSymbol,
                         dispatchReceiver,
                         explicitReceiver = null,
-                        preferGetter = preferGetter,
+                        useSite,
                         isDelegate = false,
-                        isReference = false
                     )
                 }
             }
