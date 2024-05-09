@@ -1897,6 +1897,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       public void testTypeAnnotation() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/typeCodeFragment/TypeAnnotation.kt");
       }
+
+      @Test
+      @TestMetadata("TypeParameter.kt")
+      public void testTypeParameter() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment/typeCodeFragment/TypeParameter.kt");
+      }
     }
   }
 
