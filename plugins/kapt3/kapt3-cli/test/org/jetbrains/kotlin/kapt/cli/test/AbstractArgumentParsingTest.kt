@@ -4,11 +4,9 @@
  */
 package org.jetbrains.kotlin.kapt.cli.test
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.kapt.cli.transformArgs
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.utils.TestMessageCollector
 import java.io.File
 
 private val LINE_SEPARATOR: String = System.getProperty("line.separator")
@@ -26,25 +24,5 @@ abstract class AbstractArgumentParsingTest {
         val actual = sections.replacingSection("after", actualAfter).render()
 
         JUnit5Assertions.assertEqualsToFile(testFile, actual)
-    }
-}
-
-class TestMessageCollector : MessageCollector {
-    data class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageSourceLocation?)
-
-    val messages = arrayListOf<Message>()
-
-    override fun clear() {
-        messages.clear()
-    }
-
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        messages.add(Message(severity, message, location))
-    }
-
-    override fun hasErrors(): Boolean = messages.any { it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR }
-
-    override fun toString(): String {
-        return messages.joinToString("\n") { "${it.severity}: ${it.message}${it.location?.let{" at $it"} ?: ""}" }
     }
 }
