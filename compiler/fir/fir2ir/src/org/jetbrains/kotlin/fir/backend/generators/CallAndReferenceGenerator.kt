@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -302,12 +303,33 @@ class CallAndReferenceGenerator(
      */
     private fun FirExpression.superQualifierSymbolForFieldAccess(firResolvedSymbol: FirBasedSymbol<*>?): IrClassSymbol? {
         if (firResolvedSymbol is FirBackingFieldSymbol || firResolvedSymbol is FirDelegateFieldSymbol) return null
+
         val classSymbol = when (this) {
             is FirResolvedQualifier -> {
                 if (resolvedToCompanionObject) return null
                 this.symbol as? FirClassSymbol<*>
             }
-            else -> this.resolvedType.fullyExpandedType(session).toClassSymbol(session)
+            else -> {
+                val type = this.resolvedType.fullyExpandedType(session).lowerBoundIfFlexible()
+
+                fun findIntersectionComponent(type: ConeKotlinType): ConeKotlinType? {
+                    if (type !is ConeIntersectionType) return type
+                    // in the case of intersection type in the receiver we need to find the component which contains referenced field
+                    if (firResolvedSymbol !is FirCallableSymbol<*>) return null
+                    val containingClassType = firResolvedSymbol.dispatchReceiverType as? ConeLookupTagBasedType ?: return null
+                    val containingClassLookupTag = containingClassType.lookupTag
+                    val typeContext = session.typeContext
+                    return type.intersectedTypes.first {
+                        val componentConstructor = with(typeContext) { it.lowerBoundIfFlexible().typeConstructor() }
+                        AbstractTypeChecker.isSubtypeOfClass(
+                            typeContext.newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false),
+                            componentConstructor,
+                            containingClassLookupTag
+                        )
+                    }
+                }
+                findIntersectionComponent(type)?.toClassSymbol(session)
+            }
         } ?: return null
 
         /**
