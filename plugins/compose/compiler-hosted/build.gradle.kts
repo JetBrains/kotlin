@@ -5,6 +5,17 @@ plugins {
     id("jps-compatible")
 }
 
+val composeVersion = "1.7.0-alpha07"
+repositories {
+    google {
+        content {
+            includeGroup("androidx.collection")
+            includeVersion("androidx.compose.runtime", "runtime", composeVersion)
+            includeVersion("androidx.compose.runtime", "runtime-desktop", composeVersion)
+        }
+    }
+}
+
 description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
 
 dependencies {
@@ -22,17 +33,45 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit4)
     testRuntimeOnly(libs.junit.vintage.engine)
+    testImplementation(projectTests(":analysis:analysis-api-fe10"))
+    testImplementation(projectTests(":analysis:analysis-api-fir"))
+    testImplementation(projectTests(":analysis:analysis-api-standalone"))
+    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
+    testImplementation(projectTests(":analysis:analysis-test-framework"))
+    testImplementation(projectTests(":analysis:low-level-api-fir"))
+    testImplementation(projectTests(":compiler:test-infrastructure"))
+    testApi(project(":compiler:plugin-api"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
+
+    testImplementation("androidx.compose.runtime:runtime:$composeVersion")
+
+    testImplementation(toolsJar())
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 optInToUnsafeDuringIrConstructionAPI()
 optInToObsoleteDescriptorBasedAPI()
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(8)
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+val generationRoot = projectDir.resolve("tests-gen")
+sourceSets {
+    "main" {
+        this.java.srcDirs("src/main/java")
+        this.resources.srcDir("src/main/resources")
+    }
+    "test" {
+        this.java.srcDirs("src/test/kotlin")
+        this.java.srcDir(generationRoot.name)
+    }
 }
 
 publish {
@@ -47,4 +86,11 @@ publish {
     }
 }
 
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
+    dependsOn(":dist")
+    workingDir = rootDir
+    useJUnitPlatform()
+}
+
 standardPublicJars()
+testsJar()
