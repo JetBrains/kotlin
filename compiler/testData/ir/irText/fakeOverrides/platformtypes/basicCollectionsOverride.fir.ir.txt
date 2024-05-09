@@ -65,6 +65,21 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final d: @[FlexibleNullability] kotlin.IntArray? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
@@ -129,6 +144,21 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final d: @[FlexibleNullability] kotlin.IntArray? declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? declared in <root>.Java2
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -219,6 +249,21 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       VALUE_PARAMETER name:e index:0 type:kotlin.Array<out kotlin.String>
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final d: @[FlexibleNullability] kotlin.IntArray? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
   FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B, c:<root>.C) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     VALUE_PARAMETER name:b index:1 type:<root>.B

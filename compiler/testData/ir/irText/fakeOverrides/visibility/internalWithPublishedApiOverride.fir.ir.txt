@@ -137,6 +137,9 @@ FILE fqName:<root> fileName:/test.kt
         overridden:
           internal open fun <get-a> (): kotlin.Int declared in <root>.Java2
         $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java2
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -161,6 +164,9 @@ FILE fqName:<root> fileName:/test.kt
         public open fun foo (): kotlin.Unit declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.D
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java2
     PROPERTY name:a visibility:internal modality:OPEN [val]
       overridden:
         internal open a: kotlin.Int declared in <root>.Java2
@@ -214,6 +220,9 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java4
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java4
   CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java4]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
@@ -238,6 +247,9 @@ FILE fqName:<root> fileName:/test.kt
         public open fun foo (): kotlin.Unit declared in <root>.Java4
       $this: VALUE_PARAMETER name:<this> type:<root>.G
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java4
   CLASS CLASS name:InternalVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InternalVisibility
     PROPERTY name:a visibility:internal modality:OPEN [val]

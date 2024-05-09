@@ -39,6 +39,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java2
         public open fun toString (): kotlin.String declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
         public abstract b: kotlin.Boolean declared in <root>.KotlinInterface
@@ -117,6 +120,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java2
         public open fun toString (): kotlin.String declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java2
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface; <root>.KotlinInterface2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     PROPERTY name:b visibility:public modality:OPEN [var]
@@ -185,6 +191,9 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun isB (): kotlin.Boolean declared in <root>.C'
           CONST Boolean type=kotlin.Boolean value=true
+    PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java2
   CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2; <root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -232,6 +241,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java2
         public open fun toString (): kotlin.String declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java2
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2; <root>.Java3]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
     CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
@@ -280,6 +292,9 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.E
       VALUE_PARAMETER name:t index:0 type:kotlin.Any?
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java2
   CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[<root>.Java2; <root>.Java4]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     CONSTRUCTOR visibility:public <> () returnType:<root>.F [primary]
@@ -315,6 +330,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java2
         public open fun toString (): kotlin.String declared in <root>.Java4
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,var]
       overridden:
         public abstract b: kotlin.Boolean declared in <root>.Java4
@@ -393,6 +411,9 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun getA (): kotlin.Int declared in <root>.G'
           CONST Int type=kotlin.Int value=10
+    PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java2
   CLASS CLASS name:H modality:ABSTRACT visibility:public superTypes:[<root>.Java4; <root>.KotlinInterface2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
     CONSTRUCTOR visibility:public <> () returnType:<root>.H [primary]
@@ -525,6 +546,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.KotlinInterface3
         public open fun toString (): kotlin.String declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java2
   CLASS CLASS name:K modality:FINAL visibility:public superTypes:[<root>.KotlinInterface3; <root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K
     CONSTRUCTOR visibility:public <> () returnType:<root>.K [primary]
@@ -568,6 +592,9 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.K
       VALUE_PARAMETER name:t index:0 type:kotlin.Any?
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java2
   CLASS CLASS name:L modality:ABSTRACT visibility:public superTypes:[<root>.Java2; <root>.Java5]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.L
     CONSTRUCTOR visibility:public <> () returnType:<root>.L [primary]
@@ -610,6 +637,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java2
         public open fun toString (): kotlin.String declared in <root>.Java5
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java2
   CLASS CLASS name:M modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.Java5]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.M
     CONSTRUCTOR visibility:public <> () returnType:<root>.M [primary]
@@ -653,6 +683,9 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.M
       VALUE_PARAMETER name:t index:0 type:kotlin.Any
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:b visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final b: kotlin.Boolean declared in <root>.Java2
   CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinInterface
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

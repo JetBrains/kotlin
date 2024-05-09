@@ -7145,12 +7145,6 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     }
 
     @Test
-    @TestMetadata("javaFieldsWithIntersectionTypes_k1.kt")
-    public void testJavaFieldsWithIntersectionTypes_k1() {
-      runTest("compiler/testData/codegen/bytecodeText/javaFieldsWithIntersectionTypes_k1.kt");
-    }
-
-    @Test
     @TestMetadata("javaStatics.kt")
     public void testJavaStatics() {
       runTest("compiler/testData/codegen/bytecodeText/javaStatics.kt");

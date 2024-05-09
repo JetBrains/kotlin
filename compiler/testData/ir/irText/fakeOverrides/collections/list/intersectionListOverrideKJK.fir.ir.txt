@@ -284,6 +284,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.LinkedList
         public open fun toString (): kotlin.String declared in kotlin.collections.List
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int declared in java.util.LinkedList
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in java.util.LinkedList
@@ -588,6 +591,9 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun removeAt (index: kotlin.Int): kotlin.Int declared in <root>.B'
           CONST Int type=kotlin.Int value=1
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int declared in java.util.LinkedList
     PROPERTY name:size visibility:public modality:OPEN [val]
       overridden:
         public open size: kotlin.Int declared in java.util.LinkedList
@@ -899,6 +905,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.LinkedList
         public open fun toString (): kotlin.String declared in kotlin.collections.MutableList
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int declared in java.util.LinkedList
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in java.util.LinkedList
@@ -1219,6 +1228,9 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun removeAt (index: kotlin.Int): kotlin.Int? declared in <root>.D'
           CONST Int type=kotlin.Int value=2
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int declared in java.util.LinkedList
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in java.util.LinkedList

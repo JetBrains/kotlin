@@ -28,6 +28,9 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[EnhancedNullability] T of <root>.Java1 declared in <root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1<T of <root>.B>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B<T of <root>.B>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
@@ -58,6 +61,9 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[EnhancedNullability] T of <root>.Java1 declared in <root>.Java1
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java2]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
@@ -86,6 +92,9 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[EnhancedNullability] kotlin.Int declared in <root>.Java2
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java3<kotlin.Int?>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
@@ -115,6 +124,9 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java3<kotlin.Int>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
     CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
@@ -144,6 +156,9 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java4<kotlin.Int>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
     CONSTRUCTOR visibility:public <> () returnType:<root>.F [primary]
@@ -173,6 +188,9 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java4
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[EnhancedNullability] T of <root>.Java4 declared in <root>.Java4
   CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java4<T of <root>.G>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G<T of <root>.G>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Number] reified:false
@@ -203,6 +221,9 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java4
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[EnhancedNullability] T of <root>.Java4 declared in <root>.Java4
   FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B<kotlin.String>, c:<root>.C, d:<root>.D, e:<root>.E, f:<root>.F, g:<root>.G<kotlin.Int>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     VALUE_PARAMETER name:b index:1 type:<root>.B<kotlin.String>

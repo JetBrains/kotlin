@@ -80,6 +80,9 @@ FILE fqName:<root> fileName:/1.kt
           CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
             <T0>: kotlin.Nothing
             arg0: CONST Null type=kotlin.Nothing? value=null
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.C>; <root>.KotlinInterface<R of <root>.C>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C<R of <root>.C>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -265,6 +268,9 @@ FILE fqName:<root> fileName:/1.kt
         RETURN type=kotlin.Nothing from='public open fun foo (): R of <root>.E declared in <root>.E'
           CALL 'public open fun foo (): @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Java3 modality:OPEN visibility:public superTypes:[kotlin.Any]' type=@[FlexibleNullability] R of <root>.E? origin=null
             $this: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.foo' type=<root>.E<R of <root>.E> origin=null
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.F>; <root>.KotlinInterface<R of <root>.F>; <root>.KotlinInterface2<R of <root>.F>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F<R of <root>.F>
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false

@@ -1,10 +1,10 @@
 CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:J1 modality:OPEN visibility:public superTypes:[kotlin.Any]
   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J1<T of <root>.J1>
   TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
-  FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:@[FlexibleNullability] T of <root>.J1? visibility:public
-  FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f2 type:@[FlexibleNullability] T of <root>.J1? visibility:public
-  FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:@[FlexibleNullability] T of <root>.J1? visibility:public [static]
-  FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s2 type:@[FlexibleNullability] T of <root>.J1? visibility:public [static]
+  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:f visibility:public modality:FINAL [var]
+    FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:@[FlexibleNullability] T of <root>.J1? visibility:public
+  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:f2 visibility:public modality:FINAL [var]
+    FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f2 type:@[FlexibleNullability] T of <root>.J1? visibility:public
   CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.J1<T of <root>.J1> [primary]
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
     overridden:

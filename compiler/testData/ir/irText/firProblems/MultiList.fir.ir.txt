@@ -180,6 +180,9 @@ FILE fqName:<root> fileName:/MultiList.kt
       overridden:
         public open fun trimToSize (): kotlin.Unit declared in <root>.SomeList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<kotlin.String>>
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount declared in <root>.SomeList
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open size: kotlin.Int declared in <root>.SomeList
@@ -487,6 +490,9 @@ FILE fqName:<root> fileName:/MultiList.kt
       overridden:
         public open fun trimToSize (): kotlin.Unit declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int declared in java.util.ArrayList
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
         public abstract size: kotlin.Int declared in <root>.MyList

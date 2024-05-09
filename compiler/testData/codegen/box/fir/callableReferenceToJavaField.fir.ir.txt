@@ -67,10 +67,13 @@ FILE fqName:foo fileName:/main.kt
           $this: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.lang.reflect.Field origin=EXCLEXCL
             <T0>: java.lang.reflect.Field
             arg0: CALL 'public final fun <get-javaField> (): java.lang.reflect.Field? declared in kotlin.reflect.jvm' type=java.lang.reflect.Field? origin=GET_PROPERTY
-              $receiver: PROPERTY_REFERENCE 'protected/*protected and package*/ open a: @[FlexibleNullability] foo.A? declared in bar.Base' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] foo.A? visibility:protected/*protected and package*/ declared in bar.Base' getter=null setter=null type=kotlin.reflect.KMutableProperty1<foo.Derived, @[FlexibleNullability] foo.A?> origin=null
+              $receiver: PROPERTY_REFERENCE 'protected/*protected and package*/ final a declared in foo.Derived' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] foo.A? visibility:protected/*protected and package*/ declared in foo.Derived' getter=null setter=null type=kotlin.reflect.KMutableProperty1<foo.Derived, @[FlexibleNullability] foo.A?> origin=null
           p0: GET_VAR '<this>: foo.Derived declared in foo.Derived.foo' type=foo.Derived origin=null
           p1: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in foo.A' type=foo.A origin=null
             s: CONST String type=kotlin.String value="OK"
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: @[FlexibleNullability] foo.A? declared in bar.Base
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo'

@@ -146,3 +146,6 @@ FILE fqName:<root> fileName:/kt16904.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:field visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final field: kotlin.Int declared in <root>.J

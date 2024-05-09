@@ -230,9 +230,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
   }
 
   @Test
-  @TestMetadata("javaFieldsWithIntersectionTypes_k1.kt")
-  public void testJavaFieldsWithIntersectionTypes_k1() {
-    runTest("compiler/testData/codegen/bytecodeText/javaFieldsWithIntersectionTypes_k1.kt");
+  @TestMetadata("javaFieldsWithIntersectionTypes.kt")
+  public void testJavaFieldsWithIntersectionTypes() {
+    runTest("compiler/testData/codegen/bytecodeText/javaFieldsWithIntersectionTypes.kt");
   }
 
   @Test

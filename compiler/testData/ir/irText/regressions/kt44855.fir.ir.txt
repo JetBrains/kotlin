@@ -73,3 +73,6 @@ FILE fqName:<root> fileName:/kt44855.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Parent
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:qqq visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final qqq: @[FlexibleNullability] kotlin.String? declared in <root>.Parent
