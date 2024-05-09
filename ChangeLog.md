@@ -1,3 +1,51 @@
+## 2.0.0-RC3
+
+### Apple Ecosystem
+
+- [`KT-67892`](https://youtrack.jetbrains.com/issue/KT-67892) KotlinNativeLink task instantiates with a fixed list of apiFiles
+
+### Compiler
+
+- [`KT-67993`](https://youtrack.jetbrains.com/issue/KT-67993) K2: PCLA Inference throws exception with local objects
+- [`KT-67912`](https://youtrack.jetbrains.com/issue/KT-67912) K2: Cannot inference type properly from inline function with Type parameter
+- [`KT-68056`](https://youtrack.jetbrains.com/issue/KT-68056) Prohibit referencing java field in case of conflict with property from companion object of the derived class
+- [`KT-67609`](https://youtrack.jetbrains.com/issue/KT-67609) K2: False negative INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR
+- [`KT-67875`](https://youtrack.jetbrains.com/issue/KT-67875) K2: Resolution ambiguity between Iterable and varargs
+- [`KT-67699`](https://youtrack.jetbrains.com/issue/KT-67699) Not enough information to infer type argument for 'Error' using Arrow's Raise context receiver since Kotlin 2.0.0-Beta3
+- [`KT-59897`](https://youtrack.jetbrains.com/issue/KT-59897) K2: Disappeared PACKAGE_OR_CLASSIFIER_REDECLARATION
+- [`KT-50020`](https://youtrack.jetbrains.com/issue/KT-50020) K2: False-negative USAGE_IS_NOT_INLINEABLE when lambda in receiver position
+- [`KT-67810`](https://youtrack.jetbrains.com/issue/KT-67810) K2: public-API inline function cannot access non-public-API annotation enum
+
+### JavaScript
+
+- [`KT-67978`](https://youtrack.jetbrains.com/issue/KT-67978) K2: Declaration of such kind (expect) cannot be exported to JavaScript
+
+### Native
+
+- [`KT-67218`](https://youtrack.jetbrains.com/issue/KT-67218) Native: nested classes in kx.serialization ProtoBuf produce empty array for release binary
+
+### Tools. Gradle
+
+- [`KT-67746`](https://youtrack.jetbrains.com/issue/KT-67746) Indicate for users they need to apply the new Kotlin Compose Gradle plugin
+- [`KT-67387`](https://youtrack.jetbrains.com/issue/KT-67387) Enable intrinsic remember by default in compose compiler gradle plugin
+- [`KT-67762`](https://youtrack.jetbrains.com/issue/KT-67762) Rename Kotlin Compose Compiler plugin on Gradle portal
+- [`KT-67778`](https://youtrack.jetbrains.com/issue/KT-67778) Clarify documentation for compose metricsDestination property
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-67806`](https://youtrack.jetbrains.com/issue/KT-67806) KMP import fails if android target has flavors
+- [`KT-67636`](https://youtrack.jetbrains.com/issue/KT-67636) Gradle configuration error when use withJava()
+- [`KT-67042`](https://youtrack.jetbrains.com/issue/KT-67042) K2: Unresolved reference 'convertRadiusToSigma'
+
+### Tools. Scripts
+
+- [`KT-67727`](https://youtrack.jetbrains.com/issue/KT-67727) Kotlin Scripting with language version 2.0 fails during IR lowering on empty scripts
+
+### Tools. Wasm
+
+- [`KT-67785`](https://youtrack.jetbrains.com/issue/KT-67785) Kotlin/Wasm: Node.JS 22 does not need experimental-wasm-gc flag anymore
+
+
 ## 2.0.0-RC2
 
 ### Backend. Wasm
