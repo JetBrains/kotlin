@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.util.DeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
@@ -104,40 +104,85 @@ class CheckDeclarationParentsVisitor : DeclarationParentsVisitor() {
     }
 }
 
+class IrValidationError(message: String? = null) : IllegalStateException(message)
+
 /**
  * Verifies common IR invariants that should hold in all the backends.
  */
 fun performBasicIrValidation(
-    context: CommonBackendContext,
-    fragment: IrElement,
-    mode: IrVerificationMode = IrVerificationMode.ERROR,
+    element: IrElement,
+    irBuiltIns: IrBuiltIns,
     checkProperties: Boolean = false,
     checkTypes: Boolean = false,
+    reportError: (IrFile?, IrElement, String) -> Unit,
 ) {
     val validatorConfig = IrValidatorConfig(
-        abortOnError = mode == IrVerificationMode.ERROR,
+        abortOnError = false,
         ensureAllNodesAreDifferent = true,
         checkTypes = checkTypes,
         checkDescriptors = false,
         checkProperties = checkProperties,
     )
-    val validator = IrValidator(context.irBuiltIns, validatorConfig) { file, element, message ->
-        try {
-            // TODO: render all element's parents.
-            context.reportWarning(
-                "[IR VALIDATION] ${"$message\n" + element.render()}", file,
-                element
-            )
-        } catch (e: Throwable) {
-            println("an error trying to print a warning message: $e")
-            e.printStackTrace()
-        }
-        // TODO: throw an exception after fixing bugs leading to invalid IR.
+    val validator = IrValidator(irBuiltIns, validatorConfig, reportError)
+    element.acceptVoid(validator)
+    element.checkDeclarationParents()
+}
 
-        if (mode == IrVerificationMode.ERROR) {
-            error("Validation failed in file ${file?.name ?: "???"} : ${message}\n${element.render()}")
-        }
+/**
+ * Verifies common IR invariants that should hold in all the backends.
+ *
+ * Reports errors to [CommonBackendContext.messageCollector].
+ *
+ * **Note:** this method does **not** throw [IrValidationError]. Use [throwValidationErrorIfNeeded] for checking for errors and throwing
+ * [IrValidationError]. This gives the caller the opportunity to perform additional (for example, backend-specific) validation before
+ * aborting. The caller decides when it's time to abort.
+ */
+fun performBasicIrValidation(
+    context: CommonBackendContext,
+    fragment: IrElement,
+    mode: IrVerificationMode,
+    phaseName: String,
+    checkProperties: Boolean = false,
+    checkTypes: Boolean = false,
+) {
+    if (mode == IrVerificationMode.NONE) return
+    performBasicIrValidation(
+        fragment,
+        context.irBuiltIns,
+        checkProperties,
+        checkTypes,
+    ) { file, element, message ->
+        context.reportIrValidationError(mode, file, element, message, phaseName)
     }
-    fragment.acceptVoid(validator)
-    fragment.checkDeclarationParents()
+}
+
+fun ErrorReportingContext.reportIrValidationError(
+    mode: IrVerificationMode,
+    file: IrFile?,
+    element: IrElement,
+    message: String,
+    phaseName: String,
+) {
+    val severity = when (mode) {
+        IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
+        IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
+        IrVerificationMode.NONE -> return
+    }
+    val phaseMessage = if (phaseName.isNotEmpty()) "$phaseName: " else ""
+    // TODO: render all element's parents.
+    report(
+        severity,
+        element,
+        file,
+        "[IR VALIDATION] ${phaseMessage}${"$message\n" + element.render()}",
+    )
+}
+
+/**
+ * Allows to abort the compilation process if after validating the IR there were errors and [mode] is [IrVerificationMode.ERROR].
+ */
+fun ErrorReportingContext.throwValidationErrorIfNeeded(mode: IrVerificationMode) {
+    if (messageCollector.hasErrors() && mode == IrVerificationMode.ERROR) {
+        throw IrValidationError()
+    }
 }
