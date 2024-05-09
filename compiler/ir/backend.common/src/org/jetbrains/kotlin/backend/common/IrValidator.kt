@@ -31,12 +31,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 data class IrValidatorConfig(
-    val abortOnError: Boolean, // TODO: This property is unused, remove it
-    val ensureAllNodesAreDifferent: Boolean,
     val checkTypes: Boolean = true,
-    val checkDescriptors: Boolean = true,
     val checkProperties: Boolean = false,
-    val checkScopes: Boolean = false,
+    val checkScopes: Boolean = false, // TODO: Consider setting to true by default and deleting
 )
 
 class IrValidator(
@@ -128,10 +125,7 @@ fun performBasicIrValidation(
     reportError: (IrFile?, IrElement, String) -> Unit,
 ) {
     val validatorConfig = IrValidatorConfig(
-        abortOnError = false,
-        ensureAllNodesAreDifferent = true,
         checkTypes = checkTypes,
-        checkDescriptors = false,
         checkProperties = checkProperties,
     )
     val validator = IrValidator(irBuiltIns, validatorConfig, reportError)

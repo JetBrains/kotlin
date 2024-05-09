@@ -29,7 +29,7 @@ class CheckIrElementVisitor(
     private val visitedElements = hashSetOf<IrElement>()
 
     override fun visitElement(element: IrElement) {
-        if (config.ensureAllNodesAreDifferent && !visitedElements.add(element)) {
+        if (!visitedElements.add(element)) {
             val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
             reportError(element, "Duplicate IR node: $renderString")
         }
@@ -245,31 +245,6 @@ class CheckIrElementVisitor(
         super.visitThrow(expression)
 
         expression.ensureTypeIs(irBuiltIns.nothingType)
-    }
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override fun visitClass(declaration: IrClass) {
-        super.visitClass(declaration)
-
-        if (config.checkDescriptors && !declaration.isAnnotationClass) {
-            // Check that all functions and properties from memberScope are present in IR
-            // (including FAKE_OVERRIDE ones).
-
-            val allDescriptors = declaration.descriptor.unsubstitutedMemberScope
-                .getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
-                .filter { it.visibility != DescriptorVisibilities.INVISIBLE_FAKE }
-
-            val presentDescriptors = declaration.declarations.map { it.descriptor }
-
-            val missingDescriptors = allDescriptors - presentDescriptors
-
-            if (missingDescriptors.isNotEmpty()) {
-                reportError(
-                    declaration, "Missing declarations for descriptors:\n" +
-                            missingDescriptors.joinToString("\n: ")
-                )
-            }
-        }
     }
 
     override fun visitFunction(declaration: IrFunction) {
