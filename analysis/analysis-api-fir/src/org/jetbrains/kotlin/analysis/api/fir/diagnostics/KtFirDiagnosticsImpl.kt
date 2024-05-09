@@ -4039,6 +4039,12 @@ internal class UselessCallOnNotNullImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UselessCallOnNotNull
 
+internal class UnusedAnonymousParameterImpl(
+    override val parameter: KaSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.UnusedAnonymousParameter
+
 internal class ReturnNotAllowedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

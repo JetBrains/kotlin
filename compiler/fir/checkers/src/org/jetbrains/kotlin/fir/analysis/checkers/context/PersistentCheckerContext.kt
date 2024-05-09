@@ -12,7 +12,7 @@ import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFunctionBodyContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -33,6 +33,7 @@ class PersistentCheckerContext private constructor(
     override val containingElements: PersistentList<FirElement>,
     override val isContractBody: Boolean,
     override val inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?,
+    override val lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?,
     sessionHolder: SessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
@@ -50,6 +51,7 @@ class PersistentCheckerContext private constructor(
         persistentListOf(),
         isContractBody = false,
         inlineFunctionBodyContext = null,
+        lambdaBodyContext = null,
         sessionHolder,
         returnTypeCalculator,
         persistentSetOf(),
@@ -114,6 +116,7 @@ class PersistentCheckerContext private constructor(
         containingDeclarations: PersistentList<FirDeclaration> = this.containingDeclarations,
         isContractBody: Boolean = this.isContractBody,
         inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext? = this.inlineFunctionBodyContext,
+        lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext? = this.lambdaBodyContext,
         allInfosSuppressed: Boolean = this.allInfosSuppressed,
         allWarningsSuppressed: Boolean = this.allWarningsSuppressed,
         allErrorsSuppressed: Boolean = this.allErrorsSuppressed,
@@ -129,6 +132,7 @@ class PersistentCheckerContext private constructor(
             containingElements,
             isContractBody,
             inlineFunctionBodyContext,
+            lambdaBodyContext,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -150,6 +154,11 @@ class PersistentCheckerContext private constructor(
         copy(inlineFunctionBodyContext = context)
 
     override fun unsetInlineFunctionBodyContext(): CheckerContextForProvider = copy(inlineFunctionBodyContext = null)
+
+    override fun setLambdaBodyContext(context: FirAnonymousUnusedParamChecker.LambdaBodyContext): CheckerContextForProvider =
+        copy(lambdaBodyContext = context)
+
+    override fun unsetLambdaBodyContext(): CheckerContextForProvider = copy(lambdaBodyContext = null)
 
     override fun enterFile(file: FirFile): CheckerContextForProvider = copy(containingFile = file)
 

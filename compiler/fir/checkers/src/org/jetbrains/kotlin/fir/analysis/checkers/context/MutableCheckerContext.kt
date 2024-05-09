@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFunctionBodyContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -31,6 +32,7 @@ class MutableCheckerContext private constructor(
     override val containingElements: MutableList<FirElement>,
     override var isContractBody: Boolean,
     override var inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?,
+    override var lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?,
     override var containingFile: FirFile?,
     sessionHolder: SessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
@@ -48,6 +50,7 @@ class MutableCheckerContext private constructor(
         mutableListOf(),
         isContractBody = false,
         inlineFunctionBodyContext = null,
+        lambdaBodyContext = null,
         containingFile = null,
         sessionHolder,
         returnTypeCalculator,
@@ -67,6 +70,7 @@ class MutableCheckerContext private constructor(
             containingElements,
             isContractBody,
             inlineFunctionBodyContext,
+            lambdaBodyContext,
             containingFile,
             sessionHolder,
             returnTypeCalculator,
@@ -139,6 +143,7 @@ class MutableCheckerContext private constructor(
             containingElements,
             isContractBody,
             inlineFunctionBodyContext,
+            lambdaBodyContext,
             containingFile,
             sessionHolder,
             returnTypeCalculator,
@@ -168,6 +173,16 @@ class MutableCheckerContext private constructor(
 
     override fun unsetInlineFunctionBodyContext(): CheckerContextForProvider {
         inlineFunctionBodyContext = null
+        return this
+    }
+
+    override fun setLambdaBodyContext(context: FirAnonymousUnusedParamChecker.LambdaBodyContext): CheckerContextForProvider {
+        lambdaBodyContext = context
+        return this
+    }
+
+    override fun unsetLambdaBodyContext(): CheckerContextForProvider {
+        lambdaBodyContext = null
         return this
     }
 

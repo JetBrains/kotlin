@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFunctionBodyContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.createLambdaBodyContext
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
@@ -135,12 +136,14 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
         withAnnotationContainer(anonymousFunction) {
-            val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
-            visitWithDeclarationAndReceiver(
-                anonymousFunction,
-                labelName,
-                anonymousFunction.receiverParameter
-            )
+            withLambdaBodyIfApplicable(anonymousFunction) {
+                val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
+                visitWithDeclarationAndReceiver(
+                    anonymousFunction,
+                    labelName,
+                    anonymousFunction.receiverParameter
+                )
+            }
         }
     }
 
@@ -320,6 +323,20 @@ abstract class AbstractDiagnosticCollectorVisitor(
         } finally {
             if (isInline) {
                 context = context.unsetInlineFunctionBodyContext()
+            }
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    private inline fun <T> withLambdaBodyIfApplicable(function: FirAnonymousFunction, block: () -> T): T {
+        return try {
+            if (function.isLambda) {
+                context = context.setLambdaBodyContext(createLambdaBodyContext(function, context))
+            }
+            block()
+        } finally {
+            if (function.isLambda) {
+                context = context.unsetLambdaBodyContext()
             }
         }
     }

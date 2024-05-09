@@ -3,7 +3,7 @@ fun f(t: (v: Int) -> Unit) {
 }
 
 fun main() {
-    f { i ->
+    f { <!UNUSED_ANONYMOUS_PARAMETER!>i<!> ->
 
     }
 }

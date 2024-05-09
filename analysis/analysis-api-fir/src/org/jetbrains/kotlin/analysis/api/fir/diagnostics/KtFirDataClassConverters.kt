@@ -4805,6 +4805,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.UNUSED_ANONYMOUS_PARAMETER) { firDiagnostic ->
+        UnusedAnonymousParameterImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.RETURN_NOT_ALLOWED) { firDiagnostic ->
         ReturnNotAllowedImpl(
             firDiagnostic as KtPsiDiagnostic,

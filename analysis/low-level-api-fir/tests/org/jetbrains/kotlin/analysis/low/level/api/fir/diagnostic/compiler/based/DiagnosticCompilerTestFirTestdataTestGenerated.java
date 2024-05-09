@@ -2146,6 +2146,12 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("unusedAnonymLambdaParam.kt")
+      public void testUnusedAnonymLambdaParam() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/unusedAnonymLambdaParam.kt");
+      }
+
+      @Test
       @TestMetadata("upperBoundViolated.kt")
       public void testUpperBoundViolated() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/upperBoundViolated.kt");

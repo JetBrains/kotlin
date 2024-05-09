@@ -1679,6 +1679,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VARIABLE_INITIALIZER_IS_REDUNDANT by warning<PsiElement>()
         val VARIABLE_NEVER_READ by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val USELESS_CALL_ON_NOT_NULL by warning<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
+        val UNUSED_ANONYMOUS_PARAMETER by warning<KtElement>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirValueParameterSymbol>("parameter")
+        }
     }
 
     val RETURNS by object : DiagnosticGroup("Returns") {

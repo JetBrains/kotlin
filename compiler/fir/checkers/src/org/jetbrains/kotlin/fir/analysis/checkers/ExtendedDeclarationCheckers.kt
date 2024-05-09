@@ -16,6 +16,10 @@ object ExtendedDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             PlatformClassMappedToKotlinImportsChecker
         )
+    override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker>
+        get() = setOf(
+            FirAnonymousUnusedParamChecker
+        )
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(

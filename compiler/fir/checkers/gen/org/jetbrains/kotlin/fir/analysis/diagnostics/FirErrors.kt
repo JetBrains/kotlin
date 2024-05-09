@@ -844,6 +844,7 @@ object FirErrors {
     val VARIABLE_INITIALIZER_IS_REDUNDANT: KtDiagnosticFactory0 by warning0<PsiElement>()
     val VARIABLE_NEVER_READ: KtDiagnosticFactory0 by warning0<KtNamedDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val USELESS_CALL_ON_NOT_NULL: KtDiagnosticFactory0 by warning0<PsiElement>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
+    val UNUSED_ANONYMOUS_PARAMETER: KtDiagnosticFactory1<FirValueParameterSymbol> by warning1<KtElement, FirValueParameterSymbol>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     // Returns
     val RETURN_NOT_ALLOWED: KtDiagnosticFactory0 by error0<KtReturnExpression>(SourceElementPositioningStrategies.RETURN_WITH_LABEL)
