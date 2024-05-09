@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
+import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
@@ -25,8 +26,11 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-interface CommonBackendContext : BackendContext, LoggingContext {
+interface CommonBackendContext : BackendContext, LoggingContext, BackendContextHolder {
     override val ir: Ir<CommonBackendContext>
+
+    override val heldBackendContext: CommonBackendContext
+        get() = this
 
     val configuration: CompilerConfiguration
     val scriptMode: Boolean

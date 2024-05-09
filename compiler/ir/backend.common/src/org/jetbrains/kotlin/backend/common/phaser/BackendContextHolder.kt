@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
  * Adapter interface that can be implemented to enabled to access
  * IR facilities during phase pre- and postprocessing.
  */
-interface BackendContextHolder<C : CommonBackendContext> {
-    val backendContext: C
+interface BackendContextHolder {
+
+    /**
+     * @see BackendContextHolder
+     */
+    val heldBackendContext: CommonBackendContext
 }
