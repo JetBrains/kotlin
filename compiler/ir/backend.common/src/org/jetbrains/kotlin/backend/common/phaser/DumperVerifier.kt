@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
-import org.jetbrains.kotlin.backend.common.performBasicIrValidation
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.IrVerificationMode
@@ -85,13 +82,15 @@ private fun dumpIrElement(actionState: ActionState, data: IrElement): String {
 abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Context) : ModuleLoweringPass {
 
     final override fun lower(irModule: IrModuleFragment) {
-        if (context.configuration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE) != IrVerificationMode.NONE) {
-            validate(irModule)
+        val verificationMode = context.configuration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
+        if (verificationMode != IrVerificationMode.NONE) {
+            validate(irModule, verificationMode, phaseName = this.javaClass.simpleName)
+            context.throwValidationErrorIfNeeded(verificationMode)
         }
     }
 
-    protected open fun validate(irModule: IrModuleFragment) {
-        performBasicIrValidation(context, irModule)
+    protected open fun validate(irModule: IrModuleFragment, mode: IrVerificationMode, phaseName: String) {
+        performBasicIrValidation(context, irModule, mode, phaseName)
     }
 }
 
@@ -132,7 +131,14 @@ fun <Context : LoggingContext, Data> getIrValidator(checkTypes: Boolean): Action
             )
             return
         }
-        performBasicIrValidation(context.heldBackendContext, element, checkTypes = checkTypes)
+        performBasicIrValidation(
+            context.heldBackendContext,
+            element,
+            IrVerificationMode.ERROR,
+            phaseName = "${state.beforeOrAfter.name.toLowerCaseAsciiOnly()} ${state.phase}",
+            checkTypes = checkTypes
+        )
+        context.heldBackendContext.throwValidationErrorIfNeeded(IrVerificationMode.ERROR)
     }
 
 fun <Data, Context : LoggingContext> getIrDumper(): Action<Data, Context> =
