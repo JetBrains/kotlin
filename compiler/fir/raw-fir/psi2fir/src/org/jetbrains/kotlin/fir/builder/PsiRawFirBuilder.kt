@@ -703,6 +703,7 @@ open class PsiRawFirBuilder(
                 isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                 isActual = hasActualModifier()
                 isOverride = hasModifier(OVERRIDE_KEYWORD)
+                isHide = hasModifier(HIDE_KEYWORD)
                 isConst = hasModifier(CONST_KEYWORD)
                 isLateInit = hasModifier(LATEINIT_KEYWORD)
             }
@@ -1776,6 +1777,7 @@ open class PsiRawFirBuilder(
                             isExpect = function.hasExpectModifier() || context.containerIsExpect
                             isActual = function.hasActualModifier()
                             isOverride = function.hasModifier(OVERRIDE_KEYWORD)
+                            isHide = function.hasModifier(HIDE_KEYWORD)
                             isOperator = function.hasModifier(OPERATOR_KEYWORD)
                             isInfix = function.hasModifier(INFIX_KEYWORD)
                             isInline = function.hasModifier(INLINE_KEYWORD)
@@ -2171,6 +2173,7 @@ open class PsiRawFirBuilder(
                                 isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                                 isActual = hasActualModifier()
                                 isOverride = hasModifier(OVERRIDE_KEYWORD)
+                                isHide = hasModifier(HIDE_KEYWORD)
                                 isConst = hasModifier(CONST_KEYWORD)
                                 isLateInit = hasModifier(LATEINIT_KEYWORD)
                                 isExternal = hasModifier(EXTERNAL_KEYWORD)

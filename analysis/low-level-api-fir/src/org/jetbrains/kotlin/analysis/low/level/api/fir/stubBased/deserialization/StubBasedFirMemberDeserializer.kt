@@ -341,6 +341,7 @@ internal class StubBasedFirMemberDeserializer(
                 isExpect = property.hasExpectModifier()
                 isActual = false
                 isOverride = false
+                isHide = false
                 isConst = property.hasModifier(KtTokens.CONST_KEYWORD)
                 isLateInit = property.hasModifier(KtTokens.LATEINIT_KEYWORD)
                 isExternal = property.hasModifier(KtTokens.EXTERNAL_KEYWORD)
@@ -468,6 +469,7 @@ internal class StubBasedFirMemberDeserializer(
                 isExpect = function.hasExpectModifier()
                 isActual = false
                 isOverride = false
+                isHide = false
                 isOperator = function.hasModifier(KtTokens.OPERATOR_KEYWORD)
                 isInfix = function.hasModifier(KtTokens.INFIX_KEYWORD)
                 isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
@@ -542,6 +544,7 @@ internal class StubBasedFirMemberDeserializer(
                 isExpect = constructor.hasExpectModifier() || classOrObject.hasExpectModifier()
                 isActual = false
                 isOverride = false
+                isHide = false
                 this.isInner = isInner
             }
             this.symbol = symbol

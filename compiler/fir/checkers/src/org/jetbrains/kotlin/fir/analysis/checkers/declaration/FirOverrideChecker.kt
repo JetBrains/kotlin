@@ -26,11 +26,13 @@ import org.jetbrains.kotlin.fir.declarations.CallToPotentiallyHiddenSymbolResult
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.originalOrSelf
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
@@ -346,6 +348,28 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         reporter.reportOn(containingClass.source, FirErrors.DATA_CLASS_OVERRIDE_DEFAULT_VALUES, this, overriddenClass, context)
     }
 
+    private fun retrieveOverriddenSyntheticOf(
+        member: FirCallableSymbol<*>,
+        containingClass: FirClass,
+        context: CheckerContext
+    ): List<FirCallableSymbol<*>> {
+        var foundOverriddenSyntheticProperties: List<FirCallableSymbol<*>>? = null
+        for (superType in containingClass.superTypeRefs) {
+            val superSymbol = superType.toRegularClassSymbol(context.session) ?: continue
+            val syntheticScope = FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
+                context.session, superType.coneType, superSymbol.unsubstitutedScope(context), context.returnTypeCalculator
+            ) ?: continue
+            val properties = syntheticScope.getProperties(member.name)
+            when {
+                // if we already found some properties, we don't know what to do
+                properties.isNotEmpty() && foundOverriddenSyntheticProperties != null -> return emptyList()
+                properties.isNotEmpty() -> foundOverriddenSyntheticProperties = properties
+                else -> continue
+            }
+        }
+        return foundOverriddenSyntheticProperties.orEmpty()
+    }
+
     private fun checkMember(
         member: FirCallableSymbol<*>,
         containingClass: FirClass,
@@ -354,7 +378,12 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         firTypeScope: FirTypeScope,
         context: CheckerContext
     ) {
-        val overriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
+        val directOverriddenMemberSymbols = firTypeScope.retrieveDirectOverriddenOf(member)
+        val overriddenMemberSymbols = when {
+            directOverriddenMemberSymbols.isNotEmpty() -> directOverriddenMemberSymbols
+            member !is FirPropertySymbol -> emptyList()
+            else -> retrieveOverriddenSyntheticOf(member, containingClass, context)
+        }
         val hasOverrideKeyword = member.hasModifier(KtTokens.OVERRIDE_KEYWORD)
         val isOverride = member.isOverride && (member.origin != FirDeclarationOrigin.Source || hasOverrideKeyword)
 
@@ -385,13 +414,25 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
                 )
             }?.originalOrSelf() ?: return
             val originalContainingClassSymbol = overridden.containingClassLookupTag()?.toSymbol(context.session) as? FirRegularClassSymbol ?: return
-            reporter.reportOn(
-                member.source,
-                FirErrors.VIRTUAL_MEMBER_HIDDEN,
-                member,
-                originalContainingClassSymbol,
-                context
-            )
+            if (directOverriddenMemberSymbols.isEmpty()) {
+                if (!member.hasModifier(KtTokens.HIDE_KEYWORD)) {
+                    reporter.reportOn(
+                        member.source,
+                        FirErrors.SYNTHETIC_MEMBER_HIDDEN,
+                        member,
+                        originalContainingClassSymbol,
+                        context
+                    )
+                }
+            } else {
+                reporter.reportOn(
+                    member.source,
+                    FirErrors.VIRTUAL_MEMBER_HIDDEN,
+                    member,
+                    originalContainingClassSymbol,
+                    context
+                )
+            }
             return
         }
 

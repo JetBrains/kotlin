@@ -92,6 +92,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 isExpect = irFunction.isExpect
                 isActual = false
                 isOverride = irFunction.overriddenSymbols.isNotEmpty()
+                isHide = false
                 isInfix = irFunction.isInfix
                 isInline = irFunction.isInline
                 isTailRec = irFunction.isTailrec

@@ -568,6 +568,7 @@ object FirErrors {
     val NON_FINAL_MEMBER_IN_FINAL_CLASS: KtDiagnosticFactory0 by warning0<KtNamedDeclaration>(SourceElementPositioningStrategies.OPEN_MODIFIER)
     val NON_FINAL_MEMBER_IN_OBJECT: KtDiagnosticFactory0 by warning0<KtNamedDeclaration>(SourceElementPositioningStrategies.OPEN_MODIFIER)
     val VIRTUAL_MEMBER_HIDDEN: KtDiagnosticFactory2<FirCallableSymbol<*>, FirRegularClassSymbol> by error2<KtNamedDeclaration, FirCallableSymbol<*>, FirRegularClassSymbol>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val SYNTHETIC_MEMBER_HIDDEN: KtDiagnosticFactory2<FirCallableSymbol<*>, FirRegularClassSymbol> by error2<KtNamedDeclaration, FirCallableSymbol<*>, FirRegularClassSymbol>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS: KtDiagnosticFactory0 by error0<KtObjectDeclaration>(SourceElementPositioningStrategies.COMPANION_OBJECT)

@@ -46,7 +46,8 @@ enum class ModifierFlag(val value: Long) {
     VARIANCE_IN(1L shl 33),
     VARIANCE_OUT(1L shl 34),
     VARIANCE_INVARIANT(1L shl 35),
-    REIFICATION_REIFIED(1L shl 36);
+    REIFICATION_REIFIED(1L shl 36),
+    MEMBER_HIDE(1L shl 37);
 
     companion object {
         val ElementTypeToModifierFlagMap: Map<IElementType, ModifierFlag> = mutableMapOf(
@@ -60,6 +61,7 @@ enum class ModifierFlag(val value: Long) {
 
             // Member
             KtTokens.OVERRIDE_KEYWORD to MEMBER_OVERRIDE,
+            KtTokens.HIDE_KEYWORD to MEMBER_HIDE,
             KtTokens.LATEINIT_KEYWORD to MEMBER_LATEINIT,
 
             // Visibility

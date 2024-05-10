@@ -48,6 +48,8 @@ open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
 
     fun hasOverride(): Boolean = hasFlag(ModifierFlag.MEMBER_OVERRIDE)
 
+    fun hasHide(): Boolean = hasFlag(ModifierFlag.MEMBER_HIDE)
+
     fun hasLateinit(): Boolean = hasFlag(ModifierFlag.MEMBER_LATEINIT)
 
     fun getVisibility(publicByDefault: Boolean = false): Visibility {

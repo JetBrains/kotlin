@@ -25,6 +25,7 @@ interface FirDeclarationStatus : FirElement {
     val isExpect: Boolean
     val isActual: Boolean
     val isOverride: Boolean
+    val isHide: Boolean
     val isOperator: Boolean
     val isInfix: Boolean
     val isInline: Boolean

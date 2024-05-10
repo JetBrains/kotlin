@@ -54,6 +54,12 @@ open class FirDeclarationStatusImpl(
             this[OVERRIDE] = value
         }
 
+    override var isHide: Boolean
+        get() = this[HIDE]
+        set(value) {
+            this[HIDE] = value
+        }
+
     override var isOperator: Boolean
         get() = this[OPERATOR]
         set(value) {
@@ -170,6 +176,7 @@ open class FirDeclarationStatusImpl(
         FROM_ENUM(0x10000),
         FUN(0x20000),
         HAS_STABLE_PARAMETER_NAMES(0x40000),
+        HIDE(0x80000),
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

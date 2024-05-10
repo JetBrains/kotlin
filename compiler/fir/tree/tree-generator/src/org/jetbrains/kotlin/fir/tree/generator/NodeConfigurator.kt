@@ -404,7 +404,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +visibility
             +modality(nullable = true)
             generateBooleanFields(
-                "expect", "actual", "override", "operator", "infix", "inline", "tailRec",
+                "expect", "actual", "override", "hide", "operator", "infix", "inline", "tailRec",
                 "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
                 "fromSealedClass", "fromEnumClass", "fun", "hasStableParameterNames",
             )

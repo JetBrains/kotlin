@@ -126,6 +126,7 @@ fun FirDeclarationStatus.copy(
         this.isExpect = isExpect
         this.isActual = isActual
         this.isOverride = isOverride
+        this.isHide = isHide
         this.isOperator = isOperator
         this.isInfix = isInfix
         this.isInline = isInline

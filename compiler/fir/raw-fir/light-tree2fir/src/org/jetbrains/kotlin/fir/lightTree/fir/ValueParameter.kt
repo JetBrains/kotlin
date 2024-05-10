@@ -144,6 +144,7 @@ class ValueParameter(
                 this.isExpect = isExpect
                 isActual = modifiers.hasActual()
                 isOverride = modifiers.hasOverride()
+                isHide = modifiers.hasHide()
                 isConst = modifiers.hasConst()
                 isLateInit = modifiers.hasLateinit()
             }

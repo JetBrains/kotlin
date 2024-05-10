@@ -349,6 +349,7 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
             isExpect = false
             isActual = false
             isOverride = false
+            isHide = false
             isInner = this@buildJavaConstructor.isInner
         }
         isPrimary = false

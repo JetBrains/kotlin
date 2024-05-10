@@ -626,6 +626,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_CALL_FROM_P
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_CALL_WITH_DEFAULT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_NOT_AVAILABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SYNTHETIC_MEMBER_HIDDEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TAILREC_ON_VIRTUAL_MEMBER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.THROWABLE_TYPE_MISMATCH
@@ -1844,6 +1845,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_FINAL_MEMBER_IN_OBJECT, "'open' has no effect on object.")
         map.put(
             VIRTUAL_MEMBER_HIDDEN, "''{0}'' hides member of supertype ''{1}'' and needs an ''override'' modifier.", DECLARATION_NAME,
+            DECLARATION_NAME
+        )
+        map.put(
+            SYNTHETIC_MEMBER_HIDDEN,
+            "''{0}'' hides member of supertype ''{1}''. If this is the intention, add a ''hide'' modifier.",
+            DECLARATION_NAME,
             DECLARATION_NAME
         )
         map.put(

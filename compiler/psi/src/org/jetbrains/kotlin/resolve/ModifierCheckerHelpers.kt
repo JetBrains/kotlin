@@ -74,6 +74,9 @@ private fun buildCompatibilityMap(): Map<Pair<KtKeywordToken, KtKeywordToken>, C
     result += incompatibilityRegister(CONST_KEYWORD, OPEN_KEYWORD)
     result += incompatibilityRegister(CONST_KEYWORD, OVERRIDE_KEYWORD)
 
+    // hide is incompatible with override
+    result += incompatibilityRegister(HIDE_KEYWORD, OVERRIDE_KEYWORD)
+
     // private is incompatible with override
     result += incompatibilityRegister(PRIVATE_KEYWORD, OVERRIDE_KEYWORD)
     // private is compatible with open / abstract only for classes
@@ -180,6 +183,7 @@ val possibleTargetMap = mapOf(
     SEALED_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.INTERFACE),
     INNER_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY),
     OVERRIDE_KEYWORD to EnumSet.of(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.MEMBER_FUNCTION),
+    HIDE_KEYWORD to EnumSet.of(KotlinTarget.MEMBER_PROPERTY, KotlinTarget.MEMBER_FUNCTION),
     PRIVATE_KEYWORD to defaultVisibilityTargets + KotlinTarget.BACKING_FIELD,
     PUBLIC_KEYWORD to defaultVisibilityTargets,
     INTERNAL_KEYWORD to defaultVisibilityTargets + KotlinTarget.BACKING_FIELD,

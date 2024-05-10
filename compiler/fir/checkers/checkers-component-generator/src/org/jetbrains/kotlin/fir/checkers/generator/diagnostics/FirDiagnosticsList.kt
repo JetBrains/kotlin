@@ -1126,6 +1126,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("declared")
             parameter<FirRegularClassSymbol>("overriddenContainer")
         }
+        val SYNTHETIC_MEMBER_HIDDEN by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableSymbol<*>>("declared")
+            parameter<FirRegularClassSymbol>("overriddenContainer")
+        }
     }
 
     val REDECLARATIONS by object : DiagnosticGroup("Redeclarations") {

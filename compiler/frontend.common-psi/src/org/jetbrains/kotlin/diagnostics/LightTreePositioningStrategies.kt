@@ -1446,6 +1446,9 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.modalityModifier(declaration: 
 fun FlyweightCapableTreeStructure<LighterASTNode>.overrideModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, KtTokens.OVERRIDE_KEYWORD) }
 
+fun FlyweightCapableTreeStructure<LighterASTNode>.hideModifier(declaration: LighterASTNode): LighterASTNode? =
+    modifierList(declaration)?.let { findChildByType(it, KtTokens.HIDE_KEYWORD) }
+
 fun FlyweightCapableTreeStructure<LighterASTNode>.inlineModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, INLINE_KEYWORD) }
 

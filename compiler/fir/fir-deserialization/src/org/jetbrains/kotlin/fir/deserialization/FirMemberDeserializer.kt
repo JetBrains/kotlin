@@ -398,6 +398,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isExpect = Flags.IS_EXPECT_PROPERTY.get(flags)
                 isActual = false
                 isOverride = false
+                isHide = false
                 isConst = Flags.IS_CONST.get(flags)
                 isLateInit = Flags.IS_LATEINIT.get(flags)
                 isExternal = Flags.IS_EXTERNAL_PROPERTY.get(flags)
@@ -537,6 +538,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
                 isActual = false
                 isOverride = false
+                isHide = false
                 isOperator = Flags.IS_OPERATOR.get(flags)
                 isInfix = Flags.IS_INFIX.get(flags)
                 isInline = Flags.IS_INLINE.get(flags)
@@ -619,6 +621,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 hasStableParameterNames = !Flags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
                 isActual = false
                 isOverride = false
+                isHide = false
                 this.isInner = isInner
             }
             this.symbol = symbol

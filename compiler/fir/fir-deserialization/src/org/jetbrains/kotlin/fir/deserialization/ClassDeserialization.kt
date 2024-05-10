@@ -300,6 +300,7 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
         }
         status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public).apply {
             isOverride = true
+            isHide = false
         }
         name = StandardClassIds.Callables.clone.callableName
         symbol = FirNamedFunctionSymbol(CallableId(classId, name))

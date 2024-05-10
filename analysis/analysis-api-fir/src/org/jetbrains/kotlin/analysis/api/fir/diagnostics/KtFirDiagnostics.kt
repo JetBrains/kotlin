@@ -2228,6 +2228,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val overriddenContainer: KtClassLikeSymbol
     }
 
+    interface SyntheticMemberHidden : KtFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = SyntheticMemberHidden::class
+        val declared: KtCallableSymbol
+        val overriddenContainer: KtClassLikeSymbol
+    }
+
     interface ManyCompanionObjects : KtFirDiagnostic<KtObjectDeclaration> {
         override val diagnosticClass get() = ManyCompanionObjects::class
     }

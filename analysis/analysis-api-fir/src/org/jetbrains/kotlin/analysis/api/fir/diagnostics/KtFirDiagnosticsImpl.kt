@@ -2668,6 +2668,13 @@ internal class VirtualMemberHiddenImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.VirtualMemberHidden
 
+internal class SyntheticMemberHiddenImpl(
+    override val declared: KtCallableSymbol,
+    override val overriddenContainer: KtClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.SyntheticMemberHidden
+
 internal class ManyCompanionObjectsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

@@ -1433,6 +1433,7 @@ class LightTreeRawFirDeclarationBuilder(
                             isExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
                             isActual = calculatedModifiers.hasActual()
                             isOverride = calculatedModifiers.hasOverride()
+                            isHide = calculatedModifiers.hasHide()
                             isConst = calculatedModifiers.isConst()
                             isLateInit = calculatedModifiers.hasLateinit()
                             isExternal = calculatedModifiers.hasExternal()
@@ -1869,6 +1870,7 @@ class LightTreeRawFirDeclarationBuilder(
                         isExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
                         isActual = calculatedModifiers.hasActual()
                         isOverride = calculatedModifiers.hasOverride()
+                        isHide = calculatedModifiers.hasHide()
                         isOperator = calculatedModifiers.hasOperator()
                         isInfix = calculatedModifiers.hasInfix()
                         isInline = calculatedModifiers.hasInline()

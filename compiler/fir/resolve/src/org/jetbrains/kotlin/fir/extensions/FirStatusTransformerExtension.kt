@@ -129,6 +129,7 @@ inline fun FirDeclarationStatus.transform(
         isExpect = this@transform.isExpect
         isActual = this@transform.isActual
         isOverride = this@transform.isOverride
+        isHide = this@transform.isHide
         isOperator = this@transform.isOperator
         isInfix = this@transform.isInfix
         isInline = this@transform.isInline
