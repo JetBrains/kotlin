@@ -156,9 +156,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         is ConeDynamicType -> ConeDynamicType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
         is ConeFlexibleType -> ConeFlexibleType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, typeConstructor, attributes)
-        is ConeCapturedType -> ConeCapturedType(
-            captureStatus, lowerType, nullability, constructor, attributes, isProjectionNotNull,
-        )
+        is ConeCapturedType -> copy(attributes = attributes)
         // TODO: Consider correct application of attributes to ConeIntersectionType
         // Currently, ConeAttributes.union works a bit strange, because it lefts only `other` parts
         is ConeIntersectionType -> this
@@ -208,7 +206,7 @@ fun <T : ConeKotlinType> T.withNullability(
         }
 
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, typeConstructor, theAttributes)
-        is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor, theAttributes)
+        is ConeCapturedType -> copy(nullability = nullability, attributes = theAttributes)
         is ConeIntersectionType -> when (nullability) {
             ConeNullability.NULLABLE -> this.mapTypes {
                 it.withNullability(nullability, typeContext, preserveEnhancedNullability = preserveEnhancedNullability)

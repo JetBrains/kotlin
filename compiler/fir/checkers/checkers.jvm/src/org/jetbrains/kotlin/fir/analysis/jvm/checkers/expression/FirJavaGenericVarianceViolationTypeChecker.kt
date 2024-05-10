@@ -138,19 +138,15 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
 
     private fun ConeSimpleKotlinType.removeOutProjection(isCovariant: Boolean): ConeSimpleKotlinType {
         return when (this) {
-            is ConeCapturedType -> ConeCapturedType(
-                captureStatus,
-                lowerType?.removeOutProjection(isCovariant),
-                nullability,
-                constructor.apply {
+            is ConeCapturedType -> copy(
+                lowerType = lowerType?.removeOutProjection(isCovariant),
+                constructor = constructor.apply {
                     ConeCapturedTypeConstructor(
                         projection.removeOutProjection(isCovariant),
                         supertypes?.map { it.removeOutProjection(isCovariant) },
                         typeParameterMarker
                     )
                 },
-                attributes,
-                isProjectionNotNull
             )
             is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
             is ConeIntersectionType -> ConeIntersectionType(
