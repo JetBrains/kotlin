@@ -78,7 +78,6 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::JvmDefaultParameterCleaner,
 
     ::FragmentLocalFunctionPatchLowering,
-    ::ReflectiveAccessLowering,
 
     ::InterfaceLowering,
     ::InheritedDefaultMethodsOnClassesLowering,
@@ -122,6 +121,8 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::RenameFieldsLowering,
     ::FakeLocalVariablesForBytecodeInlinerLowering,
     ::FakeLocalVariablesForIrInlinerLowering,
+
+    ::ReflectiveAccessLowering,
 )
 
 val jvmLoweringPhases = SameTypeNamedCompilerPhase(
