@@ -18,6 +18,10 @@ package org.jetbrains.kotlin.native.interop.indexer
 
 import clang.*
 import kotlinx.cinterop.*
+import org.jetbrains.kotlin.konan.exec.Command
+import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.PlatformManager
 import java.io.Closeable
 import java.io.File
 import java.nio.file.Files
@@ -172,10 +176,37 @@ private fun reportParseTranslationUnitError(sourceFile: File, errorCode: CXError
         }
 
         appendLine(compilerArgs.joinToString(" "))
+
+        // At least for CXError_ASTReadError libclang doesn't provide any useful diagnostics.
+        // We have to actually run clang to provide a more detailed error message:
+        tryGetClangInvocationResultMessage(listOf(sourceFile.absolutePath) + originalCompilerArgs)?.let {
+            appendLine()
+            appendLine("clang invocation details:")
+            appendLine(it)
+        }
     }
 
     error(message)
 }
+
+private fun tryGetClangInvocationResultMessage(compilerArgs: List<String>): String? = runCatching {
+    // The code below is basically a quick hack, so let's use it only for tests so far:
+    val nativeHome = System.getProperty("kotlin.internal.native.test.nativeHome") ?: return null
+
+    val platform = PlatformManager(Distribution(nativeHome)).platform(HostManager.host)
+    val llvmHome = File(platform.absoluteLlvmHome)
+    val clang = llvmHome.resolve("bin/clang")
+
+    val command = listOf(clang.absolutePath) + compilerArgs
+    val result = Command(command).getResult(withErrors = true)
+
+    buildString {
+        appendLine(command.joinToString(" "))
+        appendLine("Exit code: ${result.exitCode}")
+        appendLine("Output:")
+        result.outputLines.forEach(::appendLine)
+    }
+}.getOrNull()
 
 internal fun Compilation.parse(
         index: CXIndex,

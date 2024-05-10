@@ -139,6 +139,7 @@ sourceSets {
 dependencies {
     api(project(":kotlin-stdlib"))
     api(project(":kotlin-native:Interop:Runtime"))
+    implementation(project(":native:kotlin-native-utils"))
 
     testImplementation(kotlin("test-junit"))
     testImplementation(project(":compiler:util"))
