@@ -150,7 +150,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
             ConeNullability.NOT_NULL,
             typeContext,
             substitutedOriginal.attributes.add(original.attributes),
-            preserveEnhancedNullability = true,
+            preserveAttributes = true,
         )
         return ConeDefinitelyNotNullType.create(
             substituted, typeContext, avoidComprehensiveCheck = true,

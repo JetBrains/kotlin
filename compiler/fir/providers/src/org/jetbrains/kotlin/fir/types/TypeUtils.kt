@@ -173,9 +173,9 @@ fun <T : ConeKotlinType> T.withNullability(
     nullability: ConeNullability,
     typeContext: ConeTypeContext,
     attributes: ConeAttributes = this.attributes,
-    preserveEnhancedNullability: Boolean = false,
+    preserveAttributes: Boolean = false,
 ): T {
-    val theAttributes = attributes.butIf(!preserveEnhancedNullability) {
+    val theAttributes = attributes.butIf(!preserveAttributes) {
         val withoutEnhanced = it.remove(CompilerConeAttributes.EnhancedNullability)
         withoutEnhanced.transformTypesWith { t -> t.withNullability(nullability, typeContext) } ?: withoutEnhanced
     }
@@ -200,8 +200,8 @@ fun <T : ConeKotlinType> T.withNullability(
             }
             coneFlexibleOrSimpleType(
                 typeContext,
-                lowerBound.withNullability(nullability, typeContext, preserveEnhancedNullability = preserveEnhancedNullability),
-                upperBound.withNullability(nullability, typeContext, preserveEnhancedNullability = preserveEnhancedNullability)
+                lowerBound.withNullability(nullability, typeContext, preserveAttributes = preserveAttributes),
+                upperBound.withNullability(nullability, typeContext, preserveAttributes = preserveAttributes)
             )
         }
 
@@ -209,12 +209,12 @@ fun <T : ConeKotlinType> T.withNullability(
         is ConeCapturedType -> copy(nullability = nullability, attributes = theAttributes)
         is ConeIntersectionType -> when (nullability) {
             ConeNullability.NULLABLE -> this.mapTypes {
-                it.withNullability(nullability, typeContext, preserveEnhancedNullability = preserveEnhancedNullability)
+                it.withNullability(nullability, typeContext, preserveAttributes = preserveAttributes)
             }
 
             ConeNullability.UNKNOWN -> this // TODO: is that correct?
             ConeNullability.NOT_NULL -> if (effectiveNullability == ConeNullability.NOT_NULL) this else this.mapTypes {
-                it.withNullability(nullability, typeContext, preserveEnhancedNullability = preserveEnhancedNullability)
+                it.withNullability(nullability, typeContext, preserveAttributes = preserveAttributes)
             }
         }
 
@@ -222,10 +222,10 @@ fun <T : ConeKotlinType> T.withNullability(
         is ConeDefinitelyNotNullType -> when (nullability) {
             ConeNullability.NOT_NULL -> this
             ConeNullability.NULLABLE -> original.withNullability(
-                nullability, typeContext, preserveEnhancedNullability = preserveEnhancedNullability,
+                nullability, typeContext, preserveAttributes = preserveAttributes,
             )
             ConeNullability.UNKNOWN -> original.withNullability(
-                nullability, typeContext, preserveEnhancedNullability = preserveEnhancedNullability,
+                nullability, typeContext, preserveAttributes = preserveAttributes,
             )
         }
 
