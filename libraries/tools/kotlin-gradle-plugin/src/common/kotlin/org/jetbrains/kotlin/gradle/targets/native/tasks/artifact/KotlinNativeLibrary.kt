@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -62,7 +63,7 @@ class KotlinNativeLibraryImpl(
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
     override val target: KonanTarget,
-    extensions: ExtensionAware
+    extensions: ExtensionAware,
 ) : KotlinNativeLibrary, ExtensionAware by extensions {
     private val kind = if (isStatic) NativeOutputKind.STATIC else NativeOutputKind.DYNAMIC
     override fun getName() = lowerCamelCaseName(artifactName, kind.taskNameClassifier, "Library", target.presetName)
@@ -97,6 +98,9 @@ class KotlinNativeLibraryImpl(
                 @Suppress("DEPRECATION")
                 task.kotlinOptions(kotlinOptionsFn)
                 task.toolOptions(toolOptionsConfigure)
+                task.kotlinNativeProvider.set(project.provider {
+                    KotlinNativeProvider(project, task.konanTarget, task.kotlinNativeBundleBuildService)
+                })
             }
             resultTask.dependsOn(targetTask)
         }

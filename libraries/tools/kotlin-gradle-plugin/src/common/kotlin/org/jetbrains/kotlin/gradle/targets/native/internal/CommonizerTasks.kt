@@ -14,6 +14,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.commonizer.konanTargets
 import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -162,6 +164,14 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
                 kotlinPluginVersion.set(getKotlinPluginVersion())
                 commonizerClasspath.from(rootProject.maybeCreateCommonizerClasspathConfiguration())
                 customJvmArgs.set(PropertiesProvider(rootProject).commonizerJvmArgs)
+                kotlinNativeProvider.set(rootProject.provider {
+                    KotlinNativeProvider(
+                        rootProject,
+                        commonizerTargets.flatMap { target -> target.konanTargets }.toSet(),
+                        kotlinNativeBundleBuildService,
+                        enableDependenciesDownloading = false
+                    )
+                })
             }
         )
     }
