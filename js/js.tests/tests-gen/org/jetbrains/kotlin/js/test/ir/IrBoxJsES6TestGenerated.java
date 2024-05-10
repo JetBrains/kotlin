@@ -708,6 +708,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
       }
 
       @Test
+      @TestMetadata("superInLambda.kt")
+      public void testSuperInLambda() {
+        runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/superInLambda.kt");
+      }
+
+      @Test
       @TestMetadata("twiceRegeneratedAnonymousObject.kt")
       public void testTwiceRegeneratedAnonymousObject() {
         runTest("js/js.translator/testData/box/closure/inlineAnonymousFunctions/twiceRegeneratedAnonymousObject.kt");
