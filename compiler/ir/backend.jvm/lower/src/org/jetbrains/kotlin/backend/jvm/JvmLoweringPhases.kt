@@ -506,11 +506,9 @@ val jvmFragmentLoweringPhases = run {
         "IrFragmentLowering",
         listOf(
             "PrefixOfIRPhases" to loweringsUpToAndIncludingDefaultArgsPhase,
-            "FragmentLowerings" to listOf(
-                fragmentLocalFunctionPatchLowering,
-                reflectiveAccessLowering,
-            ),
-            "SuffixOfIRPhases" to remainingLowerings
+            "FragmentLocalFunctionPatchLowering" to listOf(fragmentLocalFunctionPatchLowering),
+            "SuffixOfIRPhases" to remainingLowerings,
+            "ReflectiveAccessLowering" to listOf(reflectiveAccessLowering)
         )
     )
 }
