@@ -828,10 +828,23 @@ fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
             // Upper bounds can resolve to typealiases that can expand to nullable types.
             it.coneType.fullyExpandedType(session).canBeNull(session)
         }
+        is ConeStubType -> {
+            val symbol = (constructor.variable.defaultType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol
+            symbol == null || symbol.allBoundsAreNullableOrUnresolved(session)
+        }
         is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session) }
         is ConeCapturedType -> constructor.supertypes?.all { it.canBeNull(session) } == true
         else -> fullyExpandedType(session).isNullable
     }
+}
+
+private fun FirTypeParameterSymbol.allBoundsAreNullableOrUnresolved(session: FirSession): Boolean {
+    for (bound in fir.bounds) {
+        if (bound !is FirResolvedTypeRef) return true
+        if (!bound.type.canBeNull(session)) return false
+    }
+
+    return true
 }
 
 fun FirIntersectionTypeRef.isLeftValidForDefinitelyNotNullable(session: FirSession): Boolean =

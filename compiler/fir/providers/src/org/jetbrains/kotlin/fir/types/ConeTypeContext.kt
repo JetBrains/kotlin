@@ -485,32 +485,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun KotlinTypeMarker.isNullableType(): Boolean {
         require(this is ConeKotlinType)
-        if (this.isMarkedNullable)
-            return true
-
-        return when (this) {
-            is ConeFlexibleType -> this.upperBound.isNullableType()
-            is ConeTypeParameterType -> lookupTag.symbol.allBoundsAreNullableOrUnresolved()
-            // NB: There's no branch for ConeTypeVariableType, i.e. it always returns false for them
-            // And while it seems reasonable to have similar semantics as for stub types, it would make some diagnostic test failing
-            // Thus, we leave the same semantics only for stubs (similar to TypeUtils.isNullableType)
-            is ConeStubType -> {
-                val symbol = (this.constructor.variable.defaultType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol
-                symbol == null || symbol.allBoundsAreNullableOrUnresolved()
-            }
-            is ConeIntersectionType -> intersectedTypes.all { it.isNullableType() }
-            is ConeClassLikeType -> directExpansionType(session)?.isNullableType() ?: false
-            else -> false
-        }
-    }
-
-    private fun FirTypeParameterSymbol.allBoundsAreNullableOrUnresolved(): Boolean {
-        for (bound in fir.bounds) {
-            if (bound !is FirResolvedTypeRef) return true
-            if (!bound.type.isNullableType()) return false
-        }
-
-        return true
+        return canBeNull(session)
     }
 
     private fun TypeConstructorMarker.toFirRegularClass(): FirRegularClass? {
