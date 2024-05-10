@@ -560,7 +560,18 @@ abstract class AbstractTypeApproximator(
                      * Inv<in Foo> <: Inv<in subType(Foo)>
                      */
                     val approximatedArgument = if (isApproximateDirectionToSuper(effectiveVariance, toSuper)) {
-                        val approximatedType = approximateToSuperType(argumentType, conf, depth)
+                        val approximatedType = approximateToSuperType(argumentType, conf, depth)?.let {
+                            if (isK2 &&
+                                !conf.flexible &&
+                                argumentType.hasFlexibleNullability() &&
+                                parameter.getUpperBounds().any { b -> !b.isNullableType() }
+                            ) {
+                                it.withNullability(false)
+                            } else {
+                                it
+                            }
+                        }
+
                         if (conf.intersection == TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
                             && argumentType.typeConstructor().isIntersection()
                             && parameter.getUpperBounds().all { AbstractTypeChecker.isSubtypeOf(ctx, argumentType, it) }

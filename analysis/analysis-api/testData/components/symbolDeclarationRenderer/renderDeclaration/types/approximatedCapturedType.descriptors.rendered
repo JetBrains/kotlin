@@ -2,4 +2,4 @@ class SimpleClass
 
 val classloader: ClassLoader?
 
-val obj: KClass<out Any>?
+val obj: KClass<out Any?>?
