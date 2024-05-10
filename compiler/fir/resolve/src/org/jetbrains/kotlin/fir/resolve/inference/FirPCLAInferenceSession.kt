@@ -322,10 +322,8 @@ class FirTypeVariablesAfterPCLATransformer(private val substitutor: ConeSubstitu
         // FirAnonymousFunctionExpression doesn't support replacing the type
         // since it delegates the getter to the underlying FirAnonymousFunction.
         if (element is FirExpression && element !is FirAnonymousFunctionExpression) {
-            // TODO Check why some expressions have unresolved type in builder inference session KT-61835
-            @OptIn(UnresolvedExpressionTypeAccess::class)
-            element.coneTypeOrNull
-                ?.let(substitutor::substituteOrNull)
+            element.resolvedType
+                .let(substitutor::substituteOrNull)
                 ?.let { element.replaceConeTypeOrNull(it) }
         }
 
