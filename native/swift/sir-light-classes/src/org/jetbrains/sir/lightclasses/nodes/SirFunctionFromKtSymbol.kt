@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.source.Shortcut
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
-import org.jetbrains.sir.lightclasses.extensions.sirCallableKind
+import org.jetbrains.sir.lightclasses.extensions.getSirCallableKind
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.translateParameters
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
@@ -22,14 +23,19 @@ internal class SirFunctionFromKtSymbol(
     override val ktSymbol: KtFunctionLikeSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirFunction(), SirFromKtSymbol<KtFunctionLikeSymbol> {
+    private val isShortcut: Boolean = false,
+) : SirFunction(), SirFromKtSymbol<KtFunctionLikeSymbol, SirFunction> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val origin: SirOrigin by lazy {
-        KotlinSource(ktSymbol)
+        if (isShortcut) {
+            Shortcut(this)
+        } else {
+            KotlinSource(ktSymbol)
+        }
     }
     override val kind: SirCallableKind by lazy {
-        ktSymbol.sirCallableKind
+        ktSymbol.getSirCallableKind(parent)
     }
     override val name: String by lazyWithSessions {
         ktSymbol.sirDeclarationName()
@@ -46,9 +52,20 @@ internal class SirFunctionFromKtSymbol(
 
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(analysisSession)
+            if (isShortcut) {
+                ktSymbol.getContainingModule().sirModule()
+            } else {
+                ktSymbol.getSirParent(analysisSession)
+            }
         }
         set(_) = Unit
 
     override var body: SirFunctionBody? = null
+
+    override val shortcut: SirFunction? by lazyWithSessions {
+        val pkgFqName = ktSymbol.callableIdIfNonLocal?.packageName
+            ?: return@lazyWithSessions null
+        if (!pkgFqName.hasShortcut()) return@lazyWithSessions null
+        SirFunctionFromKtSymbol(ktSymbol, ktModule, sirSession, isShortcut = true)
+    }
 }

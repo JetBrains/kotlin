@@ -11,22 +11,22 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.sir.SirCallableKind
+import org.jetbrains.kotlin.sir.SirDeclarationParent
+import org.jetbrains.kotlin.sir.SirModule
 
-internal val KtCallableSymbol.sirCallableKind: SirCallableKind
-    get() = when (symbolKind) {
-        KtSymbolKind.TOP_LEVEL -> {
-            val isRootPackage = callableIdIfNonLocal?.packageName?.isRoot
-            if (isRootPackage == true) {
-                SirCallableKind.FUNCTION
-            } else {
-                SirCallableKind.STATIC_METHOD
-            }
+internal fun KtCallableSymbol.getSirCallableKind(parent: SirDeclarationParent): SirCallableKind = when (symbolKind) {
+    KtSymbolKind.TOP_LEVEL -> {
+        if (parent is SirModule) {
+            SirCallableKind.FUNCTION
+        } else {
+            SirCallableKind.STATIC_METHOD
         }
-        KtSymbolKind.CLASS_MEMBER, KtSymbolKind.ACCESSOR,
-        -> SirCallableKind.INSTANCE_METHOD
-        KtSymbolKind.LOCAL,
-        KtSymbolKind.SAM_CONSTRUCTOR,
-        -> TODO("encountered callable kind($symbolKind) that is not translatable currently. Fix this crash during KT-65980.")
     }
+    KtSymbolKind.CLASS_MEMBER, KtSymbolKind.ACCESSOR,
+    -> SirCallableKind.INSTANCE_METHOD
+    KtSymbolKind.LOCAL,
+    KtSymbolKind.SAM_CONSTRUCTOR,
+    -> TODO("encountered callable kind($symbolKind) that is not translatable currently. Fix this crash during KT-65980.")
+}
 
 internal fun KtSymbol.documentation(): String? = this.psiSafe<KtDeclaration>()?.docComment?.text

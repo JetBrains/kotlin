@@ -31,7 +31,8 @@ public interface SirSession :
     SirEnumGenerator,
     SirTypeProvider,
     SirVisibilityChecker,
-    SirChildrenProvider
+    SirChildrenProvider,
+    SirShortcutProvider
 {
     public val sirSession: SirSession
         get() = this
@@ -44,6 +45,7 @@ public interface SirSession :
     public val typeProvider: SirTypeProvider
     public val visibilityChecker: SirVisibilityChecker
     public val childrenProvider: SirChildrenProvider
+    public val shortcutProvider: SirShortcutProvider
 
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy
         get() = typeProvider.errorTypeStrategy
@@ -74,6 +76,8 @@ public interface SirSession :
 
     override fun KtScope.extractDeclarations(ktAnalysisSession: KtAnalysisSession): Sequence<SirDeclaration> =
         with(childrenProvider) { this@extractDeclarations.extractDeclarations(ktAnalysisSession) }
+
+    override fun FqName.hasShortcut(): Boolean = with(shortcutProvider) { this@hasShortcut.hasShortcut() }
 }
 
 /**
@@ -152,4 +156,9 @@ public interface SirVisibilityChecker {
      * @return null if symbol should not be exposed to SIR completely.
      */
     public fun KtSymbolWithVisibility.sirVisibility(ktAnalysisSession: KtAnalysisSession): SirVisibility?
+}
+
+
+public interface SirShortcutProvider {
+    public fun FqName.hasShortcut(): Boolean
 }

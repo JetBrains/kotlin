@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 
-internal inline fun <reified T : KtCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
+internal inline fun <reified T : KtCallableSymbol, reified SC : SirDeclaration> SirFromKtSymbol<T,SC>.translateReturnType(): SirType {
     return withSessions {
         this@translateReturnType.ktSymbol.returnType.translateType(
             analysisSession,
@@ -23,7 +23,7 @@ internal inline fun <reified T : KtCallableSymbol> SirFromKtSymbol<T>.translateR
     }
 }
 
-internal inline fun <reified T : KtFunctionLikeSymbol> SirFromKtSymbol<T>.translateParameters(): List<SirParameter> {
+internal inline fun <reified T : KtFunctionLikeSymbol, reified SC : SirDeclaration> SirFromKtSymbol<T, SC>.translateParameters(): List<SirParameter> {
     return withSessions {
         this@translateParameters.ktSymbol.valueParameters.map { parameter ->
             val sirType = parameter.returnType.translateType(

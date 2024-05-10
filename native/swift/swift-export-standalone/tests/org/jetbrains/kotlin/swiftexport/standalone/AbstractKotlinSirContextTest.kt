@@ -103,6 +103,7 @@ abstract class AbstractSwiftRunnerTestBase(
                 errorTypeStrategy = errorTypeStrategy,
                 unsupportedTypeStrategy = unsupportedTypeStrategy,
                 outputPath = tmpdir.toPath(),
+                commonPrefix = discoveredConfig.getValue("packageRoot")
             )
         )
 

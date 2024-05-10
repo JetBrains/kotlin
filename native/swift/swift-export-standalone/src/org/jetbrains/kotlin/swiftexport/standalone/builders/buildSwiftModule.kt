@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModu
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
 import org.jetbrains.kotlin.sir.providers.impl.SirSingleModuleProvider
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
+import org.jetbrains.sir.lightclasses.SirDeclarationWithShortcut
 import kotlin.io.path.Path
 
 internal fun buildSwiftModule(
@@ -44,6 +46,7 @@ internal fun buildSwiftModule(
             module,
             errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
             unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
+            commonPrefix = config.commonFqNamePrefix,
             moduleProviderBuilder = { SirSingleModuleProvider(swiftModuleName = input.name) }
         )
         with(sirSession) {
@@ -51,13 +54,20 @@ internal fun buildSwiftModule(
                 scopeProvider(this@analyze).flatMap { scope ->
                     scope.extractDeclarations(this@analyze)
                 }.forEach { topLevelDeclaration ->
-                    val parent = topLevelDeclaration.parent as? SirMutableDeclarationContainer
-                        ?: error("top level declaration can contain only module or extension to package as a parent")
-                    parent.addChild { topLevelDeclaration }
+                    topLevelDeclaration.attachToParent()
+                    if (topLevelDeclaration is SirDeclarationWithShortcut<*>) {
+                        topLevelDeclaration.shortcut?.attachToParent()
+                    }
                 }
             }
         }
     }
+}
+
+private fun SirDeclaration.attachToParent() {
+    val parent = parent as? SirMutableDeclarationContainer
+        ?: error("top level declaration can contain only module or extension to package as a parent")
+    parent.addChild { this }
 }
 
 private data class ModuleWithScopeProvider(

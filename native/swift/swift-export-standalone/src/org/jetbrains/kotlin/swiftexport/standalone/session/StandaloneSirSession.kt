@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone.session
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.impl.*
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
@@ -14,6 +15,7 @@ internal class StandaloneSirSession(
     useSiteModule: KtModule,
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
+    commonPrefix: FqName?,
     moduleProviderBuilder: () -> SirModuleProvider,
 ) : SirSession {
 
@@ -34,4 +36,6 @@ internal class StandaloneSirSession(
     )
     override val visibilityChecker = SirVisibilityCheckerImpl()
     override val childrenProvider = SirDeclarationChildrenProviderImpl(sirSession)
+
+    override val shortcutProvider: SirShortcutProvider = SirShortcutProviderImpl(commonPrefix)
 }

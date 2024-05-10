@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone
 
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
@@ -27,6 +28,7 @@ public data class SwiftExportConfig(
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
     val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
+    private val commonPrefix: String? = null,
 ) {
     public companion object {
         /**
@@ -46,6 +48,9 @@ public data class SwiftExportConfig(
 
         public const val ROOT_PACKAGE: String = "rootPackage"
     }
+
+    internal val commonFqNamePrefix: FqName?
+        get() = commonPrefix?.let { FqName(it) }
 }
 
 public enum class ErrorTypeStrategy {

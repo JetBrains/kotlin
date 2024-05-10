@@ -6,10 +6,15 @@
 package org.jetbrains.kotlin.sir.providers.source
 
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirOrigin
 
 public data class KotlinSource(
     val symbol: KtSymbol,
+) : SirOrigin.Foreign.SourceCode
+
+public data class Shortcut(
+    val origin: SirDeclaration
 ) : SirOrigin.Foreign.SourceCode
 
 public class KotlinRuntimeElement : SirOrigin.Foreign.SourceCode

@@ -7,9 +7,14 @@ package org.jetbrains.sir.lightclasses
 
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.providers.SirSession
 
-internal interface SirFromKtSymbol<S : KtDeclarationSymbol> {
+public interface SirDeclarationWithShortcut<SC : SirDeclaration> {
+    public val shortcut: SC?
+}
+
+internal interface SirFromKtSymbol<S : KtDeclarationSymbol, SC : SirDeclaration> : SirDeclarationWithShortcut<SC> {
     val ktSymbol: S
     val ktModule: KtModule
     val sirSession: SirSession

@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInit
+import org.jetbrains.kotlin.sir.builder.buildTypealias
 import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.source.Shortcut
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.computeIsOverrideForDesignatedInit
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
@@ -27,7 +29,23 @@ internal class SirClassFromKtSymbol(
     override val ktSymbol: KtNamedClassOrObjectSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirClass(), SirFromKtSymbol<KtNamedClassOrObjectSymbol> {
+) : SirClass(), SirFromKtSymbol<KtNamedClassOrObjectSymbol, SirTypealias> {
+
+    override val shortcut: SirTypealias? by lazyWithSessions {
+        val pkgFqName = ktSymbol.classIdIfNonLocal?.packageFqName
+            ?: return@lazyWithSessions null
+        if (pkgFqName.hasShortcut()) {
+            buildTypealias {
+                name = this@SirClassFromKtSymbol.name
+                origin = Shortcut(this@SirClassFromKtSymbol)
+                type = SirNominalType(this@SirClassFromKtSymbol)
+            }.also {
+                it.parent = ktSymbol.getContainingModule().sirModule()
+            }
+        } else {
+            null
+        }
+    }
 
     override val origin: SirOrigin by lazy {
         KotlinSource(ktSymbol)

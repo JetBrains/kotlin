@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
-import org.jetbrains.sir.lightclasses.extensions.sirCallableKind
+import org.jetbrains.sir.lightclasses.extensions.getSirCallableKind
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 
@@ -23,9 +23,13 @@ internal class SirVariableFromKtSymbol(
     override val ktSymbol: KtVariableSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirVariable(), SirFromKtSymbol<KtVariableSymbol> {
+) : SirVariable(), SirFromKtSymbol<KtVariableSymbol, SirVariable> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
+
+    override val shortcut: SirVariable?
+        get() = null
+
 
     override val origin: SirOrigin by lazy {
         KotlinSource(ktSymbol)
@@ -65,6 +69,6 @@ internal class SirVariableFromKtSymbol(
         set(_) = Unit
 
     private val accessorKind by lazy {
-        ktSymbol.sirCallableKind
+        ktSymbol.getSirCallableKind(parent)
     }
 }
