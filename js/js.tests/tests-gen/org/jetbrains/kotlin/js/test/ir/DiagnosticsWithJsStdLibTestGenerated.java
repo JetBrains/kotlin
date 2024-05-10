@@ -535,6 +535,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("typeAliasInValueParameter.kt")
+    public void testTypeAliasInValueParameter() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/typeAliasInValueParameter.kt");
+    }
+
+    @Test
     @TestMetadata("unexportableTypesInSignature.kt")
     public void testUnexportableTypesInSignature() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/unexportableTypesInSignature.kt");
