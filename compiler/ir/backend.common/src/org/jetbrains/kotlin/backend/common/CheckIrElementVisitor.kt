@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 
 typealias ReportError = (element: IrElement, message: String) -> Unit
 
-class CheckIrElementVisitor(
+internal class CheckIrElementVisitor(
     val irBuiltIns: IrBuiltIns,
     val reportError: ReportError,
     val config: IrValidatorConfig

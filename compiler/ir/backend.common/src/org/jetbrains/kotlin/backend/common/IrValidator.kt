@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 typealias ReportIrValidationError = (IrFile?, IrElement, String) -> Unit
 
-data class IrValidatorConfig(
+internal data class IrValidatorConfig(
     val checkTypes: Boolean = true,
     val checkProperties: Boolean = false,
     val checkScopes: Boolean = false, // TODO: Consider setting to true by default and deleting
 )
 
-class IrValidator(
-    val irBuiltIns: IrBuiltIns,
+private class IrValidator(
+    irBuiltIns: IrBuiltIns,
     val config: IrValidatorConfig,
     val reportError: ReportIrValidationError
 ) : IrElementVisitorVoid {
