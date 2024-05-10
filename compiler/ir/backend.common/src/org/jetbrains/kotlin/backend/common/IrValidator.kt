@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
+typealias ReportIrValidationError = (IrFile?, IrElement, String) -> Unit
+
 data class IrValidatorConfig(
     val checkTypes: Boolean = true,
     val checkProperties: Boolean = false,
@@ -39,7 +41,7 @@ data class IrValidatorConfig(
 class IrValidator(
     val irBuiltIns: IrBuiltIns,
     val config: IrValidatorConfig,
-    val reportError: (IrFile?, IrElement, String) -> Unit
+    val reportError: ReportIrValidationError
 ) : IrElementVisitorVoid {
 
     var currentFile: IrFile? = null
@@ -64,7 +66,7 @@ class IrValidator(
     }
 }
 
-private fun IrElement.checkDeclarationParents(reportError: (IrFile?, IrElement, String) -> Unit) {
+private fun IrElement.checkDeclarationParents(reportError: ReportIrValidationError) {
     val checker = CheckDeclarationParentsVisitor()
     accept(checker, null)
     if (checker.errors.isNotEmpty()) {
@@ -122,7 +124,7 @@ fun performBasicIrValidation(
     irBuiltIns: IrBuiltIns,
     checkProperties: Boolean = false,
     checkTypes: Boolean = false,
-    reportError: (IrFile?, IrElement, String) -> Unit,
+    reportError: ReportIrValidationError,
 ) {
     val validatorConfig = IrValidatorConfig(
         checkTypes = checkTypes,
