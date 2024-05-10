@@ -29043,6 +29043,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("incorrectComponentExtension.kt")
+      public void testIncorrectComponentExtension() {
+        runTest("compiler/testData/diagnostics/tests/operatorsOverloading/incorrectComponentExtension.kt");
+      }
+
+      @Test
       @TestMetadata("IteratorAmbiguity.kt")
       public void testIteratorAmbiguity() {
         runTest("compiler/testData/diagnostics/tests/operatorsOverloading/IteratorAmbiguity.kt");
