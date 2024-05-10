@@ -33187,6 +33187,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     public void testExpr3() {
       runTest("compiler/testData/codegen/box/objectExpression/expr3.kt");
     }
+
+    @TestMetadata("multipleAnonymousObjectsInsideInlineFunction.kt")
+    public void testMultipleAnonymousObjectsInsideInlineFunction() {
+      runTest("compiler/testData/codegen/box/objectExpression/multipleAnonymousObjectsInsideInlineFunction.kt");
+    }
   }
 
   @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")
