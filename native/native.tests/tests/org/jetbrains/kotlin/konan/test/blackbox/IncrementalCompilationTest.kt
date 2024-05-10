@@ -197,35 +197,6 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    @TestMetadata("changedExternalDependencyVersion")
-    fun testChangedExternalDependencyVersion() = withRootDir(File("$TEST_SUITE_PATH/externalDependency")) {
-        val externalLib = compileLibrary("externalLib") {
-            libraryVersion = "1.0"
-            outputDir = "external"
-            "externalLib/file1.kt" copyTo "file1.kt"
-        }
-        val userLib = compileLibrary("userLib", externalLib) { "userLib/file1.kt" copyTo "file1.kt" }
-        val main = compileToExecutable("main", externalLib, userLib) { "main/main.kt" copyTo "main.kt" }
-
-        assertTrue(main.executableFile.exists())
-        val libFile1KtCacheDir = getLibraryFileCache("userLib", "userLib/file1.kt", "")
-        assertTrue(libFile1KtCacheDir.exists())
-        runExecutableAndVerify(main.testCase, main.testExecutable)
-
-        val modified = libFile1KtCacheDir.lastModified()
-        val externalLib1 = compileLibrary("externalLib") {
-            libraryVersion = "1.1"
-            outputDir = "external"
-            "externalLib/file1.kt" copyTo "file1.kt"
-        }
-        val userLib1 = compileLibrary("userLib", externalLib1) { "userLib/file1.kt" copyTo "file1.kt" }
-        val main1 = compileToExecutable("main", externalLib1, userLib1) { "main/main.kt" copyTo "main.kt" }
-        assertTrue(libFile1KtCacheDir.exists())
-        assertNotEquals(modified, libFile1KtCacheDir.lastModified())
-        runExecutableAndVerify(main1.testCase, main1.testExecutable)
-    }
-
-    @Test
     @TestMetadata("changedExternalDependency")
     fun testChangedExternalDependency() = withRootDir(File("$TEST_SUITE_PATH/externalDependency")) {
         val externalLib = compileLibrary("externalLib") {

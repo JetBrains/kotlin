@@ -67,13 +67,11 @@ internal class LibraryBuilder(
     targetSrc: String,
     dependencies: List<TestCompilationArtifact.KLIB>
 ) : ArtifactBuilder<TestCompilationArtifact.KLIB>(test, rootDir, targetSrc, dependencies) {
-    var libraryVersion: String? = null
-
     override fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationArtifact.KLIB>) =
         test.compileToLibrary(
             sourcesDir,
             outputDir,
-            freeCompilerArgs = libraryVersion?.let { TestCompilerArgs(listOf("-library-version=$it")) } ?: TestCompilerArgs.EMPTY,
+            freeCompilerArgs = TestCompilerArgs.EMPTY,
             dependencies
         )
 }
