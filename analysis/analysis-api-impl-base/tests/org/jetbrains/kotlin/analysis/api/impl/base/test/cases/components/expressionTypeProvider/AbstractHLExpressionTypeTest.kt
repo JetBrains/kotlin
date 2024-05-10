@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
@@ -33,13 +35,28 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiBasedTest() {
             else -> null
         } ?: error("expect an expression but got ${selected.text}, ${selected::class}")
         val type = executeOnPooledThreadInReadAction {
-            analyseForTest(expression) { expression.getKtType()?.render(renderer, position = Variance.INVARIANT) }
+            analyseForTest(expression) {
+                var ktType = expression.getKtType()
+                if (Directives.APPROXIMATE_TYPE in mainModule.testModule.directives) {
+                    ktType = ktType?.approximateToSuperPublicDenotableOrSelf(true)
+                }
+                ktType?.render(renderer, position = Variance.INVARIANT)
+            }
         }
         val actual = buildString {
             appendLine("expression: ${expression.text}")
             appendLine("type: $type")
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+    }
+
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.useDirectives(Directives)
+    }
+
+    object Directives : SimpleDirectivesContainer() {
+        val APPROXIMATE_TYPE by stringDirective("approximate expression type")
     }
 
     companion object {

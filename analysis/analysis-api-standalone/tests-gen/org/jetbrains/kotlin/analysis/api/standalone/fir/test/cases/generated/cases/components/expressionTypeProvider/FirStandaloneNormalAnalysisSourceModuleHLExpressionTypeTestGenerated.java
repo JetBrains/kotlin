@@ -293,6 +293,52 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ApproximatedLocalClasses {
+    @Test
+    @TestMetadata("accessibleLocalType.kt")
+    public void testAccessibleLocalType() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/accessibleLocalType.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInApproximatedLocalClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("deeperHierarchy1.kt")
+    public void testDeeperHierarchy1() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/deeperHierarchy1.kt");
+    }
+
+    @Test
+    @TestMetadata("deeperHierarchy2.kt")
+    public void testDeeperHierarchy2() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/deeperHierarchy2.kt");
+    }
+
+    @Test
+    @TestMetadata("deeperHierarchy3.kt")
+    public void testDeeperHierarchy3() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/deeperHierarchy3.kt");
+    }
+
+    @Test
+    @TestMetadata("deeperHierarchy4.kt")
+    public void testDeeperHierarchy4() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/deeperHierarchy4.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/simple.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment")
   @TestDataPath("$PROJECT_ROOT")
   public class Assignment {

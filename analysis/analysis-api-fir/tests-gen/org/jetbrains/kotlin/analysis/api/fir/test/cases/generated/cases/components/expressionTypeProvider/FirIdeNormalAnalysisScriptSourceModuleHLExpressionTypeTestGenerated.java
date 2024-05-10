@@ -47,6 +47,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleHLExpressionTypeTestGenerated
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ApproximatedLocalClasses {
+    @Test
+    public void testAllFilesPresentInApproximatedLocalClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment")
   @TestDataPath("$PROJECT_ROOT")
   public class Assignment {
