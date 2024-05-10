@@ -487,7 +487,7 @@ internal abstract class IrExpectActualMatchingContext(
         }
 
     override val CallableSymbolMarker.isJavaField: Boolean
-        get() = this is IrFieldSymbol && owner.isFromJava()
+        get() = this is IrPropertySymbol && owner.let { it.getter == null && it.setter == null }
 
     override fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,
