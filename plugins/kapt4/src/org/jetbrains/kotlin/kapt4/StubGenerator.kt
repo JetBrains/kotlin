@@ -668,7 +668,7 @@ private class StubGenerator(
                     metadataRenderer.invoke(this, m)
                 } else {
                     print("@kotlin.Metadata(k = ", m.kind, ", mv = {")
-                    m.metadataVersion.forEachIndexed { index, value ->
+                    metadataVersion.forEachIndexed { index, value ->
                         if (index > 0) printWithNoIndent(", ")
                         printWithNoIndent(value)
                     }
