@@ -4,7 +4,7 @@
  *   // signature: <init>()V
  *   public constructor()
  *
- *   // field: a$delegate:Ljava/lang/String;
+ *   // field: a$delegate:Lerror/NonExistentClass;
  *   // getter: getA()Ljava/lang/String;
  *   // synthetic method for annotations: getA$annotations()V
  *   public final (* delegated *) val a: kotlin/String
@@ -17,7 +17,7 @@
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class B implements NonExisting {
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String a$delegate = null;
+    private final error.NonExistentClass a$delegate = null;
 
     public B() {
         super();

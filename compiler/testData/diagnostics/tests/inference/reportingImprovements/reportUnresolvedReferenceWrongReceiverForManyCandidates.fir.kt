@@ -1,5 +1,5 @@
 fun test() {
-    val a = <!NONE_APPLICABLE!>-<!>false
+    val a = <!UNRESOLVED_REFERENCE!>-<!>false
 }
 
 operator fun A.unaryMinus() {}

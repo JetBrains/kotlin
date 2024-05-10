@@ -62,7 +62,7 @@ fun test3() {
     fooSetRef.invoke(foo, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
     fooSetRef2.invoke(foo, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
-    foo.x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
+    foo.x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 fun test4() {
@@ -75,5 +75,5 @@ fun test4() {
     fooSetRef.invoke(foo, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
     fooSetRef2.invoke(foo, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
-    foo.x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
+    foo.x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }

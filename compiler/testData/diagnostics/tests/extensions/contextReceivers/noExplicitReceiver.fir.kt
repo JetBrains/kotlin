@@ -9,12 +9,12 @@ context(A) fun B.g() {
     f()
 }
 context(A) fun C.h() {
-    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f<!>()
+    <!UNRESOLVED_REFERENCE!>f<!>()
 }
 
 fun A.q(b: B) {
     with(b) {
         f()
     }
-    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f<!>()
+    <!UNRESOLVED_REFERENCE!>f<!>()
 }

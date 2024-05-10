@@ -25,11 +25,11 @@ operator fun ModMemberAndRemExtension.rem(x: Int) {}
 
 fun foo() {
     ModAndRem % 1
-    OldMod <!NONE_APPLICABLE!>%<!> 1
+    OldMod <!UNRESOLVED_REFERENCE!>%<!> 1
 
     ModAndRemExtension % 1
 
-    ModExtension <!NONE_APPLICABLE!>%<!> 1
+    ModExtension <!UNRESOLVED_REFERENCE!>%<!> 1
 
     ModMemberAndRemExtension % 1
 

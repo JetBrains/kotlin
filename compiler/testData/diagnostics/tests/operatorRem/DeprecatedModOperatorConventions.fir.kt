@@ -26,7 +26,7 @@ class IntAndUnit {
 
 fun test() {
     OldAndNew() % 1
-    OnlyOld() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>%<!> 1
+    OnlyOld() <!UNRESOLVED_REFERENCE!>%<!> 1
     OnlyNew() % 1
     Sample() % 1
 

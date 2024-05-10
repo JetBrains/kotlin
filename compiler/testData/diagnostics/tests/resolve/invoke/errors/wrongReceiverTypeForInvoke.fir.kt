@@ -3,7 +3,7 @@
 fun String.invoke(i: Int) {}
 
 fun foo(i: Int) {
-    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>i<!>(1)
+    <!UNRESOLVED_REFERENCE!>i<!>(1)
 
     <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>1<!>(1)
 }

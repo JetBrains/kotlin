@@ -74,7 +74,7 @@ val useContains = 1 <!NOT_FUNCTION_AS_OPERATOR!>in<!> e
 val useNotContains = 1 <!NOT_FUNCTION_AS_OPERATOR, NOT_FUNCTION_AS_OPERATOR!>!in<!> e
 
 val E.invoke: I get() = I()
-val useInvoke = <!NONE_APPLICABLE!>e<!>()
+val useInvoke = <!UNRESOLVED_REFERENCE!>e<!>()
 
 val E.rangeTo: I get() = I()
 val useRangeTo = e <!NOT_FUNCTION_AS_OPERATOR!>..<!> 3

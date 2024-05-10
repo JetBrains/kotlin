@@ -8,4 +8,8 @@ FILE: suspendCOnversionForReceiver.kt
     public final fun main(): R|kotlin/Unit| {
         R|/parameterFunc|(::R|/testFunc|)
         ::R|/testFunc|.R|/extensionFunc|()
+        fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+        .R|/extensionFunc|()
     }

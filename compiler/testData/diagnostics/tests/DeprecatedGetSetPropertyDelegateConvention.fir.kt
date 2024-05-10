@@ -40,8 +40,8 @@ class Example {
     var d by CustomDelegate3()
 
     fun test() {
-        requireString(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
-        requireString(<!ARGUMENT_TYPE_MISMATCH!>aval<!>)
+        requireString(<!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: getValue")!>a<!>)
+        requireString(<!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: getValue")!>aval<!>)
         requireString(b)
         requireInt(c)
         requireInt(d)

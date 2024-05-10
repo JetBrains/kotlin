@@ -7,4 +7,5 @@ fun testFunc() {}
 fun main() {
     parameterFunc(::testFunc)
     (::testFunc).extensionFunc()
+    ({}).extensionFunc()
 }

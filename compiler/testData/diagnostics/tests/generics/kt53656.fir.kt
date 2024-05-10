@@ -11,5 +11,5 @@ fun <E, R : SecuredEntity<E>> SecurityCodeAware<E, R>.secured() : R where E : En
 class Order : Entity<Int>
 class SecuredOrder(order: Order) : SecuredEntity<<!UPPER_BOUND_VIOLATED!>Order<!>>(<!ARGUMENT_TYPE_MISMATCH!>order<!>)
 fun main() {
-    val securedOrder = Order().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>secured<!>()
+    val securedOrder = Order().<!UNRESOLVED_REFERENCE!>secured<!>()
 }

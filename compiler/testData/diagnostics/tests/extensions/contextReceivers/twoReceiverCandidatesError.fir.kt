@@ -4,7 +4,7 @@ fun String.foo() {}
 
 context(Int, Double)
 fun bar() {
-    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // should be prohibited
+    <!UNRESOLVED_REFERENCE!>foo<!>() // should be prohibited
 }
 
 fun main() {
