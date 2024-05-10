@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappe
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
 /**
@@ -59,6 +60,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             is IrPropertySymbol -> generateProperty(symbol)
             is IrEnumEntrySymbol -> generateEnumEntry(symbol)
             is IrTypeAliasSymbol -> generateTypeAlias(symbol)
+            is IrTypeParameterSymbol -> generateTypeParameter(symbol)
             else -> throw NotImplementedError("Generation of stubs for ${symbol::class.java} is not supported yet")
         }
     }
@@ -154,6 +156,19 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             isActual = true,
             expandedType = builtIns.nothingType,
         ).setCommonParent()
+    }
+
+    private fun generateTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameter {
+        return builtIns.irFactory.createTypeParameter(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
+            name = symbol.guessName(),
+            symbol = symbol,
+            variance = Variance.INVARIANT,
+            index = 0,
+            isReified = false,
+        )
     }
 
     private fun <T : IrDeclaration> T.setCommonParent(): T {

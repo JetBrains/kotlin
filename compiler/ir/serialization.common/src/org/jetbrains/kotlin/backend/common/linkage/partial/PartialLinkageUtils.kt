@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME_SETTER
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
@@ -25,6 +27,11 @@ internal object PartialLinkageUtils {
 
         is IdSignature.CompositeSignature -> inner.guessName(nameSegmentsToPickUp)
         is IdSignature.AccessorSignature -> accessorSignature.guessName(nameSegmentsToPickUp)
+
+        is IdSignature.LocalSignature -> if (localFqn == TYPE_PARAMETER_MARKER_NAME || localFqn == TYPE_PARAMETER_MARKER_NAME_SETTER)
+            "#${index()}"
+        else
+            null
 
         else -> null
     }
