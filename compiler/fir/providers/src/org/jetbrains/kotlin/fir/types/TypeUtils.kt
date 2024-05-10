@@ -111,6 +111,7 @@ fun ConeDynamicType.Companion.create(
 fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
     typeContext: ConeTypeContext,
     avoidComprehensiveCheck: Boolean = false,
+    preserveAttributes: Boolean = false,
 ): ConeKotlinType {
     if (this is ConeIntersectionType) {
         return ConeIntersectionType(intersectedTypes.map {
@@ -118,7 +119,7 @@ fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
         })
     }
     return ConeDefinitelyNotNullType.create(this, typeContext, avoidComprehensiveCheck)
-        ?: this.withNullability(ConeNullability.NOT_NULL, typeContext)
+        ?: this.withNullability(ConeNullability.NOT_NULL, typeContext, preserveAttributes = preserveAttributes)
 }
 
 fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection>): T {

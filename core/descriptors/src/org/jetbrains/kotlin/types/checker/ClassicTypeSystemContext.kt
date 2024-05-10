@@ -466,7 +466,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     val builtIns: KotlinBuiltIns
         get() = throw UnsupportedOperationException("Not supported")
 
-    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
+    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker {
         require(this is UnwrappedType, this::errorMessage)
         return makeDefinitelyNotNullOrNotNullInternal(this)
     }

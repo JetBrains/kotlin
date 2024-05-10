@@ -561,7 +561,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker =
         error("DefinitelyNotNullTypeMarker.original() type is unsupported in IR")
 
-    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
+    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker {
         error("makeDefinitelyNotNullOrNotNull is not supported in IR")
     }
 
