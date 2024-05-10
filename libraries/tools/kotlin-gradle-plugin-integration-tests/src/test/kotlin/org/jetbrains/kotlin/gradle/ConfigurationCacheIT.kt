@@ -14,6 +14,9 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import kotlin.io.path.appendText
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
 @DisplayName("Configuration cache")
 class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
@@ -158,6 +161,70 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     fun testCInteropCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
             testConfigurationCacheOf(":lib:commonizeCInterop")
+        }
+    }
+
+    @DisplayName("KT-66452: There are no false-positive Configuration Cache failures with native tasks")
+    @NativeGradlePluginTests
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+    )
+    @GradleTest
+    fun testFalsePositiveWithNativeTasks(gradleVersion: GradleVersion) {
+        nativeProject("native-simple-project", gradleVersion) {
+            buildGradleKts.modify {
+                //language=kotlin
+                """
+                |import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+                |import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+                |
+                |$it
+                |
+                |tasks.register("notCCCompatibleTask") {
+                |    notCompatibleWithConfigurationCache("not really")
+                |}
+                |
+                |tasks.withType<KotlinNativeCompile> {
+                |    dependsOn("notCCCompatibleTask")
+                |}
+                |
+                |tasks.withType<KotlinNativeLink> {
+                |    dependsOn("notCCCompatibleTask")
+                |}
+                """.trimMargin()
+            }
+            build(":commonizeNativeDistribution")
+            build(":compileCommonMainKotlinMetadata")
+            build(":linkLinuxArm64")
+        }
+    }
+
+    @DisplayName("KT-66452: There are no false-positive Configuration Cache failures with cinterop")
+    @NativeGradlePluginTests
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+    )
+    @GradleTest
+    fun testFalsePositiveWithCInteropTask(gradleVersion: GradleVersion) {
+
+        nativeProject("cinterop-with-header", gradleVersion) {
+            buildGradleKts.modify {
+                //language=kotlin
+                """
+                |import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+                |
+                |$it
+                |
+                |tasks.register("notCCCompatibleTask") {
+                |    notCompatibleWithConfigurationCache("not really")
+                |}
+                |
+                |tasks.withType<CInteropProcess> {
+                |    dependsOn("notCCCompatibleTask")
+                |}
+                """.trimMargin()
+            }
+            build(":cinteropCinteropNative")
         }
     }
 

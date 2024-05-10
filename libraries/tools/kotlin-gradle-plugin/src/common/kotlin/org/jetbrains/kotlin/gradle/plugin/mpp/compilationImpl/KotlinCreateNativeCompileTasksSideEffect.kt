@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -56,6 +57,11 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
             }
         ).finalizeValueOnRead()
 
+        task.kotlinNativeProvider.set(
+            project.provider {
+                KotlinNativeProvider(project, task.konanTarget, task.kotlinNativeBundleBuildService)
+            }
+        )
         // for metadata tasks we should provide unpacked klib
         task.produceUnpackedKlib.set(isMetadataCompilation)
     }

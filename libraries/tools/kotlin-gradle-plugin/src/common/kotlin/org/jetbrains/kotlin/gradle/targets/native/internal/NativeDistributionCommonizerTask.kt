@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
 import org.jetbrains.kotlin.gradle.utils.directoryProperty
 import org.jetbrains.kotlin.gradle.utils.listProperty
@@ -48,7 +49,8 @@ internal abstract class NativeDistributionCommonizerTask
 
     private val konanHome = project.file(project.konanHome)
 
-    private val commonizerTargets: Set<SharedCommonizerTarget> by lazy {
+    @get:Internal
+    internal val commonizerTargets: Set<SharedCommonizerTarget> by lazy {
         project.collectAllSharedCommonizerTargetsFromBuild()
     }
 
@@ -100,14 +102,19 @@ internal abstract class NativeDistributionCommonizerTask
         .property(GradleBuildMetricsReporter())
 
     @get:Nested
-    internal val kotlinNativeProvider: Provider<KotlinNativeProvider> = project.provider {
-        KotlinNativeProvider(
-            project,
-            commonizerTargets.flatMap { target -> target.konanTargets }.toSet(),
-            kotlinNativeBundleBuildService,
-            enableDependenciesDownloading = false
-        )
-    }
+    internal val kotlinNativeProvider: Property<KotlinNativeProvider> =
+        project.objects.propertyWithConvention<KotlinNativeProvider>(
+            // For KT-66452 we need to get rid of invocation of 'Task.project'.
+            // That is why we moved setting this property to task registration
+            // and added convention for backwards compatibility.
+            project.provider {
+                KotlinNativeProvider(
+                    project,
+                    commonizerTargets.flatMap { target -> target.konanTargets }.toSet(),
+                    kotlinNativeBundleBuildService,
+                    enableDependenciesDownloading = false
+                )
+            })
 
     @TaskAction
     protected fun run() {
