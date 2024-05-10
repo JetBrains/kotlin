@@ -17,12 +17,11 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-/* Make sure that all the variable references and type parameter references are within the scope of the corresponding variables and
-   type parameters.
-*/
-class ScopeValidator(
-    private val reportError: ReportError
-) {
+/**
+ * Makes sure that all the variable references and type parameter references are within the scope of the corresponding variables and
+ * type parameters.
+ */
+internal class ScopeValidator(private val reportError: ReportError) {
 
     fun check(element: IrElement) {
         element.accept(Checker(), Visibles(emptySet(), mutableSetOf()))
