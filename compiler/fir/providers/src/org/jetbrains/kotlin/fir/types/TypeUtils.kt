@@ -103,7 +103,7 @@ fun ConeDefinitelyNotNullType.Companion.create(
 fun ConeDynamicType.Companion.create(
     session: FirSession,
     attributes: ConeAttributes = ConeAttributes.Empty,
-) = ConeDynamicType(
+): ConeDynamicType = ConeDynamicType(
     session.builtinTypes.nothingType.type.withAttributes(attributes),
     session.builtinTypes.nullableAnyType.type.withAttributes(attributes),
 )
@@ -137,7 +137,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
     }
 }
 
-fun <T : ConeKotlinType> T.withArguments(replacement: (ConeTypeProjection) -> ConeTypeProjection) =
+fun <T : ConeKotlinType> T.withArguments(replacement: (ConeTypeProjection) -> ConeTypeProjection): T =
     withArguments(typeArguments.map(replacement).toTypedArray())
 
 @OptIn(DynamicTypeConstructor::class)
@@ -834,7 +834,7 @@ fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
     }
 }
 
-fun FirIntersectionTypeRef.isLeftValidForDefinitelyNotNullable(session: FirSession) =
+fun FirIntersectionTypeRef.isLeftValidForDefinitelyNotNullable(session: FirSession): Boolean =
     leftType.coneType.let { it is ConeTypeParameterType && it.canBeNull(session) && !it.isMarkedNullable }
 
-val FirIntersectionTypeRef.isRightValidForDefinitelyNotNullable get() = rightType.coneType.isAny
+val FirIntersectionTypeRef.isRightValidForDefinitelyNotNullable: Boolean get() = rightType.coneType.isAny
