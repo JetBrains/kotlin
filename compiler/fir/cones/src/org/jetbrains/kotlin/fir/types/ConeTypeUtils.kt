@@ -92,8 +92,8 @@ fun ConeSimpleKotlinType.originalIfDefinitelyNotNullable(): ConeSimpleKotlinType
     }
 }
 
-fun ConeIntersectionType.withAlternative(alternativeType: ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes, alternativeType)
+fun ConeIntersectionType.withUpperBound(upperBound: ConeKotlinType): ConeIntersectionType {
+    return ConeIntersectionType(intersectedTypes, upperBoundForApproximation = upperBound)
 }
 
 fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {

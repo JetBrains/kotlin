@@ -257,7 +257,7 @@ class ResultTypeResolver(
     ): KotlinTypeMarker? {
         if (firstCandidate.typeConstructor().isIntersection()) {
             if (!AbstractTypeChecker.isSubtypeOf(this, firstCandidate.toPublicType(), secondCandidate.toPublicType())) {
-                return createTypeWithAlternativeForIntersectionResult(firstCandidate, secondCandidate)
+                return createTypeWithUpperBoundForIntersectionResult(firstCandidate, secondCandidate)
             }
         }
 

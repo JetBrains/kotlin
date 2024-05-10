@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.unexpandedConeClassLikeType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.substituteIntersectionTypesToUpperBoundsOrSelf
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -328,14 +328,7 @@ class Fir2IrTypeConverter(
 
     private fun approximateType(type: ConeSimpleKotlinType): ConeKotlinType {
         if (type is ConeClassLikeType && type.typeArguments.isEmpty()) return type
-        val substitutor = object : AbstractConeSubstitutor(session.typeContext) {
-            override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-                return if (type is ConeIntersectionType) {
-                    type.upperBoundForApproximation?.let { substituteOrSelf(it) }
-                } else null
-            }
-        }
-        return substitutor.substituteOrSelf(type).approximateForIrOrSelf(c)
+        return type.substituteIntersectionTypesToUpperBoundsOrSelf(session).approximateForIrOrSelf(c)
     }
 }
 
