@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 
@@ -32,6 +29,10 @@ class CheckIrElementVisitor(
         if (!visitedElements.add(element)) {
             val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
             reportError(element, "Duplicate IR node: $renderString")
+
+            // The IR tree is completely messed up if it includes one element twice. It may not be a tree at all, there may be cycles.
+            // Give up early to avoid stack overflow.
+            throw DuplicateIrNodeError(element)
         }
     }
 

@@ -142,12 +142,6 @@ class IrValidatorTest {
                             "STRING_CONCATENATION type=<uninitialized parent>.Any",
                     null,
                 ),
-                Message(
-                    WARNING,
-                    "[IR VALIDATION] IrValidatorTest: unexpected type: expected <uninitialized parent>.String, got <uninitialized parent>.Any\n" +
-                            "STRING_CONCATENATION type=<uninitialized parent>.Any",
-                    null,
-                ),
             ),
         )
     }
@@ -176,12 +170,6 @@ class IrValidatorTest {
                             "STRING_CONCATENATION type=<uninitialized parent>.Any",
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
                 ),
-                Message(
-                    WARNING,
-                    "[IR VALIDATION] IrValidatorTest: unexpected type: expected <uninitialized parent>.String, got <uninitialized parent>.Any\n" +
-                            "STRING_CONCATENATION type=<uninitialized parent>.Any",
-                    CompilerMessageLocation.create("test.kt", 1, 10, null),
-                ),
             ),
         )
     }
@@ -201,12 +189,6 @@ class IrValidatorTest {
                 Message(
                     ERROR,
                     "[IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=<uninitialized parent>.Any\n" +
-                            "STRING_CONCATENATION type=<uninitialized parent>.Any",
-                    null,
-                ),
-                Message(
-                    ERROR,
-                    "[IR VALIDATION] IrValidatorTest: unexpected type: expected <uninitialized parent>.String, got <uninitialized parent>.Any\n" +
                             "STRING_CONCATENATION type=<uninitialized parent>.Any",
                     null,
                 ),
@@ -238,13 +220,27 @@ class IrValidatorTest {
                             "STRING_CONCATENATION type=<uninitialized parent>.Any",
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
                 ),
-                Message(
-                    ERROR,
-                    "[IR VALIDATION] IrValidatorTest: unexpected type: expected <uninitialized parent>.String, got <uninitialized parent>.Any\n" +
-                            "STRING_CONCATENATION type=<uninitialized parent>.Any",
-                    CompilerMessageLocation.create("test.kt", 1, 10, null),
-                ),
             ),
+        )
+    }
+
+    @Test
+    fun `no infinite recursion if there are cycles in IR`() {
+        val klass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MyClass")
+        }
+        klass.declarations.add(klass)
+        testValidation(
+            IrVerificationMode.WARNING,
+            klass,
+            listOf(
+                Message(
+                    WARNING,
+                    "[IR VALIDATION] IrValidatorTest: Duplicate IR node: CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]\n" +
+                            "CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]",
+                    null
+                )
+            )
         )
     }
 }

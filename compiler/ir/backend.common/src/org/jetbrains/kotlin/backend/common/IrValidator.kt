@@ -101,7 +101,9 @@ class CheckDeclarationParentsVisitor : DeclarationParentsVisitor() {
     }
 }
 
-class IrValidationError(message: String? = null) : IllegalStateException(message)
+open class IrValidationError(message: String? = null) : IllegalStateException(message)
+
+class DuplicateIrNodeError(element: IrElement) : IrValidationError(element.render())
 
 /**
  * Verifies common IR invariants that should hold in all the backends.
@@ -118,7 +120,12 @@ fun performBasicIrValidation(
         checkProperties = checkProperties,
     )
     val validator = IrValidator(irBuiltIns, validatorConfig, reportError)
-    element.acceptVoid(validator)
+    try {
+        element.acceptVoid(validator)
+    } catch (e: DuplicateIrNodeError) {
+        // Performing other checks may cause e.g. infinite recursion.
+        return
+    }
     element.checkDeclarationParents()
 }
 
