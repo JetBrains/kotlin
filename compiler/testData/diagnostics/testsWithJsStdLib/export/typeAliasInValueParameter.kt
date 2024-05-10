@@ -6,4 +6,4 @@ typealias A = Int
 
 @Suppress("UNUSED_PARAMETER")
 @JsExport
-fun test(<!NON_EXPORTABLE_TYPE("parameter; A")!>x: A<!>) {}
+fun test(x: A) {}
