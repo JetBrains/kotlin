@@ -23670,6 +23670,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("javaKotlinSamConflict.kt")
+        public void testJavaKotlinSamConflict() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/javaKotlinSamConflict.kt");
+        }
+
+        @Test
         @TestMetadata("kt37920.kt")
         public void testKt37920() {
           runTest("compiler/testData/diagnostics/tests/j+k/sam/kt37920.kt");
