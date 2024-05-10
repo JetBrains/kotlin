@@ -67,7 +67,6 @@ abstract class AbstractNativeKlibBackendFacade(
             serializerOutput.serializedIr,
             versions = KotlinLibraryVersioning(
                 abiVersion = KotlinAbiVersion.CURRENT,
-                libraryVersion = null,
                 compilerVersion = KotlinCompilerVersion.getVersion(),
                 metadataVersion = configuration.metadataVersion().toString(),
             ),

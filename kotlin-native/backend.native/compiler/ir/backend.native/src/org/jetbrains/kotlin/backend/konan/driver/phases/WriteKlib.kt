@@ -40,7 +40,6 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
     val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
     val versions = KotlinLibraryVersioning(
             abiVersion = abiVersion,
-            libraryVersion = null,
             compilerVersion = compilerVersion,
             metadataVersion = metadataVersion,
     )

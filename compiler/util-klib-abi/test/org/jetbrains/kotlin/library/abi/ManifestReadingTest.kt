@@ -73,7 +73,6 @@ class ManifestReadingTest {
 
     private fun createEmptyLibraryWithSpecificManifest(libraryName: String, libraryManifest: LibraryManifest): File {
         val libraryVersioning = KotlinLibraryVersioning(
-            libraryVersion = libraryManifest.libraryVersion,
             compilerVersion = libraryManifest.compilerVersion,
             abiVersion = libraryManifest.abiVersion?.parseKotlinAbiVersion(),
             metadataVersion = null

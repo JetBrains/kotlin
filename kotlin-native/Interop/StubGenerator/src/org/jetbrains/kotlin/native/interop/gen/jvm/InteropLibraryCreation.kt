@@ -36,7 +36,6 @@ fun createInteropLibrary(
     staticLibraries: List<String>
 ) {
     val version = KotlinLibraryVersioning(
-            libraryVersion = null,
             abiVersion = KotlinAbiVersion.CURRENT,
             compilerVersion = KotlinCompilerVersion.VERSION,
             metadataVersion = KlibMetadataVersion.INSTANCE.toString(),

@@ -142,7 +142,6 @@ object KlibTestUtil {
         val library = KotlinLibraryWriterImpl(
             moduleName = libraryName,
             versions = KotlinLibraryVersioning(
-                libraryVersion = null,
                 compilerVersion = null,
                 abiVersion = null,
                 metadataVersion = KlibMetadataVersion.INSTANCE.toString(),

@@ -86,7 +86,6 @@ class NativeLibraryAbiReaderWithManifestTest : AbstractNativeSimpleTest() {
                     "Native targets" -> assertManifestProperty(manifest.dumpNativeTargets())
                     "Compiler version" -> assertManifestProperty(manifest.compilerVersion)
                     "ABI version" -> assertManifestProperty(manifest.abiVersion)
-                    "Library version" -> assertManifestProperty(manifest.libraryVersion)
                     "IR provider" -> assertManifestProperty(manifest.irProviderName)
                     else -> fail { "Unexpected manifest property: $line" }
                 }
