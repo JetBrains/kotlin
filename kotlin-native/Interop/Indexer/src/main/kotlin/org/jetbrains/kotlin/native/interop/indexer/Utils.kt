@@ -142,17 +142,39 @@ internal fun parseTranslationUnit(
         )
 
         if (errorCode != CXErrorCode.CXError_Success) {
-            val copiedSourceFile = sourceFile.copyTo(Files.createTempFile(null, sourceFile.name).toFile(), overwrite = true)
-
-            error("""
-                clang_parseTranslationUnit2 failed with $errorCode;
-                sourceFile = ${copiedSourceFile.absolutePath}
-                arguments = ${compilerArgs.joinToString(" ")}
-                """.trimIndent())
+            reportParseTranslationUnitError(sourceFile, errorCode, compilerArgs)
         }
 
         return resultVar.value!!
     }
+}
+
+private fun reportParseTranslationUnitError(sourceFile: File, errorCode: CXErrorCode, originalCompilerArgs: List<String>): Nothing {
+    val message = buildString {
+        appendLine("clang_parseTranslationUnit2 failed with $errorCode;")
+        appendLine("Arguments:")
+
+        // sourceFile is typically a temporary file to be removed after the process exit;
+        // rescue it by copying to a longer-living temporary file:
+        val copiedSourceFile = sourceFile.copyTo(Files.createTempFile(null, sourceFile.name).toFile(), overwrite = true)
+
+        // Include the source file to arguments for simplicity, to mimic the clang behavior.
+        val compilerArgs = mutableListOf(copiedSourceFile.absolutePath)
+        compilerArgs.addAll(originalCompilerArgs)
+
+        // Included .pch file is typically a temporary file to be removed after the process exit;
+        // rescue it the same way:
+        val indexOfIncludePch = compilerArgs.indexOf("-include-pch")
+        if (indexOfIncludePch != -1 && indexOfIncludePch + 1 < compilerArgs.size) {
+            val pch = File(compilerArgs[indexOfIncludePch + 1])
+            val copiedPch = pch.copyTo(Files.createTempFile(null, pch.name).toFile(), overwrite = true)
+            compilerArgs[indexOfIncludePch + 1] = copiedPch.absolutePath
+        }
+
+        appendLine(compilerArgs.joinToString(" "))
+    }
+
+    error(message)
 }
 
 internal fun Compilation.parse(
