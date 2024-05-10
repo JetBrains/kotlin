@@ -16,7 +16,6 @@ import org.junit.jupiter.api.DisplayName
 class AggregatingKotlinTestReportIT : KGPBaseTest() {
     @DisplayName("KT-54506: `allTests` is not false positively up-to-date after failure")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testFailedTestsAreNotUpToDate(gradleVersion: GradleVersion) {
         project(
             "new-mpp-lib-with-tests",
@@ -102,7 +101,6 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
 
     @DisplayName("Test tasks are up-to-date when called after `allTests`")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testSuccessfulTestTasksAreUpToDate(gradleVersion: GradleVersion) {
         project(
             "new-mpp-lib-with-tests",

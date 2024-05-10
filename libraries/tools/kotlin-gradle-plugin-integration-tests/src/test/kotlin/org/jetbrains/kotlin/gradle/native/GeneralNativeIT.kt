@@ -858,7 +858,6 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Assert that a project with a native target can be configure")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS])
     fun testIgnoreDisabledNativeTargets(gradleVersion: GradleVersion) {
         nativeProject("new-mpp-lib-and-app/sample-lib", gradleVersion) {
@@ -873,7 +872,6 @@ class GeneralNativeIT : KGPBaseTest() {
 
     @DisplayName("Checks native arguments with the spaces in it")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testNativeArgsWithSpaces(gradleVersion: GradleVersion) {
         nativeProject("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             val complicatedDirectoryName = if (HostManager.hostIsMingw) {

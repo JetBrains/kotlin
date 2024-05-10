@@ -10,7 +10,6 @@ import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.ProjectResolvedConfiguration
 import java.io.Serializable
 
 class KotlinRootNpmResolution(
@@ -28,7 +27,6 @@ class KotlinRootNpmResolution(
         nodeJsEnvironment: NodeJsEnvironment,
         packageManagerEnvironment: PackageManagerEnvironment,
         npmResolutionManager: KotlinNpmResolutionManager,
-        resolvedConfigurations: Map<String, ProjectResolvedConfiguration>,
     ): Installation {
         synchronized(projects) {
             npmResolutionManager.parameters.gradleNodeModulesProvider.get().close()
@@ -38,8 +36,7 @@ class KotlinRootNpmResolution(
                 .map {
                     it.close(
                         npmResolutionManager,
-                        logger,
-                        resolvedConfigurations
+                        logger
                     )
                 }
 

@@ -29,7 +29,6 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
 
     @DisplayName("File with actual declaration needs recompiling")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @TestMetadata("expect-actual-fun-or-class-ic")
     fun testRecompilationOfActualFun(gradleVersion: GradleVersion) {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
@@ -56,7 +55,6 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
 
     @DisplayName("File with expect declaration needs recompiling indirectly")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @TestMetadata("expect-actual-fun-or-class-ic")
     fun testRecompilationOfExpectFun(gradleVersion: GradleVersion) {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {
@@ -81,7 +79,6 @@ open class ExpectActualIncrementalCompilationIT : KGPBaseTest() {
 
     @DisplayName("File with expect class declaration needs recompiling")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @TestMetadata("expect-actual-fun-or-class-ic")
     fun testRecompilationOfExpectClass(gradleVersion: GradleVersion) {
         nativeProject("expect-actual-fun-or-class-ic", gradleVersion) {

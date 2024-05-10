@@ -34,7 +34,6 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
     @JsGradlePluginTests
     @DisplayName("JS")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun inputsJs(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
@@ -52,7 +51,6 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
     @MppGradlePluginTests
     @DisplayName("MPP")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun inputsMpp(gradleVersion: GradleVersion) {
         project("hierarchical-mpp-multi-modules", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)

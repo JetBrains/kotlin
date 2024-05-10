@@ -109,7 +109,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("compiler plugin arguments set via kotlinOptions.freeCompilerArgs on task execution applied properly in MPP")
     @MppGradlePluginTests
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     internal fun freeArgsModifiedAtExecutionTimeCorrectlyMpp(gradleVersion: GradleVersion) {
         project("new-mpp-lib-with-tests", gradleVersion) {
             buildGradle.appendText(
@@ -172,7 +171,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("Should combine -opt-in arguments from languageSettings DSL")
     @MppGradlePluginTests
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun combinesOptInFromLanguageSettings(gradleVersion: GradleVersion) {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
@@ -210,7 +208,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("Should combine -opt-in arguments from languageSettings DSL for Native")
     @MppGradlePluginTests
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun combinesOptInFromLanguageSettingsNative(gradleVersion: GradleVersion) {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
@@ -395,7 +392,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("KT-57823: should be possible to configure native module name via compilation")
     @NativeGradlePluginTests
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun passesModuleNameFromNativeCompilation(gradleVersion: GradleVersion) {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
@@ -439,7 +435,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("KT-57823: uses archivesName value for native compilation module name convention")
     @NativeGradlePluginTests
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun nativeCompilationModuleNameConvention(gradleVersion: GradleVersion) {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",

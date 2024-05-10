@@ -61,7 +61,6 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     @DisplayName("Compile project with project mode")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun compileDependencyModeProject(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
@@ -78,7 +77,6 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     @DisplayName("Compile project with repository mode")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun compileDependencyModeRepository(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
@@ -142,7 +140,6 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     @DisplayName("Source set dependency in project mode")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun sourceSetDependencyProjectMode(gradleVersion: GradleVersion) {
         project(cinteropProjectName, gradleVersion) {
             reportSourceSetCommonizerDependencies(
@@ -169,7 +166,6 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     @DisplayName("Source set dependency in repository mode")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun sourceSetDependencyRepositoryMode(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
@@ -308,7 +304,6 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     @DisplayName("UP-TO-DATE transformations for P3 subproject")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun transformationsUpToDateOnP3(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
@@ -358,7 +353,6 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     @DisplayName("UP-TO-DATE transformations on adding/removing targets in repositories mode")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun upToDateTransformationsAddingRemovingTargetRepositoriesMode(
         gradleVersion: GradleVersion,
         @TempDir localRepo: Path,
@@ -371,7 +365,6 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
     @DisplayName("UP-TO-DATE transformations on adding/removing targets in project mode")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun upToDateTransformationsAddingRemovingTargetRepositoriesMode(gradleVersion: GradleVersion) {
         project(cinteropProjectName, gradleVersion) {
             testUpToDateTransformationOnRemovingOrAddingTargets(projectDependencyMode)

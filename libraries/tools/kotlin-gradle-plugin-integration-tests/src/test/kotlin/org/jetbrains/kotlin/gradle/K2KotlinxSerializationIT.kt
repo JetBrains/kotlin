@@ -17,7 +17,6 @@ import kotlin.test.assertTrue
 class K2KotlinxSerializationIT : KGPBaseTest() {
     @DisplayName("Compile common code to metadata with kotlinx.serialization and K2")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun `test kotlinxSerializationMppK2`(gradleVersion: GradleVersion) {
         project("kotlinxSerializationMppK2", gradleVersion) {
             build(":compileCommonMainKotlinMetadata") {
@@ -66,7 +65,6 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
 
     @DisplayName("Compile production executable with kotlinx.serialization to JS. KT-57690, KT-57807")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun `test kotlinx serialization compile to JS`(gradleVersion: GradleVersion) {
         project("kotlinxSerializationK2WithJs", gradleVersion) {
             build(":compileProductionExecutableKotlinJs")
@@ -75,7 +73,6 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
 
     @DisplayName("Compile test sourceset with kotlinx.serialization to JS. KT-57781")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun `test kotlinx serialization compile test source set to JS`(gradleVersion: GradleVersion) {
         project("kotlinxSerializationK2WithJs", gradleVersion) {
             build(":compileTestKotlinJs")
@@ -84,7 +81,6 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
 
     @DisplayName("Compile MPP project to JS kotlinx.serialization and K2")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun `test kotlinx serialization mpp to JS`(gradleVersion: GradleVersion) {
         project("kotlinxSerializationMppK2", gradleVersion) {
             build(":compileKotlinJs")

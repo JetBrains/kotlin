@@ -9,6 +9,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Build services usages in tasks are declared with `usesService`")
@@ -38,7 +39,6 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @DisplayName("Build services are registered for Kotlin/JS browser projects")
     @GradleTest
     @JsGradlePluginTests
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testJsBrowserProject(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             enableStableConfigurationCachePreview()
@@ -51,7 +51,6 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @DisplayName("Build services are registered for Kotlin/JS nodejs projects")
     @GradleTest
     @JsGradlePluginTests
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testJsNodeJsProject(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
             enableStableConfigurationCachePreview()

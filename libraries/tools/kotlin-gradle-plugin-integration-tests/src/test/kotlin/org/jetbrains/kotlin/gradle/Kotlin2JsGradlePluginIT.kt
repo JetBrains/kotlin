@@ -30,7 +30,6 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @JsGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
 class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
 

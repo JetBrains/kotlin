@@ -140,7 +140,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun `test - sample1 - ide dependencies`(gradleVersion: GradleVersion) {
         project("mpp-composite-build/sample1", gradleVersion) {
             projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
@@ -168,7 +167,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun `test - sample1 - assemble and execute`(gradleVersion: GradleVersion) {
         project(
             "mpp-composite-build/sample1",
@@ -198,7 +196,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun `test - sample1 - assemble and execute - included build using older version of Kotlin`(gradleVersion: GradleVersion) {
         project(
             "mpp-composite-build/sample1",

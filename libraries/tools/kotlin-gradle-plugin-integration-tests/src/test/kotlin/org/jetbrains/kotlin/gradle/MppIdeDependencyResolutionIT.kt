@@ -282,7 +282,6 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun `test cinterops - transitive project dependencies`(gradleVersion: GradleVersion) {
         project(
             "cinterop-MetadataDependencyTransformation",
@@ -313,7 +312,6 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun `test cinterops - transitive project dependencies - disabled cinterop commonization`(gradleVersion: GradleVersion) {
         project(
             "cinterop-MetadataDependencyTransformation",

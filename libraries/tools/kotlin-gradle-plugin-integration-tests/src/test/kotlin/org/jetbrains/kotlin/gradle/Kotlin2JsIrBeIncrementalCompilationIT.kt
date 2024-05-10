@@ -20,7 +20,6 @@ import kotlin.test.assertTrue
 
 @DisplayName("Incremental compilation tests for Kotlin JS IR backend with K1")
 @JsGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
 class Kotlin2JsK1IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copyEnsuringK1()
@@ -28,7 +27,6 @@ class Kotlin2JsK1IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilat
 
 @DisplayName("Incremental compilation tests for Kotlin JS IR backend with K2")
 @JsGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
 class Kotlin2JsK2IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copyEnsuringK2()
@@ -42,7 +40,6 @@ class Kotlin2JsK2IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilat
 
 @DisplayName("Incremental compilation tests for Kotlin JS IR backend")
 @JsGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
 abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions = BuildOptions(
         jsOptions = BuildOptions.JsOptions(

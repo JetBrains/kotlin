@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinProjectNpmResol
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 internal interface UsesKotlinNpmResolutionManager : Task {
     @get:Internal
@@ -50,7 +52,7 @@ internal interface UsesKotlinNpmResolutionManager : Task {
  */
 abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionManager.Parameters> {
 
-    internal interface Parameters : BuildServiceParameters {
+    interface Parameters : BuildServiceParameters {
         val resolution: Property<KotlinRootNpmResolution>
 
         val gradleNodeModulesProvider: Property<GradleNodeModulesCache>
@@ -69,7 +71,7 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
 
     sealed class ResolutionState {
 
-        internal class Configuring(val resolution: KotlinRootNpmResolution) : ResolutionState()
+        class Configuring(val resolution: KotlinRootNpmResolution) : ResolutionState()
 
         open class Prepared(val preparedInstallation: Installation) : ResolutionState()
 
@@ -85,8 +87,7 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
         logger: Logger,
         nodeJsEnvironment: NodeJsEnvironment,
         environment: PackageManagerEnvironment,
-        resolvedConfigurations: Map<String, ProjectResolvedConfiguration>,
-    ) = prepareIfNeeded(logger = logger, nodeJsEnvironment, environment, resolvedConfigurations)
+    ) = prepareIfNeeded(logger = logger, nodeJsEnvironment, environment)
 
     internal fun installIfNeeded(
         args: List<String> = emptyList(),
@@ -94,7 +95,6 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
         logger: Logger,
         nodeJsEnvironment: NodeJsEnvironment,
         packageManagerEnvironment: PackageManagerEnvironment,
-        resolvedConfigurations: Map<String, ProjectResolvedConfiguration>,
     ): Unit? {
         synchronized(this) {
             if (state is ResolutionState.Installed) {
@@ -106,7 +106,7 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
             }
 
             return try {
-                val installation: Installation = prepareIfNeeded(logger = logger, nodeJsEnvironment, packageManagerEnvironment, resolvedConfigurations)
+                val installation: Installation = prepareIfNeeded(logger = logger, nodeJsEnvironment, packageManagerEnvironment)
                 installation.install(args, services, logger, nodeJsEnvironment, packageManagerEnvironment)
                 state = ResolutionState.Installed()
             } catch (e: Exception) {
@@ -120,7 +120,6 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
         logger: Logger,
         nodeJsEnvironment: NodeJsEnvironment,
         packageManagerEnvironment: PackageManagerEnvironment,
-        resolvedConfigurations: Map<String, ProjectResolvedConfiguration>,
     ): Installation {
         val state0 = this.state
         return when (state0) {
@@ -138,8 +137,7 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
                                 logger,
                                 nodeJsEnvironment,
                                 packageManagerEnvironment,
-                                this,
-                                resolvedConfigurations
+                                this
                             ).also {
                                 this.state = ResolutionState.Prepared(it)
                             }
@@ -187,7 +185,7 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
             }
         }
 
-        internal fun registerIfAbsent(
+        fun registerIfAbsent(
             project: Project,
             resolution: Provider<KotlinRootNpmResolution>?,
             gradleNodeModulesProvider: Provider<GradleNodeModulesCache>?,

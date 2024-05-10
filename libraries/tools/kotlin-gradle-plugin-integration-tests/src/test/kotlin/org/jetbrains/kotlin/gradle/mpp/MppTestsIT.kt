@@ -13,7 +13,7 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Tests for multiplatform testing")
 class MppTestsIT : KGPBaseTest() {
     @DisplayName("KT-54634: MPP testing logic is compatible with API changes in Gradle 7.6")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4, additionalVersions = [TestVersions.Gradle.G_7_5, TestVersions.Gradle.G_7_6])
+    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_7_5, TestVersions.Gradle.G_7_6])
     @GradleTest
     fun testKt54634(gradleVersion: GradleVersion) {
         project(
@@ -54,7 +54,6 @@ class MppTestsIT : KGPBaseTest() {
     // https://cs.android.com/android-studio/platform/tools/base/+/0185d5af71ba51c64681731f99f319bfcaeb0174:build-system/gradle-core/src/main/java/com/android/build/gradle/internal/attribution/BuildAnalyzerConfiguratorService.kt;l=78-84
     @DisplayName("KTIJ-25757: MPP is compatible with getting all task output files before execution (Android Studio case)")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testKtij25757AllTaskOutputFilesBeforeExecution(gradleVersion: GradleVersion) {
         project(
             "new-mpp-lib-with-tests",

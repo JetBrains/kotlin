@@ -112,7 +112,6 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("KotlinToolingMetadata tasks are avaialbe in Kotlin JS browser project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun tasksAreAvailableInKotlinJsBrowser(
         gradleVersion: GradleVersion,
         @TempDir localRepository: Path

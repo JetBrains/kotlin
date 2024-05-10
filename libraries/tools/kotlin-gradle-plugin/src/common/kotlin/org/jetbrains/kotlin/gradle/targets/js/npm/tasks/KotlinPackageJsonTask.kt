@@ -7,23 +7,24 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.*
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
+import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.gradle.utils.mapToFile
-import org.jetbrains.kotlin.gradle.utils.setProperty
 import java.io.File
 
 @DisableCachingByDefault
@@ -39,6 +40,17 @@ abstract class KotlinPackageJsonTask :
 
     private val rootResolver: KotlinRootNpmResolver
         get() = nodeJs.resolver
+
+    private val compilationResolver: KotlinCompilationNpmResolver
+        get() = rootResolver[projectPath][compilationDisambiguatedName.get()]
+
+    private fun findDependentTasks(): Collection<Any> =
+        compilationResolver.compilationNpmResolution.internalDependencies.map { dependency ->
+            nodeJs.resolver[dependency.projectPath][dependency.compilationName].npmProject.packageJsonTaskPath
+        } + compilationResolver.compilationNpmResolution.internalCompositeDependencies.map { dependency ->
+            dependency.includedBuild?.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME") ?: error("includedBuild instance is not available")
+            dependency.includedBuild.task(":${RootPackageJsonTask.NAME}")
+        }
 
     // -----
 
@@ -71,8 +83,33 @@ abstract class KotlinPackageJsonTask :
             .sorted()
     }
 
-    @get:Input
-    internal val externalNpmDependencies: SetProperty<NpmDependencyDeclaration> = project.objects.setProperty<NpmDependencyDeclaration>()
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal val compositeFiles: Set<File> by lazy {
+        val map = compilationResolver.aggregatedConfiguration
+            .incoming
+            .artifactView { artifactView ->
+                artifactView.componentFilter { componentIdentifier ->
+                    componentIdentifier is ProjectComponentIdentifier
+                }
+            }
+            .artifacts
+            .filter {
+                it.id `is` CompositeProjectComponentArtifactMetadata
+            }
+            .map { it.file }
+            .toSet()
+        map
+    }
+
+    // nested inputs are processed in configuration phase
+    // so npmResolutionManager must not be used
+    @get:Nested
+    internal val producerInputs: PackageJsonProducerInputs by lazy {
+        compilationResolver.compilationNpmResolution.inputs
+    }
 
     @get:OutputFile
     abstract val packageJson: Property<File>
@@ -81,35 +118,31 @@ abstract class KotlinPackageJsonTask :
     fun resolve() {
         val resolution = npmResolutionManager.get().resolution.get()[projectPath][compilationDisambiguatedName.get()]
         val preparedResolution = resolution
-            .resolution!!
+            .prepareWithDependencies(
+                npmResolutionManager = npmResolutionManager.get(),
+                logger = logger
+            )
 
         resolution.createPackageJson(preparedResolution, packageJsonMain, packageJsonHandlers)
     }
 
     companion object {
-        internal fun create(
-            compilation: KotlinJsIrCompilation,
-            disambiguatedName: String,
-            compilationResolution: Provider<KotlinCompilationNpmResolution>
-        ): TaskProvider<KotlinPackageJsonTask> {
-            val project = compilation.target.project
+        fun create(compilation: KotlinJsIrCompilation): TaskProvider<KotlinPackageJsonTask> {
+            val target = compilation.target
+            val project = target.project
             val npmProject = compilation.npmProject
             val nodeJsTaskProviders = project.rootProject.kotlinNodeJsExtension
 
             val npmCachesSetupTask = nodeJsTaskProviders.npmCachesSetupTaskProvider
             val packageJsonTaskName = npmProject.packageJsonTaskName
             val packageJsonUmbrella = nodeJsTaskProviders.packageJsonUmbrellaTaskProvider
-
             val npmResolutionManager = project.kotlinNpmResolutionManager
             val gradleNodeModules = GradleNodeModulesCache.registerIfAbsent(project, null, null)
             val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
-                task.compilationDisambiguatedName.set(disambiguatedName)
+                task.compilationDisambiguatedName.set(compilation.disambiguatedName)
                 task.packageJsonHandlers.set(compilation.packageJsonHandlers)
                 task.description = "Create package.json file for $compilation"
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
-                task.externalNpmDependencies.set(
-                    compilationResolution.map { it.npmDependencies }
-                )
 
                 task.npmResolutionManager.value(npmResolutionManager)
                     .disallowChanges()
@@ -126,6 +159,7 @@ abstract class KotlinPackageJsonTask :
                     it.npmResolutionManager.get().isConfiguringState()
                 }
 
+                task.dependsOn(target.project.provider { task.findDependentTasks() })
                 task.dependsOn(npmCachesSetupTask)
             }
 

@@ -128,7 +128,6 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @JsGradlePluginTests
     @DisplayName("JS unrelated tasks are not configured")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun jsNoTasksConfigured(gradleVersion: GradleVersion) {
         project("kotlin-js-plugin-project", gradleVersion) {
             createTaskWithExpensiveConfiguration()
@@ -140,7 +139,6 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @MppGradlePluginTests
     @DisplayName("MPP unrelated tasks are not configured")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun mppNoTasksConfigured(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-app", gradleVersion) {
             createTaskWithExpensiveConfiguration()
@@ -181,7 +179,6 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @JvmGradlePluginTests
     @DisplayName("JVM early configuration resolution")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testEarlyConfigurationsResolutionKotlin(gradleVersion: GradleVersion) {
         testEarlyConfigurationsResolution("kotlinProject", gradleVersion, kts = false)
     }
@@ -189,7 +186,6 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @JsGradlePluginTests
     @DisplayName("JS early configuration resolution")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun testEarlyConfigurationsResolutionKotlinJs(gradleVersion: GradleVersion) {
         testEarlyConfigurationsResolution("kotlin-js-browser-project", gradleVersion, kts = true)
     }

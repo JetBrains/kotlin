@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -22,7 +23,6 @@ class KotlinJsIrK2IncrementalGradlePluginIT : AbstractKotlinJsIncrementalGradleP
 }
 
 @JsGradlePluginTests
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
 abstract class AbstractKotlinJsIncrementalGradlePluginIT(
     protected val irBackend: Boolean
 ) : KGPBaseTest() {

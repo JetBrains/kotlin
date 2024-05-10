@@ -9,7 +9,6 @@ import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolveException
 import org.gradle.api.artifacts.ResolvedConfiguration
-import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.*
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.tooling.core.withClosure
@@ -44,7 +43,7 @@ internal class LazyResolvedConfiguration private constructor(
 
     val resolutionFailures: Collection<Throwable> get() = artifactCollection.failures
 
-    private val artifactsByComponentId: Map<ComponentIdentifier, List<ResolvedArtifactResult>> by TransientLazy { resolvedArtifacts.groupBy { it.id.componentIdentifier } }
+    private val artifactsByComponentId by TransientLazy { resolvedArtifacts.groupBy { it.id.componentIdentifier } }
 
     val allDependencies: Set<DependencyResult> by TransientLazy {
         root.dependencies.withClosure<DependencyResult> {

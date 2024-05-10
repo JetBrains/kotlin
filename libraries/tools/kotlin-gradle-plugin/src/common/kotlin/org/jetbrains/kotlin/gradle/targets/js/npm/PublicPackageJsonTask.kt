@@ -15,10 +15,8 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
@@ -28,16 +26,10 @@ abstract class PublicPackageJsonTask :
     DefaultTask(),
     UsesKotlinNpmResolutionManager {
 
-    private val nodeJs: NodeJsRootExtension
-        get() = project.rootProject.kotlinNodeJsExtension
-
     @get:Internal
     abstract val compilationDisambiguatedName: Property<String>
 
     private val projectPath = project.path
-
-    private val rootResolver: KotlinRootNpmResolver
-        get() = nodeJs.resolver
 
     @get:Input
     val projectVersion = project.version.toString()
@@ -68,19 +60,16 @@ abstract class PublicPackageJsonTask :
         }
     }
 
-    @get:Internal
-    internal val components by lazy {
-        rootResolver.allResolvedConfigurations
-    }
-
-    @get:Input
-    val externalDependencies: Collection<NpmDependencyDeclaration>
+    private val compilationResolution: PreparedKotlinCompilationNpmResolution
         get() = npmResolutionManager.get().resolution.get()[projectPath][compilationDisambiguatedName.get()]
             .getResolutionOrPrepare(
                 npmResolutionManager.get(),
-                logger,
-                components
-            ).externalNpmDependencies
+                logger
+            )
+
+    @get:Input
+    val externalDependencies: Collection<NpmDependencyDeclaration>
+        get() = compilationResolution.externalNpmDependencies
 
     private val defaultPackageJsonFile by lazy {
         project.layout.buildDirectory

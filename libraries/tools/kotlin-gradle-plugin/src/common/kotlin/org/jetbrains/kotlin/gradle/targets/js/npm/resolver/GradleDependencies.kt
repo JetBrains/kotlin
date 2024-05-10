@@ -5,25 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
-import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.ResolvedArtifact
+import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.initialization.IncludedBuild
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Optional
 import java.io.File
 import java.io.Serializable
 
 data class ExternalGradleDependency(
-    val module: String,
-    val version: String?,
-    val artifact: File
+    val dependency: ResolvedDependency,
+    val artifact: ResolvedArtifact
 ) : Serializable
 
 data class FileCollectionExternalGradleDependency(
-    @InputFiles
     val files: Collection<File>,
-    @Input
-    @Optional
     val dependencyVersion: String?
 ) : Serializable
 

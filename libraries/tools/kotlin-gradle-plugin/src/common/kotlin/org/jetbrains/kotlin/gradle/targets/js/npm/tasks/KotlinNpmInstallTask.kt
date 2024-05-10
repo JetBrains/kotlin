@@ -9,7 +9,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
@@ -22,8 +21,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.asNodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.gradle.utils.listProperty
-import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import java.io.File
 
 @DisableCachingByDefault
@@ -71,16 +68,15 @@ abstract class KotlinNpmInstallTask :
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
-    val packageJsonFiles: ListProperty<RegularFile> = project.objects.listProperty<RegularFile>().value(
-        project.objects.providerWithLazyConvention {
-            rootResolver.projectResolvers.values
-                .flatMap { it.compilationResolvers }
-                .map { it.npmProject.name }
-                .map { name ->
-                    packagesDir.map { dir -> dir.dir(name).file(NpmProject.PACKAGE_JSON) }.get()
-                }
-        }
-    )
+    val packageJsonFiles: List<RegularFile> by lazy {
+        rootResolver.projectResolvers.values
+            .flatMap { it.compilationResolvers }
+            .map { it.compilationNpmResolution }
+            .map { resolution ->
+                val name = resolution.npmProjectName
+                packagesDir.map { it.dir(name).file(NpmProject.PACKAGE_JSON) }.get()
+            }
+    }
 
     @get:OutputFiles
     val additionalFiles: FileCollection by lazy {
@@ -103,11 +99,6 @@ abstract class KotlinNpmInstallTask :
     val yarnLock: File
         get() = yarnLockFile.getFile()
 
-    @get:Internal
-    internal val components by lazy {
-        rootResolver.allResolvedConfigurations
-    }
-
     // node_modules as OutputDirectory is performance problematic
     // so input will only be existence of its directory
     @get:Internal
@@ -121,8 +112,7 @@ abstract class KotlinNpmInstallTask :
                 services = services,
                 logger = logger,
                 nodsJsEnvironment,
-                packageManagerEnv,
-                components,
+                packageManagerEnv
             ) ?: throw (npmResolutionManager.get().state as KotlinNpmResolutionManager.ResolutionState.Error).wrappedException
     }
 

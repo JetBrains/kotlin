@@ -34,7 +34,6 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
 
     @MppGradlePluginTests
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @DisplayName("works in JS")
     fun testBrokenTcaInJs(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
@@ -58,7 +57,6 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
 
     @MppGradlePluginTests
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @DisplayName("works in MPP") // aka KT-56131
     fun testBrokenTcaInMpp(gradleVersion: GradleVersion) {
         project("new-mpp-lib-with-tests", gradleVersion) {

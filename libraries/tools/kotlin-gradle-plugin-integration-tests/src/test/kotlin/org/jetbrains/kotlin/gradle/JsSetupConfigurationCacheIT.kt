@@ -27,7 +27,6 @@ class JsSetupConfigurationCacheIT : KGPBaseTest() {
     // hack to be run on Mac m*
     @DisplayName("Check Node.JS setup on different platforms")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun checkNodeJsSetup(gradleVersion: GradleVersion) {
         project(
             "kotlin-js-browser-project",
@@ -45,7 +44,6 @@ class JsSetupConfigurationCacheIT : KGPBaseTest() {
     // hack to be run on Mac m*
     @DisplayName("Check Node.JS setup on different platforms with Yarn")
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     fun checkNodeJsSetupYarn(gradleVersion: GradleVersion) {
         project(
             "kotlin-js-browser-project",
