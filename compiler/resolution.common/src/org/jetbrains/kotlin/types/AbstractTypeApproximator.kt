@@ -197,18 +197,54 @@ abstract class AbstractTypeApproximator(
     ): SimpleTypeMarker? {
         if (!toSuper) return null
         if (!conf.localTypes && !conf.anonymous) return null
+
+        fun TypeConstructorMarker.isAcceptable(conf: TypeApproximatorConfiguration): Boolean {
+            return !(conf.localTypes && isLocalType()) && !(conf.anonymous && isAnonymous())
+        }
+
         val constructor = type.typeConstructor()
-        val needApproximate = (conf.localTypes && constructor.isLocalType()) || (conf.anonymous && constructor.isAnonymous())
-        if (!needApproximate) return null
-        val superConstructor = constructor.supertypes().first().typeConstructor()
+        if (constructor.isAcceptable(conf)) return null
         val typeCheckerContext = newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )
-        val result = AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, superConstructor)
-            .firstOrNull()
-            ?.withNullability(type.isMarkedNullable())
-            ?: return null
+
+        var result: SimpleTypeMarker? = null
+
+        if (isK2) {
+            // BFS for non-local/anonymous supertype:
+            // search for non-local supertypes in the super types of the given type,
+            // then it their respective super types, etc.
+            // Ignore `Any`.
+            // If no suitable type is found, return `Any`.
+            val visited = mutableSetOf<SimpleTypeMarker>()
+            val queue = ArrayDeque<SimpleTypeMarker>().apply { add(type) }
+
+            while (queue.isNotEmpty()) {
+                val currentType = queue.removeFirst()
+                if (!visited.add(currentType)) continue
+                val currentConstructor = currentType.typeConstructor()
+                if (currentConstructor.isAcceptable(conf)) {
+                    result = currentType.withNullability(type.isMarkedNullable())
+                    break
+                }
+                currentConstructor.supertypes()
+                    .flatMap { AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, it.typeConstructor()) }
+                    .filterTo(queue) { !it.typeConstructor().isAnyConstructor() }
+            }
+
+            if (result == null) {
+                result = ctx.anyType().withNullability(type.isMarkedNullable())
+            }
+        } else {
+            val superConstructor = constructor.supertypes().first().typeConstructor()
+            result = AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, superConstructor)
+                .firstOrNull()
+                ?.withNullability(type.isMarkedNullable())
+        }
+
+        if (result == null) return null
+
         /*
          * AbstractTypeChecker captures any projections in the super type by default, which may lead to the situation, when some local
          *   type with projection is approximated to some public type with captured (from subtyping) type argument (which is obviously

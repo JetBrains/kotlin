@@ -1,2 +1,2 @@
 expression: B()
-type: A
+type: kotlin.Any
