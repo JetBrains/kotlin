@@ -50,7 +50,7 @@ private fun ConeKotlinType.substituteAlternativesInPublicType(session: FirSessio
     val substitutor = object : AbstractConeSubstitutor(session.typeContext) {
         override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
             if (type !is ConeIntersectionType) return null
-            val alternativeType = type.alternativeType ?: return null
+            val alternativeType = type.upperBoundForApproximation ?: return null
             return substituteOrSelf(alternativeType)
         }
     }

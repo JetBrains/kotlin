@@ -259,7 +259,7 @@ class CallAndReferenceGenerator(
     private fun approximateFunctionReferenceParameterType(typeProjection: ConeTypeProjection): ConeTypeProjection {
         if (typeProjection.isStarProjection) return typeProjection
         val intersectionType = typeProjection as? ConeIntersectionType ?: return typeProjection
-        val newType = intersectionType.alternativeType
+        val newType = intersectionType.upperBoundForApproximation
             ?: session.typeContext.commonSuperType(intersectionType.intersectedTypes.toList()) as? ConeKotlinType
             ?: return typeProjection
         return newType.toTypeProjection(typeProjection.kind)

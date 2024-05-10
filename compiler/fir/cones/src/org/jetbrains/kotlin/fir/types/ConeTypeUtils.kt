@@ -97,7 +97,7 @@ fun ConeIntersectionType.withAlternative(alternativeType: ConeKotlinType): ConeI
 }
 
 fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes.map(func), alternativeType?.let(func))
+    return ConeIntersectionType(intersectedTypes.map(func), upperBoundForApproximation?.let(func))
 }
 
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {

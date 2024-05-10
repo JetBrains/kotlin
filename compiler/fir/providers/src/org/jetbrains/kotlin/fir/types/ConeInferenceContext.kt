@@ -100,7 +100,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             } else {
                 ConeIntersectionType(
                     constructor.intersectedTypes.map { it.withAttributes(coneAttributes) },
-                    constructor.alternativeType?.withAttributes(coneAttributes)
+                    constructor.upperBoundForApproximation?.withAttributes(coneAttributes)
                 )
             }
             else -> error("!")
