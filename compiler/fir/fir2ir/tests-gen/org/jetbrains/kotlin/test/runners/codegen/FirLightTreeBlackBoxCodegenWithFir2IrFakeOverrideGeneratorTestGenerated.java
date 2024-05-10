@@ -37068,6 +37068,12 @@ public class FirLightTreeBlackBoxCodegenWithFir2IrFakeOverrideGeneratorTestGener
     }
 
     @Test
+    @TestMetadata("signatureConflictHiddenByTypeParameter.kt")
+    public void testSignatureConflictHiddenByTypeParameter() {
+      runTest("compiler/testData/codegen/box/localClass/signatureConflictHiddenByTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("tryCatch.kt")
     public void testTryCatch() {
       runTest("compiler/testData/codegen/box/localClass/tryCatch.kt");

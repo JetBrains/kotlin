@@ -31567,6 +31567,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/localClass/objectExpressionInProperty.kt");
     }
 
+    @TestMetadata("signatureConflictHiddenByTypeParameter.kt")
+    public void testSignatureConflictHiddenByTypeParameter() {
+      runTest("compiler/testData/codegen/box/localClass/signatureConflictHiddenByTypeParameter.kt");
+    }
+
     @TestMetadata("tryCatch.kt")
     public void testTryCatch() {
       runTest("compiler/testData/codegen/box/localClass/tryCatch.kt");

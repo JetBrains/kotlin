@@ -74,6 +74,12 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
   }
 
   @Test
+  @TestMetadata("signatureConflictHiddenByTypeParameter.kt")
+  public void testSignatureConflictHiddenByTypeParameter() {
+    runTest("compiler/testData/diagnostics/testsWithJvmBackend/signatureConflictHiddenByTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("suspendInlineCycle.kt")
   public void testSuspendInlineCycle() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle.kt");

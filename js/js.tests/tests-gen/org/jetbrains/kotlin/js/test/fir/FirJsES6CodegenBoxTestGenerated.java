@@ -26472,6 +26472,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("signatureConflictHiddenByTypeParameter.kt")
+    public void testSignatureConflictHiddenByTypeParameter() {
+      runTest("compiler/testData/codegen/box/localClass/signatureConflictHiddenByTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("tryCatch.kt")
     public void testTryCatch() {
       runTest("compiler/testData/codegen/box/localClass/tryCatch.kt");
