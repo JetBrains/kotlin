@@ -536,7 +536,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         if (field is FirJavaField && field.isStatic && field.isFinal && parentIsExternal) {
             // We are going to create IR for Java static final fields lazily because they can refer to some Kotlin const.
             // This way we delay const evaluation of Java fields until IR tree is fully built, and we can run IR interpreter.
-            return lazyDeclarationsGenerator.createIrLazyField(field, symbol, irParent!!, origin).apply {
+            return lazyDeclarationsGenerator.createIrLazyField(field, symbol, irParent!!, origin, irPropertySymbol = null).apply {
                 setParent(irParent)
                 addDeclarationToParent(this, irParent)
             }

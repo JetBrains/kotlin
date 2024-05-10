@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.fir.backend.utils
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.backend.utils.UseSiteKind.*
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -25,8 +27,10 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -177,7 +181,26 @@ private fun Fir2IrComponents.toIrSymbol(
         is FirConstructorSymbol -> declarationStorage.getIrConstructorSymbol(symbol.fir.originalConstructorIfTypeAlias?.symbol ?: symbol)
         is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(symbol, fakeOverrideOwnerLookupTag)
         is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(symbol, fakeOverrideOwnerLookupTag)
-        is FirFieldSymbol -> declarationStorage.getOrCreateIrField(symbol, fakeOverrideOwnerLookupTag).symbol
+        is FirFieldSymbol -> if (configuration.useFirBasedFakeOverrideGenerator) {
+            @OptIn(FirBasedFakeOverrideGenerator::class)
+            declarationStorage.getOrCreateIrField(symbol, fakeOverrideOwnerLookupTag).symbol
+        } else {
+            when (useSite) {
+                Reference -> declarationStorage.getIrSymbolForField(symbol, fakeOverrideOwnerLookupTag)
+                else -> {
+                    val originalSymbol = symbol.unwrapFakeOverrides()
+                    val ownerLookupTag = when {
+                        originalSymbol.isJavaOrEnhancement -> null
+                        else -> fakeOverrideOwnerLookupTag
+                    }
+                    val propertySymbol = declarationStorage.getIrSymbolForField(
+                        originalSymbol,
+                        fakeOverrideOwnerLookupTag = ownerLookupTag
+                    ) as IrPropertySymbol
+                    declarationStorage.findBackingFieldOfProperty(propertySymbol)
+                }
+            }
+        }
         is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(symbol)
         is FirDelegateFieldSymbol -> declarationStorage.getIrDelegateFieldSymbol(symbol)
         is FirVariableSymbol<*> -> declarationStorage.getIrValueSymbol(symbol)

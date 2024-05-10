@@ -330,7 +330,14 @@ class FirClassSubstitutionScope(
         // TODO: do we have fields with implicit type?
         val newReturnType = returnType?.substitute() ?: return original
 
-        return FirFakeOverrideGenerator.createSubstitutionOverrideField(session, member, derivedClassLookupTag, newReturnType, origin)
+        return FirFakeOverrideGenerator.createSubstitutionOverrideField(
+            session,
+            member,
+            derivedClassLookupTag,
+            newReturnType,
+            newDispatchReceiverType = dispatchReceiverTypeForSubstitutedMembers,
+            origin
+        )
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {

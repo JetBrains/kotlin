@@ -165,23 +165,29 @@ class CallAndReferenceGenerator(
             }
 
             fun convertReferenceToField(fieldSymbol: FirFieldSymbol): IrExpression? {
-                val irFieldSymbol = fieldSymbol.toSymbolForCall() as? IrFieldSymbol ?: return null
-
                 val field = fieldSymbol.fir
-                val propertySymbol = declarationStorage.findPropertyForBackingField(irFieldSymbol)
-                    ?: run {
-                        // In case of [IrField] without the corresponding property, we've created it directly from [FirField].
-                        // Since it's used as a field reference, we need a bogus property as a placeholder.
-                        @OptIn(UnsafeDuringIrConstructionAPI::class)
-                        declarationStorage.getOrCreateIrPropertyByPureField(fieldSymbol.fir, irFieldSymbol.owner.parent).symbol
-                    }
+                val irFieldSymbol: IrFieldSymbol
+                val irPropertySymbol: IrPropertySymbol
+                if (configuration.useFirBasedFakeOverrideGenerator) {
+                    irFieldSymbol = fieldSymbol.toSymbolForCall() as? IrFieldSymbol ?: return null
+                    irPropertySymbol = declarationStorage.findPropertyForBackingField(irFieldSymbol)
+                        ?: run {
+                            // In case of [IrField] without the corresponding property, we've created it directly from [FirField].
+                            // Since it's used as a field reference, we need a bogus property as a placeholder.
+                            @OptIn(UnsafeDuringIrConstructionAPI::class, FirBasedFakeOverrideGenerator::class)
+                            declarationStorage.getOrCreateIrPropertyByPureField(fieldSymbol.fir, irFieldSymbol.owner.parent).symbol
+                        }
+                } else {
+                    irPropertySymbol = fieldSymbol.toSymbolForCall() as IrPropertySymbol
+                    irFieldSymbol = declarationStorage.findBackingFieldOfProperty(irPropertySymbol)!!
+                }
                 return IrPropertyReferenceImpl(
                     startOffset, endOffset, type,
-                    propertySymbol,
+                    irPropertySymbol,
                     typeArgumentsCount = 0,
                     field = irFieldSymbol,
-                    getter = runIf(!field.isStatic) { declarationStorage.findGetterOfProperty(propertySymbol) },
-                    setter = runIf(!field.isStatic) { declarationStorage.findSetterOfProperty(propertySymbol) },
+                    getter = runIf(!field.isStatic) { declarationStorage.findGetterOfProperty(irPropertySymbol) },
+                    setter = runIf(!field.isStatic) { declarationStorage.findSetterOfProperty(irPropertySymbol) },
                     origin
                 ).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
             }

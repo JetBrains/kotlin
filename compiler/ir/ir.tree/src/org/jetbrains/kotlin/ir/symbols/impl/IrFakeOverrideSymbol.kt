@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.*
@@ -65,3 +66,12 @@ class IrPropertyFakeOverrideSymbol(
 ) : IrFakeOverrideSymbolBase<IrPropertySymbol, IrProperty, PropertyDescriptor>(
     originalSymbol, containingClassSymbol, idSignature
 ), IrPropertySymbol
+
+class IrFieldFakeOverrideSymbol(
+    originalSymbol: IrFieldSymbol,
+    containingClassSymbol: IrClassSymbol,
+    idSignature: IdSignature?,
+    val correspondingPropertySymbol: IrPropertySymbol
+) : IrFakeOverrideSymbolBase<IrFieldSymbol, IrField, PropertyDescriptor>(
+    originalSymbol, containingClassSymbol, idSignature
+), IrFieldSymbol

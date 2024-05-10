@@ -190,6 +190,7 @@ class FakeOverrideGenerator(
                                 session, firField,
                                 derivedClassLookupTag = firClass.symbol.toLookupTag(),
                                 newReturnType = firField.returnTypeRef.coneType,
+                                newDispatchReceiverType = null,
                                 origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
                             )
                         },
@@ -238,13 +239,25 @@ class FakeOverrideGenerator(
 
     internal fun computeBaseSymbolsWithContainingClass(
         klass: FirClass,
-        originalFunction: FirPropertySymbol,
+        originalProperty: FirPropertySymbol,
     ): List<Pair<FirPropertySymbol, ConeClassLikeLookupTag>> {
         return computeBaseSymbolsWithContainingClass(
             klass,
-            originalFunction,
+            originalProperty,
             FirTypeScope::getDirectOverriddenProperties,
             FirTypeScope::processOverriddenProperties
+        )
+    }
+
+    internal fun computeBaseSymbolsWithContainingClass(
+        klass: FirClass,
+        originalField: FirFieldSymbol,
+    ): List<Pair<FirFieldSymbol, ConeClassLikeLookupTag>> {
+        return computeBaseSymbolsWithContainingClass(
+            klass,
+            originalField,
+            directOverridden = { listOfNotNull(originalField.originalIfFakeOverride()) },
+            processOverridden = { _, _ -> shouldNotBeCalled() }
         )
     }
 
@@ -509,6 +522,26 @@ class FakeOverrideGenerator(
                 newDispatchReceiverType = containingClass.defaultType(),
                 origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
                 isExpect = containingClass.isExpect || firProperty.isExpect
+            )
+        }
+    }
+
+    internal fun createFirFieldFakeOverrideIfNeeded(
+        originalField: FirField,
+        dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+        irClass: IrClass,
+    ): FirField? {
+        val originalSymbol = originalField.symbol
+        return createFirFakeOverrideIfNeeded(
+            dispatchReceiverLookupTag, irClass, originalSymbol
+        ) { firField ->
+            val containingClass = dispatchReceiverLookupTag.toFirRegularClass(session)!!
+            FirFakeOverrideGenerator.createSubstitutionOverrideField(
+                session,
+                firField,
+                derivedClassLookupTag = dispatchReceiverLookupTag,
+                newDispatchReceiverType = containingClass.defaultType(),
+                origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
             )
         }
     }

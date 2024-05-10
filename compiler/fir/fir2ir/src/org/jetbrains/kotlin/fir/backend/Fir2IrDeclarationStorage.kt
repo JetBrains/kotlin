@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -58,6 +60,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.concurrent.ConcurrentHashMap
 
@@ -232,17 +237,23 @@ class Fir2IrDeclarationStorage(
     }
 
     // For pure fields (from Java) only
+    @FirBasedFakeOverrideGenerator
     private val fieldToPropertyCache: ConcurrentHashMap<Pair<FirField, IrDeclarationParent>, IrProperty> = ConcurrentHashMap()
 
     private val delegatedReverseCache: ConcurrentHashMap<IrSymbol, FirDeclaration> = ConcurrentHashMap()
 
+    @FirBasedFakeOverrideGenerator
     private val fieldCache: ConcurrentHashMap<FirField, IrFieldSymbol> = commonMemberStorage.fieldCache
 
     private data class FieldStaticOverrideKey(val lookupTag: ConeClassLikeLookupTag, val name: Name)
 
+    @FirBasedFakeOverrideGenerator
     private val fieldStaticOverrideCache: ConcurrentHashMap<FieldStaticOverrideKey, IrFieldSymbol> = ConcurrentHashMap()
 
     private val localStorage: Fir2IrLocalCallableStorage by threadLocal { Fir2IrLocalCallableStorage() }
+
+    // TODO: move to common storage
+    private val propertyForFieldCache: ConcurrentHashMap<FirField, IrPropertySymbol> = ConcurrentHashMap()
 
     // ------------------------------------ package fragments ------------------------------------
 
@@ -821,6 +832,186 @@ class Fir2IrDeclarationStorage(
 
     // ------------------------------------ fields ------------------------------------
 
+    /**
+     * @return [IrFieldSymbol] if [firFieldSymbol] is a field for supertype delegating
+     * @return [IrPropertySymbol] if [firFieldSymbol] is a java field or fake-override of it
+     */
+    fun getIrSymbolForField(
+        firFieldSymbol: FirFieldSymbol,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?
+    ): IrSymbol {
+        val field = firFieldSymbol.fir
+        val originalField = field.unwrapFakeOverrides()
+
+        @Suppress("NAME_SHADOWING")
+        val fakeOverrideOwnerLookupTag = fakeOverrideOwnerLookupTag ?: runIf(field !== originalField) {
+            field.dispatchReceiverClassLookupTagOrNull()
+        }
+        return when {
+            originalField.origin == FirDeclarationOrigin.Synthetic.DelegateField ->
+                getIrSymbolForSupertypeDelegateField(originalField, fakeOverrideOwnerLookupTag)
+
+            originalField.isJavaOrEnhancement -> getIrPropertySymbolForJavaField(field, fakeOverrideOwnerLookupTag)
+
+            else -> errorWithAttachment("Unknown field kind. Only java fields and fields for supertype delegation are supported") {
+                withFirEntry("field", field)
+                withFirEntry("originalField", originalField)
+            }
+        }
+    }
+
+    private fun getIrSymbolForSupertypeDelegateField(
+        field: FirField,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?
+    ): IrFieldSymbol {
+        requireWithAttachment(
+            fakeOverrideOwnerLookupTag == null || field.dispatchReceiverClassLookupTagOrNull() == fakeOverrideOwnerLookupTag,
+            { "Field for supertype delegate accessed with incorrect fakeOverrideOwnerLookupTag" }
+        ) {
+            withEntry("fakeOverrideOwnerLookupTag", fakeOverrideOwnerLookupTag.toString())
+            withFirEntry("field", field)
+        }
+        @OptIn(FirBasedFakeOverrideGenerator::class)
+        return fieldCache.getOrPut(field) { createFieldSymbol() }
+    }
+
+    private fun getIrPropertySymbolForJavaField(
+        field: FirField,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?
+    ): IrPropertySymbol {
+        getCachedIrSymbolForJavaField(field, fakeOverrideOwnerLookupTag)?.let { return it }
+
+        val symbols = createAndCachePropertySymbolsForJavaField(field, fakeOverrideOwnerLookupTag)
+        return symbols.propertySymbol
+    }
+
+    private fun createAndCachePropertySymbolsForJavaField(
+        field: FirField,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?
+    ): PropertySymbols {
+        val irParent = findIrParent(field, fakeOverrideOwnerLookupTag)
+        requireNotNull(irParent) { "No IR parent found for field ${field.render()}" }
+
+        val buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {
+            withFirEntry("field", field)
+            withEntry("fakeOverrideOwnerLookupTag", fakeOverrideOwnerLookupTag.toString())
+            withEntry("irParent", irParent.render())
+        }
+
+        val isFakeOverride = field.isFakeOverride(fakeOverrideOwnerLookupTag)
+        val staticFakeOverride = isFakeOverride && field.isStatic
+        val parentIsExternal = irParent.isExternalParent()
+
+        if (staticFakeOverride && !parentIsExternal) {
+            errorWithAttachment(
+                "Fake-overrides for static field in non-external classes are not allowed",
+                buildAttachment = buildAttachment
+            )
+        }
+
+        val symbols = if (isFakeOverride && !staticFakeOverride && !parentIsExternal) {
+            /**
+             * At this point `field` may be an unwrapped substitution override, so we need to take the most
+             *   original field to create f/o symbol
+             * This is needed for cases of complex `Java -> Kotlin -> Java -> Kotlin` hierarchies,
+             *   see the test compiler/testData/codegen/box/fakeOverride/fieldInJKJKHierarchy.kt
+             */
+            createFakeOverridePropertySymbolsForJavaField(field.unwrapFakeOverrides(), fakeOverrideOwnerLookupTag)
+        } else {
+            requireWithAttachment(
+                irParent.isExternalParent(),
+                { "Non f/o field with non-external parent" },
+                buildAttachment = buildAttachment
+            )
+
+            val fieldSymbol = createFieldSymbol()
+            val propertySymbol = IrPropertySymbolImpl()
+            val origin = field.computeExternalOrigin()
+
+            @OptIn(FirBasedFakeOverrideGenerator::class)
+            val firForLazyField = calculateFirForLazyDeclaration(
+                field, fakeOverrideOwnerLookupTag, irParent,
+                fakeOverrideGenerator::createFirFieldFakeOverrideIfNeeded
+            )
+
+            lazyDeclarationsGenerator.createIrPropertyForPureField(firForLazyField, fieldSymbol, propertySymbol, irParent, origin)
+            PropertySymbols(
+                propertySymbol,
+                getterSymbol = null,
+                setterSymbol = null,
+                backingFieldSymbol = fieldSymbol
+            )
+        }
+        cacheIrPropertySymbolsForPureField(field, symbols, fakeOverrideOwnerLookupTag, isFakeOverride)
+        return symbols
+    }
+
+    private fun cacheIrPropertySymbolsForPureField(
+        field: FirField,
+        symbols: PropertySymbols,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+        isFakeOverride: Boolean
+    ) {
+        val irPropertySymbol = symbols.propertySymbol
+        symbols.backingFieldSymbol?.let {
+            backingFieldForPropertyCache[irPropertySymbol] = it
+            propertyForBackingFieldCache[it] = irPropertySymbol
+        }
+        if (isFakeOverride) {
+            val originalField = field.unwrapFakeOverrides()
+            val key = FakeOverrideIdentifier(
+                originalField.symbol,
+                fakeOverrideOwnerLookupTag ?: field.containingClassLookupTag()!!,
+                c
+            )
+            irForFirSessionDependantDeclarationMap[key] = irPropertySymbol
+        } else {
+            propertyForFieldCache[field] = irPropertySymbol
+        }
+    }
+
+    private fun createFakeOverridePropertySymbolsForJavaField(
+        field: FirField,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?
+    ): PropertySymbols {
+        val originalPropertySymbol = getIrPropertySymbolForJavaField(field, fakeOverrideOwnerLookupTag = null)
+        val originalFieldSymbol = findBackingFieldOfProperty(originalPropertySymbol)
+        requireWithAttachment(
+            originalFieldSymbol != null,
+            { "No original backing field found for f/o field" }
+        ) {
+            withFirEntry("field", field)
+            withEntry("fakeOverrideOwnerLookupTag", fakeOverrideOwnerLookupTag.toString())
+        }
+
+        val containingClassSymbol = findContainingIrClassSymbol(field, fakeOverrideOwnerLookupTag)
+        val propertySymbol = IrPropertyFakeOverrideSymbol(originalPropertySymbol, containingClassSymbol, idSignature = null)
+        val fieldSymbol = IrFieldFakeOverrideSymbol(
+            originalFieldSymbol,
+            containingClassSymbol,
+            idSignature = null,
+            correspondingPropertySymbol = propertySymbol
+        )
+        return PropertySymbols(
+            propertySymbol,
+            getterSymbol = null,
+            setterSymbol = null,
+            backingFieldSymbol = fieldSymbol
+        )
+    }
+
+    private fun getCachedIrSymbolForJavaField(field: FirField, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?): IrPropertySymbol? {
+        return getCachedIrCallableSymbol(
+            declaration = field,
+            fakeOverrideOwnerLookupTag,
+            cacheGetter = propertyForFieldCache::get,
+            cacheSetter = propertyForFieldCache::set,
+            signatureCalculator = { null },
+            referenceIfAny = { null }
+        )
+    }
+
+    @FirBasedFakeOverrideGenerator
     fun getOrCreateIrPropertyByPureField(
         field: FirField,
         irParent: IrDeclarationParent
@@ -836,6 +1027,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    @FirBasedFakeOverrideGenerator
     fun getOrCreateIrField(
         firFieldSymbol: FirFieldSymbol,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
@@ -863,12 +1055,14 @@ class Fir2IrDeclarationStorage(
 
     // TODO: there is a mess with methods for fields
     //   we have three (!) different functions to getOrCreate field in different circumstances
+    @FirBasedFakeOverrideGenerator
     fun getOrCreateIrField(field: FirField, irParent: IrDeclarationParent?): IrField {
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         getCachedIrFieldSymbol(field, irParent)?.ownerIfBound()?.let { return it }
         return createAndCacheIrField(field, irParent)
     }
 
+    @FirBasedFakeOverrideGenerator
     private fun getCachedIrFieldSymbol(field: FirField, irParent: IrDeclarationParent?): IrFieldSymbol? {
         val containingClassLookupTag = (irParent as IrClass?)?.classId?.toLookupTag()
         val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(field, containingClassLookupTag)
@@ -879,6 +1073,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    @FirBasedFakeOverrideGenerator
     private fun createAndCacheIrField(
         field: FirField,
         irParent: IrDeclarationParent?,
@@ -904,6 +1099,7 @@ class Fir2IrDeclarationStorage(
     }
 
     // This function returns null if this field/ownerClassId combination does not describe static fake override
+    @FirBasedFakeOverrideGenerator
     private fun getFieldStaticFakeOverrideKey(field: FirField, ownerLookupTag: ConeClassLikeLookupTag?): FieldStaticOverrideKey? {
         if (ownerLookupTag == null || !field.isStatic ||
             !field.isSubstitutionOrIntersectionOverride && ownerLookupTag == field.containingClassLookupTag()
@@ -936,19 +1132,23 @@ class Fir2IrDeclarationStorage(
     }
 
     fun getCachedIrFieldSymbolForSupertypeDelegateField(field: FirField): IrFieldSymbol? {
+        @OptIn(FirBasedFakeOverrideGenerator::class)
         return fieldCache[field]
     }
 
     fun recordSupertypeDelegateFieldMappedToBackingField(field: FirField, irFieldSymbol: IrFieldSymbol) {
+        @OptIn(FirBasedFakeOverrideGenerator::class)
         fieldCache[field] = irFieldSymbol
     }
 
     fun getCachedIrFieldStaticFakeOverrideSymbolByDeclaration(field: FirField): IrFieldSymbol? {
         val ownerLookupTag = field.containingClassLookupTag() ?: return null
+        @OptIn(FirBasedFakeOverrideGenerator::class)
         return fieldStaticOverrideCache[FieldStaticOverrideKey(ownerLookupTag, field.name)]
     }
 
     internal fun createSupertypeDelegateIrField(field: FirField, irClass: IrClass): IrField {
+        @OptIn(FirBasedFakeOverrideGenerator::class)
         return createAndCacheIrField(
             field,
             irParent = irClass,
@@ -1535,11 +1735,7 @@ class Fir2IrDeclarationStorage(
         val firBasedSymbol = callableDeclaration.symbol
         val callableId = firBasedSymbol.callableId
         val callableOrigin = callableDeclaration.origin
-        val parentLookupTag = when {
-            // non-static fields can not be fake overrides
-            firBasedSymbol is FirFieldSymbol && !firBasedSymbol.isStatic -> callableDeclaration.containingClassLookupTag()
-            else -> fakeOverrideOwnerLookupTag ?: callableDeclaration.containingClassLookupTag()
-        }
+        val parentLookupTag = fakeOverrideOwnerLookupTag ?: callableDeclaration.containingClassLookupTag()
         return findIrParent(
             callableId.packageName,
             parentLookupTag,

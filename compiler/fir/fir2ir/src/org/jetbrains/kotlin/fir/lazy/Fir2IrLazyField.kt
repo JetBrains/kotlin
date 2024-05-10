@@ -40,6 +40,7 @@ class Fir2IrLazyField(
     override val fir: FirField,
     val containingClass: FirRegularClass?,
     override val symbol: IrFieldSymbol,
+    correspondingPropertySymbol: IrPropertySymbol?
 ) : IrField(), AbstractFir2IrLazyDeclaration<FirField>, Fir2IrComponents by c {
     init {
         symbol.bind(this)
@@ -83,8 +84,7 @@ class Fir2IrLazyField(
         }
     }
 
-    override var correspondingPropertySymbol: IrPropertySymbol?
-        get() = null
+    override var correspondingPropertySymbol: IrPropertySymbol? = correspondingPropertySymbol
         set(_) = mutationNotSupported()
 
     override var metadata: MetadataSource?

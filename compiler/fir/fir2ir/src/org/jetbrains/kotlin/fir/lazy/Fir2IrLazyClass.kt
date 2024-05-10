@@ -212,9 +212,22 @@ class Fir2IrLazyClass(
                 scope.processPropertiesByName(name) { symbol ->
                     when {
                         !shouldBuildStub(symbol.fir) -> {}
-                        symbol is FirFieldSymbol && !isStaticFromSuperInterface(symbol.fir) -> {
-                            val field = declarationStorage.getOrCreateIrField(symbol.fir, this)
-                            result += createFieldOnlyProperty(field)
+                        symbol is FirFieldSymbol -> {
+                            if (configuration.useFirBasedFakeOverrideGenerator) {
+                                if (!isStaticFromSuperInterface(symbol.fir)) {
+                                    val field = declarationStorage.getOrCreateIrField(symbol.fir, this)
+                                    result += createFieldOnlyProperty(field)
+                                }
+                            } else {
+                                if (!symbol.isStatic) {
+                                    // Lazy declarations are created together with their symbol, so it's safe to take the owner here
+                                    @OptIn(UnsafeDuringIrConstructionAPI::class)
+                                    result += declarationStorage.getIrSymbolForField(
+                                        symbol,
+                                        fakeOverrideOwnerLookupTag = lookupTag
+                                    ).owner as IrProperty
+                                }
+                            }
                         }
                         symbol is FirPropertySymbol -> {
                             // Lazy declarations are created together with their symbol, so it's safe to take the owner here
