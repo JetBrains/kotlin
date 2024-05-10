@@ -27,7 +27,6 @@ fun createInteropLibrary(
     metadata: KlibModuleMetadata,
     outputPath: String,
     moduleName: String,
-    libraryVersion: String,
     nativeBitcodeFiles: List<String>,
     target: KonanTarget,
     manifest: Properties,
@@ -37,7 +36,7 @@ fun createInteropLibrary(
     staticLibraries: List<String>
 ) {
     val version = KotlinLibraryVersioning(
-            libraryVersion = libraryVersion,
+            libraryVersion = null,
             abiVersion = KotlinAbiVersion.CURRENT,
             compilerVersion = KotlinCompilerVersion.VERSION,
             metadataVersion = KlibMetadataVersion.INSTANCE.toString(),

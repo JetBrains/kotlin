@@ -47,7 +47,12 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-library", shortName = "-l", valueDescription = "<path>", description = "Link with the given library.", delimiter = Argument.Delimiters.none)
     var libraries: Array<String>? = null
 
-    @Argument(value = "-library-version", shortName = "-lv", valueDescription = "<version>", description = "Set the library version.")
+    @Argument(
+        value = "-library-version",
+        shortName = "-lv",
+        valueDescription = "<version>",
+        description = "The library version.\nNote: This option is deprecated and will be removed in one of the future releases."
+    )
     var libraryVersion: String? = null
 
     @Argument(value = "-list-targets", deprecatedName = "-list_targets", description = "List available hardware targets.")

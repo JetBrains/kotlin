@@ -60,8 +60,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("overridden compiler distribution path")
         val LIBRARY_FILES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("library file paths")
-        val LIBRARY_VERSION: CompilerConfigurationKey<String?>
-                = CompilerConfigurationKey.create("library version")
         val LIGHT_DEBUG: CompilerConfigurationKey<Boolean?>
                 = CompilerConfigurationKey.create("add light debug information")
         val GENERATE_DEBUG_TRAMPOLINE: CompilerConfigurationKey<Boolean?>

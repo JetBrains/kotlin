@@ -37,11 +37,10 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
     val shortLibraryName = config.shortModuleName
     val abiVersion = KotlinAbiVersion.CURRENT
     val compilerVersion = KotlinCompilerVersion.getVersion().toString()
-    val libraryVersion = configuration.get(KonanConfigKeys.LIBRARY_VERSION)
     val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
     val versions = KotlinLibraryVersioning(
             abiVersion = abiVersion,
-            libraryVersion = libraryVersion,
+            libraryVersion = null,
             compilerVersion = compilerVersion,
             metadataVersion = metadataVersion,
     )

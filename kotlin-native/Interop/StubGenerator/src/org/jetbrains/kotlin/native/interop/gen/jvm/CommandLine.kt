@@ -47,8 +47,12 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             .multiple().delimiter(",")
     val library by argParser.option(ArgType.String, shortName = "l", description = "library to use for building")
             .multiple()
-    val libraryVersion by argParser.option(ArgType.String, shortName = "lv", description = "resulting interop library version")
-            .default("unspecified")
+    val libraryVersion by argParser.option(
+            ArgType.String,
+            shortName = "lv",
+            description = "resulting interop library version",
+            deprecatedWarning = "'-libraryVersion' ('-lv') option is deprecated and will be removed in one of the future releases"
+    )
 
     // TODO: remove after 2.0, KT-61098
     val repo by argParser.option(

@@ -68,8 +68,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(PRODUCE, outputKind)
     putIfNotNull(HEADER_KLIB, arguments.headerKlibPath)
 
-    arguments.libraryVersion?.let { put(LIBRARY_VERSION, it) }
-
     arguments.mainPackage?.let { put(ENTRY, it) }
     arguments.manifestFile?.let { put(MANIFEST_FILE, it) }
     arguments.runtimeFile?.let { put(RUNTIME_FILE, it) }
