@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM_IR
+// IGNORE_CODEGEN_WITH_FIR2IR_FAKE_OVERRIDE_GENERATION
 // Field VS property: case 3.1
 // See KT-54393 for details
 
