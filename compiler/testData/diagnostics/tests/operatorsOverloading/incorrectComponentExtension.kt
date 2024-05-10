@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class DummyClass001
 
 fun DummyClass001.component1() = "1"
