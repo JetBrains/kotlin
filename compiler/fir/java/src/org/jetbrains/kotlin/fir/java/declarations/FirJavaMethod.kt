@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -54,6 +56,8 @@ class FirJavaMethod @FirImplementationDetail constructor(
         this.resolveState = resolvePhase.asResolveState()
     }
 
+    private val typeParameterBoundsResolveLock = ReentrantLock()
+
     override val receiverParameter: FirReceiverParameter?
         get() = null
 
@@ -75,6 +79,11 @@ class FirJavaMethod @FirImplementationDetail constructor(
 
     //not used actually, because get 'enhanced' into regular FirSimpleFunction
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
+
+    internal fun withTypeParameterBoundsResolveLock(f: () -> Unit) {
+        // TODO: KT-68587
+        typeParameterBoundsResolveLock.withLock(f)
+    }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)

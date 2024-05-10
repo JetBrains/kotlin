@@ -28,11 +28,14 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
+import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaTypeParameter
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaField
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
@@ -228,7 +231,15 @@ class FirSignatureEnhancement(
         }
 
         val firMethod = original.fir
-        performBoundsResolutionIfNeeded(firMethod.typeParameters, firMethod.source)
+        when (firMethod) {
+            is FirJavaMethod -> performBoundsResolutionForJavaMethodOrConstructorTypeParameters(
+                firMethod.typeParameters, firMethod.source, firMethod::withTypeParameterBoundsResolveLock
+            )
+            is FirJavaConstructor -> performBoundsResolutionForJavaMethodOrConstructorTypeParameters(
+                firMethod.typeParameters, firMethod.source, firMethod::withTypeParameterBoundsResolveLock
+            )
+            else -> {}
+        }
         return enhanceMethod(
             firMethod,
             original.callableId,
@@ -481,16 +492,25 @@ class FirSignatureEnhancement(
         function.replaceStatus(newStatus)
     }
 
-    fun performBoundsResolution(typeParameters: List<FirTypeParameterRef>, source: KtSourceElement?) {
-        val initialBounds = performFirstRoundOfBoundsResolution(typeParameters, source)
-        enhanceTypeParameterBoundsAfterFirstRound(typeParameters, initialBounds, source)
+    fun performBoundsResolutionForClassTypeParameters(facade: FirJavaFacade, klass: FirJavaClass, source: KtSourceElement?) {
+        val typeParameters = klass.typeParameters
+        if (typeParameters.isEmpty()) return
+        facade.withClassTypeParameterBoundsResolveLock {
+            performFirstRoundOfBoundsResolution(typeParameters, source)
+        }
+        enhanceTypeParameterBoundsAfterFirstRound(typeParameters, source, facade::withClassTypeParameterBoundsResolveLock)
     }
 
-    private fun performBoundsResolutionIfNeeded(typeParameters: List<FirTypeParameterRef>, source: KtSourceElement?) {
-        if (typeParameters.all { it !is FirTypeParameter || it is FirJavaTypeParameter && it.areBoundsAlreadyResolved() }) {
-            return
+    private fun performBoundsResolutionForJavaMethodOrConstructorTypeParameters(
+        typeParameters: List<FirTypeParameterRef>,
+        source: KtSourceElement?,
+        withTypeParameterBoundsResolveLock: (() -> Unit) -> Unit,
+    ) {
+        if (typeParameters.isEmpty()) return
+        withTypeParameterBoundsResolveLock {
+            performFirstRoundOfBoundsResolution(typeParameters, source)
         }
-        performBoundsResolution(typeParameters, source)
+        enhanceTypeParameterBoundsAfterFirstRound(typeParameters, source, withTypeParameterBoundsResolveLock)
     }
 
     /**
@@ -505,41 +525,52 @@ class FirSignatureEnhancement(
      * we would the need upper bounds of all the type parameters that might not yet be initialized at the moment
      *
      * See the usages of FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
+     *
+     * @return false if first time initialization was done previously, true otherwise
      */
     private fun performFirstRoundOfBoundsResolution(
         typeParameters: List<FirTypeParameterRef>,
         source: KtSourceElement?,
-    ): List<List<FirTypeRef>> {
-        val result = mutableListOf<List<FirTypeRef>>()
+    ): Boolean {
         for (typeParameter in typeParameters) {
             if (typeParameter is FirJavaTypeParameter) {
-                result += typeParameter.performFirstRoundOfBoundsResolution(session, javaTypeParameterStack, source)
+                if (!typeParameter.performFirstRoundOfBoundsResolution(session, javaTypeParameterStack, source)) {
+                    return false
+                }
             }
         }
-        return result
+        return true
     }
 
     /**
-     * In most cases that method doesn't change anything
+     * In most cases the result of this method is just bounds from the [performFirstRoundOfBoundsResolution]
      *
-     * But the cases like A<T extends A>
+     * But for the cases like A<T extends A>
      * After the first step we've got all bounds are initialized to potentially approximated version of raw types
      * And here, we compute the final version using previously initialized bounds
      *
      * So, mostly it works just as the first step, but assumes that bounds already contain FirResolvedTypeRef
+     *
+     * This function never publishes its result, so all [FirJavaTypeParameter] are remaining unchanged.
+     *
+     * @return null if second round was done previously, or matrix of enhanced bounds for all [FirJavaTypeParameter] otherwise
      */
     private fun performSecondRoundOfBoundsResolution(
         typeParameters: List<FirTypeParameterRef>,
-        initialBounds: List<List<FirTypeRef>>,
         source: KtSourceElement?,
-    ) {
-        var currentIndex = 0
+    ): List<MutableList<FirResolvedTypeRef>>? {
+        val result = mutableListOf<MutableList<FirResolvedTypeRef>>()
         for (typeParameter in typeParameters) {
             if (typeParameter is FirJavaTypeParameter) {
-                typeParameter.performSecondRoundOfBoundsResolution(session, javaTypeParameterStack, source, initialBounds[currentIndex])
-                currentIndex++
+                val enhancedBounds =
+                    typeParameter.performSecondRoundOfBoundsResolution(session, javaTypeParameterStack, source)
+                if (enhancedBounds == null) {
+                    return null
+                }
+                result += enhancedBounds
             }
         }
+        return result
     }
 
     /**
@@ -553,33 +584,55 @@ class FirSignatureEnhancement(
      */
     private fun enhanceTypeParameterBoundsAfterFirstRound(
         typeParameters: List<FirTypeParameterRef>,
-        initialBounds: List<List<FirTypeRef>>,
         source: KtSourceElement?,
+        withTypeParameterBoundsResolveLock: (() -> Unit) -> Unit,
     ) {
-        performSecondRoundOfBoundsResolution(typeParameters, initialBounds, source)
+        val secondRoundBounds = performSecondRoundOfBoundsResolution(typeParameters, source)
+        if (secondRoundBounds == null) {
+            // null means here that everything is already enhanced to the last round
+            return
+        }
 
         // Type parameters can have interdependencies between them. Assuming that there are no top-level cycles
         // (`A : B, B : A` - invalid), the cycles can still appear when type parameters use each other in argument
         // position (`A : C<B>, B : D<A>` - valid). In this case the precise enhancement of each bound depends on
         // the others' nullability, for which we need to enhance at least its head type constructor.
-        typeParameters.replaceEnhancedBounds { typeParameter, bound ->
+        typeParameters.replaceEnhancedBounds(secondRoundBounds) { typeParameter, bound ->
             enhanceTypeParameterBound(typeParameter, bound, forceOnlyHeadTypeConstructor = true)
         }
-        typeParameters.replaceEnhancedBounds { typeParameter, bound ->
+        typeParameters.replaceEnhancedBounds(secondRoundBounds) { typeParameter, bound ->
             enhanceTypeParameterBound(typeParameter, bound, forceOnlyHeadTypeConstructor = false)
+        }
+
+        var currentIndex = 0
+        withTypeParameterBoundsResolveLock {
+            // Here we publish our results
+            for (typeParameter in typeParameters) {
+                /**
+                 * This 'if' condition, together with currentIndex++, must be synchronized
+                 * with the same 'if' inside [performFirstRoundOfBoundsResolution]
+                 */
+                if (typeParameter is FirJavaTypeParameter) {
+                    typeParameter.storeBoundsAfterAllRounds(secondRoundBounds[currentIndex])
+                    currentIndex++
+                }
+            }
         }
     }
 
     private inline fun List<FirTypeParameterRef>.replaceEnhancedBounds(
+        secondRoundBounds: List<MutableList<FirResolvedTypeRef>>,
         crossinline block: (FirTypeParameter, FirResolvedTypeRef) -> FirResolvedTypeRef
     ) {
+        var currentIndex = 0
         for (typeParameter in this) {
+            /**
+             * This 'if' condition, together with currentIndex++, must be synchronized
+             * with the same 'if' inside [performFirstRoundOfBoundsResolution]
+             */
             if (typeParameter is FirJavaTypeParameter) {
-                check(typeParameter.areBoundsAlreadyResolved()) {
-                    "Attempt to run the 3rd and 4th rounds of Java type parameter bounds enhancement without finishing 2nd round!" +
-                            " ownerSymbol = ${typeParameter.containingDeclarationSymbol} typeParameter = ${typeParameter.name}"
-                }
-                typeParameter.replaceEnhancedBounds(block)
+                secondRoundBounds[currentIndex].replaceAll { block(typeParameter, it) }
+                currentIndex++
             }
         }
     }

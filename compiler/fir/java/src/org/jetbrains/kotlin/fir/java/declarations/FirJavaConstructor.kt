@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 import kotlin.properties.Delegates
 
 class FirJavaConstructor @FirImplementationDetail constructor(
@@ -52,6 +54,8 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         this.resolveState = resolvePhase.asResolveState()
     }
 
+    private val typeParameterBoundsResolveLock = ReentrantLock()
+
     override val delegatedConstructor: FirDelegatedConstructorCall?
         get() = null
 
@@ -66,6 +70,11 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     override val contextReceivers: List<FirContextReceiver>
         get() = emptyList()
+
+    internal fun withTypeParameterBoundsResolveLock(f: () -> Unit) {
+        // TODO: KT-68587
+        typeParameterBoundsResolveLock.withLock(f)
+    }
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         valueParameters.transformInplace(transformer, data)
