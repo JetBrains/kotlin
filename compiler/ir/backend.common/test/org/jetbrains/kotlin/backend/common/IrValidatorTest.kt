@@ -246,6 +246,37 @@ class IrValidatorTest {
             )
         )
     }
+
+    @Test
+    fun `incorrect parents are reported`() {
+        val klass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MyClass")
+        }
+        val function = IrFactoryImpl.buildFun {
+            name = Name.identifier("foo")
+            returnType = TestIrBuiltins.unitType
+        }
+        klass.declarations.add(function)
+        function.parent = function
+        testValidation(
+            IrVerificationMode.WARNING,
+            klass,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: Declarations with wrong parent: 1
+                    declaration: FUN name:foo visibility:public modality:FINAL <> () returnType:<uninitialized parent>.Unit
+                    expectedParent: FUN name:foo visibility:public modality:FINAL <> () returnType:<uninitialized parent>.Unit
+                    actualParent: CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]
+                    Expected parents:
+                    
+                    CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]""".trimIndent(),
+                    null,
+                )
+            ),
+        )
+    }
 }
 
 private class TestBackendContext(

@@ -64,12 +64,14 @@ class IrValidator(
     }
 }
 
-fun IrElement.checkDeclarationParents() {
+private fun IrElement.checkDeclarationParents(reportError: (IrFile?, IrElement, String) -> Unit) {
     val checker = CheckDeclarationParentsVisitor()
     accept(checker, null)
     if (checker.errors.isNotEmpty()) {
         val expectedParents = LinkedHashSet<IrDeclarationParent>()
-        throw AssertionError(
+        reportError(
+            null,
+            this,
             buildString {
                 append("Declarations with wrong parent: ")
                 append(checker.errors.size)
@@ -77,14 +79,10 @@ fun IrElement.checkDeclarationParents() {
                 checker.errors.forEach {
                     append("declaration: ")
                     append(it.declaration.render())
-                    append("\n\t")
-                    append(it.declaration)
                     append("\nexpectedParent: ")
                     append(it.expectedParent.render())
                     append("\nactualParent: ")
                     append(it.actualParent?.render())
-                    append("\n")
-                    expectedParents.add(it.expectedParent)
                 }
                 append("\nExpected parents:\n")
                 expectedParents.forEach {
@@ -95,7 +93,7 @@ fun IrElement.checkDeclarationParents() {
     }
 }
 
-class CheckDeclarationParentsVisitor : DeclarationParentsVisitor() {
+private class CheckDeclarationParentsVisitor : DeclarationParentsVisitor() {
     class Error(val declaration: IrDeclaration, val expectedParent: IrDeclarationParent, val actualParent: IrDeclarationParent?)
 
     val errors = ArrayList<Error>()
@@ -137,7 +135,7 @@ fun performBasicIrValidation(
         // Performing other checks may cause e.g. infinite recursion.
         return
     }
-    element.checkDeclarationParents()
+    element.checkDeclarationParents(reportError)
 }
 
 /**
