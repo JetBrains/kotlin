@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
@@ -48,6 +46,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
     session, scopeSession, FirResolvePhase.SUPER_TYPES
@@ -472,6 +471,10 @@ open class FirSupertypeResolverVisitor(
                 }
             }.also {
                 addSupertypesFromExtensions(classLikeDeclaration, it, transformer, scopeDeclaration)
+                @OptIn(PrivateForInline::class)
+                if (transformer.currentFile != null && classLikeDeclaration is FirRegularClass) {
+                    addSupertypesToGeneratedNestedClasses(classLikeDeclaration, transformer, scopeDeclaration)
+                }
             }
         }
     }
@@ -488,6 +491,48 @@ open class FirSupertypeResolverVisitor(
             if (extension.needTransformSupertypes(klass)) {
                 supertypeRefs += extension.computeAdditionalSupertypes(klass, supertypeRefs, typeResolveService)
             }
+        }
+    }
+
+    private fun addSupertypesToGeneratedNestedClasses(
+        klass: FirRegularClass,
+        typeResolveTransformer: FirSpecificTypeResolverTransformer,
+        scopeDeclaration: ScopeClassDeclaration,
+    ) {
+        if (supertypeGenerationExtensions.isEmpty()) return
+        val typeResolveService = TypeResolveServiceForPlugins(typeResolveTransformer, scopeDeclaration)
+        val generatedNestedClasses = klass.generatedNestedClassifiers(session)
+        for (nestedClass in generatedNestedClasses) {
+            if (nestedClass !is FirRegularClass) continue
+            requireWithAttachment(
+                nestedClass.superTypeRefs.all { it is FirResolvedTypeRef },
+                { "Supertypes of generated class should be resolved"}
+            ) {
+                val unresolvedTypes = nestedClass.superTypeRefs.filter { it !is FirResolvedTypeRef }
+                withEntry("Unresolved types", unresolvedTypes.joinToString(", ") { it.render() })
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            val superTypes = nestedClass.superTypeRefs.toMutableList() as MutableList<FirResolvedTypeRef>
+
+            var someTypesWereGenerated = false
+
+            for (extension in supertypeGenerationExtensions) {
+                if (extension.needTransformSupertypes(nestedClass)) {
+                    @OptIn(ExperimentalSupertypesGenerationApi::class)
+                    val newSupertypes = extension.computeAdditionalSupertypesForGeneratedNestedClass(
+                        nestedClass, typeResolveService
+                    )
+                    if (newSupertypes.isNotEmpty()) {
+                        someTypesWereGenerated = true
+                        superTypes += newSupertypes
+                    }
+                }
+            }
+            if (someTypesWereGenerated && superTypes.isNotEmpty()) {
+                superTypes.removeIf { it.type.isAny }
+            }
+            nestedClass.replaceSuperTypeRefs(superTypes)
         }
     }
 
