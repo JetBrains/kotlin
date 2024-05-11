@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.library.*
  * @property platformTargets [KLIB_PROPERTY_NATIVE_TARGETS], [KLIB_PROPERTY_WASM_TARGETS]
  * @property compilerVersion [KLIB_PROPERTY_COMPILER_VERSION]
  * @property abiVersion [KLIB_PROPERTY_ABI_VERSION]
- * @property libraryVersion [KLIB_PROPERTY_LIBRARY_VERSION]
  * @property irProviderName [KLIB_PROPERTY_IR_PROVIDER]
  */
 @ExperimentalLibraryAbiReader
@@ -23,7 +22,6 @@ data class LibraryManifest(
     val platformTargets: List<LibraryTarget>,
     val compilerVersion: String?,
     val abiVersion: String?,
-    val libraryVersion: String?,
     val irProviderName: String?
 ) {
     @Deprecated("Use platformTargets instead", ReplaceWith("platformTargets"))

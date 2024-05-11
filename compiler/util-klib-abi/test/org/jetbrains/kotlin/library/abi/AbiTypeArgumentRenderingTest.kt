@@ -42,7 +42,7 @@ class AbiTypeArgumentRenderingTest {
 
     private fun mockLibraryAbi(signatureVersion: AbiSignatureVersion, vararg declarations: AbiDeclaration): LibraryAbi =
         LibraryAbi(
-            manifest = LibraryManifest(null, emptyList(), null, null, null, null),
+            manifest = LibraryManifest(null, emptyList(), null, null, null),
             uniqueName = "type-argument-rendering-test",
             signatureVersions = setOf(signatureVersion),
             topLevelDeclarations = object : AbiTopLevelDeclarations {
