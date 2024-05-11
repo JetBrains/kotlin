@@ -5,28 +5,28 @@
 
 package org.jetbrains.rhizomedb.fir
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirSupertypeGenerationExtension.TypeResolveService
-import org.jetbrains.kotlin.fir.extensions.buildUserTypeFromQualifierParts
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.rhizomedb.fir.resolve.RhizomedbSymbolNames
+import org.jetbrains.rhizomedb.fir.services.rhizomedbEntityPredicateMatcher
 
 class RhizomedbFirSupertypesExtension(session: FirSession) : FirSupertypeGenerationExtension(session) {
     override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean {
@@ -35,8 +35,8 @@ class RhizomedbFirSupertypesExtension(session: FirSession) : FirSupertypeGenerat
             return false
         }
 
-        val entity = symbol.getContainingDeclaration(session) as? FirClassSymbol ?: return false
-        return session.predicateBasedProvider.matches(RhizomedbFirPredicates.annotatedWithEntityType, entity)
+        val entity = symbol.getContainingClass(session) ?: return false
+        return entity.classKind == ClassKind.CLASS && session.rhizomedbEntityPredicateMatcher.isEntityTypeAnnotated(entity)
     }
 
     override fun computeAdditionalSupertypes(
@@ -44,54 +44,43 @@ class RhizomedbFirSupertypesExtension(session: FirSession) : FirSupertypeGenerat
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService,
     ): List<FirResolvedTypeRef> {
-        if (resolvedSupertypes.any { it.type.classId == RhizomedbSymbolNames.entityTypeClassId }) {
+        if (resolvedSupertypes.any { it.isEntityType(typeResolver) }) {
+            // Already EntityType subclass
             return emptyList()
         }
 
         val symbol = classLikeDeclaration.symbol as? FirClassSymbol<*> ?: return emptyList()
-        val entity = symbol.getContainingDeclaration(session) as? FirClassSymbol ?: return emptyList()
+        val entity = symbol.getContainingClass(session) ?: return emptyList()
 
-        val supertypes = entity.getSuperTypes(session, supertypeSupplier = typeResolveSupplier(typeResolver))
-        if (supertypes.all { it.lookupTag.classId != RhizomedbSymbolNames.entityClassId }) {
+        if (!entity.isEntity(typeResolver)) {
+            // Do not modify a non-entity companion
             return emptyList()
         }
 
         val def = RhizomedbSymbolNames.entityTypeClassId.constructClassLikeType(arrayOf(entity.defaultType()), false)
-        val annotation = entity.entityTypeAnnotation(session) ?: return emptyList()
+        return listOf(def.toFirResolvedTypeRef())
+    }
 
-        val getClassArgument = (annotation as? FirAnnotationCall)?.arguments?.singleOrNull() as? FirGetClassCall
+    private fun FirClassLikeSymbol<*>.isEntity(typeResolver: TypeResolveService): Boolean {
+        return isSubclassOf(RhizomedbSymbolNames.entityClassId, typeResolver)
+    }
 
-        val typeToResolve = getClassArgument?.let {
-            buildUserTypeFromQualifierParts(isMarkedNullable = false) {
-                fun visitQualifiers(expression: FirExpression) {
-                    if (expression !is FirPropertyAccessExpression) return
-                    expression.explicitReceiver?.let { visitQualifiers(it) }
-                    expression.qualifierName?.let { part(it) }
-                }
-                visitQualifiers(getClassArgument.argument)
-            }
+    private fun FirResolvedTypeRef.isEntityType(typeResolver: TypeResolveService): Boolean {
+        return isSubclassOf(RhizomedbSymbolNames.entityTypeClassId, typeResolver)
+    }
+
+    private fun FirClassLikeSymbol<*>.isSubclassOf(classId: ClassId, typeResolver: TypeResolveService): Boolean {
+        return getSuperTypes(session, supertypeSupplier = typeResolveSupplier(typeResolver)).any {
+            it.classId == classId
         }
+    }
 
-        val resolvedArgument = typeToResolve?.let {
-            typeResolver.resolveUserType(typeToResolve).type
-        } ?: def
-
-        val entityTypeSymbol = resolvedArgument.toSymbol(session)!!
-        val finalType = if (entityTypeSymbol.typeParameterSymbols?.isNotEmpty() == true) {
-            resolvedArgument.classId!!.constructClassLikeType(arrayOf(entity.defaultType()))
-        } else {
-            resolvedArgument
-        }
-
-        return listOf(finalType.toFirResolvedTypeRef())
+    private fun FirResolvedTypeRef.isSubclassOf(classId: ClassId, typeResolver: TypeResolveService): Boolean {
+        return type.classId == classId || type.toClassSymbol(session)?.isSubclassOf(classId, typeResolver) ?: false
     }
 
     private val FirPropertyAccessExpression.qualifierName: Name?
         get() = (calleeReference as? FirSimpleNamedReference)?.name
-
-    override fun FirDeclarationPredicateRegistrar.registerPredicates() {
-        register(RhizomedbFirPredicates.annotatedWithEntityType)
-    }
 }
 
 fun typeResolveSupplier(typeResolver: TypeResolveService): SupertypeSupplier = object : SupertypeSupplier() {
@@ -109,3 +98,6 @@ fun typeResolveSupplier(typeResolver: TypeResolveService): SupertypeSupplier = o
         }
     }
 }
+
+fun FirClassLikeSymbol<*>.getContainingClass(session: FirSession): FirClassSymbol<*>? =
+    getContainingDeclaration(session) as? FirClassSymbol

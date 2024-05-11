@@ -1,0 +1,7 @@
+FILE: typealias.kt
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final typealias MyEntity = R|com/jetbrains/rhizomedb/Entity|
+    public final fun foo(): R|kotlin/Unit| {
+        Q|MyEntity|.<Ambiguity: all, [com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all]>#()
+        Q|MyEntity|.<Ambiguity: single, [com/jetbrains/rhizomedb/single, com/jetbrains/rhizomedb/single]>#()
+        Q|MyEntity|.<Ambiguity: singleOrNull, [com/jetbrains/rhizomedb/singleOrNull, com/jetbrains/rhizomedb/singleOrNull]>#()
+    }

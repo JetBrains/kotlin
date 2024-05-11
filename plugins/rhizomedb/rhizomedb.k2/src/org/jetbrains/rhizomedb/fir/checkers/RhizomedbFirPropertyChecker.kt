@@ -23,6 +23,7 @@ object RhizomedbFirPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.hasAnnotation(RhizomedbAnnotations.manyAnnotationClassId, context.session)) return
         if (!declaration.hasAnnotation(RhizomedbAnnotations.valueAttributeClassId, context.session) &&
+            !declaration.hasAnnotation(RhizomedbAnnotations.transientAttributeClassId, context.session) &&
             !declaration.hasAnnotation(RhizomedbAnnotations.referenceAttributeClassId, context.session)
         ) return
         if (declaration.returnTypeRef.isSet()) return

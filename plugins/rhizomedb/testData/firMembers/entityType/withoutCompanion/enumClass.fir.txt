@@ -1,0 +1,38 @@
+FILE: enumClass.kt
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final enum class MyEntity : R|com/jetbrains/rhizomedb/Entity|, R|kotlin/Enum<MyEntity>| {
+        private constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
+            super<R|kotlin/Enum<MyEntity>|>()
+        }
+
+        public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
+            public get(): R|com/jetbrains/rhizomedb/EID|
+
+        @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final static enum entry A: R|MyEntity| = object : R|MyEntity| {
+            private constructor(): R|<anonymous>| {
+                super<R|MyEntity|>(Int(0))
+            }
+
+        }
+
+        public final static enum entry B: R|MyEntity| = object : R|MyEntity| {
+            private constructor(): R|<anonymous>| {
+                super<R|MyEntity|>(Int(1))
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<MyEntity>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEntity| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEntity>|
+            public get(): R|kotlin/enums/EnumEntries<MyEntity>|
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        Q|MyEntity|.<Unresolved name: all>#()
+        Q|MyEntity|.<Unresolved name: single>#()
+        Q|MyEntity|.<Unresolved name: singleOrNull>#()
+    }

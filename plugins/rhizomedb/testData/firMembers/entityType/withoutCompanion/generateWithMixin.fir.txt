@@ -1,9 +1,11 @@
-FILE: entityHierarchy.kt
-    public abstract interface BaseEntity : R|com/jetbrains/rhizomedb/Entity| {
+FILE: generateWithMixin.kt
+    public final object MyEntityMixin : R|com/jetbrains/rhizomedb/Mixin<MyEntity>| {
+        private constructor(): R|MyEntityMixin| {
+            super<R|com/jetbrains/rhizomedb/Mixin<MyEntity>|>(<getClass>(Q|MyEntity|))
+        }
+
     }
-    public abstract interface DerivedEntity : R|BaseEntity| {
-    }
-    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final data class MyEntity : R|DerivedEntity| {
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|(mixins = vararg(<getClass>(Q|MyEntityMixin|))) public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
         public constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
             super<R|kotlin/Any|>()
         }

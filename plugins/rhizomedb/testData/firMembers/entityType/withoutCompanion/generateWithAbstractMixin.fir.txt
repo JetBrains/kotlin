@@ -1,5 +1,11 @@
-FILE: generateBasicEntityType.kt
-    @R|com/jetbrains/rhizomedb/GeneratedEntityType|(baseType = <getClass>(Q|com/jetbrains/rhizomedb/EntityType|)) public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+FILE: generateWithAbstractMixin.kt
+    public abstract class MyEntityMixin<E : R|com/jetbrains/rhizomedb/Entity|> : R|com/jetbrains/rhizomedb/Mixin<E>| {
+        public constructor<E : R|com/jetbrains/rhizomedb/Entity|>(ident: R|kotlin/String|): R|MyEntityMixin<E>| {
+            super<R|com/jetbrains/rhizomedb/Mixin<E>|>(R|<local>/ident|)
+        }
+
+    }
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|(mixins = vararg(<getClass>(Q|MyEntityMixin|))) public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
         public constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
             super<R|kotlin/Any|>()
         }
@@ -7,19 +13,12 @@ FILE: generateBasicEntityType.kt
         public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
             public get(): R|com/jetbrains/rhizomedb/EID|
 
-        public final companion object Companion : R|kotlin/Any|, R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
-            private constructor(): R|MyEntity.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-            public final val X: R|kotlin/Int| = Int(42)
-                public get(): R|kotlin/Int|
-
-        }
-
         public final operator fun component1(): R|com/jetbrains/rhizomedb/EID|
 
         public final fun copy(eid: R|com/jetbrains/rhizomedb/EID| = this@R|/MyEntity|.R|/MyEntity.eid|): R|MyEntity|
+
+        public final companion object Companion : R|kotlin/Any|, R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
+        }
 
     }
     public final fun foo(): R|kotlin/Unit| {

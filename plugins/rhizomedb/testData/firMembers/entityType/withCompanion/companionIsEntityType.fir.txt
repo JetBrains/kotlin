@@ -1,11 +1,5 @@
-FILE: generateGenericEntityType.kt
-    public abstract class MyEntityType<E : R|com/jetbrains/rhizomedb/Entity|> : R|com/jetbrains/rhizomedb/EntityType<E>| {
-        public constructor<E : R|com/jetbrains/rhizomedb/Entity|>(ident: R|kotlin/String|, cons: R|(com/jetbrains/rhizomedb/EID) -> E|): R|MyEntityType<E>| {
-            super<R|com/jetbrains/rhizomedb/EntityType<E>|>(R|<local>/ident|, R|<local>/cons|)
-        }
-
-    }
-    @R|com/jetbrains/rhizomedb/GeneratedEntityType|(baseType = <getClass>(Q|MyEntityType|)) public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+FILE: companionIsEntityType.kt
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
         public constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
             super<R|kotlin/Any|>()
         }
@@ -13,9 +7,9 @@ FILE: generateGenericEntityType.kt
         public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
             public get(): R|com/jetbrains/rhizomedb/EID|
 
-        public final companion object Companion : R|kotlin/Any|, R|MyEntityType<MyEntity>| {
+        public final companion object Companion : R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
             private constructor(): R|MyEntity.Companion| {
-                super<R|kotlin/Any|>()
+                super<R|com/jetbrains/rhizomedb/EntityType<MyEntity>|>(<getClass>(Q|MyEntity|), ::R|/MyEntity.MyEntity|)
             }
 
             public final val X: R|kotlin/Int| = Int(42)

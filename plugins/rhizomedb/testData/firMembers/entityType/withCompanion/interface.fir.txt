@@ -1,0 +1,18 @@
+FILE: interface.kt
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public abstract interface MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|MyEntity.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val X: R|kotlin/Int| = Int(42)
+                public get(): R|kotlin/Int|
+
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        Q|MyEntity|.<Ambiguity: all, [com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all]>#()
+        Q|MyEntity|.<Ambiguity: single, [com/jetbrains/rhizomedb/single, com/jetbrains/rhizomedb/single]>#()
+        Q|MyEntity|.<Ambiguity: singleOrNull, [com/jetbrains/rhizomedb/singleOrNull, com/jetbrains/rhizomedb/singleOrNull]>#()
+    }

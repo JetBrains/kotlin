@@ -5,10 +5,10 @@
 
 package org.jetbrains.rhizomedb.fir
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.plugin.createCompanionObject
@@ -27,7 +27,7 @@ import org.jetbrains.rhizomedb.fir.services.rhizomedbEntityPredicateMatcher
 class RhizomedbFirResolveExtension(session: FirSession) : FirDeclarationGenerationExtension(session) {
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        if (classSymbol !is FirRegularClassSymbol) {
+        if (classSymbol !is FirRegularClassSymbol || classSymbol.classKind != ClassKind.CLASS) {
             return emptySet()
         }
 
@@ -44,11 +44,12 @@ class RhizomedbFirResolveExtension(session: FirSession) : FirDeclarationGenerati
         name: Name,
         context: NestedClassGenerationContext,
     ): FirClassLikeSymbol<*>? {
-        if (owner !is FirRegularClassSymbol) error("Can't generate class inside ${owner.classId.asSingleFqName()}")
-        return when (name) {
-            SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT -> generateCompanionDeclaration(owner)
-            else -> error("Can't generate class ${owner.classId.createNestedClassId(name).asSingleFqName()}")
+        if (owner !is FirRegularClassSymbol || owner.companionObjectSymbol != null) {
+            return null
         }
+        return createCompanionObject(owner, RhizomedbPluginKey) {
+//            superType(RhizomedbSymbolNames.entityTypeClassId.constructClassLikeType(arrayOf(owner.defaultType()), false))
+        }.symbol
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
@@ -58,11 +59,11 @@ class RhizomedbFirResolveExtension(session: FirSession) : FirDeclarationGenerati
         }
 
         val entity = classSymbol.getContainingDeclaration(session) as? FirClassSymbol ?: return emptySet()
-        if (!entityMather.isEntity(entity)) {
+        if (entity.classKind != ClassKind.CLASS || !entityMather.isEntity(entity)) {
             return emptySet()
         }
 
-        val props = entity.declarationSymbols.filterIsInstance<FirPropertySymbol>().filter(entityMather::isAttributeAnnotated)
+        val props = entity.declarationProperties.filter(entityMather::isAttributeAnnotated)
         return buildSet {
             for (prop in props) {
                 add(prop.name.toAttributeName())
@@ -74,9 +75,8 @@ class RhizomedbFirResolveExtension(session: FirSession) : FirDeclarationGenerati
         val classSymbol = context?.owner ?: return emptyList()
         val entity = classSymbol.getContainingDeclaration(session) as? FirClassSymbol ?: return emptyList()
 
-        val prop = entity.declarationSymbols.filterIsInstance<FirPropertySymbol>().firstOrNull {
-            it.name == callableId.callableName.toPropertyName()
-        } ?: return emptyList()
+        val propName = callableId.callableName.toPropertyName()
+        val prop = entity.declarationProperties.firstOrNull { it.name == propName } ?: return emptyList()
 
         val attribute = session.attributesProvider.getBackingAttribute(prop) ?: return emptyList()
         val property = createMemberProperty(
@@ -88,17 +88,7 @@ class RhizomedbFirResolveExtension(session: FirSession) : FirDeclarationGenerati
 
         return listOf(property.symbol)
     }
-
-    private fun generateCompanionDeclaration(entity: FirRegularClassSymbol): FirRegularClassSymbol? {
-        if (entity.companionObjectSymbol != null) return null
-        val companion = createCompanionObject(entity, RhizomedbPluginKey) {
-//            superType(RhizomedbSymbolNames.entityTypeClassId.constructClassLikeType(arrayOf(entity.defaultType()), false))
-        }
-
-        return companion.symbol
-    }
-
-    override fun FirDeclarationPredicateRegistrar.registerPredicates() {
-        register(RhizomedbFirPredicates.selfOrParentAnnotatedWithEntityType)
-    }
 }
+
+val FirClassSymbol<*>.declarationProperties: List<FirPropertySymbol>
+    get() = declarationSymbols.filterIsInstance<FirPropertySymbol>()

@@ -17,12 +17,14 @@ object RhizomedbAnnotations {
     val manyFqName = FqName("com.jetbrains.rhizomedb.Many")
     val generatedEntityTypeFqName = FqName("com.jetbrains.rhizomedb.GeneratedEntityType")
     val valueAttributeFqName = FqName("com.jetbrains.rhizomedb.ValueAttribute")
+    val transientAttributeFqName = FqName("com.jetbrains.rhizomedb.TransientAttribute")
     val referenceAttributeFqName = FqName("com.jetbrains.rhizomedb.ReferenceAttribute")
     val entityConstructorFqName = FqName("com.jetbrains.rhizomedb.EntityConstructor")
 
     val manyAnnotationClassId = ClassId.topLevel(manyFqName)
     val generatedEntityTypeClassId = ClassId.topLevel(generatedEntityTypeFqName)
     val valueAttributeClassId = ClassId.topLevel(valueAttributeFqName)
+    val transientAttributeClassId = ClassId.topLevel(transientAttributeFqName)
     val referenceAttributeClassId = ClassId.topLevel(referenceAttributeFqName)
     val entityConstructorClassId = ClassId.topLevel(entityConstructorFqName)
 }

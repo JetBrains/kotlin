@@ -1,11 +1,8 @@
 import com.jetbrains.rhizomedb.*
 
-abstract class MyEntityType() : EntityType<MyEntity>("myEntity", ::MyEntity)
-
-@GeneratedEntityType(MyEntityType::class)
+@GeneratedEntityType
 data class MyEntity(override val eid: EID) : Entity {
-    // OPTIONAL_COMPANION
-    companion object {
+    companion object : EntityType<MyEntity>(MyEntity::class, ::MyEntity) {
         val X = 42
     }
 }

@@ -6,8 +6,8 @@
 package org.jetbrains.rhizomedb.runners;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -89,9 +89,21 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
         }
 
         @Test
-        @TestMetadata("entityHierarchy.kt")
-        public void testEntityHierarchy() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/entityHierarchy.kt");
+        @TestMetadata("companionIsEntityType.kt")
+        public void testCompanionIsEntityType() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/companionIsEntityType.kt");
+        }
+
+        @Test
+        @TestMetadata("companionIsEntityTypeEventually.kt")
+        public void testCompanionIsEntityTypeEventually() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/companionIsEntityTypeEventually.kt");
+        }
+
+        @Test
+        @TestMetadata("enumClass.kt")
+        public void testEnumClass() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/enumClass.kt");
         }
 
         @Test
@@ -101,33 +113,27 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
         }
 
         @Test
-        @TestMetadata("generateBasicEntityType.kt")
-        public void testGenerateBasicEntityType() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateBasicEntityType.kt");
+        @TestMetadata("generateWithAbstractMixin.kt")
+        public void testGenerateWithAbstractMixin() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateWithAbstractMixin.kt");
         }
 
         @Test
-        @TestMetadata("generateEntityTypeWithNoArgConstructor.kt")
-        public void testGenerateEntityTypeWithNoArgConstructor() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateEntityTypeWithNoArgConstructor.kt");
+        @TestMetadata("generateWithMixin.kt")
+        public void testGenerateWithMixin() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateWithMixin.kt");
         }
 
         @Test
-        @TestMetadata("generateFinalNonGenericEntityType.kt")
-        public void testGenerateFinalNonGenericEntityType() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateFinalNonGenericEntityType.kt");
+        @TestMetadata("interface.kt")
+        public void testInterface() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/interface.kt");
         }
 
         @Test
-        @TestMetadata("generateGenericEntityType.kt")
-        public void testGenerateGenericEntityType() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateGenericEntityType.kt");
-        }
-
-        @Test
-        @TestMetadata("generateNonGenericEntityType.kt")
-        public void testGenerateNonGenericEntityType() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/generateNonGenericEntityType.kt");
+        @TestMetadata("isEntityEventually.kt")
+        public void testIsEntityEventually() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withCompanion/isEntityEventually.kt");
         }
 
         @Test
@@ -153,9 +159,9 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
         }
 
         @Test
-        @TestMetadata("entityHierarchy.kt")
-        public void testEntityHierarchy() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/entityHierarchy.kt");
+        @TestMetadata("enumClass.kt")
+        public void testEnumClass() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/enumClass.kt");
         }
 
         @Test
@@ -165,33 +171,27 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
         }
 
         @Test
-        @TestMetadata("generateBasicEntityType.kt")
-        public void testGenerateBasicEntityType() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateBasicEntityType.kt");
+        @TestMetadata("generateWithAbstractMixin.kt")
+        public void testGenerateWithAbstractMixin() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateWithAbstractMixin.kt");
         }
 
         @Test
-        @TestMetadata("generateEntityTypeWithNoArgConstructor.kt")
-        public void testGenerateEntityTypeWithNoArgConstructor() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateEntityTypeWithNoArgConstructor.kt");
+        @TestMetadata("generateWithMixin.kt")
+        public void testGenerateWithMixin() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateWithMixin.kt");
         }
 
         @Test
-        @TestMetadata("generateFinalNonGenericEntityType.kt")
-        public void testGenerateFinalNonGenericEntityType() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateFinalNonGenericEntityType.kt");
+        @TestMetadata("interface.kt")
+        public void testInterface() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/interface.kt");
         }
 
         @Test
-        @TestMetadata("generateGenericEntityType.kt")
-        public void testGenerateGenericEntityType() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateGenericEntityType.kt");
-        }
-
-        @Test
-        @TestMetadata("generateNonGenericEntityType.kt")
-        public void testGenerateNonGenericEntityType() {
-          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/generateNonGenericEntityType.kt");
+        @TestMetadata("isEntityEventually.kt")
+        public void testIsEntityEventually() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/isEntityEventually.kt");
         }
 
         @Test
@@ -204,6 +204,18 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
         @TestMetadata("notEntity.kt")
         public void testNotEntity() {
           runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/notEntity.kt");
+        }
+
+        @Test
+        @TestMetadata("object.kt")
+        public void testObject() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/object.kt");
+        }
+
+        @Test
+        @TestMetadata("typealias.kt")
+        public void testTypealias() {
+          runTest("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion/typealias.kt");
         }
       }
     }

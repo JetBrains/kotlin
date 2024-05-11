@@ -1,11 +1,9 @@
 import com.jetbrains.rhizomedb.*
+import kotlin.reflect.KClass
 
-abstract class MyEntityType<E : Entity>(
-    ident: String,
-    cons: (EID) -> E
-) : EntityType<E>(ident, cons)
+object MyEntityMixin : Mixin<MyEntity>(MyEntity::class)
 
-@GeneratedEntityType(MyEntityType::class)
+@GeneratedEntityType(MyEntityMixin::class)
 data class MyEntity(override val eid: EID) : Entity {
     // OPTIONAL_COMPANION
     companion object {

@@ -1,5 +1,9 @@
-FILE: generateBasicEntityType.kt
-    @R|com/jetbrains/rhizomedb/GeneratedEntityType|(baseType = <getClass>(Q|com/jetbrains/rhizomedb/EntityType|)) public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+FILE: isEntityEventually.kt
+    public abstract interface BaseEntity : R|com/jetbrains/rhizomedb/Entity| {
+    }
+    public abstract interface DerivedEntity : R|BaseEntity| {
+    }
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final data class MyEntity : R|DerivedEntity| {
         public constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
             super<R|kotlin/Any|>()
         }

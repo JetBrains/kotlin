@@ -5,10 +5,9 @@ abstract class MyEntityType(
     cons: (EID) -> MyEntity
 ) : EntityType<MyEntity>(ident, cons)
 
-@GeneratedEntityType(MyEntityType::class)
+@GeneratedEntityType
 data class MyEntity(override val eid: EID) : Entity {
-    // OPTIONAL_COMPANION
-    companion object {
+    companion object : MyEntityType("MyEntity", ::MyEntity) {
         val X = 42
     }
 }

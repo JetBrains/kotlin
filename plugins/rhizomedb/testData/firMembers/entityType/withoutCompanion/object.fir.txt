@@ -1,0 +1,15 @@
+FILE: object.kt
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final object MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+        private constructor(): R|MyEntity| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override val eid: R|com/jetbrains/rhizomedb/EID| = Int(0)
+            public get(): R|com/jetbrains/rhizomedb/EID|
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        Q|MyEntity|.<Ambiguity: all, [com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all]>#()
+        Q|MyEntity|.<Ambiguity: single, [com/jetbrains/rhizomedb/single, com/jetbrains/rhizomedb/single]>#()
+        Q|MyEntity|.<Ambiguity: singleOrNull, [com/jetbrains/rhizomedb/singleOrNull, com/jetbrains/rhizomedb/singleOrNull]>#()
+    }

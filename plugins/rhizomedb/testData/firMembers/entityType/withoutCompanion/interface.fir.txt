@@ -1,0 +1,8 @@
+FILE: interface.kt
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public abstract interface MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        Q|MyEntity|.<Unresolved name: all>#()
+        Q|MyEntity|.<Unresolved name: single>#()
+        Q|MyEntity|.<Unresolved name: singleOrNull>#()
+    }

@@ -15,6 +15,7 @@ object RhizomedbFirPredicates {
 
     internal val annotatedWithAttribute = DeclarationPredicate.create {
         annotated(RhizomedbAnnotations.valueAttributeFqName) or
+                annotated(RhizomedbAnnotations.transientAttributeFqName) or
                 annotated(RhizomedbAnnotations.referenceAttributeFqName)
     }
 

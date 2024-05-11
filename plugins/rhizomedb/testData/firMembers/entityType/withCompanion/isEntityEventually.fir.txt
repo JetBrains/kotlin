@@ -1,4 +1,4 @@
-FILE: entityHierarchy.kt
+FILE: isEntityEventually.kt
     public abstract interface BaseEntity : R|com/jetbrains/rhizomedb/Entity| {
     }
     public abstract interface DerivedEntity : R|BaseEntity| {

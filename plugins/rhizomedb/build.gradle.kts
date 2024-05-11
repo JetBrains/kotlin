@@ -40,7 +40,7 @@ dependencies {
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
-    rhizomedbClasspath("org.jetbrains.fleet:rhizomedb:1.33.0-temporaryHack.6")
+    rhizomedbClasspath("org.jetbrains.fleet:rhizomedb:1.35.0-FL24724_88c9c0cd7b257.9")
 }
 
 java {
