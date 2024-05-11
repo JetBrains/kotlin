@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
@@ -44,7 +43,6 @@ interface Fir2IrComponents {
     val declarationStorage: Fir2IrDeclarationStorage
 
     val typeConverter: Fir2IrTypeConverter
-    val signatureComposer: FirBasedSignatureComposer
     val visibilityConverter: Fir2IrVisibilityConverter
 
     val callablesGenerator: Fir2IrCallableDeclarationsGenerator

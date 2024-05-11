@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -46,7 +45,6 @@ class Fir2IrComponentsStorage(
 
     val moduleDescriptor: FirModuleDescriptor = FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns)
 
-    override val signatureComposer: FirBasedSignatureComposer = commonMemberStorage.firSignatureComposer
     override val symbolTable: SymbolTable = commonMemberStorage.symbolTable
 
     private val conversionScope = Fir2IrConversionScope(configuration)
@@ -100,6 +98,6 @@ class Fir2IrComponentsStorage(
             get() = irMangler
 
         override val firMangler: FirMangler
-            get() = commonMemberStorage.firSignatureComposer.mangler
+            get() = commonMemberStorage.mangler
     }
 }

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
-import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
@@ -305,16 +304,6 @@ class Fir2IrDeclarationStorage(
         function: FirSimpleFunction,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
     ): IrSimpleFunctionSymbol? {
-        return getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag) {
-            signatureComposer.composeSignature(function, fakeOverrideOwnerLookupTag)
-        }
-    }
-
-    fun getCachedIrFunctionSymbol(
-        function: FirSimpleFunction,
-        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
-        signatureCalculator: () -> IdSignature?
-    ): IrSimpleFunctionSymbol? {
         if (function.visibility == Visibilities.Local) {
             return localStorage.getLocalFunctionSymbol(function)
         }
@@ -332,12 +321,8 @@ class Fir2IrDeclarationStorage(
         val cachedIrCallable = getCachedIrCallableSymbol(
             function,
             fakeOverrideOwnerLookupTag,
-            functionCache::get,
-            functionCache::set,
-            signatureCalculator
-        ) { signature ->
-            symbolTable.referenceSimpleFunctionIfAny(signature)
-        }
+            functionCache::get
+        )
         return cachedIrCallable?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
     }
 
@@ -704,29 +689,23 @@ class Fir2IrDeclarationStorage(
 
     fun getCachedIrPropertySymbol(
         property: FirProperty,
-        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
-        signatureCalculator: () -> IdSignature? = { signatureComposer.composeSignature(property, fakeOverrideOwnerLookupTag) }
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?
     ): IrPropertySymbol? {
         @Suppress("NAME_SHADOWING")
         val property = prepareProperty(property)
         val symbol = getCachedIrCallableSymbol(
             property,
             fakeOverrideOwnerLookupTag,
-            propertyCache::get,
-            propertyCache::set,
-            signatureCalculator
-        ) { signature ->
-            symbolTable.referencePropertyIfAny(signature)
-        } ?: return null
+            propertyCache::get
+        ) ?: return null
         return symbolsMappingForLazyClasses.remapPropertySymbol(symbol)
     }
 
     private fun getCachedIrPropertySymbols(
         property: FirProperty,
-        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
-        signatureCalculator: () -> IdSignature? = { signatureComposer.composeSignature(property, fakeOverrideOwnerLookupTag) }
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?
     ): PropertySymbols? {
-        val propertySymbol = getCachedIrPropertySymbol(property, fakeOverrideOwnerLookupTag, signatureCalculator) ?: return null
+        val propertySymbol = getCachedIrPropertySymbol(property, fakeOverrideOwnerLookupTag) ?: return null
         return PropertySymbols(
             propertySymbol,
             findGetterOfProperty(propertySymbol)!!,
@@ -924,10 +903,7 @@ class Fir2IrDeclarationStorage(
         return getCachedIrCallableSymbol(
             declaration = field,
             fakeOverrideOwnerLookupTag,
-            cacheGetter = propertyForFieldCache::get,
-            cacheSetter = propertyForFieldCache::set,
-            signatureCalculator = { null },
-            referenceIfAny = { null }
+            cacheGetter = propertyForFieldCache::get
         )
     }
 
@@ -1147,10 +1123,7 @@ class Fir2IrDeclarationStorage(
     private inline fun <reified FC : FirCallableDeclaration, reified IS : IrSymbol> getCachedIrCallableSymbol(
         declaration: FC,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
-        cacheGetter: (FC) -> IS?,
-        cacheSetter: (FC, IS) -> Unit,
-        signatureCalculator: () -> IdSignature?,
-        referenceIfAny: (IdSignature) -> IS?
+        cacheGetter: (FC) -> IS?
     ): IS? {
         /*
          * There should be two types of declarations:
@@ -1178,80 +1151,6 @@ class Fir2IrDeclarationStorage(
             irForFirSessionDependantDeclarationMap[key]?.let { return it as IS }
         } else {
             cacheGetter(declaration)?.let { return it }
-        }
-
-        // TODO: Special case mentioned above. Should be removed after fixing creation. KT-61085
-        if (declaration.isSubstitutionOrIntersectionOverride) {
-            cacheGetter(declaration)?.let { return it }
-        }
-
-        /*
-         * There are cases when two different f/o identifiers may represent the same IR f/o
-         *
-         * // MODULE: common
-         * expect open class Base<T>() {
-         *     fun foo(param: T) // (1)
-         * }
-         *
-         * class Derived : Base<String>() {
-         *     // substitution override fun foo(param: String)
-         * }
-         *
-         * // MODULE: platform()()(common)
-         * actual open class Base<T> {
-         *     actual fun foo(param: T) {} // (2)
-         * }
-         *
-         * fun test(d: Derived) {
-         *     d.foo()
-         * }
-         *
-         * In this case we have two different FIR functions for substitution override Derived.foo, because substitution and two different
-         *   original functions for them depending on the module we are watching
-         * - during conversion of the common module we will create and save IR f/o for derived with identifier (function (1), Derived)
-         * - during conversion of the platform module for each call of `Derived.foo` we will use identifier (function (2), Derived).
-         * But we actually must use the f/o which was created in common module. So here we should reuse the symbol from symbol table if we
-         *   find one.
-         *
-         * TODO: Most likely check for `isFakeOverride` may be removed after fix of KT-61774
-         */
-        signatureCalculator()?.let { signature ->
-            val cachedInSymbolTable = referenceIfAny(signature) ?: return@let
-            when {
-                isFakeOverride -> {
-                    val key = FakeOverrideIdentifier(
-                        declaration.symbol.unwrapFakeOverrides(),
-                        fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!,
-                        c
-                    )
-                    irForFirSessionDependantDeclarationMap[key] = cachedInSymbolTable
-                }
-                declaration.initialSignatureAttr != null -> {
-                    /*
-                     * FIR creates remapped functions for builtin JVM classes based on use-site session, not declaration site
-                     * It leads to the situations when we have two different mapped FIR functions for the same original function
-                     *   (and same IR function)
-                     */
-                    cacheSetter(declaration, cachedInSymbolTable)
-                }
-                declaration.symbol is FirJavaOverriddenSyntheticPropertySymbol -> {
-                    /*
-                     * Synthetic properties for java classes, if those properties are based on real Kotlin properties are also session
-                     *   dependant
-                     */
-                    cacheSetter(declaration, cachedInSymbolTable)
-                }
-                declaration.origin.generatedAnyMethod -> {
-                    /*
-                     * Generated methods from Any for data and value classes are session-dependant
-                     */
-                    cacheSetter(declaration, cachedInSymbolTable)
-                }
-                else -> {
-                    error("IR declaration with signature \"$signature\" found in SymbolTable and not found in declaration storage")
-                }
-            }
-            return cachedInSymbolTable
         }
 
         return null

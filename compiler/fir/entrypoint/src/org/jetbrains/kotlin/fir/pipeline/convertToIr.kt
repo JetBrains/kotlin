@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -80,7 +79,7 @@ fun FirResult.convertToIrAndActualize(
 ): Fir2IrActualizedResult {
     require(outputs.isNotEmpty()) { "No modules found" }
 
-    val commonMemberStorage = Fir2IrCommonMemberStorage(FirBasedSignatureComposer.create(firMangler, fir2IrConfiguration))
+    val commonMemberStorage = Fir2IrCommonMemberStorage(firMangler)
     fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
 
     val firProvidersWithGeneratedFiles: MutableMap<FirModuleData, FirProviderWithGeneratedFiles> = mutableMapOf()
