@@ -67,6 +67,7 @@ class ComposeIrGenerationExtension(
     private val moduleMetricsFactory: ((StabilityInferencer) -> ModuleMetrics)? = null,
     private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
     private val featureFlags: FeatureFlags,
+    private val skipIrLoweringIfRuntimeNotFound: Boolean = false,
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
         private set
@@ -75,6 +76,12 @@ class ComposeIrGenerationExtension(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
     ) {
+        if (skipIrLoweringIfRuntimeNotFound) {
+            // If it is a Compose app, it will depend on Compose runtime. Therefore, we must be
+            // able to find ComposeVersion. If it is a non-Compose app, we skip this IR lowering.
+            pluginContext.referenceClass(ComposeClassIds.ComposeVersion) ?: return
+        }
+
         val isKlibTarget = !pluginContext.platform.isJvm()
         VersionChecker(pluginContext).check()
 

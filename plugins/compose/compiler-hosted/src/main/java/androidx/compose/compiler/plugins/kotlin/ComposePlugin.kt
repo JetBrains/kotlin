@@ -93,6 +93,8 @@ object ComposeConfiguration {
         CompilerConfigurationKey<List<String>>(
             "A list of features to enable."
         )
+    val SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY =
+        CompilerConfigurationKey<Boolean>("Skip IR lowering transformation when finding Compose runtime fails")
 }
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -213,6 +215,13 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
+        val SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_OPTION = CliOption(
+            "skipIrLoweringIfRuntimeNotFound",
+            "<true|false>",
+            "Skip IR lowering transformation when finding Compose runtime fails",
+            required = false,
+            allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId = PLUGIN_ID
@@ -232,6 +241,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         STABLE_CONFIG_PATH_OPTION,
         TRACE_MARKERS_OPTION,
         FEATURE_FLAG_OPTION,
+        SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_OPTION,
     )
 
     override fun processOption(
@@ -330,6 +340,10 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
                 value
             )
         }
+        SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_OPTION -> configuration.put(
+            ComposeConfiguration.SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY,
+            value == "true"
+        )
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
@@ -686,6 +700,10 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 true
             )
 
+            val skipIrLoweringIfRuntimeNotFound = configuration.getBoolean(
+                ComposeConfiguration.SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY,
+            )
+
             val featureFlags = FeatureFlags(
                 configuration.get(
                     ComposeConfiguration.FEATURE_FLAGS, emptyList()
@@ -738,6 +756,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 moduleMetricsFactory = moduleMetricsFactory,
                 descriptorSerializerContext = descriptorSerializerContext,
                 featureFlags = featureFlags,
+                skipIrLoweringIfRuntimeNotFound = skipIrLoweringIfRuntimeNotFound,
             )
         }
     }
