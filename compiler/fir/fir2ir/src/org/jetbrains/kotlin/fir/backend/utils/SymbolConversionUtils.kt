@@ -181,10 +181,7 @@ private fun Fir2IrComponents.toIrSymbol(
         is FirConstructorSymbol -> declarationStorage.getIrConstructorSymbol(symbol.fir.originalConstructorIfTypeAlias?.symbol ?: symbol)
         is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(symbol, fakeOverrideOwnerLookupTag)
         is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(symbol, fakeOverrideOwnerLookupTag)
-        is FirFieldSymbol -> if (configuration.useFirBasedFakeOverrideGenerator) {
-            @OptIn(FirBasedFakeOverrideGenerator::class)
-            declarationStorage.getOrCreateIrField(symbol, fakeOverrideOwnerLookupTag).symbol
-        } else {
+        is FirFieldSymbol -> {
             when (useSite) {
                 Reference -> declarationStorage.getIrSymbolForField(symbol, fakeOverrideOwnerLookupTag)
                 else -> {

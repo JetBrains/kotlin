@@ -285,22 +285,6 @@ class Fir2IrClassifierStorage(
             conversionScope.withContainingFirClass(klass) {
                 classifiersGenerator.processClassHeader(klass, irClass)
                 converter.processClassMembers(klass, irClass)
-                // See the problem from KT-57441
-                //
-                // ```kt
-                // class Wrapper {
-                //     private val dummy = object: Bar {}
-                //     private val bar = object: Bar by dummy {}
-                // }
-                // interface Bar {
-                //     val foo: String
-                //         get() = ""
-                // }
-                // ```
-                //
-                // When we are building bar.foo fake override, we should call dummy.foo,
-                // so we should have object : Bar.foo fake override to be built and bound.
-                converter.bindFakeOverridesInClass(irClass)
             }
         }
         localClassesCreatedOnTheFly.clear()

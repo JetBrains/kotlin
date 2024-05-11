@@ -126,12 +126,6 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
     val configuration = CompilerConfiguration()
     configuration[CommonConfigurationKeys.MODULE_NAME] = module.name
 
-    if (module.targetPlatform.isJvm() && CodegenTestDirectives.ENABLE_FIR_FAKE_OVERRIDE_GENERATION in module.directives) {
-        // IR-based fake override generator is enabled by default on all platforms.
-        // On JVM, we can also test FIR2IR-based fake override generator.
-        configuration.put(CommonConfigurationKeys.USE_FIR_BASED_FAKE_OVERRIDE_GENERATOR, true)
-    }
-
     if (JsEnvironmentConfigurationDirectives.GENERATE_STRICT_IMPLICIT_EXPORT in module.directives) {
         configuration.put(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT, true)
     }

@@ -513,16 +513,6 @@ They should be a subset of sources passed as free arguments."""
         }
 
     @Argument(
-        value = "-Xuse-fir-fake-override-builder",
-        description = "Generate all fake overrides via FIR2IR instead of IR, i.e. revert to behavior before KT-61514 was resolved."
-    )
-    var useFirFakeOverrideBuilder = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xmetadata-klib",
         description = "Produce a klib that only contains the metadata of declarations.",
         deprecatedName = "-Xexpect-actual-linker"

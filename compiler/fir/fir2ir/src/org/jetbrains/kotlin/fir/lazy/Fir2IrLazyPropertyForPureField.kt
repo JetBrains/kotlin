@@ -31,18 +31,11 @@ class Fir2IrLazyPropertyForPureField(
         symbol.bind(this)
     }
 
-    override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) {
-        when (configuration.useFirBasedFakeOverrideGenerator) {
-            true -> error("Fir2IrLazyPropertyForPureField shouldn't be created when FirBasedFakeOverrideGenerator is enabled")
-            false -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
-        }
-    }
-
-    private fun computeOverriddenSymbolsForIrFakeOverrideGenerator(): List<IrPropertySymbol> {
-        val containingClass = field.containingClass ?: return emptyList()
+    override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) lazy@{
+        val containingClass = field.containingClass ?: return@lazy emptyList()
         val baseFieldsWithDispatchReceiverTag =
             fakeOverrideGenerator.computeBaseSymbolsWithContainingClass(containingClass, field.fir.symbol)
-        return baseFieldsWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
+        baseFieldsWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
             declarationStorage.getIrSymbolForField(symbol, dispatchReceiverLookupTag) as IrPropertySymbol
         }
     }

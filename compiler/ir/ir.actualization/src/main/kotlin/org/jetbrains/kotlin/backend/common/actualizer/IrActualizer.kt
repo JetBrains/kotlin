@@ -33,7 +33,6 @@ class IrActualizer(
     val ktDiagnosticReporter: IrDiagnosticReporter,
     val typeSystemContext: IrTypeSystemContext,
     expectActualTracker: ExpectActualTracker?,
-    val useFirBasedFakeOverrideGenerator: Boolean,
     val mainFragment: IrModuleFragment,
     val dependentFragments: List<IrModuleFragment>,
     extraActualClassExtractor: IrExtraActualDeclarationExtractor? = null,
@@ -75,29 +74,15 @@ class IrActualizer(
         // 1. Collect expect-actual links for members of classes found on step 1.
         val expectActualMap = collector.matchAllExpectDeclarations(classActualizationInfo)
 
-        if (useFirBasedFakeOverrideGenerator) {
-            //   2. Actualize expect fake overrides in non-expect classes inside common or multi-platform module.
-            //      It's probably important to run FakeOverridesActualizer before ActualFakeOverridesAdder
-            FakeOverridesActualizer(expectActualMap, ktDiagnosticReporter).apply { dependentFragments.forEach { visitModuleFragment(it) } }
-
-            //   3. Add fake overrides to non-expect classes inside common or multi-platform module,
-            //      taken from these non-expect classes actualized super classes.
-            ActualFakeOverridesAdder(
-                expectActualMap,
-                classActualizationInfo.actualClasses,
-                typeSystemContext
-            ).apply { dependentFragments.forEach { visitModuleFragment(it) } }
-        }
-
-        //   4. Copy and actualize function parameter default values from expect functions
+        // 2. Copy and actualize function parameter default values from expect functions
         val symbolRemapper = ActualizerSymbolRemapper(expectActualMap)
         FunctionDefaultParametersActualizer(symbolRemapper, expectActualMap).actualize()
 
-        //   5. Actualize expect calls in dependent fragments using info obtained in the previous steps
+        // 3. Actualize expect calls in dependent fragments using info obtained in the previous steps
         val actualizerVisitor = ActualizerVisitor(symbolRemapper)
         dependentFragments.forEach { it.transform(actualizerVisitor, null) }
 
-        //   6. Move all declarations to mainFragment
+        // 4. Move all declarations to mainFragment
         mergeIrFragments(mainFragment, dependentFragments)
         return expectActualMap
     }

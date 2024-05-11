@@ -236,33 +236,11 @@ class Fir2IrLazyProperty(
         }
     }
 
-    override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) {
-        when (configuration.useFirBasedFakeOverrideGenerator) {
-            true -> computeOverriddenUsingFir2IrFakeOverrideGenerator()
-            false -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
-        }
-    }
-
-    // TODO: drop this function after migration to IR f/o generator will be complete (KT-64202)
-    private fun computeOverriddenUsingFir2IrFakeOverrideGenerator(): List<IrPropertySymbol> {
-        if (containingClass == null) return emptyList()
-        if (isFakeOverride && parent is Fir2IrLazyClass) {
-            fakeOverrideGenerator.calcBaseSymbolsForFakeOverrideProperty(
-                containingClass, this, fir.symbol
-            )
-            fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let {
-                assert(!it.contains(symbol)) { "Cannot add function $symbol to its own overriddenSymbols" }
-                return it
-            }
-        }
-        return fir.generateOverriddenPropertySymbols(containingClass, c)
-    }
-
-    private fun computeOverriddenSymbolsForIrFakeOverrideGenerator(): List<IrPropertySymbol> {
-        if (containingClass == null || parent !is Fir2IrLazyClass) return emptyList()
+    override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) lazy@{
+        if (containingClass == null || parent !is Fir2IrLazyClass) return@lazy emptyList()
         val baseFunctionWithDispatchReceiverTag =
             fakeOverrideGenerator.computeBaseSymbolsWithContainingClass(containingClass, fir.symbol)
-        return baseFunctionWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
+        baseFunctionWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
             declarationStorage.getIrPropertySymbol(symbol, dispatchReceiverLookupTag) as IrPropertySymbol
         }
     }

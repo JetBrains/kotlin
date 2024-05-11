@@ -219,7 +219,6 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
         // The last variant is possible for local variables like 'val a = object : Any() { ... }'
         if (processMembersOfClassesOnTheFlyImmediately) {
             converter.processClassMembers(classOrLocalParent, result)
-            converter.bindFakeOverridesInClass(result)
         }
         val irClass = if (classOrLocalParent === klass) {
             result

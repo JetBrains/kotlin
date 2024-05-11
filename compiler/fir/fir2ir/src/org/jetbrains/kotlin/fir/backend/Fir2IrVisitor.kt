@@ -143,7 +143,6 @@ class Fir2IrVisitor(
             val anonymousObject = (enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject
             converter.processAnonymousObjectHeaders(anonymousObject, correspondingClass)
             converter.processClassMembers(anonymousObject, correspondingClass)
-            converter.bindFakeOverridesInClass(correspondingClass)
             conversionScope.withParent(correspondingClass) {
                 memberGenerator.convertClassContent(correspondingClass, anonymousObject)
 
@@ -304,9 +303,7 @@ class Fir2IrVisitor(
                                 }
                             }
                             statement is FirClass -> {
-                                (statement.accept(this@Fir2IrVisitor, null) as IrClass).also {
-                                    converter.bindFakeOverridesInClass(it)
-                                }
+                                statement.accept(this@Fir2IrVisitor, null) as IrClass
                             }
                             else -> {
                                 statement.accept(this@Fir2IrVisitor, null) as? IrDeclaration

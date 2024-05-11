@@ -201,49 +201,6 @@ class DelegatedMemberGenerator(private val c: Fir2IrComponents) : Fir2IrComponen
         return result
     }
 
-    @OptIn(FirBasedFakeOverrideGenerator::class)
-    fun bindDelegatedMembersOverriddenSymbols(irClass: IrClass) {
-        if (!c.configuration.useFirBasedFakeOverrideGenerator) return
-        val superClasses by lazy(LazyThreadSafetyMode.NONE) {
-            irClass.superTypes.mapNotNullTo(mutableSetOf()) {
-                // All class symbols should be already bound at this moment
-                @OptIn(UnsafeDuringIrConstructionAPI::class)
-                it.classifierOrNull?.owner as? IrClass
-            }
-        }
-
-        require(irClass !is Fir2IrLazyClass)
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
-        val declarations = irClass.declarations
-
-        for (declaration in declarations) {
-            if (declaration.origin != IrDeclarationOrigin.DELEGATED_MEMBER) continue
-            when (declaration) {
-                is IrSimpleFunction -> {
-                    val symbol = declaration.symbol
-                    declaration.overriddenSymbols = baseFunctionSymbols[declaration]?.flatMap {
-                        fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)
-                    }?.filter { it != symbol }.orEmpty()
-                }
-                is IrProperty -> {
-                    val symbol = declaration.symbol
-                    declaration.overriddenSymbols = basePropertySymbols[declaration]?.flatMap {
-                        fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)
-                    }?.filter { it != symbol }.orEmpty()
-                    declaration.getter!!.overriddenSymbols = declaration.overriddenSymbols.mapNotNull {
-                        declarationStorage.findGetterOfProperty(it)
-                    }
-                    if (declaration.isVar) {
-                        declaration.setter!!.overriddenSymbols = declaration.overriddenSymbols.mapNotNull {
-                            declarationStorage.findSetterOfProperty(it)
-                        }
-                    }
-                }
-                else -> continue
-            }
-        }
-    }
-
     private fun generateDelegatedFunction(
         subClass: IrClass,
         firSubClass: FirClass,

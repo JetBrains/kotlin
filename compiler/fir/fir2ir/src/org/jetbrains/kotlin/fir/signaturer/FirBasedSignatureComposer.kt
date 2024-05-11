@@ -20,14 +20,11 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-
+// TODO: remove
 sealed class FirBasedSignatureComposer(val mangler: FirMangler) {
     companion object {
         fun create(mangler: FirMangler, configuration: Fir2IrConfiguration): FirBasedSignatureComposer {
-            return when (configuration.useFirBasedFakeOverrideGenerator) {
-                false -> Empty(mangler)
-                true -> FirBasedSignatureComposerImpl(mangler)
-            }
+            return Empty(mangler)
         }
     }
 

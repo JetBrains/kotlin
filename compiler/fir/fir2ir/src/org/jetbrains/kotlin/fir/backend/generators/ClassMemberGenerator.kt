@@ -211,16 +211,6 @@ internal class ClassMemberGenerator(
                 // Scope for primary constructor should be left after class declaration
                 declarationStorage.leaveScope(irFunction.symbol)
             }
-            if (irFunction is IrSimpleFunction && firFunction is FirSimpleFunction && containingClass != null) {
-                /**
-                 * In useIrFakeOverrideBuilder it would be dropped anyway, as [org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder.buildFakeOverridesForClass]
-                 * recalculates this value from scratch. Also, it's quite meaningless in non-platform modules anyway.
-                 */
-                if (configuration.useFirBasedFakeOverrideGenerator) {
-                    @OptIn(FirBasedFakeOverrideGenerator::class)
-                    irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(containingClass, c)
-                }
-            }
         }
         return irFunction
     }
@@ -230,19 +220,8 @@ internal class ClassMemberGenerator(
         val delegate = property.delegate
         val propertyType = property.returnTypeRef.toIrType(c)
         irProperty.initializeBackingField(property, initializerExpression = initializer ?: delegate)
-        if (containingClass != null) {
-            /**
-             * In useIrFakeOverrideBuilder it would be dropped anyway, as [org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder.buildFakeOverridesForClass]
-             * recalculates this value from scratch. Also, it's quite meaningless in non-platform modules anyway.
-             */
-            if (configuration.useFirBasedFakeOverrideGenerator) {
-                @OptIn(FirBasedFakeOverrideGenerator::class) // checked for useIrFakeOverrideBuilder
-                irProperty.overriddenSymbols = property.generateOverriddenPropertySymbols(containingClass, c)
-            }
-        }
-        val needGenerateDefaultGetter =
-            property.getter is FirDefaultPropertyGetter ||
-                    (property.getter == null && irProperty.parent is IrScript && property.destructuringDeclarationContainerVariable != null)
+        val needGenerateDefaultGetter = property.getter is FirDefaultPropertyGetter ||
+                (property.getter == null && irProperty.parent is IrScript && property.destructuringDeclarationContainerVariable != null)
 
         irProperty.getter?.setPropertyAccessorContent(
             property, property.getter, irProperty, propertyType,
@@ -350,11 +329,6 @@ internal class ClassMemberGenerator(
                     declarationStorage.leaveScope(this.symbol)
                 }
             }
-            if (containingClass != null && c.configuration.useFirBasedFakeOverrideGenerator) {
-                @OptIn(FirBasedFakeOverrideGenerator::class)
-                this.overriddenSymbols = property.generateOverriddenAccessorSymbols(containingClass, isGetter, c)
-            }
-
         }
     }
 

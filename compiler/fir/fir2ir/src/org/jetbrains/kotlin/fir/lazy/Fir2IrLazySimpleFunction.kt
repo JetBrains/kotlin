@@ -96,33 +96,11 @@ class Fir2IrLazySimpleFunction(
         }
     }
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) {
-        when (configuration.useFirBasedFakeOverrideGenerator) {
-            true -> computeOverriddenUsingFir2IrFakeOverrideGenerator()
-            false -> computeOverriddenSymbolsForIrFakeOverrideGenerator()
-        }
-    }
-
-    // TODO: drop this function after migration to IR f/o generator will be complete (KT-64202)
-    private fun computeOverriddenUsingFir2IrFakeOverrideGenerator(): List<IrSimpleFunctionSymbol> {
-        if (firParent == null) return emptyList()
-        if (isFakeOverride && parent is Fir2IrLazyClass) {
-            fakeOverrideGenerator.calcBaseSymbolsForFakeOverrideFunction(
-                firParent, this, fir.symbol
-            )
-            fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let {
-                assert(!it.contains(symbol)) { "Cannot add function $symbol to its own overriddenSymbols" }
-                return it
-            }
-        }
-        return fir.generateOverriddenFunctionSymbols(firParent, c)
-    }
-
-    private fun computeOverriddenSymbolsForIrFakeOverrideGenerator(): List<IrSimpleFunctionSymbol> {
-        if (firParent == null || parent !is Fir2IrLazyClass) return emptyList()
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) lazy@{
+        if (firParent == null || parent !is Fir2IrLazyClass) return@lazy emptyList()
         val baseFunctionWithDispatchReceiverTag =
             fakeOverrideGenerator.computeBaseSymbolsWithContainingClass(firParent, fir.symbol)
-        return baseFunctionWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
+        baseFunctionWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
             declarationStorage.getIrFunctionSymbol(symbol, dispatchReceiverLookupTag) as IrSimpleFunctionSymbol
         }
     }

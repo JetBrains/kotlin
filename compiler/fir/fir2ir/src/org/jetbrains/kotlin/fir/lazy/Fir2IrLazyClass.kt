@@ -214,20 +214,13 @@ class Fir2IrLazyClass(
                     when {
                         !shouldBuildStub(symbol.fir) -> {}
                         symbol is FirFieldSymbol -> {
-                            if (configuration.useFirBasedFakeOverrideGenerator) {
-                                if (!isStaticFromSuperInterface(symbol.fir)) {
-                                    val field = declarationStorage.getOrCreateIrField(symbol.fir, this)
-                                    result += createFieldOnlyProperty(field)
-                                }
-                            } else {
-                                if (!symbol.isStatic) {
-                                    // Lazy declarations are created together with their symbol, so it's safe to take the owner here
-                                    @OptIn(UnsafeDuringIrConstructionAPI::class)
-                                    result += declarationStorage.getIrSymbolForField(
-                                        symbol,
-                                        fakeOverrideOwnerLookupTag = lookupTag
-                                    ).owner as IrProperty
-                                }
+                            if (!symbol.isStatic) {
+                                // Lazy declarations are created together with their symbol, so it's safe to take the owner here
+                                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                                result += declarationStorage.getIrSymbolForField(
+                                    symbol,
+                                    fakeOverrideOwnerLookupTag = lookupTag
+                                ).owner as IrProperty
                             }
                         }
                         symbol is FirPropertySymbol -> {
