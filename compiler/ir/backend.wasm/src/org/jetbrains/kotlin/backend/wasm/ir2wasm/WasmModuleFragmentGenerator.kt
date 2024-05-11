@@ -19,7 +19,7 @@ class WasmModuleFragmentGenerator(
     fun generateModule(irModuleFragment: IrModuleFragment): List<WasmCompiledFileFragment> {
         val wasmCompiledModuleFragments = mutableListOf<WasmCompiledFileFragment>()
         for (irFile in irModuleFragment.files) {
-            val wasmFileFragment = WasmCompiledIrFileFragment(irFile.symbol)
+            val wasmFileFragment = WasmCompiledFileFragment()
             val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
             val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
 

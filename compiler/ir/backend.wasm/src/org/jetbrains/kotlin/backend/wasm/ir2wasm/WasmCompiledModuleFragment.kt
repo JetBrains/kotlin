@@ -18,27 +18,21 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
-sealed class ReferenceKey
-data class SignatureKey(val signature: IdSignature) : ReferenceKey()
-data class SymbolKey(val symbol: IrSymbol) : ReferenceKey()
-
-class WasmCompiledIrFileFragment(val irFile: IrFileSymbol) : WasmCompiledFileFragment()
-
-open class WasmCompiledFileFragment {
+class WasmCompiledFileFragment {
     val functions =
-        ReferencableAndDefinable<ReferenceKey, WasmFunction>()
+        ReferencableAndDefinable<IdSignature, WasmFunction>()
     val globalFields =
-        ReferencableAndDefinable<ReferenceKey, WasmGlobal>()
+        ReferencableAndDefinable<IdSignature, WasmGlobal>()
     val globalVTables =
-        ReferencableAndDefinable<ReferenceKey, WasmGlobal>()
+        ReferencableAndDefinable<IdSignature, WasmGlobal>()
     val globalClassITables =
-        ReferencableAndDefinable<ReferenceKey, WasmGlobal>()
+        ReferencableAndDefinable<IdSignature, WasmGlobal>()
     val functionTypes =
-        ReferencableAndDefinable<ReferenceKey, WasmFunctionType>()
+        ReferencableAndDefinable<IdSignature, WasmFunctionType>()
     val gcTypes =
-        ReferencableAndDefinable<ReferenceKey, WasmTypeDeclaration>()
+        ReferencableAndDefinable<IdSignature, WasmTypeDeclaration>()
     val vTableGcTypes =
-        ReferencableAndDefinable<ReferenceKey, WasmTypeDeclaration>()
+        ReferencableAndDefinable<IdSignature, WasmTypeDeclaration>()
     val classITableGcType =
         ReferencableAndDefinable<IdSignature, WasmTypeDeclaration>()
     val classITableInterfaceSlot =
@@ -48,9 +42,9 @@ open class WasmCompiledFileFragment {
     val classITableInterfaceHasImplementors =
         ReferencableAndDefinable<IdSignature, Int>()
     val typeInfo =
-        mutableMapOf<ReferenceKey, ConstantDataElement>()
+        mutableMapOf<IdSignature, ConstantDataElement>()
     val classIds =
-        ReferencableElements<ReferenceKey, Int>()
+        ReferencableElements<IdSignature, Int>()
     val interfaceIds =
         ReferencableElements<IdSignature, Int>()
     val stringLiteralAddress =
@@ -228,7 +222,7 @@ class WasmCompiledModuleFragment(
 
         //FILEWISE
         var currentDataSectionAddress = 0
-        val classIds = mutableMapOf<ReferenceKey, Int>()
+        val classIds = mutableMapOf<IdSignature, Int>()
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.typeInfo.forEach { (referenceKey, wasmSymbol) ->
                 classIds[referenceKey] = currentDataSectionAddress
@@ -351,7 +345,7 @@ class WasmCompiledModuleFragment(
         recGroupTypes.sortBy(::wasmTypeDeclarationOrderKey)
 
         //OPT
-        val throwableSignature = SignatureKey(irBuiltIns.throwableClass.signature!!)
+        val throwableSignature = irBuiltIns.throwableClass.signature!!
         val throwableDeclaration = wasmCompiledFileFragments.firstNotNullOfOrNull { fragment -> fragment.gcTypes.defined[throwableSignature] }
         check(throwableDeclaration != null)
         val tagFuncType = WasmFunctionType(

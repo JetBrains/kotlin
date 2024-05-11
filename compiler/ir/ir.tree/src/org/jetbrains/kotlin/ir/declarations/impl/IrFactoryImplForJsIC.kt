@@ -37,8 +37,17 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         return this
     }
 
+    private val unknownDeclarations = mutableMapOf<IrDeclaration, IdSignature>()
     override fun declarationSignature(declaration: IrDeclaration): IdSignature? {
-        return declarationToSignature[declaration] ?: declaration.symbol.signature ?: declaration.symbol.privateSignature
+        val signature = declarationToSignature[declaration]
+            ?: declaration.symbol.signature
+            ?: declaration.symbol.privateSignature
+            ?: unknownDeclarations[declaration]
+        if (signature != null) return signature
+
+        val unknownDeclaration = IdSignature.ScopeLocalDeclaration(unknownDeclarations.size, "UNKNOWN")
+        unknownDeclarations[declaration] = unknownDeclaration
+        return unknownDeclaration
     }
 
     override fun createAnonymousInitializer(

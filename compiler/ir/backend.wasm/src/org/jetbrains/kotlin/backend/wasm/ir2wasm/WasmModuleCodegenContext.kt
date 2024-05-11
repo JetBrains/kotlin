@@ -21,10 +21,8 @@ class WasmFileCodegenContext(
     private val wasmFileFragment: WasmCompiledFileFragment,
     private val idSignatureRetriever: IdSignatureRetriever,
 ) {
-    private fun IrSymbol.getReferenceKey(): ReferenceKey =
-        idSignatureRetriever.declarationSignature(this.owner as IrDeclaration)
-            ?.let { SignatureKey(it) }
-            ?: SymbolKey(this)
+    private fun IrSymbol.getReferenceKey(): IdSignature =
+        idSignatureRetriever.declarationSignature(this.owner as IrDeclaration)!!
 
     fun referenceStringLiteralAddressAndId(string: String): Pair<WasmSymbol<Int>, WasmSymbol<Int>> {
         val address = wasmFileFragment.stringLiteralAddress.reference(string)
@@ -101,7 +99,7 @@ class WasmFileCodegenContext(
         wasmFileFragment.vTableGcTypes.reference(irClass.getReferenceKey())
 
     fun referenceVTableGcType(iface: IdSignature): WasmSymbol<WasmTypeDeclaration> =
-        wasmFileFragment.vTableGcTypes.reference(SignatureKey(iface))
+        wasmFileFragment.vTableGcTypes.reference(iface)
 
     fun referenceClassITableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
         wasmFileFragment.classITableGcType.reference(irClass.getSignature())
@@ -137,7 +135,7 @@ class WasmFileCodegenContext(
     }
 
     fun defineDeclaredInterface(iface: IrClassSymbol) {
-        wasmFileFragment.declaredInterfaces.add((iface.getReferenceKey() as SignatureKey).signature)
+        wasmFileFragment.declaredInterfaces.add(iface.getReferenceKey())
     }
 
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
