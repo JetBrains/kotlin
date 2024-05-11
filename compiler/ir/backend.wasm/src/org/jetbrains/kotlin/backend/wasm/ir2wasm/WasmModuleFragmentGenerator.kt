@@ -8,34 +8,33 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class WasmModuleFragmentGenerator(
-    backendContext: WasmBackendContext,
-    wasmModuleFragment: WasmCompiledModuleFragment,
-    idSignatureRetriever: IdSignatureRetriever,
-    allowIncompleteImplementations: Boolean,
+    private val backendContext: WasmBackendContext,
+    private val wasmModuleMetadataCache: WasmModuleMetadataCache,
+    private val idSignatureRetriever: IdSignatureRetriever,
+    private val allowIncompleteImplementations: Boolean,
 ) {
-    val declarationGenerator =
-        DeclarationGenerator(
-            WasmModuleCodegenContext(
-                backendContext,
-                idSignatureRetriever,
-                wasmModuleFragment,
-            ),
-            allowIncompleteImplementations,
-        )
-
-    fun generateModule(irModuleFragment: IrModuleFragment) {
-        acceptVisitor(irModuleFragment, declarationGenerator)
-    }
-
-    private fun acceptVisitor(irModuleFragment: IrModuleFragment, visitor: IrElementVisitorVoid) {
+    fun generateModule(irModuleFragment: IrModuleFragment): List<WasmCompiledFileFragment> {
+        val wasmCompiledModuleFragments = mutableListOf<WasmCompiledFileFragment>()
         for (irFile in irModuleFragment.files) {
+            val wasmFileFragment = WasmCompiledIrFileFragment(irFile.symbol)
+            val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
+            val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
+
+            val generator = DeclarationGenerator(
+                backendContext,
+                wasmFileCodegenContext,
+                wasmModuleTypeTransformer,
+                wasmModuleMetadataCache,
+                allowIncompleteImplementations,
+            )
             for (irDeclaration in irFile.declarations) {
-                irDeclaration.acceptVoid(visitor)
+                irDeclaration.acceptVoid(generator)
             }
+            wasmCompiledModuleFragments.add(wasmFileFragment)
         }
+        return wasmCompiledModuleFragments
     }
 }
