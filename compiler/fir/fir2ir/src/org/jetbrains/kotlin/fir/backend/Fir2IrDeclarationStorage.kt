@@ -1146,13 +1146,18 @@ class Fir2IrDeclarationStorage(
     }
 
     internal fun createSupertypeDelegateIrField(field: FirField, irClass: IrClass): IrField {
-        @OptIn(FirBasedFakeOverrideGenerator::class)
-        return createAndCacheIrField(
-            field,
-            irParent = irClass,
+        val symbol = createFieldSymbol()
+
+        val irField = callablesGenerator.createIrField(
+            field, irParent = irClass, symbol,
             type = field.initializer?.resolvedType ?: field.returnTypeRef.coneType,
             origin = IrDeclarationOrigin.DELEGATE
         )
+
+        @OptIn(FirBasedFakeOverrideGenerator::class)
+        fieldCache[field] = symbol
+
+        return irField
     }
 
     // ------------------------------------ parameters ------------------------------------
