@@ -238,8 +238,6 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
         return irClass.thisReceiver
     }
 
-    fun lastClass(): IrClass? = classStack.lastOrNull()
-
     fun lastWhenSubject(): IrVariable = whenSubjectVariableStack.last()
     fun lastSafeCallSubject(): IrVariable = safeCallSubjectVariableStack.last()
 

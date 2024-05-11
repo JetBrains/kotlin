@@ -87,7 +87,7 @@ class Fir2IrComponentsStorage(
     override val callGenerator: CallAndReferenceGenerator = CallAndReferenceGenerator(this, fir2IrVisitor, conversionScope)
 
     @FirBasedFakeOverrideGenerator
-    override val fakeOverrideGenerator: FakeOverrideGenerator = FakeOverrideGenerator(this, conversionScope)
+    override val fakeOverrideGenerator: FakeOverrideGenerator = FakeOverrideGenerator(this)
     override val delegatedMemberGenerator: DelegatedMemberGenerator = DelegatedMemberGenerator(this)
     override val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses = Fir2IrSymbolsMappingForLazyClasses()
 

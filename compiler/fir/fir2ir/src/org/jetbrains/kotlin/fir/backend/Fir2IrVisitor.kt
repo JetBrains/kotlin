@@ -76,8 +76,6 @@ class Fir2IrVisitor(
     val annotationMode: Boolean
         get() = _annotationMode
 
-    private fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T = conversionScope.applyParentFromStackTo(declaration)
-
     internal inline fun <T> withAnnotationMode(enableAnnotationMode: Boolean = true, block: () -> T): T {
         val oldAnnotationMode = _annotationMode
         _annotationMode = enableAnnotationMode
@@ -506,7 +504,7 @@ class Fir2IrVisitor(
                 "Stub for Enum.entries"
             )
         return conversionScope.withProperty(irProperty, property) {
-            memberGenerator.convertPropertyContent(irProperty, property, containingClass = conversionScope.containerFirClass())
+            memberGenerator.convertPropertyContent(irProperty, property)
         }
     }
 

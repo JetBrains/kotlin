@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
-import org.jetbrains.kotlin.fir.backend.generators.generateOverriddenPropertySymbols
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.asCompileTimeIrInitializer
 import org.jetbrains.kotlin.fir.backend.utils.toIrConst
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-@OptIn(FirBasedFakeOverrideGenerator::class)
 class Fir2IrLazyProperty(
     private val c: Fir2IrComponents,
     override val startOffset: Int,
@@ -238,6 +236,8 @@ class Fir2IrLazyProperty(
 
     override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) lazy@{
         if (containingClass == null || parent !is Fir2IrLazyClass) return@lazy emptyList()
+
+        @OptIn(FirBasedFakeOverrideGenerator::class)
         val baseFunctionWithDispatchReceiverTag =
             fakeOverrideGenerator.computeBaseSymbolsWithContainingClass(containingClass, fir.symbol)
         baseFunctionWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->

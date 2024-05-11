@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-@OptIn(FirBasedFakeOverrideGenerator::class)
 class Fir2IrLazyPropertyForPureField(
     private val c: Fir2IrComponents,
     private val field: Fir2IrLazyField,
@@ -33,6 +32,8 @@ class Fir2IrLazyPropertyForPureField(
 
     override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) lazy@{
         val containingClass = field.containingClass ?: return@lazy emptyList()
+
+        @OptIn(FirBasedFakeOverrideGenerator::class)
         val baseFieldsWithDispatchReceiverTag =
             fakeOverrideGenerator.computeBaseSymbolsWithContainingClass(containingClass, field.fir.symbol)
         baseFieldsWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->

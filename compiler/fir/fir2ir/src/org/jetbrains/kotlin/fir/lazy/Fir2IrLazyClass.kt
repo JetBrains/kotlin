@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lazy
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.backend.generators.isFakeOverride
 import org.jetbrains.kotlin.fir.backend.utils.computeValueClassRepresentation
 import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
@@ -28,19 +27,14 @@ import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.isClassWithFqName
 import org.jetbrains.kotlin.ir.util.DeserializableClass
-import org.jetbrains.kotlin.ir.util.getAllSuperclasses
 import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.Name
 
-@OptIn(FirBasedFakeOverrideGenerator::class) // only for lazy
 class Fir2IrLazyClass(
     private val c: Fir2IrComponents,
     override val startOffset: Int,
@@ -157,13 +151,6 @@ class Fir2IrLazyClass(
         get() = computeValueClassRepresentation(fir)
         set(_) = mutationNotSupported()
 
-    private val fakeOverridesByName = mutableMapOf<Name, Collection<IrDeclaration>>()
-
-    fun getFakeOverridesByName(name: Name): Collection<IrDeclaration> = fakeOverridesByName.getOrPut(name) {
-        fakeOverrideGenerator.generateFakeOverridesForName(this@Fir2IrLazyClass, name, fir)
-            .also(converter::bindFakeOverridesOrPostpone)
-    }
-
     @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
         val result = mutableListOf<IrDeclaration>()
@@ -243,30 +230,6 @@ class Fir2IrLazyClass(
 
         result
     }
-
-    private fun isStaticFromSuperInterface(field: FirField): Boolean {
-        if (!field.isStatic) return false
-        val containingClassFqName = field.containingClassLookupTag()?.classId?.asSingleFqName() ?: return false
-        return getAllSuperclasses().any { it.isInterface && it.isClassWithFqName(containingClassFqName) }
-    }
-
-    private fun createFieldOnlyProperty(field: IrField): IrProperty =
-        factory.createProperty(
-            field.startOffset,
-            field.endOffset,
-            field.origin,
-            field.name,
-            field.visibility,
-            Modality.FINAL,
-            IrPropertySymbolImpl(),
-            !field.isFinal,
-            field.isStatic && field.isFinal,
-            isLateinit = false,
-            isDelegated = false,
-        ).apply {
-            parent = field.parent
-            backingField = field
-        }
 
     private fun shouldBuildStub(fir: FirDeclaration): Boolean {
         if (fir is FirCallableDeclaration) {

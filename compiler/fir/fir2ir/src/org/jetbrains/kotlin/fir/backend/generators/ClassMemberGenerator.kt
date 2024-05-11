@@ -215,7 +215,7 @@ internal class ClassMemberGenerator(
         return irFunction
     }
 
-    fun convertPropertyContent(irProperty: IrProperty, property: FirProperty, containingClass: FirClass?): IrProperty {
+    fun convertPropertyContent(irProperty: IrProperty, property: FirProperty): IrProperty {
         val initializer = property.backingField?.initializer ?: property.initializer
         val delegate = property.delegate
         val propertyType = property.returnTypeRef.toIrType(c)
@@ -224,10 +224,7 @@ internal class ClassMemberGenerator(
                 (property.getter == null && irProperty.parent is IrScript && property.destructuringDeclarationContainerVariable != null)
 
         irProperty.getter?.setPropertyAccessorContent(
-            property, property.getter, irProperty, propertyType,
-            isDefault = needGenerateDefaultGetter,
-            isGetter = true,
-            containingClass = containingClass
+            property.getter, irProperty, propertyType, isDefault = needGenerateDefaultGetter
         )
         // Create fake body for Enum.entries
         if (irProperty.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) {
@@ -237,10 +234,7 @@ internal class ClassMemberGenerator(
 
         if (property.isVar) {
             irProperty.setter?.setPropertyAccessorContent(
-                property, property.setter, irProperty, propertyType,
-                property.setter is FirDefaultPropertySetter,
-                isGetter = false,
-                containingClass = containingClass
+                property.setter, irProperty, propertyType, property.setter is FirDefaultPropertySetter
             )
         }
         annotationGenerator.generate(irProperty, property)
@@ -291,13 +285,10 @@ internal class ClassMemberGenerator(
     }
 
     private fun IrSimpleFunction.setPropertyAccessorContent(
-        property: FirProperty,
         propertyAccessor: FirPropertyAccessor?,
         correspondingProperty: IrProperty,
         propertyType: IrType,
-        isDefault: Boolean,
-        isGetter: Boolean,
-        containingClass: FirClass?
+        isDefault: Boolean
     ) {
         conversionScope.withFunction(this) {
             applyParentFromStackTo(this)

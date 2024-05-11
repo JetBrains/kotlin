@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.utils.contextReceiversForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrCallableDeclarationsGenerator
 import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
-import org.jetbrains.kotlin.fir.backend.generators.generateOverriddenFunctionSymbols
 import org.jetbrains.kotlin.fir.backend.lazyMappedFunctionListVar
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-@OptIn(FirBasedFakeOverrideGenerator::class) // only for lazy
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
 class Fir2IrLazySimpleFunction(
     c: Fir2IrComponents,
@@ -98,6 +96,8 @@ class Fir2IrLazySimpleFunction(
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) lazy@{
         if (firParent == null || parent !is Fir2IrLazyClass) return@lazy emptyList()
+
+        @OptIn(FirBasedFakeOverrideGenerator::class) // only for lazy
         val baseFunctionWithDispatchReceiverTag =
             fakeOverrideGenerator.computeBaseSymbolsWithContainingClass(firParent, fir.symbol)
         baseFunctionWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
