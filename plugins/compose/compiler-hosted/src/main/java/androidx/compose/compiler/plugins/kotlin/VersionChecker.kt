@@ -17,13 +17,20 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
-class VersionChecker(val context: IrPluginContext) {
+enum class VersionCheckerResult {
+    SUCCESS,
+    NOT_FOUND,
+}
+
+class VersionChecker(val context: IrPluginContext, private val messageCollector: MessageCollector? = null) {
 
     companion object {
         /**
@@ -156,9 +163,22 @@ class VersionChecker(val context: IrPluginContext) {
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    fun check() {
+    fun check(skipIfRuntimeNotFound: Boolean = false): VersionCheckerResult {
         val versionClass = context.referenceClass(ComposeClassIds.ComposeVersion)
         if (versionClass == null) {
+            // If it is a Compose app, it will depend on Compose runtime. Therefore, we must be
+            // able to find ComposeVersion. If it is a non-Compose app, we skip this IR lowering.
+            if (skipIfRuntimeNotFound) {
+                messageCollector?.report(
+                    CompilerMessageSeverity.WARNING, """
+                        The Compose Compiler requires the Compose Runtime to be on the classpath, but
+                        none could be found. Skipping transform because
+                        skipIrLoweringIfRuntimeNotFound flag was passed to the compiler.
+                    """.trimIndent().replace('\n', ' ')
+                )
+                return VersionCheckerResult.NOT_FOUND
+            }
+
             // If the version class isn't present, it likely means that compose runtime isn't on the
             // classpath anywhere. But also for dev03-dev15 there wasn't any ComposeVersion class at
             // all, so we check for the presence of the Composer class here to try and check for the
@@ -172,7 +192,7 @@ class VersionChecker(val context: IrPluginContext) {
         }
 
         // The check accesses bodies of the functions that are not deserialized in KLIB
-        if (!context.platform.isJvm()) return
+        if (!context.platform.isJvm()) return VersionCheckerResult.SUCCESS
 
         val versionExpr = versionClass
             .owner
@@ -191,6 +211,7 @@ class VersionChecker(val context: IrPluginContext) {
             outdatedRuntime(runtimeVersionToMavenVersionTable[versionInt] ?: "<unknown>")
         }
         // success. We are compatible with this runtime version!
+        return VersionCheckerResult.SUCCESS
     }
 
     private fun noRuntimeOnClasspathError(): Nothing {

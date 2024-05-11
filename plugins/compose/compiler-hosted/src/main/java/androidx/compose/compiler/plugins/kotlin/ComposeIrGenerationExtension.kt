@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -67,6 +68,8 @@ class ComposeIrGenerationExtension(
     private val moduleMetricsFactory: ((StabilityInferencer) -> ModuleMetrics)? = null,
     private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
     private val featureFlags: FeatureFlags,
+    private val skipIfRuntimeNotFound: Boolean = false,
+    private val messageCollector: MessageCollector? = null,
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
         private set
@@ -76,7 +79,9 @@ class ComposeIrGenerationExtension(
         pluginContext: IrPluginContext
     ) {
         val isKlibTarget = !pluginContext.platform.isJvm()
-        VersionChecker(pluginContext).check()
+        if (VersionChecker(pluginContext, messageCollector).check(skipIfRuntimeNotFound) == VersionCheckerResult.NOT_FOUND) {
+            return
+        }
 
         val stabilityInferencer = StabilityInferencer(
             pluginContext.moduleDescriptor,
