@@ -2,11 +2,11 @@
 
 package org.jetbrains.kotlin.library
 
-@Deprecated(DEPRECATED_DEPENDENCY_VERSIONS, ReplaceWith("RequiredUnresolvedLibrary(path)"), level = DeprecationLevel.ERROR)
+@Deprecated(DEPRECATED_LIBRARY_AND_DEPENDENCY_VERSIONS, ReplaceWith("RequiredUnresolvedLibrary(path)"), level = DeprecationLevel.ERROR)
 fun UnresolvedLibrary(path: String, @Suppress("UNUSED_PARAMETER") libraryVersion: String?): RequiredUnresolvedLibrary =
     RequiredUnresolvedLibrary(path)
 
-@Deprecated(DEPRECATED_DEPENDENCY_VERSIONS, ReplaceWith("UnresolvedLibrary(path, lenient)"), level = DeprecationLevel.ERROR)
+@Deprecated(DEPRECATED_LIBRARY_AND_DEPENDENCY_VERSIONS, ReplaceWith("UnresolvedLibrary(path, lenient)"), level = DeprecationLevel.ERROR)
 fun UnresolvedLibrary(path: String, @Suppress("UNUSED_PARAMETER") libraryVersion: String?, lenient: Boolean): UnresolvedLibrary =
     if (lenient) LenientUnresolvedLibrary(path) else RequiredUnresolvedLibrary(path)
 
@@ -26,7 +26,7 @@ sealed class UnresolvedLibrary {
     abstract val path: String
 
     @Suppress("DeprecatedCallableAddReplaceWith") // There is no replacement.
-    @Deprecated(DEPRECATED_DEPENDENCY_VERSIONS, level = DeprecationLevel.ERROR)
+    @Deprecated(DEPRECATED_LIBRARY_AND_DEPENDENCY_VERSIONS, level = DeprecationLevel.ERROR)
     val libraryVersion: String? get() = null
 
     @Deprecated(DEPRECATED_SUBSTITUTE_PATH, level = DeprecationLevel.ERROR)
@@ -41,7 +41,7 @@ sealed class UnresolvedLibrary {
 data class RequiredUnresolvedLibrary(
     override val path: String,
 ) : UnresolvedLibrary() {
-    @Deprecated(DEPRECATED_DEPENDENCY_VERSIONS, level = DeprecationLevel.ERROR)
+    @Deprecated(DEPRECATED_LIBRARY_AND_DEPENDENCY_VERSIONS, level = DeprecationLevel.ERROR)
     constructor(path: String, @Suppress("UNUSED_PARAMETER") libraryVersion: String?) : this(path)
 
     @Deprecated(DEPRECATED_SUBSTITUTE_PATH, ReplaceWith("copy(path = newPath)"), level = DeprecationLevel.ERROR)
@@ -53,7 +53,7 @@ data class RequiredUnresolvedLibrary(
 data class LenientUnresolvedLibrary(
     override val path: String,
 ) : UnresolvedLibrary() {
-    @Deprecated(DEPRECATED_DEPENDENCY_VERSIONS, level = DeprecationLevel.ERROR)
+    @Deprecated(DEPRECATED_LIBRARY_AND_DEPENDENCY_VERSIONS, level = DeprecationLevel.ERROR)
     constructor(path: String, @Suppress("UNUSED_PARAMETER") libraryVersion: String?) : this(path)
 
     @Deprecated(DEPRECATED_SUBSTITUTE_PATH, ReplaceWith("copy(path = newPath)"), level = DeprecationLevel.ERROR)

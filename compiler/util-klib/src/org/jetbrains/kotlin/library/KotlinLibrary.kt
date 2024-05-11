@@ -21,7 +21,7 @@ const val KLIB_PROPERTY_IR_SIGNATURE_VERSIONS = "ir_signature_versions"
  */
 const val KLIB_PROPERTY_METADATA_VERSION = "metadata_version"
 
-@Deprecated(DEPRECATED_DEPENDENCY_VERSIONS)
+@Deprecated(DEPRECATED_LIBRARY_AND_DEPENDENCY_VERSIONS)
 const val KLIB_PROPERTY_DEPENDENCY_VERSION = "dependency_version"
 const val KLIB_PROPERTY_LIBRARY_VERSION = "library_version"
 const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
@@ -168,4 +168,4 @@ val BaseKotlinLibrary.commonizerNativeTargets: List<String>?
         manifestProperties.propertyList(KLIB_PROPERTY_COMMONIZER_NATIVE_TARGETS, escapeInQuotes = true)
     else null
 
-const val DEPRECATED_DEPENDENCY_VERSIONS = "Dependency versions have been phased out, see KT-65834"
+const val DEPRECATED_LIBRARY_AND_DEPENDENCY_VERSIONS = "Library and dependency versions have been phased out, see KT-65834"
