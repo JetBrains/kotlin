@@ -76,10 +76,12 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         get() = fir.isExpect
         set(_) = mutationNotSupported()
 
+    @Suppress("LeakingThis")
     override var body: IrBody? by lazyVar(lock) {
         if (tryLoadIr()) body else null
     }
 
+    @Suppress("LeakingThis")
     override var visibility: DescriptorVisibility by lazyVar(lock) {
         c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
     }
@@ -90,6 +92,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
+    @Suppress("LeakingThis")
     override var attributeOwnerId: IrAttributeContainer = this
     override var originalBeforeInline: IrAttributeContainer? = null
 

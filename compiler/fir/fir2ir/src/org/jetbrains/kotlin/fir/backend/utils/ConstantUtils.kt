@@ -51,7 +51,7 @@ fun <T> FirLiteralExpression.toIrConst(irType: IrType): IrConst<T> {
         @Suppress("UNCHECKED_CAST")
         IrConstImpl(
             startOffset, endOffset,
-            // Strip all annotations (including special annotations such as @EnhancedNullability) from constant type
+            // Strip all annotations (including special annotations such as @EnhancedNullability) from a constant type
             irType.removeAnnotations(),
             kind, value as T
         )

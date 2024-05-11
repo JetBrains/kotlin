@@ -256,10 +256,10 @@ class DelegatedMemberGenerator(private val c: Fir2IrComponents) : Fir2IrComponen
         val callTypeCanBeNullable: Boolean
         val callReturnType = when (isSetter) {
             false -> {
-                val substitution = originalFirDeclaration.typeParameters.zip(delegatedFirDeclaration.typeParameters)
-                    .map { (original, delegated) ->
+                val substitution =
+                    originalFirDeclaration.typeParameters.zip(delegatedFirDeclaration.typeParameters).associate { (original, delegated) ->
                         original.symbol to delegated.symbol.defaultType
-                    }.toMap()
+                    }
 
                 val substitutor = substitutorByMap(substitution, session)
                 val substitutedType = substitutor.substituteOrSelf(originalFirDeclaration.returnTypeRef.coneType)

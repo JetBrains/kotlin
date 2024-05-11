@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.signaturer.irName
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
 /**
@@ -293,3 +293,18 @@ open class FirMangleComputer(
         }
     }
 }
+
+/**
+ * The name that an IR node generated from this [FirPropertyAccessor] will have.
+ *
+ * If the corresponding property has name `foo`, this will return `<get-foo>` or `<set-foo>`.
+ */
+private val FirPropertyAccessor.irName: Name
+    get() {
+        val prefix = when {
+            isGetter -> "<get-"
+            isSetter -> "<set-"
+            else -> error("unknown property accessor kind $this")
+        }
+        return Name.special(prefix + propertySymbol.fir.name + ">")
+    }

@@ -392,6 +392,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             } ?: this
         }
 
+        @Suppress("RecursivePropertyAccessor")
         private val ClassId.topmostParentClassId: ClassId
             get() = parentClassId?.topmostParentClassId ?: this
     }

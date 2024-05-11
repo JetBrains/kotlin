@@ -62,7 +62,9 @@ internal class MappedLazyVar<T>(
     val mapperFun: Fir2IrSymbolsMappingForLazyClasses.(T) -> T
 ) : ReadWriteProperty<Any?, T> {
     private val lazy = lazyVar(lock, initializer)
-    @Volatile private var lastSeenGeneration: Int = -1
+
+    @Volatile
+    private var lastSeenGeneration: Int = -1
 
     override fun toString(): String = lazy.toString()
 

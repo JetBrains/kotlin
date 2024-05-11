@@ -274,13 +274,13 @@ class Fir2IrVisitor(
                                     IrCompositeImpl(
                                         startOffset, endOffset,
                                         irBuiltIns.unitType, IrStatementOrigin.DESTRUCTURING_DECLARATION
-                                    ).also {
-                                        it.statements.add(
+                                    ).also { composite ->
+                                        composite.statements.add(
                                             declarationStorage.createAndCacheIrVariable(statement, conversionScope.parentFromStack()).also {
                                                 it.initializer = statement.initializer?.toIrStatement() as? IrExpression
                                             }
                                         )
-                                        destructComposites[(statement).symbol] = it
+                                        destructComposites[(statement).symbol] = composite
                                     }
                                 }
                             }
@@ -686,18 +686,12 @@ class Fir2IrVisitor(
             callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
         }
 
-        val convertedExpression = when (boundSymbol) {
+        when (boundSymbol) {
             is FirClassSymbol -> generateThisReceiverAccessForClass(thisReceiverExpression, boundSymbol)
             is FirScriptSymbol -> generateThisReceiverAccessForScript(thisReceiverExpression, boundSymbol)
             is FirCallableSymbol -> generateThisReceiverAccessForCallable(thisReceiverExpression, boundSymbol)
             else -> null
-        }
-
-        if (convertedExpression != null) {
-            convertedExpression
-        } else {
-            visitQualifiedAccessExpression(thisReceiverExpression, data)
-        }
+        } ?: visitQualifiedAccessExpression(thisReceiverExpression, data)
     }
 
     private fun generateThisReceiverAccessForClass(
@@ -908,7 +902,7 @@ class Fir2IrVisitor(
                     is KtFakeSourceElementKind.DesugaredForLoop -> IrStatementOrigin.FOR_LOOP
                     is KtFakeSourceElementKind.DesugaredAugmentedAssign ->
                         augmentedAssignSourceKindToIrStatementOrigin[expression.source?.kind]
-                    is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> incOrDeclSourceKindToIrStatementOrigin[expression.source?.kind]
+                    is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> incOrDecSourceKindToIrStatementOrigin[expression.source?.kind]
                     else -> null
                 }
                 expression.convertToIrExpressionOrBlock(origin)
@@ -1110,7 +1104,8 @@ class Fir2IrVisitor(
             }
         }
         if (source?.kind is KtRealSourceElementKind) {
-            val lastStatementHasNothingType = (statements.lastOrNull() as? FirExpression)?.resolvedType?.fullyExpandedType(session)?.isNothing == true
+            val lastStatement = statements.lastOrNull() as? FirExpression
+            val lastStatementHasNothingType = lastStatement?.resolvedType?.fullyExpandedType(session)?.isNothing == true
             return statements.convertToIrBlock(source, origin, forceUnitType = origin?.isLoop == true || lastStatementHasNothingType)
         }
         return statements.convertToIrExpressionOrBlock(source, origin)

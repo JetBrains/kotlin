@@ -204,7 +204,12 @@ class Fir2IrClassifierStorage(
         val classId = firClass.symbol.classId
         val parentId = classId.outerClassId
         val parentClass = parentId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) }
-        val irParent = declarationStorage.findIrParent(classId.packageFqName, parentClass?.toLookupTag(), firClass.symbol, firClass.origin)!!
+        val irParent = declarationStorage.findIrParent(
+            classId.packageFqName,
+            parentClass?.toLookupTag(),
+            firClass.symbol,
+            firClass.origin
+        )!!
 
         classCache[firClass] = symbol
         check(irParent.isExternalParent()) { "Source classes should be created separately before referencing" }
@@ -215,7 +220,7 @@ class Fir2IrClassifierStorage(
         return irClass
     }
 
-    fun getIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
+    private fun getIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
         val firClassSymbol = lookupTag.toSymbol(session) as? FirClassSymbol<*> ?: return null
         return getIrClass(firClassSymbol.fir)
     }
@@ -265,7 +270,11 @@ class Fir2IrClassifierStorage(
     // ------------------------------------ local classes ------------------------------------
 
     private fun createAndCacheLocalIrClassOnTheFly(klass: FirClass): IrClass {
-        val (irClass, firClassOrLocalParent, irClassOrLocalParent) = classifiersGenerator.createLocalIrClassOnTheFly(klass, processMembersOfClassesOnTheFlyImmediately)
+        val (irClass, firClassOrLocalParent, irClassOrLocalParent) = classifiersGenerator.createLocalIrClassOnTheFly(
+            klass,
+            processMembersOfClassesOnTheFlyImmediately
+        )
+
         if (!processMembersOfClassesOnTheFlyImmediately) {
             localClassesCreatedOnTheFly[firClassOrLocalParent] = irClassOrLocalParent
         }

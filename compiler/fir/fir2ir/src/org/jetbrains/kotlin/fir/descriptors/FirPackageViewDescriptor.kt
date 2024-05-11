@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class FirPackageViewDescriptor(override val fqName: FqName, val moduleDescriptor: ModuleDescriptor) : PackageViewDescriptor {
     override fun getContainingDeclaration(): PackageViewDescriptor? {
-        TODO("not implemented")
+        shouldNotBeCalled()
     }
 
     override val memberScope: MemberScope
@@ -26,19 +27,19 @@ class FirPackageViewDescriptor(override val fqName: FqName, val moduleDescriptor
         get() = listOf(FirPackageFragmentDescriptor(fqName, moduleDescriptor))
 
     override fun getOriginal(): DeclarationDescriptor {
-        TODO("not implemented")
+        shouldNotBeCalled()
     }
 
     override fun getName(): Name {
-        TODO("not implemented")
+        shouldNotBeCalled()
     }
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
-        TODO("not implemented")
+        shouldNotBeCalled()
     }
 
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
-        TODO("not implemented")
+        shouldNotBeCalled()
     }
 
     override val annotations: Annotations

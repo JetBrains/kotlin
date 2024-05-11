@@ -87,7 +87,8 @@ class Fir2IrDeclarationStorage(
     }
 
     private val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunctionSymbol> = commonMemberStorage.functionCache
-    private val dataClassGeneratedFunctionsCache: ConcurrentHashMap<FirClass, DataClassGeneratedFunctionsStorage> = commonMemberStorage.dataClassGeneratedFunctionsCache
+    private val dataClassGeneratedFunctionsCache: ConcurrentHashMap<FirClass, DataClassGeneratedFunctionsStorage> =
+        commonMemberStorage.dataClassGeneratedFunctionsCache
 
     private val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructorSymbol> = commonMemberStorage.constructorCache
 
@@ -383,7 +384,7 @@ class Fir2IrDeclarationStorage(
             callable.isSubstitutionOrIntersectionOverride -> callable.containingClassLookupTag()
             else -> shouldNotBeCalled()
         }
-        requireNotNull(containingClassLookupTag) { "Containing class not found for ${callable.render()}"}
+        requireNotNull(containingClassLookupTag) { "Containing class not found for ${callable.render()}" }
         return classifierStorage.getIrClassSymbol(containingClassLookupTag)
             ?: error("IR class for $containingClassLookupTag not found")
     }
@@ -597,7 +598,9 @@ class Fir2IrDeclarationStorage(
 
         val setterSymbol = runIf(property.isVar) {
             val setterIsVisible = property.setter?.let { setter ->
-                (fakeOverrideOwnerLookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.fir?.let { containingClass -> setter.isVisibleInClass(containingClass) }
+                (fakeOverrideOwnerLookupTag?.toSymbol(session) as? FirClassSymbol<*>)?.fir?.let { containingClass ->
+                    setter.isVisibleInClass(containingClass)
+                }
             } ?: true
             runIf(setterIsVisible) {
                 IrFunctionFakeOverrideSymbol(originalSymbols.setterSymbol!!, containingClassSymbol, idSignature = null)
@@ -1205,17 +1208,14 @@ class Fir2IrDeclarationStorage(
     private fun fillUnboundSymbols(cache: Map<out FirCallableDeclaration, IrSymbol>) {
         for ((firDeclaration, irSymbol) in cache) {
             if (irSymbol.isBound) continue
-            generateDeclaration(firDeclaration.symbol, dispatchReceiverLookupTag = null)
+            generateDeclaration(firDeclaration.symbol)
         }
     }
 
-    private fun generateDeclaration(
-        originalSymbol: FirBasedSymbol<*>,
-        dispatchReceiverLookupTag: ConeClassLikeLookupTag?,
-    ) {
+    private fun generateDeclaration(originalSymbol: FirBasedSymbol<*>) {
         val irParent = findIrParent(
             originalSymbol.packageFqName(),
-            dispatchReceiverLookupTag ?: originalSymbol.getContainingClassSymbol(session)?.toLookupTag(),
+            originalSymbol.getContainingClassSymbol(session)?.toLookupTag(),
             originalSymbol,
             originalSymbol.origin
         )
@@ -1223,13 +1223,13 @@ class Fir2IrDeclarationStorage(
             is FirPropertySymbol -> createAndCacheIrProperty(
                 originalSymbol.fir,
                 irParent,
-                fakeOverrideOwnerLookupTag = dispatchReceiverLookupTag
+                fakeOverrideOwnerLookupTag = null
             )
 
             is FirNamedFunctionSymbol -> createAndCacheIrFunction(
                 originalSymbol.fir,
                 irParent,
-                fakeOverrideOwnerLookupTag = dispatchReceiverLookupTag
+                fakeOverrideOwnerLookupTag = null
             )
 
             else -> error("Unexpected declaration: $originalSymbol")

@@ -98,19 +98,18 @@ class Fir2IrDataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrC
             origin,
             forbidDirectFieldAccess = false
         ) {
-
             override fun generateSyntheticFunctionParameterDeclarations(irFunction: IrFunction) {
                 // TODO
             }
 
-            override fun getProperty(irValueParameter: IrValueParameter?): IrProperty =
-                irValueParameter?.let {
-                    // `irClass` is a source class and definitely is not a lazy class
-                    @OptIn(UnsafeDuringIrConstructionAPI::class)
-                    irClass.properties.single { irProperty ->
-                        irProperty.name == irValueParameter.name && irProperty.backingField?.type == irValueParameter.type
-                    }
-                } ?: error("Property for parameter $irValueParameter")
+            override fun getProperty(irValueParameter: IrValueParameter?): IrProperty {
+                requireNotNull(irValueParameter)
+                // `irClass` is a source class and definitely is not a lazy class
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                return irClass.properties.single { irProperty ->
+                    irProperty.name == irValueParameter.name && irProperty.backingField?.type == irValueParameter.type
+                }
+            }
 
             inner class Fir2IrHashCodeFunctionInfo(
                 override val symbol: IrSimpleFunctionSymbol,
@@ -123,7 +122,7 @@ class Fir2IrDataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrC
 
             private fun getHashCodeFunction(klass: FirRegularClass): FirNamedFunctionSymbol {
                 if (klass.classId == StandardClassIds.Nothing) {
-                    // scope of kotlin.Nothing is empty, so we need to search for `hashCode` in scope of kotlin.Any
+                    // scope of kotlin.Nothing is empty, so we need to search for `hashCode` in the scope of kotlin.Any
                     return getHashCodeFunction(session.builtinTypes.anyType.type.toRegularClassSymbol(session)!!.fir)
                 }
                 val scope = klass.symbol.unsubstitutedScope(c)
@@ -174,7 +173,8 @@ class Fir2IrDataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrC
                         }
                         val firHashCode = getHashCodeFunction(classForType)
                         val lookupTag = classForType.symbol.toLookupTag()
-                        declarationStorage.getIrFunctionSymbol(firHashCode, lookupTag) as IrSimpleFunctionSymbol to (firHashCode.dispatchReceiverType != null)
+                        val functionSymbol = declarationStorage.getIrFunctionSymbol(firHashCode, lookupTag) as IrSimpleFunctionSymbol
+                        functionSymbol to (firHashCode.dispatchReceiverType != null)
                     }
                 }
                 return Fir2IrHashCodeFunctionInfo(symbol, hasDispatchReceiver)

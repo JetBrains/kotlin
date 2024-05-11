@@ -25,18 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 
-internal tailrec fun FirCallableSymbol<*>.unwrapSubstitutionAndIntersectionOverrides(): FirCallableSymbol<*> {
-    val originalForSubstitutionOverride = originalForSubstitutionOverride
-    if (originalForSubstitutionOverride != null && originalForSubstitutionOverride != this) {
-        return originalForSubstitutionOverride.unwrapSubstitutionAndIntersectionOverrides()
-    }
-
-    val baseForIntersectionOverride = baseForIntersectionOverride
-    if (baseForIntersectionOverride != null) return baseForIntersectionOverride.unwrapSubstitutionAndIntersectionOverrides()
-
-    return this
-}
-
 internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(
     c: Fir2IrComponents,
     owner: ConeClassLikeLookupTag? = containingClassLookupTag()
@@ -153,8 +141,4 @@ internal fun FirClass.unsubstitutedScope(c: Fir2IrComponents): FirTypeScope {
 
 internal fun FirClassSymbol<*>.declaredScope(c: Fir2IrComponents): FirContainingNamesAwareScope {
     return this.declaredMemberScope(c.session, memberRequiredPhase = null)
-}
-
-internal fun FirClass.declaredScope(c: Fir2IrComponents): FirContainingNamesAwareScope {
-    return symbol.declaredScope(c)
 }

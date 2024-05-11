@@ -78,6 +78,7 @@ fun FirReference.extractDeclarationSiteSymbol(c: Fir2IrComponents): FirCallableS
     symbol = symbol.unwrapCallRepresentative(c)
     return symbol
 }
+
 private enum class UseSiteKind {
     GetCall,
     SetCall,

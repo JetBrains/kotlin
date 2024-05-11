@@ -637,6 +637,7 @@ class Fir2IrConverter(
                     dep.collectDependsOnRecursive(set)
                 }
             }
+
             val moduleData = session.moduleData
             val dependsOnTransitive = buildSet {
                 moduleData.collectDependsOnRecursive(this)

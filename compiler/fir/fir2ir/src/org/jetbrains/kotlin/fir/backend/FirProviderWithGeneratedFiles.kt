@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 
-class FirProviderWithGeneratedFiles(val session: FirSession, previousProviders: Map<FirModuleData, FirProviderWithGeneratedFiles>) : FirProvider() {
+class FirProviderWithGeneratedFiles(
+    val session: FirSession,
+    previousProviders: Map<FirModuleData, FirProviderWithGeneratedFiles>,
+) : FirProvider() {
     private val generatedFilesProvider = FirProviderImpl(session, session.kotlinScopeProvider)
 
     private val providers: List<FirProvider> = buildList {

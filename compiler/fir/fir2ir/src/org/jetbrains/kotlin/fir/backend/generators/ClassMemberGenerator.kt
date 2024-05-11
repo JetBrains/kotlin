@@ -192,14 +192,17 @@ internal class ClassMemberGenerator(
                     }
                     irFunction.parent is IrClass && irFunction.parentAsClass.isData -> {
                         when {
-                            DataClassResolver.isComponentLike(irFunction.name) ->
-                                firFunction?.body?.let { irFunction.body = visitor.convertToIrBlockBody(it) }
-                                    ?: dataClassMembersGenerator.generateDataClassComponentBody(irFunction, containingClass as FirRegularClass)
-                            DataClassResolver.isCopy(irFunction.name) ->
-                                firFunction?.body?.let { irFunction.body = visitor.convertToIrBlockBody(it) }
-                                    ?: dataClassMembersGenerator.generateDataClassCopyBody(irFunction, containingClass as FirRegularClass)
-                            else ->
-                                irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
+                            DataClassResolver.isComponentLike(irFunction.name) -> when (val firBody = firFunction?.body) {
+                                null -> dataClassMembersGenerator.generateDataClassComponentBody(
+                                    irFunction, containingClass as FirRegularClass
+                                )
+                                else -> irFunction.body = visitor.convertToIrBlockBody(firBody)
+                            }
+                            DataClassResolver.isCopy(irFunction.name) -> when (val firBody = firFunction?.body) {
+                                null -> dataClassMembersGenerator.generateDataClassCopyBody(irFunction, containingClass as FirRegularClass)
+                                else -> irFunction.body = visitor.convertToIrBlockBody(firBody)
+                            }
+                            else -> irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
                         }
                     }
                     else -> {
@@ -342,7 +345,7 @@ internal class ClassMemberGenerator(
                 )
             }
 
-        // Unwrap substitution overrides from both derived class and a super class
+        // Unwrap substitution overrides from both derived class and a superclass
         val constructorSymbol = referencedSymbol
             .unwrapCallRepresentative(c, referencedSymbol.containingClassLookupTag())
             .unwrapCallRepresentative(c, (referencedSymbol.resolvedReturnType as? ConeClassLikeType)?.lookupTag)
@@ -355,7 +358,7 @@ internal class ClassMemberGenerator(
             val typeArguments = constructedTypeRef.coneType.fullyExpandedType(session).typeArguments
             val constructor = constructorSymbol.fir
             /*
-             * We should generate enum constructor call only if it is used to create new enum entry (so it's super constructor call)
+             * We should generate enum constructor call only if it is used to create new enum entry (so it's a super constructor call)
              * If it is this constructor call that we are facing secondary constructor of enum, and should generate
              *   regular delegating constructor call
              *

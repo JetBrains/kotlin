@@ -63,7 +63,7 @@ interface Fir2IrComponents {
     val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar
 
     /**
-     * A set of FIR files serving as input for the fir2ir ([Fir2IrConverter.createIrModuleFragment] function) for conversion to IR.
+     * A set of FIR files serving as input for the fir2ir ([Fir2IrConverter.generateIrModuleFragment] function) for conversion to IR.
      *
      * We set annotations for IR objects, such as IrFunction, in two scenarios:
      *  1. For FIR declared in library or precompiled: when creating IR object from FIR
