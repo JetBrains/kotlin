@@ -87,7 +87,6 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
         private val TRANSIENT_MANIFEST_PROPERTIES = listOf(
             KLIB_PROPERTY_ABI_VERSION,
             KLIB_PROPERTY_METADATA_VERSION,
-            KLIB_PROPERTY_LIBRARY_VERSION,
             KLIB_PROPERTY_COMPILER_VERSION,
             KLIB_PROPERTY_IR_SIGNATURE_VERSIONS
         )

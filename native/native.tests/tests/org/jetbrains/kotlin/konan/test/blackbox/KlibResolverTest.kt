@@ -151,6 +151,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 "liba" -> {
                     // set the library version = 1.0
                     patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                        @Suppress("DEPRECATION")
                         properties[KLIB_PROPERTY_LIBRARY_VERSION] = "1.0"
                     }
                 }
@@ -196,6 +197,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 "liba" -> {
                     // set the library version = 1.0
                     patchManifestAsMap(JUnit5Assertions, klib.klibFile) { properties ->
+                        @Suppress("DEPRECATION")
                         properties[KLIB_PROPERTY_LIBRARY_VERSION] = "1.0"
                     }
                 }

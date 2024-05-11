@@ -23,7 +23,10 @@ const val KLIB_PROPERTY_METADATA_VERSION = "metadata_version"
 
 @Deprecated(DEPRECATED_LIBRARY_AND_DEPENDENCY_VERSIONS)
 const val KLIB_PROPERTY_DEPENDENCY_VERSION = "dependency_version"
+
+@Deprecated(DEPRECATED_LIBRARY_AND_DEPENDENCY_VERSIONS)
 const val KLIB_PROPERTY_LIBRARY_VERSION = "library_version"
+
 const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
 const val KLIB_PROPERTY_SHORT_NAME = "short_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"
