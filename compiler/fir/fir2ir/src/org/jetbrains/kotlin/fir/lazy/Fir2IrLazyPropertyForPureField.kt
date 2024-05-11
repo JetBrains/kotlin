@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.backend.lazyMappedPropertyListVar
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -33,9 +32,8 @@ class Fir2IrLazyPropertyForPureField(
     override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) lazy@{
         val containingClass = field.containingClass ?: return@lazy emptyList()
 
-        @OptIn(FirBasedFakeOverrideGenerator::class)
         val baseFieldsWithDispatchReceiverTag =
-            fakeOverrideGenerator.computeBaseSymbolsWithContainingClass(containingClass, field.fir.symbol)
+            lazyFakeOverrideGenerator.computeFakeOverrideKeys(containingClass, field.fir.symbol)
         baseFieldsWithDispatchReceiverTag.map { (symbol, dispatchReceiverLookupTag) ->
             declarationStorage.getIrSymbolForField(symbol, dispatchReceiverLookupTag) as IrPropertySymbol
         }

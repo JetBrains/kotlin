@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
-import org.jetbrains.kotlin.fir.backend.generators.FirBasedFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.contextReceiversForFunctionOrContainingProperty
@@ -199,8 +198,7 @@ class Fir2IrDeclarationStorage(
 
     private val delegatedReverseCache: ConcurrentHashMap<IrSymbol, FirDeclaration> = ConcurrentHashMap()
 
-    @FirBasedFakeOverrideGenerator
-    private val fieldCache: ConcurrentHashMap<FirField, IrFieldSymbol> = commonMemberStorage.fieldCache
+    private val fieldForDelegatedSupertypeCache: ConcurrentHashMap<FirField, IrFieldSymbol> = ConcurrentHashMap()
 
     private val localStorage: Fir2IrLocalCallableStorage by threadLocal { Fir2IrLocalCallableStorage() }
 
@@ -538,6 +536,7 @@ class Fir2IrDeclarationStorage(
      * IMPORTANT: this whole story requires to call [prepareProperty] or [preparePropertySymbol] in the beginning of any public method
      *   which accepts arbitary FirProperty or FirPropertySymbol
      */
+    @Suppress("KDocUnresolvedReference")
     private data class FirSyntheticPropertyKey(
         val originalForGetter: FirSimpleFunction,
         val originalForSetter: FirSimpleFunction?,
@@ -679,10 +678,8 @@ class Fir2IrDeclarationStorage(
         val irParent = findIrParent(property, fakeOverrideOwnerLookupTag)
         if (irParent?.isExternalParent() == true) {
             val symbols = createPropertySymbols(property, fakeOverrideOwnerLookupTag, parentIsExternal = true)
-            @OptIn(FirBasedFakeOverrideGenerator::class) // only for lazy
             val firForLazyProperty = calculateFirForLazyDeclaration(
-                property, fakeOverrideOwnerLookupTag, irParent,
-                fakeOverrideGenerator::createFirPropertyFakeOverrideIfNeeded
+                property, fakeOverrideOwnerLookupTag, lazyFakeOverrideGenerator::createFirPropertyFakeOverrideIfNeeded
             )
 
             callablesGenerator.createIrProperty(
@@ -797,8 +794,7 @@ class Fir2IrDeclarationStorage(
             withEntry("fakeOverrideOwnerLookupTag", fakeOverrideOwnerLookupTag.toString())
             withFirEntry("field", field)
         }
-        @OptIn(FirBasedFakeOverrideGenerator::class)
-        return fieldCache.getOrPut(field) { createFieldSymbol() }
+        return fieldForDelegatedSupertypeCache.getOrPut(field) { createFieldSymbol() }
     }
 
     private fun getIrPropertySymbolForJavaField(
@@ -854,10 +850,8 @@ class Fir2IrDeclarationStorage(
             val propertySymbol = IrPropertySymbolImpl()
             val origin = field.computeExternalOrigin()
 
-            @OptIn(FirBasedFakeOverrideGenerator::class)
             val firForLazyField = calculateFirForLazyDeclaration(
-                field, fakeOverrideOwnerLookupTag, irParent,
-                fakeOverrideGenerator::createFirFieldFakeOverrideIfNeeded
+                field, fakeOverrideOwnerLookupTag, lazyFakeOverrideGenerator::createFirFieldFakeOverrideIfNeeded
             )
 
             lazyDeclarationsGenerator.createIrPropertyForPureField(firForLazyField, fieldSymbol, propertySymbol, irParent, origin)
@@ -966,13 +960,11 @@ class Fir2IrDeclarationStorage(
     }
 
     fun getCachedIrFieldSymbolForSupertypeDelegateField(field: FirField): IrFieldSymbol? {
-        @OptIn(FirBasedFakeOverrideGenerator::class)
-        return fieldCache[field]
+        return fieldForDelegatedSupertypeCache[field]
     }
 
     fun recordSupertypeDelegateFieldMappedToBackingField(field: FirField, irFieldSymbol: IrFieldSymbol) {
-        @OptIn(FirBasedFakeOverrideGenerator::class)
-        fieldCache[field] = irFieldSymbol
+        fieldForDelegatedSupertypeCache[field] = irFieldSymbol
     }
 
     internal fun createSupertypeDelegateIrField(field: FirField, irClass: IrClass): IrField {
@@ -983,10 +975,7 @@ class Fir2IrDeclarationStorage(
             type = field.initializer?.resolvedType ?: field.returnTypeRef.coneType,
             origin = IrDeclarationOrigin.DELEGATE
         )
-
-        @OptIn(FirBasedFakeOverrideGenerator::class)
-        fieldCache[field] = symbol
-
+        fieldForDelegatedSupertypeCache[field] = symbol
         return irField
     }
 
@@ -1129,10 +1118,8 @@ class Fir2IrDeclarationStorage(
             val irParent = findIrParent(function, fakeOverrideOwnerLookupTag)
             if (irParent?.isExternalParent() == true) {
                 val symbol = createMemberFunctionSymbol(function, fakeOverrideOwnerLookupTag, parentIsExternal = true)
-                @OptIn(FirBasedFakeOverrideGenerator::class) // only for lazy
                 val firForLazyFunction = calculateFirForLazyDeclaration(
-                    function, fakeOverrideOwnerLookupTag, irParent,
-                    fakeOverrideGenerator::createFirFunctionFakeOverrideIfNeeded
+                    function, fakeOverrideOwnerLookupTag, lazyFakeOverrideGenerator::createFirFunctionFakeOverrideIfNeeded
                 )
                 // Return value is not used here, because creation of IR declaration binds it to the corresponding symbol
                 // And all we want here is to bind symbol for lazy declaration
@@ -1273,11 +1260,10 @@ class Fir2IrDeclarationStorage(
     private inline fun <T : FirCallableDeclaration> calculateFirForLazyDeclaration(
         originalDeclaration: T,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
-        irParent: IrDeclarationParent,
-        createFakeOverrideIfNeeded: (T, ConeClassLikeLookupTag, IrClass) -> T?
+        createFakeOverrideIfNeeded: (T, ConeClassLikeLookupTag) -> T?
     ): T {
-        if (irParent !is IrClass || fakeOverrideOwnerLookupTag == null) return originalDeclaration
-        return createFakeOverrideIfNeeded(originalDeclaration, fakeOverrideOwnerLookupTag, irParent) ?: originalDeclaration
+        if (fakeOverrideOwnerLookupTag == null) return originalDeclaration
+        return createFakeOverrideIfNeeded(originalDeclaration, fakeOverrideOwnerLookupTag) ?: originalDeclaration
     }
 
     // ------------------------------------ binding unbound symbols ------------------------------------

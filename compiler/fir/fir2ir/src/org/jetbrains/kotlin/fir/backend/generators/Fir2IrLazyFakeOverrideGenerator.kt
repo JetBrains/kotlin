@@ -18,27 +18,28 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.util.setMultimapOf
-import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-@RequiresOptIn(
-    level = RequiresOptIn.Level.ERROR,
-    message = "This api is planned for deprecation. Make sure, you don't use it with useIrFakeOverrideBuilder=true and non-lazy classes"
-)
-annotation class FirBasedFakeOverrideGenerator
-
-@FirBasedFakeOverrideGenerator
-class FakeOverrideGenerator(
-    private val c: Fir2IrComponents
-) : Fir2IrComponents by c {
-    internal fun computeBaseSymbolsWithContainingClass(
+/**
+ * This class should be used ONLY for generation of fake-overrides for Fir2IrLazy... declarations
+ */
+class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrComponents by c {
+    /**
+     * For given [originalFunction] calculates original symbols for supertypes of given [klass], which contain this function
+     *   in the override hierarchy.
+     * This is needed to correctly build f/o keys during building the overridden functions list of the lazy function.
+     *
+     * For detailed examples see the documentation to [computeFakeOverrideKeysImpl]
+     */
+    internal fun computeFakeOverrideKeys(
         klass: FirClass,
         originalFunction: FirNamedFunctionSymbol,
     ): List<Pair<FirNamedFunctionSymbol, ConeClassLikeLookupTag>> {
-        return computeBaseSymbolsWithContainingClass(
+        return computeFakeOverrideKeysImpl(
             klass,
             originalFunction,
             FirTypeScope::getDirectOverriddenFunctions,
@@ -46,11 +47,18 @@ class FakeOverrideGenerator(
         )
     }
 
-    internal fun computeBaseSymbolsWithContainingClass(
+    /**
+     * For given [originalProperty] calculates original symbols for supertypes of given [klass], which contain this property
+     *   in the override hierarchy.
+     * This is needed to correctly build f/o keys during building the overridden functions list of the lazy property.
+     *
+     * For detailed examples see the documentation to [computeFakeOverrideKeysImpl]
+     */
+    internal fun computeFakeOverrideKeys(
         klass: FirClass,
         originalProperty: FirPropertySymbol,
     ): List<Pair<FirPropertySymbol, ConeClassLikeLookupTag>> {
-        return computeBaseSymbolsWithContainingClass(
+        return computeFakeOverrideKeysImpl(
             klass,
             originalProperty,
             FirTypeScope::getDirectOverriddenProperties,
@@ -58,11 +66,18 @@ class FakeOverrideGenerator(
         )
     }
 
-    internal fun computeBaseSymbolsWithContainingClass(
+    /**
+     * For given [originalField] calculates original symbols for supertypes of given [klass], which contain this field
+     *   in the override hierarchy.
+     * This is needed to correctly build f/o keys during building the overridden functions list of the lazy field.
+     *
+     * For detailed examples see the documentation to [computeFakeOverrideKeysImpl]
+     */
+    internal fun computeFakeOverrideKeys(
         klass: FirClass,
         originalField: FirFieldSymbol,
     ): List<Pair<FirFieldSymbol, ConeClassLikeLookupTag>> {
-        return computeBaseSymbolsWithContainingClass(
+        return computeFakeOverrideKeysImpl(
             klass,
             originalField,
             directOverridden = { listOfNotNull(originalField.originalIfFakeOverride()) },
@@ -120,7 +135,7 @@ class FakeOverrideGenerator(
      * To resolve this ambiguity (which one choose, `A.foo` or `AImpl.foo`), we need to understand, which of those functions override
      *   all other candidates (see [chooseMostSpecificOverridden] function) and leave only `AImpl.foo`
      */
-    private inline fun <reified S : FirCallableSymbol<*>> computeBaseSymbolsWithContainingClass(
+    private inline fun <reified S : FirCallableSymbol<*>> computeFakeOverrideKeysImpl(
         klass: FirClass,
         originalSymbol: S,
         directOverridden: FirTypeScope.(S) -> List<S>,
@@ -158,107 +173,6 @@ class FakeOverrideGenerator(
         return result
     }
 
-    private inline fun <reified S : FirCallableSymbol<*>> chooseMostSpecificOverridden(
-        containingClassLookupTag: ConeClassLikeLookupTag,
-        overridden: Collection<S>,
-        processOverridden: FirTypeScope.(S, (S) -> ProcessorAction) -> ProcessorAction
-    ): S {
-        val scope = containingClassLookupTag.toFirRegularClassSymbol(session)?.unsubstitutedScope(c) ?: return overridden.first()
-
-        val result = overridden.firstOrNull { s1 ->
-            overridden.all { s2 ->
-                if (s1 == s2) return@all true
-                scope.anyOverriddenOf(s1, processOverridden) { it == s2 }
-            }
-        }
-
-        return result ?: overridden.first()
-    }
-
-    private inline fun <D : FirCallableDeclaration, reified S : FirCallableSymbol<D>> createFirFakeOverrideIfNeeded(
-        dispatchReceiverLookupTag: ConeClassLikeLookupTag,
-        originalSymbol: S,
-        createFakeOverrideSymbol: (firDeclaration: D) -> S,
-    ): D? {
-        val originalDeclaration = originalSymbol.fir
-        return when {
-            originalSymbol.containingClassLookupTag() == dispatchReceiverLookupTag -> null
-
-            originalDeclaration.allowsToHaveFakeOverride -> {
-                // Trivial fake override case
-                // We've got no relevant declaration in FIR world for such a fake override in current class, thus we're creating it here
-                val fakeOverrideSymbol = createFakeOverrideSymbol(originalDeclaration)
-                fakeOverrideSymbol.fir
-            }
-
-            else -> null
-        }
-    }
-
-    internal fun createFirFunctionFakeOverrideIfNeeded(
-        originalFunction: FirSimpleFunction,
-        dispatchReceiverLookupTag: ConeClassLikeLookupTag,
-        irClass: IrClass,
-    ): FirSimpleFunction? {
-        val originalSymbol = originalFunction.symbol
-        return createFirFakeOverrideIfNeeded(
-            dispatchReceiverLookupTag, originalSymbol
-        ) { firFunction ->
-            val containingClass = dispatchReceiverLookupTag.toFirRegularClass(session)!!
-            FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
-                session,
-                FirNamedFunctionSymbol(CallableId(containingClass.symbol.classId, originalSymbol.callableId.callableName)),
-                firFunction,
-                derivedClassLookupTag = dispatchReceiverLookupTag,
-                newDispatchReceiverType = containingClass.defaultType(),
-                origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
-                isExpect = containingClass.isExpect || firFunction.isExpect
-            )
-        }
-    }
-
-    internal fun createFirPropertyFakeOverrideIfNeeded(
-        originalProperty: FirProperty,
-        dispatchReceiverLookupTag: ConeClassLikeLookupTag,
-        irClass: IrClass,
-    ): FirProperty? {
-        val originalSymbol = originalProperty.symbol
-        return createFirFakeOverrideIfNeeded(
-            dispatchReceiverLookupTag, originalSymbol
-        ) { firProperty ->
-            val containingClass = dispatchReceiverLookupTag.toFirRegularClass(session)!!
-            FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
-                session,
-                FirPropertySymbol(CallableId(containingClass.symbol.classId, originalSymbol.callableId.callableName)),
-                firProperty,
-                derivedClassLookupTag = dispatchReceiverLookupTag,
-                newDispatchReceiverType = containingClass.defaultType(),
-                origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
-                isExpect = containingClass.isExpect || firProperty.isExpect
-            )
-        }
-    }
-
-    internal fun createFirFieldFakeOverrideIfNeeded(
-        originalField: FirField,
-        dispatchReceiverLookupTag: ConeClassLikeLookupTag,
-        irClass: IrClass,
-    ): FirField? {
-        val originalSymbol = originalField.symbol
-        return createFirFakeOverrideIfNeeded(
-            dispatchReceiverLookupTag, originalSymbol
-        ) { firField ->
-            val containingClass = dispatchReceiverLookupTag.toFirRegularClass(session)!!
-            FirFakeOverrideGenerator.createSubstitutionOverrideField(
-                session,
-                firField,
-                derivedClassLookupTag = dispatchReceiverLookupTag,
-                newDispatchReceiverType = containingClass.defaultType(),
-                origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
-            )
-        }
-    }
-
     private inline fun <reified S : FirCallableSymbol<*>> computeBaseSymbols(
         symbol: S,
         directOverridden: FirTypeScope.(S) -> List<S>,
@@ -285,4 +199,118 @@ class FakeOverrideGenerator(
     private inline fun <reified S : FirCallableSymbol<*>> S.unwrapRenamedForOverride(): S =
         if (origin == FirDeclarationOrigin.RenamedForOverride) fir.initialSignatureAttr?.symbol as? S ?: this else this
 
+    private inline fun <reified S : FirCallableSymbol<*>> chooseMostSpecificOverridden(
+        containingClassLookupTag: ConeClassLikeLookupTag,
+        overridden: Collection<S>,
+        processOverridden: FirTypeScope.(S, (S) -> ProcessorAction) -> ProcessorAction
+    ): S {
+        val scope = containingClassLookupTag.toFirRegularClassSymbol(session)?.unsubstitutedScope(c) ?: return overridden.first()
+
+        val result = overridden.firstOrNull { s1 ->
+            overridden.all { s2 ->
+                if (s1 == s2) return@all true
+                scope.anyOverriddenOf(s1, processOverridden) { it == s2 }
+            }
+        }
+
+        return result ?: overridden.first()
+    }
+
+    // --------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates dummy "substitution-override" FIR function in case when there is no actual substitution in inheritor
+     * This is needed for creation of [Fir2IrLazySimpleFunction] for this fake-override, as each [Fir2IrLazySimpleFunction] should be based
+     *   on the unique FIR declaration
+     */
+    internal fun createFirFunctionFakeOverrideIfNeeded(
+        originalFunction: FirSimpleFunction,
+        dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+    ): FirSimpleFunction? {
+        val originalSymbol = originalFunction.symbol
+        return createFirFakeOverrideIfNeeded(
+            dispatchReceiverLookupTag, originalSymbol
+        ) { firFunction ->
+            val containingClass = dispatchReceiverLookupTag.toFirRegularClass(session)!!
+            FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
+                session,
+                FirNamedFunctionSymbol(CallableId(containingClass.symbol.classId, originalSymbol.callableId.callableName)),
+                firFunction,
+                derivedClassLookupTag = dispatchReceiverLookupTag,
+                newDispatchReceiverType = containingClass.defaultType(),
+                origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
+                isExpect = containingClass.isExpect || firFunction.isExpect
+            )
+        }
+    }
+
+    /**
+     * Creates dummy "substitution-override" FIR property in case when there is no actual substitution in inheritor
+     * This is needed for creation of [Fir2IrLazyProperty] for this fake-override, as each [Fir2IrLazyProperty] should be based
+     *   on the unique FIR declaration
+     */
+    internal fun createFirPropertyFakeOverrideIfNeeded(
+        originalProperty: FirProperty,
+        dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+    ): FirProperty? {
+        val originalSymbol = originalProperty.symbol
+        return createFirFakeOverrideIfNeeded(
+            dispatchReceiverLookupTag, originalSymbol
+        ) { firProperty ->
+            val containingClass = dispatchReceiverLookupTag.toFirRegularClass(session)!!
+            FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
+                session,
+                FirPropertySymbol(CallableId(containingClass.symbol.classId, originalSymbol.callableId.callableName)),
+                firProperty,
+                derivedClassLookupTag = dispatchReceiverLookupTag,
+                newDispatchReceiverType = containingClass.defaultType(),
+                origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
+                isExpect = containingClass.isExpect || firProperty.isExpect
+            )
+        }
+    }
+
+    /**
+     * Creates dummy "substitution-override" FIR field in case when there is no actual substitution in inheritor
+     * This is needed for creation of [Fir2IrLazyField] for this fake-override, as each [Fir2IrLazyField] should be based
+     *   on the unique FIR declaration
+     */
+    internal fun createFirFieldFakeOverrideIfNeeded(
+        originalField: FirField,
+        dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+    ): FirField? {
+        val originalSymbol = originalField.symbol
+        return createFirFakeOverrideIfNeeded(
+            dispatchReceiverLookupTag, originalSymbol
+        ) { firField ->
+            val containingClass = dispatchReceiverLookupTag.toFirRegularClass(session)!!
+            FirFakeOverrideGenerator.createSubstitutionOverrideField(
+                session,
+                firField,
+                derivedClassLookupTag = dispatchReceiverLookupTag,
+                newDispatchReceiverType = containingClass.defaultType(),
+                origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
+            )
+        }
+    }
+
+    private inline fun <D : FirCallableDeclaration, reified S : FirCallableSymbol<D>> createFirFakeOverrideIfNeeded(
+        dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+        originalSymbol: S,
+        createFakeOverrideSymbol: (firDeclaration: D) -> S,
+    ): D? {
+        val originalDeclaration = originalSymbol.fir
+        return when {
+            originalSymbol.containingClassLookupTag() == dispatchReceiverLookupTag -> null
+
+            originalDeclaration.allowsToHaveFakeOverride -> {
+                // Trivial fake override case
+                // We've got no relevant declaration in FIR world for such a fake override in current class, thus we're creating it here
+                val fakeOverrideSymbol = createFakeOverrideSymbol(originalDeclaration)
+                fakeOverrideSymbol.fir
+            }
+
+            else -> null
+        }
+    }
 }
