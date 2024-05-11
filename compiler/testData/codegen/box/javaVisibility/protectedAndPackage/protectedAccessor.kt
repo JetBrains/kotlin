@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_CODEGEN_WITH_FIR2IR_FAKE_OVERRIDE_GENERATION
 // MODULE: lib
 // FILE: protectedPack/A.java
 package protectedPack;
