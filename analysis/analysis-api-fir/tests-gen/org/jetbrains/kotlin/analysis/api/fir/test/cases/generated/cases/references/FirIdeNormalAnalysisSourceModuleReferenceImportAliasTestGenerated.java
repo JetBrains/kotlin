@@ -52,6 +52,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceImportAliasTestGenerated e
   }
 
   @Test
+  @TestMetadata("classAliasWithCompanionObject.kt")
+  public void testClassAliasWithCompanionObject() {
+    runTest("analysis/analysis-api/testData/imports/importAliases/classAliasWithCompanionObject.kt");
+  }
+
+  @Test
   @TestMetadata("functionAlias.kt")
   public void testFunctionAlias() {
     runTest("analysis/analysis-api/testData/imports/importAliases/functionAlias.kt");

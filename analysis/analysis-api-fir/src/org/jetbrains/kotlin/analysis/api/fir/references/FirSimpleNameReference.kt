@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 internal class KtFirSimpleNameReference(
     expression: KtSimpleNameExpression,
@@ -94,7 +95,16 @@ internal class KtFirSimpleNameReference(
                 is KtSimpleNameExpression -> contentElement.mainReference.multiResolve(false)
                 else -> null
             } ?: return null
-        if (multiResolve(false).any { it in importResults }) {
+        val resolveResults = multiResolve(false)
+        if (resolveResults.any { it in importResults }) {
+            return importDirective.alias
+        }
+        val targets = resolveResults.mapNotNull { it.element }
+        val adjustedImportTargets = importResults.mapNotNull {
+            val e = it.element
+            if (e is KtObjectDeclaration && e.isCompanion()) e.containingClassOrObject else null
+        }
+        if (adjustedImportTargets.any { it in targets }) {
             return importDirective.alias
         }
         return null
