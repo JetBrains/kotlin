@@ -58,9 +58,10 @@ class SwiftExportUnitTests {
                     "$XCODE_ENVIRONMENT_OVERRIDE_KEY.ENABLE_USER_SCRIPT_SANDBOXING",
                     "NO"
                 )
+
+                enableSwiftExport()
             },
             code = {
-                enableSwiftExport(true)
                 repositories.mavenLocal()
 
                 kotlin {
