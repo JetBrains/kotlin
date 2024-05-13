@@ -231,6 +231,14 @@ class WasmSerializer(val outputStream: OutputStream) {
         list.forEach { serializeFunc(it) }
     }
 
+    fun <K, V> serialize(map: Map<K, V>, serializeKeyFunc: (K) -> Unit, serializeValueFunc: (V) -> Unit) {
+        b.writeUInt32(map.size.toUInt())
+        map.forEach { (key, value) ->
+            serializeKeyFunc(key)
+            serializeValueFunc(value)
+        }
+    }
+
     fun <A, B> serialize(pair: Pair<A, B>, serializeAFunc: (A) -> Unit, serializeBFunc: (B) -> Unit) {
         serializeAFunc(pair.first)
         serializeBFunc(pair.second)
