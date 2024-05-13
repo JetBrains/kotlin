@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.deserialization
 
+// TODO: paths
 /**
  * Any top level declarations in core/builtins/src are also available from FirBuiltinSymbolProvider (or FirIdeBuiltinSymbolProvider) for IDE
  * so we filter them out to avoid providing the "same" symbols twice.

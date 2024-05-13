@@ -54,7 +54,7 @@ dependencies {
     configurationBuiltins(project(":core:builtins"))
 }
 
-val builtinsDir = "${rootDir}/core/builtins"
+val builtinsDir = "${rootDir}/core/builtins" // TODO
 val builtinsSrcDir = "${layout.buildDirectory.get().asFile}/src/builtin-sources"
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins/intrinsic"
 val jvmBuiltinsDir = "${rootDir}/${jvmBuiltinsRelativeDir}"
@@ -413,6 +413,7 @@ kotlin {
                         .map { "$jvmBuiltinsRelativeDir/$it" }
 
                 // TODO: try to reuse absolute paths defined in the beginning
+                // TODO: Not needed?
                 val sources = listOf(
                     "core/builtins/src/kotlin/",
                 ) + unimplementedNativeBuiltIns
@@ -484,6 +485,7 @@ kotlin {
                     (file(jvmBuiltinsDir).list().toSortedSet() - file("wasm/builtins/kotlin/").list())
                         .map { "$jvmBuiltinsRelativeDir/$it" }
 
+                // TODO: Not needed?
                 val sources = listOf(
                     "core/builtins/src/kotlin/"
                 ) + unimplementedNativeBuiltIns
@@ -690,14 +692,17 @@ tasks {
                 // just to depend on source-generating tasks
                 exclude("**")
             }
+            // TODO
             from("${rootDir}/core/builtins/native/kotlin") {
                 into("kotlin")
                 include("Comparable.kt")
                 include("Enum.kt")
             }
+            // TODO
             from("$jsBuiltinsSrcDir/core/builtins/native") {
                 exclude("kotlin/Comparable.kt")
             }
+            // TODO
             from("$jsBuiltinsSrcDir/core/builtins/src")
             from("$jsBuiltinsSrcDir/libraries/stdlib/js/src")
             from("$jsDir/builtins") {

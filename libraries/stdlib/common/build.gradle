@@ -18,6 +18,7 @@ sourceSets {
             srcDir commonSrcDir
             srcDir '../unsigned/src'
             if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
+                // TODO
                 srcDir "$rootDir/core/builtins/src/kotlin/internal"
             }
         }

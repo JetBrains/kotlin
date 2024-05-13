@@ -13,6 +13,7 @@
   <property name="kotlin_root" location="IT_IS_SET_FROM_GRADLE1"/>
   <property name="kotlin_libs" location="IS_IS_SET_FROM_GRADLE2"/>
 
+<!-- TODO -->
   <property name="kotlin_builtins_dir" location="${kotlin_root}/core/builtins"/>
   <property name="kotlin_stdlib_dir" location="${kotlin_root}/libraries/stdlib"/>
   <property name="kotlin_test_dir" location="${kotlin_root}/libraries/kotlin.test"/>

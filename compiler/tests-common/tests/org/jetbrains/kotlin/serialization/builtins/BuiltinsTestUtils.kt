@@ -20,7 +20,7 @@ object BuiltinsTestUtils {
         val files = KotlinTestUtils.loadToKtFiles(
             environment, ContainerUtil.concat<File>(
                 allFilesUnder("libraries/stdlib/jvm/builtins/intrinsic"),
-                allFilesUnder("core/builtins/src"),
+                allFilesUnder("core/builtins/src"), // TODO
                 allFilesUnder("core/builtins/build/src/ranges"),
                 allFilesUnder("core/builtins/build/src/reflect"),
             )

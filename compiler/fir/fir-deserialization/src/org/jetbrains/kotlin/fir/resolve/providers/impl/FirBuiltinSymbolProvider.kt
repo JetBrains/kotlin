@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.io.InputStream
 
+// TODO: paths
 /**
  * This provider allows to get symbols for so-called built-in classes.
  *
