@@ -48,7 +48,7 @@ class ConstantDataIntField(val name: String, val value: WasmSymbol<Int>) : Const
     override val sizeInBytes: Int = INT_SIZE_BYTES
 }
 
-class ConstantDataIntegerArray(val name: String, val value: List<Long>, private val integerSize: Int) : ConstantDataElement() {
+class ConstantDataIntegerArray(val name: String, val value: List<Long>, val integerSize: Int) : ConstantDataElement() {
     override fun toBytes(): ByteArray {
         val array = ByteArray(value.size * integerSize)
         repeat(value.size) { i ->
