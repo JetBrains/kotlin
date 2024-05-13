@@ -252,7 +252,7 @@ class WasmDeserializer(val inputStream: InputStream) {
 
     fun deserializeImportDescriptor(): WasmImportDescriptor {
         val moduleName = deserializeString()
-        val declarationName = deserializeString()
+        val declarationName = deserializeSymbol(::deserializeString)
         return WasmImportDescriptor(moduleName, declarationName)
     }
 

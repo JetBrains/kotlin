@@ -223,7 +223,7 @@ class WasmSerializer(val outputStream: OutputStream) {
 
     fun serialize(descriptor: WasmImportDescriptor) {
         serialize(descriptor.moduleName)
-        serialize(descriptor.declarationName)
+        serializeSymbol(descriptor.declarationName, ::serialize)
     }
 
     fun <T> serialize(list: List<T>, serializeFunc: (T) -> Unit) {
