@@ -69,6 +69,12 @@ public class LLFirReversedNativeTestGenerated extends AbstractLLFirReversedNativ
   }
 
   @Test
+  @TestMetadata("noIncompatibleThrowsOnSubstitutionAndIntersectionOverrides.kt")
+  public void testNoIncompatibleThrowsOnSubstitutionAndIntersectionOverrides() {
+    runTest("compiler/testData/diagnostics/nativeTests/noIncompatibleThrowsOnSubstitutionAndIntersectionOverrides.kt");
+  }
+
+  @Test
   @TestMetadata("noObjcOverrideConflictingOverloadsDisabled.kt")
   public void testNoObjcOverrideConflictingOverloadsDisabled() {
     runTest("compiler/testData/diagnostics/nativeTests/noObjcOverrideConflictingOverloadsDisabled.kt");
