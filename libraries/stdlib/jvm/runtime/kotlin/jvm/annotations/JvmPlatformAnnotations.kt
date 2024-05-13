@@ -134,13 +134,17 @@ public actual annotation class ImplicitlyActualizedByJvmDeclaration
 public actual annotation class JvmField
 
 /**
- * Instructs compiler to generate or omit wildcards for type arguments corresponding to parameters with
- * declaration-site variance, for example such as `Collection<out T>` has.
+ * Instructs the compiler to generate or omit wildcards for type arguments corresponding to parameters with declaration-site variance,
+ * for example such as `E` of `kotlin.collections.Collection` which is declared with an `out` variance.
  *
- * If the innermost applied `@JvmSuppressWildcards` has `suppress=true`, the type is generated without wildcards.
- * If the innermost applied `@JvmSuppressWildcards` has `suppress=false`, the type is generated with wildcards.
+ * - If the innermost applied `@JvmSuppressWildcards` has `suppress=true` and the type is not annotated with `@JvmWildcard`, the type is
+ * generated without wildcards.
+ * - If the innermost applied `@JvmSuppressWildcards` has `suppress=false`, the type is generated with wildcards.
  *
  * It may be helpful only if declaration seems to be inconvenient to use from Java.
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/java-to-kotlin-interop.html#variant-generics)
+ * for more information.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
@@ -148,9 +152,12 @@ public actual annotation class JvmField
 public actual annotation class JvmSuppressWildcards(actual val suppress: Boolean = true)
 
 /**
- * Instructs compiler to generate wildcard for annotated type arguments corresponding to parameters with declaration-site variance.
+ * Instructs the compiler to generate wildcard for annotated type arguments corresponding to parameters with declaration-site variance.
  *
  * It may be helpful only if declaration seems to be inconvenient to use from Java without wildcard.
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/java-to-kotlin-interop.html#variant-generics)
+ * for more information.
  */
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
