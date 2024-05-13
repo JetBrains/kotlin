@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.serialization
 
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.ByteWriter
@@ -342,6 +342,48 @@ class WasmSerializer(val outputStream: OutputStream) {
             serialize(memberSignature)
             serialize(overriddenSignatures, ::serialize)
         }
+    }
+
+    fun serialize(constantDataElement: ConstantDataElement) {
+        when (constantDataElement) {
+            is ConstantDataCharArray -> withId(0U) { serialize(constantDataElement) }
+            is ConstantDataCharField -> withId(1U) { serialize(constantDataElement) }
+            is ConstantDataIntArray -> withId(2U) { serialize(constantDataElement) }
+            is ConstantDataIntField -> withId(3U) { serialize(constantDataElement) }
+            is ConstantDataIntegerArray -> withId(4U) { serialize(constantDataElement) }
+            is ConstantDataStruct -> withId(5U) { serialize(constantDataElement) }
+        }
+    }
+
+    fun serialize(constantDataCharArray: ConstantDataCharArray) {
+        serialize(constantDataCharArray.name)
+        serialize(constantDataCharArray.value) { serializeSymbol(it) { b.writeUInt32(it.code.toUInt()) } }
+    }
+
+    fun serialize(constantDataCharField: ConstantDataCharField) {
+        serialize(constantDataCharField.name)
+        serializeSymbol(constantDataCharField.value) { b.writeUInt32(it.code.toUInt()) }
+    }
+
+    fun serialize(constantDataIntArray: ConstantDataIntArray) {
+        serialize(constantDataIntArray.name)
+        serialize(constantDataIntArray.value) { serializeSymbol(it) { b.writeUInt32(it.toUInt()) } }
+    }
+
+    fun serialize(constantDataIntField: ConstantDataIntField) {
+        serialize(constantDataIntField.name)
+        serializeSymbol(constantDataIntField.value) { b.writeUInt32(it.toUInt()) }
+    }
+
+    fun serialize(constantDataIntegerArray: ConstantDataIntegerArray) {
+        serialize(constantDataIntegerArray.name)
+        serialize(constantDataIntegerArray.value) { b.writeUInt64(it.toULong()) }
+        b.writeUInt32(constantDataIntegerArray.integerSize.toUInt())
+    }
+
+    fun serialize(constantDataStruct: ConstantDataStruct) {
+        serialize(constantDataStruct.name)
+        serialize(constantDataStruct.elements, ::serialize)
     }
 
     fun serialize(jsCodeSnippet: WasmCompiledModuleFragment.JsCodeSnippet) {
