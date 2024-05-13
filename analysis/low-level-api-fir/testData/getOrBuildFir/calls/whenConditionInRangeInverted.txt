@@ -1,9 +1,9 @@
 KT element: KtWhenConditionInRange
-FIR element: null
-FIR source kind: null
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-null
+R|/MyClass.MyClass|().R|/contains|<R|MyClass|>($subj$)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] whenConditionInRangeInverted.kt
