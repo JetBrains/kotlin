@@ -101,8 +101,6 @@ kotlin-symbol-light-classes = { module = "org.jetbrains.kotlin:symbol-light-clas
 #### Java analysis ####
 intellij-java-psi-api = { module = "com.jetbrains.intellij.java:java-psi", version.ref = "intellij-platform" }
 intellij-java-psi-impl = { module = "com.jetbrains.intellij.java:java-psi-impl", version.ref = "intellij-platform" }
-intellij-platform-util-api = { module = "com.jetbrains.intellij.platform:util", version.ref = "intellij-platform" }
-intellij-platform-util-rt = { module = "com.jetbrains.intellij.platform:util-rt", version.ref = "intellij-platform" }
 
 #### HTML ####
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
