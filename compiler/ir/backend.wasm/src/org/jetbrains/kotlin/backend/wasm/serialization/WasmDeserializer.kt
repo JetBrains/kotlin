@@ -267,7 +267,7 @@ class WasmDeserializer(val inputStream: InputStream) {
         return list
     }
 
-    fun <K, V> deserializeMap(deserializeKeyFunc: () -> K, deserializeValueFunc: () -> V): MutableMap<K, V> {
+    fun <K, V> deserializeMap(deserializeKeyFunc: () -> K, deserializeValueFunc: () -> V): LinkedHashMap<K, V> {
         val size = deserializeInt()
         val map = newLinkedHashMapWithExpectedSize<K, V>(size)
         repeat(size) {
@@ -448,6 +448,16 @@ class WasmDeserializer(val inputStream: InputStream) {
         wasmDeserializeFunc: () -> Wasm
     ) = WasmCompiledModuleFragment.ReferencableElements<Ir, Wasm>().apply {
         unbound = deserializeMap(irDeserializeFunc) { deserializeSymbol(wasmDeserializeFunc) }
+    }
+
+    fun <Ir, Wasm : Any> deserializeReferencableAndDefinable(
+        irDeserializeFunc: () -> Ir,
+        wasmDeserializeFunc: () -> Wasm
+    ) = WasmCompiledModuleFragment.ReferencableAndDefinable<Ir, Wasm>().apply {
+        unbound = deserializeMap(irDeserializeFunc) { deserializeSymbol(wasmDeserializeFunc) }
+        defined = deserializeMap(irDeserializeFunc, wasmDeserializeFunc)
+        elements = deserializeList(wasmDeserializeFunc)
+        wasmToIr = deserializeMap(wasmDeserializeFunc, irDeserializeFunc)
     }
 
     private fun deserializeInt() = b.readUInt32().toInt()

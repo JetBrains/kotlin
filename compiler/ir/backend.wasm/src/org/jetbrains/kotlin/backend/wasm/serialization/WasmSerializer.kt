@@ -410,6 +410,17 @@ class WasmSerializer(val outputStream: OutputStream) {
         wasmSerializeFunc: (Wasm) -> Unit
     ) = serialize(referencableElements.unbound, irSerializeFunc) { serializeSymbol(it, wasmSerializeFunc) }
 
+    fun <Ir, Wasm : Any> serialize(
+        referencableAndDefinable: WasmCompiledModuleFragment.ReferencableAndDefinable<Ir, Wasm>,
+        irSerializeFunc: (Ir) -> Unit,
+        wasmSerializeFunc: (Wasm) -> Unit
+    ) = with(referencableAndDefinable) {
+        serialize(unbound, irSerializeFunc) { serializeSymbol(it, wasmSerializeFunc) }
+        serialize(defined, irSerializeFunc, wasmSerializeFunc)
+        serialize(elements, wasmSerializeFunc)
+        serialize(wasmToIr, wasmSerializeFunc, irSerializeFunc)
+    }
+
     private fun <T : Any> serializeSymbol(value: WasmSymbolReadOnly<T>, serializeFunc: (T) -> Unit) =
         withFlags(value.getOwner() == null) {
             value.getOwner()?.let { serializeFunc(it) }
