@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.serialization
 
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -145,6 +146,12 @@ class WasmDeserializer(val inputStream: InputStream) {
                 0xFFFF - 0 -> WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR
                 0xFFFF - 1 -> WasmOp.PSEUDO_COMMENT_GROUP_START
                 0xFFFF - 2 -> WasmOp.PSEUDO_COMMENT_GROUP_END
+                0xFFFF - 3 -> WasmOp.MACRO_IF
+                0xFFFF - 4 -> WasmOp.MACRO_ELSE
+                0xFFFF - 5 -> WasmOp.MACRO_END_IF
+                0xFFFF - 6 -> WasmOp.MACRO_TABLE
+                0xFFFF - 7 -> WasmOp.MACRO_TABLE_INDEX
+                0xFFFF - 8 -> WasmOp.MACRO_TABLE_END
                 else -> OPCODE_TO_WASM_OP.getOrElse(opcode) { error("Unknown opcode $opcode") }
             }
             val immediates = deserializeList(::deserializeImmediate)
@@ -275,6 +282,79 @@ class WasmDeserializer(val inputStream: InputStream) {
                 }
             }
         }
+
+    fun deserializeIdSignature(): IdSignature =
+        withId { id ->
+            when (id) {
+                0 -> deserializeAccessorSignature()
+                1 -> deserializeCommonSignature()
+                2 -> deserializeCompositeSignature()
+                3 -> deserializeFileLocalSignature()
+                4 -> deserializeLocalSignature()
+                5 -> deserializeLoweredDeclarationSignature()
+                6 -> deserializeScopeLocalDeclaration()
+                7 -> deserializeSpecialFakeOverrideSignature()
+                else -> idError()
+            }
+        }
+
+    fun deserializeAccessorSignature(): IdSignature.AccessorSignature {
+        val propertySignature = deserializeIdSignature()
+        val accessorSignature = deserializeCommonSignature()
+        return IdSignature.AccessorSignature(propertySignature, accessorSignature)
+    }
+
+    fun deserializeCommonSignature(): IdSignature.CommonSignature =
+        withFlags { flags ->
+            val packageFqName = deserializeString()
+            val declarationFqName = deserializeString()
+            val id = if (flags.consume()) null else b.readUInt64().toLong()
+            val mask = b.readUInt64().toLong()
+            val description = if (flags.consume()) null else deserializeString()
+            IdSignature.CommonSignature(packageFqName, declarationFqName, id, mask, description)
+        }
+
+    fun deserializeCompositeSignature(): IdSignature.CompositeSignature {
+        val container = deserializeIdSignature()
+        val inner = deserializeIdSignature()
+        return IdSignature.CompositeSignature(container, inner)
+    }
+
+    fun deserializeFileLocalSignature(): IdSignature.FileLocalSignature =
+        withFlags { flags ->
+            val container = deserializeIdSignature()
+            val id = b.readUInt64().toLong()
+            val description = if (flags.consume()) null else deserializeString()
+            IdSignature.FileLocalSignature(container, id, description)
+        }
+
+    fun deserializeLocalSignature(): IdSignature.LocalSignature =
+        withFlags { flags ->
+            val localFqn = deserializeString()
+            val hashSig = if (flags.consume()) null else b.readUInt64().toLong()
+            val description = if (flags.consume()) null else deserializeString()
+            IdSignature.LocalSignature(localFqn, hashSig, description)
+        }
+
+    fun deserializeLoweredDeclarationSignature(): IdSignature.LoweredDeclarationSignature {
+        val original = deserializeIdSignature()
+        val stage = b.readUInt32().toInt()
+        val index = b.readUInt32().toInt()
+        return IdSignature.LoweredDeclarationSignature(original, stage, index)
+    }
+
+    fun deserializeScopeLocalDeclaration(): IdSignature.ScopeLocalDeclaration =
+        withFlags { flags ->
+            val id = b.readUInt32().toInt()
+            val description = if (flags.consume()) null else deserializeString()
+            IdSignature.ScopeLocalDeclaration(id, description)
+        }
+
+    fun deserializeSpecialFakeOverrideSignature(): IdSignature.SpecialFakeOverrideSignature {
+        val memberSignature = deserializeIdSignature()
+        val overriddenSignatures = deserializeList(::deserializeIdSignature)
+        return IdSignature.SpecialFakeOverrideSignature(memberSignature, overriddenSignatures)
+    }
 
     fun deserializeString(): String {
         val length = b.readUInt32().toInt()
