@@ -81,6 +81,10 @@ abstract class DokkaBuildProperties @Inject constructor(
         dokkaProperty("integration_test.useK2", String::toBoolean)
             .orElse(false)
 
+    /** Allows running integration tests with a custom Dokka version */
+    val integrationTestDokkaVersionOverride: Provider<String> =
+        dokkaProperty("integration_test.dokkaVersionOverride") { it }
+
     val androidSdkDir: Provider<File> =
         providers
             // first try finding a local.properties file in any parent directory
