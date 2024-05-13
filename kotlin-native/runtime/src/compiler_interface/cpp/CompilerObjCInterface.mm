@@ -37,7 +37,6 @@ touchFunction(MissingInitImp)
 
 touchFunction(Kotlin_Interop_DoesObjectConformToProtocol)
 touchFunction(Kotlin_Interop_IsObjectKindOfClass)
-touchFunction(Kotlin_Interop_IsObjectSameClass)
 
 touchFunction(Kotlin_ObjCExport_refToLocalObjC)
 touchFunction(Kotlin_ObjCExport_refToRetainedObjC)

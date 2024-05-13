@@ -269,13 +269,9 @@ fun IrClass.getExternalObjCClassBinaryName(): String =
 fun IrClass.getExternalObjCMetaClassBinaryName(): String {
     this.getExplicitExternalObjCClassBinaryName()?.let { return it }
     // External ObjC metaclass is named as `Foo.Componion`, Foo is subclass of NSObject or itself.
-    if (this.isCompanion) {
-        val parent = this.parent as? IrClass
-        parent?.getExplicitExternalObjCClassBinaryName()?.let { return it }
-        parent?.let { return it.name.asString() }
-    }
+    if (this.isCompanion) return (this.parent as IrClass).getExternalObjCClassBinaryName()
     return this.name.asString().removeSuffix("Meta")
 }
 
 private fun IrClass.getExplicitExternalObjCClassBinaryName() =
-        this.annotations.findAnnotation(externalObjCClassFqName)?.getAnnotationValueOrNull<String>("binaryName")
+        this.annotations.findAnnotation(externalObjCClassFqName)!!.getAnnotationValueOrNull<String>("binaryName")

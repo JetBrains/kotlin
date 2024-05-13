@@ -456,7 +456,6 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     val Kotlin_Interop_DoesObjectConformToProtocol by lazyRtFunction
     val Kotlin_Interop_IsObjectKindOfClass by lazyRtFunction
-    val Kotlin_Interop_IsObjectSameClass by lazyRtFunction
 
     val Kotlin_ObjCExport_refToLocalObjC by lazyRtFunction
     val Kotlin_ObjCExport_refToRetainedObjC by lazyRtFunction

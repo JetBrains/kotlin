@@ -134,9 +134,13 @@ fun testNonObjCObjectTypeCast() {
 fun testObjCMetaClassTypeChecking() {
     val nsObjectClass: ObjCClass = NSObject
     val nsObjectMetaClass: ObjCClass = object_getClass(nsObjectClass)!!
-    assertFalse(nsObjectClass is NSObject.Companion)
-    assertTrue(nsObjectMetaClass is NSObject.Companion)
+    assertTrue(nsObjectClass is NSObject.Companion)
+    assertFalse(nsObjectMetaClass is NSObject.Companion)
     assertFalse(nsObjectClass == nsObjectMetaClass)
+
+    val nsObjectCompanion: ObjCClass = NSObject.Companion
+    assertTrue(nsObjectCompanion is NSObject.Companion)
+    assertTrue(nsObjectClass == nsObjectCompanion)
 }
 
 fun box(): String {
