@@ -7,5 +7,5 @@ public func foo(
     arg6: Swift.Double,
     arg7: Swift.Float
 ) -> Swift.Bool {
-    fatalError()
+    stub()
 }

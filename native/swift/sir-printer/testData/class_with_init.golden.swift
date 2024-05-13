@@ -8,7 +8,7 @@ public class Foo {
         arg6: Swift.Double,
         arg7: Swift.Float
     ) {
-        fatalError()
+        stub()
     }
     public init(
         arg1: Swift.UInt8,
@@ -16,7 +16,7 @@ public class Foo {
         arg3: Swift.UInt32,
         arg4: Swift.UInt64
     ) {
-        fatalError()
+        stub()
     }
     public required init(
         arg1: Swift.UInt8,
@@ -24,7 +24,7 @@ public class Foo {
         arg3: Swift.UInt32,
         arg4: Swift.UInt64
     ) {
-        fatalError()
+        stub()
     }
     public convenience init(
         arg1: Swift.UInt8,
@@ -32,6 +32,6 @@ public class Foo {
         arg3: Swift.UInt32,
         arg4: Swift.UInt64
     ) {
-        fatalError()
+        stub()
     }
 }

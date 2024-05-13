@@ -8,7 +8,7 @@ public class Foo {
         arg6: Swift.Double,
         arg7: Swift.Float
     ) -> Swift.Bool {
-        fatalError()
+        stub()
     }
     public func bar(
         arg1: Swift.UInt8,
@@ -16,6 +16,6 @@ public class Foo {
         arg3: Swift.UInt32,
         arg4: Swift.UInt64
     ) -> Swift.Bool {
-        fatalError()
+        stub()
     }
 }

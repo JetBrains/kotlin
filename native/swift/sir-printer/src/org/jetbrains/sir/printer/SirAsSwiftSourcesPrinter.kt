@@ -15,14 +15,26 @@ public class SirAsSwiftSourcesPrinter(
     private val printer: SmartPrinter,
     private val stableDeclarationsOrder: Boolean,
     private val renderDocComments: Boolean,
+    private val emptyBodyStub: SirFunctionBody
 ) : IndentingPrinter by printer {
 
     public companion object {
-        public fun print(module: SirModule, stableDeclarationsOrder: Boolean, renderDocComments: Boolean): String {
+
+        public val fatalErrorBodyStub: SirFunctionBody = SirFunctionBody(
+            listOf("fatalError()")
+        )
+
+        public fun print(
+            module: SirModule,
+            stableDeclarationsOrder: Boolean,
+            renderDocComments: Boolean,
+            emptyBodyStub: SirFunctionBody = fatalErrorBodyStub
+        ): String {
             val childrenPrinter = SirAsSwiftSourcesPrinter(
                 SmartPrinter(StringBuilder()),
                 stableDeclarationsOrder = stableDeclarationsOrder,
                 renderDocComments = renderDocComments,
+                emptyBodyStub = emptyBodyStub,
             )
             val declarationsString = with(childrenPrinter) {
                 module.printChildren()
@@ -34,6 +46,7 @@ public class SirAsSwiftSourcesPrinter(
                     SmartPrinter(StringBuilder()),
                     stableDeclarationsOrder = stableDeclarationsOrder,
                     renderDocComments = renderDocComments,
+                    emptyBodyStub = emptyBodyStub,
                 )
                 with(importsPrinter) {
                     module.printImports()
@@ -138,9 +151,13 @@ public class SirAsSwiftSourcesPrinter(
         printPreNameKeywords()
         printName()
         printPostNameKeywords()
-        if (this !is SirAccessor) { print("(") }
+        if (this !is SirAccessor) {
+            print("(")
+        }
         collectParameters().print()
-        if (this !is SirAccessor) { print(")") }
+        if (this !is SirAccessor) {
+            print(")")
+        }
         printReturnType()
         println(" {")
         withIndent {
@@ -176,7 +193,7 @@ public class SirAsSwiftSourcesPrinter(
         superClass?.let { ": ${it.swift} " } ?: ""
     )
 
-    private fun SirElement.printName() =print(
+    private fun SirElement.printName() = print(
         when (this@printName) {
             is SirNamed -> name
             is SirExtension -> extendedType.swift
@@ -204,7 +221,7 @@ public class SirAsSwiftSourcesPrinter(
             is SirInit -> "init"
             is SirFunction -> "func $name"
             is SirGetter,
-            is SirSetter
+            is SirSetter,
             -> ""
         }
     )
@@ -213,7 +230,7 @@ public class SirAsSwiftSourcesPrinter(
         is SirInit -> "?".takeIf { isFailable }?.let { print(it) }
         is SirFunction,
         is SirGetter,
-        is SirSetter
+        is SirSetter,
         -> print("")
     }
 
@@ -229,7 +246,7 @@ public class SirAsSwiftSourcesPrinter(
             is SirFunction -> " -> ${returnType.swift}"
             is SirInit,
             is SirGetter,
-            is SirSetter
+            is SirSetter,
             -> ""
         }
     )
@@ -258,12 +275,13 @@ public class SirAsSwiftSourcesPrinter(
                 }
             }
 
-    private fun SirFunctionBody?.print() = (this?.statements ?: listOf("fatalError()"))
+    private fun SirFunctionBody?.print() = (this ?: emptyBodyStub)
+        .statements
         .forEach {
             println(it)
         }
 
-    private fun SirCallableKind.print() =print(
+    private fun SirCallableKind.print() = print(
         when (this) {
             SirCallableKind.FUNCTION -> ""
             SirCallableKind.INSTANCE_METHOD -> ""
