@@ -685,6 +685,11 @@ abstract class ByteWriter {
         writeByte(v.toByte())
     }
 
+    fun writeUInt16(v: UShort) {
+        writeByte(v.toByte())
+        writeByte((v.toUInt() shr 8).toByte())
+    }
+
     fun writeUInt32(v: UInt) {
         writeByte(v.toByte())
         writeByte((v shr 8).toByte())
