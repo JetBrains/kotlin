@@ -41,6 +41,8 @@ interface FirDeclarationStatus : FirElement {
     val isFromEnumClass: Boolean
     val isFun: Boolean
     val hasStableParameterNames: Boolean
+    val defaultVisibility: Visibility
+    val defaultModality: Modality
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitDeclarationStatus(this, data)

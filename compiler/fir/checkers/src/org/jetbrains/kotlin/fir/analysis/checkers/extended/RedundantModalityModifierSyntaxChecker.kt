@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.modalityModifier
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.redundantModalities
+import org.jetbrains.kotlin.fir.analysis.checkers.resolvedStatus
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDeclarationSyntaxChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -40,13 +41,16 @@ object RedundantModalityModifierSyntaxChecker : FirDeclarationSyntaxChecker<FirD
     ) {
         require(element is FirMemberDeclaration)
         val modality = element.modality ?: return
+        val resolvedStatus = element.symbol.resolvedStatus!!
+        val defaultModality = resolvedStatus.defaultModality
         if (
-            modality == Modality.FINAL
+            modality == defaultModality
             && (context.containingDeclarations.last() as? FirClass)?.classKind == ClassKind.INTERFACE
         ) return
 
         if (source.treeStructure.modalityModifier(source.lighterASTNode) == null) return
-        val redundantModalities = element.redundantModalities(context)
+
+        val redundantModalities = element.redundantModalities(context, defaultModality)
         if (redundantModalities.contains(modality)) {
             reporter.reportOn(source, REDUNDANT_MODALITY_MODIFIER, context)
         }

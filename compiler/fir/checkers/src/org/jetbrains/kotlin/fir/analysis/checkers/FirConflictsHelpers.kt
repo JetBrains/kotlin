@@ -85,7 +85,7 @@ private fun FirBasedSymbol<*>.isCollectable(): Boolean {
 private val FirNamedFunctionSymbol.isCollectableAccordingToSource: Boolean
     get() = source?.kind !is KtFakeSourceElementKind || source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers
 
-private val FirBasedSymbol<*>.resolvedStatus
+internal val FirBasedSymbol<*>.resolvedStatus
     get() = when (this) {
         is FirCallableSymbol<*> -> resolvedStatus
         is FirClassLikeSymbol<*> -> resolvedStatus

@@ -408,6 +408,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
                 "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
                 "fromSealedClass", "fromEnumClass", "fun", "hasStableParameterNames",
             )
+            +field("defaultVisibility", visibilityType, nullable = false)
+            +field("defaultModality", modalityType, nullable = false)
         }
 
         resolvedDeclarationStatus.configure {

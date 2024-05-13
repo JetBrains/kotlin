@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 
-class FirResolvedDeclarationStatusImpl(
+open class FirResolvedDeclarationStatusImpl(
     visibility: Visibility,
     modality: Modality,
     override val effectiveVisibility: EffectiveVisibility

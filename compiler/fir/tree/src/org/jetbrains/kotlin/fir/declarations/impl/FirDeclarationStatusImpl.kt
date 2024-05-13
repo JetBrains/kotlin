@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
@@ -185,6 +186,12 @@ open class FirDeclarationStatusImpl(
     ): FirResolvedDeclarationStatusImpl {
         return FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility, flags)
     }
+
+    override val defaultModality: Modality
+        get() = Modality.FINAL
+
+    override val defaultVisibility: Visibility
+        get() = Visibilities.DEFAULT_VISIBILITY
 }
 
 @OptIn(FirImplementationDetail::class)
