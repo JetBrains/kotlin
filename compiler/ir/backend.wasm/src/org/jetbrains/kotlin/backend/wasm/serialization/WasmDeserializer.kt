@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.serialization
 
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import org.jetbrains.kotlin.wasm.ir.*
@@ -372,6 +372,56 @@ class WasmDeserializer(val inputStream: InputStream) {
         val memberSignature = deserializeIdSignature()
         val overriddenSignatures = deserializeList(::deserializeIdSignature)
         return IdSignature.SpecialFakeOverrideSignature(memberSignature, overriddenSignatures)
+    }
+
+    fun deserializeConstantDataElement(): ConstantDataElement =
+        withId { id ->
+            when (id) {
+                0 -> deserializeConstantDataCharArray()
+                1 -> deserializeConstantDataCharField()
+                2 -> deserializeConstantDataIntArray()
+                3 -> deserializeConstantDataIntField()
+                4 -> deserializeConstantDataIntegerArray()
+                5 -> deserializeConstantDataStruct()
+                else -> idError()
+            }
+        }
+
+    fun deserializeConstantDataCharArray(): ConstantDataCharArray {
+        val name = deserializeString()
+        val value = deserializeList { deserializeSymbol { Char(deserializeInt()) } }
+        return ConstantDataCharArray(name, value)
+    }
+
+    fun deserializeConstantDataCharField(): ConstantDataCharField {
+        val name = deserializeString()
+        val value = deserializeSymbol { Char(deserializeInt()) }
+        return ConstantDataCharField(name, value)
+    }
+
+    fun deserializeConstantDataIntArray(): ConstantDataIntArray {
+        val name = deserializeString()
+        val value = deserializeList { deserializeSymbol(::deserializeInt) }
+        return ConstantDataIntArray(name, value)
+    }
+
+    fun deserializeConstantDataIntField(): ConstantDataIntField {
+        val name = deserializeString()
+        val value = deserializeSymbol(::deserializeInt)
+        return ConstantDataIntField(name, value)
+    }
+
+    fun deserializeConstantDataIntegerArray(): ConstantDataIntegerArray {
+        val name = deserializeString()
+        val value = deserializeList { b.readUInt64().toLong() }
+        val integerSize = deserializeInt()
+        return ConstantDataIntegerArray(name, value, integerSize)
+    }
+
+    fun deserializeConstantDataStruct(): ConstantDataStruct {
+        val name = deserializeString()
+        val value = deserializeList(::deserializeConstantDataElement)
+        return ConstantDataStruct(name, value)
     }
 
     fun deserializeJsCodeSnippet(): WasmCompiledModuleFragment.JsCodeSnippet {
