@@ -67,7 +67,7 @@ class ComposeIrGenerationExtension(
     private val moduleMetricsFactory: ((StabilityInferencer) -> ModuleMetrics)? = null,
     private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
     private val featureFlags: FeatureFlags,
-    private val skipIrLoweringIfRuntimeNotFound: Boolean = false,
+    private val skipIfRuntimeNotFound: Boolean = false,
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
         private set
