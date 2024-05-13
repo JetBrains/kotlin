@@ -265,6 +265,12 @@ class WasmDeserializer(val inputStream: InputStream) {
         return list
     }
 
+    fun <A, B> deserializePair(deserializeAFunc: () -> A, deserializeBFunc: () -> B): Pair<A, B> {
+        val a = deserializeAFunc()
+        val b = deserializeBFunc()
+        return Pair(a, b)
+    }
+
     fun deserializeSourceLocation() =
         withId { id ->
             when (id) {
