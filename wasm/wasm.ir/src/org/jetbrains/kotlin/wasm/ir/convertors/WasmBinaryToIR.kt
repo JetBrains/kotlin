@@ -590,6 +590,10 @@ abstract class ByteReader {
     fun readUByte(): UByte =
         readByte().toUByte()
 
+    fun readUInt16(): UShort =
+        (readUByte().toUInt() or
+                (readUByte().toUInt() shl 8)).toUShort()
+
     fun readUInt32(): UInt =
         readUByte().toUInt() or
                 (readUByte().toUInt() shl 8) or
