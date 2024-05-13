@@ -52,19 +52,6 @@ class DeclarationGenerator(
         // Type aliases are not material
     }
 
-
-    private val jsCodeCounter = mutableMapOf<String, Int>()
-    private fun jsCodeName(declaration: IrFunction): String {
-        error("TODO")
-//        require(declaration is IrSimpleFunction)
-//        val key = declaration.fqNameWhenAvailable.toString()
-//        // counter is used to resolve fqName clashes
-//        val counterValue = jsCodeCounter.getOrPut(key, defaultValue = { 0 })
-//        jsCodeCounter[key] = counterValue + 1
-//        val counterSuffix = if (counterValue == 0 && key.lastOrNull()?.isDigit() == false) "" else "_$counterValue"
-//        return "$key$counterSuffix"
-    }
-
     override fun visitFunction(declaration: IrFunction) {
         // Inline class constructors are currently empty
         if (declaration is IrConstructor && backendContext.inlineClassesUtils.isClassInlineLike(declaration.parentAsClass))
@@ -85,9 +72,10 @@ class DeclarationGenerator(
             }
             jsCode != null -> {
                 // check(declaration.isExternal) { "Non-external fun with @JsFun ${declaration.fqNameWhenAvailable}"}
-                val jsCodeName = jsCodeName(declaration)
-                wasmFileCodegenContext.addJsFun(jsCodeName, jsCode)
-                WasmImportDescriptor("js_code", jsCodeName)
+                require(declaration is IrSimpleFunction)
+                val uniqueJsFunName = wasmFileCodegenContext.referenceUniqueJsFunName(declaration.fqNameWhenAvailable.toString())
+                wasmFileCodegenContext.addJsFun(uniqueJsFunName, jsCode)
+                WasmImportDescriptor("js_code", uniqueJsFunName)
             }
             else -> {
                 null

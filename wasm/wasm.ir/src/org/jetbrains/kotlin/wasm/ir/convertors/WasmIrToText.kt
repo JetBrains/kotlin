@@ -425,7 +425,7 @@ class WasmIrToText(
     private fun WasmImportDescriptor.appendImportPair() {
         sameLineList("import") {
             toWatString(moduleName)
-            toWatString(declarationName)
+            toWatString(declarationName.owner)
         }
     }
 

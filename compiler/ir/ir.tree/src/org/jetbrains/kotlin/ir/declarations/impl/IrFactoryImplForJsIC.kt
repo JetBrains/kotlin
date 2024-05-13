@@ -10,44 +10,29 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
-class IrFactoryImplForJsIC(override val stageController: StageController) : AbstractIrFactoryImpl(), IdSignatureRetriever {
+class IrFactoryImplForJsIC(stageController: StageController) : AbstractIrFactoryImplForIC(stageController) {
     private val declarationToSignature = WeakHashMap<IrDeclaration, IdSignature>()
 
-    private fun <T : IrDeclaration> T.register(): T {
-        when (this) {
-            is IrFunction, is IrProperty, is IrClass, is IrField -> Unit
-            else -> return this
-        }
+    override fun <T : IrDeclaration> T.register(): T {
         val parentSig = stageController.currentDeclaration?.let { declarationSignature(it) } ?: return this
 
-        if (this in declarationToSignature.keys) {
-            error("Declaration is already registered")
-        }
+        stageController.createSignature(parentSig)?.let { declarationToSignature[this] = it }
 
-        val newSignature = stageController.createSignature(parentSig)
-        if (newSignature in declarationToSignature.values) {
-            error("Signature is already registered")
-        }
-        declarationToSignature[this] = newSignature
         return this
     }
 
     override fun declarationSignature(declaration: IrDeclaration): IdSignature? {
-        val signature = declarationToSignature[declaration]
-            ?: declaration.symbol.signature
-            ?: declaration.symbol.privateSignature
-        if (signature != null) return signature
-
-        val unknownDeclaration = IdSignature.ScopeLocalDeclaration(declaration.dump().hashCode(), "UNKNOWN")
-        declarationToSignature[declaration] = unknownDeclaration
-        return unknownDeclaration
+        return declarationToSignature[declaration] ?: declaration.symbol.signature ?: declaration.symbol.privateSignature
     }
+}
+
+abstract class AbstractIrFactoryImplForIC(override val stageController: StageController) : AbstractIrFactoryImpl(), IdSignatureRetriever {
+    protected abstract fun <T : IrDeclaration> T.register(): T
 
     override fun createAnonymousInitializer(
         startOffset: Int,

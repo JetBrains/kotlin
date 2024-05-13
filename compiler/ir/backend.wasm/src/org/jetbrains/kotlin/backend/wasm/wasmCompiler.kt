@@ -265,7 +265,7 @@ fun generateAsyncJsWrapper(
 ): String {
 
     val jsCodeBody = jsFuns.joinToString(",\n") {
-        "${it.importName.toJsStringLiteral()} : ${it.jsCode}"
+        "${it.importName.owner.toJsStringLiteral()} : ${it.jsCode}"
     }
 
     val jsCodeBodyIndented = jsCodeBody.prependIndent("        ")

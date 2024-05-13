@@ -418,7 +418,7 @@ class WasmIrToBinary(
 
     private fun appendImportedFunction(function: WasmFunction.Imported) {
         b.writeString(function.importPair.moduleName)
-        b.writeString(function.importPair.declarationName)
+        b.writeString(function.importPair.declarationName.owner)
         b.writeByte(0)  // Function external kind.
         b.writeVarUInt32(function.type.owner.index)
     }
@@ -430,7 +430,7 @@ class WasmIrToBinary(
     private fun appendTable(table: WasmTable) {
         if (table.importPair != null) {
             b.writeString(table.importPair.moduleName)
-            b.writeString(table.importPair.declarationName)
+            b.writeString(table.importPair.declarationName.owner)
             b.writeByte(1)
         }
 
@@ -441,7 +441,7 @@ class WasmIrToBinary(
     private fun appendMemory(memory: WasmMemory) {
         if (memory.importPair != null) {
             b.writeString(memory.importPair.moduleName)
-            b.writeString(memory.importPair.declarationName)
+            b.writeString(memory.importPair.declarationName.owner)
             b.writeByte(2)
         }
         appendLimits(memory.limits)
@@ -450,7 +450,7 @@ class WasmIrToBinary(
     private fun appendGlobal(c: WasmGlobal) {
         if (c.importPair != null) {
             b.writeString(c.importPair.moduleName)
-            b.writeString(c.importPair.declarationName)
+            b.writeString(c.importPair.declarationName.owner)
             b.writeByte(3)
             appendType(c.type)
             b.writeVarUInt1(c.isMutable)
@@ -464,7 +464,7 @@ class WasmIrToBinary(
     private fun appendTag(t: WasmTag) {
         if (t.importPair != null) {
             b.writeString(t.importPair.moduleName)
-            b.writeString(t.importPair.declarationName)
+            b.writeString(t.importPair.declarationName.owner)
             b.writeByte(4)
             return
         }

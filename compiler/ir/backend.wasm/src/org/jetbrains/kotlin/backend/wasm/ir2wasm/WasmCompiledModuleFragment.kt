@@ -58,6 +58,7 @@ class WasmCompiledFileFragment {
     val declaredInterfaces =
         mutableListOf<IdSignature>()
     val initFunctions = mutableListOf<FunWithPriority>()
+    val uniqueJsFunNames = ReferencableElements<String, String>()
     val jsFuns = mutableListOf<JsCodeSnippet>()
     val jsModuleImports = mutableSetOf<String>()
     val exports = mutableListOf<WasmExport<*>>()
@@ -70,7 +71,7 @@ class WasmCompiledModuleFragment(
     private val irBuiltIns: IrBuiltIns,
     private val generateTrapsInsteadOfExceptions: Boolean,
 ) {
-    class JsCodeSnippet(val importName: String, val jsCode: String)
+    class JsCodeSnippet(val importName: WasmSymbolReadOnly<String>, val jsCode: String)
 
     class FunWithPriority(val function: WasmFunction, val priority: String)
 
@@ -224,9 +225,9 @@ class WasmCompiledModuleFragment(
         var currentDataSectionAddress = 0
         val classIds = mutableMapOf<IdSignature, Int>()
         wasmCompiledFileFragments.forEach { fragment ->
-            fragment.typeInfo.forEach { (referenceKey, wasmSymbol) ->
+            fragment.typeInfo.forEach { (referenceKey, dataElement) ->
                 classIds[referenceKey] = currentDataSectionAddress
-                currentDataSectionAddress += wasmSymbol.sizeInBytes
+                currentDataSectionAddress += dataElement.sizeInBytes
             }
         }
         wasmCompiledFileFragments.forEach { fragment ->
@@ -247,13 +248,16 @@ class WasmCompiledModuleFragment(
         wasmCompiledFileFragments.flatMapTo(allStrings) { it.stringLiteralAddress.unbound.keys }
         allStrings.forEach { string ->
             wasmCompiledFileFragments.forEach { fragment ->
-                fragment.stringLiteralAddress.unbound[string]?.bind(stringDataSectionStart)
-                fragment.stringLiteralPoolId.unbound[string]?.bind(stringLiteralCount)
-
-                val constData = ConstantDataCharArray("string_literal", string.toCharArray())
-                stringDataSectionBytes += constData.toBytes().toList()
-                stringDataSectionStart += constData.sizeInBytes
-                stringLiteralCount++
+                val literalAddress = fragment.stringLiteralAddress.unbound[string]
+                if (literalAddress != null) {
+                    val literalPoolId = fragment.stringLiteralPoolId.unbound[string] ?: error("String symbol expected")
+                    literalAddress.bind(stringDataSectionStart)
+                    literalPoolId.bind(stringLiteralCount)
+                    val constData = ConstantDataCharArray("string_literal", string.toCharArray())
+                    stringDataSectionBytes += constData.toBytes().toList()
+                    stringDataSectionStart += constData.sizeInBytes
+                    stringLiteralCount++
+                }
             }
         }
 
@@ -293,6 +297,16 @@ class WasmCompiledModuleFragment(
                     typeInfo.toBytes()
                 )
                 data.add(typeData)
+            }
+        }
+
+        val jsCodeCounter = mutableMapOf<String, Int>()
+        wasmCompiledFileFragments.forEach { fragment ->
+            fragment.uniqueJsFunNames.unbound.forEach { (jsFunName, symbol) ->
+                val counterValue = jsCodeCounter.getOrPut(jsFunName, defaultValue = { 0 })
+                jsCodeCounter[jsFunName] = counterValue + 1
+                val counterSuffix = if (counterValue == 0 && jsFunName.lastOrNull()?.isDigit() == false) "" else "_$counterValue"
+                symbol.bind("$jsFunName$counterSuffix")
             }
         }
 

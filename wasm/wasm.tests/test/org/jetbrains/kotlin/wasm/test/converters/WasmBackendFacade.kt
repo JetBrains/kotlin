@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
+import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -95,7 +96,7 @@ class WasmBackendFacade(
             friendLibraries
         )
 
-        val irFactory = IrFactoryImplForJsIC(WholeWorldStageController())
+        val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
 
         val testPackage = extractTestPackage(testServices)
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
