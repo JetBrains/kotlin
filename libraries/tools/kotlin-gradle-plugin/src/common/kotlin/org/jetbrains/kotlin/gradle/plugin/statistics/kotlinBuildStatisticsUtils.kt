@@ -172,7 +172,7 @@ private fun collectAppliedPluginsStatistics(
     configurationTimeMetrics: MetricContainer,
 ) {
     for (plugin in ObservablePlugins.values()) {
-        project.plugins.withId(plugin.title) {
+        if (project.plugins.hasPlugin(plugin.title)) {
             configurationTimeMetrics.put(plugin.metric, true)
         }
     }
