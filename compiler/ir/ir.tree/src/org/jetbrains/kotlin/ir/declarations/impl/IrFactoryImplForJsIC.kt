@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
@@ -37,16 +38,14 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         return this
     }
 
-    private val unknownDeclarations = mutableMapOf<IrDeclaration, IdSignature>()
     override fun declarationSignature(declaration: IrDeclaration): IdSignature? {
         val signature = declarationToSignature[declaration]
             ?: declaration.symbol.signature
             ?: declaration.symbol.privateSignature
-            ?: unknownDeclarations[declaration]
         if (signature != null) return signature
 
-        val unknownDeclaration = IdSignature.ScopeLocalDeclaration(unknownDeclarations.size, "UNKNOWN")
-        unknownDeclarations[declaration] = unknownDeclaration
+        val unknownDeclaration = IdSignature.ScopeLocalDeclaration(declaration.dump().hashCode(), "UNKNOWN")
+        declarationToSignature[declaration] = unknownDeclaration
         return unknownDeclaration
     }
 
