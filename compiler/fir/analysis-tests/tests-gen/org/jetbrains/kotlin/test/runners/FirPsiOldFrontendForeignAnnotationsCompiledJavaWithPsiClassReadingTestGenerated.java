@@ -1065,6 +1065,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
         }
 
         @Test
+        @TestMetadata("kt68110.kt")
+        public void testKt68110() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/kt68110.kt");
+        }
+
+        @Test
         @TestMetadata("NonPlatformTypeParameter.kt")
         public void testNonPlatformTypeParameter() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NonPlatformTypeParameter.kt");
