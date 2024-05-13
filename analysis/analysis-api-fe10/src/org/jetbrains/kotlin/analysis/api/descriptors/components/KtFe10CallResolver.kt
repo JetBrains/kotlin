@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtF
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10ReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
@@ -486,20 +487,19 @@ internal class KtFe10CallResolver(
             return KtPartiallyAppliedSymbol(
                 signature,
                 dispatchReceiver?.toKtReceiverValue(context, this, smartCastDispatchReceiverType)
-                    ?: targetDescriptor.dispatchReceiverForImportedCallables(this),
+                    ?: targetDescriptor.dispatchReceiverForImportedCallables(),
                 extensionReceiver?.toKtReceiverValue(context, this),
             )
         }
     }
 
-    private fun CallableDescriptor.dispatchReceiverForImportedCallables(resolvedCall: ResolvedCall<*>): KtReceiverValue? {
+    private fun CallableDescriptor.dispatchReceiverForImportedCallables(): KtReceiverValue? {
         if (this !is ImportedFromObjectCallableDescriptor<*>) return null
-        val expression = resolvedCall.call.callElement as? KtExpression ?: return null
-        return KtExplicitReceiverValue(
-            expression,
+
+        val symbol = containingObject.toKtClassSymbol(analysisContext)
+        return KtImplicitReceiverValue(
+            symbol,
             containingObject.defaultType.toKtType(analysisContext),
-            isSafeNavigation = false,
-            token,
         )
     }
 

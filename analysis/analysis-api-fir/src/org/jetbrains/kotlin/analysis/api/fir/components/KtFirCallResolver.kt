@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
@@ -851,6 +852,10 @@ internal class KtFirCallResolver(
                     else -> return null
                 }
                 KtImplicitReceiverValue(implicitPartiallyAppliedSymbol, resolvedType.asKtType())
+            }
+            this is FirResolvedQualifier && this.source?.kind is KtFakeSourceElementKind.ImplicitReceiver -> {
+                val symbol = this.symbol ?: return null
+                KtImplicitReceiverValue(symbol.toKtSymbol(), resolvedType.asKtType())
             }
             else -> {
                 val psi = psi

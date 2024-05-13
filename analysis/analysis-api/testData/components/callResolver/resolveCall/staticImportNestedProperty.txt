@@ -1,9 +1,32 @@
 KtSuccessCallInfo:
   call = KtSimpleVariableAccessCall:
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
-        expression = bar
-        isSafeNavigation = false
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtNamedClassOrObjectSymbol:
+          annotationsList: []
+          classIdIfNonLocal: one/two/TopLevelObject.Nested
+          classKind: OBJECT
+          companionObject: null
+          contextReceivers: []
+          isActual: false
+          isData: false
+          isExpect: false
+          isExternal: false
+          isFun: false
+          isInline: false
+          isInner: false
+          modality: FINAL
+          name: Nested
+          origin: SOURCE
+          superTypes: [
+            KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: kotlin/Any
+          ]
+          symbolKind: CLASS_MEMBER
+          typeParameters: []
+          visibility: Public
         type = one.two.TopLevelObject.Nested
       extensionReceiver = null
       signature = KtVariableLikeSignature:
