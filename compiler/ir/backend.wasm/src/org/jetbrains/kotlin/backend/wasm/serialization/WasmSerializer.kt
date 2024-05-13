@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.serialization
 
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.ByteWriter
@@ -341,6 +342,16 @@ class WasmSerializer(val outputStream: OutputStream) {
             serialize(memberSignature)
             serialize(overriddenSignatures, ::serialize)
         }
+    }
+
+    fun serialize(jsCodeSnippet: WasmCompiledModuleFragment.JsCodeSnippet) {
+        serializeSymbol(jsCodeSnippet.importName, ::serialize)
+        serialize(jsCodeSnippet.jsCode)
+    }
+
+    fun serialize(funWithPriority: WasmCompiledModuleFragment.FunWithPriority) {
+        serialize(funWithPriority.function)
+        serialize(funWithPriority.priority)
     }
 
     fun serialize(str: String) {
