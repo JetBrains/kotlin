@@ -19,7 +19,7 @@ object BuiltinsTestUtils {
     fun compileBuiltinsModule(environment: KotlinCoreEnvironment): ModuleDescriptor {
         val files = KotlinTestUtils.loadToKtFiles(
             environment, ContainerUtil.concat<File>(
-                allFilesUnder("core/builtins/native"),
+                allFilesUnder("libraries/stdlib/jvm/builtins/intrinsic"),
                 allFilesUnder("core/builtins/src"),
                 allFilesUnder("core/builtins/build/src/ranges"),
                 allFilesUnder("core/builtins/build/src/reflect"),

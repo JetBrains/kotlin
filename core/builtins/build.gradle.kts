@@ -6,7 +6,7 @@ plugins {
 }
 
 val builtinsSrc = fileFrom(rootDir, "core", "builtins", "src")
-val builtinsNative = fileFrom(rootDir, "core", "builtins", "native")
+val builtinsNative = fileFrom(rootDir, "libraries/stdlib/jvm/builtins/intrinsic")
 val kotlinReflectCommon = fileFrom(rootDir, "libraries/stdlib/src/kotlin/reflect/")
 val kotlinReflectJvm = fileFrom(rootDir, "libraries/stdlib/jvm/src/kotlin/reflect")
 val kotlinRangesCommon = fileFrom(rootDir, "libraries/stdlib/src/kotlin/ranges")

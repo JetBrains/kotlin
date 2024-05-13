@@ -22,7 +22,7 @@ fun assertExists(file: File) {
     if (!file.exists()) error("Output dir does not exist: ${file.absolutePath}")
 }
 
-val BUILT_INS_NATIVE_DIR_JVM = File("core/builtins/native/")
+val BUILT_INS_NATIVE_DIR_JVM = File("libraries/stdlib/jvm/builtins/intrinsic/")
 val BUILT_INS_NATIVE_DIR_JS = File("libraries/stdlib/js/builtins/")
 val BUILT_INS_NATIVE_DIR_WASM = File("libraries/stdlib/wasm/builtins/")
 val BUILT_INS_NATIVE_DIR_NATIVE = File("kotlin-native/runtime/src/main/kotlin/")

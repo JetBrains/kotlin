@@ -56,6 +56,8 @@ dependencies {
 
 val builtinsDir = "${rootDir}/core/builtins"
 val builtinsSrcDir = "${layout.buildDirectory.get().asFile}/src/builtin-sources"
+val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins/intrinsic"
+val jvmBuiltinsDir = "${rootDir}/${jvmBuiltinsRelativeDir}"
 
 val jsDir = "${projectDir}/js"
 val jsBuiltinsSrcDir = "${layout.buildDirectory.get().asFile}/src/js-builtin-sources"
@@ -407,8 +409,8 @@ kotlin {
 
             prepareJsIrMainSources.configure {
                 val unimplementedNativeBuiltIns =
-                    (file("$builtinsDir/native/kotlin/").list()!!.toSortedSet() - file("$jsDir/builtins/").list()!!)
-                        .map { "core/builtins/native/kotlin/$it" }
+                    (file(jvmBuiltinsDir).list()!!.toSortedSet() - file("$jsDir/builtins/").list()!!)
+                        .map { "$jvmBuiltinsRelativeDir/$it" }
 
                 // TODO: try to reuse absolute paths defined in the beginning
                 val sources = listOf(
@@ -479,8 +481,8 @@ kotlin {
             }
             prepareWasmBuiltinSources.configure {
                 val unimplementedNativeBuiltIns =
-                    (file("$rootDir/core/builtins/native/kotlin/").list().toSortedSet() - file("wasm/builtins/kotlin/").list())
-                        .map { "core/builtins/native/kotlin/$it" }
+                    (file(jvmBuiltinsDir).list().toSortedSet() - file("wasm/builtins/kotlin/").list())
+                        .map { "$jvmBuiltinsRelativeDir/$it" }
 
                 val sources = listOf(
                     "core/builtins/src/kotlin/"
