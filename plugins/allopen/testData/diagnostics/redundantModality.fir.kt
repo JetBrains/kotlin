@@ -6,6 +6,6 @@ annotation class AllOpen
 @AllOpen
 class Some {
     fun default() {}
-    open fun meaninglessOpen() {}
-    <!REDUNDANT_MODALITY_MODIFIER!>final<!> fun meaningfullFinal() {}
+    <!REDUNDANT_MODALITY_MODIFIER!>open<!> fun meaninglessOpen() {}
+    final fun meaningfullFinal() {}
 }

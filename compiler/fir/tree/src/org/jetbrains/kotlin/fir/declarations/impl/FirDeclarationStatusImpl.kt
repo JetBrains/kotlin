@@ -179,7 +179,7 @@ open class FirDeclarationStatusImpl(
         return this
     }
 
-    fun resolved(
+    open fun resolved(
         visibility: Visibility,
         modality: Modality,
         effectiveVisibility: EffectiveVisibility
@@ -192,6 +192,38 @@ open class FirDeclarationStatusImpl(
 
     override val defaultVisibility: Visibility
         get() = Visibilities.DEFAULT_VISIBILITY
+}
+
+class FirDeclarationStatusWithAlteredDefaults(
+    visibility: Visibility,
+    modality: Modality?,
+    override val defaultVisibility: Visibility,
+    override val defaultModality: Modality,
+) : FirDeclarationStatusImpl(visibility, modality) {
+    internal constructor(
+        visibility: Visibility,
+        modality: Modality?,
+        defaultVisibility: Visibility,
+        defaultModality: Modality,
+        flags: Int
+    ) : this(visibility, modality, defaultVisibility, defaultModality) {
+        this.flags = flags
+    }
+
+    override fun resolved(
+        visibility: Visibility,
+        modality: Modality,
+        effectiveVisibility: EffectiveVisibility
+    ): FirResolvedDeclarationStatusImpl {
+        return FirResolvedDeclarationStatusWithAlteredDefaults(
+            visibility,
+            modality,
+            defaultVisibility,
+            defaultModality,
+            effectiveVisibility,
+            flags
+        )
+    }
 }
 
 @OptIn(FirImplementationDetail::class)

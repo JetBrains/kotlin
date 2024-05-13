@@ -50,3 +50,22 @@ open class FirResolvedDeclarationStatusImpl(
     override val modality: Modality
         get() = super.modality!!
 }
+
+class FirResolvedDeclarationStatusWithAlteredDefaults(
+    visibility: Visibility,
+    modality: Modality,
+    override val defaultVisibility: Visibility,
+    override val defaultModality: Modality,
+    effectiveVisibility: EffectiveVisibility,
+) : FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility) {
+    internal constructor(
+        visibility: Visibility,
+        modality: Modality,
+        defaultVisibility: Visibility,
+        defaultModality: Modality,
+        effectiveVisibility: EffectiveVisibility,
+        flags: Int
+    ) : this(visibility, modality, defaultVisibility, defaultModality, effectiveVisibility) {
+        this.flags = flags
+    }
+}

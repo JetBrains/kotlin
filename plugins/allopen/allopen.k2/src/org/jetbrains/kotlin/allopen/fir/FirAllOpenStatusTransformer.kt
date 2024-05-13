@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
+import org.jetbrains.kotlin.fir.copyWithNewDefaults
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -37,10 +38,9 @@ class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExt
     }
 
     override fun transformStatus(status: FirDeclarationStatus, declaration: FirDeclaration): FirDeclarationStatus {
-        return if (status.modality == null) {
-            status.copy(modality = Modality.OPEN)
-        } else {
-            status
+        return when (status.modality) {
+            null -> status.copyWithNewDefaults(modality = Modality.OPEN, defaultModality = Modality.OPEN)
+            else -> status.copyWithNewDefaults(defaultModality = Modality.OPEN)
         }
     }
 }
