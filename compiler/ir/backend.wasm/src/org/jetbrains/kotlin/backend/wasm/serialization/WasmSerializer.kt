@@ -231,6 +231,11 @@ class WasmSerializer(val outputStream: OutputStream) {
         list.forEach { serializeFunc(it) }
     }
 
+    fun <A, B> serialize(pair: Pair<A, B>, serializeAFunc: (A) -> Unit, serializeBFunc: (B) -> Unit) {
+        serializeAFunc(pair.first)
+        serializeBFunc(pair.second)
+    }
+
     fun serialize(sl: SourceLocation) =
         when (sl) {
             SourceLocation.NoLocation -> withId(0U) { }
