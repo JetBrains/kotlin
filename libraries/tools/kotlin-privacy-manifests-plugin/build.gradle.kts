@@ -1,9 +1,11 @@
 import plugins.configureDefaultPublishing
+import plugins.configureKotlinPomAttributes
 
 plugins {
     kotlin("jvm")
     `java-gradle-plugin`
     `maven-publish`
+    id("com.gradle.plugin-publish")
 }
 
 group = "org.jetbrains.kotlin"
@@ -22,6 +24,11 @@ dependencies {
 val functionalTest by sourceSets.creating
 
 gradlePlugin {
+    website.set("https://kotlinlang.org/")
+    vcsUrl.set("https://github.com/jetbrains/kotlin")
+    plugins.configureEach {
+        tags.add("kotlin")
+    }
     plugins {
         create("apple-privacy-manifests") {
             id = "org.jetbrains.kotlin.apple-privacy-manifests"
@@ -58,5 +65,9 @@ publishing {
         maven(layout.buildDirectory.dir("repo")) {
             name = "BuildDirectory"
         }
+    }
+
+    publications.withType(MavenPublication::class.java).all {
+        configureKotlinPomAttributes(project)
     }
 }
