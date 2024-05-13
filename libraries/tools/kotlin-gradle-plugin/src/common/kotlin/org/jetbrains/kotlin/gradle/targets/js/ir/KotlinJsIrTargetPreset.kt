@@ -30,13 +30,11 @@ open class KotlinJsIrTargetPreset(
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
         return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType).apply {
             this.isMpp = this@KotlinJsIrTargetPreset.isMpp
-            project.runProjectConfigurationHealthCheckWhenEvaluated {
-                KotlinJsIrTargetMetrics.collectMetrics(
-                    isBrowserConfigured = isBrowserConfigured,
-                    isNodejsConfigured = isNodejsConfigured,
-                    project
-                )
-            }
+            KotlinJsIrTargetMetrics.collectMetrics(
+                isBrowserConfigured = isBrowserConfigured,
+                isNodejsConfigured = isNodejsConfigured,
+                project
+            )
         }
     }
 

@@ -281,3 +281,11 @@ internal object NativeLinkTaskMetrics : FusMetrics {
         }
     }
 }
+
+internal object KotlinStdlibConfigurationMetrics : FusMetrics {
+    internal fun collectMetrics(project: Project, requestedStdlibVersion: String, ) {
+        project.addConfigurationMetrics {
+            it.put(StringMetrics.KOTLIN_STDLIB_VERSION, requestedStdlibVersion)
+        }
+    }
+}
