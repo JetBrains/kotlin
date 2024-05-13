@@ -81,7 +81,7 @@ class WasmCompiledModuleFragment(
     class FunWithPriority(val function: WasmFunction, val priority: String)
 
     open class ReferencableElements<Ir, Wasm : Any> {
-        val unbound = mutableMapOf<Ir, WasmSymbol<Wasm>>()
+        var unbound = mutableMapOf<Ir, WasmSymbol<Wasm>>()
         fun reference(ir: Ir): WasmSymbol<Wasm> {
             val declaration = (ir as? IrSymbol)?.owner as? IrDeclarationWithName
             if (declaration != null) {
@@ -104,10 +104,10 @@ class WasmCompiledModuleFragment(
             wasmToIr[wasm] = ir
         }
 
-        val defined = LinkedHashMap<Ir, Wasm>()
-        val elements = mutableListOf<Wasm>()
+        var defined = LinkedHashMap<Ir, Wasm>()
+        var elements = mutableListOf<Wasm>()
 
-        val wasmToIr = mutableMapOf<Wasm, Ir>()
+        var wasmToIr = mutableMapOf<Wasm, Ir>()
     }
 
     private fun <IrSymbolType, WasmDeclarationType : Any, WasmSymbolType : WasmSymbol<WasmDeclarationType>> bindFileFragments(

@@ -404,6 +404,12 @@ class WasmSerializer(val outputStream: OutputStream) {
         b.writeBytes(bytes)
     }
 
+    fun <Ir, Wasm : Any> serialize(
+        referencableElements: WasmCompiledModuleFragment.ReferencableElements<Ir, Wasm>,
+        irSerializeFunc: (Ir) -> Unit,
+        wasmSerializeFunc: (Wasm) -> Unit
+    ) = serialize(referencableElements.unbound, irSerializeFunc) { serializeSymbol(it, wasmSerializeFunc) }
+
     private fun <T : Any> serializeSymbol(value: WasmSymbolReadOnly<T>, serializeFunc: (T) -> Unit) =
         withFlags(value.getOwner() == null) {
             value.getOwner()?.let { serializeFunc(it) }

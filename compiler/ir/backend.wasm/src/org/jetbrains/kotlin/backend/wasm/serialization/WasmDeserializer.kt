@@ -443,6 +443,13 @@ class WasmDeserializer(val inputStream: InputStream) {
         return String(bytes)
     }
 
+    fun <Ir, Wasm : Any> deserializeReferencableElements(
+        irDeserializeFunc: () -> Ir,
+        wasmDeserializeFunc: () -> Wasm
+    ) = WasmCompiledModuleFragment.ReferencableElements<Ir, Wasm>().apply {
+        unbound = deserializeMap(irDeserializeFunc) { deserializeSymbol(wasmDeserializeFunc) }
+    }
+
     private fun deserializeInt() = b.readUInt32().toInt()
 
     private fun <T : Any> deserializeSymbol(deserializeFunc: () -> T) =
