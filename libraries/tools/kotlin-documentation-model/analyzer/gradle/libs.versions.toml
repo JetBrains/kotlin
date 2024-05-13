@@ -1,6 +1,6 @@
 [versions]
 
-gradlePlugin-kotlin = "2.0.0-RC1"
+gradlePlugin-kotlin = "2.0.0-RC3"
 # See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
 gradlePlugin-android = "7.1.3"
 gradlePlugin-dokka = "1.9.20"
@@ -11,7 +11,7 @@ kotlinx-serialization = "1.6.0"
 kotlinx-bcv = "0.13.2"
 
 ## Analysis
-kotlin-compiler = "2.0.0-RC1"
+kotlin-compiler = "2.0.0-RC3"
 kotlin-compiler-k2 = "2.0.20-dev-7"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
