@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.serialization
 
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -263,6 +264,17 @@ class WasmDeserializer(val inputStream: InputStream) {
             list.add(itemDeserializeFunc())
         }
         return list
+    }
+
+    fun <K, V> deserializeMap(deserializeKeyFunc: () -> K, deserializeValueFunc: () -> V): MutableMap<K, V> {
+        val size = deserializeInt()
+        val map = newLinkedHashMapWithExpectedSize<K, V>(size)
+        repeat(size) {
+            val key = deserializeKeyFunc()
+            val value = deserializeValueFunc()
+            map[key] = value
+        }
+        return map
     }
 
     fun <A, B> deserializePair(deserializeAFunc: () -> A, deserializeBFunc: () -> B): Pair<A, B> {
