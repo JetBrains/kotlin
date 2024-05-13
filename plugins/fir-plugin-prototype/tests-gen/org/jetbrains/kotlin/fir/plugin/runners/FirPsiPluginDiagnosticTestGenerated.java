@@ -188,6 +188,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
     }
 
     @Test
+    @TestMetadata("redundantTransformedVisibility.kt")
+    public void testRedundantTransformedVisibility() {
+      runTest("plugins/fir-plugin-prototype/testData/diagnostics/status/redundantTransformedVisibility.kt");
+    }
+
+    @Test
     @TestMetadata("simpleAnnotation.kt")
     public void testSimpleAnnotation() {
       runTest("plugins/fir-plugin-prototype/testData/diagnostics/status/simpleAnnotation.kt");

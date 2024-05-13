@@ -179,12 +179,6 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             return theSource.explicitVisibility == null
         }
 
-    private val KtSourceElement.explicitVisibility: Visibility?
-        get() {
-            val visibilityModifier = treeStructure.visibilityModifier(lighterASTNode)
-            return (visibilityModifier?.tokenType as? KtModifierKeywordToken)?.toVisibilityOrNull()
-        }
-
     private fun Visibility?.isEffectivelyHiddenBy(declaration: FirMemberDeclaration?): Boolean {
         val containerVisibility = declaration?.effectiveVisibility?.toVisibility() ?: return false
 
@@ -299,3 +293,9 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         }
     }
 }
+
+val KtSourceElement.explicitVisibility: Visibility?
+    get() {
+        val visibilityModifier = treeStructure.visibilityModifier(lighterASTNode)
+        return (visibilityModifier?.tokenType as? KtModifierKeywordToken)?.toVisibilityOrNull()
+    }
