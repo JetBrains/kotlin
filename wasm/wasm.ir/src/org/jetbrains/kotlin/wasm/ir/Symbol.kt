@@ -24,6 +24,8 @@ class WasmSymbol<out T : Any>(owner: T? = null) : WasmSymbolReadOnly<T> {
         _owner = value as T
     }
 
+    fun isBound() = _owner != null
+
     override fun equals(other: Any?): Boolean =
         other is WasmSymbol<*> && _owner == other._owner
 
