@@ -13,5 +13,8 @@ strictEnums = CXErrorCode CXCursorKind CXTypeKind CXDiagnosticSeverity CXLoadDia
     CXTUResourceUsageKind CXLinkageKind CXVisibilityKind CXLanguageKind CXCallingConv CXChildVisitResult \
     CXTokenKind CXEvalResultKind CXVisitorResult CXResult CXIdxEntityKind
 
-# These functions are not available in 11.1.0 upstream.
-excludedFunctions = clang_Cursor_getVarDeclInitializer clang_Cursor_hasVarDeclGlobalStorage clang_Cursor_hasVarDeclExternalStorage
+# These functions are present in only one of the branches `kotlin/llvm-16.0.0-apple` and `kotlin/llvm-16.0.0`.
+# So if we don't exclude them, the "prebuilt" stubs generated on one platform won't compile on another platform.
+excludedFunctions = clang_Error_getCode clang_Error_getDescription clang_Error_dispose \
+    clang_getDiagnosticFileContents clang_getDiagnosticFileOriginalSourceRange \
+    clang_CXXMethod_isCopyAssignmentOperator clang_CXXMethod_isMoveAssignmentOperator
