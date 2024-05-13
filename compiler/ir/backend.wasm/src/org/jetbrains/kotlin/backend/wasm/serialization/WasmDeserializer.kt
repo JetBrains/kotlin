@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.serialization
 
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import org.jetbrains.kotlin.wasm.ir.*
@@ -372,6 +373,18 @@ class WasmDeserializer(val inputStream: InputStream) {
         val memberSignature = deserializeIdSignature()
         val overriddenSignatures = deserializeList(::deserializeIdSignature)
         return IdSignature.SpecialFakeOverrideSignature(memberSignature, overriddenSignatures)
+    }
+
+    fun deserializeJsCodeSnippet(): WasmCompiledModuleFragment.JsCodeSnippet {
+        val importName = deserializeSymbol(::deserializeString)
+        val jsCode = deserializeString()
+        return WasmCompiledModuleFragment.JsCodeSnippet(importName, jsCode)
+    }
+
+    fun deserializeFunWithPriority(): WasmCompiledModuleFragment.FunWithPriority {
+        val function = deserializeFunction()
+        val priority = deserializeString()
+        return WasmCompiledModuleFragment.FunWithPriority(function, priority)
     }
 
     fun deserializeString(): String {
