@@ -42,6 +42,12 @@ public class DiagnosticTestForAllOpenBaseGenerated extends AbstractDiagnosticTes
   }
 
   @Test
+  @TestMetadata("redundantModality.kt")
+  public void testRedundantModality() {
+    runTest("plugins/allopen/testData/diagnostics/redundantModality.kt");
+  }
+
+  @Test
   @TestMetadata("smartcast.kt")
   public void testSmartcast() {
     runTest("plugins/allopen/testData/diagnostics/smartcast.kt");
