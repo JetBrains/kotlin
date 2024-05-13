@@ -164,8 +164,9 @@ internal class KtFe10CallResolver(
             return resolveCall(parentBinaryExpression)
         }
 
-        if (psi is KtCallableReferenceExpression) {
-            return resolveCall(psi.callableReference)
+        when (psi) {
+            is KtCallableReferenceExpression -> return resolveCall(psi.callableReference)
+            is KtWhenConditionInRange -> return psi.operationReference.let(::resolveCall)
         }
 
         when (unwrappedPsi) {
@@ -202,6 +203,13 @@ internal class KtFe10CallResolver(
             ) {
                 // TODO: Handle compound assignment
                 handleAsFunctionCall(this, unwrappedPsi)?.toKtCallCandidateInfos()?.let { return@with it }
+            }
+
+            // The regular mechanism doesn't work, so at least the resolved call should be returned
+            when (psi) {
+                is KtWhenConditionInRange -> {
+                    return resolvedKtCallInfo?.toKtCallCandidateInfos().orEmpty()
+                }
             }
 
             val resolutionScope = unwrappedPsi.getResolutionScope(this) ?: return emptyList()

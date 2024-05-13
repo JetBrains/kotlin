@@ -1345,6 +1345,10 @@ internal class KtFirCallResolver(
                 realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
             is FirAnonymousFunctionExpression ->
                 realPsi?.parent as? KtLabeledExpression ?: realPsi as? KtExpression
+            is FirWhenSubjectExpression ->
+                // The subject variable is not processed here as we don't have KtExpression to represent it.
+                // K1 creates a fake expression in this case.
+                whenRef.value.subject?.findSourceKtExpressionForCallArgument()
             // FirBlock is a fake container for desugared expressions like `++index` or `++list[0]`
             is FirBlock -> psi as? KtExpression
             else -> realPsi as? KtExpression

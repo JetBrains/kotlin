@@ -24,7 +24,7 @@ KtSuccessCallInfo:
       T -> (MyClass)
     }
     argumentMapping = {
-      1 -> (KtVariableLikeSignature:
+      f -> (KtVariableLikeSignature:
         name = int
         receiverType = null
         returnType = kotlin.Int
