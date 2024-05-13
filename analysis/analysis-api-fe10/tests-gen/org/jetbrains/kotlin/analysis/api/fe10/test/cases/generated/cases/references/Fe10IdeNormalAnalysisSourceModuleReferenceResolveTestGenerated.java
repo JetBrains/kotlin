@@ -682,6 +682,18 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
     runTest("analysis/analysis-api/testData/referenceResolve/ValueParameter.kt");
   }
 
+  @Test
+  @TestMetadata("whenConditionInRange.kt")
+  public void testWhenConditionInRange() {
+    runTest("analysis/analysis-api/testData/referenceResolve/whenConditionInRange.kt");
+  }
+
+  @Test
+  @TestMetadata("whenConditionInRangeInverted.kt")
+  public void testWhenConditionInRangeInverted() {
+    runTest("analysis/analysis-api/testData/referenceResolve/whenConditionInRangeInverted.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/referenceResolve/arrayAccess")
   @TestDataPath("$PROJECT_ROOT")

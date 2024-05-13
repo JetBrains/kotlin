@@ -526,6 +526,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     public void testSuperType() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/superType.kt");
     }
+
+    @Test
+    @TestMetadata("whenConditionInRange.kt")
+    public void testWhenConditionInRange() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/whenConditionInRange.kt");
+    }
+
+    @Test
+    @TestMetadata("whenConditionInRangeInverted.kt")
+    public void testWhenConditionInRangeInverted() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/whenConditionInRangeInverted.kt");
+    }
   }
 
   @Nested

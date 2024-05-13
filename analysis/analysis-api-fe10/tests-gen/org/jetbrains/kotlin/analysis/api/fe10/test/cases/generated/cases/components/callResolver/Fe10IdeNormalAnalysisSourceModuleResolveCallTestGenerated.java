@@ -1121,6 +1121,18 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("whenConditionInRange.kt")
+  public void testWhenConditionInRange() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/whenConditionInRange.kt");
+  }
+
+  @Test
+  @TestMetadata("whenConditionInRangeInverted.kt")
+  public void testWhenConditionInRangeInverted() {
+    runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/whenConditionInRangeInverted.kt");
+  }
+
+  @Test
   @TestMetadata("whenSelectorSmartCast.kt")
   public void testWhenSelectorSmartCast() {
     runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/whenSelectorSmartCast.kt");

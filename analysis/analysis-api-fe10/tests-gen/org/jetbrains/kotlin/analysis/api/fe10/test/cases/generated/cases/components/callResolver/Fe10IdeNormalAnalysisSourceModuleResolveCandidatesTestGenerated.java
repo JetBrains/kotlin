@@ -150,6 +150,18 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
     public void testStaticMethodFromJavaClassFromSuper() {
       runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/staticMethodFromJavaClassFromSuper.kt");
     }
+
+    @Test
+    @TestMetadata("whenConditionInRange.kt")
+    public void testWhenConditionInRange() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/whenConditionInRange.kt");
+    }
+
+    @Test
+    @TestMetadata("whenConditionInRangeInverted.kt")
+    public void testWhenConditionInRangeInverted() {
+      runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/whenConditionInRangeInverted.kt");
+    }
   }
 
   @Nested
