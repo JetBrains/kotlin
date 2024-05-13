@@ -1,0 +1,12 @@
+package inline
+
+inline fun f(): Int {
+    val obj = A()
+    val oldSum = PublishedClass().getValue()
+        + obj.publishedVal
+        + obj.publishedMethod()
+        + obj.publishedVar
+        + inline.A.publishedConst
+
+    return oldSum + 3
+}
