@@ -133,7 +133,6 @@ val irCompilerModulesForIDE = arrayOf(
 val commonCompilerModules = arrayOf(
     ":compiler:psi",
     ":compiler:frontend.common-psi",
-    ":analysis:light-classes-base",
     ":compiler:frontend.common",
     ":compiler:util",
     ":compiler:config",
@@ -155,13 +154,13 @@ val commonCompilerModules = arrayOf(
     ":core:util.runtime",
     ":compiler:frontend.common.jvm",
     ":compiler:frontend.java", // TODO this is fe10 module but some utils used in fir ide now
+    ":analysis:light-classes-base",
     ":analysis:decompiled:decompiler-to-stubs",
     ":analysis:decompiled:decompiler-to-file-stubs",
     ":analysis:decompiled:decompiler-js",
     ":analysis:decompiled:decompiler-native",
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:light-classes-for-decompiled",
-    ":analysis:project-structure",
     ":analysis:kt-references",
     ":kotlin-build-common",
     ":kotlin-util-io",

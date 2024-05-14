@@ -130,7 +130,7 @@ internal abstract class SymbolLightMethodBase(
         if (hasPublishedApiAnnotation(annotationUseSiteTarget.toFilter())) return defaultName
 
         val sourceModule = ktModule as? KtSourceModule ?: return defaultName
-        return mangleInternalName(defaultName, sourceModule)
+        return mangleInternalName(defaultName, sourceModule.stableModuleName ?: sourceModule.moduleName)
     }
 
     abstract fun isOverride(): Boolean
