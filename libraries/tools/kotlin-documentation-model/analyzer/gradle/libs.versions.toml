@@ -12,7 +12,7 @@ kotlinx-bcv = "0.13.2"
 
 ## Analysis
 kotlin-compiler = "2.0.0-RC3"
-kotlin-compiler-k2 = "2.0.20-dev-7"
+kotlin-compiler-k2 = "2.0.20-dev-3206"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
