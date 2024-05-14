@@ -4,9 +4,13 @@ uintptr_t Class_without_package_INNER_CLASS_init_allocate();
 
 void Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
 
+uintptr_t Class_without_package_INNER_OBJECT_get();
+
 uintptr_t Demo_INNER_CLASS_init_allocate();
 
 void Demo_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t Demo_INNER_OBJECT_get();
 
 uintptr_t Demo_arg1_get(uintptr_t self);
 
@@ -42,6 +46,8 @@ uintptr_t Object_without_package_INNER_CLASS_init_allocate();
 
 void Object_without_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
 
+uintptr_t Object_without_package_INNER_OBJECT_get();
+
 uintptr_t __root___Class_without_package_init_allocate();
 
 void __root___Class_without_package_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
@@ -49,6 +55,8 @@ void __root___Class_without_package_init_initialize__TypesOfArguments__uintptr_t
 uintptr_t __root___Demo_init_allocate();
 
 void __root___Demo_init_initialize__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t_uintptr_t__(uintptr_t __kt, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, uintptr_t arg4);
+
+uintptr_t __root___Object_without_package_get();
 
 void __root___combine__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, uintptr_t arg4);
 
@@ -96,6 +104,8 @@ uintptr_t namespace_deeper_Class_with_package_INNER_CLASS_init_allocate();
 
 void namespace_deeper_Class_with_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
 
+uintptr_t namespace_deeper_Class_with_package_INNER_OBJECT_get();
+
 uintptr_t namespace_deeper_Class_with_package_init_allocate();
 
 void namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
@@ -103,4 +113,8 @@ void namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__uint
 uintptr_t namespace_deeper_Object_with_package_INNER_CLASS_init_allocate();
 
 void namespace_deeper_Object_with_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t namespace_deeper_Object_with_package_INNER_OBJECT_get();
+
+uintptr_t namespace_deeper_Object_with_package_get();
 

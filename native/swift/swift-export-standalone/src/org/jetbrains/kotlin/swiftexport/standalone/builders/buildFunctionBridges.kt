@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.util.*
@@ -52,10 +50,15 @@ private fun SirFunction.constructBridgeRequests(generator: BridgeGenerator): Lis
 }
 
 private fun SirVariable.constructBridgeRequests(generator: BridgeGenerator): List<BridgeRequest> {
-    val fqName = ((origin as? KotlinSource)?.symbol as? KtVariableLikeSymbol)
-        ?.callableIdIfNonLocal?.asSingleFqName()
-        ?.pathSegments()?.map { it.toString() }
-        ?: return emptyList()
+    val fqName = when (val origin = origin) {
+        is KotlinSource -> (origin.symbol as? KtVariableLikeSymbol)
+            ?.callableIdIfNonLocal?.asSingleFqName()
+            ?.pathSegments()?.map { it.toString() }
+        is SirOrigin.ObjectAccessor -> ((origin.`for` as KotlinSource).symbol as KtNamedClassOrObjectSymbol)
+            .classIdIfNonLocal?.asSingleFqName()
+            ?.pathSegments()?.map { it.toString() }
+        else -> null
+    } ?: return emptyList()
 
     val res = mutableListOf<BridgeRequest>()
     accessors.forEach {

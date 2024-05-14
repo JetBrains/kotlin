@@ -133,6 +133,12 @@ public fun OBJECT_NO_PACKAGE_Foo_init_initialize(__kt: kotlin.native.internal.Na
     kotlin.native.internal.initInstance(____kt, OBJECT_NO_PACKAGE.Foo())
 }
 
+@ExportedBridge("OBJECT_NO_PACKAGE_OBJECT_INSIDE_OBJECT_get")
+public fun OBJECT_NO_PACKAGE_OBJECT_INSIDE_OBJECT_get(): kotlin.native.internal.NativePtr {
+    val _result = OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("OBJECT_NO_PACKAGE_foo")
 public fun OBJECT_NO_PACKAGE_foo(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE
@@ -197,6 +203,12 @@ public fun __root___Foo_init_initialize(__kt: kotlin.native.internal.NativePtr, 
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     val __f = f
     kotlin.native.internal.initInstance(____kt, Foo(__f))
+}
+
+@ExportedBridge("__root___OBJECT_NO_PACKAGE_get")
+public fun __root___OBJECT_NO_PACKAGE_get(): kotlin.native.internal.NativePtr {
+    val _result = OBJECT_NO_PACKAGE
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_Foo_INSIDE_CLASS_init_allocate")
@@ -395,6 +407,12 @@ public fun namespace_deeper_NAMESPACED_CLASS_init_initialize(__kt: kotlin.native
     kotlin.native.internal.initInstance(____kt, namespace.deeper.NAMESPACED_CLASS())
 }
 
+@ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Bar_OBJECT_INSIDE_CLASS_get")
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_Bar_OBJECT_INSIDE_CLASS_get(): kotlin.native.internal.NativePtr {
+    val _result = namespace.deeper.OBJECT_WITH_PACKAGE.Bar.OBJECT_INSIDE_CLASS
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE.Bar
@@ -434,11 +452,23 @@ public fun namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize(__kt: kotlin
     kotlin.native.internal.initInstance(____kt, namespace.deeper.OBJECT_WITH_PACKAGE.Foo())
 }
 
+@ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_OBJECT_INSIDE_OBJECT_get")
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_OBJECT_INSIDE_OBJECT_get(): kotlin.native.internal.NativePtr {
+    val _result = namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_foo")
 public fun namespace_deeper_OBJECT_WITH_PACKAGE_foo(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE
     val _result = __self.foo()
     return _result
+}
+
+@ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_get")
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_get(): kotlin.native.internal.NativePtr {
+    val _result = namespace.deeper.OBJECT_WITH_PACKAGE
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_value_get")

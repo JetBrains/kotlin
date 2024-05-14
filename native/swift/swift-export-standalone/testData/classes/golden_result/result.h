@@ -40,6 +40,8 @@ uintptr_t OBJECT_NO_PACKAGE_Foo_init_allocate();
 
 void OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
 
+uintptr_t OBJECT_NO_PACKAGE_OBJECT_INSIDE_OBJECT_get();
+
 int32_t OBJECT_NO_PACKAGE_foo(uintptr_t self);
 
 int32_t OBJECT_NO_PACKAGE_value_get(uintptr_t self);
@@ -59,6 +61,8 @@ void __root___Foo_init_initialize__TypesOfArguments__uintptr_t_int32_t__(uintptr
 uintptr_t __root___Foo_init_allocate();
 
 void __root___Foo_init_initialize__TypesOfArguments__uintptr_t_float__(uintptr_t __kt, float f);
+
+uintptr_t __root___OBJECT_NO_PACKAGE_get();
 
 uintptr_t namespace_Foo_INSIDE_CLASS_init_allocate();
 
@@ -120,6 +124,8 @@ uintptr_t namespace_deeper_NAMESPACED_CLASS_init_allocate();
 
 void namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
 
+uintptr_t namespace_deeper_OBJECT_WITH_PACKAGE_Bar_OBJECT_INSIDE_CLASS_get();
+
 int32_t namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar(uintptr_t self);
 
 int32_t namespace_deeper_OBJECT_WITH_PACKAGE_Bar_i_get(uintptr_t self);
@@ -132,7 +138,11 @@ uintptr_t namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_allocate();
 
 void namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
 
+uintptr_t namespace_deeper_OBJECT_WITH_PACKAGE_OBJECT_INSIDE_OBJECT_get();
+
 int32_t namespace_deeper_OBJECT_WITH_PACKAGE_foo(uintptr_t self);
+
+uintptr_t namespace_deeper_OBJECT_WITH_PACKAGE_get();
 
 int32_t namespace_deeper_OBJECT_WITH_PACKAGE_value_get(uintptr_t self);
 

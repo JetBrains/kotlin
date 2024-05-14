@@ -17,7 +17,7 @@ public class Class_without_package : KotlinRuntime.KotlinBase {
     public class INNER_OBJECT : KotlinRuntime.KotlinBase {
         public static var shared: main.Class_without_package.INNER_OBJECT {
             get {
-                fatalError()
+                return main.Class_without_package.INNER_OBJECT(__externalRCRef: Class_without_package_INNER_OBJECT_get())
             }
         }
         private override init() {
@@ -56,7 +56,7 @@ public class Demo : KotlinRuntime.KotlinBase {
     public class INNER_OBJECT : KotlinRuntime.KotlinBase {
         public static var shared: main.Demo.INNER_OBJECT {
             get {
-                fatalError()
+                return main.Demo.INNER_OBJECT(__externalRCRef: Demo_INNER_OBJECT_get())
             }
         }
         private override init() {
@@ -176,7 +176,7 @@ public class Object_without_package : KotlinRuntime.KotlinBase {
     public class INNER_OBJECT : KotlinRuntime.KotlinBase {
         public static var shared: main.Object_without_package.INNER_OBJECT {
             get {
-                fatalError()
+                return main.Object_without_package.INNER_OBJECT(__externalRCRef: Object_without_package_INNER_OBJECT_get())
             }
         }
         private override init() {
@@ -190,7 +190,7 @@ public class Object_without_package : KotlinRuntime.KotlinBase {
     }
     public static var shared: main.Object_without_package {
         get {
-            fatalError()
+            return main.Object_without_package(__externalRCRef: __root___Object_without_package_get())
         }
     }
     private override init() {
@@ -311,7 +311,7 @@ public extension main.namespace.deeper {
         public class INNER_OBJECT : KotlinRuntime.KotlinBase {
             public static var shared: main.namespace.deeper.Class_with_package.INNER_OBJECT {
                 get {
-                    fatalError()
+                    return main.namespace.deeper.Class_with_package.INNER_OBJECT(__externalRCRef: namespace_deeper_Class_with_package_INNER_OBJECT_get())
                 }
             }
             private override init() {
@@ -350,7 +350,7 @@ public extension main.namespace.deeper {
         public class INNER_OBJECT : KotlinRuntime.KotlinBase {
             public static var shared: main.namespace.deeper.Object_with_package.INNER_OBJECT {
                 get {
-                    fatalError()
+                    return main.namespace.deeper.Object_with_package.INNER_OBJECT(__externalRCRef: namespace_deeper_Object_with_package_INNER_OBJECT_get())
                 }
             }
             private override init() {
@@ -364,7 +364,7 @@ public extension main.namespace.deeper {
         }
         public static var shared: main.namespace.deeper.Object_with_package {
             get {
-                fatalError()
+                return main.namespace.deeper.Object_with_package(__externalRCRef: namespace_deeper_Object_with_package_get())
             }
         }
         private override init() {

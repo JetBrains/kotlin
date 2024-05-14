@@ -143,7 +143,7 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
     public class OBJECT_INSIDE_OBJECT : KotlinRuntime.KotlinBase {
         public static var shared: main.OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT {
             get {
-                fatalError()
+                return main.OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT(__externalRCRef: OBJECT_NO_PACKAGE_OBJECT_INSIDE_OBJECT_get())
             }
         }
         private override init() {
@@ -157,7 +157,7 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
     }
     public static var shared: main.OBJECT_NO_PACKAGE {
         get {
-            fatalError()
+            return main.OBJECT_NO_PACKAGE(__externalRCRef: __root___OBJECT_NO_PACKAGE_get())
         }
     }
     public var value: Swift.Int32 {
@@ -287,7 +287,7 @@ public extension main.namespace.deeper {
             public class OBJECT_INSIDE_CLASS : KotlinRuntime.KotlinBase {
                 public static var shared: main.namespace.deeper.OBJECT_WITH_PACKAGE.Bar.OBJECT_INSIDE_CLASS {
                     get {
-                        fatalError()
+                        return main.namespace.deeper.OBJECT_WITH_PACKAGE.Bar.OBJECT_INSIDE_CLASS(__externalRCRef: namespace_deeper_OBJECT_WITH_PACKAGE_Bar_OBJECT_INSIDE_CLASS_get())
                     }
                 }
                 private override init() {
@@ -335,7 +335,7 @@ public extension main.namespace.deeper {
         public class OBJECT_INSIDE_OBJECT : KotlinRuntime.KotlinBase {
             public static var shared: main.namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT {
                 get {
-                    fatalError()
+                    return main.namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT(__externalRCRef: namespace_deeper_OBJECT_WITH_PACKAGE_OBJECT_INSIDE_OBJECT_get())
                 }
             }
             private override init() {
@@ -349,7 +349,7 @@ public extension main.namespace.deeper {
         }
         public static var shared: main.namespace.deeper.OBJECT_WITH_PACKAGE {
             get {
-                fatalError()
+                return main.namespace.deeper.OBJECT_WITH_PACKAGE(__externalRCRef: namespace_deeper_OBJECT_WITH_PACKAGE_get())
             }
         }
         public var value: Swift.Int32 {
