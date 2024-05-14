@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -65,6 +65,8 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
 
     override fun getReferencedValue(symbol: IrValueSymbol) = symbol.actualizeSymbol()
 
+    override fun getReferencedValueParameter(symbol: IrValueParameterSymbol) = symbol.actualizeSymbol()
+
     override fun getReferencedFunction(symbol: IrFunctionSymbol) = symbol.actualizeSymbol()
 
     override fun getReferencedProperty(symbol: IrPropertySymbol) = symbol.actualizeSymbol()
@@ -73,7 +75,11 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
 
     override fun getReferencedClassifier(symbol: IrClassifierSymbol) = symbol.actualizeSymbol()
 
+    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol) = symbol.actualizeSymbol()
+
     override fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol) = symbol.actualizeSymbol()
+
+    override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol) = symbol.actualizeSymbol()
 
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol) = symbol.actualizeSymbol()
 

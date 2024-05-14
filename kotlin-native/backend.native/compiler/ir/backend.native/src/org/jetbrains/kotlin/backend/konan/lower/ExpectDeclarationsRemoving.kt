@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.lower
@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.unexpectedSymbolKind
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -115,21 +117,18 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
                         symbol.owner.findActualForExpected().symbol
                     else super.getReferencedClass(symbol)
 
-            override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol = when (symbol) {
-                is IrClassSymbol -> getReferencedClass(symbol)
-                is IrTypeParameterSymbol -> remapExpectTypeParameter(symbol).symbol
-                is IrScriptSymbol -> symbol.unexpectedSymbolKind<IrClassifierSymbol>()
+            override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol {
+                return remapExpectTypeParameter(symbol).symbol
+            }
+
+            override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol {
+                symbol.unexpectedSymbolKind<IrScriptSymbol>()
             }
 
             override fun getReferencedConstructor(symbol: IrConstructorSymbol) =
                     if (symbol.descriptor.isExpect)
                         symbol.owner.findActualForExpected().symbol
                     else super.getReferencedConstructor(symbol)
-
-            override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol = when (symbol) {
-                is IrSimpleFunctionSymbol -> getReferencedSimpleFunction(symbol)
-                is IrConstructorSymbol -> getReferencedConstructor(symbol)
-            }
 
             override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol) = when {
                 symbol.descriptor.isExpect -> symbol.owner.findActualForExpected().symbol

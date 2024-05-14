@@ -77,7 +77,10 @@ interface ReferencedSymbolRemapper {
      * - [IrFunctionReference.symbol]
      * - [IrReturn.returnTargetSymbol]
      */
-    fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol
+    fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol = when (symbol) {
+        is IrConstructorSymbol -> getReferencedConstructor(symbol)
+        is IrSimpleFunctionSymbol -> getReferencedSimpleFunction(symbol)
+    }
 
     /**
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
@@ -119,20 +122,50 @@ interface ReferencedSymbolRemapper {
      * - [IrClassReference.symbol]
      * - [IrSimpleType.classifier]
      */
-    fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol
+    fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol = when (symbol) {
+        is IrClassSymbol -> getReferencedClass(symbol)
+        is IrScriptSymbol -> getReferencedScript(symbol)
+        is IrTypeParameterSymbol -> getReferencedTypeParameter(symbol)
+    }
+
+    /**
+     * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
+     * - [IrClassReference.symbol]
+     * - [IrSimpleType.classifier]
+     */
+    fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol
 
     /**
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
      * - [IrReturn.returnTargetSymbol]
      */
-    fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol): IrReturnTargetSymbol
+    fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol): IrReturnTargetSymbol = when (symbol) {
+        is IrFunctionSymbol -> getReferencedFunction(symbol)
+        is IrReturnableBlockSymbol -> getReferencedReturnableBlock(symbol)
+    }
+
+    /**
+     * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
+     * - [IrReturn.returnTargetSymbol]
+     */
+    fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol
 
     /**
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
      * - [IrGetValue.symbol]
      * - [IrSetValue.symbol]
      */
-    fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol
+    fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol = when (symbol) {
+        is IrValueParameterSymbol -> getReferencedValueParameter(symbol)
+        is IrVariableSymbol -> getReferencedVariable(symbol)
+    }
+
+    /**
+     * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
+     * - [IrGetValue.symbol]
+     * - [IrSetValue.symbol]
+     */
+    fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol
 
     /**
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):

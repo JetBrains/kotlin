@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classOrFail
@@ -60,11 +59,6 @@ class IrActualizer(
                 // In that case, it would later fail with error in matching inside [actualizeCallablesAndMergeModules]
                 // Let's leave to expect class as is for that case, it is probably best effort to make errors reasonable.
                 return symbol
-            }
-
-            override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol {
-                if (symbol !is IrClassSymbol) return symbol
-                return getReferencedClass(symbol)
             }
         }
         dependentFragments.forEach { it.transform(ActualizerVisitor(classSymbolRemapper), null) }
