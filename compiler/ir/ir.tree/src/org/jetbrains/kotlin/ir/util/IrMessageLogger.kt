@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
+// TODO: Delete this interface and use MessageCollector instead (KT-68174)
 interface IrMessageLogger {
 
     enum class Severity {
