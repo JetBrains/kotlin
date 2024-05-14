@@ -194,7 +194,7 @@ class ExpressionMarkerProvider : TestService {
         val range = getSelectedRangeOrNull(file) ?: return null
         val elements = file.elementsInRange(range).trimWhitespaces()
         if (elements.size != 1) {
-            error("Expected one element at rage but found ${elements.size} [${elements.joinToString { it::class.simpleName + ": " + it.text }}]")
+            error("Expected one element at range but found ${elements.size} [${elements.joinToString { it::class.simpleName + ": " + it.text }}]")
         }
         return elements.single()
     }
