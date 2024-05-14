@@ -37470,6 +37470,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("kt67695_for_loops_lowering.kt")
+    public void testKt67695_for_loops_lowering() {
+      runTest("compiler/testData/codegen/box/lower/kt67695_for_loops_lowering.kt");
+    }
+
+    @Test
     @TestMetadata("localDelegatedProperty.kt")
     public void testLocalDelegatedProperty() {
       runTest("compiler/testData/codegen/box/lower/localDelegatedProperty.kt");

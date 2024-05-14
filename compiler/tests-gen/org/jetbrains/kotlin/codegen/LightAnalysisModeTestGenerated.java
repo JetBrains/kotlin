@@ -31916,6 +31916,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/lower"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
+    @TestMetadata("kt67695_for_loops_lowering.kt")
+    public void testKt67695_for_loops_lowering() {
+      runTest("compiler/testData/codegen/box/lower/kt67695_for_loops_lowering.kt");
+    }
+
     @TestMetadata("localDelegatedProperty.kt")
     public void testLocalDelegatedProperty() {
       runTest("compiler/testData/codegen/box/lower/localDelegatedProperty.kt");
