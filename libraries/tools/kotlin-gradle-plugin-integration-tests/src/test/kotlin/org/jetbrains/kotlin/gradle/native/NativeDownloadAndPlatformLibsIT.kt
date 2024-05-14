@@ -80,7 +80,11 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     @DisplayName("Downloading K/N with custom konanDataDir property")
     @GradleTest
     fun testLibrariesGenerationInCustomKonanDir(gradleVersion: GradleVersion) {
-        platformLibrariesProject("linuxX64", gradleVersion = gradleVersion) {
+        platformLibrariesProject(gradleVersion = gradleVersion) {
+            // We need a binary, because otherwise `assemble` will trigger only the klib-compilation task,
+            // which doesn't download dependencies:
+            buildGradleKts.appendText("\nkotlin.linuxX64().binaries.executable()")
+
             build("assemble", buildOptions = defaultBuildOptions.copy(konanDataDir = workingDir.resolve(".konan"))) {
                 assertOutputContains("Kotlin/Native distribution: .*kotlin-native-prebuilt-$platformName".toRegex())
                 assertOutputDoesNotContain("Generate platform libraries for ")
