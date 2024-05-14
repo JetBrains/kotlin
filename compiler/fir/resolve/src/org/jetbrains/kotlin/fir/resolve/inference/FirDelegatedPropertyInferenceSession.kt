@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -61,7 +62,7 @@ class FirDelegatedPropertyInferenceSession(
 
     private var wasCompletionRun = false
 
-    override fun baseConstraintStorageForCandidate(candidate: Candidate): ConstraintStorage? {
+    override fun baseConstraintStorageForCandidate(candidate: Candidate, bodyResolveContext: BodyResolveContext): ConstraintStorage? {
         if (wasCompletionRun || !candidate.callInfo.callSite.isAnyOfDelegateOperators()) return null
         return currentConstraintStorage
     }

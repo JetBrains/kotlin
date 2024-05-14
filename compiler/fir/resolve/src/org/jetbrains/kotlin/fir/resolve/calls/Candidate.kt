@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
-import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -49,7 +49,7 @@ class Candidate(
     val isFromCompanionObjectTypeScope: Boolean = false,
     // It's only true if we're in the member scope of smart cast receiver and this particular candidate came from original type
     val isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
-    inferenceSession: FirInferenceSession,
+    bodyResolveContext: BodyResolveContext,
 ) : AbstractCandidate() {
 
     override var symbol: FirBasedSymbol<*> = symbol
@@ -76,7 +76,9 @@ class Candidate(
         val system = constraintSystemFactory.createConstraintSystem()
 
         val baseCSFromInferenceSession =
-            runUnless(baseSystem.usesOuterCs) { inferenceSession.baseConstraintStorageForCandidate(this) }
+            runUnless(baseSystem.usesOuterCs) {
+                bodyResolveContext.inferenceSession.baseConstraintStorageForCandidate(this, bodyResolveContext)
+            }
         if (baseCSFromInferenceSession != null) {
             system.setBaseSystem(baseCSFromInferenceSession)
             system.addOtherSystem(baseSystem)

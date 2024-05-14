@@ -425,7 +425,7 @@ class FirCallCompleter(
                     runIf(withPCLASession) {
                         candidate.lambdasAnalyzedWithPCLA += lambdaArgument
 
-                        FirPCLAInferenceSession(candidate, session.inferenceComponents, transformer.context.returnTypeCalculator)
+                        FirPCLAInferenceSession(candidate, session.inferenceComponents)
                     }
 
                 if (pclaInferenceSession != null) {

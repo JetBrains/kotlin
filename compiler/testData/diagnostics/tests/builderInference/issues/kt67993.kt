@@ -1,8 +1,5 @@
 // FIR_IDENTICAL
 // ISSUE: KT-67993
-// IGNORE_REVERSED_RESOLVE
-// IGNORE_NON_REVERSED_RESOLVE
-// Reason: see KT-68031
 
 class Builder<T> {
     fun add(x: T) {}
