@@ -1,22 +1,10 @@
-group 'com.example'
-version '1.0'
-
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
 }
 
-apply plugin: 'kotlin-multiplatform'
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
+group = "com.example"
+version = "1.0"
 
 kotlin {
     js('nodeJs')
@@ -30,27 +18,15 @@ kotlin {
             }
         }
     }
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                api 'org.jetbrains.kotlin:kotlin-stdlib-common'
-            }
-        }
-        nodeJsMain {
-            dependencies {
-                api 'org.jetbrains.kotlin:kotlin-stdlib-js'
-            }
-        }
-    }
 }
 
 kotlin.sourceSets.each { println it.kotlin.srcDirs }
 
-apply plugin: 'maven-publish'
-
 publishing {
     repositories {
-        maven { url "${projectDir.absolutePath.replace('\\', '/')}/repo" }
+        maven {
+            name = "LocalRepo"
+            url = "<localRepo>"
+        }
     }
 }

@@ -2,7 +2,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-group="org.sample.one"
+group = "org.sample.one"
 
 kotlin {
     linuxX64("linux") {
@@ -12,18 +12,16 @@ kotlin {
         nodejs()
     }
 
-    sourceSets["commonMain"].dependencies {
-        implementation(kotlin("stdlib-common"))
-        implementation(project(":foo:foo"))
-    }
-
-    sourceSets["jsMain"].dependencies {
-        implementation(kotlin("stdlib-js"))
-    }
-
-    sourceSets.all {
-        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+    sourceSets {
+        configureEach {
+            languageSettings {
+                optIn("kotlinx.cinterop.ExperimentalForeignApi")
+            }
+        }
+        commonMain {
+            dependencies {
+                implementation(project(":foo:foo"))
+            }
+        }
     }
 }
-
-

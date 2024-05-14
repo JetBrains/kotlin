@@ -76,7 +76,7 @@ kotlin {
             binaries.executable("main", [DEBUG]) {
                 entryPoint = "com.example.app.native.main"
             }
-            
+
             binaries.all {
                 // Check that linker options are correctly passed to the compiler.
                 linkerOpts = ['-L.']
@@ -86,7 +86,7 @@ kotlin {
 }
 
 tasks.register("resolveRuntimeDependencies", DefaultTask) {
-    doFirst { 
+    doFirst {
         // KT-26301
         def configName = kotlin.targets.jvm6.compilations.main.runtimeDependencyConfigurationName
         configurations[configName].resolve()

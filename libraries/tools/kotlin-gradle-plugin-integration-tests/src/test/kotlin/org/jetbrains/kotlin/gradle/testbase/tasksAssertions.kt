@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
-import kotlin.test.assertNotNull
 
 /**
  * Asserts given tasks are not present in the build task graph.
@@ -17,11 +16,16 @@ import kotlin.test.assertNotNull
  * are not considered 'executed').
  */
 fun BuildResult.assertTasksAreNotInTaskGraph(vararg taskPaths: String) {
-    val presentTasks = taskPaths.filter { task(it) != null }
+    val presentTasks = taskPaths.mapNotNull { task(it) }
     assert(presentTasks.isEmpty()) {
         printBuildOutput()
         val allTaskPaths = taskPaths.joinToString(prefix = "[", postfix = "]")
-        "Tasks $allTaskPaths shouldn't be present in the task graph, but $presentTasks were present"
+        """
+        |Tasks $allTaskPaths shouldn't be present in the task graph, but found ${presentTasks.joinToString { "${it.path} (${it.outcome})" }}
+        |
+        |All task states:
+        |${getActualTasksAsString()}
+        """.trimMargin()
     }
 }
 
@@ -110,11 +114,10 @@ fun BuildResult.assertTasksNoSource(vararg taskPaths: String) {
 private fun BuildResult.assertTasksHaveOutcome(expected: TaskOutcome, taskPaths: Collection<String>) {
     taskPaths.forEach { taskPath ->
         val task = task(taskPath)
-        assertNotNull(task, "expected Task $taskPath had state $expected, but task was not executed")
-        assert(task.outcome == expected) {
+        assert(task?.outcome == expected) {
             printBuildOutput()
             """
-            |Expected Task $taskPath had state:${expected}, but was:${task.outcome}
+            |Expected Task $taskPath had state:${expected}, but was ${task?.outcome ?: "not executed"}
             |
             |Actual task states:
             |${getActualTasksAsString()}

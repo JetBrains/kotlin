@@ -1,6 +1,6 @@
 plugins {
-	id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
-	id("maven-publish")
+    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+    id("maven-publish")
 }
 
 group = "com.example"
@@ -44,17 +44,17 @@ kotlin {
             }
         }
         js?.compilations?.get("main")?.defaultSourceSet {
-        	dependencies {
+            dependencies {
                 api(kotlin("stdlib-js"))
-        	}
+            }
         }
     }
 }
 
 publishing {
-	repositories {
-		maven { setUrl("${projectDir.absolutePath.replace('\\', '/')}/repo") }
-	}
+    repositories {
+        maven { setUrl("${projectDir.absolutePath.replace('\\', '/')}/repo") }
+    }
 }
 
 // Check that a compilation may be created after project evaluation, KT-28896:

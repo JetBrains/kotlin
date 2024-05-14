@@ -2,13 +2,13 @@ group 'com.example'
 version '1.0'
 
 buildscript {
-	repositories {
-		mavenLocal()
-		mavenCentral()
-	}
-	dependencies {
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-	}
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
 }
 
 apply plugin: 'kotlin-multiplatform'
@@ -19,44 +19,44 @@ repositories {
 }
 
 kotlin {
-	jvm("jvmWithoutJava")
-	macosX64("macos64")
-	macosArm64()
-	linuxX64("linux64")
-	mingwX64("mingw64")
-	js {
-		nodejs()
-	}
+    jvm("jvmWithoutJava")
+    macosX64("macos64")
+    macosArm64()
+    linuxX64("linux64")
+    mingwX64("mingw64")
+    js {
+        nodejs()
+    }
 
-	sourceSets {
+    sourceSets {
         commonTest {
-        	dependencies {
-        		implementation 'org.jetbrains.kotlin:kotlin-test-common'
-        		implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
-        	}
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-test-common'
+                implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+            }
         }
         configure([main, jvmWithoutJavaMain]) {
-        	dependencies {
-				implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-        		implementation 'org.jetbrains.kotlin:kotlin-script-runtime'
-        	}
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+                implementation 'org.jetbrains.kotlin:kotlin-script-runtime'
+            }
         }
         configure([test, jvmWithoutJavaTest]) {
-        	dependencies {
-        		implementation 'org.jetbrains.kotlin:kotlin-test'
-        		implementation 'org.jetbrains.kotlin:kotlin-test-junit'
-        	}
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-test'
+                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+            }
         }
         jsTest {
-        	dependencies {
-        		implementation 'org.jetbrains.kotlin:kotlin-test-js'
-        	}
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-test-js'
+            }
         }
-		nativeMain {
-			dependsOn commonMain
-		}
-		configure([macos64Main, macosArm64Main, linux64Main, mingw64Main]) {
-			dependsOn nativeMain
-		}
+        nativeMain {
+            dependsOn commonMain
+        }
+        configure([macos64Main, macosArm64Main, linux64Main, mingw64Main]) {
+            dependsOn nativeMain
+        }
     }
 }

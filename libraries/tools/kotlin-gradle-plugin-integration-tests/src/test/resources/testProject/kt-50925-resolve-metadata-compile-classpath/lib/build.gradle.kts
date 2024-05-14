@@ -1,15 +1,10 @@
 plugins {
-    kotlin("multiplatform").version("<pluginMarkerVersion>")
+    kotlin("multiplatform")
     `maven-publish`
 }
 
 group = "kt50925"
 version = "1.0"
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
 
 kotlin {
     linuxX64()
@@ -18,6 +13,8 @@ kotlin {
 
 publishing {
     repositories {
-        maven("$rootDir/../repo")
+        maven("<localRepo>") {
+            name = "LocalRepo"
+        }
     }
 }

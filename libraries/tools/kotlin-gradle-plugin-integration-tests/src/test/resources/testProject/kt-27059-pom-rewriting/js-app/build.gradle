@@ -1,36 +1,21 @@
 plugins {
-    id "maven-publish"
-    id "org.jetbrains.kotlin.js"
+    id("org.jetbrains.kotlin.js")
+    id("maven-publish")
 }
 
 group = "com.example"
 version = "1.0"
 
 kotlin {
-    js {
-    }
+    js()
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
-}
-
-if (project.findProperty("mppProjectDependency") == "true") {
-
-    dependencies {
-        api project(":mpp-lib")
+    if (project.findProperty("mppProjectDependency") == "true") {
+        api(project(":mpp-lib"))
+    } else {
+        api("com.example:mpp-lib:1.0")
     }
-
-} else {
-
-    repositories {
-        maven { setUrl "${rootProject.buildDir}/repo" }
-    }
-
-    dependencies {
-        api "com.example:mpp-lib:1.0"
-    }
-
 }
 
 publishing {
@@ -40,6 +25,9 @@ publishing {
         }
     }
     repositories {
-        maven { setUrl("${rootProject.buildDir}/repo") }
+        maven {
+            name = "LocalRepo"
+            url = uri("<localRepo>")
+        }
     }
 }
