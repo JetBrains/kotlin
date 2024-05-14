@@ -114,7 +114,8 @@ internal val DevirtualizationPhase = createSimpleNamedCompilerPhase<NativeGenera
                     .associate { it.key.irCallSite!! to it.value }
             val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
             DevirtualizationAnalysis.devirtualize(input.irModule, context,
-                    externalModulesDFG, devirtualizedCallSites)
+                    externalModulesDFG, devirtualizedCallSites,
+                    DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_VTABLE_CALL, DevirtualizationUnfoldFactors.IR_DEVIRTUALIZED_ITABLE_CALL)
         }
 )
 

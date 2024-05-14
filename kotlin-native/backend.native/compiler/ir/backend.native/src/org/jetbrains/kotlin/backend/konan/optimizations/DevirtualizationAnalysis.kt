@@ -36,6 +36,18 @@ import org.jetbrains.kotlin.name.Name
 import java.util.*
 import kotlin.collections.ArrayList
 
+object DevirtualizationUnfoldFactors {
+    /**
+     * Maximum unfold factor for a devirtualized call via vtable.
+     */
+    const val IR_DEVIRTUALIZED_VTABLE_CALL = 3
+
+    /**
+     * Maximum unfold factor for a devirtualized interface call.
+     */
+    const val IR_DEVIRTUALIZED_ITABLE_CALL = 3
+}
+
 // Devirtualization analysis is performed using Variable Type Analysis algorithm.
 // See http://web.cs.ucla.edu/~palsberg/tba/papers/sundaresan-et-al-oopsla00.pdf for details.
 internal object DevirtualizationAnalysis {
@@ -1357,7 +1369,8 @@ internal object DevirtualizationAnalysis {
             DevirtualizationAnalysisImpl(context, irModule, moduleDFG, externalModulesDFG).analyze()
 
     fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
-                     devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
+                     devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>,
+                     maxVTableUnfoldFactor: Int, maxITableUnfoldFactor: Int) {
         val symbols = context.ir.symbols
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!
         val isSubtype = symbols.isSubtype
@@ -1502,9 +1515,7 @@ internal object DevirtualizationAnalysis {
                 val callee = expression.symbol.owner
                 val owner = callee.parentAsClass
                 // TODO: Think how to evaluate different unfold factors (in terms of both execution speed and code size).
-                val classMaxUnfoldFactor = 3
-                val interfaceMaxUnfoldFactor = 3
-                val maxUnfoldFactor = if (owner.isInterface) interfaceMaxUnfoldFactor else classMaxUnfoldFactor
+                val maxUnfoldFactor = if (owner.isInterface) maxITableUnfoldFactor else maxVTableUnfoldFactor
                 ++devirtualizedCallSitesCount
                 if (possibleCallees.size > maxUnfoldFactor) {
                     // Callsite too complicated to devirtualize.
