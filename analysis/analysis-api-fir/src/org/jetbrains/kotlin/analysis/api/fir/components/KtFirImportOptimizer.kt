@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.isImplicitDispatchReceiver
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
+import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
@@ -71,6 +72,12 @@ internal class KtFirImportOptimizer(
         val (usedDeclarations, unresolvedNames) = collectReferencedEntities(file)
 
         return KtImportOptimizerResult(usedDeclarations, unresolvedNames)
+    }
+
+    override fun getImportableName(symbol: KtSymbol): FqName? = when (symbol) {
+        is KtClassLikeSymbol -> symbol.classIdIfNonLocal?.asSingleFqName()
+        is KtCallableSymbol -> symbol.firSymbol.computeImportableName(firSession)
+        else -> null
     }
 
     private data class ReferencedEntitiesResult(

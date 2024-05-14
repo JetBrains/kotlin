@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -64,13 +66,13 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
     val containingClassId = callableId.classId
         ?: return callableId.asSingleFqName()
 
-    if (this is FirConstructorSymbol) return containingClassId.asSingleFqName()
-
     val containingClass = getContainingClassSymbol(useSiteSession) ?: return null
 
+    if (this is FirConstructorSymbol) return if (!containingClass.isInner) containingClassId.asSingleFqName() else null
+
     // Java static members, enums, and object members can be imported
-    val canBeImported = containingClass.origin is FirDeclarationOrigin.Java ||
-            containingClass.classKind == ClassKind.ENUM_CLASS ||
+    val canBeImported = containingClass.origin is FirDeclarationOrigin.Java && isStatic ||
+            containingClass.classKind == ClassKind.ENUM_CLASS && isStatic ||
             containingClass.classKind == ClassKind.OBJECT
 
     return if (canBeImported) callableId.asSingleFqName() else null

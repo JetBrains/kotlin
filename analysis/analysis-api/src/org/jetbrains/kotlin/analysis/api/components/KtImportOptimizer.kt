@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
 public abstract class KtImportOptimizer : KtLifetimeOwner {
     public abstract fun analyseImports(file: KtFile): KtImportOptimizerResult
+
+    public abstract fun getImportableName(symbol: KtSymbol): FqName?
 }
 
 public interface KtImportOptimizerMixIn : KtAnalysisSessionMixIn {
@@ -25,6 +28,13 @@ public interface KtImportOptimizerMixIn : KtAnalysisSessionMixIn {
      */
     public fun analyseImports(file: KtFile): KtImportOptimizerResult = withValidityAssertion {
         return analysisSession.importOptimizer.analyseImports(file)
+    }
+
+    /**
+     * @return a [FqName] which can be used to import [this] symbol or `null` if the symbol cannot be imported.
+     */
+    public fun KtSymbol.getImportableName(): FqName? = withValidityAssertion {
+        return analysisSession.importOptimizer.getImportableName(this)
     }
 }
 
