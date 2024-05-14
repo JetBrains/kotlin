@@ -20,6 +20,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.artifacts.internal.KlibPackaging
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -245,7 +246,15 @@ class DefaultKotlinUsageContext(
                      * as it will switch to KotlinPlatformType.jvm and requires this additional attribute to disambiguate
                      * Android from the JVM
                      */
-                    (it.name != "org.gradle.jvm.environment" || publishJvmEnvironmentAttribute)
+                    (it.name != "org.gradle.jvm.environment" || publishJvmEnvironmentAttribute) &&
+                    /**
+                     * Non-packed klibs are used only locally and should not be published.
+                     * Thus, it does not make sense to publish this attribute as well.
+                     *
+                     * Another option could be to put this attribute only on the secondary variant that is non-packed.
+                     * However, disambiguation rules do not work well on old Gradle versions with this.
+                     */
+                    it.name != KlibPackaging.ATTRIBUTE_NAME
         }
 
 }

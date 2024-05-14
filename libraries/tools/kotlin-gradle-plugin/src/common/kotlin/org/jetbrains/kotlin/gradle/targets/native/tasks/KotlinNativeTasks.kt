@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
+import org.jetbrains.kotlin.gradle.internal.tasks.ProducesKlib
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
@@ -119,7 +120,7 @@ internal fun MutableList<String>.addFileArgs(parameter: String, values: FileColl
 /**
  * We pass to the compiler:
  *
- *    - Only *.klib files and directories (normally containing an unpacked klib).
+ *    - Only *.klib files and directories (normally containing an unpackaged klib).
  *      A dependency configuration may contain jar files
  *      (e.g. when a common artifact was directly added to commonMain source set).
  *      So, we need to filter out such artifacts.
@@ -144,11 +145,7 @@ abstract class AbstractKotlinNativeCompile<
         >
 @Inject constructor(
     private val objectFactory: ObjectFactory,
-) : AbstractKotlinCompileTool<M>(objectFactory) {
-
-    @get:Inject
-    protected abstract val projectLayout: ProjectLayout
-
+) : AbstractKotlinCompileTool<M>(objectFactory), ProducesKlib {
     @get:Internal
     internal abstract val compilation: KotlinCompilationInfo
 
@@ -165,8 +162,7 @@ abstract class AbstractKotlinNativeCompile<
     @get:Internal
     abstract val baseName: String
 
-    @get:Input
-    internal val produceUnpackedKlib: Property<Boolean> = objectFactory.propertyWithConvention(false)
+    override val produceUnpackagedKlib: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
     @get:Input
     @get:Optional
@@ -249,7 +245,7 @@ abstract class AbstractKotlinNativeCompile<
     open val outputFile: Provider<File>
         get() = destinationDirectory.flatMap {
             val prefix = outputKind.prefix(konanTarget)
-            val suffix = if (produceUnpackedKlib.get()) "" else outputKind.suffix(konanTarget)
+            val suffix = if (produceUnpackagedKlib.get()) "" else outputKind.suffix(konanTarget)
             val filename = "$prefix${baseName}$suffix".let {
                 when {
                     outputKind == FRAMEWORK ->
@@ -466,6 +462,9 @@ internal constructor(
 
     // endregion.
 
+    override val klibOutput: Provider<File>
+        get() = outputFile
+
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
     override fun setupCompilerArgs(args: K2NativeCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
@@ -496,7 +495,7 @@ internal constructor(
             args.nodefaultlibs = sharedCompilationData != null
             args.nostdlib = true
             args.manifestFile = sharedCompilationData?.manifestFile?.absolutePath
-            args.nopack = produceUnpackedKlib.get()
+            args.nopack = produceUnpackagedKlib.get()
 
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
 
@@ -1075,7 +1074,8 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     UsesBuildMetricsService,
     UsesKotlinNativeBundleBuildService,
     UsesClassLoadersCachingBuildService,
-    UsesKonanPropertiesBuildService {
+    UsesKonanPropertiesBuildService,
+    ProducesKlib {
 
     internal class Params(
         val settings: DefaultCInteropSettings,
@@ -1140,9 +1140,11 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
 
     @get:Internal
-    val outputFileName: String = with(LIBRARY) {
-        "$baseKlibName${suffix(konanTarget)}"
-    }
+    val outputFileName: String
+        get() = with(LIBRARY) {
+            val suffix = if (produceUnpackagedKlib.get()) "" else suffix(konanTarget)
+            "$baseKlibName$suffix"
+        }
 
     @get:Input
     val moduleName: String = project.klibModuleName(baseKlibName)
@@ -1194,8 +1196,11 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     // Inputs and outputs.
 
-    @OutputFile
+    @Internal // registered as Input with proper type in task configuration action based on `produceUnpackagedKlib`
     val outputFileProvider: Provider<File> = destinationDirectory.map { it.asFile.resolve(outputFileName) }
+
+    override val klibOutput: Provider<File>
+        get() = outputFileProvider
 
     //Error file will be written only for errors during a project sync because for the sync task mustn't fail
     //see: org.jetbrains.kotlin.gradle.targets.native.tasks.IdeaSyncKotlinNativeCInteropRunnerExecutionContext
@@ -1271,6 +1276,8 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     private val allHeadersHashesFile: Provider<RegularFile> =
         destinationDirectory.dir(interopName).map { it.file("cinterop-headers-hash.json") }
 
+    override val produceUnpackagedKlib: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
     init {
         outputs.upToDateWhen {
             checkHeadersChanged()
@@ -1310,6 +1317,9 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
             addArg("-Xmodule-name", moduleName)
             addArgIfNotNull("-Xkonan-data-dir", kotlinNativeProvider.get().konanDataDir.orNull)
+            if (produceUnpackagedKlib.get()) {
+                add("-nopack")
+            }
 
             addAll(extraOpts)
         }

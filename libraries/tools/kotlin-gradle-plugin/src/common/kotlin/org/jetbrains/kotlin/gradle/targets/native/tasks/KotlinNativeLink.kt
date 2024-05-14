@@ -284,7 +284,7 @@ constructor(
         }
 
         sources { args ->
-            args.includes = sources.asFileTree.files.toPathsArray()
+            args.includes = sourceFiles.files.toPathsArray()
         }
     }
 

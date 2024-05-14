@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.jetbrains.kotlin.gradle.artifacts.internal.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -173,6 +174,11 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
                 attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             }
             description = "Compile classpath for '$compilationCoordinates'."
+            if (target.producesPlatformKlib) {
+                if (target.project.kotlinPropertiesProvider.useNonPackedKlibs) {
+                    KlibPackaging.setAttributeTo(target.project, attributes, true)
+                }
+            }
         }
 
     val runtimeDependencyConfiguration =

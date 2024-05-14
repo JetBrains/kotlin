@@ -55,8 +55,13 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             it.kotlinCompilerArgumentsLogLevel
                 .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
                 .finalizeValueOnRead()
+            it.produceUnpackagedKlib.set(project.kotlinPropertiesProvider.useNonPackedKlibs)
+            if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
+                it.outputs.dir(it.klibDirectory)
+            } else {
+                it.outputs.file(it.klibFile)
+            }
         }
-
 
         project.launch {
             project.commonizeCInteropTask()?.configure { commonizeCInteropTask ->
@@ -70,15 +75,14 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             compileDependencyFiles += interopOutput
             if (isMain()) {
                 // Add interop library to special CInteropApiElements configuration
-                createCInteropApiElementsKlibArtifact(compilation.target, interop, interopTask)
+                createCInteropApiElementsKlibArtifact(compilation, interop, interopTask)
 
                 // Add the interop library in publication.
                 if (compilation.konanTarget.enabledOnCurrentHostForBinariesCompilation()) {
                     createKlibArtifact(
                         compilation,
-                        artifactFile = interopTask.flatMap { it.outputFileProvider },
-                        classifier = "cinterop-${interop.name}",
-                        producingTask = interopTask,
+                        classifier = interop.classifier,
+                        klibProducingTask = interopTask,
                     )
                 }
 
