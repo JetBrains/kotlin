@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfigurationService
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import java.io.File
 
@@ -26,6 +27,15 @@ object CLIConfigurationKeys {
     // Roots, including dependencies and own sources
     @JvmField
     val CONTENT_ROOTS: CompilerConfigurationKey<List<ContentRoot>> = CompilerConfigurationKey.create("content roots")
+
+    // Used by kotest, Realm, Dokka, KSP compiler plugins
+    @Deprecated(
+        "Please use CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY instead",
+        ReplaceWith("CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY", "org.jetbrains.kotlin.config.CommonConfigurationKeys"),
+        DeprecationLevel.WARNING,
+    )
+    @JvmField
+    val MESSAGE_COLLECTOR_KEY: CompilerConfigurationKey<MessageCollector> = CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
 
     // Used by compiler plugins to access delegated message collector in GroupingMessageCollector
     @JvmField
