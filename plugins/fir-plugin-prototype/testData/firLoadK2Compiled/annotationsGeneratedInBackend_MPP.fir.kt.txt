@@ -1,8 +1,8 @@
-// FILE: module_common_annotationsGeneratedInBackend_MPP.kt
+// FILE: module_main_annotationsGeneratedInBackend_MPP.kt
 package test
 
 @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
-class VerySpecificNameInCommon {
+class VerySpecificNameInPlatform {
   @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
   val x: Int
     field = x
@@ -33,11 +33,11 @@ class VerySpecificNameInCommon {
 
 }
 
-// FILE: module_main_annotationsGeneratedInBackend_MPP.kt
+// FILE: module_common_annotationsGeneratedInBackend_MPP.kt
 package test
 
 @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
-class VerySpecificNameInPlatform {
+class VerySpecificNameInCommon {
   @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK")
   val x: Int
     field = x

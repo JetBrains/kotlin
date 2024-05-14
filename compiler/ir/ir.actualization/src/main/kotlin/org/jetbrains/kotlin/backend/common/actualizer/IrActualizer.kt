@@ -123,9 +123,11 @@ class IrActualizer(
     }
 
     private fun mergeIrFragments(mainFragment: IrModuleFragment, dependentFragments: List<IrModuleFragment>) {
-        val newFiles = dependentFragments.flatMap { it.files }
+        // Reversing `dependentFragments` results in backward top-sorted order
+        // It is crucial for aligning files order when serializing to klib
+        val newFiles = dependentFragments.reversed().flatMap { it.files }
         for (file in newFiles) file.module = mainFragment
-        mainFragment.files.addAll(0, newFiles)
+        mainFragment.files.addAll(newFiles)
     }
 }
 

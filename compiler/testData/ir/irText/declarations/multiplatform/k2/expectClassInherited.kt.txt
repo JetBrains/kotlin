@@ -1,5 +1,3 @@
-// FILE: common.kt
-
 // FILE: platform.kt
 
 abstract class A {
@@ -27,4 +25,6 @@ open class B : A {
   }
 
 }
+
+// FILE: common.kt
 

@@ -1,5 +1,3 @@
-// FILE: common.kt
-
 // FILE: platform.kt
 
 // CHECK:
@@ -25,3 +23,6 @@ sealed class Ops {
   protected constructor() /* primary */
 
 }
+
+// FILE: common.kt
+
