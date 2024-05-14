@@ -1,3 +1,4 @@
+import KotlinBridges
 import KotlinRuntime
 
 public typealias X = ERROR_TYPE
@@ -13,7 +14,14 @@ public class MyClass : KotlinRuntime.KotlinBase {
         }
     }
     public override init() {
-        fatalError()
+        let __kt = __root___MyClass_init_allocate()
+        super.init(__externalRCRef: __kt)
+        __root___MyClass_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+    }
+    public override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
     }
     public func method(
         arg: Swift.Int32

@@ -1,4 +1,72 @@
 #include <stdint.h>
 
+uintptr_t Foo_INSIDE_CLASS_init_allocate();
+
+void Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate();
+
+void OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t OBJECT_NO_PACKAGE_Bar_init_allocate();
+
+void OBJECT_NO_PACKAGE_Bar_init_initialize__TypesOfArguments__uintptr_t_int32_t__(uintptr_t __kt, int32_t i);
+
+uintptr_t OBJECT_NO_PACKAGE_Foo_init_allocate();
+
+void OBJECT_NO_PACKAGE_Foo_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t __root___CLASS_WITH_SAME_NAME_init_allocate();
+
+void __root___CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t __root___Foo_init_allocate();
+
+void __root___Foo_init_initialize__TypesOfArguments__uintptr_t_int32_t__(uintptr_t __kt, int32_t a);
+
+uintptr_t __root___Foo_init_allocate();
+
+void __root___Foo_init_initialize__TypesOfArguments__uintptr_t_float__(uintptr_t __kt, float f);
+
+uintptr_t namespace_Foo_INSIDE_CLASS_init_allocate();
+
+void namespace_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t namespace_Foo_init_allocate();
+
+void namespace_Foo_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t namespace_NAMESPACED_CLASS_init_allocate();
+
+void namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_allocate();
+
+void namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t namespace_deeper_Foo_INSIDE_CLASS_init_allocate();
+
+void namespace_deeper_Foo_INSIDE_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t namespace_deeper_Foo_init_allocate();
+
+void namespace_deeper_Foo_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t namespace_deeper_NAMESPACED_CLASS_init_allocate();
+
+void namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_allocate();
+
+void namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_initialize__TypesOfArguments__uintptr_t_int32_t__(uintptr_t __kt, int32_t i);
+
+uintptr_t namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_allocate();
+
+void namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t why_we_need_module_names_CLASS_WITH_SAME_NAME_init_allocate();
+
+void why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
 int32_t why_we_need_module_names_bar();
 

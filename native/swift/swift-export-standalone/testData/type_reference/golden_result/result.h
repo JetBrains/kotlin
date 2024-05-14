@@ -1,0 +1,30 @@
+#include <stdint.h>
+
+uintptr_t Class_without_package_INNER_CLASS_init_allocate();
+
+void Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t Demo_INNER_CLASS_init_allocate();
+
+void Demo_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t Object_without_package_INNER_CLASS_init_allocate();
+
+void Object_without_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t __root___Class_without_package_init_allocate();
+
+void __root___Class_without_package_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t namespace_deeper_Class_with_package_INNER_CLASS_init_allocate();
+
+void namespace_deeper_Class_with_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t namespace_deeper_Class_with_package_init_allocate();
+
+void namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
+uintptr_t namespace_deeper_Object_with_package_INNER_CLASS_init_allocate();
+
+void namespace_deeper_Object_with_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+

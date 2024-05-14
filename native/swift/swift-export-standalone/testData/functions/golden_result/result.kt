@@ -14,8 +14,7 @@ public fun namespace1_bar(): Int {
 
 @ExportedBridge("namespace1_local_functions_foo")
 public fun namespace1_local_functions_foo(): Unit {
-    val _result = namespace1.local_functions.foo()
-    return _result
+    namespace1.local_functions.foo()
 }
 
 @ExportedBridge("namespace1_main_all_args__TypesOfArguments___Bool_int8_t_int16_t_int32_t_int64_t_uint8_t_uint16_t_uint32_t_uint64_t_float_double__")
@@ -31,8 +30,7 @@ public fun namespace1_main_all_args(arg1: Boolean, arg2: Byte, arg3: Short, arg4
     val __arg9 = arg9
     val __arg10 = arg10
     val __arg11 = arg11
-    val _result = namespace1.main.all_args(__arg1, __arg2, __arg3, __arg4, __arg5, __arg6, __arg7, __arg8, __arg9, __arg10, __arg11)
-    return _result
+    namespace1.main.all_args(__arg1, __arg2, __arg3, __arg4, __arg5, __arg6, __arg7, __arg8, __arg9, __arg10, __arg11)
 }
 
 @ExportedBridge("namespace1_main_foobar__TypesOfArguments__int32_t__")

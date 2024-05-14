@@ -5,46 +5,52 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
+import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.util.*
-import org.jetbrains.kotlin.sir.bridge.BridgeRequest
-import org.jetbrains.kotlin.sir.bridge.createFunctionBodyFromRequest
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal fun buildBridgeRequests(container: SirDeclarationContainer): List<BridgeRequest> = buildList {
+internal fun buildBridgeRequests(generator: BridgeGenerator, container: SirDeclarationContainer): List<BridgeRequest> = buildList {
+    addAll(
+        container
+            .allCallables()
+            .filterIsInstance<SirInit>()
+            .flatMap { it.constructBridgeRequests(generator) }
+    )
     addAll(
         container
             .allCallables()
             .filterIsInstance<SirFunction>()
-            .flatMap { it.constructBridgeRequests() }
+            .flatMap { it.constructBridgeRequests(generator) }
     )
     addAll(
         container
             .allVariables()
-            .flatMap { it.constructBridgeRequests() }
+            .flatMap { it.constructBridgeRequests(generator) }
     )
     addAll(
         container
             .allContainers()
-            .flatMap { buildBridgeRequests(it) }
+            .flatMap { buildBridgeRequests(generator, it) }
     )
 }
 
-private fun SirFunction.constructBridgeRequests(): List<BridgeRequest> {
+private fun SirFunction.constructBridgeRequests(generator: BridgeGenerator): List<BridgeRequest> {
     val fqName = ((origin as? KotlinSource)?.symbol as? KtFunctionLikeSymbol)
         ?.callableIdIfNonLocal?.asSingleFqName()
         ?.pathSegments()?.map { it.toString() }
         ?: return emptyList()
 
     return listOfNotNull(
-        patchCallableBodyAndGenerateRequest(fqName)
+        patchCallableBodyAndGenerateRequest(generator, fqName)
     )
 }
 
-private fun SirVariable.constructBridgeRequests(): List<BridgeRequest> {
+private fun SirVariable.constructBridgeRequests(generator: BridgeGenerator): List<BridgeRequest> {
     val fqName = ((origin as? KotlinSource)?.symbol as? KtVariableLikeSymbol)
         ?.callableIdIfNonLocal?.asSingleFqName()
         ?.pathSegments()?.map { it.toString() }
@@ -53,20 +59,43 @@ private fun SirVariable.constructBridgeRequests(): List<BridgeRequest> {
     val res = mutableListOf<BridgeRequest>()
     accessors.forEach {
         res.addIfNotNull(
-            it.patchCallableBodyAndGenerateRequest(fqName)
+            it.patchCallableBodyAndGenerateRequest(generator, fqName)
         )
     }
 
     return res.toList()
 }
 
+private fun SirInit.constructBridgeRequests(generator: BridgeGenerator): List<BridgeRequest> {
+    if (origin is SirOrigin.KotlinBaseInitOverride) {
+        val names = parameters.map { it.argumentName!! }
+        body = SirFunctionBody(buildList {
+            add("super.init(${names.joinToString(separator = ", ") { "$it: $it" }})")
+        })
+        return emptyList()
+    }
+    val fqName = ((origin as? KotlinSource)?.symbol as? KtConstructorSymbol)
+        ?.containingClassIdIfNonLocal?.asSingleFqName()
+        ?.pathSegments()?.map { it.toString() }
+        ?: return emptyList()
+
+    return listOfNotNull(
+        patchCallableBodyAndGenerateRequest(generator, fqName)
+    )
+}
 
 private fun SirCallable.patchCallableBodyAndGenerateRequest(
+    generator: BridgeGenerator,
     fqName: List<String>,
 ): BridgeRequest? = when (kind) {
     SirCallableKind.FUNCTION,
     SirCallableKind.STATIC_METHOD,
+    SirCallableKind.CLASS_METHOD,
     -> {
+        if (kind == SirCallableKind.CLASS_METHOD) {
+            // Only init is supported for now.
+            check(this is SirInit)
+        }
         val typesUsed = listOf(returnType) + allParameters.map { it.type }
         if (typesUsed.none { !it.isSupported }) {
             val suffix = bridgeSuffix
@@ -75,7 +104,7 @@ private fun SirCallable.patchCallableBodyAndGenerateRequest(
                 fqName.forBridge.joinToString("_") + suffix,
                 fqName
             )
-            body = createFunctionBodyFromRequest(request)
+            body = generator.generateSirFunctionBody(request)
             request
         } else {
             null
@@ -83,7 +112,6 @@ private fun SirCallable.patchCallableBodyAndGenerateRequest(
 
     }
     SirCallableKind.INSTANCE_METHOD,
-    SirCallableKind.CLASS_METHOD,
     -> {
         null
     }
@@ -95,6 +123,7 @@ private val SirType.isSupported: Boolean
 private val SirCallable.bridgeSuffix: String
     get() = when (this) {
         is SirAccessor -> "_$bridgeSuffix"
+        is SirInit -> "_init"
         else -> ""
     }
 

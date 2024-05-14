@@ -65,8 +65,18 @@ internal class SirClassFromKtSymbol(
             .toList()
     }
 
+    private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInit {
+        origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
+        kind = SirCallableKind.CLASS_METHOD
+        isFailable = false
+        initKind = SirInitializerKind.ORDINARY
+        isOverride = true
+        parameters.add(SirParameter(argumentName = "__externalRCRef", type = SirNominalType(SirSwiftModule.uint)))
+    }.also { it.parent = this }
+
     private fun syntheticDeclarations(): List<SirDeclaration> = if (ktSymbol.classKind == KtClassKind.OBJECT)
         listOf<SirDeclaration>(
+            kotlinBaseInitDeclaration(),
             buildInit {
                 origin = SirOrigin.PrivateObjectInit(`for` = KotlinSource(ktSymbol))
                 visibility = SirVisibility.PRIVATE
@@ -89,5 +99,5 @@ internal class SirClassFromKtSymbol(
         )
             .map { it.also { it.parent = this } }
     else
-        emptyList()
+        listOf(kotlinBaseInitDeclaration())
 }

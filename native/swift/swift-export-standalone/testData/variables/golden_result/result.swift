@@ -11,7 +11,7 @@ public extension main.namespace.main {
             return namespace_main_bar_get()
         }
         set {
-            namespace_main_bar_set__TypesOfArguments__int32_t__(newValue)
+            return namespace_main_bar_set__TypesOfArguments__int32_t__(newValue)
         }
     }
     public static var foo: Swift.Int32 {

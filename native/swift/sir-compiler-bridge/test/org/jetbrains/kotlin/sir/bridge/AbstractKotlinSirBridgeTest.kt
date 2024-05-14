@@ -27,7 +27,7 @@ abstract class AbstractKotlinSirBridgeTest {
         val cBridgePrinter = createCBridgePrinter()
 
         requests.forEach { request ->
-            generator.generate(request)?.let {
+            generator.generateFunctionBridges(request).forEach {
                 kotlinBridgePrinter.add(it)
                 cBridgePrinter.add(it)
             }
@@ -47,7 +47,7 @@ private fun parseRequestsFromTestDir(testDir: File): List<BridgeRequest> =
     testDir.listFiles()
         ?.filter { it.extension == "properties" && it.name.startsWith("request") }
         ?.map { readRequestFromFile(it) }
-        ?.sortedBy { it.bridgeName }
+        ?.sorted()
         ?: emptyList()
 
 private fun parseType(typeName: String): SirType {

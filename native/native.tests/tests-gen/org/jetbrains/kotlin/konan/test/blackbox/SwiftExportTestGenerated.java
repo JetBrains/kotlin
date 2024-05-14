@@ -24,6 +24,12 @@ public class SwiftExportTestGenerated extends AbstractNativeSwiftExportTest {
   }
 
   @Test
+  @TestMetadata("referenceTypes")
+  public void testReferenceTypes() {
+    runTest("native/native.tests/testData/SwiftExport/referenceTypes/");
+  }
+
+  @Test
   @TestMetadata("smokes")
   public void testSmokes() {
     runTest("native/native.tests/testData/SwiftExport/smokes/");

@@ -31,6 +31,8 @@ object SirSwiftModule : SirModule() {
     val double = primitive("Double")
     val float = primitive("Float")
 
+    val uint = primitive("UInt")
+
     val void = buildStruct {
         origin = SirOrigin.ExternallyDefined(name = "Swift.Void")
         visibility = SirVisibility.PUBLIC
@@ -54,6 +56,8 @@ object SirSwiftModule : SirModule() {
 
         double,
         float,
+
+        uint,
     )
 }
 
