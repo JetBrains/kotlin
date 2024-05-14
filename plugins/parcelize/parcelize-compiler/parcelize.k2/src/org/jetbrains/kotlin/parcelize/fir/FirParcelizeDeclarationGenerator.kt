@@ -50,6 +50,7 @@ class FirParcelizeDeclarationGenerator(
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner ?: return emptyList()
+        if (!checkParcelizeClassSymbols(owner, session) { it in matchedClasses }) return emptyList()
         require(owner is FirRegularClassSymbol)
         val function = when (callableId.callableName) {
             DESCRIBE_CONTENTS_NAME -> {
@@ -109,8 +110,7 @@ class FirParcelizeDeclarationGenerator(
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when {
             classSymbol.rawStatus.modality == Modality.ABSTRACT || classSymbol.rawStatus.modality == Modality.SEALED -> emptySet()
-            checkParcelizeClassSymbols(classSymbol, session) { it in matchedClasses } -> parcelizeMethodsNames
-            else -> emptySet()
+            else -> parcelizeMethodsNames
         }
     }
 

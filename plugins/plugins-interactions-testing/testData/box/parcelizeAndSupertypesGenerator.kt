@@ -2,7 +2,6 @@
 // ENABLE_PARCELIZE
 // WITH_STDLIB
 // ISSUE: KT-68162
-// IGNORE_BACKEND_K2: JVM_IR
 
 interface A
 interface B : A
