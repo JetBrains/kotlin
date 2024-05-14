@@ -21,6 +21,15 @@ object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
         PluginStructureProvider.registerApplicationServices(application, PLUGIN_RELATIVE_PATH)
     }
 
+    /**
+     * TODO (KT-68186): This is a workaround for [KT-68186](https://youtrack.jetbrains.com/issue/KT-68186).
+     *
+     * @see PluginStructureProvider.registerApplicationServices
+     */
+    fun registerApplicationServices(application: MockApplication, classLoader: ClassLoader) {
+        PluginStructureProvider.registerApplicationServices(application, PLUGIN_RELATIVE_PATH, classLoader)
+    }
+
     override fun registerProjectExtensionPoints(project: MockProject) {
         PluginStructureProvider.registerProjectExtensionPoints(project, PLUGIN_RELATIVE_PATH)
     }

@@ -14,6 +14,7 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockComponentManager
 import com.intellij.mock.MockProject
 import com.intellij.openapi.extensions.DefaultPluginDescriptor
+import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.platform.util.plugins.DataLoader
 import com.intellij.util.NoOpXmlInterner
 import com.intellij.util.containers.ContainerUtil
@@ -53,10 +54,7 @@ object PluginStructureProvider {
     private val pluginDescriptorsCache = ContainerUtil.createConcurrentSoftKeySoftValueMap<PluginDesignation, RawPluginDescriptor>()
 
     private data class PluginDesignation(val relativePath: String, val classLoader: ClassLoader) {
-        constructor(relativePath: String, project: MockComponentManager) : this(
-            relativePath,
-            project.loadClass<Any>(PluginDesignation::class.java.name, fakePluginDescriptor).classLoader,
-        )
+        constructor(relativePath: String, componentManager: MockComponentManager) : this(relativePath, componentManager.classLoader)
     }
 
     private fun getOrCalculatePluginDescriptor(
@@ -85,24 +83,49 @@ object PluginStructureProvider {
     }
 
     fun registerApplicationServices(application: MockApplication, pluginRelativePath: String) {
-        registerServices(application, pluginRelativePath, RawPluginDescriptor::appContainerDescriptor)
+        registerApplicationServices(application, pluginRelativePath, application.classLoader)
+    }
+
+    /**
+     * TODO (KT-68186): This is a workaround for [KT-68186](https://youtrack.jetbrains.com/issue/KT-68186). We cannot rely on the
+     * application's class loader for now, so we have to use the configured class loader manually.
+     */
+    fun registerApplicationServices(application: MockApplication, pluginRelativePath: String, classLoader: ClassLoader) {
+        registerServices(
+            application,
+            pluginRelativePath,
+            classLoader,
+            RawPluginDescriptor::appContainerDescriptor,
+        ) { className, pluginDescriptor ->
+            @Suppress("UNCHECKED_CAST")
+            Class.forName(className, true, classLoader) as Class<Any>
+        }
     }
 
     fun registerProjectServices(project: MockProject, pluginRelativePath: String) {
-        registerServices(project, pluginRelativePath, RawPluginDescriptor::projectContainerDescriptor)
+        registerServices(
+            project,
+            pluginRelativePath,
+            project.classLoader,
+            RawPluginDescriptor::projectContainerDescriptor,
+        ) { className, pluginDescriptor ->
+            project.loadClass<Any>(className, pluginDescriptor)
+        }
     }
 
     private inline fun registerServices(
         componentManager: MockComponentManager,
         pluginRelativePath: String,
+        classLoader: ClassLoader,
         containerDescriptor: RawPluginDescriptor.() -> ContainerDescriptor,
+        loadClass: (String, PluginDescriptor) -> Class<Any>,
     ) {
-        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, componentManager))
+        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, classLoader))
         for (serviceDescriptor in pluginDescriptor.containerDescriptor().services) {
-            val serviceImplementationClass = componentManager.loadClass<Any>(serviceDescriptor.serviceImplementation, fakePluginDescriptor)
+            val serviceImplementationClass = loadClass(serviceDescriptor.serviceImplementation, fakePluginDescriptor)
             val serviceInterface = serviceDescriptor.serviceInterface
             if (serviceInterface != null) {
-                val serviceInterfaceClass = componentManager.loadClass<Any>(serviceInterface, fakePluginDescriptor)
+                val serviceInterfaceClass = loadClass(serviceInterface, fakePluginDescriptor)
 
                 @Suppress("UNCHECKED_CAST")
                 componentManager.registerServiceWithInterface(serviceInterfaceClass, serviceImplementationClass)
@@ -126,6 +149,9 @@ object PluginStructureProvider {
 
         (project.analysisMessageBus as MessageBusEx).setLazyListeners(listenersMap)
     }
+
+    private val MockComponentManager.classLoader
+        get() = loadClass<Any>(PluginDesignation::class.java.name, fakePluginDescriptor).classLoader
 
     // workaround for ambiguity resolution
     private fun <T> MockComponentManager.registerServiceWithInterface(interfaceClass: Class<T>, implementationClass: Class<T>) {

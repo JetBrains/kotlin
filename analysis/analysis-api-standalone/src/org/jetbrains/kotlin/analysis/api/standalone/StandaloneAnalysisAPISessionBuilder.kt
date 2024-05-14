@@ -61,7 +61,8 @@ public class StandaloneAnalysisAPISessionBuilder(
         )
 
     init {
-        FirStandaloneServiceRegistrar.registerApplicationServices(kotlinCoreProjectEnvironment.environment.application)
+        // TODO (KT-68186): Passing the class loader explicitly is a workaround for KT-68186.
+        FirStandaloneServiceRegistrar.registerApplicationServices(application, classLoader)
     }
 
     public val application: Application = kotlinCoreProjectEnvironment.environment.application
