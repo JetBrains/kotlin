@@ -203,7 +203,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
 
         val classPath = extractClassPath(module, classLoader, classFileFactory)
 
-        val mainClassAndArguments = testServices.jvmBoxMainClassProvider?.getMainClassNameAndAdditionalArguments() ?: run {
+        val mainClassAndArguments = testServices.jvmBoxMainClassProvider?.getMainClassNameAndAdditionalArguments(module) ?: run {
             val mainFile = module.files.firstOrNull {
                 it.name == MainFunctionForBlackBoxTestsSourceProvider.BOX_MAIN_FILE_NAME && it.isAdditional
             } ?: error("No file with main function was generated. Please check TODO source provider")
