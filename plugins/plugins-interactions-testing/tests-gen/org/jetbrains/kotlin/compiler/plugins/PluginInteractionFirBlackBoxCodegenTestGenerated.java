@@ -23,4 +23,10 @@ public class PluginInteractionFirBlackBoxCodegenTestGenerated extends AbstractPl
   public void testAllFilesPresentInBox() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugins-interactions-testing/testData/box"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_IR, true);
   }
+
+  @Test
+  @TestMetadata("parcelizeAndSupertypesGenerator.kt")
+  public void testParcelizeAndSupertypesGenerator() {
+    runTest("plugins/plugins-interactions-testing/testData/box/parcelizeAndSupertypesGenerator.kt");
+  }
 }
