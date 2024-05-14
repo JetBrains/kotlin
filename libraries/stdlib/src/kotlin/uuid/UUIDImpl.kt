@@ -34,14 +34,30 @@ internal fun uuidFromRandomBytes(randomBytes: ByteArray): UUID {
 }
 
 internal fun uuidToString(uuid: UUID): String = with(uuid) {
-    val part1 = (mostSignificantBits shr 32).toInt().toHexString()
-    val part2 = (mostSignificantBits shr 16).toShort().toHexString()
-    val part3 = mostSignificantBits.toShort().toHexString()
-    val part4 = (leastSignificantBits shr 48).toShort().toHexString()
-    val part5a = (leastSignificantBits shr 32).toShort().toHexString()
-    val part5b = leastSignificantBits.toInt().toHexString()
+    val bytes = ByteArray(36)
+    leastSignificantBits.formatBytesInto(bytes, 24, 6)
+    bytes[23] = '-'.code.toByte()
+    (leastSignificantBits ushr 48).formatBytesInto(bytes, 19, 2)
+    bytes[18] = '-'.code.toByte()
+    mostSignificantBits.formatBytesInto(bytes, 14, 2)
+    bytes[13] = '-'.code.toByte()
+    (mostSignificantBits ushr 16).formatBytesInto(bytes, 9, 2)
+    bytes[8] = '-'.code.toByte()
+    (mostSignificantBits ushr 32).formatBytesInto(bytes, 0, 4)
 
-    "$part1-$part2-$part3-$part4-$part5a$part5b"
+    return bytes.decodeToString()
+}
+
+private fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, count: Int) {
+    var long = this
+    var dstIndex = dstOffset + 2 * count
+    repeat(count) {
+        val byte = (long and 0xFF).toInt()
+        val byteDigits = BYTE_TO_LOWER_CASE_HEX_DIGITS[byte]
+        dst[--dstIndex] = byteDigits.toByte()
+        dst[--dstIndex] = (byteDigits shr 8).toByte()
+        long = long shr 8
+    }
 }
 
 internal fun uuidFromString(uuidString: String): UUID {
@@ -67,7 +83,10 @@ private fun String.checkHyphenAt(index: Int) {
 }
 
 internal fun uuidToHexString(uuid: UUID): String = with(uuid) {
-    mostSignificantBits.toHexString() + leastSignificantBits.toHexString()
+    val bytes = ByteArray(32)
+    leastSignificantBits.formatBytesInto(bytes, 16, 8)
+    mostSignificantBits.formatBytesInto(bytes, 0, 8)
+    return bytes.decodeToString()
 }
 
 internal fun uuidFromHexString(hexString: String): UUID {
@@ -77,19 +96,18 @@ internal fun uuidFromHexString(hexString: String): UUID {
     return UUID(msb, lsb)
 }
 
-private fun Long.toByteArray(bytes: ByteArray, startIndex: Int) {
+private fun Long.toByteArray(dst: ByteArray, dstOffset: Int) {
     for (index in 0 until 8) {
-        bytes[startIndex + index] = (this shr 8 * (7 - index)).toByte()
+        val shift = 8 * (7 - index)
+        dst[dstOffset + index] = (this ushr shift).toByte()
     }
 }
 
-internal fun uuidToByteArray(uuid: UUID): ByteArray {
-    with(uuid) {
-        val bytes = ByteArray(UUID.SIZE_BYTES)
-        mostSignificantBits.toByteArray(bytes, 0)
-        leastSignificantBits.toByteArray(bytes, 8)
-        return bytes
-    }
+internal fun uuidToByteArray(uuid: UUID): ByteArray = with(uuid) {
+    val bytes = ByteArray(UUID.SIZE_BYTES)
+    mostSignificantBits.toByteArray(bytes, 0)
+    leastSignificantBits.toByteArray(bytes, 8)
+    return bytes
 }
 
 internal val UUID_LEXICAL_ORDER = Comparator<UUID> { a, b ->

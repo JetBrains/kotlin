@@ -17,7 +17,8 @@ private const val UPPER_CASE_HEX_DIGITS = "0123456789ABCDEF"
  * of each Byte value makes it possible to access the table only once per Byte.
  * This noticeably improves performance, especially for large ByteArray's.
  */
-private val BYTE_TO_LOWER_CASE_HEX_DIGITS = IntArray(256) {
+@ExperimentalStdlibApi
+internal val BYTE_TO_LOWER_CASE_HEX_DIGITS = IntArray(256) {
     (LOWER_CASE_HEX_DIGITS[(it shr 4)].code shl 8) or LOWER_CASE_HEX_DIGITS[(it and 0xF)].code
 }
 
