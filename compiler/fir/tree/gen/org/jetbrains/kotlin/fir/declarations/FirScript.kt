@@ -32,7 +32,7 @@ abstract class FirScript : FirDeclaration(), FirControlFlowGraphOwner {
     abstract val declarations: List<FirDeclaration>
     abstract override val symbol: FirScriptSymbol
     abstract val parameters: List<FirProperty>
-    abstract val contextReceivers: List<FirContextReceiver>
+    abstract val receivers: List<FirScriptReceiverParameter>
     abstract val resultPropertyName: Name?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -54,5 +54,5 @@ abstract class FirScript : FirDeclaration(), FirControlFlowGraphOwner {
 
     abstract fun <D> transformParameters(transformer: FirTransformer<D>, data: D): FirScript
 
-    abstract fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirScript
+    abstract fun <D> transformReceivers(transformer: FirTransformer<D>, data: D): FirScript
 }

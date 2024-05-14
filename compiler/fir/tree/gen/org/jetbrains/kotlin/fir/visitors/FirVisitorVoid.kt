@@ -243,6 +243,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(receiverParameter)
     }
 
+    final override fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter, data: Nothing?) {
+        visitScriptReceiverParameter(scriptReceiverParameter)
+    }
+
+    open fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter) {
+        visitElement(scriptReceiverParameter)
+    }
+
     final override fun visitProperty(property: FirProperty, data: Nothing?) {
         visitProperty(property)
     }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.labelName
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValueForScript
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -21,10 +20,9 @@ class TowerElementsForScript(
 fun SessionHolder.collectTowerDataElementsForScript(owner: FirScript): TowerElementsForScript {
     owner.lazyResolveToPhase(FirResolvePhase.TYPES)
 
-    val contextReceivers = owner.contextReceivers.mapIndexed { index, receiver ->
+    val contextReceivers = owner.receivers.mapIndexed() { index, receiver ->
         ImplicitReceiverValueForScript(
-            owner.symbol, receiver.typeRef.coneType, receiver.labelName, session, scopeSession,
-            contextReceiverNumber = index,
+            owner.symbol, receiver.typeRef.coneType, receiver.labelName, session, scopeSession, receiverNumber = index
         )
     }.asReversed()
 

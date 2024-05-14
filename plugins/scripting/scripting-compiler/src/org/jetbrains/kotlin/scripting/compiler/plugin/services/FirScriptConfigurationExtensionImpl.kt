@@ -50,7 +50,7 @@ import kotlin.script.experimental.host.StringScriptSource
 class FirScriptConfiguratorExtensionImpl(
     session: FirSession,
     // TODO: left here because it seems it will be needed soon, remove supression if used or remove the param if it is not the case
-    @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration,
+    @Suppress("UNUSED_PARAMETER", "unused") hostConfiguration: ScriptingHostConfiguration,
 ) : FirScriptConfiguratorExtension(session) {
 
     override fun FirScriptBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
@@ -66,7 +66,7 @@ class FirScriptConfiguratorExtensionImpl(
         // TODO: rewrite/extract decision logic for clarity
         configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
             val baseClassFqn = FqName.fromSegments(baseClass.typeName.split("."))
-            contextReceivers.add(buildContextReceiverWithFqName(baseClassFqn, Name.special(SCRIPT_SPECIAL_NAME_STRING)))
+            receivers.add(buildImplicitReceiverWithFqName(baseClassFqn, Name.special(SCRIPT_SPECIAL_NAME_STRING)))
 
             val baseClassSymbol =
                 session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(ClassId(baseClassFqn.parent(), baseClassFqn.shortName()))
@@ -93,7 +93,7 @@ class FirScriptConfiguratorExtensionImpl(
         }
 
         configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
-            contextReceivers.add(buildContextReceiverWithFqName(FqName.fromSegments(implicitReceiver.typeName.split("."))))
+            receivers.add(buildImplicitReceiverWithFqName(FqName.fromSegments(implicitReceiver.typeName.split("."))))
         }
 
         configuration[ScriptCompilationConfiguration.providedProperties]?.forEach { (propertyName, propertyType) ->
@@ -179,8 +179,8 @@ class FirScriptConfiguratorExtensionImpl(
         return configuration
     }
 
-    private fun buildContextReceiverWithFqName(classFqn: FqName, customName: Name? = null) =
-        buildContextReceiver {
+    private fun buildImplicitReceiverWithFqName(classFqn: FqName, customName: Name? = null) =
+        buildScriptReceiverParameter {
             val userTypeRef = buildUserTypeRef {
                 isMarkedNullable = false
                 qualifier.addAll(
@@ -190,8 +190,7 @@ class FirScriptConfiguratorExtensionImpl(
                 )
             }
             typeRef = userTypeRef
-            labelNameFromTypeRef = userTypeRef.qualifier.lastOrNull()?.name
-            customLabelName = customName
+            labelName = customName ?: userTypeRef.qualifier.lastOrNull()?.name
         }
 
     private val _knownAnnotationsForSamWithReceiver = hashSetOf<String>()

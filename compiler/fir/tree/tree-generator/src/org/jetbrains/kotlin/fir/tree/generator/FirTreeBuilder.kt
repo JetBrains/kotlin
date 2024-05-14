@@ -45,6 +45,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val variable by sealedElement(Declaration, callableDeclaration, statement)
     val valueParameter by element(Declaration, variable, controlFlowGraphOwner)
     val receiverParameter by element(Declaration, annotationContainer)
+    val scriptReceiverParameter by element(Declaration, receiverParameter)
     val property by element(Declaration, variable, typeParametersOwner, controlFlowGraphOwner)
     val field by element(Declaration, variable, controlFlowGraphOwner)
     val enumEntry by element(Declaration, variable)

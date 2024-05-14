@@ -59,7 +59,11 @@ internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirReso
                 checkAnnotationsAreResolved(target.contextReceivers, target)
             }
 
-            is FirScript -> checkAnnotationsAreResolved(target.contextReceivers, target)
+            is FirScript -> for (receiver in target.receivers) {
+                checkAnnotationsAreResolved(receiver)
+                checkAnnotationsAreResolved(target, receiver.typeRef)
+            }
+
             is FirTypeAlias -> checkAnnotationsAreResolved(target, target.expandedTypeRef)
         }
     }

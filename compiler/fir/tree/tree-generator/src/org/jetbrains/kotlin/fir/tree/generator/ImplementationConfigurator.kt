@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.generators.tree.ImplementationKind.OpenClass
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
 
     override fun configure(model: Model) = with(FirTreeBuilder) {
+
+        impl(receiverParameter)
+
         impl(constructor) {
             defaultFalse("isPrimary", withGetter = true)
         }

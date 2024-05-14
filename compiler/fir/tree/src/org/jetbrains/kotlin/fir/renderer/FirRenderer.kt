@@ -214,13 +214,17 @@ class FirRenderer(
         }
 
         override fun visitScript(script: FirScript) {
-            renderContexts(script.contextReceivers)
             annotationRenderer?.render(script)
             printer.print("SCRIPT: ")
             declarationRenderer?.renderPhaseAndAttributes(script) ?: resolvePhaseRenderer?.render(script)
             printer.println(script.name)
 
             printer.pushIndent()
+            // following the function convention, although in a compiled script parameters are passed before receivers
+            script.receivers.forEach {
+                it.accept(this)
+                printer.newLine()
+            }
             script.parameters.forEach {
                 it.accept(this)
                 printer.newLine()
@@ -234,6 +238,12 @@ class FirRenderer(
             }
 
             printer.popIndent()
+        }
+
+        override fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter) {
+            print("<script receiver parameter>: ")
+            annotationRenderer?.render(scriptReceiverParameter)
+            scriptReceiverParameter.typeRef.accept(this)
         }
 
         override fun visitCodeFragment(codeFragment: FirCodeFragment) {

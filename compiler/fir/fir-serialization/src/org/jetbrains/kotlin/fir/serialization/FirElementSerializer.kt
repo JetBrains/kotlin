@@ -375,15 +375,6 @@ class FirElementSerializer private constructor(
             }
         }
 
-        for (contextReceiver in script.contextReceivers) {
-            val typeRef = contextReceiver.typeRef
-            if (useTypeTable()) {
-                builder.addContextReceiverTypeId(typeId(typeRef))
-            } else {
-                builder.addContextReceiverType(typeProto(contextReceiver.typeRef))
-            }
-        }
-
         if (versionRequirementTable == null) error("Version requirements must be serialized for scripts: ${script.render()}")
 
         builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(script))

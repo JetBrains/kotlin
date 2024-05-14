@@ -243,6 +243,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformReceiverParameter(receiverParameter, data)
     }
 
+    open fun transformScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter, data: D): FirReceiverParameter {
+        return transformElement(scriptReceiverParameter, data)
+    }
+
+    final override fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter, data: D): FirReceiverParameter {
+        return transformScriptReceiverParameter(scriptReceiverParameter, data)
+    }
+
     open fun transformProperty(property: FirProperty, data: D): FirStatement {
         return transformElement(property, data)
     }

@@ -46,7 +46,6 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
         return when (this) {
             is FirCallableDeclaration -> contextReceivers
             is FirRegularClass -> contextReceivers
-            is FirScript -> contextReceivers
             else -> emptyList()
         }
     }
