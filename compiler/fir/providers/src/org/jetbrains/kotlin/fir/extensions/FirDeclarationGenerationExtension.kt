@@ -61,7 +61,7 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
     open fun hasPackage(packageFqName: FqName): Boolean = false
 
     /*
-     * Can be called after SUPERTYPES stage
+     * Can be called on SUPERTYPES stage
      *
      * `generate...` methods will be called only if `get...Names/ClassIds/CallableIds` returned corresponding
      *   declaration name
