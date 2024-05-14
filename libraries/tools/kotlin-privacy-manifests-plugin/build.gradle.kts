@@ -5,7 +5,10 @@ plugins {
     kotlin("jvm")
     `java-gradle-plugin`
     `maven-publish`
-    id("com.gradle.plugin-publish")
+}
+
+if (kotlinBuildProperties.isApplePrivacyManifestsPluginEnabled) {
+    apply(plugin = "com.gradle.plugin-publish")
 }
 
 group = "org.jetbrains.kotlin"
@@ -22,23 +25,6 @@ dependencies {
 }
 
 val functionalTest by sourceSets.creating
-
-gradlePlugin {
-    website.set("https://kotlinlang.org/")
-    vcsUrl.set("https://github.com/jetbrains/kotlin")
-    plugins.configureEach {
-        tags.add("kotlin")
-    }
-    plugins {
-        create("apple-privacy-manifests") {
-            id = "org.jetbrains.kotlin.apple-privacy-manifests"
-            displayName = "Apple privacy manifests copying plugin"
-            description = "Plugin for copying privacy manifests to Kotlin Multiplatform frameworks"
-            implementationClass = "org.jetbrains.kotlin.PrivacyManifestsPlugin"
-        }
-    }
-    testSourceSets(functionalTest)
-}
 
 configurations[functionalTest.implementationConfigurationName].extendsFrom(configurations.testImplementation.get())
 
@@ -58,16 +44,35 @@ tasks.register<Test>("functionalTest") {
     useJUnitPlatform()
 }
 
-configureDefaultPublishing()
-
-publishing {
-    repositories {
-        maven(layout.buildDirectory.dir("repo")) {
-            name = "BuildDirectory"
+if (kotlinBuildProperties.isApplePrivacyManifestsPluginEnabled) {
+    gradlePlugin {
+        website.set("https://kotlinlang.org/")
+        vcsUrl.set("https://github.com/jetbrains/kotlin")
+        plugins.configureEach {
+            tags.add("kotlin")
         }
+        plugins {
+            create("apple-privacy-manifests") {
+                id = "org.jetbrains.kotlin.apple-privacy-manifests"
+                displayName = "Apple privacy manifests copying plugin"
+                description = "Plugin for copying privacy manifests to Kotlin Multiplatform frameworks"
+                implementationClass = "org.jetbrains.kotlin.PrivacyManifestsPlugin"
+            }
+        }
+        testSourceSets(functionalTest)
     }
 
-    publications.withType(MavenPublication::class.java).all {
-        configureKotlinPomAttributes(project)
+    configureDefaultPublishing()
+
+    publishing {
+        repositories {
+            maven(layout.buildDirectory.dir("repo")) {
+                name = "BuildDirectory"
+            }
+        }
+
+        publications.withType(MavenPublication::class.java).all {
+            configureKotlinPomAttributes(project)
+        }
     }
 }
