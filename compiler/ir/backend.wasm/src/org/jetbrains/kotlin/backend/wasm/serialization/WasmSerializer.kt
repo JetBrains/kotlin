@@ -84,6 +84,18 @@ class WasmSerializer(val outputStream: OutputStream) {
             serialize(arrDecl.field.type)
         }
 
+    fun serialize(memory: WasmMemory) =
+        serializeNamedModuleField(memory, listOf(memory.importPair == null)) {
+            serialize(memory.limits)
+            memory.importPair?.let { serialize(it) }
+        }
+
+    fun serialize(tag: WasmTag): Unit =
+        serializeNamedModuleField(tag, listOf(tag.importPair == null)) {
+            serialize(tag.type)
+            tag.importPair?.let { serialize(it) }
+        }
+
     fun serialize(structFieldDecl: WasmStructFieldDeclaration) {
         serialize(structFieldDecl.name)
         serialize(structFieldDecl.type)
@@ -114,7 +126,7 @@ class WasmSerializer(val outputStream: OutputStream) {
             WasmHeapType.Simple.NoExtern -> withId(4U) { }
             WasmHeapType.Simple.None -> withId(5U) { }
             WasmHeapType.Simple.Struct -> withId(6U) { }
-            is WasmHeapType.Type -> withId(7U) { serializeSymbol(type.type) { serialize(it) } }
+            is WasmHeapType.Type -> withId(7U) { serialize(type.type) { serialize(it) } }
         }
 
     fun serialize(local: WasmLocal) {
@@ -158,22 +170,22 @@ class WasmSerializer(val outputStream: OutputStream) {
             is WasmImmediate.ConstI64 -> withId(6U) { b.writeUInt64(i.value.toULong()) }
             is WasmImmediate.ConstString -> withId(7U) { serialize(i.value) }
             is WasmImmediate.ConstU8 -> withId(8U) { b.writeUByte(i.value) }
-            is WasmImmediate.DataIdx -> withId(9U) { serializeSymbol(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.DataIdx -> withId(9U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
             is WasmImmediate.ElemIdx -> withId(10U) { serialize(i.value) }
-            is WasmImmediate.FuncIdx -> withId(11U) { serializeSymbol(i.value) { serialize(it) } }
-            is WasmImmediate.GcType -> withId(12U) { serializeSymbol(i.value) { serialize(it) } }
-            is WasmImmediate.GlobalIdx -> withId(13U) { serializeSymbol(i.value) { serialize(it) } }
+            is WasmImmediate.FuncIdx -> withId(11U) { serialize(i.value) { serialize(it) } }
+            is WasmImmediate.GcType -> withId(12U) { serialize(i.value) { serialize(it) } }
+            is WasmImmediate.GlobalIdx -> withId(13U) { serialize(i.value) { serialize(it) } }
             is WasmImmediate.HeapType -> withId(14U) { serialize(i.value) }
             is WasmImmediate.LabelIdx -> withId(15U) { b.writeUInt32(i.value.toUInt()) }
             is WasmImmediate.LabelIdxVector -> withId(16U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.LocalIdx -> withId(17U) { serializeSymbol(i.value) { serialize(it) } }
+            is WasmImmediate.LocalIdx -> withId(17U) { serialize(i.value) { serialize(it) } }
             is WasmImmediate.MemArg -> withId(18U) { b.writeUInt32(i.align); b.writeUInt32(i.offset) }
             is WasmImmediate.MemoryIdx -> withId(19U) { b.writeUInt32(i.value.toUInt()) }
-            is WasmImmediate.StructFieldIdx -> withId(20U) { serializeSymbol(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.SymbolI32 -> withId(21U) { serializeSymbol(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.TableIdx -> withId(22U) { serializeSymbol(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.TagIdx -> withId(23U) { serializeSymbol(i.value) { b.writeUInt32(it.toUInt()) } }
-            is WasmImmediate.TypeIdx -> withId(24U) { serializeSymbol(i.value) { serialize(it) } }
+            is WasmImmediate.StructFieldIdx -> withId(20U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.SymbolI32 -> withId(21U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.TableIdx -> withId(22U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.TagIdx -> withId(23U) { serialize(i.value) { b.writeUInt32(it.toUInt()) } }
+            is WasmImmediate.TypeIdx -> withId(24U) { serialize(i.value) { serialize(it) } }
             is WasmImmediate.ValTypeVector -> withId(25U) { serialize(i.value, ::serialize) }
         }
 
@@ -202,7 +214,7 @@ class WasmSerializer(val outputStream: OutputStream) {
     fun serialize(value: WasmTable.Value) =
         when (value) {
             is WasmTable.Value.Expression -> withId(0U) { serialize(value.expr, ::serialize) }
-            is WasmTable.Value.Function -> withId(1U) { serializeSymbol(value.function) { serialize(it) } }
+            is WasmTable.Value.Function -> withId(1U) { serialize(value.function) { serialize(it) } }
         }
 
     fun serialize(element: WasmElement): Unit =
@@ -222,14 +234,42 @@ class WasmSerializer(val outputStream: OutputStream) {
             WasmElement.Mode.Passive -> withId(2U) { }
         }
 
+    fun serialize(export: WasmExport<*>) {
+        // The name is serialized before the id.
+        serialize(export.name)
+        when (export) {
+            is WasmExport.Function -> withId(0U) { serialize(export.field) }
+            is WasmExport.Table -> withId(1U) { serialize(export.field) }
+            is WasmExport.Memory -> withId(2U) { serialize(export.field) }
+            is WasmExport.Global -> withId(3U) { serialize(export.field) }
+            is WasmExport.Tag -> withId(4U) { serialize(export.field) }
+        }
+    }
+
+    fun serialize(limit: WasmLimits) =
+        withFlags(limit.maxSize == null) {
+            b.writeUInt32(limit.minSize)
+            limit.maxSize?.let { b.writeUInt32(it) }
+        }
+
     fun serialize(descriptor: WasmImportDescriptor) {
         serialize(descriptor.moduleName)
-        serializeSymbol(descriptor.declarationName, ::serialize)
+        serialize(descriptor.declarationName, ::serialize)
+    }
+
+    fun <A, B> serialize(pair: Pair<A, B>, serializeAFunc: (A) -> Unit, serializeBFunc: (B) -> Unit) {
+        serializeAFunc(pair.first)
+        serializeBFunc(pair.second)
     }
 
     fun <T> serialize(list: List<T>, serializeFunc: (T) -> Unit) {
         b.writeUInt32(list.size.toUInt())
         list.forEach { serializeFunc(it) }
+    }
+
+    fun <T> serialize(set: Set<T>, serializeFunc: (T) -> Unit) {
+        b.writeUInt32(set.size.toUInt())
+        set.forEach { serializeFunc(it) }
     }
 
     fun <K, V> serialize(map: Map<K, V>, serializeKeyFunc: (K) -> Unit, serializeValueFunc: (V) -> Unit) {
@@ -238,11 +278,6 @@ class WasmSerializer(val outputStream: OutputStream) {
             serializeKeyFunc(key)
             serializeValueFunc(value)
         }
-    }
-
-    fun <A, B> serialize(pair: Pair<A, B>, serializeAFunc: (A) -> Unit, serializeBFunc: (B) -> Unit) {
-        serializeAFunc(pair.first)
-        serializeBFunc(pair.second)
     }
 
     fun serialize(sl: SourceLocation) =
@@ -288,9 +323,9 @@ class WasmSerializer(val outputStream: OutputStream) {
             withFlags(id == null, description == null) {
                 serialize(packageFqName)
                 serialize(declarationFqName)
-                id?.let { b.writeUInt64(id!!.toULong()) }
+                id?.let { b.writeUInt64(it.toULong()) }
                 b.writeUInt64(mask.toULong())
-                description?.let { serialize(description!!) }
+                description?.let { serialize(it) }
             }
         }
     }
@@ -307,7 +342,7 @@ class WasmSerializer(val outputStream: OutputStream) {
             withFlags(description == null) {
                 serialize(container)
                 b.writeUInt64(id.toULong())
-                description?.let { serialize(description!!) }
+                description?.let { serialize(it) }
             }
         }
     }
@@ -316,8 +351,8 @@ class WasmSerializer(val outputStream: OutputStream) {
         with(local) {
             withFlags(hashSig == null, description == null) {
                 serialize(localFqn)
-                hashSig?.let { b.writeUInt64(hashSig!!.toULong()) }
-                description?.let { serialize(description!!) }
+                hashSig?.let { b.writeUInt64(it.toULong()) }
+                description?.let { serialize(it) }
             }
         }
     }
@@ -334,7 +369,7 @@ class WasmSerializer(val outputStream: OutputStream) {
         with(scopeLocal) {
             withFlags(description == null) {
                 b.writeUInt32(id.toUInt())
-                description?.let { serialize(description!!) }
+                description?.let { serialize(it) }
             }
         }
     }
@@ -359,22 +394,22 @@ class WasmSerializer(val outputStream: OutputStream) {
 
     fun serialize(constantDataCharArray: ConstantDataCharArray) {
         serialize(constantDataCharArray.name)
-        serialize(constantDataCharArray.value) { serializeSymbol(it) { b.writeUInt32(it.code.toUInt()) } }
+        serialize(constantDataCharArray.value) { serialize(it) { b.writeUInt32(it.code.toUInt()) } }
     }
 
     fun serialize(constantDataCharField: ConstantDataCharField) {
         serialize(constantDataCharField.name)
-        serializeSymbol(constantDataCharField.value) { b.writeUInt32(it.code.toUInt()) }
+        serialize(constantDataCharField.value) { b.writeUInt32(it.code.toUInt()) }
     }
 
     fun serialize(constantDataIntArray: ConstantDataIntArray) {
         serialize(constantDataIntArray.name)
-        serialize(constantDataIntArray.value) { serializeSymbol(it) { b.writeUInt32(it.toUInt()) } }
+        serialize(constantDataIntArray.value) { serialize(it) { b.writeUInt32(it.toUInt()) } }
     }
 
     fun serialize(constantDataIntField: ConstantDataIntField) {
         serialize(constantDataIntField.name)
-        serializeSymbol(constantDataIntField.value) { b.writeUInt32(it.toUInt()) }
+        serialize(constantDataIntField.value) { b.writeUInt32(it.toUInt()) }
     }
 
     fun serialize(constantDataIntegerArray: ConstantDataIntegerArray) {
@@ -389,7 +424,7 @@ class WasmSerializer(val outputStream: OutputStream) {
     }
 
     fun serialize(jsCodeSnippet: WasmCompiledModuleFragment.JsCodeSnippet) {
-        serializeSymbol(jsCodeSnippet.importName, ::serialize)
+        serialize(jsCodeSnippet.importName, ::serialize)
         serialize(jsCodeSnippet.jsCode)
     }
 
@@ -404,24 +439,62 @@ class WasmSerializer(val outputStream: OutputStream) {
         b.writeBytes(bytes)
     }
 
+    fun serialize(int: Int) {
+        b.writeUInt32(int.toUInt())
+    }
+
+    fun serialize(long: Long) {
+        b.writeUInt64(long.toULong())
+    }
+
     fun <Ir, Wasm : Any> serialize(
         referencableElements: WasmCompiledModuleFragment.ReferencableElements<Ir, Wasm>,
         irSerializeFunc: (Ir) -> Unit,
         wasmSerializeFunc: (Wasm) -> Unit
-    ) = serialize(referencableElements.unbound, irSerializeFunc) { serializeSymbol(it, wasmSerializeFunc) }
+    ) = serialize(referencableElements.unbound, irSerializeFunc) { serialize(it, wasmSerializeFunc) }
 
     fun <Ir, Wasm : Any> serialize(
         referencableAndDefinable: WasmCompiledModuleFragment.ReferencableAndDefinable<Ir, Wasm>,
         irSerializeFunc: (Ir) -> Unit,
         wasmSerializeFunc: (Wasm) -> Unit
     ) = with(referencableAndDefinable) {
-        serialize(unbound, irSerializeFunc) { serializeSymbol(it, wasmSerializeFunc) }
+        serialize(unbound, irSerializeFunc) { serialize(it, wasmSerializeFunc) }
         serialize(defined, irSerializeFunc, wasmSerializeFunc)
         serialize(elements, wasmSerializeFunc)
         serialize(wasmToIr, wasmSerializeFunc, irSerializeFunc)
     }
 
-    private fun <T : Any> serializeSymbol(value: WasmSymbolReadOnly<T>, serializeFunc: (T) -> Unit) =
+    fun serialize(wasmCompiledFileFragment: WasmCompiledFileFragment) =
+        with(wasmCompiledFileFragment) {
+            serialize(functions, ::serialize, ::serialize)
+            serialize(globalFields, ::serialize, ::serialize)
+            serialize(globalVTables, ::serialize, ::serialize)
+            serialize(globalClassITables, ::serialize, ::serialize)
+            serialize(functionTypes, ::serialize, ::serialize)
+            serialize(gcTypes, ::serialize, ::serialize)
+            serialize(vTableGcTypes, ::serialize, ::serialize)
+            serialize(classITableGcType, ::serialize, ::serialize)
+            serialize(classITableInterfaceSlot, ::serialize, ::serialize)
+            serialize(classITableInterfaceTableSize, ::serialize, ::serialize)
+            serialize(classITableInterfaceHasImplementors, ::serialize, ::serialize)
+            serialize(typeInfo, ::serialize, ::serialize)
+            serialize(classIds, ::serialize, ::serialize)
+            serialize(interfaceIds, ::serialize, ::serialize)
+            serialize(stringLiteralAddress, ::serialize, ::serialize)
+            serialize(stringLiteralPoolId, ::serialize, ::serialize)
+            serialize(constantArrayDataSegmentId, { serialize(it, { serialize(it, ::serialize) }, ::serialize)}, ::serialize)
+            serialize(interfaceUnions) { serialize(it, ::serialize) }
+            serialize(declaredInterfaces, ::serialize)
+            serialize(initFunctions, ::serialize)
+            serialize(uniqueJsFunNames, ::serialize, ::serialize)
+            serialize(jsFuns, ::serialize)
+            serialize(jsModuleImports, ::serialize)
+            serialize(exports, ::serialize)
+            serialize(scratchMemAddr, ::serialize)
+            serialize(stringPoolSize, ::serialize)
+        }
+
+    fun <T : Any> serialize(value: WasmSymbolReadOnly<T>, serializeFunc: (T) -> Unit) =
         withFlags(value.getOwner() == null) {
             value.getOwner()?.let { serializeFunc(it) }
         }

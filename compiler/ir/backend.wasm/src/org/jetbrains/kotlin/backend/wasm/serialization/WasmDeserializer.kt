@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm.serialization
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
+import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -100,6 +101,20 @@ class WasmDeserializer(val inputStream: InputStream) {
                     isMutable
                 )
             )
+        }
+
+    fun deserializeMemory(): WasmMemory =
+        deserializeNamedModuleField { _, flags ->
+            val limits = deserializeLimits()
+            val importPair = if (flags.consume()) null else deserializeImportDescriptor()
+            WasmMemory(limits, importPair)
+        }
+
+    fun deserializeTag(): WasmTag =
+        deserializeNamedModuleField { _, flags ->
+            val type = deserializeFunctionType()
+            val importPair = if (flags.consume()) null else deserializeImportDescriptor()
+            WasmTag(type, importPair)
         }
 
     fun deserializeStructFieldDeclaration(): WasmStructFieldDeclaration {
@@ -252,19 +267,56 @@ class WasmDeserializer(val inputStream: InputStream) {
             }
         }
 
+    fun deserializeExport(): WasmExport<*> {
+        // The name is deserialized before the id.
+        val name = deserializeString()
+        return withId { id ->
+            when (id) {
+                0 -> WasmExport.Function(name, deserializeFunction())
+                1 -> WasmExport.Table(name, deserializeTable())
+                2 -> WasmExport.Memory(name, deserializeMemory())
+                3 -> WasmExport.Global(name, deserializeGlobal())
+                4 -> WasmExport.Tag(name, deserializeTag())
+                else -> idError()
+            }
+        }
+    }
+
+    fun deserializeLimits(): WasmLimits =
+        withFlags { flags ->
+            val minSize = b.readUInt32()
+            val maxSize = if (flags.consume()) null else b.readUInt32()
+            WasmLimits(minSize, maxSize)
+        }
+
     fun deserializeImportDescriptor(): WasmImportDescriptor {
         val moduleName = deserializeString()
         val declarationName = deserializeSymbol(::deserializeString)
         return WasmImportDescriptor(moduleName, declarationName)
     }
 
+    fun <A, B> deserializePair(deserializeAFunc: () -> A, deserializeBFunc: () -> B): Pair<A, B> {
+        val a = deserializeAFunc()
+        val b = deserializeBFunc()
+        return Pair(a, b)
+    }
+
     fun <T> deserializeList(itemDeserializeFunc: () -> T): MutableList<T> {
         val size = deserializeInt()
         val list = ArrayList<T>(size)
-        for (i in 0 until size) {
+        repeat(size) {
             list.add(itemDeserializeFunc())
         }
         return list
+    }
+
+    fun <T> deserializeSet(itemDeserializeFunc: () -> T): LinkedHashSet<T> {
+        val size = deserializeInt()
+        val set = newLinkedHashSetWithExpectedSize<T>(size)
+        repeat(size) {
+            set.add(itemDeserializeFunc())
+        }
+        return set
     }
 
     fun <K, V> deserializeMap(deserializeKeyFunc: () -> K, deserializeValueFunc: () -> V): LinkedHashMap<K, V> {
@@ -276,12 +328,6 @@ class WasmDeserializer(val inputStream: InputStream) {
             map[key] = value
         }
         return map
-    }
-
-    fun <A, B> deserializePair(deserializeAFunc: () -> A, deserializeBFunc: () -> B): Pair<A, B> {
-        val a = deserializeAFunc()
-        val b = deserializeBFunc()
-        return Pair(a, b)
     }
 
     fun deserializeSourceLocation() =
@@ -443,6 +489,10 @@ class WasmDeserializer(val inputStream: InputStream) {
         return String(bytes)
     }
 
+    fun deserializeInt() = b.readUInt32().toInt()
+
+    fun deserializeLong() = b.readUInt64().toLong()
+
     fun <Ir, Wasm : Any> deserializeReferencableElements(
         irDeserializeFunc: () -> Ir,
         wasmDeserializeFunc: () -> Wasm
@@ -460,12 +510,39 @@ class WasmDeserializer(val inputStream: InputStream) {
         wasmToIr = deserializeMap(wasmDeserializeFunc, irDeserializeFunc)
     }
 
-    private fun deserializeInt() = b.readUInt32().toInt()
+    fun deserializeWasmCompiledFileFragment(): WasmCompiledFileFragment = WasmCompiledFileFragment().apply {
+        functions = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
+        globalFields = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
+        globalVTables = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
+        globalClassITables = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
+        functionTypes = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunctionType)
+        gcTypes = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration)
+        vTableGcTypes = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration)
+        classITableGcType = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration)
+        classITableInterfaceSlot = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeInt)
+        classITableInterfaceTableSize = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeInt)
+        classITableInterfaceHasImplementors = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeInt)
+        typeInfo = deserializeMap(::deserializeIdSignature, ::deserializeConstantDataElement)
+        classIds = deserializeReferencableElements(::deserializeIdSignature, ::deserializeInt)
+        interfaceIds = deserializeReferencableElements(::deserializeIdSignature, ::deserializeInt)
+        stringLiteralAddress = deserializeReferencableElements(::deserializeString, ::deserializeInt)
+        stringLiteralPoolId = deserializeReferencableElements(::deserializeString, ::deserializeInt)
+        constantArrayDataSegmentId = deserializeReferencableElements({ deserializePair({ deserializeList(::deserializeLong) }, ::deserializeType) }, ::deserializeInt)
+        interfaceUnions = deserializeList { deserializeList(::deserializeIdSignature) }
+        declaredInterfaces = deserializeList(::deserializeIdSignature)
+        initFunctions = deserializeList(::deserializeFunWithPriority)
+        uniqueJsFunNames = deserializeReferencableElements(::deserializeString, ::deserializeString)
+        jsFuns = deserializeList(::deserializeJsCodeSnippet)
+        jsModuleImports = deserializeSet(::deserializeString)
+        exports = deserializeList(::deserializeExport)
+        scratchMemAddr = deserializeSymbol(::deserializeInt)
+        stringPoolSize = deserializeSymbol(::deserializeInt)
+    }
 
-    private fun <T : Any> deserializeSymbol(deserializeFunc: () -> T) =
+    fun <T : Any> deserializeSymbol(deserializeFunc: () -> T) =
         withFlags { flags -> deserializeSymbol(flags, deserializeFunc) }
 
-    private fun <T : Any> deserializeSymbol(flags: Flags, deserializeFunc: () -> T): WasmSymbol<T> {
+    fun <T : Any> deserializeSymbol(flags: Flags, deserializeFunc: () -> T): WasmSymbol<T> {
         val owner = if (flags.consume()) null else deserializeFunc()
         return WasmSymbol(owner)
     }

@@ -21,51 +21,51 @@ import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 class WasmCompiledFileFragment {
-    val functions =
+    var functions =
         ReferencableAndDefinable<IdSignature, WasmFunction>()
-    val globalFields =
+    var globalFields =
         ReferencableAndDefinable<IdSignature, WasmGlobal>()
-    val globalVTables =
+    var globalVTables =
         ReferencableAndDefinable<IdSignature, WasmGlobal>()
-    val globalClassITables =
+    var globalClassITables =
         ReferencableAndDefinable<IdSignature, WasmGlobal>()
-    val functionTypes =
+    var functionTypes =
         ReferencableAndDefinable<IdSignature, WasmFunctionType>()
-    val gcTypes =
+    var gcTypes =
         ReferencableAndDefinable<IdSignature, WasmTypeDeclaration>()
-    val vTableGcTypes =
+    var vTableGcTypes =
         ReferencableAndDefinable<IdSignature, WasmTypeDeclaration>()
-    val classITableGcType =
+    var classITableGcType =
         ReferencableAndDefinable<IdSignature, WasmTypeDeclaration>()
-    val classITableInterfaceSlot =
+    var classITableInterfaceSlot =
         ReferencableAndDefinable<IdSignature, Int>()
-    val classITableInterfaceTableSize =
+    var classITableInterfaceTableSize =
         ReferencableAndDefinable<IdSignature, Int>()
-    val classITableInterfaceHasImplementors =
+    var classITableInterfaceHasImplementors =
         ReferencableAndDefinable<IdSignature, Int>()
-    val typeInfo =
+    var typeInfo =
         mutableMapOf<IdSignature, ConstantDataElement>()
-    val classIds =
+    var classIds =
         ReferencableElements<IdSignature, Int>()
-    val interfaceIds =
+    var interfaceIds =
         ReferencableElements<IdSignature, Int>()
-    val stringLiteralAddress =
+    var stringLiteralAddress =
         ReferencableElements<String, Int>()
-    val stringLiteralPoolId =
+    var stringLiteralPoolId =
         ReferencableElements<String, Int>()
-    val constantArrayDataSegmentId =
+    var constantArrayDataSegmentId =
         ReferencableElements<Pair<List<Long>, WasmType>, Int>()
-    val interfaceUnions =
+    var interfaceUnions =
         mutableListOf<List<IdSignature>>()
-    val declaredInterfaces =
+    var declaredInterfaces =
         mutableListOf<IdSignature>()
-    val initFunctions = mutableListOf<FunWithPriority>()
-    val uniqueJsFunNames = ReferencableElements<String, String>()
-    val jsFuns = mutableListOf<JsCodeSnippet>()
-    val jsModuleImports = mutableSetOf<String>()
-    val exports = mutableListOf<WasmExport<*>>()
-    val scratchMemAddr = WasmSymbol<Int>()
-    val stringPoolSize = WasmSymbol<Int>()
+    var initFunctions = mutableListOf<FunWithPriority>()
+    var uniqueJsFunNames = ReferencableElements<String, String>()
+    var jsFuns = mutableListOf<JsCodeSnippet>()
+    var jsModuleImports = mutableSetOf<String>()
+    var exports = mutableListOf<WasmExport<*>>()
+    var scratchMemAddr = WasmSymbol<Int>()
+    var stringPoolSize = WasmSymbol<Int>()
     val throwableTagIndex = WasmSymbol<Int>()
     val jsExceptionTagIndex = WasmSymbol<Int>()
 }
