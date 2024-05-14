@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -30,6 +31,7 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
         }
 
         defaultDirectives {
+            +ENABLE_PARCELIZE
             +USE_PSI_CLASS_FILES_READING
             DIAGNOSTICS with "-UNUSED_PARAMETER"
         }

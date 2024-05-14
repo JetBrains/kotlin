@@ -44,14 +44,14 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testImplementation(project(":kotlinx-serialization-compiler-plugin.common"))
-    testImplementation(project(":kotlinx-serialization-compiler-plugin.k1"))
-    testImplementation(project(":kotlinx-serialization-compiler-plugin.k2"))
-    testImplementation(project(":kotlinx-serialization-compiler-plugin.backend"))
-    testImplementation(project(":kotlinx-serialization-compiler-plugin.cli"))
+    testApi(project(":kotlinx-serialization-compiler-plugin.common"))
+    testApi(project(":kotlinx-serialization-compiler-plugin.k1"))
+    testApi(project(":kotlinx-serialization-compiler-plugin.k2"))
+    testApi(project(":kotlinx-serialization-compiler-plugin.backend"))
+    testApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    testApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0")
+    testApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     coreJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0") { isTransitive = false }
     jsonJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0") { isTransitive = false }

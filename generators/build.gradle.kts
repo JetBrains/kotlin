@@ -72,6 +72,7 @@ dependencies {
     testApi(projectTests(":kotlin-atomicfu-compiler-plugin"))
     testApi(projectTests(":plugins:fir-plugin-prototype"))
     testApi(projectTests(":plugins:fir-plugin-prototype:fir-plugin-ic-test"))
+    testApi(projectTests(":plugins:plugins-interactions-testing"))
     testApi(projectTests(":generators:test-generator"))
     testApi(projectTests(":plugins:scripting:scripting-tests"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

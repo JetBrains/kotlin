@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirPsiAsmLikeInstructionListingTest
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -21,6 +22,7 @@ open class AbstractFirParcelizeBytecodeListingTest : AbstractFirPsiAsmLikeInstru
 private fun TestConfigurationBuilder.configureParcelizeSpecific() {
     defaultDirectives {
         +FIR_DIFFERENCE
+        +ENABLE_PARCELIZE
     }
     useConfigurators(::ParcelizeEnvironmentConfigurator)
 }

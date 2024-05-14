@@ -90,6 +90,7 @@
         <option value="$PROJECT_DIR$/analysis/symbol-light-classes/testData" />
         <option value="$PROJECT_DIR$/analysis/low-level-api-fir/testData" />
         <option value="$PROJECT_DIR$/native/native.tests/testData" />
+        <option value="$PROJECT_DIR$/plugins/plugins-interactions-testing/testData" />
       </array>
     </option>
   </component>

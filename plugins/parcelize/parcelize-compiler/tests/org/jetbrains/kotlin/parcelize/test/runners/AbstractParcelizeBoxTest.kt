@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeMainClassProvider
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeRuntimeClasspathProvider
@@ -50,6 +51,7 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
 
     override fun TestConfigurationBuilder.configuration() {
         defaultDirectives {
+            +ENABLE_PARCELIZE
             +REQUIRES_SEPARATE_PROCESS
             +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         }

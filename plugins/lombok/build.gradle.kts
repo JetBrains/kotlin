@@ -12,12 +12,12 @@ dependencies {
     embedded(project(":kotlin-lombok-compiler-plugin.cli")) { isTransitive = false }
 
     testImplementation(intellijCore())
-    testImplementation(project(":kotlin-lombok-compiler-plugin.common"))
-    testImplementation(project(":kotlin-lombok-compiler-plugin.k1"))
-    testImplementation(project(":kotlin-lombok-compiler-plugin.k2"))
-    testImplementation(project(":kotlin-lombok-compiler-plugin.cli"))
+    testApi(project(":kotlin-lombok-compiler-plugin.common"))
+    testApi(project(":kotlin-lombok-compiler-plugin.k1"))
+    testApi(project(":kotlin-lombok-compiler-plugin.k2"))
+    testApi(project(":kotlin-lombok-compiler-plugin.cli"))
 
-    testImplementation(commonDependency("org.projectlombok:lombok"))
+    testApi(commonDependency("org.projectlombok:lombok"))
 
     testApi(project(":compiler:util"))
     testApi(project(":compiler:backend"))

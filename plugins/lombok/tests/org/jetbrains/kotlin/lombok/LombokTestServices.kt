@@ -9,6 +9,7 @@ import lombok.Getter
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.lombok.LombokDirectives.ENABLE_LOMBOK
 import org.jetbrains.kotlin.lombok.LombokDirectives.WITH_GUAVA
 import org.jetbrains.kotlin.lombok.LombokEnvironmentConfigurator.Companion.GUAVA_JAR
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -26,6 +27,7 @@ class LombokAdditionalSourceFileProvider(testServices: TestServices) : Additiona
     }
 
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+        if (ENABLE_LOMBOK !in module.directives) return emptyList()
         return listOf(File(COMMON_SOURCE_PATH).toTestFile())
     }
 }
@@ -43,6 +45,7 @@ class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         get() = listOf(LombokDirectives)
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        if (ENABLE_LOMBOK !in module.directives) return
         configuration.addJvmClasspathRoot(PathUtil.getResourcePathForClass(Getter::class.java))
         if (WITH_GUAVA in module.directives) {
             configuration.addJvmClasspathRoot(GUAVA_JAR)
@@ -60,12 +63,14 @@ class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
     }
 
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
+        if (ENABLE_LOMBOK !in module.directives) return
         LombokComponentRegistrar.registerComponents(this, configuration)
     }
 }
 
 class LombokRuntimeClassPathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
+        if (ENABLE_LOMBOK !in module.directives) return emptyList()
         return if (WITH_GUAVA in module.directives) {
             listOf(GUAVA_JAR)
         } else {
@@ -75,5 +80,6 @@ class LombokRuntimeClassPathProvider(testServices: TestServices) : RuntimeClassp
 }
 
 object LombokDirectives : SimpleDirectivesContainer() {
+    val ENABLE_LOMBOK by directive("Enables lombok plugin")
     val WITH_GUAVA by directive("Add guava to classpath")
 }

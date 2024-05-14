@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrAsmLikeInstructionListingTest
@@ -12,6 +13,11 @@ import org.jetbrains.kotlin.test.runners.codegen.AbstractIrAsmLikeInstructionLis
 open class AbstractParcelizeIrBytecodeListingTest : AbstractIrAsmLikeInstructionListingTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.useConfigurators(::ParcelizeEnvironmentConfigurator)
+        with(builder) {
+            defaultDirectives {
+                +ENABLE_PARCELIZE
+            }
+            useConfigurators(::ParcelizeEnvironmentConfigurator)
+        }
     }
 }
