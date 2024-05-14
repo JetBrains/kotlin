@@ -567,6 +567,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableFusMetricsCollection: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_COLLECT_FUS_METRICS_ENABLED) ?: true
 
+    val produceUnpackedKlibs: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_PRODUCE_UNCOMPRESSED_KLIBS) ?: false
+
+    val consumeUnpackedKlibs: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_CONSUME_UNCOMPRESSED_KLIBS) ?: false
+
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
      * @see KOTLIN_JS_KARMA_BROWSERS
@@ -690,6 +696,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
             property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableUnsafeOptimizationsForMultiplatform")
         val KOTLIN_KLIBS_KT64115_WORKAROUND_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.enableWorkaroundForKT64115")
         val KOTLIN_COLLECT_FUS_METRICS_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.collectFUSMetrics")
+        val KOTLIN_PRODUCE_UNCOMPRESSED_KLIBS = property("kotlin.uncompressedKlibs.produce")
+        val KOTLIN_CONSUME_UNCOMPRESSED_KLIBS = property("kotlin.uncompressedKlibs.consume")
     }
 
     companion object {

@@ -67,7 +67,7 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
             task.konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
         })
         // for metadata tasks we should provide unpacked klib
-        task.produceUnpackedKlib.set(isMetadataCompilation)
+        task.produceUnpackedKlib.set(isMetadataCompilation || project.kotlinPropertiesProvider.produceUnpackedKlibs)
     }
 
     compilationInfo.classesDirs.from(kotlinNativeCompile.map { it.outputFile })
