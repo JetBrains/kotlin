@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -105,18 +106,17 @@ internal class AnnotationTranslator {
 
             is KtArrayAnnotationValue -> ArrayValue(annotationValue.values.map { toDokkaAnnotationValue(it) })
             is KtAnnotationApplicationValue -> AnnotationValue(toDokkaAnnotation(annotationValue.annotationValue))
-            is KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue -> ClassValue(
-                annotationValue.classId.relativeClassName.asString(),
-                annotationValue.classId.createDRI()
-            )
-
-            is KtKClassAnnotationValue.KtLocalKClassAnnotationValue -> throw IllegalStateException("Unexpected a local class in annotation")
-            is KtKClassAnnotationValue.KtErrorClassAnnotationValue -> ClassValue(
-                annotationValue.unresolvedQualifierName ?: "",
-                DRI(packageName = "", classNames = ERROR_CLASS_NAME)
-            )
-
-            KtUnsupportedAnnotationValue -> ClassValue(
+            is KtKClassAnnotationValue -> when (val type: KtType = annotationValue.type) {
+                is KtNonErrorClassType -> ClassValue(
+                    type.classId.relativeClassName.asString(),
+                    type.classId.createDRI()
+                )
+                else -> ClassValue(
+                    type.asStringForDebugging(),
+                    DRI(packageName = "", classNames = ERROR_CLASS_NAME)
+                )
+            }
+            is KtUnsupportedAnnotationValue -> ClassValue(
                 "<Unsupported Annotation Value>",
                 DRI(packageName = "", classNames = ERROR_CLASS_NAME)
             )
