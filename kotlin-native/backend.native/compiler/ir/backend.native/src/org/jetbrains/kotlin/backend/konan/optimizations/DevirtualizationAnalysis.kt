@@ -46,6 +46,16 @@ object DevirtualizationUnfoldFactors {
      * Maximum unfold factor for a devirtualized interface call.
      */
     const val IR_DEVIRTUALIZED_ITABLE_CALL = 3
+
+    /**
+     * Maximum unfold factor for a devirtualized call during the call graph construction.
+     */
+    const val DFG_DEVIRTUALIZED_CALL = 5
+
+    /**
+     * Maximum unfold factor for a non devirtualized call during the call graph construction.
+     */
+    const val DFG_NON_DEVIRTUALIZED_CALL = 5
 }
 
 // Devirtualization analysis is performed using Variable Type Analysis algorithm.
