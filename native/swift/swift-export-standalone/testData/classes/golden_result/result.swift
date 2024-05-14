@@ -13,7 +13,7 @@ public class CLASS_WITH_SAME_NAME : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
     public func foo() -> Swift.Int32 {
-        fatalError()
+        return CLASS_WITH_SAME_NAME_foo(self.__externalRCRef())
     }
 }
 /**
@@ -22,7 +22,7 @@ public class CLASS_WITH_SAME_NAME : KotlinRuntime.KotlinBase {
 public class ClassWithNonPublicConstructor : KotlinRuntime.KotlinBase {
     public var a: Swift.Int32 {
         get {
-            fatalError()
+            return ClassWithNonPublicConstructor_a_get(self.__externalRCRef())
         }
     }
     public override init(
@@ -46,7 +46,7 @@ public class Foo : KotlinRuntime.KotlinBase {
         */
         public var my_value_inner: Swift.UInt32 {
             get {
-                fatalError()
+                return Foo_INSIDE_CLASS_my_value_inner_get(self.__externalRCRef())
             }
         }
         /**
@@ -54,10 +54,10 @@ public class Foo : KotlinRuntime.KotlinBase {
         */
         public var my_variable_inner: Swift.Int64 {
             get {
-                fatalError()
+                return Foo_INSIDE_CLASS_my_variable_inner_get(self.__externalRCRef())
             }
             set {
-                fatalError()
+                return Foo_INSIDE_CLASS_my_variable_inner_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
             }
         }
         /**
@@ -77,7 +77,7 @@ public class Foo : KotlinRuntime.KotlinBase {
         * this is a sample comment for func on INSIDE_CLASS without package
         */
         public func my_func() -> Swift.Bool {
-            fatalError()
+            return Foo_INSIDE_CLASS_my_func(self.__externalRCRef())
         }
     }
     /**
@@ -85,7 +85,7 @@ public class Foo : KotlinRuntime.KotlinBase {
     */
     public var my_value: Swift.UInt32 {
         get {
-            fatalError()
+            return Foo_my_value_get(self.__externalRCRef())
         }
     }
     /**
@@ -93,10 +93,10 @@ public class Foo : KotlinRuntime.KotlinBase {
     */
     public var my_variable: Swift.Int64 {
         get {
-            fatalError()
+            return Foo_my_variable_get(self.__externalRCRef())
         }
         set {
-            fatalError()
+            return Foo_my_variable_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
         }
     }
     public override init(
@@ -125,7 +125,7 @@ public class Foo : KotlinRuntime.KotlinBase {
     * this is a sample comment for func on class without package
     */
     public func foo() -> Swift.Bool {
-        fatalError()
+        return Foo_foo(self.__externalRCRef())
     }
 }
 /**
@@ -147,7 +147,7 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
         }
         public var i: Swift.Int32 {
             get {
-                fatalError()
+                return OBJECT_NO_PACKAGE_Bar_i_get(self.__externalRCRef())
             }
         }
         public override init(
@@ -163,7 +163,7 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
             OBJECT_NO_PACKAGE_Bar_init_initialize__TypesOfArguments__uintptr_t_int32_t__(__kt, i)
         }
         public func bar() -> Swift.Int32 {
-            fatalError()
+            return OBJECT_NO_PACKAGE_Bar_bar(self.__externalRCRef())
         }
     }
     public class Foo : KotlinRuntime.KotlinBase {
@@ -200,15 +200,15 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
     }
     public var value: Swift.Int32 {
         get {
-            fatalError()
+            return OBJECT_NO_PACKAGE_value_get(self.__externalRCRef())
         }
     }
     public var variable: Swift.Int32 {
         get {
-            fatalError()
+            return OBJECT_NO_PACKAGE_variable_get(self.__externalRCRef())
         }
         set {
-            fatalError()
+            return OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__int32_t__(self.__externalRCRef(), newValue)
         }
     }
     private override init() {
@@ -220,7 +220,7 @@ public class OBJECT_NO_PACKAGE : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
     public func foo() -> Swift.Int32 {
-        fatalError()
+        return OBJECT_NO_PACKAGE_foo(self.__externalRCRef())
     }
 }
 public extension main.namespace.deeper {
@@ -229,15 +229,15 @@ public extension main.namespace.deeper {
             public class DEEPER_INSIDE_CLASS : KotlinRuntime.KotlinBase {
                 public var my_value: Swift.UInt32 {
                     get {
-                        fatalError()
+                        return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_value_get(self.__externalRCRef())
                     }
                 }
                 public var my_variable: Swift.Int64 {
                     get {
-                        fatalError()
+                        return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_get(self.__externalRCRef())
                     }
                     set {
-                        fatalError()
+                        return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
                     }
                 }
                 public override init() {
@@ -251,20 +251,20 @@ public extension main.namespace.deeper {
                     super.init(__externalRCRef: __externalRCRef)
                 }
                 public func foo() -> Swift.Bool {
-                    fatalError()
+                    return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_foo(self.__externalRCRef())
                 }
             }
             public var my_value: Swift.UInt32 {
                 get {
-                    fatalError()
+                    return namespace_deeper_Foo_INSIDE_CLASS_my_value_get(self.__externalRCRef())
                 }
             }
             public var my_variable: Swift.Int64 {
                 get {
-                    fatalError()
+                    return namespace_deeper_Foo_INSIDE_CLASS_my_variable_get(self.__externalRCRef())
                 }
                 set {
-                    fatalError()
+                    return namespace_deeper_Foo_INSIDE_CLASS_my_variable_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
                 }
             }
             public override init() {
@@ -278,20 +278,20 @@ public extension main.namespace.deeper {
                 super.init(__externalRCRef: __externalRCRef)
             }
             public func foo() -> Swift.Bool {
-                fatalError()
+                return namespace_deeper_Foo_INSIDE_CLASS_foo(self.__externalRCRef())
             }
         }
         public var my_value: Swift.UInt32 {
             get {
-                fatalError()
+                return namespace_deeper_Foo_my_value_get(self.__externalRCRef())
             }
         }
         public var my_variable: Swift.Int64 {
             get {
-                fatalError()
+                return namespace_deeper_Foo_my_variable_get(self.__externalRCRef())
             }
             set {
-                fatalError()
+                return namespace_deeper_Foo_my_variable_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
             }
         }
         public override init() {
@@ -305,7 +305,7 @@ public extension main.namespace.deeper {
             super.init(__externalRCRef: __externalRCRef)
         }
         public func foo() -> Swift.Bool {
-            fatalError()
+            return namespace_deeper_Foo_foo(self.__externalRCRef())
         }
     }
     public class NAMESPACED_CLASS : KotlinRuntime.KotlinBase {
@@ -345,7 +345,7 @@ public extension main.namespace.deeper {
             }
             public var i: Swift.Int32 {
                 get {
-                    fatalError()
+                    return namespace_deeper_OBJECT_WITH_PACKAGE_Bar_i_get(self.__externalRCRef())
                 }
             }
             public override init(
@@ -361,7 +361,7 @@ public extension main.namespace.deeper {
                 namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_initialize__TypesOfArguments__uintptr_t_int32_t__(__kt, i)
             }
             public func bar() -> Swift.Int32 {
-                fatalError()
+                return namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar(self.__externalRCRef())
             }
         }
         public class Foo : KotlinRuntime.KotlinBase {
@@ -398,15 +398,15 @@ public extension main.namespace.deeper {
         }
         public var value: Swift.Int32 {
             get {
-                fatalError()
+                return namespace_deeper_OBJECT_WITH_PACKAGE_value_get(self.__externalRCRef())
             }
         }
         public var variable: Swift.Int32 {
             get {
-                fatalError()
+                return namespace_deeper_OBJECT_WITH_PACKAGE_variable_get(self.__externalRCRef())
             }
             set {
-                fatalError()
+                return namespace_deeper_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__int32_t__(self.__externalRCRef(), newValue)
             }
         }
         private override init() {
@@ -418,7 +418,7 @@ public extension main.namespace.deeper {
             super.init(__externalRCRef: __externalRCRef)
         }
         public func foo() -> Swift.Int32 {
-            fatalError()
+            return namespace_deeper_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())
         }
     }
 }
@@ -447,7 +447,7 @@ public extension main.namespace {
         */
         public var my_value: Swift.UInt32 {
             get {
-                fatalError()
+                return namespace_Foo_my_value_get(self.__externalRCRef())
             }
         }
         /**
@@ -455,10 +455,10 @@ public extension main.namespace {
         */
         public var my_variable: Swift.Int64 {
             get {
-                fatalError()
+                return namespace_Foo_my_variable_get(self.__externalRCRef())
             }
             set {
-                fatalError()
+                return namespace_Foo_my_variable_set__TypesOfArguments__int64_t__(self.__externalRCRef(), newValue)
             }
         }
         public override init() {
@@ -475,7 +475,7 @@ public extension main.namespace {
         * this is a sample comment for func on class with package
         */
         public func foo() -> Swift.Bool {
-            fatalError()
+            return namespace_Foo_foo(self.__externalRCRef())
         }
     }
     /**
@@ -512,7 +512,7 @@ public extension main.why_we_need_module_names {
             super.init(__externalRCRef: __externalRCRef)
         }
         public func foo() -> Swift.Void {
-            fatalError()
+            return why_we_need_module_names_CLASS_WITH_SAME_NAME_foo(self.__externalRCRef())
         }
     }
     /**

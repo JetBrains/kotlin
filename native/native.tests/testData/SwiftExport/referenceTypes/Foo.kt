@@ -1,4 +1,10 @@
-class Foo(val x: Int)
+class Foo(var x: Int) {
+    fun getAndSetX(newX: Int): Int {
+        val oldX = x
+        x = newX
+        return oldX
+    }
+}
 
 fun getX(foo: Foo) = foo.x
 

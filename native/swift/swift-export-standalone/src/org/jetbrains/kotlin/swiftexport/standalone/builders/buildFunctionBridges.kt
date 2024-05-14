@@ -88,34 +88,18 @@ private fun SirInit.constructBridgeRequests(generator: BridgeGenerator): List<Br
 private fun SirCallable.patchCallableBodyAndGenerateRequest(
     generator: BridgeGenerator,
     fqName: List<String>,
-): BridgeRequest? = when (kind) {
-    SirCallableKind.FUNCTION,
-    SirCallableKind.STATIC_METHOD,
-    SirCallableKind.CLASS_METHOD,
-    -> {
-        if (kind == SirCallableKind.CLASS_METHOD) {
-            // Only init is supported for now.
-            check(this is SirInit)
-        }
-        val typesUsed = listOf(returnType) + allParameters.map { it.type }
-        if (typesUsed.all { it.isSupported }) {
-            val suffix = bridgeSuffix
-            val request = BridgeRequest(
-                this,
-                fqName.forBridge.joinToString("_") + suffix,
-                fqName
-            )
-            body = generator.generateSirFunctionBody(request)
-            request
-        } else {
-            null
-        }
-
-    }
-    SirCallableKind.INSTANCE_METHOD,
-    -> {
-        null
-    }
+): BridgeRequest? {
+    val typesUsed = listOf(returnType) + allParameters.map { it.type }
+    if (typesUsed.any { !it.isSupported })
+        return null
+    val suffix = bridgeSuffix
+    val request = BridgeRequest(
+        this,
+        fqName.forBridge.joinToString("_") + suffix,
+        fqName
+    )
+    body = generator.generateSirFunctionBody(request)
+    return request
 }
 
 private val SirType.isSupported: Boolean

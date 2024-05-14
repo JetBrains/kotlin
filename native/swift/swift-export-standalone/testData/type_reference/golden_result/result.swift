@@ -70,54 +70,54 @@ public class Demo : KotlinRuntime.KotlinBase {
     }
     public var arg1: main.Class_without_package {
         get {
-            fatalError()
+            return main.Class_without_package(__externalRCRef: Demo_arg1_get(self.__externalRCRef()))
         }
     }
     public var arg2: main.namespace.deeper.Class_with_package {
         get {
-            fatalError()
+            return main.namespace.deeper.Class_with_package(__externalRCRef: Demo_arg2_get(self.__externalRCRef()))
         }
     }
     public var arg3: main.Object_without_package {
         get {
-            fatalError()
+            return main.Object_without_package(__externalRCRef: Demo_arg3_get(self.__externalRCRef()))
         }
     }
     public var arg4: main.namespace.deeper.Object_with_package {
         get {
-            fatalError()
+            return main.namespace.deeper.Object_with_package(__externalRCRef: Demo_arg4_get(self.__externalRCRef()))
         }
     }
     public var var1: main.Class_without_package {
         get {
-            fatalError()
+            return main.Class_without_package(__externalRCRef: Demo_var1_get(self.__externalRCRef()))
         }
         set {
-            fatalError()
+            return Demo_var1_set__TypesOfArguments__uintptr_t__(self.__externalRCRef(), newValue.__externalRCRef())
         }
     }
     public var var2: main.namespace.deeper.Class_with_package {
         get {
-            fatalError()
+            return main.namespace.deeper.Class_with_package(__externalRCRef: Demo_var2_get(self.__externalRCRef()))
         }
         set {
-            fatalError()
+            return Demo_var2_set__TypesOfArguments__uintptr_t__(self.__externalRCRef(), newValue.__externalRCRef())
         }
     }
     public var var3: main.Object_without_package {
         get {
-            fatalError()
+            return main.Object_without_package(__externalRCRef: Demo_var3_get(self.__externalRCRef()))
         }
         set {
-            fatalError()
+            return Demo_var3_set__TypesOfArguments__uintptr_t__(self.__externalRCRef(), newValue.__externalRCRef())
         }
     }
     public var var4: main.namespace.deeper.Object_with_package {
         get {
-            fatalError()
+            return main.namespace.deeper.Object_with_package(__externalRCRef: Demo_var4_get(self.__externalRCRef()))
         }
         set {
-            fatalError()
+            return Demo_var4_set__TypesOfArguments__uintptr_t__(self.__externalRCRef(), newValue.__externalRCRef())
         }
     }
     public override init(
@@ -141,7 +141,7 @@ public class Demo : KotlinRuntime.KotlinBase {
         arg3: main.Object_without_package,
         arg4: main.namespace.deeper.Object_with_package
     ) -> main.Demo {
-        fatalError()
+        return main.Demo(__externalRCRef: Demo_combine__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
     }
     public func combine_inner_classses(
         arg1: main.Class_without_package.INNER_CLASS,
@@ -149,7 +149,7 @@ public class Demo : KotlinRuntime.KotlinBase {
         arg3: main.Object_without_package.INNER_CLASS,
         arg4: main.namespace.deeper.Object_with_package.INNER_CLASS
     ) -> main.Demo.INNER_CLASS {
-        fatalError()
+        return main.Demo.INNER_CLASS(__externalRCRef: Demo_combine_inner_classses__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
     }
     public func combine_inner_objects(
         arg1: main.Class_without_package.INNER_OBJECT,
@@ -157,7 +157,7 @@ public class Demo : KotlinRuntime.KotlinBase {
         arg3: main.Object_without_package.INNER_OBJECT,
         arg4: main.namespace.deeper.Object_with_package.INNER_OBJECT
     ) -> main.Demo.INNER_OBJECT {
-        fatalError()
+        return main.Demo.INNER_OBJECT(__externalRCRef: Demo_combine_inner_objects__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(self.__externalRCRef(), arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()))
     }
 }
 public class Object_without_package : KotlinRuntime.KotlinBase {

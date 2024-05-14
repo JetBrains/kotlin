@@ -1,5 +1,19 @@
 import kotlin.native.internal.ExportedBridge
 
+@ExportedBridge("CLASS_WITH_SAME_NAME_foo")
+public fun CLASS_WITH_SAME_NAME_foo(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as CLASS_WITH_SAME_NAME
+    val _result = __self.foo()
+    return _result
+}
+
+@ExportedBridge("ClassWithNonPublicConstructor_a_get")
+public fun ClassWithNonPublicConstructor_a_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassWithNonPublicConstructor
+    val _result = __self.a
+    return _result
+}
+
 @ExportedBridge("Foo_INSIDE_CLASS_init_allocate")
 public fun Foo_INSIDE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<Foo.INSIDE_CLASS>()
@@ -12,6 +26,62 @@ public fun Foo_INSIDE_CLASS_init_initialize(__kt: kotlin.native.internal.NativeP
     kotlin.native.internal.initInstance(____kt, Foo.INSIDE_CLASS())
 }
 
+@ExportedBridge("Foo_INSIDE_CLASS_my_func")
+public fun Foo_INSIDE_CLASS_my_func(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.INSIDE_CLASS
+    val _result = __self.my_func()
+    return _result
+}
+
+@ExportedBridge("Foo_INSIDE_CLASS_my_value_inner_get")
+public fun Foo_INSIDE_CLASS_my_value_inner_get(self: kotlin.native.internal.NativePtr): UInt {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.INSIDE_CLASS
+    val _result = __self.my_value_inner
+    return _result
+}
+
+@ExportedBridge("Foo_INSIDE_CLASS_my_variable_inner_get")
+public fun Foo_INSIDE_CLASS_my_variable_inner_get(self: kotlin.native.internal.NativePtr): Long {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.INSIDE_CLASS
+    val _result = __self.my_variable_inner
+    return _result
+}
+
+@ExportedBridge("Foo_INSIDE_CLASS_my_variable_inner_set__TypesOfArguments__int64_t__")
+public fun Foo_INSIDE_CLASS_my_variable_inner_set(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.INSIDE_CLASS
+    val __newValue = newValue
+    __self.my_variable_inner = __newValue
+}
+
+@ExportedBridge("Foo_foo")
+public fun Foo_foo(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
+    val _result = __self.foo()
+    return _result
+}
+
+@ExportedBridge("Foo_my_value_get")
+public fun Foo_my_value_get(self: kotlin.native.internal.NativePtr): UInt {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
+    val _result = __self.my_value
+    return _result
+}
+
+@ExportedBridge("Foo_my_variable_get")
+public fun Foo_my_variable_get(self: kotlin.native.internal.NativePtr): Long {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
+    val _result = __self.my_variable
+    return _result
+}
+
+@ExportedBridge("Foo_my_variable_set__TypesOfArguments__int64_t__")
+public fun Foo_my_variable_set(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
+    val __newValue = newValue
+    __self.my_variable = __newValue
+}
+
 @ExportedBridge("OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate")
 public fun OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<OBJECT_NO_PACKAGE.Bar.CLASS_INSIDE_CLASS_INSIDE_OBJECT>()
@@ -22,6 +92,20 @@ public fun OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate(
 public fun OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, OBJECT_NO_PACKAGE.Bar.CLASS_INSIDE_CLASS_INSIDE_OBJECT())
+}
+
+@ExportedBridge("OBJECT_NO_PACKAGE_Bar_bar")
+public fun OBJECT_NO_PACKAGE_Bar_bar(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE.Bar
+    val _result = __self.bar()
+    return _result
+}
+
+@ExportedBridge("OBJECT_NO_PACKAGE_Bar_i_get")
+public fun OBJECT_NO_PACKAGE_Bar_i_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE.Bar
+    val _result = __self.i
+    return _result
 }
 
 @ExportedBridge("OBJECT_NO_PACKAGE_Bar_init_allocate")
@@ -47,6 +131,34 @@ public fun OBJECT_NO_PACKAGE_Foo_init_allocate(): kotlin.native.internal.NativeP
 public fun OBJECT_NO_PACKAGE_Foo_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, OBJECT_NO_PACKAGE.Foo())
+}
+
+@ExportedBridge("OBJECT_NO_PACKAGE_foo")
+public fun OBJECT_NO_PACKAGE_foo(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE
+    val _result = __self.foo()
+    return _result
+}
+
+@ExportedBridge("OBJECT_NO_PACKAGE_value_get")
+public fun OBJECT_NO_PACKAGE_value_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE
+    val _result = __self.value
+    return _result
+}
+
+@ExportedBridge("OBJECT_NO_PACKAGE_variable_get")
+public fun OBJECT_NO_PACKAGE_variable_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE
+    val _result = __self.variable
+    return _result
+}
+
+@ExportedBridge("OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__int32_t__")
+public fun OBJECT_NO_PACKAGE_variable_set(self: kotlin.native.internal.NativePtr, newValue: Int): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_NO_PACKAGE
+    val __newValue = newValue
+    __self.variable = __newValue
 }
 
 @ExportedBridge("__root___CLASS_WITH_SAME_NAME_init_allocate")
@@ -99,6 +211,13 @@ public fun namespace_Foo_INSIDE_CLASS_init_initialize(__kt: kotlin.native.intern
     kotlin.native.internal.initInstance(____kt, namespace.Foo.INSIDE_CLASS())
 }
 
+@ExportedBridge("namespace_Foo_foo")
+public fun namespace_Foo_foo(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
+    val _result = __self.foo()
+    return _result
+}
+
 @ExportedBridge("namespace_Foo_init_allocate")
 public fun namespace_Foo_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<namespace.Foo>()
@@ -109,6 +228,27 @@ public fun namespace_Foo_init_allocate(): kotlin.native.internal.NativePtr {
 public fun namespace_Foo_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, namespace.Foo())
+}
+
+@ExportedBridge("namespace_Foo_my_value_get")
+public fun namespace_Foo_my_value_get(self: kotlin.native.internal.NativePtr): UInt {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
+    val _result = __self.my_value
+    return _result
+}
+
+@ExportedBridge("namespace_Foo_my_variable_get")
+public fun namespace_Foo_my_variable_get(self: kotlin.native.internal.NativePtr): Long {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
+    val _result = __self.my_variable
+    return _result
+}
+
+@ExportedBridge("namespace_Foo_my_variable_set__TypesOfArguments__int64_t__")
+public fun namespace_Foo_my_variable_set(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
+    val __newValue = newValue
+    __self.my_variable = __newValue
 }
 
 @ExportedBridge("namespace_NAMESPACED_CLASS_init_allocate")
@@ -123,6 +263,13 @@ public fun namespace_NAMESPACED_CLASS_init_initialize(__kt: kotlin.native.intern
     kotlin.native.internal.initInstance(____kt, namespace.NAMESPACED_CLASS())
 }
 
+@ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_foo")
+public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_foo(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS
+    val _result = __self.foo()
+    return _result
+}
+
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_allocate")
 public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS>()
@@ -133,6 +280,34 @@ public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_allocate()
 public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS())
+}
+
+@ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_value_get")
+public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_value_get(self: kotlin.native.internal.NativePtr): UInt {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS
+    val _result = __self.my_value
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_get")
+public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_get(self: kotlin.native.internal.NativePtr): Long {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS
+    val _result = __self.my_variable
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set__TypesOfArguments__int64_t__")
+public fun namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_variable_set(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS.DEEPER_INSIDE_CLASS
+    val __newValue = newValue
+    __self.my_variable = __newValue
+}
+
+@ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_foo")
+public fun namespace_deeper_Foo_INSIDE_CLASS_foo(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS
+    val _result = __self.foo()
+    return _result
 }
 
 @ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_init_allocate")
@@ -147,6 +322,34 @@ public fun namespace_deeper_Foo_INSIDE_CLASS_init_initialize(__kt: kotlin.native
     kotlin.native.internal.initInstance(____kt, namespace.deeper.Foo.INSIDE_CLASS())
 }
 
+@ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_my_value_get")
+public fun namespace_deeper_Foo_INSIDE_CLASS_my_value_get(self: kotlin.native.internal.NativePtr): UInt {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS
+    val _result = __self.my_value
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_my_variable_get")
+public fun namespace_deeper_Foo_INSIDE_CLASS_my_variable_get(self: kotlin.native.internal.NativePtr): Long {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS
+    val _result = __self.my_variable
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_Foo_INSIDE_CLASS_my_variable_set__TypesOfArguments__int64_t__")
+public fun namespace_deeper_Foo_INSIDE_CLASS_my_variable_set(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo.INSIDE_CLASS
+    val __newValue = newValue
+    __self.my_variable = __newValue
+}
+
+@ExportedBridge("namespace_deeper_Foo_foo")
+public fun namespace_deeper_Foo_foo(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
+    val _result = __self.foo()
+    return _result
+}
+
 @ExportedBridge("namespace_deeper_Foo_init_allocate")
 public fun namespace_deeper_Foo_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<namespace.deeper.Foo>()
@@ -159,6 +362,27 @@ public fun namespace_deeper_Foo_init_initialize(__kt: kotlin.native.internal.Nat
     kotlin.native.internal.initInstance(____kt, namespace.deeper.Foo())
 }
 
+@ExportedBridge("namespace_deeper_Foo_my_value_get")
+public fun namespace_deeper_Foo_my_value_get(self: kotlin.native.internal.NativePtr): UInt {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
+    val _result = __self.my_value
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_Foo_my_variable_get")
+public fun namespace_deeper_Foo_my_variable_get(self: kotlin.native.internal.NativePtr): Long {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
+    val _result = __self.my_variable
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_Foo_my_variable_set__TypesOfArguments__int64_t__")
+public fun namespace_deeper_Foo_my_variable_set(self: kotlin.native.internal.NativePtr, newValue: Long): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
+    val __newValue = newValue
+    __self.my_variable = __newValue
+}
+
 @ExportedBridge("namespace_deeper_NAMESPACED_CLASS_init_allocate")
 public fun namespace_deeper_NAMESPACED_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<namespace.deeper.NAMESPACED_CLASS>()
@@ -169,6 +393,20 @@ public fun namespace_deeper_NAMESPACED_CLASS_init_allocate(): kotlin.native.inte
 public fun namespace_deeper_NAMESPACED_CLASS_init_initialize(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)
     kotlin.native.internal.initInstance(____kt, namespace.deeper.NAMESPACED_CLASS())
+}
+
+@ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar")
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE.Bar
+    val _result = __self.bar()
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Bar_i_get")
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_Bar_i_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE.Bar
+    val _result = __self.i
+    return _result
 }
 
 @ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_Bar_init_allocate")
@@ -196,6 +434,40 @@ public fun namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_initialize(__kt: kotlin
     kotlin.native.internal.initInstance(____kt, namespace.deeper.OBJECT_WITH_PACKAGE.Foo())
 }
 
+@ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_foo")
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_foo(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE
+    val _result = __self.foo()
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_value_get")
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_value_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE
+    val _result = __self.value
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_variable_get")
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_variable_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE
+    val _result = __self.variable
+    return _result
+}
+
+@ExportedBridge("namespace_deeper_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__int32_t__")
+public fun namespace_deeper_OBJECT_WITH_PACKAGE_variable_set(self: kotlin.native.internal.NativePtr, newValue: Int): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.OBJECT_WITH_PACKAGE
+    val __newValue = newValue
+    __self.variable = __newValue
+}
+
+@ExportedBridge("why_we_need_module_names_CLASS_WITH_SAME_NAME_foo")
+public fun why_we_need_module_names_CLASS_WITH_SAME_NAME_foo(self: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as why_we_need_module_names.CLASS_WITH_SAME_NAME
+    __self.foo()
+}
+
 @ExportedBridge("why_we_need_module_names_CLASS_WITH_SAME_NAME_init_allocate")
 public fun why_we_need_module_names_CLASS_WITH_SAME_NAME_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<why_we_need_module_names.CLASS_WITH_SAME_NAME>()
@@ -219,5 +491,4 @@ public fun why_we_need_module_names_foo(): kotlin.native.internal.NativePtr {
     val _result = why_we_need_module_names.foo()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
-
 

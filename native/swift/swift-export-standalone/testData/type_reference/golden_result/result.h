@@ -8,6 +8,36 @@ uintptr_t Demo_INNER_CLASS_init_allocate();
 
 void Demo_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
 
+uintptr_t Demo_arg1_get(uintptr_t self);
+
+uintptr_t Demo_arg2_get(uintptr_t self);
+
+uintptr_t Demo_arg3_get(uintptr_t self);
+
+uintptr_t Demo_arg4_get(uintptr_t self);
+
+uintptr_t Demo_combine__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(uintptr_t self, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, uintptr_t arg4);
+
+uintptr_t Demo_combine_inner_classses__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(uintptr_t self, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, uintptr_t arg4);
+
+uintptr_t Demo_combine_inner_objects__TypesOfArguments__uintptr_t_uintptr_t_uintptr_t_uintptr_t__(uintptr_t self, uintptr_t arg1, uintptr_t arg2, uintptr_t arg3, uintptr_t arg4);
+
+uintptr_t Demo_var1_get(uintptr_t self);
+
+void Demo_var1_set__TypesOfArguments__uintptr_t__(uintptr_t self, uintptr_t newValue);
+
+uintptr_t Demo_var2_get(uintptr_t self);
+
+void Demo_var2_set__TypesOfArguments__uintptr_t__(uintptr_t self, uintptr_t newValue);
+
+uintptr_t Demo_var3_get(uintptr_t self);
+
+void Demo_var3_set__TypesOfArguments__uintptr_t__(uintptr_t self, uintptr_t newValue);
+
+uintptr_t Demo_var4_get(uintptr_t self);
+
+void Demo_var4_set__TypesOfArguments__uintptr_t__(uintptr_t self, uintptr_t newValue);
+
 uintptr_t Object_without_package_INNER_CLASS_init_allocate();
 
 void Object_without_package_INNER_CLASS_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
