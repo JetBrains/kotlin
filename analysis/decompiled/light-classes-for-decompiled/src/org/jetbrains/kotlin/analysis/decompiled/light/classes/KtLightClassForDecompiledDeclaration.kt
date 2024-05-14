@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledField
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledMethod
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.analysis.providers.createAllLibrariesModificationTracker
+import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.classes.ClassInnerStuffCache
 import org.jetbrains.kotlin.asJava.classes.getEnumEntriesPsiMethod
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 internal inline fun <R : PsiElement, T> R.cachedValueWithLibraryTracker(
     crossinline computer: () -> T,
 ): T = CachedValuesManager.getCachedValue(this) {
-    CachedValueProvider.Result.createSingleDependency(computer(), project.createAllLibrariesModificationTracker())
+    CachedValueProvider.Result.createSingleDependency(
+        computer(),
+        KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker,
+    )
 }
 
 open class KtLightClassForDecompiledDeclaration(
@@ -44,7 +47,7 @@ open class KtLightClassForDecompiledDeclaration(
         ClassInnerStuffCache(
             /* aClass = */ this,
             /* generateEnumMethods = */ true,
-            /* modificationTrackers = */ listOf(project.createAllLibrariesModificationTracker()),
+            /* modificationTrackers = */ listOf(KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker),
         )
     }
 
