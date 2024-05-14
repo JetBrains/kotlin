@@ -79,7 +79,7 @@ class CollectionStubComputer(val context: JvmBackendContext) {
         }
     }
 
-    private val stubsCache = ConcurrentHashMap<IrClass, List<StubsForCollectionClass>>()
+    private val stubsCache = HashMap<IrClass, List<StubsForCollectionClass>>()
 
     fun stubsForCollectionClasses(irClass: IrClass): List<StubsForCollectionClass> =
         stubsCache.getOrPut(irClass) {

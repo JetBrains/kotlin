@@ -123,7 +123,7 @@ class JvmBackendContext(
     // Store evaluated SMAP for anonymous classes. Used only with IR inliner.
     val typeToCachedSMAP = mutableMapOf<Type, SMAP>()
 
-    private val localClassType = ConcurrentHashMap<IrAttributeContainer, Type>()
+    private val localClassType = HashMap<IrAttributeContainer, Type>()
 
     val isCompilingAgainstJdk8OrLater = state.jvmBackendClassResolver.resolveToClassDescriptors(
         Type.getObjectType("java/lang/invoke/LambdaMetafactory")
@@ -136,24 +136,24 @@ class JvmBackendContext(
         localClassType[container.attributeOwnerId] = value
     }
 
-    val isEnclosedInConstructor = ConcurrentHashMap.newKeySet<IrAttributeContainer>()
-    val enclosingMethodOverride = ConcurrentHashMap<IrFunction, IrFunction>()
+    val isEnclosedInConstructor = HashSet<IrAttributeContainer>()
+    val enclosingMethodOverride = HashMap<IrFunction, IrFunction>()
 
-    private val classCodegens = ConcurrentHashMap<IrClass, Any>()
+    private val classCodegens = HashMap<IrClass, Any>()
 
     @Suppress("UNCHECKED_CAST")
     fun <ClassCodegen : Any> getOrCreateClassCodegen(klass: IrClass, create: (IrClass) -> ClassCodegen): ClassCodegen =
         classCodegens.computeIfAbsent(klass, create) as ClassCodegen
 
-    val localDelegatedProperties = ConcurrentHashMap<IrAttributeContainer, List<IrLocalDelegatedPropertySymbol>>()
+    val localDelegatedProperties = HashMap<IrAttributeContainer, List<IrLocalDelegatedPropertySymbol>>()
 
     val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
     val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
     val multifileFacadeClassForPart = mutableMapOf<IrClass, IrClass>()
     val multifileFacadeMemberToPartMember = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
-    val hiddenConstructorsWithMangledParams = ConcurrentHashMap<IrConstructor, IrConstructor>()
-    val hiddenConstructorsOfSealedClasses = ConcurrentHashMap<IrConstructor, IrConstructor>()
+    val hiddenConstructorsWithMangledParams = HashMap<IrConstructor, IrConstructor>()
+    val hiddenConstructorsOfSealedClasses = HashMap<IrConstructor, IrConstructor>()
 
     val collectionStubComputer = CollectionStubComputer(this)
 
@@ -167,7 +167,7 @@ class JvmBackendContext(
         overridesWithoutStubs.getOrElse(function) { function.overriddenSymbols }
 
     val bridgeLoweringCache = BridgeLoweringCache(this)
-    val functionsWithSpecialBridges: MutableSet<IrFunction> = ConcurrentHashMap.newKeySet()
+    val functionsWithSpecialBridges: MutableSet<IrFunction> = HashSet()
 
     override var inVerbosePhase: Boolean = false // TODO: needs parallelizing
 
@@ -175,10 +175,10 @@ class JvmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.jvm")
 
-    val suspendLambdaToOriginalFunctionMap = ConcurrentHashMap<IrAttributeContainer, IrFunction>()
-    val suspendFunctionOriginalToView = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
+    val suspendLambdaToOriginalFunctionMap = HashMap<IrAttributeContainer, IrFunction>()
+    val suspendFunctionOriginalToView = HashMap<IrSimpleFunction, IrSimpleFunction>()
 
-    val staticDefaultStubs = ConcurrentHashMap<IrSimpleFunctionSymbol, IrSimpleFunction>()
+    val staticDefaultStubs = HashMap<IrSimpleFunctionSymbol, IrSimpleFunction>()
 
     val inlineClassReplacements = MemoizedInlineClassReplacements(config.functionsWithInlineClassReturnTypesMangled, irFactory, this)
 
@@ -190,7 +190,7 @@ class JvmBackendContext(
 
     val publicAbiSymbols = mutableSetOf<IrClassSymbol>()
 
-    val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> = ConcurrentHashMap.newKeySet()
+    val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> = HashSet()
 
     val optionalAnnotations = mutableListOf<MetadataSource.Class>()
 

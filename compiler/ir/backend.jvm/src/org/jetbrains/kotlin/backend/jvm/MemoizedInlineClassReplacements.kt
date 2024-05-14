@@ -34,8 +34,8 @@ class MemoizedInlineClassReplacements(
     context: JvmBackendContext
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("inline-class-replacements")) {
 
-    val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
+    val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = HashMap()
+    val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = HashMap()
 
     private val mangleCallsToJavaMethodsWithValueClasses =
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.MangleCallsToJavaMethodsWithValueClasses)

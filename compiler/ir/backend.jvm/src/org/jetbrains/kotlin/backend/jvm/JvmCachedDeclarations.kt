@@ -35,16 +35,16 @@ class JvmCachedDeclarations(
 ) {
     val syntheticAccessorGenerator = JvmSyntheticAccessorGenerator(context)
 
-    private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
-    private val staticBackingFields = ConcurrentHashMap<IrProperty, IrField>()
-    private val staticCompanionDeclarations = ConcurrentHashMap<IrSimpleFunction, Pair<IrSimpleFunction, IrSimpleFunction>>()
+    private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
+    private val staticBackingFields = HashMap<IrProperty, IrField>()
+    private val staticCompanionDeclarations = HashMap<IrSimpleFunction, Pair<IrSimpleFunction, IrSimpleFunction>>()
 
-    private val defaultImplsMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
-    private val defaultImplsClasses = ConcurrentHashMap<IrClass, IrClass>()
-    private val defaultImplsRedirections = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
-    private val defaultImplsOriginalMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
+    private val defaultImplsMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
+    private val defaultImplsClasses = HashMap<IrClass, IrClass>()
+    private val defaultImplsRedirections = HashMap<IrSimpleFunction, IrSimpleFunction>()
+    private val defaultImplsOriginalMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
 
-    private val repeatedAnnotationSyntheticContainers = ConcurrentHashMap<IrClass, IrClass>()
+    private val repeatedAnnotationSyntheticContainers = HashMap<IrClass, IrClass>()
 
     fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
         singletonFieldDeclarations.getOrPut(enumEntry) {
@@ -339,8 +339,8 @@ class CachedFieldsForObjectInstances(
     private val irFactory: IrFactory,
     private val languageVersionSettings: LanguageVersionSettings,
 ) {
-    private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
-    private val interfaceCompanionFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
+    private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
+    private val interfaceCompanionFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
 
     fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDeclarations.getOrPut(singleton) {

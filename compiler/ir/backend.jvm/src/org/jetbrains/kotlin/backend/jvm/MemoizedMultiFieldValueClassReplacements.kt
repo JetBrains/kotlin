@@ -38,9 +38,9 @@ class MemoizedMultiFieldValueClassReplacements(
     context: JvmBackendContext
 ) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("multi-field-value-class-replacements")) {
 
-    val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
-    val originalConstructorForConstructorReplacement: MutableMap<IrConstructor, IrConstructor> = ConcurrentHashMap()
+    val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = HashMap()
+    val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = HashMap()
+    val originalConstructorForConstructorReplacement: MutableMap<IrConstructor, IrConstructor> = HashMap()
 
     private fun IrValueParameter.grouped(
         name: String?,
@@ -89,7 +89,7 @@ class MemoizedMultiFieldValueClassReplacements(
     ): List<RemappedParameter> = map { it.grouped(name, substitutionMap, targetFunction, originWhenFlattened) }
 
 
-    val oldMfvcDefaultArguments = ConcurrentHashMap<IrValueParameter, IrExpression>()
+    val oldMfvcDefaultArguments = HashMap<IrValueParameter, IrExpression>()
 
     private fun buildReplacement(
         function: IrFunction,
@@ -189,9 +189,9 @@ class MemoizedMultiFieldValueClassReplacements(
         }
     }
 
-    val bindingOldFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> = ConcurrentHashMap()
+    val bindingOldFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> = HashMap()
     val bindingNewFunctionToParameterTemplateStructure: MutableMap<IrFunction, List<RemappedParameter>> =
-        object : ConcurrentHashMap<IrFunction, List<RemappedParameter>>() {
+        object : HashMap<IrFunction, List<RemappedParameter>>() {
             override fun put(key: IrFunction, value: List<RemappedParameter>): List<RemappedParameter>? {
                 require(key.explicitParametersCount == value.sumOf { it.valueParameters.size }) {
                     "Illegal structure $value for function ${key.dump()}"
@@ -331,10 +331,10 @@ class MemoizedMultiFieldValueClassReplacements(
         return this
     }
 
-    private val fieldsToRemove = ConcurrentHashMap<IrClass, MutableSet<IrField>>()
+    private val fieldsToRemove = HashMap<IrClass, MutableSet<IrField>>()
     fun getFieldsToRemove(clazz: IrClass): Set<IrField> = fieldsToRemove[clazz] ?: emptySet()
     fun addFieldToRemove(clazz: IrClass, field: IrField) {
-        fieldsToRemove.getOrPut(clazz) { ConcurrentHashMap<IrField, Unit>().keySet(Unit) }.add(field.withAddedStaticReplacementIfNeeded())
+        fieldsToRemove.getOrPut(clazz) { HashSet<IrField>() }.add(field.withAddedStaticReplacementIfNeeded())
     }
 
     fun getMfvcFieldNode(field: IrField): NameableMfvcNode? {

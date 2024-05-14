@@ -42,9 +42,9 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
         val superQualifierSymbol: IrClassSymbol?
     )
 
-    private val functionMap = ConcurrentHashMap<FunctionKey, IrFunctionSymbol>()
-    private val getterMap = ConcurrentHashMap<FieldKey, IrSimpleFunctionSymbol>()
-    private val setterMap = ConcurrentHashMap<FieldKey, IrSimpleFunctionSymbol>()
+    private val functionMap = HashMap<FunctionKey, IrFunctionSymbol>()
+    private val getterMap = HashMap<FieldKey, IrSimpleFunctionSymbol>()
+    private val setterMap = HashMap<FieldKey, IrSimpleFunctionSymbol>()
 
     fun getSyntheticFunctionAccessor(expression: IrFunctionAccessExpression, scopes: List<ScopeWithIr>): IrFunctionSymbol {
         return if (expression is IrCall)

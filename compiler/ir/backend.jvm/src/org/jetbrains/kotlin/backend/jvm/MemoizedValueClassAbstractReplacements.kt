@@ -24,7 +24,7 @@ abstract class MemoizedValueClassAbstractReplacements(
     protected val context: JvmBackendContext,
     protected val storageManager: LockBasedStorageManager
 ) {
-    private val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
+    private val propertyMap = HashMap<IrPropertySymbol, IrProperty>()
 
     /**
      * Get a replacement for a function or a constructor.

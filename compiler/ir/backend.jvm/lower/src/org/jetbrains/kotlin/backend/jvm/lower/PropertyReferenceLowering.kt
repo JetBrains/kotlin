@@ -290,7 +290,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 
     // Assuming that the only functions that take PROPERTY_REFERENCE_FOR_DELEGATE-kind references are getValue,
     // setValue, and provideDelegate, there is only one valid index for each symbol, so we don't need it in the key.
-    private val usesPropertyParameterCache = ConcurrentHashMap<IrSymbol, Boolean>()
+    private val usesPropertyParameterCache = HashMap<IrSymbol, Boolean>()
 
     override fun visitCall(expression: IrCall): IrExpression {
         // Don't generate entries in `$$delegatedProperties` if they won't be used for anything. This is only possible

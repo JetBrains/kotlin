@@ -51,7 +51,7 @@ object DefaultDelegateFactory : DelegateFactory {
     override fun <K : IrDeclaration, V : Collection<IrDeclaration>> newDeclarationToDeclarationCollectionMapping(): Mapping.Delegate<K, V> = newMappingImpl()
 
     private fun <K : IrDeclaration, V> newMappingImpl() = object : Mapping.Delegate<K, V>() {
-        private val map: MutableMap<K, V> = ConcurrentHashMap()
+        private val map: MutableMap<K, V> = HashMap()
 
         override operator fun get(key: K): V? {
             return map[key]
