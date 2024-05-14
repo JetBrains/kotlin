@@ -71,23 +71,23 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsGenerator) -> Uni
     assertExists(RUNTIME_JVM_DIR)
     assertExists(UNSIGNED_TYPES_DIR)
 
-    generate(File(BUILT_INS_NATIVE_DIR_JVM, "kotlin/Primitives.kt")) { JvmPrimitivesGenerator(it) }
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Primitives.kt")) { JvmPrimitivesGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JS, "Primitives.kt")) { JsPrimitivesGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Primitives.kt")) { WasmPrimitivesGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Primitives.kt")) { NativePrimitivesGenerator(it) }
 
-    generate(File(BUILT_INS_NATIVE_DIR_JVM, "kotlin/Boolean.kt")) { JvmBooleanGenerator(it) }
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Boolean.kt")) { JvmBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JS, "Boolean.kt")) { JsBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Boolean.kt")) { WasmBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Boolean.kt")) { NativeBooleanGenerator(it) }
 
-    generate(File(BUILT_INS_NATIVE_DIR_JVM, "kotlin/Char.kt")) { JvmCharGenerator(it) }
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Char.kt")) { JvmCharGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JS, "Char.kt")) { JsCharGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Char.kt")) { WasmCharGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Char.kt")) { NativeCharGenerator(it) }
 
     generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/functions/Functions.kt")) { GenerateFunctions(it) }
-    generate(File(BUILT_INS_NATIVE_DIR_JVM, "kotlin/Arrays.kt")) { GenerateArrays(it) }
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "Arrays.kt")) { GenerateArrays(it) }
     generate(File(STDLIB_DIR, "kotlin/collections/PrimitiveIterators.kt")) { GenerateIterators(it) }
     generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/internal/ArrayIterators.kt")) { GenerateArrayIterators(it) }
     generate(File(STDLIB_DIR, "kotlin/ranges/ProgressionIterators.kt")) { GenerateProgressionIterators(it) }
