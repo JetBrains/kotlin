@@ -649,7 +649,9 @@ tasks {
         duplicatesStrategy = DuplicatesStrategy.FAIL
         archiveAppendix.set(null as String?)
         into("jvmMain") {
-            from("${rootDir}/core/builtins/native")
+            from("${rootDir}/libraries/stdlib/jvm/builtins/intrinsic") {
+                into("kotlin")
+            }
             from(kotlin.sourceSets["jvmMainJdk7"].kotlin) {
                 into("jdk7")
             }
@@ -693,7 +695,7 @@ tasks {
                 exclude("**")
             }
             // TODO
-            from("${rootDir}/core/builtins/native/kotlin") {
+            from("${rootDir}/libraries/stdlib/jvm/builtins/intrinsic") {
                 into("kotlin")
                 include("Comparable.kt")
                 include("Enum.kt")
