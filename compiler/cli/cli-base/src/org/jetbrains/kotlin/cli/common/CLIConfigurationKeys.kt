@@ -13,54 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.cli.common
 
-package org.jetbrains.kotlin.cli.common;
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfigurationService
+import org.jetbrains.kotlin.cli.common.config.ContentRoot
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import java.io.File
 
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig;
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfigurationService;
-import org.jetbrains.kotlin.cli.common.config.ContentRoot;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.config.CompilerConfigurationKey;
-
-import java.io.File;
-import java.util.List;
-
-public class CLIConfigurationKeys {
+object CLIConfigurationKeys {
     // Roots, including dependencies and own sources
-    public static final CompilerConfigurationKey<List<ContentRoot>> CONTENT_ROOTS =
-            CompilerConfigurationKey.create("content roots");
+    @JvmField
+    val CONTENT_ROOTS: CompilerConfigurationKey<List<ContentRoot>> = CompilerConfigurationKey.create("content roots")
 
     // Used by compiler plugins to access delegated message collector in GroupingMessageCollector
-    public static final CompilerConfigurationKey<MessageCollector> ORIGINAL_MESSAGE_COLLECTOR_KEY =
-            CompilerConfigurationKey.create("original message collector");
+    @JvmField
+    val ORIGINAL_MESSAGE_COLLECTOR_KEY: CompilerConfigurationKey<MessageCollector> =
+        CompilerConfigurationKey.create("original message collector")
 
-    public static final CompilerConfigurationKey<Boolean> RENDER_DIAGNOSTIC_INTERNAL_NAME =
-            CompilerConfigurationKey.create("render diagnostic internal name");
+    @JvmField
+    val RENDER_DIAGNOSTIC_INTERNAL_NAME: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create("render diagnostic internal name")
 
-    public static final CompilerConfigurationKey<Boolean> ALLOW_KOTLIN_PACKAGE =
-            CompilerConfigurationKey.create("allow kotlin package");
-    public static final CompilerConfigurationKey<CommonCompilerPerformanceManager> PERF_MANAGER =
-            CompilerConfigurationKey.create("performance manager");
+    @JvmField
+    val ALLOW_KOTLIN_PACKAGE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("allow kotlin package")
+
+    @JvmField
+    val PERF_MANAGER: CompilerConfigurationKey<CommonCompilerPerformanceManager> = CompilerConfigurationKey.create("performance manager")
 
     // Used in Eclipse plugin (see KotlinCLICompiler)
-    public static final CompilerConfigurationKey<String> INTELLIJ_PLUGIN_ROOT =
-            CompilerConfigurationKey.create("intellij plugin root");
+    @JvmField
+    val INTELLIJ_PLUGIN_ROOT: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("intellij plugin root")
 
     // See K2MetadataCompilerArguments
+    @JvmField
+    val METADATA_DESTINATION_DIRECTORY: CompilerConfigurationKey<File> = CompilerConfigurationKey.create("metadata destination directory")
 
-    public static final CompilerConfigurationKey<File> METADATA_DESTINATION_DIRECTORY =
-            CompilerConfigurationKey.create("metadata destination directory");
+    @JvmField
+    val PHASE_CONFIG: CompilerConfigurationKey<PhaseConfig> = CompilerConfigurationKey.create("phase configuration")
 
-    public static final CompilerConfigurationKey<PhaseConfig> PHASE_CONFIG =
-            CompilerConfigurationKey.create("phase configuration");
-
-    public static final CompilerConfigurationKey<PhaseConfigurationService> FLEXIBLE_PHASE_CONFIG =
-            CompilerConfigurationKey.create("flexible phase configuration");
+    @JvmField
+    val FLEXIBLE_PHASE_CONFIG: CompilerConfigurationKey<PhaseConfigurationService> =
+        CompilerConfigurationKey.create("flexible phase configuration")
 
     // used in FIR IDE uast tests
-    public static final CompilerConfigurationKey<File> PATH_TO_KOTLIN_COMPILER_JAR =
-            CompilerConfigurationKey.create("jar of Kotlin compiler in Kotlin plugin");
-
-    private CLIConfigurationKeys() {
-    }
+    @JvmField
+    val PATH_TO_KOTLIN_COMPILER_JAR: CompilerConfigurationKey<File> =
+        CompilerConfigurationKey.create("jar of Kotlin compiler in Kotlin plugin")
 }
