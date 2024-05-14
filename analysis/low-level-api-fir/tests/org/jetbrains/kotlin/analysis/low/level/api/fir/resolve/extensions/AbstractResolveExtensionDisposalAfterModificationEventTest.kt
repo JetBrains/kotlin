@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 
-import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -68,7 +68,7 @@ class KtResolveExtensionWithDisposalTrackerProvider() : KtResolveExtensionProvid
 }
 
 object ResolveExtensionDisposalTestConfigurator : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
+    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
         get() = buildList {
             addAll(super.serviceRegistrars)
             add(ResolveExtensionDisposalTestServiceRegistrar)
@@ -76,10 +76,6 @@ object ResolveExtensionDisposalTestConfigurator : AnalysisApiFirSourceTestConfig
 }
 
 object ResolveExtensionDisposalTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {}
-    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
-    override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {}
-
     override fun registerProjectServices(
         project: MockProject,
         testServices: TestServices,

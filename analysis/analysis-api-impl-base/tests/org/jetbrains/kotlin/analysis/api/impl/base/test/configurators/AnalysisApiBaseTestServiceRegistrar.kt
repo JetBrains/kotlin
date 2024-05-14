@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
@@ -72,7 +73,7 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         }
     }
 
-    override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
+    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
         val moduleStructure = testServices.ktTestModuleStructure
         val testKtFiles = moduleStructure.mainModules.flatMap { it.ktFiles }
 

@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtCodeFragmentTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.configureLibraryCompilationSupport
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.services.TestServices
 
 class AnalysisApiFirCodeFragmentTestConfigurator(
     analyseInDependentSession: Boolean
@@ -31,6 +32,6 @@ class AnalysisApiFirCodeFragmentTestConfigurator(
         }
     }
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
+    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
         get() = super.serviceRegistrars + AnalysisApiLibraryBaseTestServiceRegistrar
 }

@@ -29,7 +29,7 @@ import java.io.InputStream
 /**
  * The Analysis API has an XML-based declaration way to define services, extensions and so on.
  *
- * This class provides a way to register such definitions to avoid manual registration in [AnalysisApiStandaloneServiceRegistrar].
+ * This class provides a way to register such definitions to avoid manual registration in [AnalysisApiServiceRegistrar].
  */
 @Suppress("UnstableApiUsage")
 @KtAnalysisNonPublicApi

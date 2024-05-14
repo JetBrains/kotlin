@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 
 @OptIn(KtAnalysisNonPublicApi::class)
-object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
+object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
     private const val PLUGIN_RELATIVE_PATH = "/META-INF/analysis-api/analysis-api-fir-standalone-base.xml"
 
     override fun registerApplicationServices(application: MockApplication) {
@@ -26,7 +26,7 @@ object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
      *
      * @see PluginStructureProvider.registerApplicationServices
      */
-    fun registerApplicationServices(application: MockApplication, classLoader: ClassLoader) {
+    fun registerApplicationServicesWithCustomClassLoader(application: MockApplication, classLoader: ClassLoader) {
         PluginStructureProvider.registerApplicationServices(application, PLUGIN_RELATIVE_PATH, classLoader)
     }
 

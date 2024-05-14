@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fe10.test.configurator
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
+import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.descriptors.CliFe10AnalysisFacade
@@ -42,7 +43,7 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     }
 
     @OptIn(KtAnalysisApiInternals::class, TestInfrastructureInternals::class)
-    override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
+    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
         project.apply {
             registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade())
             registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(enabled = true))

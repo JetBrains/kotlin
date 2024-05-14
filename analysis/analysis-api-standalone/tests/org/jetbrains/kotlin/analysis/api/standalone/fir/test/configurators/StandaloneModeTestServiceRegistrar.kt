@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators
 
 import com.intellij.mock.MockProject
+import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
@@ -18,8 +19,12 @@ import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPsiDeclarationPr
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.services.TestServices
 
+/**
+ * Registers services specific to Standalone mode *tests*, in addition to the Standalone production services registered by
+ * [FirStandaloneServiceRegistrar][org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar].
+ */
 @OptIn(KtAnalysisApiInternals::class)
-public object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
+object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider::class.java)
@@ -28,7 +33,7 @@ public object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistr
         }
     }
 
-    override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
+    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
         project.apply {
             registerService(
                 KotlinPsiDeclarationProviderFactory::class.java,

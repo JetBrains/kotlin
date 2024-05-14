@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -24,7 +24,7 @@ object AnalysisApiSymbolLightClassesDecompiledTestConfigurator : AnalysisApiTest
         AnalysisApiFirLibraryBinaryDecompiledTestConfigurator.configureTest(builder, disposable)
     }
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
+    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
         get() = AnalysisApiFirLibraryBinaryDecompiledTestConfigurator.serviceRegistrars +
                 AnalysisApiSymbolLightClassesDecompiledTestServiceRegistrar
 

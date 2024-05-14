@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.ApplicationServiceRegistration
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.LLFirStandaloneLibrarySymbolProviderFactory
@@ -61,8 +62,15 @@ public class StandaloneAnalysisAPISessionBuilder(
         )
 
     init {
-        // TODO (KT-68186): Passing the class loader explicitly is a workaround for KT-68186.
-        FirStandaloneServiceRegistrar.registerApplicationServices(application, classLoader)
+        val application = kotlinCoreProjectEnvironment.environment.application
+        ApplicationServiceRegistration.registerWithCustomRegistration(application, listOf(FirStandaloneServiceRegistrar)) {
+            // TODO (KT-68186): Passing the class loader explicitly is a workaround for KT-68186.
+            if (this is FirStandaloneServiceRegistrar) {
+                registerApplicationServicesWithCustomClassLoader(application, classLoader)
+            } else {
+                registerApplicationServices(application, data = Unit)
+            }
+        }
     }
 
     public val application: Application = kotlinCoreProjectEnvironment.environment.application
