@@ -1,17 +1,20 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin
+
+import kotlin.internal.ActualizeByJvmBuiltinProvider
 
 /**
  * The common base class of all enum classes.
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/enum-classes.html) for more
  * information on enum classes.
  */
-public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<E> {
-    companion object {}
+@ActualizeByJvmBuiltinProvider
+public expect abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<E> {
+    public companion object {}
 
     /**
      * Returns the name of this enum constant, exactly as declared in its enum declaration.
@@ -25,16 +28,10 @@ public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<
      */
     public final val ordinal: Int
 
-    public override final fun compareTo(other: E): Int
+    public final override fun compareTo(other: E): Int
 
-    /**
-     * Throws an exception since enum constants cannot be cloned.
-     * This method prevents enum classes from inheriting from `Cloneable`.
-     */
-    protected final fun clone(): Any
-
-    public override final fun equals(other: Any?): Boolean
-    public override final fun hashCode(): Int
+    public final override fun equals(other: Any?): Boolean
+    public final override fun hashCode(): Int
     public override fun toString(): String
 
     /**

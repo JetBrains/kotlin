@@ -1,18 +1,19 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
 
-import kotlin.internal.PlatformDependent
+import kotlin.internal.ActualizeByJvmBuiltinProvider
 
 /**
  * Classes that inherit from this interface can be represented as a sequence of elements that can
  * be iterated over.
  * @param T the type of element being iterated over. The iterator is covariant in its element type.
  */
-public interface Iterable<out T> {
+@ActualizeByJvmBuiltinProvider
+public expect interface Iterable<out T> {
     /**
      * Returns an iterator over the elements of this object.
      */
@@ -24,7 +25,8 @@ public interface Iterable<out T> {
  * be iterated over and that supports removing elements during iteration.
  * @param T the type of element being iterated over. The mutable iterator is invariant in its element type.
  */
-public interface MutableIterable<out T> : Iterable<T> {
+@ActualizeByJvmBuiltinProvider
+public expect interface MutableIterable<out T> : Iterable<T> {
     /**
      * Returns an iterator over the elements of this sequence that supports removing elements during iteration.
      */
@@ -36,7 +38,8 @@ public interface MutableIterable<out T> : Iterable<T> {
  * read/write access is supported through the [MutableCollection] interface.
  * @param E the type of elements contained in the collection. The collection is covariant in its element type.
  */
-public interface Collection<out E> : Iterable<E> {
+@ActualizeByJvmBuiltinProvider
+public expect interface Collection<out E> : Iterable<E> {
     // Query Operations
     /**
      * Returns the size of the collection.
@@ -67,7 +70,8 @@ public interface Collection<out E> : Iterable<E> {
  *
  * @param E the type of elements contained in the collection. The mutable collection is invariant in its element type.
  */
-public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
+@ActualizeByJvmBuiltinProvider
+public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
     // Query Operations
     override fun iterator(): MutableIterator<E>
 
@@ -121,7 +125,8 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
  * read/write access is supported through the [MutableList] interface.
  * @param E the type of elements contained in the list. The list is covariant in its element type.
  */
-public interface List<out E> : Collection<E> {
+@ActualizeByJvmBuiltinProvider
+public expect interface List<out E> : Collection<E> {
     // Query Operations
 
     override val size: Int
@@ -176,7 +181,8 @@ public interface List<out E> : Collection<E> {
  * A generic ordered collection of elements that supports adding and removing elements.
  * @param E the type of elements contained in the list. The mutable list is invariant in its element type.
  */
-public interface MutableList<E> : List<E>, MutableCollection<E> {
+@ActualizeByJvmBuiltinProvider
+public expect interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
     /**
      * Adds the specified element to the end of this list.
@@ -243,7 +249,8 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
  * read/write access is supported through the [MutableSet] interface.
  * @param E the type of elements contained in the set. The set is covariant in its element type.
  */
-public interface Set<out E> : Collection<E> {
+@ActualizeByJvmBuiltinProvider
+public expect interface Set<out E> : Collection<E> {
     // Query Operations
 
     override val size: Int
@@ -260,7 +267,8 @@ public interface Set<out E> : Collection<E> {
  * adding and removing elements.
  * @param E the type of elements contained in the set. The mutable set is invariant in its element type.
  */
-public interface MutableSet<E> : Set<E>, MutableCollection<E> {
+@ActualizeByJvmBuiltinProvider
+public expect interface MutableSet<E> : Set<E>, MutableCollection<E> {
     // Query Operations
     override fun iterator(): MutableIterator<E>
 
@@ -292,7 +300,8 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
  *          can accept key as a parameter (of [containsKey] for example) and return it in [keys] set.
  * @param V the type of map values. The map is covariant in its value type.
  */
-public interface Map<K, out V> {
+@ActualizeByJvmBuiltinProvider
+public expect interface Map<K, out V> {
     // Query Operations
     /**
      * Returns the number of key/value pairs in the map.
@@ -318,18 +327,6 @@ public interface Map<K, out V> {
      * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
      */
     public operator fun get(key: K): V?
-
-    /**
-     * Returns the value corresponding to the given [key], or [defaultValue] if such a key is not present in the map.
-     *
-     * @since JDK 1.8
-     */
-    @SinceKotlin("1.1")
-    @PlatformDependent
-    public fun getOrDefault(key: K, defaultValue: @UnsafeVariance V): V {
-        // See default implementation in JDK sources
-        throw NotImplementedError()
-    }
 
     // Views
     /**
@@ -369,7 +366,8 @@ public interface Map<K, out V> {
  * @param K the type of map keys. The map is invariant in its key type.
  * @param V the type of map values. The mutable map is invariant in its value type.
  */
-public interface MutableMap<K, V> : Map<K, V> {
+@ActualizeByJvmBuiltinProvider
+public expect interface MutableMap<K, V> : Map<K, V> {
     // Modification Operations
     /**
      * Associates the specified [value] with the specified [key] in the map.
@@ -384,18 +382,6 @@ public interface MutableMap<K, V> : Map<K, V> {
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
     public fun remove(key: K): V?
-
-    /**
-     * Removes the entry for the specified key only if it is mapped to the specified value.
-     *
-     * @return true if entry was removed
-     */
-    @SinceKotlin("1.1")
-    @PlatformDependent
-    public fun remove(key: K, value: V): Boolean {
-        // See default implementation in JDK sources
-        return true
-    }
 
     // Bulk Modification Operations
     /**
@@ -412,17 +398,17 @@ public interface MutableMap<K, V> : Map<K, V> {
     /**
      * Returns a [MutableSet] of all keys in this map.
      */
-    override val keys: MutableSet<K>
+    public override val keys: MutableSet<K>
 
     /**
      * Returns a [MutableCollection] of all values in this map. Note that this collection may contain duplicate values.
      */
-    override val values: MutableCollection<V>
+    public override val values: MutableCollection<V>
 
     /**
      * Returns a [MutableSet] of all key/value pairs in this map.
      */
-    override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+    public override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
 
     /**
      * Represents a key/value pair held by a [MutableMap].
