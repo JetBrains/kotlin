@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 
 public class SirVisibilityCheckerImpl : SirVisibilityChecker {
 
-    override fun KtSymbolWithVisibility.sirVisibility(ktAnalysisSession: KtAnalysisSession): SirVisibility {
+    override fun KtSymbolWithVisibility.sirVisibility(ktAnalysisSession: KtAnalysisSession): SirVisibility = with(ktAnalysisSession) {
         val ktSymbol = this@sirVisibility
         val isConsumable = isPublic() && when (ktSymbol) {
             is KtNamedClassOrObjectSymbol -> {
@@ -34,7 +34,11 @@ public class SirVisibilityCheckerImpl : SirVisibilityChecker {
                 true
             }
             is KtTypeAliasSymbol -> {
-                true // FIXME: filter-out unrepresentable types
+                val type = ktSymbol.expandedType
+
+                !type.isMarkedNullable && type.fullyExpandedType.isPrimitive ||
+                        (type.expandedClassSymbol as? KtSymbolWithVisibility)
+                            ?.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC
             }
             else -> false
         }

@@ -158,8 +158,7 @@ private fun SirCallable.bridgeParameters() = allParameters
 
 private fun bridgeType(type: SirType): Bridge {
     require(type is SirNominalType)
-
-    return when (type.type) {
+    return when (val subtype = type.type) {
         SirSwiftModule.void -> Bridge.AsIs(type, KotlinType.Unit, CType.Void)
 
         SirSwiftModule.bool -> Bridge.AsIs(type, KotlinType.Boolean, CType.Bool)
@@ -178,6 +177,8 @@ private fun bridgeType(type: SirType): Bridge {
         SirSwiftModule.float -> Bridge.AsIs(type, KotlinType.Float, CType.Float)
 
         SirSwiftModule.uint -> Bridge.AsObject(type, KotlinType.Object, CType.Object)
+        
+        is SirTypealias -> bridgeType(subtype.type)
 
         // TODO: Right now, we just assume everything nominal that we do not recognize is a class. We should make this decision looking at kotlin type?
         else -> Bridge.AsObject(type, KotlinType.Object, CType.Object)

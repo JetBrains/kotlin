@@ -31,7 +31,7 @@ public class SirTypeProviderImpl(
             .handleImports(ktAnalysisSession, processTypeImports)
 
     private fun buildSirNominalType(ktType: KtType, ktAnalysisSession: KtAnalysisSession): SirType {
-        with(ktAnalysisSession) {
+        fun buildPrimitiveType(ktType: KtType): SirType? = with(ktAnalysisSession) {
             when {
                 ktType.isUnit -> SirSwiftModule.void
 
@@ -51,19 +51,24 @@ public class SirTypeProviderImpl(
                 ktType.isFloat -> SirSwiftModule.float
                 else -> null
             }?.let { primitiveType ->
-                return SirNominalType(primitiveType)
-            }
-            return when (ktType) {
-                is KtUsualClassType -> with(sirSession) {
-                    SirNominalType(ktType.classSymbol.sirDeclaration() as SirNamedDeclaration)
-                }
-                is KtFunctionalType,
-                is KtTypeParameterType,
-                -> SirUnsupportedType()
-                is KtErrorType -> SirErrorType(ktType.errorMessage)
-                else -> SirErrorType("Unexpected type ${ktType.asStringForDebugging()}")
+                SirNominalType(primitiveType)
             }
         }
+
+        fun buildRegularType(ktType: KtType): SirType = when (ktType) {
+            is KtUsualClassType -> with(sirSession) {
+                SirNominalType(ktType.classSymbol.sirDeclaration() as SirNamedDeclaration)
+            }
+            is KtFunctionalType,
+            is KtTypeParameterType,
+            -> SirUnsupportedType()
+            is KtErrorType -> SirErrorType(ktType.errorMessage)
+            else -> SirErrorType("Unexpected type ${ktType.asStringForDebugging()}")
+        }
+
+        return ktType.abbreviatedType?.let { buildRegularType(it) }
+            ?: buildPrimitiveType(ktType)
+            ?: buildRegularType(ktType)
     }
 
     private fun SirType.handleErrors(

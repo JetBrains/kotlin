@@ -1,7 +1,14 @@
 import KotlinBridges
 import KotlinRuntime
 
+public typealias DefaultInteger = main.RegularInteger
 public typealias RegularInteger = Swift.Int32
+public typealias ShouldHaveNoAnnotation = Swift.Int32
+public func increment(
+    integer: main.DefaultInteger
+) -> main.RegularInteger {
+    return __root___increment__TypesOfArguments__int32_t__(integer)
+}
 public extension main.typealiases.inner {
     public typealias Foo = main.typealiases.Foo
     public typealias LargeInteger = Swift.Int64

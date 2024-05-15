@@ -1,5 +1,12 @@
 import kotlin.native.internal.ExportedBridge
 
+@ExportedBridge("__root___increment__TypesOfArguments__int32_t__")
+public fun __root___increment(integer: Int): Int {
+    val __integer = integer
+    val _result = increment(__integer)
+    return _result
+}
+
 @ExportedBridge("typealiases_Foo_init_allocate")
 public fun typealiases_Foo_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<typealiases.Foo>()

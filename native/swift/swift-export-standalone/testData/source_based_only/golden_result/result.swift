@@ -1,7 +1,6 @@
 import KotlinBridges
 import KotlinRuntime
 
-public typealias X = ERROR_TYPE
 public class MyClass : KotlinRuntime.KotlinBase {
     public var x: ERROR_TYPE {
         get {

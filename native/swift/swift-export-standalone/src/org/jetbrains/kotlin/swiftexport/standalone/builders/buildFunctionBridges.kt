@@ -97,7 +97,7 @@ private fun SirCallable.patchCallableBodyAndGenerateRequest(
             check(this is SirInit)
         }
         val typesUsed = listOf(returnType) + allParameters.map { it.type }
-        if (typesUsed.none { !it.isSupported }) {
+        if (typesUsed.all { it.isSupported }) {
             val suffix = bridgeSuffix
             val request = BridgeRequest(
                 this,
@@ -118,7 +118,13 @@ private fun SirCallable.patchCallableBodyAndGenerateRequest(
 }
 
 private val SirType.isSupported: Boolean
-    get() = this is SirNominalType && type.parent == SirSwiftModule
+    get() = when (this) {
+        is SirNominalType -> when (val declaration = type) {
+            is SirTypealias -> declaration.type.isSupported
+            else -> declaration.parent == SirSwiftModule
+        }
+        else -> false
+    }
 
 private val SirCallable.bridgeSuffix: String
     get() = when (this) {
