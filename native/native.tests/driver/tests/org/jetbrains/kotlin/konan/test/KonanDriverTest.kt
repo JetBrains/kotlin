@@ -178,8 +178,8 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         }
         val expected = "inline_threshold: 76"
         assertTrue(
-            compilationResult.stdout.contains(expected),
-            "Compiler's stdout must contain string: $expected\n" +
+            compilationResult.stderr.contains(expected),
+            "Compiler's stderr must contain string: $expected\n" +
                     "STDOUT:\n${compilationResult.stdout}\nSTDERR:${compilationResult.stderr}"
         )
         testRunSettings.executor.runProcess(kexe.absolutePath)
