@@ -51,6 +51,11 @@ void alloc::Allocator::clearForTests() noexcept {
     impl_->heap().ClearForTests();
 }
 
+size_t alloc::Allocator::estimateOverheadPerThread() noexcept {
+    if (compiler::disableAllocatorOverheadEstimate()) return 0;
+    return impl_->heap().EstimateOverheadPerThread();
+}
+
 void alloc::initObjectPool() noexcept {}
 
 void alloc::compactObjectPoolInCurrentThread() noexcept {}

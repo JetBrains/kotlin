@@ -51,6 +51,8 @@ public:
     // TODO: Move into AllocatorTestSupport.hpp
     void clearForTests() noexcept;
 
+    size_t estimateOverheadPerThread() noexcept;
+
 private:
     std::unique_ptr<Impl> impl_;
 };
