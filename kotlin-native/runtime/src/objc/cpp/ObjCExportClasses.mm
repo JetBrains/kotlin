@@ -14,6 +14,7 @@
 #import <objc/objc-exception.h>
 #import <dispatch/dispatch.h>
 
+#import "CallsChecker.hpp"
 #import "ObjCExport.h"
 #import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
@@ -193,6 +194,8 @@ static void injectToRuntime();
 }
 
 - (instancetype)initWithExternalRCRef:(uintptr_t)ref {
+    kotlin::CalledFromNativeGuard guard;
+
     RuntimeAssert(kotlin::compiler::swiftExport(), "Must be used in Swift Export only");
 
     permanent = refHolder.initWithExternalRCRef(reinterpret_cast<void*>(ref));
@@ -200,8 +203,6 @@ static void injectToRuntime();
         // Cannot attach associated objects to permanent objects.
         return self;
     }
-
-    kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
 
     // ref holds a strong reference to obj, no need to place obj onto a stack.
     auto obj = refHolder.ref<ErrorPolicy::kTerminate>();
@@ -216,12 +217,12 @@ static void injectToRuntime();
     RuntimeAssert([old class] == [self class], "Object %p had associated object of type %p but we try to init with %p", obj, [old class], [self class]);
 
     // Make self point to that object.
-    // TODO(KT-65969): Check that it works for Swift.
-
     KotlinBase* retiredSelf = self;
     self = objc_retain(old);
 
     retiredSelf->refHolder.releaseRef();
+    kotlin::CallsCheckerIgnoreGuard callsCheckerGuard;
+    // retiredSelf is safe to dealloc right in the Runnable state as it cannot not lead to any long-running or blocking calls.
     [retiredSelf releaseAsAssociatedObject];
 
     return self;
