@@ -331,11 +331,9 @@ public class KotlinStaticDeclarationProviderFactory(
         val recorder = KtDeclarationRecorder()
 
         // Indexing built-ins
-        val builtins = mutableSetOf<String>()
         if (!skipBuiltins) {
-            loadBuiltIns().forEach { stub ->
-                processStub(stub)
-                builtins.add(stub.psi.virtualFile.name)
+            loadBuiltIns().forEach {
+                processStub(it)
             }
         }
 
