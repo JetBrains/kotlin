@@ -53,6 +53,7 @@ internal class FirErrorTypeRefImpl(
 
     override fun <D> transformPartiallyResolvedTypeRef(transformer: FirTransformer<D>, data: D): FirErrorTypeRef {
         partiallyResolvedTypeRef = partiallyResolvedTypeRef?.transform(transformer, data)
+        transformChildren(transformer, data)
         return this
     }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-67503
 
 @Target(AnnotationTarget.TYPE)
