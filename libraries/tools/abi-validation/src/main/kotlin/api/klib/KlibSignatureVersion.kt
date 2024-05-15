@@ -30,6 +30,10 @@ public class KlibSignatureVersion internal constructor(internal val version: Int
     }
 
     override fun toString(): String {
-        return "KlibSignatureVersion($version)"
+        val versionStr = when(version) {
+            LATEST.version -> "LATEST"
+            else -> version.toString()
+        }
+        return "KlibSignatureVersion($versionStr)"
     }
 }
