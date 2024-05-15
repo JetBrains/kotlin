@@ -21,10 +21,16 @@ object StubFirScopeProvider : FirScopeProvider() {
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope = error("Stub")
 
-    override fun getStaticMemberScopeForCallables(
+    override fun getStaticCallableMemberScope(
         klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
+    ): FirContainingNamesAwareScope? = null
+
+    override fun getStaticCallableMemberScopeForBackend(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
     ): FirContainingNamesAwareScope? = null
 
     override fun getNestedClassifierScope(

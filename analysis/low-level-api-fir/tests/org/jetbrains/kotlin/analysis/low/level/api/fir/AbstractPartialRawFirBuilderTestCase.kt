@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.io.path.readText
 
 abstract class AbstractPartialRawFirBuilderTestCase : AbstractAnalysisApiBasedTest() {
@@ -101,19 +102,25 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractAnalysisApiBasedTe
                 useSiteSession: FirSession,
                 scopeSession: ScopeSession,
                 memberRequiredPhase: FirResolvePhase?,
-            ): FirTypeScope = error("Should not be called")
+            ): FirTypeScope = shouldNotBeCalled()
 
-            override fun getStaticMemberScopeForCallables(
+            override fun getStaticCallableMemberScope(
                 klass: FirClass,
                 useSiteSession: FirSession,
                 scopeSession: ScopeSession,
-            ): FirContainingNamesAwareScope? = error("Should not be called")
+            ): FirContainingNamesAwareScope = shouldNotBeCalled()
+
+            override fun getStaticCallableMemberScopeForBackend(
+                klass: FirClass,
+                useSiteSession: FirSession,
+                scopeSession: ScopeSession,
+            ): FirContainingNamesAwareScope = shouldNotBeCalled()
 
             override fun getNestedClassifierScope(
                 klass: FirClass,
                 useSiteSession: FirSession,
                 scopeSession: ScopeSession,
-            ): FirContainingNamesAwareScope? = error("Should not be called")
+            ): FirContainingNamesAwareScope = shouldNotBeCalled()
         }
 
         val session = FirSessionFactoryHelper.createEmptySession()

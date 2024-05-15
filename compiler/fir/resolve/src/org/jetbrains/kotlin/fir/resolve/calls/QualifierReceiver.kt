@@ -57,7 +57,7 @@ class ClassQualifierReceiver(
     override fun callableScope(): FirScope? {
         val klass = classSymbol.fir
         val provider = klass.scopeProvider
-        return provider.getStaticMemberScopeForCallables(klass, useSiteSession, scopeSession)
+        return provider.getStaticCallableMemberScope(klass, useSiteSession, scopeSession)
     }
 
     override fun classifierScope(): FirScope? {

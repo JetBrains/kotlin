@@ -41,7 +41,7 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
         val scopeSession = analysisSession.getScopeSessionFor(firSession)
         return if (isStatic) {
             val firClass = owner.fir
-            firClass.scopeProvider.getStaticMemberScopeForCallables(firClass, firSession, scopeSession)
+            firClass.scopeProvider.getStaticCallableMemberScope(firClass, firSession, scopeSession)
         } else {
             owner.unsubstitutedScope(
                 useSiteSession = firSession,
