@@ -117,7 +117,6 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::ReplaceKFunctionInvokeWithFunctionInvoke,
     ::JvmKotlinNothingValueExceptionLowering,
     ::MakePropertyDelegateMethodsStaticLowering,
-    ::AddSuperQualifierToJavaFieldAccessLowering,
     ::ReplaceNumberToCharCallSitesLowering,
 
     ::RenameFieldsLowering,

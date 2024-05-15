@@ -260,12 +260,6 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
   }
 
   @Test
-  @TestMetadata("javaFields_k1.kt")
-  public void testJavaFields_k1() {
-    runTest("compiler/testData/codegen/bytecodeText/javaFields_k1.kt");
-  }
-
-  @Test
   @TestMetadata("javaStatics.kt")
   public void testJavaStatics() {
     runTest("compiler/testData/codegen/bytecodeText/javaStatics.kt");
