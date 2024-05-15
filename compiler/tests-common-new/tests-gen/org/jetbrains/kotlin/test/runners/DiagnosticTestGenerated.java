@@ -13177,6 +13177,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       public void testStackOverflowOnDoUnify() {
         runTest("compiler/testData/diagnostics/tests/exceptions/stackOverflowOnDoUnify.kt");
       }
+
+      @Test
+      @TestMetadata("transformErrorTypeChildrenWhileTransformingPartiallyResolvedType.kt")
+      public void testTransformErrorTypeChildrenWhileTransformingPartiallyResolvedType() {
+        runTest("compiler/testData/diagnostics/tests/exceptions/transformErrorTypeChildrenWhileTransformingPartiallyResolvedType.kt");
+      }
     }
 
     @Nested
