@@ -310,7 +310,7 @@ private fun Project.configureCheckTasks(
     val apiDump = task<CopyFile>(targetConfig.apiTaskName("Dump")) {
         isEnabled = apiCheckEnabled(projectName, extension) && apiBuild.map { it.enabled }.getOrElse(true)
         group = "other"
-        description = "Syncs API from build dir to ${targetConfig.apiDir} dir for $projectName"
+        description = "Syncs the API file for $projectName"
         from = apiBuildDir.get().resolve(dumpFileName)
         to = apiCheckDir.get().resolve(dumpFileName)
         dependsOn(apiBuild)
@@ -432,7 +432,7 @@ private class KlibValidationPipelineBuilder(
         klibMergeDir: File
     ) = project.task<CopyFile>(klibDumpConfig.apiTaskName("Dump")) {
         isEnabled = klibAbiCheckEnabled(project.name, extension)
-        description = "Syncs a KLib ABI dump from a build dir to the ${klibDumpConfig.apiDir} dir for ${project.name}"
+        description = "Syncs the KLib ABI file for ${project.name}"
         group = "other"
         from = klibMergeDir.resolve(klibDumpFileName)
         to = klibApiDir.get().resolve(klibDumpFileName)
