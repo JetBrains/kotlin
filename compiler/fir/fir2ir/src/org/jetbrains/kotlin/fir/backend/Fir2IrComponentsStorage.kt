@@ -50,7 +50,7 @@ class Fir2IrComponentsStorage(
     override val callablesGenerator: Fir2IrCallableDeclarationsGenerator = Fir2IrCallableDeclarationsGenerator(this)
     override val classifiersGenerator: Fir2IrClassifiersGenerator = Fir2IrClassifiersGenerator(this)
     override val lazyDeclarationsGenerator: Fir2IrLazyDeclarationsGenerator = Fir2IrLazyDeclarationsGenerator(this)
-    override val dataClassMembersGenerator: Fir2IrDataClassMembersGenerator = Fir2IrDataClassMembersGenerator(this)
+    override val dataClassMembersGenerator: Fir2IrDataClassMembersGenerator = Fir2IrDataClassMembersGenerator(this, commonMemberStorage)
 
     // builtins should go after storages and generators, because they use them during initialization
     override val builtins: IrBuiltInsOverFir = initializedIrBuiltIns ?: IrBuiltInsOverFir(

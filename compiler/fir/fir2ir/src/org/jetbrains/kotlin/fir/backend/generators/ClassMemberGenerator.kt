@@ -94,18 +94,6 @@ internal class ClassMemberGenerator(
                 }
             }
 
-            if (klass is FirRegularClass && (irClass.isValue || irClass.isData)) {
-                if (irClass.isSingleFieldValueClass) {
-                    dataClassMembersGenerator.generateBodiesForSingleFieldValueClassMembers(klass, irClass)
-                }
-                if (irClass.isMultiFieldValueClass) {
-                    dataClassMembersGenerator.generateBodiesForMultiFieldValueClassMembers(klass, irClass)
-                }
-                if (irClass.isData) {
-                    dataClassMembersGenerator.generateBodiesForDataClassMembers(klass, irClass)
-                }
-            }
-
             annotationGenerator.generate(irClass, klass)
             if (irPrimaryConstructor != null) {
                 declarationStorage.leaveScope(irPrimaryConstructor.symbol)
@@ -191,15 +179,14 @@ internal class ClassMemberGenerator(
                         irFunction.body = IrSyntheticBodyImpl(startOffset, endOffset, kind)
                     }
                     irFunction.parent is IrClass && irFunction.parentAsClass.isData -> {
+                        require(irFunction is IrSimpleFunction)
                         when {
                             DataClassResolver.isComponentLike(irFunction.name) -> when (val firBody = firFunction?.body) {
-                                null -> dataClassMembersGenerator.generateDataClassComponentBody(
-                                    irFunction, containingClass as FirRegularClass
-                                )
+                                null -> dataClassMembersGenerator.registerCopyOrComponentFunction(irFunction)
                                 else -> irFunction.body = visitor.convertToIrBlockBody(firBody)
                             }
                             DataClassResolver.isCopy(irFunction.name) -> when (val firBody = firFunction?.body) {
-                                null -> dataClassMembersGenerator.generateDataClassCopyBody(irFunction, containingClass as FirRegularClass)
+                                null -> dataClassMembersGenerator.registerCopyOrComponentFunction(irFunction)
                                 else -> irFunction.body = visitor.convertToIrBlockBody(firBody)
                             }
                             else -> irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }

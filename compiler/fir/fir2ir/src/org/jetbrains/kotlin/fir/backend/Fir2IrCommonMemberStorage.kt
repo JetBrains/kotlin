@@ -45,4 +45,17 @@ class Fir2IrCommonMemberStorage(val mangler: FirMangler) {
     val delegateVariableForPropertyCache: ConcurrentHashMap<IrLocalDelegatedPropertySymbol, IrVariableSymbol> = ConcurrentHashMap()
 
     val irForFirSessionDependantDeclarationMap: MutableMap<Fir2IrDeclarationStorage.FakeOverrideIdentifier, IrSymbol> = mutableMapOf()
+
+    /**
+     * Contains information about synthetic methods generated for data and value classes
+     * It will be used to generate bodies of those methods after fir2ir conversion is over
+     */
+    val generatedDataValueClassSyntheticFunctions: MutableMap<IrClass, DataValueClassGeneratedMembersInfo> = mutableMapOf()
+
+    data class DataValueClassGeneratedMembersInfo(
+        val components: Fir2IrComponents,
+        val firClass: FirRegularClass,
+        val origin: IrDeclarationOrigin,
+        val generatedFunctions: MutableList<IrSimpleFunction>
+    )
 }

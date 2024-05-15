@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.generators.Fir2IrDataClassGeneratedMemberBodyGenerator
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
@@ -156,6 +157,10 @@ fun FirResult.convertToIrAndActualize(
     // actualization separately. This should go away, after useIrFakeOverrideBuilder becomes
     // always enabled
     irActualizer?.actualizeClassifiers()
+
+    Fir2IrDataClassGeneratedMemberBodyGenerator(irBuiltins)
+        .generateBodiesForClassesWithSyntheticDataClassMembers(commonMemberStorage.generatedDataValueClassSyntheticFunctions)
+
     val temporaryResolver = SpecialFakeOverrideSymbolsResolver(emptyMap())
 
     val fakeOverrideBuilder = platformComponentsStorage.createFakeOverrideBuilder(irTypeSystemContext)
