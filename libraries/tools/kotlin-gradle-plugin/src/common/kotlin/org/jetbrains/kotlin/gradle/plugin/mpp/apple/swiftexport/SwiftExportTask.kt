@@ -10,38 +10,49 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
+import java.io.File
+import java.io.Serializable
 import javax.inject.Inject
 
+internal data class SwiftModule(
+    val name: String,
+    val files: SwiftFiles,
+    val dependencies: List<SwiftModule>,
+) : Serializable
+
+internal data class SwiftFiles(
+    val swiftApi: File,
+    val kotlinBridges: File,
+    val cHeaderBridges: File,
+) : Serializable
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
 internal abstract class SwiftExportTask : DefaultTask() {
 
+    @get:Inject
+    abstract val workerExecutor: WorkerExecutor
+
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val swiftExportClasspath: ConfigurableFileCollection
-
-    @get:Inject
-    abstract val workerExecutor: WorkerExecutor
 
     @get:Nested
     abstract val parameters: SwiftExportParameters
 
     @TaskAction
     fun run() {
-        val workQueue = workerExecutor.classLoaderIsolation { workerSpec ->
+        val swiftExportQueue = workerExecutor.classLoaderIsolation { workerSpec ->
             workerSpec.classpath.from(swiftExportClasspath)
         }
 
-        workQueue.submit(SwiftExportAction::class.java) { workParameters ->
+        swiftExportQueue.submit(SwiftExportAction::class.java) { workParameters ->
             workParameters.stableDeclarationsOrder.set(parameters.stableDeclarationsOrder)
             workParameters.swiftApiModuleName.set(parameters.swiftApiModuleName)
             workParameters.bridgeModuleName.set(parameters.bridgeModuleName)
             workParameters.konanDistribution.set(parameters.konanDistribution)
             workParameters.kotlinLibraryFile.set(parameters.kotlinLibraryFile)
-
-            workParameters.swiftApiPath.set(parameters.swiftApiPath)
-            workParameters.headerBridgePath.set(parameters.headerBridgePath)
-            workParameters.kotlinBridgePath.set(parameters.kotlinBridgePath)
+            workParameters.outputPath.set(parameters.outputPath)
+            workParameters.swiftModulesFile.set(parameters.swiftModulesFile)
         }
     }
 }

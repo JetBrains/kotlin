@@ -96,8 +96,8 @@ private fun Project.registerSwiftExportRun(
     val compileTask = mainCompilation.compileTaskProvider
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
-        val swiftIntermediates = outputs.map { it.dir("swiftIntermediates") }
-        val kotlinIntermediates = outputs.map { it.dir("kotlinIntermediates") }
+        val files = outputs.map { it.dir("files") }
+        val serializedModules = outputs.map { it.dir("modules") }
 
         // Input
         task.swiftExportClasspath.from(maybeCreateSwiftExportClasspathResolvableConfiguration())
@@ -109,9 +109,10 @@ private fun Project.registerSwiftExportRun(
         )
 
         // Output
-        task.parameters.swiftApiPath.convention(swiftIntermediates.map { it.file("KotlinAPI.swift") })
-        task.parameters.headerBridgePath.convention(swiftIntermediates.map { it.file("KotlinBridge.h") })
-        task.parameters.kotlinBridgePath.convention(kotlinIntermediates.map { it.file("KotlinBridge.kt") })
+        task.parameters.outputPath.set(files)
+        task.parameters.swiftModulesFile.set(
+            serializedModules.map { it.file("${swiftApiModuleName.get()}.json") }
+        )
     }
 }
 
@@ -130,7 +131,7 @@ private fun registerSwiftExportCompilationAndGetBinary(
         invokeWhenCreated = { swiftExportCompilation ->
             swiftExportCompilation.associateWith(mainCompilation)
             swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportTask.map {
-                it.parameters.kotlinBridgePath.getFile().parent
+                it.parameters.outputPath.getFile()
             })
 
             swiftExportCompilation.compileTaskProvider.configure {
@@ -169,16 +170,15 @@ private fun Project.registerPackageGeneration(
 
         // Input
         task.kotlinRuntime.set(
-            file(Distribution(konanDistribution.root.absolutePath).kotlinRuntimeForSwiftHome)
+            file(Distribution(konanDistribution.root.canonicalPath).kotlinRuntimeForSwiftHome)
         )
 
-        task.swiftApiPath.convention(swiftExportTask.flatMap { it.parameters.swiftApiPath })
-        task.headerBridgePath.convention(swiftExportTask.flatMap { it.parameters.headerBridgePath })
-        task.headerBridgeModuleName.convention(swiftExportTask.flatMap { it.parameters.bridgeModuleName })
-        task.libraryPath.convention(staticLibrary.linkTaskProvider.flatMap { layout.file(it.outputFile) })
-        task.swiftLibraryName.convention(swiftApiLibraryName)
-        task.kotlinLibraryName.convention(kotlinStaticLibraryName)
-        task.swiftApiModuleName.convention(swiftApiModuleName)
+        task.swiftModulesFile.set(swiftExportTask.map { it.parameters.swiftModulesFile.get() })
+        task.headerBridgeModuleName.set(swiftExportTask.map { it.parameters.bridgeModuleName.get() })
+        task.libraryPath.set(staticLibrary.linkTaskProvider.map { layout.file(it.outputFile).get() })
+        task.swiftLibraryName.set(swiftApiLibraryName)
+        task.kotlinLibraryName.set(kotlinStaticLibraryName)
+        task.swiftApiModuleName.set(swiftApiModuleName)
 
         // Output
         task.packagePath.set(syntheticBuildRoot.flatMap { root ->
@@ -186,7 +186,6 @@ private fun Project.registerPackageGeneration(
         })
     }
 
-    packageGenerationTask.dependsOn(staticLibrary.linkTaskProvider)
     return packageGenerationTask
 }
 

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
 import org.jetbrains.kotlin.utils.KotlinNativePaths
+import java.io.Serializable
 import org.jetbrains.sir.printer.swift
 import java.nio.file.Path
 import kotlin.io.path.div
@@ -72,7 +73,7 @@ public sealed interface InputModule {
     public class Source(
         override val name: String,
         override val path: Path,
-    ): InputModule
+    ) : InputModule
 
     public class Binary(
         override val name: String,
@@ -84,13 +85,13 @@ public data class SwiftExportModule(
     val name: String,
     val files: SwiftExportFiles,
     val dependencies: List<SwiftExportModule>,
-)
+) : Serializable
 
 public data class SwiftExportFiles(
     val swiftApi: Path,
     val kotlinBridges: Path,
     val cHeaderBridges: Path,
-)
+) : Serializable
 
 /**
  * Trivial logging interface that should be implemented

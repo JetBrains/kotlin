@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 import org.gradle.workers.WorkAction
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.swiftexport.standalone.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -43,13 +44,13 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
                 ),
                 logger = Companion,
                 distribution = parameters.konanDistribution.get(),
-                outputPath = parameters.swiftApiPath.getFile().toPath(), // just a placeholder
-            ),
-            output = SwiftExportFiles(
-                swiftApi = parameters.swiftApiPath.getFile().toPath(),
-                kotlinBridges = parameters.kotlinBridgePath.getFile().toPath(),
-                cHeaderBridges = parameters.headerBridgePath.getFile().toPath(),
+                outputPath = parameters.outputPath.getFile().toPath()
             )
-        )
+        ).apply {
+            val modules = getOrThrow()
+            val path = parameters.swiftModulesFile.getFile().canonicalPath
+
+            SerializationTools.writeToJson(modules, path)
+        }
     }
 }
