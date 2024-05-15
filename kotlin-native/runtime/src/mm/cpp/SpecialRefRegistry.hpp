@@ -21,6 +21,11 @@ class ObjCBackRef;
 class StableRef;
 class WeakRef;
 
+// TODO use in profiler?
+enum class SpecialRefKind {
+    kInvalid, kStableRef, kWeakRef, kBackRef
+};
+
 // Registry for all special references to objects:
 // * stable references (i.e. always part of the root set)
 // * weak references
@@ -61,7 +66,7 @@ class SpecialRefRegistry : private Pinned {
         inline static constexpr Rc disposedMarker = std::numeric_limits<Rc>::min();
         static_assert(disposedMarker < 0, "disposedMarker must be an impossible Rc value");
 
-        Node(SpecialRefRegistry& registry, ObjHeader* obj, Rc rc) noexcept : obj_(obj), rc_(rc) {
+        Node(SpecialRefRegistry& registry, ObjHeader* obj, Rc rc, SpecialRefKind kind) noexcept : obj_(obj), rc_(rc), kind_(kind) {
             RuntimeAssert(obj != nullptr, "Creating StableRef for null object");
             RuntimeAssert(rc >= 0, "Creating StableRef with negative rc %d", rc);
             // Runtime tests occasionally use sentinel values under 8 for opaque objects
@@ -175,6 +180,8 @@ class SpecialRefRegistry : private Pinned {
         std::atomic<Rc> rc_; // After dispose() will be disposedMarker.
         // Singly linked lock free list. Using acquire-release throughout.
         std::atomic<Node*> nextRoot_ = nullptr;
+    public: // FIXME
+        SpecialRefKind kind_ = SpecialRefKind::kInvalid;
     };
 
 public:
@@ -205,9 +212,9 @@ public:
         friend class StableRef;
         friend class SpecialRefRegistryTest;
 
-        [[nodiscard("must be manually disposed")]] Node& registerNode(ObjHeader* obj, Node::Rc rc, bool allowFastDeletion) noexcept {
+        [[nodiscard("must be manually disposed")]] Node& registerNode(ObjHeader* obj, Node::Rc rc, bool allowFastDeletion, SpecialRefKind kind) noexcept {
             RuntimeAssert(obj != nullptr, "Creating node for null object");
-            queue_.emplace_back(owner_, obj, rc);
+            queue_.emplace_back(owner_, obj, rc, kind);
             auto& node = queue_.back();
             return node;
         }
@@ -218,10 +225,10 @@ public:
 
     class RootsIterator {
     public:
-        ObjHeader* operator*() const noexcept {
+        auto operator*() const noexcept {
             // Ignoring rc here. If someone nulls out rc during root
             // scanning, it's okay to be conservative and still make it a root.
-            return node_->obj_.load(std::memory_order_relaxed);
+            return std::make_pair(node_->obj_.load(std::memory_order_relaxed), node_->kind_);
         }
 
         RootsIterator& operator++() noexcept {

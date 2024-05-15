@@ -47,10 +47,12 @@ public:
             auto pkg = to_string(typeInfo_->packageName_);
             auto cls = to_string(typeInfo_->relativeName_);
             auto fqName = pkg.empty() ? cls : pkg + "." + cls;
+            auto res = fqName;
             if (typeInfo_->IsArray()) {
-                return fqName + "[" + std::to_string(arrayLength_) +"]";
+                res += "[" + std::to_string(arrayLength_) +"]";
             }
-            return fqName;
+            res += " (" + std::to_string(typeInfo_->instanceSize_) + "bytes)";
+            return res;
         }
 
         const TypeInfo* typeInfo_;
@@ -83,23 +85,34 @@ public:
     enum class SpecialRefKind {
         kStableRef, kWeakRef, kBackRef
     };
+    enum class OpKind {
+        kCreated, kDisposed
+    };
 
-    struct SpecialRefCreation {
-        auto operator==(const SpecialRefCreation& other) const noexcept { return kind_ == other.kind_; }
-        auto operator!=(const SpecialRefCreation& other) const noexcept { return !operator==(other); }
+    struct SpecialRefOp {
+        auto operator==(const SpecialRefOp& other) const noexcept { return kind_ == other.kind_ && op_ == other.op_; }
+        auto operator!=(const SpecialRefOp& other) const noexcept { return !operator==(other); }
 
         auto toString() const -> std::string {
+            std::string kind;
             switch (kind_) {
-                case SpecialRefKind::kStableRef: return "StableRef";
-                case SpecialRefKind::kWeakRef: return "WeakRef";
-                case SpecialRefKind::kBackRef: return "BackRef";
+                case SpecialRefKind::kStableRef: kind = "StableRef"; break;
+                case SpecialRefKind::kWeakRef: kind = "WeakRef"; break;
+                case SpecialRefKind::kBackRef: kind = "BackRef"; break;
             }
+            std::string op;
+            switch (op_) {
+                case OpKind::kCreated: op = "created"; break;
+                case OpKind::kDisposed: op = "disposed"; break;
+            }
+            return kind + " " + op;
         }
 
         SpecialRefKind kind_;
+        OpKind op_;
     };
 
-    using Event = SpecialRefCreation;
+    using Event = SpecialRefOp;
 };
 
 }
@@ -121,6 +134,6 @@ struct std::hash<kotlin::profiler::SafePointEventTraits::Event> {
 template<>
 struct std::hash<kotlin::profiler::SpecialRefEventTraits::Event> {
     std::size_t operator()(const kotlin::profiler::SpecialRefEventTraits::Event& e) const noexcept {
-        return static_cast<std::size_t>(e.kind_);
+        return kotlin::CombineHash(static_cast<std::size_t>(e.kind_), static_cast<std::size_t>(e.op_));
     }
 };

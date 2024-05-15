@@ -88,8 +88,17 @@ mm::GlobalRootSet::Value mm::GlobalRootSet::Iterator::operator*() noexcept {
     switch (phase_) {
         case Phase::kGlobals:
             return {**globalsIterator_, Source::kGlobal};
-        case Phase::kStableRefs:
-            return {*specialRefsIterator_, Source::kStableRef};
+        case Phase::kStableRefs: {
+            auto [obj, refKind] = *specialRefsIterator_;
+            Source source;
+            switch (refKind) {
+                case SpecialRefKind::kInvalid: RuntimeFail(""); break;
+                case SpecialRefKind::kStableRef: source = Source::kStableRef; break;
+                case SpecialRefKind::kWeakRef: source = Source::kWeakRef; break;
+                case SpecialRefKind::kBackRef: source = Source::kObjcBackRef; break;
+            }
+            return {obj, source};
+        }
         case Phase::kDone:
             RuntimeFail("Cannot dereference");
     }

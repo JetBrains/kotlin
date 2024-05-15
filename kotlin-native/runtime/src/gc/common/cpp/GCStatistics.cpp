@@ -77,8 +77,10 @@ struct RootSetStatistics {
     KLong threadLocalReferences;
     KLong stackReferences;
     KLong globalReferences;
-    KLong stableReferences;
-    KLong total() const { return threadLocalReferences + stackReferences + globalReferences + stableReferences; }
+    KLong stableRefs;
+    KLong weakRefs;
+    KLong objcBackRefs;
+    KLong total() const { return threadLocalReferences + stackReferences + globalReferences + stableRefs + weakRefs + objcBackRefs; }
 };
 
 struct GCInfo {
@@ -116,7 +118,7 @@ struct GCInfo {
         if (rootSet)
             Kotlin_Internal_GC_GCInfoBuilder_setRootSet(
                     builder, rootSet->threadLocalReferences, rootSet->stackReferences, rootSet->globalReferences,
-                    rootSet->stableReferences);
+                    rootSet->stableRefs + rootSet->weakRefs + rootSet->objcBackRefs); // TODO split ref kinds
         if (markStats)
             Kotlin_Internal_GC_GCInfoBuilder_setMarkStats(builder, markStats->markedCount);
         sweepStats.build(builder, Kotlin_Internal_GC_GCInfoBuilder_setSweepStats);
@@ -225,9 +227,12 @@ void GCHandle::finished() {
                     "%" PRIu64 " stack references, "
                     "%" PRIu64 " global references, "
                     "%" PRIu64 " stable references. "
+                    "%" PRIu64 " weak references. "
+                    "%" PRIu64 " objc-back references. "
                     "In total %" PRIu64 " roots.",
                     stat->rootSet->threadLocalReferences, stat->rootSet->stackReferences, stat->rootSet->globalReferences,
-                    stat->rootSet->stableReferences, stat->rootSet->total());
+                    stat->rootSet->stableRefs, stat->rootSet->weakRefs, stat->rootSet->objcBackRefs,
+                    stat->rootSet->total());
         }
         if (stat->markStats) {
             GCLogInfo(epoch_, "Mark: %" PRIu64 " objects.", stat->markStats->markedCount);
@@ -344,20 +349,22 @@ void GCHandle::threadRootSetCollected(mm::ThreadData &threadData, uint64_t threa
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         if (!stat->rootSet) {
-            stat->rootSet = RootSetStatistics{0, 0, 0, 0};
+            stat->rootSet = RootSetStatistics{0, 0, 0, 0, 0, 0};
         }
         stat->rootSet->stackReferences += static_cast<KLong>(stackReferences);
         stat->rootSet->threadLocalReferences += static_cast<KLong>(threadLocalReferences);
     }
 }
-void GCHandle::globalRootSetCollected(uint64_t globalReferences, uint64_t stableReferences) {
+void GCHandle::globalRootSetCollected(uint64_t globalReferences, uint64_t stableReferences, uint64_t weakRefs, uint64_t objcBackRefs) {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         if (!stat->rootSet) {
-            stat->rootSet = RootSetStatistics{0, 0, 0, 0};
+            stat->rootSet = RootSetStatistics{0, 0, 0, 0, 0, 0};
         }
         stat->rootSet->globalReferences += static_cast<KLong>(globalReferences);
-        stat->rootSet->stableReferences += static_cast<KLong>(stableReferences);
+        stat->rootSet->stableRefs += static_cast<KLong>(stableReferences);
+        stat->rootSet->weakRefs += static_cast<KLong>(weakRefs);
+        stat->rootSet->objcBackRefs += static_cast<KLong>(objcBackRefs);
     }
 }
 
@@ -459,10 +466,15 @@ GCHandle::GCGlobalRootSetScope::GCGlobalRootSetScope(kotlin::gc::GCHandle handle
 
 GCHandle::GCGlobalRootSetScope::~GCGlobalRootSetScope(){
     if (!handle_.isValid()) return;
-    handle_.globalRootSetCollected(globalRoots_, stableRoots_);
+    handle_.globalRootSetCollected(globalRoots_, stableRefs_, weakRefs_, objcBackRefs_);
     GCLogDebug(
-            handle_.getEpoch(), "Collected global root set global=%" PRIu64 " stableRef=%" PRIu64 " in %" PRIu64 " microseconds.",
-            globalRoots_, stableRoots_, getStageTime());
+            handle_.getEpoch(), "Collected global root set "
+                                "global=%" PRIu64
+                                " stableRef=%" PRIu64
+                                " weakRef=%" PRIu64
+                                " objcBackRef=%" PRIu64
+                                " in %" PRIu64 " microseconds.",
+            globalRoots_, stableRefs_, weakRefs_, objcBackRefs_, getStageTime());
 }
 
 GCHandle::GCThreadRootSetScope::GCThreadRootSetScope(kotlin::gc::GCHandle handle, mm::ThreadData& threadData) :

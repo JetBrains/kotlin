@@ -23,7 +23,7 @@ public:
     static std::vector<ObjHeader*> Collect(mm::ThreadData& threadData) {
         threadData.specialRefRegistry().publish();
         std::vector<ObjHeader*> result;
-        for (const auto& obj : mm::SpecialRefRegistry::instance().roots()) {
+        for (auto [obj, kind] : mm::SpecialRefRegistry::instance().roots()) {
             result.push_back(obj);
         }
         return result;

@@ -17,18 +17,21 @@
 using namespace kotlin;
 
 ALWAYS_INLINE mm::StableRef mm::SpecialRefRegistry::ThreadQueue::createStableRef(ObjHeader* object) noexcept {
-    ProfilerHit(mm::ThreadRegistry::Instance().CurrentThreadData()->profilers().specialRef(), {profiler::SpecialRefEventTraits::SpecialRefKind::kStableRef});
-    return mm::StableRef(registerNode(object, 1, true).asRaw());
+    ProfilerHit(mm::ThreadRegistry::Instance().CurrentThreadData()->profilers().specialRef(),
+                {profiler::SpecialRefEventTraits::SpecialRefKind::kStableRef, profiler::SpecialRefEventTraits::OpKind::kCreated});
+    return mm::StableRef(registerNode(object, 1, true, SpecialRefKind::kStableRef).asRaw());
 }
 
 ALWAYS_INLINE mm::WeakRef mm::SpecialRefRegistry::ThreadQueue::createWeakRef(ObjHeader* object) noexcept {
-    ProfilerHit(mm::ThreadRegistry::Instance().CurrentThreadData()->profilers().specialRef(), {profiler::SpecialRefEventTraits::SpecialRefKind::kWeakRef});
-    return mm::WeakRef(registerNode(object, 0, false).asRaw());
+    ProfilerHit(mm::ThreadRegistry::Instance().CurrentThreadData()->profilers().specialRef(),
+                {profiler::SpecialRefEventTraits::SpecialRefKind::kWeakRef, profiler::SpecialRefEventTraits::OpKind::kCreated});
+    return mm::WeakRef(registerNode(object, 0, false, SpecialRefKind::kWeakRef).asRaw());
 }
 
 ALWAYS_INLINE mm::ObjCBackRef mm::SpecialRefRegistry::ThreadQueue::createObjCBackRef(ObjHeader* object) noexcept {
-    ProfilerHit(mm::ThreadRegistry::Instance().CurrentThreadData()->profilers().specialRef(), {profiler::SpecialRefEventTraits::SpecialRefKind::kBackRef});
-    return mm::ObjCBackRef(registerNode(object, 1, false).asRaw());
+    ProfilerHit(mm::ThreadRegistry::Instance().CurrentThreadData()->profilers().specialRef(),
+                {profiler::SpecialRefEventTraits::SpecialRefKind::kBackRef, profiler::SpecialRefEventTraits::OpKind::kCreated});
+    return mm::ObjCBackRef(registerNode(object, 1, false, SpecialRefKind::kBackRef).asRaw());
 }
 
 // static

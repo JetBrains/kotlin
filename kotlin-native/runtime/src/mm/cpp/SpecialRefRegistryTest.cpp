@@ -69,7 +69,7 @@ public:
 
     std::vector<ObjHeader*> roots() noexcept {
         std::vector<ObjHeader*> result;
-        for (auto* obj : mm::SpecialRefRegistry::instance().roots()) {
+        for (auto [obj, kind] : mm::SpecialRefRegistry::instance().roots()) {
             result.push_back(obj);
         }
         return result;

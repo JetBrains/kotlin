@@ -22,7 +22,7 @@ class ProfileReporter {
 public:
     using EventRecord = typename Profiler<EventTraits>::EventRecord;
 
-    explicit ProfileReporter(const Profiler<EventTraits>& profiler) : profiler_(profiler) {}
+    explicit ProfileReporter(const Profiler<EventTraits>& profiler) : profiler_(profiler), entryPrinter_(*this) {}
 
     void report() {
         {
@@ -83,12 +83,15 @@ private:
     class IndentedEntryPrinter {
         static constexpr auto kIdentStep = 2;
     public:
+        explicit IndentedEntryPrinter(ProfileReporter& reporter) : reporter_(reporter) {}
+
         void incIdent() { baseIdent_ += kIdentStep; }
         void decIdent() { baseIdent_ -= kIdentStep; }
 
         void print(std::size_t hits, const ContextEntry& entry) {
             auto buf = std::stringstream{};
-            buf << "[" << hits << "]";
+            auto fraction = static_cast<double>(hits) / reporter_.profiler_.recordedEventCount_;
+            buf << "[" << hits << "] (" << fraction * 100 << "%)";
             auto hitsStr = buf.str();
 
             buf = std::stringstream{};
@@ -122,6 +125,7 @@ private:
             }
         }
 
+        ProfileReporter& reporter_;
         std::size_t baseIdent_ = 0;
     };
 

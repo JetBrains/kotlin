@@ -38,8 +38,11 @@ public:
 
     // Dispose stable reference.
     void dispose() && noexcept {
+        logDispose();
         std::move(*this).disposeImpl();
     }
+
+    void logDispose() noexcept;
 
     // Get the underlying object.
     // Always safe, because the object is guaranteed to be in the root set.

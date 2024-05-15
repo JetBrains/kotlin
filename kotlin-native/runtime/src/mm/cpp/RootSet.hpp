@@ -85,6 +85,8 @@ public:
     enum class Source {
         kGlobal,
         kStableRef,
+        kWeakRef,
+        kObjcBackRef,
     };
 
     struct Value {

@@ -139,7 +139,13 @@ void collectRootSetGlobals(GCHandle gcHandle, typename Traits::MarkQueue& markQu
                     handle.addGlobalRoot();
                     break;
                 case mm::GlobalRootSet::Source::kStableRef:
-                    handle.addStableRoot();
+                    handle.addStableRef();
+                    break;
+                case mm::GlobalRootSet::Source::kWeakRef:
+                    handle.addWeakRef();
+                    break;
+                case mm::GlobalRootSet::Source::kObjcBackRef:
+                    handle.addObjBackRef();
                     break;
             }
         }

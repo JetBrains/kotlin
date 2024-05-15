@@ -79,7 +79,7 @@ private:
     explicit GCHandle(uint64_t epoch) : epoch_(epoch) {}
 
     void threadRootSetCollected(mm::ThreadData& threadData, uint64_t threadLocalReferences, uint64_t stackReferences);
-    void globalRootSetCollected(uint64_t globalReferences, uint64_t stableReferences);
+    void globalRootSetCollected(uint64_t globalReferences, uint64_t stableReferences, uint64_t weakRefs, uint64_t objcBackRefs);
     void swept(SweepStats stats, uint64_t markedCount) noexcept;
     void sweptExtraObjects(SweepStats stats) noexcept;
     void marked(MarkStats stats);
@@ -185,7 +185,9 @@ public:
 
 class GCHandle::GCGlobalRootSetScope : public GCStageScopeBase {
     uint64_t globalRoots_ = 0;
-    uint64_t stableRoots_ = 0;
+    uint64_t stableRefs_ = 0;
+    uint64_t weakRefs_ = 0;
+    uint64_t objcBackRefs_ = 0;
 
 public:
     explicit GCGlobalRootSetScope(GCHandle handle);
@@ -201,16 +203,26 @@ public:
         using std::swap;
         swap(reinterpret_cast<GCStageScopeBase&>(first), reinterpret_cast<GCStageScopeBase&>(second));
         swap(first.globalRoots_, second.globalRoots_);
-        swap(first.stableRoots_, second.stableRoots_);
+        swap(first.stableRefs_, second.stableRefs_);
+        swap(first.weakRefs_, second.weakRefs_);
+        swap(first.objcBackRefs_, second.objcBackRefs_);
     }
     ~GCGlobalRootSetScope();
     void addGlobalRoot() {
         requireValid();
         globalRoots_++;
     }
-    void addStableRoot() {
+    void addStableRef() {
         requireValid();
-        stableRoots_++;
+        stableRefs_++;
+    }
+    void addWeakRef() {
+        requireValid();
+        weakRefs_++;
+    }
+    void addObjBackRef() {
+        requireValid();
+        objcBackRefs_++;
     }
 };
 

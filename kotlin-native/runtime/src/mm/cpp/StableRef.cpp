@@ -17,3 +17,8 @@ ALWAYS_INLINE mm::StableRef mm::StableRef::create(ObjHeader* obj) noexcept {
     RuntimeAssert(obj != nullptr, "Creating StableRef for null object");
     return mm::ThreadRegistry::Instance().CurrentThreadData()->specialRefRegistry().createStableRef(obj);
 }
+
+void mm::StableRef::logDispose() noexcept {
+    ProfilerHit(mm::ThreadRegistry::Instance().CurrentThreadData()->profilers().specialRef(),
+                {profiler::SpecialRefEventTraits::SpecialRefKind::kBackRef, profiler::SpecialRefEventTraits::OpKind::kDisposed});
+}
