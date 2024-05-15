@@ -21219,6 +21219,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Test
+    @TestMetadata("staticFakeOverridesInJKKJKHierarchyMultimodule_additionalInterfaces.kt")
+    public void testStaticFakeOverridesInJKKJKHierarchyMultimodule_additionalInterfaces() {
+      runTest("compiler/testData/codegen/box/fakeOverride/staticFakeOverridesInJKKJKHierarchyMultimodule_additionalInterfaces.kt");
+    }
+
+    @Test
     @TestMetadata("substitutionInLocal.kt")
     public void testSubstitutionInLocal() {
       runTest("compiler/testData/codegen/box/fakeOverride/substitutionInLocal.kt");
