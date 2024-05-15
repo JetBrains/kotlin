@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.createIncompatibleAbiVersio
 abstract class KlibMetadataStubBuilder(
     private val version: Int,
     private val fileType: FileType,
-    private val readFile: (VirtualFile) -> FileWithMetadata?
+    protected val readFile: (VirtualFile) -> FileWithMetadata?
 ) : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + version
 

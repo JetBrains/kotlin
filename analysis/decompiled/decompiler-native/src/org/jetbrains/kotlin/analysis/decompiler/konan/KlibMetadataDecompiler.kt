@@ -31,6 +31,7 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
 
     protected abstract fun getDecompiledText(
         file: FileWithMetadata.Compatible,
+        virtualFile: VirtualFile,
         serializerProtocol: SerializerExtensionProtocol,
         flexibleTypeDeserializer: FlexibleTypeDeserializer
     ): DecompiledText
@@ -66,7 +67,7 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
 
         return when (val file = readFileSafely(virtualFile)) {
             is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), file.version)
-            is FileWithMetadata.Compatible -> getDecompiledText(file, serializerProtocol(), flexibleTypeDeserializer)
+            is FileWithMetadata.Compatible -> getDecompiledText(file, virtualFile, serializerProtocol(), flexibleTypeDeserializer)
             null -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), invalidBinaryVersion())
         }
     }
