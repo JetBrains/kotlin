@@ -60,4 +60,21 @@ class LambdaMemoizationRegressionTests(useFir: Boolean) : AbstractIrTransformTes
             val x = @Composable {}
         """
     )
+
+    // regression test for b/340606661
+    @Test
+    fun testMemoizationInInlineFunction() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.*
+
+            @Composable
+            inline fun Test(
+                someBool: Boolean,
+            ) {
+                val someInt = remember { 1 }
+                val lambda = { someInt }
+                println(lambda.hashCode())
+            }
+        """
+    )
 }
