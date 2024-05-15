@@ -83,24 +83,23 @@ abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Co
 
     final override fun lower(irModule: IrModuleFragment) {
         val verificationMode = context.configuration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
-        if (verificationMode != IrVerificationMode.NONE) {
-            validate(irModule, verificationMode, phaseName = this.javaClass.simpleName)
-            context.throwValidationErrorIfNeeded(verificationMode)
+        validateIr(context, verificationMode) {
+            validate(irModule, verificationMode, phaseName = this@IrValidationPhase.javaClass.simpleName)
         }
     }
 
-    protected abstract fun validate(irModule: IrModuleFragment, mode: IrVerificationMode, phaseName: String)
+    protected abstract fun IrValidationContext.validate(irModule: IrModuleFragment, mode: IrVerificationMode, phaseName: String)
 }
 
 open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
-    override fun validate(irModule: IrModuleFragment, mode: IrVerificationMode, phaseName: String) {
-        performBasicIrValidation(context, irModule, mode, phaseName)
+    override fun IrValidationContext.validate(irModule: IrModuleFragment, mode: IrVerificationMode, phaseName: String) {
+        performBasicIrValidation(irModule, context.irBuiltIns, phaseName)
     }
 }
 
 open class IrValidationAfterLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
-    override fun validate(irModule: IrModuleFragment, mode: IrVerificationMode, phaseName: String) {
-        performBasicIrValidation(context, irModule, mode, phaseName)
+    override fun IrValidationContext.validate(irModule: IrModuleFragment, mode: IrVerificationMode, phaseName: String) {
+        performBasicIrValidation(irModule, context.irBuiltIns, phaseName)
     }
 }
 
@@ -129,14 +128,15 @@ fun <Context : ErrorReportingContext, Data> getIrValidator(checkTypes: Boolean):
             )
             return
         }
-        performBasicIrValidation(
-            context.heldBackendContext,
-            element,
-            IrVerificationMode.ERROR,
-            phaseName = "${state.beforeOrAfter.name.toLowerCaseAsciiOnly()} ${state.phase}",
-            checkTypes = checkTypes
-        )
-        context.heldBackendContext.throwValidationErrorIfNeeded(IrVerificationMode.ERROR)
+        val backendContext = context.heldBackendContext
+        validateIr(backendContext, IrVerificationMode.ERROR) {
+            performBasicIrValidation(
+                element,
+                backendContext.irBuiltIns,
+                phaseName = "${state.beforeOrAfter.name.toLowerCaseAsciiOnly()} ${state.phase}",
+                checkTypes = checkTypes,
+            )
+        }
     }
 
 fun <Data, Context : ErrorReportingContext> getIrDumper(): Action<Data, Context> =
