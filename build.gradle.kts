@@ -230,7 +230,6 @@ val fe10CompilerModules = arrayOf(
     ":compiler:backend",
     ":compiler:plugin-api",
     ":compiler:javac-wrapper",
-    ":compiler:cli-common",
     ":compiler:cli-base",
     ":compiler:cli",
     ":compiler:cli-js",
