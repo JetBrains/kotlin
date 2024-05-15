@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -146,4 +148,18 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
             }
         }
     }
+}
+
+fun Fir2IrComponents.constTrue(startOffset: Int, endOffset: Int): IrConst<Boolean> {
+    return IrConstImpl.constTrue(startOffset, endOffset, builtins.booleanType)
+}
+
+fun Fir2IrComponents.constFalse(startOffset: Int, endOffset: Int): IrConst<Boolean> {
+    return IrConstImpl.constFalse(startOffset, endOffset, builtins.booleanType)
+}
+
+fun Fir2IrComponents.elseBranch(elseExpr: IrExpression): IrElseBranch {
+    val startOffset = elseExpr.startOffset
+    val endOffset = elseExpr.endOffset
+    return IrElseBranchImpl(startOffset, endOffset, constTrue(startOffset, endOffset), elseExpr)
 }

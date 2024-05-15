@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -65,10 +64,7 @@ import org.jetbrains.kotlin.utils.findIsInstanceAnd
 class Fir2IrVisitor(
     private val c: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope
-) : Fir2IrComponents by c, FirDefaultVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
-    override val irBuiltIns: IrBuiltIns
-        get() = c.builtins
-
+) : Fir2IrComponents by c, FirDefaultVisitor<IrElement, Any?>() {
     internal val implicitCastInserter = Fir2IrImplicitCastInserter(c)
 
     private val memberGenerator = ClassMemberGenerator(c, this, conversionScope)
