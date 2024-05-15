@@ -139,6 +139,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             default("startOffset", undefinedOffset(), withGetter = true)
             default("endOffset", undefinedOffset(), withGetter = true)
             default("name", "descriptor.name", withGetter = true)
+        }.apply {
+            // TODO: should be generated again after KT-68314 is fixed
+            doPrint = false
         }
 
         impl(errorDeclaration) {

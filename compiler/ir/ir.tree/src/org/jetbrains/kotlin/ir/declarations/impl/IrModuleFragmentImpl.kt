@@ -3,11 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
-// DO NOT MODIFY IT MANUALLY.
-
-@file:Suppress("DuplicatedCode")
-
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -17,10 +12,21 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.Name
 
-class IrModuleFragmentImpl(
-    override val descriptor: ModuleDescriptor,
-    override val irBuiltins: IrBuiltIns,
-) : IrModuleFragment() {
+// TODO: should be generated again after KT-68314 is fixed
+class IrModuleFragmentImpl(override val descriptor: ModuleDescriptor) : IrModuleFragment() {
+    constructor(descriptor: ModuleDescriptor, irBuiltins: IrBuiltIns) : this(descriptor) {
+        initializeIrBuiltins(irBuiltins)
+    }
+
+    fun initializeIrBuiltins(irBuiltins: IrBuiltIns) {
+        require(_irBuiltins == null) { "irBuiltins already initialized" }
+        _irBuiltins = irBuiltins
+    }
+
+    private var _irBuiltins: IrBuiltIns? = null
+    override val irBuiltins: IrBuiltIns
+        get() = _irBuiltins ?: error("irBuiltins not initialized")
+
     override val startOffset: Int
         get() = UNDEFINED_OFFSET
 
