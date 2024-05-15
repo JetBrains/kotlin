@@ -46,18 +46,24 @@ object KotlinSourceSetConvention :
         thisRef: NamedDomainObjectContainer<KotlinSourceSet>, property: KProperty<*>,
     ): NamedDomainObjectProvider<KotlinSourceSet> {
         val name = property.name
-        val trace = Trace() // trace should be created eagarly to have better stacktrace
-        return if (name in thisRef.names) {
-            thisRef.named(name) { sourceSet ->
-                if (sourceSet.isAccessedByKotlinSourceSetConventionAt == null) {
-                    sourceSet.isAccessedByKotlinSourceSetConventionAt = trace
-                }
-            }
-        } else {
-            thisRef.register(name) { sourceSet ->
-                sourceSet.isAccessedByKotlinSourceSetConventionAt = trace
-            }
+        val sourceSet = try {
+            thisRef.maybeCreate(name)
+        } catch (e: IllegalStateException) {
+            throw IllegalStateException(
+                "Kotlin Source Set '$name' was attempted to be created during registration or configuration of another source set. " +
+                        "Please ensure Kotlin Source Set '$name' is first accessed outside configuration code block.",
+                e
+            )
         }
+        if (sourceSet.isAccessedByKotlinSourceSetConventionAt == null) {
+            sourceSet.isAccessedByKotlinSourceSetConventionAt = Trace()
+        }
+
+        // Because of this issue KT-68206 at this moment, we create & configure sourceSet eagerly here.
+        // But then we speculatively return NamedDomainObjectProvider<KotlinSourceSet> as it is lazy.
+        // We still want to keep `NamedDomainObjectProvider<KotlinSourceSet>` and when we fix KT-68206 and related
+        // problems around it, then this API would return truly lazy NamedDomainObjectProvider.
+        return thisRef.named(name)
     }
 
     /**
