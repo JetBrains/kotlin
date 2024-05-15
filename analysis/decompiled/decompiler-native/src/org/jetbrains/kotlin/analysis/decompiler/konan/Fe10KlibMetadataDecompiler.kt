@@ -42,12 +42,12 @@ abstract class Fe10KlibMetadataDecompiler<out V : BinaryVersion>(
     }
 
     override fun getDecompiledText(
-        file: FileWithMetadata.Compatible,
+        fileWithMetadata: FileWithMetadata.Compatible,
         virtualFile: VirtualFile,
         serializerProtocol: SerializerExtensionProtocol,
         flexibleTypeDeserializer: FlexibleTypeDeserializer
     ): DecompiledText {
-        return decompiledText(file, virtualFile, serializerProtocol, ::readFileSafely, flexibleTypeDeserializer, renderer)
+        return decompiledText(fileWithMetadata, virtualFile, serializerProtocol, ::readFileSafely, flexibleTypeDeserializer, renderer)
     }
 }
 
@@ -58,7 +58,7 @@ abstract class Fe10KlibMetadataDecompiler<out V : BinaryVersion>(
  * That's why in K2 it is important to preserve declaration order during deserialization to not get PSI vs. stubs mismatch.
  */
 internal fun decompiledText(
-    file: FileWithMetadata.Compatible,
+    fileWithMetadata: FileWithMetadata.Compatible,
     virtualFile: VirtualFile,
     serializerProtocol: SerializerExtensionProtocol,
     readFile: (VirtualFile) -> FileWithMetadata?,
@@ -66,18 +66,18 @@ internal fun decompiledText(
     renderer: DescriptorRenderer,
     deserializationConfiguration: DeserializationConfiguration = DeserializationConfiguration.Default
 ): DecompiledText {
-    val packageFqName = file.packageFqName
-    val mainClassDataFinder = KlibMetadataClassDataFinder(file.proto, file.nameResolver)
+    val packageFqName = fileWithMetadata.packageFqName
+    val mainClassDataFinder = KlibMetadataClassDataFinder(fileWithMetadata.proto, fileWithMetadata.nameResolver)
     val resolver = KlibMetadataDeserializerForDecompiler(
-        packageFqName, file.proto, file.nameResolver,
+        packageFqName, fileWithMetadata.proto, fileWithMetadata.nameResolver,
         NearFileClassDataFinder.wrapIfNeeded(mainClassDataFinder, virtualFile, readFile),
         serializerProtocol, flexibleTypeDeserializer,
         deserializationConfiguration,
     )
     val declarations = arrayListOf<DeclarationDescriptor>()
     declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
-    for (classProto in file.classesToDecompile) {
-        val classId = file.nameResolver.getClassId(classProto.fqName)
+    for (classProto in fileWithMetadata.classesToDecompile) {
+        val classId = fileWithMetadata.nameResolver.getClassId(classProto.fqName)
         declarations.addIfNotNull(resolver.resolveTopLevelClass(classId))
     }
     return buildDecompiledText(packageFqName, declarations, renderer)

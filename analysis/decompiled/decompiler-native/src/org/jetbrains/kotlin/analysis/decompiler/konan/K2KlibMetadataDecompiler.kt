@@ -36,7 +36,7 @@ abstract class K2KlibMetadataDecompiler<out V : BinaryVersion>(
     }
 
     override fun getDecompiledText(
-        file: FileWithMetadata.Compatible,
+        fileWithMetadata: FileWithMetadata.Compatible,
         virtualFile: VirtualFile,
         serializerProtocol: SerializerExtensionProtocol,
         flexibleTypeDeserializer: FlexibleTypeDeserializer
@@ -48,7 +48,7 @@ abstract class K2KlibMetadataDecompiler<out V : BinaryVersion>(
         }
 
         return decompiledText(
-            file,
+            fileWithMetadata,
             virtualFile,
             serializerProtocol,
             ::readFileSafely,
