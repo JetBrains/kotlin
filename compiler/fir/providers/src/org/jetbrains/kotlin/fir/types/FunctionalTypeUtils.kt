@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
+import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -234,7 +235,19 @@ fun ConeKotlinType.findContributedInvokeSymbol(
                 overriddenInvoke = functionSymbol
                 ProcessorAction.STOP
             } else {
-                ProcessorAction.NEXT
+                val dispatchReceiverType = functionSymbol.originalOrSelf().dispatchReceiverType
+                val dispatchReceiverFunctionKind = (dispatchReceiverType as? ConeClassLikeType)?.functionTypeKind(session)
+                val expectedFunctionKind = expectedFunctionType.functionTypeKind(session)
+                if (dispatchReceiverFunctionKind == null || !dispatchReceiverFunctionKind.isBasicFunctionOrKFunction ||
+                    expectedFunctionKind?.isBasicFunctionOrKFunction == true ||
+                    expectedFunctionKind?.isReflectType != dispatchReceiverFunctionKind.isReflectType
+                ) {
+                    ProcessorAction.NEXT
+                } else {
+                    // Suspend (or other) conversion should be applied
+                    overriddenInvoke = functionSymbol
+                    ProcessorAction.STOP
+                }
             }
         }
     }

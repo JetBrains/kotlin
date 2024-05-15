@@ -15133,6 +15133,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
       public void testSubtypeOfFunctionalTypeToSuspendConversion() {
         runTest("compiler/testData/codegen/box/coroutines/suspendConversion/subtypeOfFunctionalTypeToSuspendConversion.kt");
       }
+
+      @Test
+      @TestMetadata("suspendConversionBetweenFunInterfaces.kt")
+      public void testSuspendConversionBetweenFunInterfaces() {
+        runTest("compiler/testData/codegen/box/coroutines/suspendConversion/suspendConversionBetweenFunInterfaces.kt");
+      }
     }
 
     @Nested

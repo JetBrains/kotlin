@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-67933
 
 interface Flow<out T> {
