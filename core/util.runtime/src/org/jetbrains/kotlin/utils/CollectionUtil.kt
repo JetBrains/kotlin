@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -79,4 +79,21 @@ inline fun <T> Iterable<T>.atMostOne(predicate: (T) -> Boolean): T? = this.filte
 fun <K, V> MutableMap<K, MutableList<V>>.putToMultiMap(key: K, value: V) {
     val list = getOrPut(key) { mutableListOf() }
     list.add(value)
+}
+
+fun <T> Collection<T>.closure(preserveOrder: Boolean = false, f: (T) -> Collection<T>): Collection<T> {
+    if (size == 0) return this
+
+    val result = if (preserveOrder) LinkedHashSet(this) else HashSet(this)
+    var elementsToCheck = result
+    var oldSize = 0
+    while (result.size > oldSize) {
+        oldSize = result.size
+        val toAdd = if (preserveOrder) linkedSetOf() else hashSetOf<T>()
+        elementsToCheck.forEach { toAdd.addAll(f(it)) }
+        result.addAll(toAdd)
+        elementsToCheck = toAdd
+    }
+
+    return result
 }
