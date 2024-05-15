@@ -53,7 +53,7 @@ internal fun AbstractKotlinTarget.setUpResourcesVariant(
             "${targetName}ZipMultiplatformResourcesForPublication"
         ) { copy ->
             copy.destinationDirectory.set(zippedResourcesDirectory)
-            copy.duplicatesStrategy = DuplicatesStrategy.FAIL
+            copy.duplicatesStrategy = DuplicatesStrategy.WARN
             copy.archiveExtension.set(RESOURCES_ZIP_EXTENSION)
         }
         zipResourcesForPublication.configure {

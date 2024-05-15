@@ -95,7 +95,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val gc: GC get() = configuration.get(BinaryOptions.gc) ?: defaultGC
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val checkStateAtExternalCalls: Boolean get() = configuration.get(BinaryOptions.checkStateAtExternalCalls) ?: false
-    private val defaultDisableMmap get() = target.family == Family.MINGW
+    private val defaultDisableMmap get() = target.family == Family.MINGW || target.family == Family.ZEPHYR
     val disableMmap: Boolean by lazy {
         when (configuration.get(BinaryOptions.disableMmap)) {
             null -> defaultDisableMmap
@@ -103,6 +103,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             false -> {
                 if (target.family == Family.MINGW) {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING, "MinGW target does not support mmap/munmap")
+                    true
+                } else if (target.family == Family.ZEPHYR) {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Zephyr target does not support mmap/munmap")
                     true
                 } else {
                     false

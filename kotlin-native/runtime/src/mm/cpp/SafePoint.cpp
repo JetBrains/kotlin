@@ -6,6 +6,7 @@
 #include "SafePoint.hpp"
 
 #include <atomic>
+#include <optional>
 
 #include "GCScheduler.hpp"
 #include "KAssert.h"

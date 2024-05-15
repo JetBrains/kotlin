@@ -517,6 +517,8 @@ dependencies {
     runtimeBitcode(project(":kotlin-native:runtime"))
 }
 
+project.logger.warn("target list: $targetList")
+
 targetList.forEach { target ->
     // TODO: replace with a more convenient user-facing task that can build for a specific target.
     //       like compileToBitcode with optional argument --target.

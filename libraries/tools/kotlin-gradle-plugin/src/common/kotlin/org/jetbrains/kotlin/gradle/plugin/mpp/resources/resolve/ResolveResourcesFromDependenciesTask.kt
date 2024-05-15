@@ -44,7 +44,7 @@ internal abstract class ResolveResourcesFromDependenciesTask : DefaultTask() {
                     copy.from(archiveOperations.zipTree(it))
                 }
             copy.into(outputDirectory)
-            copy.duplicatesStrategy = DuplicatesStrategy.FAIL
+            copy.duplicatesStrategy = DuplicatesStrategy.WARN
         }
     }
 

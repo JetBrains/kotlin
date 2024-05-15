@@ -22,6 +22,13 @@
 
 #include "Porting.h"
 
+#if defined KONAN_ZEPHYR
+
+// ExecFormat isn't support in Zephyr
+
+#else
+
+
 #if USE_ELF_SYMBOLS
 
 #include <dlfcn.h>
@@ -379,3 +386,5 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
 }
 
 #endif // USE_ELF_SYMBOLS
+
+#endif

@@ -42,6 +42,9 @@ native {
         OSX -> {
             cxxflags += "-DKONAN_MACOS=1"
         }
+        ZEPHYR -> {
+            cxxflags += "-DKONAN_ZEPHYR=1"
+        }
         else -> Unit
     }
     suffixes {

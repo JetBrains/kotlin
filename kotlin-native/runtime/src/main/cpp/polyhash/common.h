@@ -8,6 +8,7 @@
 
 #include <array>
 #include <cstdint>
+#include <stddef.h>
 #include "polyhash/naive.h"
 #include "../Common.h"
 

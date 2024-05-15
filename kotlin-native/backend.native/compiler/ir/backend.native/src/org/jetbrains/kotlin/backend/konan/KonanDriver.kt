@@ -32,7 +32,7 @@ import java.util.*
  */
 private fun String.looksLikeRemovedTarget(): Boolean =
         // NB: zephyr had loadable targets, so the full value was of form 'zephyr_<subtarget>'
-        this in removedTargetsNames || this.startsWith("zephyr_")
+        this in removedTargetsNames
 
 private val removedTargetsNames = setOf(
         "ios_arm32",

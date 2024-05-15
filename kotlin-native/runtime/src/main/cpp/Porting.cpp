@@ -246,7 +246,9 @@ NO_EXTERNAL_CALLS_CHECK int currentThreadId() {
 #elif KONAN_LINUX
     return gettid();
 #elif KONAN_WINDOWS
-  return GetCurrentThreadId();
+    return GetCurrentThreadId();
+#elif KONAN_ZEPHYR
+    return pthread_self();
 #else
 #error "How to find currentThreadId()?"
 #endif

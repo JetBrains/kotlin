@@ -28,12 +28,15 @@ Ret waitUntilViaFor(
         if (current >= until) {
             return timeoutValue;
         }
+        #ifndef KONAN_ZEPHYR
+        // TODO: figure out why compiler is not happy about the type conversion here with Zephyr.
         auto left = until - current;
         // Shield standard library from saturating types.
         auto interval = left > step ? std::chrono::duration<Rep, Period>(step) : std::chrono::duration<Rep, Period>(left);
         if (auto value = std::invoke(std::forward<WaitForF>(waitForF), interval); value != timeoutValue) {
             return value;
         }
+    #endif
     }
 }
 

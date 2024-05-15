@@ -136,6 +136,8 @@ interface AndroidConfigurables : Configurables, ClangFlags
 interface WasmConfigurables : Configurables, ClangFlags, LldFlags
 
 interface ZephyrConfigurables : Configurables, ClangFlags {
+    val localToolchainRoot get() = targetString("localToolchainRoot")
+    val localToolchainInterface get() = targetList("localToolchainInterfaces")
     val boardSpecificClangFlags get() = targetList("boardSpecificClangFlags")
     val targetAbi get() = targetString("targetAbi")
 }

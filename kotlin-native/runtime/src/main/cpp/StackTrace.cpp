@@ -5,6 +5,28 @@
 
 #include "StackTrace.hpp"
 
+#if NO_STACKTRACE_SUPPORT
+// For platforms do not support needed APIs to access stack trace info, we will add
+// dummy implementations here
+
+NO_INLINE std::vector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFrames) noexcept {
+    std::vector<void*> result;
+    return result;
+}
+
+NO_INLINE size_t kotlin::internal::GetCurrentStackTrace(size_t skipFrames, std_support::span<void*> buffer) noexcept {
+    return 0;
+}
+
+std::vector<std::string> kotlin::GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept {
+    std::vector<std::string> result;
+    return result;
+}
+
+NO_INLINE void kotlin::PrintStackTraceStderr() {
+}
+#else
+
 #if USE_GCC_UNWIND
 // GCC unwinder for backtrace.
 #include <unwind.h>
@@ -327,3 +349,5 @@ NO_INLINE void kotlin::PrintStackTraceStderr() {
         konan::consoleErrorf("\n");
     }
 }
+
+#endif

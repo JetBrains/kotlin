@@ -7,6 +7,7 @@
 #include "ThreadSuspension.hpp"
 
 #include <condition_variable>
+#include <optional>
 
 #include "CallsChecker.hpp"
 #include "Logging.hpp"

@@ -64,6 +64,7 @@ sealed class ClangArgs(
                     "UNICODE".takeIf { target.family == Family.MINGW },
                     "USE_WINAPI_UNWIND=1".takeIf { target.supportsWinAPIUnwind() },
                     "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() },
+                    "NO_STACKTRACE_SUPPORT".takeIf { target.family == Family.ZEPHYR },
                     // Clang 11 does not support this attribute. We don't need to handle it properly,
                     // so just undefine it.
                     "NS_FORMAT_ARGUMENT(A)=".takeIf { target.family.isAppleFamily },
@@ -189,6 +190,16 @@ sealed class ClangArgs(
                     "-I$toolchainSysroot/usr/include",
                     "-I$toolchainSysroot/usr/include/$clangTarget"
             )
+        }
+
+        KonanTarget.ZEPHYR_M55 -> {
+            if (configurables is ZephyrConfigurables) {
+                var toolchainRoot = configurables.localToolchainRoot
+                var includes = configurables.localToolchainInterface
+                includes.map {"-I$toolchainRoot$it" }
+            } else {
+                throw Exception("expecting zephyr configurables for zephyr_55 target")
+            }
         }
 
         else -> emptyList()

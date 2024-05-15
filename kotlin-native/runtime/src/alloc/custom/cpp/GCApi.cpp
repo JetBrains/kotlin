@@ -11,7 +11,11 @@
 #include <cstring>
 #include <limits>
 
-#ifndef KONAN_WINDOWS
+#if defined(KONAN_WINDOWS) || defined(KONAN_ZEPHYR)
+#define NO_MMAN_SUPPORT 1
+#endif
+
+#ifndef NO_MMAN_SUPPORT
 #include <sys/mman.h>
 #endif
 
@@ -103,7 +107,7 @@ void* SafeAlloc(uint64_t size) noexcept {
         memory = calloc(size, 1);
         error = memory == nullptr;
     } else {
-#if KONAN_WINDOWS
+#if NO_MMAN_SUPPORT
         RuntimeFail("mmap is not available on mingw");
 #elif KONAN_LINUX
         memory = mmap(nullptr, size, PROT_WRITE | PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE | MAP_NORESERVE | MAP_POPULATE, -1, 0);
@@ -127,7 +131,7 @@ void Free(void* ptr, size_t size) noexcept {
     if (compiler::disableMmap()) {
         free(ptr);
     } else {
-#if KONAN_WINDOWS
+#if NO_MMAN_SUPPORT
         RuntimeFail("mmap is not available on mingw");
 #else
         auto result = munmap(ptr, size);
