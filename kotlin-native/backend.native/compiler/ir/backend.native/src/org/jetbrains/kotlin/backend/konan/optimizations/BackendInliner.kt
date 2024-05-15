@@ -370,13 +370,12 @@ internal class FunctionInlining(
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression) = when (expression.symbol) {
-        initInstance -> { // Comes from the interop lowering - skip inlining.
+        initInstance -> {
             val instance = expression.getValueArgument(0)!!
             val constructorCall = expression.getValueArgument(1) as IrConstructorCall
             instance.transformChildrenVoid()
             constructorCall.transformChildrenVoid()
-            //tryInline(constructorCall, instance)
-            expression
+            tryInline(constructorCall, instance)
         }
         else -> {
             expression.transformChildrenVoid()
