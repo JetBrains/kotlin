@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,12 +13,13 @@ import kotlin.wasm.internal.getSimpleName
  * @param message the detail message string.
  * @param cause the cause of this throwable.
  */
-public open class Throwable(public open val message: String?, public open val cause: kotlin.Throwable?) {
-    public constructor(message: String?) : this(message, null)
+public actual open class Throwable
+public actual constructor(public actual open val message: String?, public actual open val cause: kotlin.Throwable?) {
+    public actual constructor(message: String?) : this(message, null)
 
-    public constructor(cause: Throwable?) : this(cause?.toString(), cause)
+    public actual constructor(cause: Throwable?) : this(cause?.toString(), cause)
 
-    public constructor() : this(null, null)
+    public actual constructor() : this(null, null)
 
     //TODO: Investigate possibility to make WASI stack discoverable (KT-60965)
     internal val stack: String get() = ""

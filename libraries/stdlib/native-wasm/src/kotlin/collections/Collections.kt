@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
@@ -21,11 +21,11 @@ internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array
  * be iterated over.
  * @param T the type of element being iterated over. The iterator is covariant in its element type.
  */
-public interface Iterable<out T> {
+public actual interface Iterable<out T> {
     /**
      * Returns an iterator over the elements of this object.
      */
-    public operator fun iterator(): Iterator<T>
+    public actual operator fun iterator(): Iterator<T>
 }
 
 /**
@@ -33,11 +33,11 @@ public interface Iterable<out T> {
  * be iterated over and that supports removing elements during iteration.
  * @param T the type of element being iterated over. The mutable iterator is invariant in its element type.
  */
-public interface MutableIterable<out T> : Iterable<T> {
+public actual interface MutableIterable<out T> : Iterable<T> {
     /**
      * Returns an iterator over the elements of this sequence that supports removing elements during iteration.
      */
-    override fun iterator(): MutableIterator<T>
+    actual override fun iterator(): MutableIterator<T>
 }
 
 
