@@ -98,23 +98,25 @@ class IrValidatorTest {
         return file
     }
 
-    private fun testValidation(mode: IrVerificationMode, tree: IrElement, expectedMessages: List<Message>) {
-        performBasicIrValidation(
-            context,
-            tree,
-            mode,
-            phaseName = "IrValidatorTest",
-            checkTypes = true,
-        )
-
-        assertEquals(expectedMessages, messageCollector.messages)
-
+    private inline fun runValidationAndAssert(mode: IrVerificationMode, block: () -> Unit) {
         if (mode == IrVerificationMode.ERROR) {
-            assertFailsWith<IrValidationError> {
-                context.throwValidationErrorIfNeeded(mode)
-            }
+            assertFailsWith<IrValidationError>(block = block)
         } else {
-            context.throwValidationErrorIfNeeded(mode) // Should not throw
+            block()
+        }
+    }
+
+    private fun testValidation(mode: IrVerificationMode, tree: IrElement, expectedMessages: List<Message>) {
+        runValidationAndAssert(mode) {
+            validateIr(context, mode) {
+                performBasicIrValidation(
+                    tree,
+                    context.irBuiltIns,
+                    phaseName = "IrValidatorTest",
+                    checkTypes = true,
+                )
+                assertEquals(expectedMessages, messageCollector.messages)
+            }
         }
     }
 

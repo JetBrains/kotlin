@@ -1,22 +1,12 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -141,60 +131,89 @@ fun performBasicIrValidation(
 }
 
 /**
- * Verifies common IR invariants that should hold in all the backends.
- *
- * Reports errors to [CommonBackendContext.messageCollector].
- *
- * **Note:** this method does **not** throw [IrValidationError]. Use [throwValidationErrorIfNeeded] for checking for errors and throwing
- * [IrValidationError]. This gives the caller the opportunity to perform additional (for example, backend-specific) validation before
- * aborting. The caller decides when it's time to abort.
+ * [IrValidationContext] is responsible for collecting validation errors, logging them and optionally throwing [IrValidationError]
+ * (if the verification mode passed to [validateIr] is [IrVerificationMode.ERROR])
  */
-fun performBasicIrValidation(
-    context: CommonBackendContext,
-    fragment: IrElement,
-    mode: IrVerificationMode,
-    phaseName: String,
-    checkProperties: Boolean = false,
-    checkTypes: Boolean = false,
-) {
-    if (mode == IrVerificationMode.NONE) return
-    performBasicIrValidation(
-        fragment,
-        context.irBuiltIns,
-        checkProperties,
-        checkTypes,
-    ) { file, element, message ->
-        context.reportIrValidationError(mode, file, element, message, phaseName)
+sealed interface IrValidationContext {
+
+    /**
+     * Logs the validation error into the underlying [MessageCollector].
+     */
+    fun reportIrValidationError(file: IrFile?, element: IrElement, message: String, phaseName: String)
+
+    /**
+     * Allows to abort the compilation process if after or during validating the IR there were errors and the verification mode is
+     * [IrVerificationMode.ERROR].
+     */
+    fun throwValidationErrorIfNeeded()
+
+    /**
+     * Verifies common IR invariants that should hold in all the backends.
+     *
+     * Reports errors to [CommonBackendContext.messageCollector].
+     *
+     * **Note:** this method does **not** throw [IrValidationError]. Use [throwValidationErrorIfNeeded] for checking for errors and throwing
+     * [IrValidationError]. This gives the caller the opportunity to perform additional (for example, backend-specific) validation before
+     * aborting. The caller decides when it's time to abort.
+     */
+    fun performBasicIrValidation(
+        fragment: IrElement,
+        irBuiltIns: IrBuiltIns,
+        phaseName: String,
+        checkProperties: Boolean = false,
+        checkTypes: Boolean = false,
+    ) {
+        performBasicIrValidation(
+            fragment,
+            irBuiltIns,
+            checkProperties,
+            checkTypes,
+        ) { file, element, message ->
+            reportIrValidationError(file, element, message, phaseName)
+        }
     }
 }
 
-fun LoggingContext.reportIrValidationError(
-    mode: IrVerificationMode,
-    file: IrFile?,
-    element: IrElement,
-    message: String,
-    phaseName: String,
-) {
-    val severity = when (mode) {
-        IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
-        IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
-        IrVerificationMode.NONE -> return
+private class IrValidationContextImpl(
+    private val loggingContext: LoggingContext,
+    private val mode: IrVerificationMode
+) : IrValidationContext {
+
+    private var hasValidationErrors: Boolean = false
+
+    override fun reportIrValidationError(file: IrFile?, element: IrElement, message: String, phaseName: String) {
+        val severity = when (mode) {
+            IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
+            IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
+            IrVerificationMode.NONE -> return
+        }
+        hasValidationErrors = true
+        val phaseMessage = if (phaseName.isNotEmpty()) "$phaseName: " else ""
+        // TODO: render all element's parents.
+        loggingContext.report(
+            severity,
+            element,
+            file,
+            "[IR VALIDATION] ${phaseMessage}${"$message\n" + element.render()}",
+        )
     }
-    val phaseMessage = if (phaseName.isNotEmpty()) "$phaseName: " else ""
-    // TODO: render all element's parents.
-    report(
-        severity,
-        element,
-        file,
-        "[IR VALIDATION] ${phaseMessage}${"$message\n" + element.render()}",
-    )
+
+    override fun throwValidationErrorIfNeeded() {
+        if (hasValidationErrors && mode == IrVerificationMode.ERROR) {
+            throw IrValidationError()
+        }
+    }
 }
 
 /**
- * Allows to abort the compilation process if after validating the IR there were errors and [mode] is [IrVerificationMode.ERROR].
+ * Logs validation errors encountered during the execution of the [runValidationRoutines] closure into [loggingContext].
+ *
+ * If [mode] is [IrVerificationMode.ERROR], throws [IrValidationError] after [runValidationRoutines] has finished,
+ * thus allowing to collect as many errors as possible instead of aborting after the first one.
  */
-fun LoggingContext.throwValidationErrorIfNeeded(mode: IrVerificationMode) {
-    if (messageCollector.hasErrors() && mode == IrVerificationMode.ERROR) {
-        throw IrValidationError()
-    }
+fun validateIr(loggingContext: LoggingContext, mode: IrVerificationMode, runValidationRoutines: IrValidationContext.() -> Unit) {
+    if (mode == IrVerificationMode.NONE) return
+    val validationContext = IrValidationContextImpl(loggingContext, mode)
+    validationContext.runValidationRoutines()
+    validationContext.throwValidationErrorIfNeeded()
 }
