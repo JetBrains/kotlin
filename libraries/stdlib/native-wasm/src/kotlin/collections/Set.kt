@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
@@ -11,16 +11,16 @@ package kotlin.collections
  * read/write access is supported through the [MutableSet] interface.
  * @param E the type of elements contained in the set. The set is covariant in its element type.
  */
-public interface Set<out E> : Collection<E> {
+public actual interface Set<out E> : Collection<E> {
     // Query Operations
-    override val size: Int
+    actual override val size: Int
 
-    override fun isEmpty(): Boolean
-    override fun contains(element: @UnsafeVariance E): Boolean
-    override fun iterator(): Iterator<E>
+    actual override fun isEmpty(): Boolean
+    actual override fun contains(element: @UnsafeVariance E): Boolean
+    actual override fun iterator(): Iterator<E>
 
     // Bulk Operations
-    override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
+    actual override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 }
 
 /**
@@ -28,9 +28,9 @@ public interface Set<out E> : Collection<E> {
  * adding and removing elements.
  * @param E the type of elements contained in the set. The mutable set is invariant in its element type.
  */
-public interface MutableSet<E> : Set<E>, MutableCollection<E> {
+public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     // Query Operations
-    override fun iterator(): MutableIterator<E>
+    actual override fun iterator(): MutableIterator<E>
 
     // Modification Operations
 
@@ -39,14 +39,14 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
      *
      * @return `true` if the element has been added, `false` if the element is already contained in the set.
      */
-    override fun add(element: E): Boolean
+    actual override fun add(element: E): Boolean
 
-    override fun remove(element: E): Boolean
+    actual override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
-    override fun addAll(elements: Collection<E>): Boolean
+    actual override fun addAll(elements: Collection<E>): Boolean
 
-    override fun removeAll(elements: Collection<E>): Boolean
-    override fun retainAll(elements: Collection<E>): Boolean
-    override fun clear(): Unit
+    actual override fun removeAll(elements: Collection<E>): Boolean
+    actual override fun retainAll(elements: Collection<E>): Boolean
+    actual override fun clear(): Unit
 }
