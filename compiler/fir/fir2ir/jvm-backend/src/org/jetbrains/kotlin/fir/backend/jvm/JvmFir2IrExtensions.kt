@@ -39,6 +39,8 @@ class JvmFir2IrExtensions(
     private val irDeserializer: JvmIrDeserializer,
     private val mangler: KotlinMangler.IrMangler,
 ) : Fir2IrExtensions, JvmGeneratorExtensions {
+    private var irBuiltIns: IrBuiltIns? = null
+
     override val parametersAreAssignable: Boolean get() = true
     override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>
         get() = listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
@@ -93,10 +95,12 @@ class JvmFir2IrExtensions(
     override val irNeedsDeserialization: Boolean =
         configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
 
-    override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean =
-        irDeserializer.deserializeTopLevelClass(
-            irClass, components.builtins, components.symbolTable, components.irProviders, this
+    override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean {
+        val builtIns = irBuiltIns ?: error("BuiltIns are not initialized")
+        return irDeserializer.deserializeTopLevelClass(
+            irClass, builtIns, components.symbolTable, components.irProviders, this
         )
+    }
 
     override fun hasBackingField(property: FirProperty, session: FirSession): Boolean =
         property.origin is FirDeclarationOrigin.Java || Fir2IrExtensions.Default.hasBackingField(property, session)
@@ -104,4 +108,9 @@ class JvmFir2IrExtensions(
     override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean =
         declaration.hasAnnotation(StandardClassIds.Annotations.jvmStatic, session) ||
                 (declaration as? FirPropertyAccessor)?.propertySymbol?.fir?.hasAnnotation(StandardClassIds.Annotations.jvmStatic, session) == true
+
+    override fun initializeIrBuiltIns(irBuiltIns: IrBuiltIns) {
+        require(this.irBuiltIns == null) { "BuiltIns are already initialized" }
+        this.irBuiltIns = irBuiltIns
+    }
 }

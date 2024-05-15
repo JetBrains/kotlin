@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.backend.utils
 
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
-import org.jetbrains.kotlin.fir.backend.FirMetadataSource
-import org.jetbrains.kotlin.fir.backend.toIrType
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -29,7 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.collections.List
 import kotlin.collections.Set
@@ -143,3 +140,32 @@ internal inline fun <R> convertCatching(element: FirElement, conversionScope: Fi
         }
     }
 }
+
+fun IrType.getArrayElementType(builtins: Fir2IrBuiltinSymbolsContainer): IrType {
+    return when {
+        isBoxedArray -> {
+            when (val argument = (this as IrSimpleType).arguments.singleOrNull()) {
+                is IrTypeProjection ->
+                    argument.type
+                is IrStarProjection ->
+                    builtins.anyNType
+                null ->
+                    error("Unexpected array argument type: null")
+            }
+        }
+        else -> {
+            val classifier = this.classOrNull!!
+            builtins.primitiveArrayElementTypes[classifier]
+                ?: builtins.unsignedArraysElementTypes[classifier]
+                ?: error("Primitive array expected: $classifier")
+        }
+    }
+}
+
+fun IrType.toArrayOrPrimitiveArrayType(builtins: Fir2IrBuiltinSymbolsContainer): IrType {
+    return when {
+        isPrimitiveType() -> builtins.primitiveArrayForType[this]?.defaultType ?: error("$this not in primitiveArrayForType")
+        else -> builtins.arrayClass.typeWith(this)
+    }
+}
+

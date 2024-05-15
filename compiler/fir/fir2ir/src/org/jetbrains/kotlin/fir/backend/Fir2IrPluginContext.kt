@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Fir2IrPluginContext(
     private val c: Fir2IrComponents,
+    override val irBuiltIns: IrBuiltIns,
     @property:ObsoleteDescriptorBasedAPI override val moduleDescriptor: ModuleDescriptor
 ) : IrPluginContext {
     companion object {
@@ -63,9 +64,6 @@ class Fir2IrPluginContext(
         get() = c.symbolTable
 
     override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, symbolTable)
-
-    override val irBuiltIns: IrBuiltIns
-        get() = c.builtins
 
     private val symbolProvider: FirSymbolProvider
         get() = c.session.symbolProvider

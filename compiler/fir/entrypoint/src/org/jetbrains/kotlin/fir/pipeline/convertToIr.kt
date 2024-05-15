@@ -56,6 +56,7 @@ data class Fir2IrActualizedResult(
     val components: Fir2IrComponents,
     val pluginContext: Fir2IrPluginContext,
     val irActualizedResult: IrActualizedResult?,
+    val irBuiltIns: IrBuiltIns,
 )
 
 fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnosticsCollector) {
@@ -93,7 +94,7 @@ fun FirResult.convertToIrAndActualize(
 
     val platformFirOutput = outputs.last()
 
-    fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(predefinedBuiltins: IrBuiltInsOverFir?): Fir2IrComponentsStorage {
+    fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(): Fir2IrComponentsStorage {
         return Fir2IrComponentsStorage(
             session,
             scopeSession,
@@ -105,13 +106,12 @@ fun FirResult.convertToIrAndActualize(
             commonMemberStorage,
             irMangler,
             kotlinBuiltIns,
-            predefinedBuiltins,
             specialAnnotationsProvider,
             firProvidersWithGeneratedFiles.getValue(session.moduleData),
         )
     }
 
-    val platformComponentsStorage = platformFirOutput.createFir2IrComponentsStorage(predefinedBuiltins = null)
+    val platformComponentsStorage = platformFirOutput.createFir2IrComponentsStorage()
 
     val dependentIrFragments = mutableListOf<IrModuleFragmentImpl>()
     lateinit var mainIrFragment: IrModuleFragmentImpl
@@ -123,7 +123,7 @@ fun FirResult.convertToIrAndActualize(
         val componentsStorage = if (isMainOutput) {
             platformComponentsStorage
         } else {
-            firOutput.createFir2IrComponentsStorage(platformComponentsStorage.builtins)
+            firOutput.createFir2IrComponentsStorage()
         }
 
         val irModuleFragment = Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir).also {
@@ -137,8 +137,9 @@ fun FirResult.convertToIrAndActualize(
         }
     }
 
-    val irBuiltins = platformComponentsStorage.builtins
+    val irBuiltins = createIrBuiltins()
     val irTypeSystemContext = typeSystemContextProvider(irBuiltins)
+    fir2IrExtensions.initializeIrBuiltIns(irBuiltins)
 
     mainIrFragment.initializeIrBuiltins(irBuiltins)
     dependentIrFragments.forEach { it.initializeIrBuiltins(irBuiltins) }
@@ -180,10 +181,12 @@ fun FirResult.convertToIrAndActualize(
 
     (fakeOverrideBuilder.strategy as Fir2IrFakeOverrideStrategy).clearFakeOverrideFields()
 
-    val pluginContext = Fir2IrPluginContext(platformComponentsStorage, platformComponentsStorage.moduleDescriptor)
+    val pluginContext = Fir2IrPluginContext(platformComponentsStorage, irBuiltins, platformComponentsStorage.moduleDescriptor)
     pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
-    return Fir2IrActualizedResult(mainIrFragment, platformComponentsStorage, pluginContext, actualizationResult)
+    return Fir2IrActualizedResult(mainIrFragment, platformComponentsStorage, pluginContext, actualizationResult, irBuiltins)
 }
+
+private fun createIrBuiltins(): IrBuiltIns = TODO()
 
 private fun Fir2IrComponentsStorage.createFakeOverrideBuilder(irTypeSystemContext: IrTypeSystemContext): IrFakeOverrideBuilder {
     return IrFakeOverrideBuilder(
