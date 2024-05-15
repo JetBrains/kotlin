@@ -28,7 +28,6 @@ public interface SirSession :
     SirDeclarationProvider,
     SirParentProvider,
     SirModuleProvider,
-    SirEnumGenerator,
     SirTypeProvider,
     SirVisibilityChecker,
     SirChildrenProvider
@@ -40,7 +39,6 @@ public interface SirSession :
     public val declarationProvider: SirDeclarationProvider
     public val parentProvider: SirParentProvider
     public val moduleProvider: SirModuleProvider
-    public val enumGenerator: SirEnumGenerator
     public val typeProvider: SirTypeProvider
     public val visibilityChecker: SirVisibilityChecker
     public val childrenProvider: SirChildrenProvider
@@ -49,8 +47,6 @@ public interface SirSession :
         get() = typeProvider.errorTypeStrategy
     override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy
         get() = typeProvider.unsupportedTypeStrategy
-
-    override fun FqName.sirPackageEnum(module: SirModule): SirEnum = with(enumGenerator) { this@sirPackageEnum.sirPackageEnum(module) }
 
     override fun KtDeclarationSymbol.sirDeclarationName(): String = with(declarationNamer) { this@sirDeclarationName.sirDeclarationName() }
 

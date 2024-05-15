@@ -18,7 +18,6 @@ internal class StandaloneSirSession(
 ) : SirSession {
 
     override val declarationNamer = SirDeclarationNamerImpl()
-    override val enumGenerator = SirEnumGeneratorImpl()
     override val moduleProvider = moduleProviderBuilder()
     override val declarationProvider = CachingSirDeclarationProvider(
         declarationsProvider = SirDeclarationFromKtSymbolProvider(
@@ -26,7 +25,7 @@ internal class StandaloneSirSession(
             sirSession = sirSession,
         )
     )
-    override val parentProvider = SirParentProviderImpl(sirSession)
+    override val parentProvider = SirParentProviderImpl(sirSession, SirEnumGeneratorImpl())
     override val typeProvider = SirTypeProviderImpl(
         sirSession,
         errorTypeStrategy = errorTypeStrategy,

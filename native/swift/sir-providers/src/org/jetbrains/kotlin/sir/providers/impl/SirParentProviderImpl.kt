@@ -11,11 +11,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildExtension
+import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
 import org.jetbrains.kotlin.sir.providers.SirParentProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.util.addChild
 
-public class SirParentProviderImpl(private val sirSession: SirSession) : SirParentProvider {
+public class SirParentProviderImpl(
+    private val sirSession: SirSession,
+    private val packageEnumGenerator: SirEnumGenerator
+) : SirParentProvider {
 
     private val createdExtensionsForModule: MutableMap<SirModule, MutableMap<SirEnum, SirExtension>> = mutableMapOf()
 
@@ -37,7 +41,7 @@ public class SirParentProviderImpl(private val sirSession: SirSession) : SirPare
             return if (packageFqName.isRoot) {
                 sirModule
             } else {
-                val enumAsPackage = with(sirSession) { packageFqName.sirPackageEnum(sirModule) }
+                val enumAsPackage = with(packageEnumGenerator) { packageFqName.sirPackageEnum(sirModule) }
                 val extensionsInModule = createdExtensionsForModule.getOrPut(sirModule) { mutableMapOf() }
                 val extensionForPackage = extensionsInModule.getOrPut(enumAsPackage) {
                     sirModule.addChild {
