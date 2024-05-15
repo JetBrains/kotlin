@@ -105,7 +105,7 @@ internal fun PhaseContext.fir2Ir(
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
             specialAnnotationsProvider = null,
             extraActualDeclarationExtractorInitializer = { null },
-            actualizerTypeContextProvider = ::IrTypeSystemContextImpl,
+            typeSystemContextProvider = ::IrTypeSystemContextImpl,
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }

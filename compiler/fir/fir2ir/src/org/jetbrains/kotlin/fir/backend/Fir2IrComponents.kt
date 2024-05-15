@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
@@ -54,7 +53,6 @@ interface Fir2IrComponents {
     val callGenerator: CallAndReferenceGenerator
     val lazyFakeOverrideGenerator: Fir2IrLazyFakeOverrideGenerator
     val delegatedMemberGenerator: DelegatedMemberGenerator
-    val fakeOverrideBuilder: IrFakeOverrideBuilder
     val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses
 
     val extensions: Fir2IrExtensions

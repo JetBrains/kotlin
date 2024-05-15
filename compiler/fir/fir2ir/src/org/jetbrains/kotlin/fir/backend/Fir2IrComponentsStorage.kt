@@ -11,17 +11,12 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrComponentsStorage(
@@ -32,13 +27,11 @@ class Fir2IrComponentsStorage(
     override val extensions: Fir2IrExtensions,
     override val configuration: Fir2IrConfiguration,
     override val visibilityConverter: Fir2IrVisibilityConverter,
-    actualizerTypeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     irMangler: KotlinMangler.IrMangler,
     kotlinBuiltIns: KotlinBuiltIns,
     initializedIrBuiltIns: IrBuiltInsOverFir?,
     override val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
-    initializedIrTypeSystemContext: IrTypeSystemContext?,
     override val firProvider: FirProviderWithGeneratedFiles,
 ) : Fir2IrComponents {
     override val filesBeingCompiled: Set<FirFile>? = runIf(configuration.allowNonCachedDeclarations) { fir.toSet() }
@@ -62,17 +55,6 @@ class Fir2IrComponentsStorage(
     // builtins should go after storages and generators, because they use them during initialization
     override val builtins: IrBuiltInsOverFir = initializedIrBuiltIns ?: IrBuiltInsOverFir(
         this, configuration.languageVersionSettings, moduleDescriptor, irMangler
-    )
-    val irTypeSystemContext: IrTypeSystemContext = initializedIrTypeSystemContext ?: actualizerTypeContextProvider(builtins)
-
-    override val fakeOverrideBuilder: IrFakeOverrideBuilder = IrFakeOverrideBuilder(
-        irTypeSystemContext,
-        Fir2IrFakeOverrideStrategy(
-            Fir2IrConverter.friendModulesMap(session),
-            isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm(),
-            isOverrideOfPublishedApiFromOtherModuleDisallowed = session.moduleData.platform.isJvm(),
-        ),
-        extensions.externalOverridabilityConditions
     )
 
     override val irProviders: List<IrProvider> = emptyList()
