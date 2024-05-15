@@ -40283,6 +40283,42 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("newListMethodsNullability20.kt")
+      public void testNewListMethodsNullability20() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullability20.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsNullability21.kt")
+      public void testNewListMethodsNullability21() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullability21.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsNullabilityLatest.kt")
+      public void testNewListMethodsNullabilityLatest() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityLatest.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsNullabilityOverrides20.kt")
+      public void testNewListMethodsNullabilityOverrides20() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityOverrides20.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsNullabilityOverrides21.kt")
+      public void testNewListMethodsNullabilityOverrides21() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityOverrides21.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsNullabilityOverridesLatest.kt")
+      public void testNewListMethodsNullabilityOverridesLatest() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityOverridesLatest.kt");
+      }
+
+      @Test
       @TestMetadata("noFalsePositiveAbstractToArray.kt")
       public void testNoFalsePositiveAbstractToArray() {
         runTest("compiler/testData/diagnostics/tests/testsWithJava21/noFalsePositiveAbstractToArray.kt");
