@@ -268,7 +268,7 @@ class DelegatedMemberGenerator(private val c: Fir2IrComponents) : Fir2IrComponen
             }
             true -> {
                 callTypeCanBeNullable = false
-                irBuiltIns.unitType
+                builtins.unitType
             }
         }
 
@@ -329,7 +329,7 @@ class DelegatedMemberGenerator(private val c: Fir2IrComponents) : Fir2IrComponen
         if (isSetter || originalDeclarationReturnType.isUnit || originalDeclarationReturnType.isNothing) {
             body.statements.add(irCastOrCall)
         } else {
-            val irReturn = IrReturnImpl(startOffset, endOffset, irBuiltIns.nothingType, delegatedIrFunction.symbol, irCastOrCall)
+            val irReturn = IrReturnImpl(startOffset, endOffset, builtins.nothingType, delegatedIrFunction.symbol, irCastOrCall)
             body.statements.add(irReturn)
         }
         return body

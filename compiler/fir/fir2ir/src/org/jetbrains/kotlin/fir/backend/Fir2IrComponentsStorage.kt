@@ -60,10 +60,10 @@ class Fir2IrComponentsStorage(
     override val dataClassMembersGenerator: Fir2IrDataClassMembersGenerator = Fir2IrDataClassMembersGenerator(this)
 
     // builtins should go after storages and generators, because they use them during initialization
-    override val irBuiltIns: IrBuiltInsOverFir = initializedIrBuiltIns ?: IrBuiltInsOverFir(
+    override val builtins: IrBuiltInsOverFir = initializedIrBuiltIns ?: IrBuiltInsOverFir(
         this, configuration.languageVersionSettings, moduleDescriptor, irMangler
     )
-    val irTypeSystemContext: IrTypeSystemContext = initializedIrTypeSystemContext ?: actualizerTypeContextProvider(irBuiltIns)
+    val irTypeSystemContext: IrTypeSystemContext = initializedIrTypeSystemContext ?: actualizerTypeContextProvider(builtins)
 
     override val fakeOverrideBuilder: IrFakeOverrideBuilder = IrFakeOverrideBuilder(
         irTypeSystemContext,

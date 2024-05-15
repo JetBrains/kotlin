@@ -35,38 +35,38 @@ class Fir2IrTypeConverter(
     internal val classIdToSymbolMap by lazy {
         // Note: this map must include all base classes, and they should be before derived classes!
         mapOf(
-            StandardClassIds.Nothing to irBuiltIns.nothingClass,
-            StandardClassIds.Any to irBuiltIns.anyClass,
-            StandardClassIds.Unit to irBuiltIns.unitClass,
-            StandardClassIds.Boolean to irBuiltIns.booleanClass,
-            StandardClassIds.CharSequence to irBuiltIns.charSequenceClass,
-            StandardClassIds.String to irBuiltIns.stringClass,
-            StandardClassIds.Number to irBuiltIns.numberClass,
-            StandardClassIds.Long to irBuiltIns.longClass,
-            StandardClassIds.Int to irBuiltIns.intClass,
-            StandardClassIds.Short to irBuiltIns.shortClass,
-            StandardClassIds.Byte to irBuiltIns.byteClass,
-            StandardClassIds.Float to irBuiltIns.floatClass,
-            StandardClassIds.Double to irBuiltIns.doubleClass,
-            StandardClassIds.Char to irBuiltIns.charClass,
-            StandardClassIds.Array to irBuiltIns.arrayClass,
+            StandardClassIds.Nothing to builtins.nothingClass,
+            StandardClassIds.Any to builtins.anyClass,
+            StandardClassIds.Unit to builtins.unitClass,
+            StandardClassIds.Boolean to builtins.booleanClass,
+            StandardClassIds.CharSequence to builtins.charSequenceClass,
+            StandardClassIds.String to builtins.stringClass,
+            StandardClassIds.Number to builtins.numberClass,
+            StandardClassIds.Long to builtins.longClass,
+            StandardClassIds.Int to builtins.intClass,
+            StandardClassIds.Short to builtins.shortClass,
+            StandardClassIds.Byte to builtins.byteClass,
+            StandardClassIds.Float to builtins.floatClass,
+            StandardClassIds.Double to builtins.doubleClass,
+            StandardClassIds.Char to builtins.charClass,
+            StandardClassIds.Array to builtins.arrayClass,
         )
     }
 
     internal val classIdToTypeMap by lazy {
         mapOf(
-            StandardClassIds.Nothing to irBuiltIns.nothingType,
-            StandardClassIds.Unit to irBuiltIns.unitType,
-            StandardClassIds.Boolean to irBuiltIns.booleanType,
-            StandardClassIds.String to irBuiltIns.stringType,
-            StandardClassIds.Any to irBuiltIns.anyType,
-            StandardClassIds.Long to irBuiltIns.longType,
-            StandardClassIds.Int to irBuiltIns.intType,
-            StandardClassIds.Short to irBuiltIns.shortType,
-            StandardClassIds.Byte to irBuiltIns.byteType,
-            StandardClassIds.Float to irBuiltIns.floatType,
-            StandardClassIds.Double to irBuiltIns.doubleType,
-            StandardClassIds.Char to irBuiltIns.charType
+            StandardClassIds.Nothing to builtins.nothingType,
+            StandardClassIds.Unit to builtins.unitType,
+            StandardClassIds.Boolean to builtins.booleanType,
+            StandardClassIds.String to builtins.stringType,
+            StandardClassIds.Any to builtins.anyType,
+            StandardClassIds.Long to builtins.longType,
+            StandardClassIds.Int to builtins.intType,
+            StandardClassIds.Short to builtins.shortType,
+            StandardClassIds.Byte to builtins.byteType,
+            StandardClassIds.Float to builtins.floatType,
+            StandardClassIds.Double to builtins.doubleType,
+            StandardClassIds.Char to builtins.charType
         )
     }
 
@@ -78,14 +78,14 @@ class Fir2IrTypeConverter(
         return when (this) {
             !is FirResolvedTypeRef -> createErrorType()
             !is FirImplicitBuiltinTypeRef -> type.toIrType(typeOrigin, annotations)
-            is FirImplicitNothingTypeRef -> irBuiltIns.nothingType
-            is FirImplicitUnitTypeRef -> irBuiltIns.unitType
-            is FirImplicitBooleanTypeRef -> irBuiltIns.booleanType
-            is FirImplicitStringTypeRef -> irBuiltIns.stringType
-            is FirImplicitAnyTypeRef -> irBuiltIns.anyType
-            is FirImplicitIntTypeRef -> irBuiltIns.intType
-            is FirImplicitNullableAnyTypeRef -> irBuiltIns.anyNType
-            is FirImplicitNullableNothingTypeRef -> irBuiltIns.nothingNType
+            is FirImplicitNothingTypeRef -> builtins.nothingType
+            is FirImplicitUnitTypeRef -> builtins.unitType
+            is FirImplicitBooleanTypeRef -> builtins.booleanType
+            is FirImplicitStringTypeRef -> builtins.stringType
+            is FirImplicitAnyTypeRef -> builtins.anyType
+            is FirImplicitIntTypeRef -> builtins.intType
+            is FirImplicitNullableAnyTypeRef -> builtins.anyNType
+            is FirImplicitNullableNothingTypeRef -> builtins.nothingNType
             else -> type.toIrType(typeOrigin, annotations)
         }
     }
@@ -131,7 +131,7 @@ class Fir2IrTypeConverter(
                 }
 
                 if (isExtensionFunctionType && annotations.getAnnotationsByClassId(ExtensionFunctionType, session).isEmpty()) {
-                    irBuiltIns.extensionFunctionTypeAnnotationCall?.let {
+                    builtins.extensionFunctionTypeAnnotationCall?.let {
                         typeAnnotations += it
                     }
                 }
@@ -318,7 +318,7 @@ class Fir2IrTypeConverter(
     private fun getArrayClassSymbol(classId: ClassId?): IrClassSymbol? {
         val primitiveId = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: return null
         val irType = classIdToTypeMap[primitiveId]
-        return irBuiltIns.primitiveArrayForType[irType] ?: error("Strange primitiveId $primitiveId from array: $classId")
+        return builtins.primitiveArrayForType[irType] ?: error("Strange primitiveId $primitiveId from array: $classId")
     }
 
     private fun getBuiltInClassSymbol(classId: ClassId?): IrClassSymbol? {

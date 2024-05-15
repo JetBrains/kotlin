@@ -91,7 +91,7 @@ class Fir2IrDataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrC
         val origin: IrDeclarationOrigin
     ) {
         private val irDataClassMembersGenerator = object : IrBasedDataClassMembersGenerator(
-            IrGeneratorContextBase(c.irBuiltIns),
+            IrGeneratorContextBase(c.builtins),
             c.symbolTable,
             irClass,
             irClass.kotlinFqName,
@@ -211,7 +211,7 @@ class Fir2IrDataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 val toStringFunction = createSyntheticIrFunction(
                     TO_STRING,
                     toStringContributedFunction,
-                    c.irBuiltIns.stringType,
+                    c.builtins.stringType,
                 )
                 declarationStorage.cacheGeneratedFunction(toStringContributedFunction, toStringFunction)
             }
@@ -222,7 +222,7 @@ class Fir2IrDataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 val hashCodeFunction = createSyntheticIrFunction(
                     HASHCODE_NAME,
                     hashcodeNameContributedFunction,
-                    c.irBuiltIns.intType,
+                    c.builtins.intType,
                 )
                 declarationStorage.cacheGeneratedFunction(hashcodeNameContributedFunction, hashCodeFunction)
             }
@@ -233,7 +233,7 @@ class Fir2IrDataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 val equalsFunction = createSyntheticIrFunction(
                     EQUALS,
                     equalsContributedFunction,
-                    c.irBuiltIns.booleanType,
+                    c.builtins.booleanType,
                     otherParameterNeeded = true,
                     isOperator = true
                 )
@@ -335,7 +335,7 @@ class Fir2IrDataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrC
             ).apply {
                 if (otherParameterNeeded) {
                     val irValueParameter = createSyntheticIrParameter(
-                        this, syntheticCounterpart.valueParameters.first().name, c.irBuiltIns.anyNType
+                        this, syntheticCounterpart.valueParameters.first().name, c.builtins.anyNType
                     )
                     this.valueParameters = listOf(irValueParameter)
                 }
@@ -343,8 +343,8 @@ class Fir2IrDataClassMembersGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 setParent(irClass)
                 addDeclarationToParent(this, irClass)
                 dispatchReceiverParameter = generateDispatchReceiverParameter(this)
-                c.irBuiltIns.findBuiltInClassMemberFunctions(
-                    c.irBuiltIns.anyClass,
+                c.builtins.findBuiltInClassMemberFunctions(
+                    c.builtins.anyClass,
                     this.name
                 ).singleOrNull()?.let {
                     overriddenSymbols = listOf(it)

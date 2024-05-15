@@ -413,7 +413,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
     ): IrSimpleFunction = convertCatching(propertyAccessor ?: property) {
         val prefix = if (isSetter) "set" else "get"
         val containerSource = (correspondingProperty as? IrProperty)?.containerSource
-        val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
+        val accessorReturnType = if (isSetter) builtins.unitType else propertyType
         val visibility = propertyAccessor?.visibility?.let {
             c.visibilityConverter.convertToDescriptorVisibility(it)
         }

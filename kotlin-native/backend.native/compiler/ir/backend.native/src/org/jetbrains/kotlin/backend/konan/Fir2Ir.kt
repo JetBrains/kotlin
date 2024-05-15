@@ -158,5 +158,5 @@ private fun PhaseContext.createKonanSymbols(
 ): KonanSymbols {
     val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), pluginContext.irFactory)
 
-    return KonanSymbols(this, SymbolOverIrLookupUtils(), components.irBuiltIns, symbolTable.lazyWrapper)
+    return KonanSymbols(this, SymbolOverIrLookupUtils(), components.builtins, symbolTable.lazyWrapper)
 }

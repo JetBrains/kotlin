@@ -125,7 +125,7 @@ fun FirResult.convertToIrAndActualize(
         val componentsStorage = if (isMainOutput) {
             platformComponentsStorage
         } else {
-            firOutput.createFir2IrComponentsStorage(platformComponentsStorage.irBuiltIns, platformComponentsStorage.irTypeSystemContext)
+            firOutput.createFir2IrComponentsStorage(platformComponentsStorage.builtins, platformComponentsStorage.irTypeSystemContext)
         }
 
         val irModuleFragment = Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir).also {

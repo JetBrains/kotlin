@@ -274,7 +274,7 @@ class Fir2IrConverter(
                 body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
                     statements += IrDelegatingConstructorCallImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        irBuiltIns.unitType,
+                        builtins.unitType,
                         irAnyConstructor,
                         typeArgumentsCount = 0,
                         valueArgumentsCount = 0
@@ -285,7 +285,7 @@ class Fir2IrConverter(
 
         IrSimpleFunctionSymbolImpl().let { irSymbol ->
             val lastStatement = codeFragment.block.statements.lastOrNull()
-            val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType(c) ?: irBuiltIns.unitType
+            val returnType = (lastStatement as? FirExpression)?.resolvedType?.toIrType(c) ?: builtins.unitType
 
             irFactory.createSimpleFunction(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -651,7 +651,7 @@ class Fir2IrConverter(
 
             session.lazyDeclarationResolver.disableLazyResolveContractChecks()
 
-            val irModuleFragment = IrModuleFragmentImpl(components.moduleDescriptor, components.irBuiltIns)
+            val irModuleFragment = IrModuleFragmentImpl(components.moduleDescriptor, components.builtins)
 
             val allFirFiles = buildList {
                 addAll(firFiles)

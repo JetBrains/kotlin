@@ -163,7 +163,7 @@ internal class ClassMemberGenerator(
                                 contextReceiverFields[index].symbol,
                                 IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, thisParameter.type, thisParameter.symbol),
                                 IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
-                                c.irBuiltIns.unitType,
+                                c.builtins.unitType,
                             )
                         )
                     }
@@ -307,13 +307,13 @@ internal class ClassMemberGenerator(
                             startOffset, endOffset,
                             listOf(
                                 if (isSetter) {
-                                    IrSetFieldImpl(startOffset, endOffset, fieldSymbol, irBuiltIns.unitType).apply {
+                                    IrSetFieldImpl(startOffset, endOffset, fieldSymbol, builtins.unitType).apply {
                                         setReceiver(declaration)
                                         value = IrGetValueImpl(startOffset, endOffset, propertyType, valueParameters.first().symbol)
                                     }
                                 } else {
                                     IrReturnImpl(
-                                        startOffset, endOffset, irBuiltIns.nothingType, symbol,
+                                        startOffset, endOffset, builtins.nothingType, symbol,
                                         IrGetFieldImpl(startOffset, endOffset, fieldSymbol, propertyType).setReceiver(declaration)
                                     )
                                 }
@@ -380,7 +380,7 @@ internal class ClassMemberGenerator(
             } else {
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset,
-                    irBuiltIns.unitType,
+                    builtins.unitType,
                     irConstructorSymbol,
                     typeArgumentsCount = constructor.typeParameters.size,
                     valueArgumentsCount = constructor.valueParameters.size + constructor.contextReceivers.size

@@ -62,7 +62,7 @@ class Fir2IrLazyPropertyAccessor(
         set(_) = mutationNotSupported()
 
     override var returnType: IrType by lazyVar(lock) {
-        if (isSetter) irBuiltIns.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)
+        if (isSetter) builtins.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)
     }
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {

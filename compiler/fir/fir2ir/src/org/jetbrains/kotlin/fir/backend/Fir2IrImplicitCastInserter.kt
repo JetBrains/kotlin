@@ -99,7 +99,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
     override fun visitExpression(expression: FirExpression, data: IrElement): IrElement {
         return when (expression) {
             is FirBlock -> (data as IrContainerExpression).insertImplicitCasts()
-            is FirUnitExpression -> coerceToUnitIfNeeded(data as IrExpression, irBuiltIns)
+            is FirUnitExpression -> coerceToUnitIfNeeded(data as IrExpression, builtins)
             else -> data
         }
     }
@@ -107,7 +107,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
     override fun visitStatement(statement: FirStatement, data: IrElement): IrElement {
         return when (statement) {
             is FirTypeAlias -> data
-            is FirUnitExpression -> coerceToUnitIfNeeded(data as IrExpression, irBuiltIns)
+            is FirUnitExpression -> coerceToUnitIfNeeded(data as IrExpression, builtins)
             is FirBlock -> (data as IrContainerExpression).insertImplicitCasts()
             else -> statement.accept(this, data)
         }
@@ -215,7 +215,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
 
         return when {
             expandedExpectedType.isUnit -> {
-                coerceToUnitIfNeeded(this, irBuiltIns)
+                coerceToUnitIfNeeded(this, builtins)
             }
             expandedValueType is ConeDynamicType -> {
                 if (expandedExpectedType !is ConeDynamicType && !expandedExpectedType.isNullableAny) {
@@ -268,7 +268,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         statements.forEachIndexed { i, irStatement ->
             if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
                 if (i != lastIndex || coerceLastExpressionToUnit) {
-                    statements[i] = coerceToUnitIfNeeded(irStatement, irBuiltIns)
+                    statements[i] = coerceToUnitIfNeeded(irStatement, builtins)
                 }
                 // TODO: for the last statement, need to cast to the return type if mismatched
             }
@@ -282,7 +282,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
 
         statements.forEachIndexed { i, irStatement ->
             if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
-                statements[i] = coerceToUnitIfNeeded(irStatement, irBuiltIns)
+                statements[i] = coerceToUnitIfNeeded(irStatement, builtins)
             }
         }
         return this

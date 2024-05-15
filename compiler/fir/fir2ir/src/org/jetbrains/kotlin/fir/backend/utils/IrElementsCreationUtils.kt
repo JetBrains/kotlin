@@ -78,20 +78,20 @@ fun Fir2IrComponents.createSafeCallConstruction(
         statements += receiverVariable
         statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
             val condition = IrCallImpl(
-                startOffset, endOffset, irBuiltIns.booleanType,
-                irBuiltIns.eqeqSymbol,
+                startOffset, endOffset, builtins.booleanType,
+                builtins.eqeqSymbol,
                 valueArgumentsCount = 2,
                 typeArgumentsCount = 0,
                 origin = IrStatementOrigin.EQEQ
             ).apply {
                 putValueArgument(0, IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol))
-                putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType))
+                putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType))
             }
             branches += IrBranchImpl(
-                condition, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType)
+                condition, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
             )
             branches += IrElseBranchImpl(
-                IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true),
+                IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
                 expressionOnNotNull
             )
         }

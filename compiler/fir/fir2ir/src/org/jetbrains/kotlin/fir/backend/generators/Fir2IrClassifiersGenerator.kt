@@ -238,7 +238,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             visibility = DescriptorVisibilities.PRIVATE,
             isInline = false,
             isExpect = false,
-            returnType = irBuiltIns.unitType,
+            returnType = builtins.unitType,
             modality = Modality.FINAL,
             symbol = IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
@@ -339,7 +339,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
                     thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
                     thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
                 )
-                superTypes = listOf(irBuiltIns.anyType)
+                superTypes = listOf(builtins.anyType)
             }
         }
         return irClass
@@ -437,7 +437,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
                     thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
                     thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER,
                 )
-                superTypes = listOf(irBuiltIns.anyType)
+                superTypes = listOf(builtins.anyType)
             }
         }
     }

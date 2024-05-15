@@ -31,7 +31,7 @@ interface Fir2IrComponents {
     val converter: Fir2IrConverter
 
     val symbolTable: SymbolTable
-    val irBuiltIns: IrBuiltInsOverFir
+    val builtins: IrBuiltInsOverFir
     val specialAnnotationsProvider: IrSpecialAnnotationsProvider?
     val manglers: Manglers
 

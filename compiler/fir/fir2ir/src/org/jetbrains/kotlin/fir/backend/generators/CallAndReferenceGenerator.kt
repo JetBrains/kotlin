@@ -449,7 +449,7 @@ class CallAndReferenceGenerator(
                         ?: qualifiedAccess.dynamicOperator
                         ?: IrDynamicOperator.INVOKE
                     val theType = if (name == OperatorNameConventions.COMPARE_TO) {
-                        typeConverter.irBuiltIns.booleanType
+                        typeConverter.builtins.booleanType
                     } else {
                         type
                     }
@@ -718,7 +718,7 @@ class CallAndReferenceGenerator(
         val injectedValue = findInjectedValue(calleeReference)
         if (injectedValue != null) {
             return element.convertWithOffsets { startOffset, endOffset ->
-                val type = irBuiltIns.unitType
+                val type = builtins.unitType
                 val origin = calleeReference.statementOrigin()
                 IrSetValueImpl(startOffset, endOffset, type, injectedValue.irParameterSymbol, assignedValue, origin)
             }
@@ -733,7 +733,7 @@ class CallAndReferenceGenerator(
         variableAssignment: FirVariableAssignment,
         explicitReceiverExpression: IrExpression?,
     ): IrExpression = convertCatching(variableAssignment, conversionScope) {
-        val type = irBuiltIns.unitType
+        val type = builtins.unitType
         val calleeReference = variableAssignment.calleeReference ?: error("Reference not resolvable")
         // TODO(KT-63348): An expected type should be passed to the IrExpression conversion.
         val assignedValue = wrapWithImplicitCastForAssignment(variableAssignment, visitor.convertToIrExpression(variableAssignment.rValue))
@@ -1128,7 +1128,7 @@ class CallAndReferenceGenerator(
                                 UNDEFINED_OFFSET,
                                 UNDEFINED_OFFSET,
                                 elementType,
-                                elementType.toArrayOrPrimitiveArrayType(irBuiltIns)
+                                elementType.toArrayOrPrimitiveArrayType(builtins)
                             )
                         }
                         putValueArgument(index, value)
@@ -1235,7 +1235,7 @@ class CallAndReferenceGenerator(
             parameter.isMarkedWithImplicitIntegerCoercion -> when {
                 this is IrVarargImpl && argument is FirVarargArgumentsExpression -> {
                     val targetTypeFqName = varargElementType.classFqName ?: return this
-                    val conversionFunctions = irBuiltIns.getNonBuiltInFunctionsWithFirCounterpartByExtensionReceiver(
+                    val conversionFunctions = builtins.getNonBuiltInFunctionsWithFirCounterpartByExtensionReceiver(
                         Name.identifier("to" + targetTypeFqName.shortName().asString()),
                         StandardNames.BUILT_INS_PACKAGE_NAME.asString()
                     )
@@ -1252,7 +1252,7 @@ class CallAndReferenceGenerator(
                 else -> {
                     val targetIrType = parameter.returnTypeRef.toIrType()
                     val targetTypeFqName = targetIrType.classFqName ?: return this
-                    val conversionFunctions = irBuiltIns.getNonBuiltInFunctionsWithFirCounterpartByExtensionReceiver(
+                    val conversionFunctions = builtins.getNonBuiltInFunctionsWithFirCounterpartByExtensionReceiver(
                         Name.identifier("to" + targetTypeFqName.shortName().asString()),
                         StandardNames.BUILT_INS_PACKAGE_NAME.asString()
                     )
@@ -1393,7 +1393,7 @@ class CallAndReferenceGenerator(
                             // (FIR calls Any method directly, but FE 1.0 calls its interface f/o instead)
                             implicitCast(
                                 baseDispatchReceiver,
-                                irBuiltIns.anyType,
+                                builtins.anyType,
                                 IrTypeOperator.IMPLICIT_CAST
                             )
                         }
