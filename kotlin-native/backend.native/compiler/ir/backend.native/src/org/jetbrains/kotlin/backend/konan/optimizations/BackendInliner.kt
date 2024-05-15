@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
+import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
 import org.jetbrains.kotlin.backend.konan.ir.superClasses
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -210,22 +212,25 @@ internal class BackendInliner(
                         1000 -
                         500 +
                         750 +
-                        875 -
-                        810 -
-                        780 -
-                        765 +
-                        772 -
-                        768 +
-                        770 -
-                        769 +
+                        875 +
+                        930 +
+                        965 -
+                        945 -
+                        938 +
+                        942 -
+                        939 +
+                        940 +
+                        941 -
                          */
 //                        ++count
-//                        if (count == 769) {
-//                            println("ZZZ: ${irFunction.fileOrNull?.path} ${irFunction.render()}")
-//                            functionsToInline.forEach { println("    ${it.render()}") }
-//                            //println(irFunction.dump())
-//                        }
-//                        if (count > 769)
+////                        if (count == 941) {
+////                            println("ZZZ: ${irFunction.fileOrNull?.path} ${irFunction.render()}")
+////                            //functionsToInline.forEach { println("    ${it.render()}") }
+////                            functionsToInline.forEach { println("    ${it.dump()}") }
+////                            //println(irFunction.dump())
+////                            println("BEFORE: ${irFunction.dump()}")
+////                        }
+//                        if (count > 941)
 //                            continue
 
 //                        if (irFunction is IrConstructor && irFunction.constructedClass.name.asString() == "ArrayList" && irFunction.valueParameters.size == 6)
@@ -251,7 +256,8 @@ internal class BackendInliner(
                         )
                         val devirtualizedCallSitesFromInlinedFunctions = inliner.lower(irBody, irFunction)
 
-//                        println("AFTER: ${irFunction.dump()}")
+////                        if (count == 941)
+//                            println("AFTER: ${irFunction.dump()}")
 
                         LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }
                                 .forEach { (irElement, liveVariables) ->
@@ -378,6 +384,9 @@ internal class FunctionInlining(
         }
     } ?: expression
 
+    private val IrConstructor.delegatingConstructorCallIsNoop: Boolean
+        get() = constructedClass.isExternalObjCClass() || constructedClass.isAny()
+
     private fun tryInline(callSite: IrFunctionAccessExpression, instance: IrExpression?): IrExpression? {
         val calleeSymbol = callSite.symbol
         val actualCallee = inlineFunctionResolver.getFunctionDeclaration(calleeSymbol)
@@ -437,6 +446,9 @@ internal class FunctionInlining(
                 val thisReceiver = callee.constructedClass.thisReceiver!!
                 copiedCallee.transformChildrenVoid(object : IrElementTransformerVoid() {
                     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                        if (expression.symbol.owner.delegatingConstructorCallIsNoop)
+                            return IrCompositeImpl(expression.startOffset, expression.endOffset, unitType)
+
                         val constructorCall = IrConstructorCallImpl(
                                 expression.startOffset, expression.endOffset,
                                 expression.type,
