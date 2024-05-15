@@ -239,7 +239,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
                 lowHighSurrogates.set(surrogatesStart - minSurrogate,
                         surrogatesEnd - minSurrogate + 1,
                         !invertedSurrogates)
-                if (!mayContainSupplCodepoints && end >= Char.MIN_SUPPLEMENTARY_CODE_POINT) {
+                if (!mayContainSupplCodepoints && end >= Char_MIN_SUPPLEMENTARY_CODE_POINT) {
                     mayContainSupplCodepoints = true
                 }
             }

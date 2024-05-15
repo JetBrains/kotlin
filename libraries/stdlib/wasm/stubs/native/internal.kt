@@ -7,10 +7,10 @@ package kotlin.native.internal
 
 // Only for compatibility with shared K/N stdlib code
 
-internal interface KonanSet<out E> : Set<E> {
-    fun getElement(element: @UnsafeVariance E): E?
+internal actual interface KonanSet<out E> : Set<E> {
+    actual fun getElement(element: @UnsafeVariance E): E?
 }
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
-internal annotation class CanBePrecreated
+internal actual annotation class CanBePrecreated

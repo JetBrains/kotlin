@@ -30,4 +30,5 @@ import kotlin.annotation.AnnotationTarget.*
 )
 @MustBeDocumented
 @SinceKotlin("1.9")
-internal actual annotation class ObsoleteNativeApi
+@OptionalExpectation
+internal expect annotation class ObsoleteNativeApi()

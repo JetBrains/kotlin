@@ -380,7 +380,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
                 object: AbstractCharClass() {
                     override fun contains(ch: Int): Boolean = alt xor (ch in start..end)
                 }.apply {
-                    if (end >= Char.MIN_SUPPLEMENTARY_CODE_POINT) {
+                    if (end >= Char_MIN_SUPPLEMENTARY_CODE_POINT) {
                         mayContainSupplCodepoints = true
                     }
                     val minSurrogate = Char.MIN_SURROGATE.toInt()

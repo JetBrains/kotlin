@@ -124,6 +124,11 @@ internal actual inline fun checkCountOverflow(count: Int): Int {
 }
 
 /**
+ * Replaces each element in the list with a result of a transformation specified.
+ */
+internal expect fun <T> MutableList<T>.replaceAll(transformation: (T) -> T)
+
+/**
  * Returns a new read-only list containing only the specified object [element].
  *
  * @sample samples.collections.Collections.Lists.singletonReadOnlyList

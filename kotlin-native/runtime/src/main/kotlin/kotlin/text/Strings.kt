@@ -355,7 +355,7 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
 }
 
 @GCUnsafeCall("Kotlin_String_unsafeStringFromCharArray")
-internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
+internal actual external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
 
 /**
  * Returns a [CharArray] containing characters of this string or its substring.

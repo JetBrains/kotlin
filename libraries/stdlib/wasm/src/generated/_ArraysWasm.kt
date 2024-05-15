@@ -1803,7 +1803,7 @@ internal fun CharArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int)
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-internal fun <T> Array<T>.copyOfUninitializedElements(newSize: Int): Array<T> {
+internal actual fun <T> Array<T>.copyOfUninitializedElements(newSize: Int): Array<T> {
     return copyOfUninitializedElements(0, newSize)
 }
 

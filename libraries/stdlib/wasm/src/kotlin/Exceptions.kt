@@ -111,7 +111,7 @@ internal actual open class UninitializedPropertyAccessException : RuntimeExcepti
     public actual constructor(cause: Throwable?) : super(cause)
 }
 
-public open class OutOfMemoryError : Error {
-    public constructor() : super()
-    public constructor(message: String?) : super(message)
+public actual open class OutOfMemoryError : Error {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
 }

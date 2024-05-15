@@ -8,7 +8,7 @@ package kotlin.collections
 /**
  * Replaces each element in the list with a result of a transformation specified.
  */
-internal fun <T> MutableList<T>.replaceAll(transformation: (T) -> T) {
+internal actual fun <T> MutableList<T>.replaceAll(transformation: (T) -> T) {
     val it = listIterator()
     while (it.hasNext()) {
         val element = it.next()

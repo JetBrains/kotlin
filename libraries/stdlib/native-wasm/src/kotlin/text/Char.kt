@@ -229,15 +229,18 @@ public actual val Char.category: CharCategory
 @PublishedApi
 @Suppress("DEPRECATION")
 internal actual fun checkRadix(radix: Int): Int {
-    if(radix !in Char.MIN_RADIX..Char.MAX_RADIX) {
-        throw IllegalArgumentException("radix $radix was not in valid range ${Char.MIN_RADIX..Char.MAX_RADIX}")
+    if(radix !in Char_MIN_RADIX..Char_MAX_RADIX) {
+        throw IllegalArgumentException("radix $radix was not in valid range ${Char_MIN_RADIX..Char_MAX_RADIX}")
     }
     return radix
 }
 
 // Char.Compaion methods. Konan specific.
-
+internal const val Char_MIN_RADIX: Int = 2
+internal const val Char_MAX_RADIX: Int = 36
 // TODO: Make public when supplementary codepoints are supported.
+internal const val Char_MIN_SUPPLEMENTARY_CODE_POINT: Int = 0x10000
+
 /** Converts a unicode code point to lower case. */
 internal fun Char.Companion.toLowerCase(codePoint: Int): Int =
     if (codePoint <= MAX_VALUE.code) {
@@ -255,3 +258,8 @@ internal fun Char.Companion.toUpperCase(codePoint: Int): Int =
     } else {
         codePoint // TODO: Implement this transformation for supplementary codepoints.
     }
+
+internal expect fun Char.Companion.toCodePoint(high: Char, low: Char): Int
+internal expect fun Char.Companion.toChars(codePoint: Int): CharArray
+internal expect fun Char.Companion.isSupplementaryCodePoint(codepoint: Int): Boolean
+internal expect fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean

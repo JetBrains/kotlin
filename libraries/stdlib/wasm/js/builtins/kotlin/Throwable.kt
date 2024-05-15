@@ -48,5 +48,11 @@ public open class Throwable(public open val message: String?, public open val ca
     }
 }
 
+internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
+    get() = this.suppressedExceptionsList
+    set(value) { this.suppressedExceptionsList = value }
+
+internal actual val Throwable.stack: String get() = this.stack
+
 private fun captureStackTrace(): ExternalInterfaceType =
     js("new Error().stack")

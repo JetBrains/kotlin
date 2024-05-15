@@ -12,7 +12,7 @@ import kotlin.experimental.ExperimentalNativeApi
  */
 // Deprecate in favour of KT-57152 when it's provided.
 @ExperimentalNativeApi
-public fun <T> MutableList<T>.replaceAll(transformation: (T) -> T) {
+public actual fun <T> MutableList<T>.replaceAll(transformation: (T) -> T) {
     val it = listIterator()
     while (it.hasNext()) {
         val element = it.next()

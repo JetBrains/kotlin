@@ -137,7 +137,7 @@ internal annotation class Independent
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
 @PublishedApi
-internal annotation class CanBePrecreated
+internal actual annotation class CanBePrecreated
 
 /**
  * Marks a class that has a finalizer.
