@@ -36,4 +36,10 @@ class KlibSignatureVersionTest {
         assertEquals(KlibSignatureVersion.of(1).hashCode(), KlibSignatureVersion.of(1).hashCode())
         assertNotEquals(KlibSignatureVersion.of(1).hashCode(), KlibSignatureVersion.of(2).hashCode())
     }
+
+    @Test
+    fun toStringFormat() {
+        assertEquals("KlibSignatureVersion(LATEST)", KlibSignatureVersion.LATEST.toString())
+        assertEquals("KlibSignatureVersion(42)", KlibSignatureVersion.of(42).toString())
+    }
 }
