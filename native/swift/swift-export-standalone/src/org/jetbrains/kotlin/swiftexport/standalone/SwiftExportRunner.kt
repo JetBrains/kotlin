@@ -130,7 +130,7 @@ public fun runSwiftExport(
         )
         DEFAULT_BRIDGE_MODULE_NAME
     }
-    val swiftModule = buildSwiftModule(input, config)
+    val buildResult = buildSwiftModule(input, config)
     val bridgeGenerator = createBridgeGenerator(object : SirTypeNamer {
         override fun swiftFqName(type: SirType): String = type.swift
         override fun kotlinFqName(type: SirType): String {
@@ -138,11 +138,12 @@ public fun runSwiftExport(
             return ((type.type.origin as KotlinSource).symbol as KtClassLikeSymbol).classIdIfNonLocal!!.asFqNameString()
         }
     })
-    val bridgeRequests = buildBridgeRequests(bridgeGenerator, swiftModule)
+    val bridgeRequests = buildBridgeRequests(bridgeGenerator, buildResult.mainModule)
     if (bridgeRequests.isNotEmpty()) {
-        swiftModule.updateImports(listOf(SirImport(bridgeModuleName)))
+        buildResult.mainModule.updateImports(listOf(SirImport(bridgeModuleName)))
     }
-    swiftModule.dumpResultToFiles(
+    dumpResultToFiles(
+        listOf(buildResult.mainModule, buildResult.moduleForPackageEnums),
         bridgeGenerator,
         bridgeRequests, output,
         stableDeclarationsOrder = stableDeclarationsOrder,

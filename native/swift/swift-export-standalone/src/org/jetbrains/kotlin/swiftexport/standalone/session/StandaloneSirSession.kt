@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone.session
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.impl.*
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
@@ -14,6 +15,7 @@ internal class StandaloneSirSession(
     useSiteModule: KtModule,
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
+    moduleForPackageEnums: SirModule,
     moduleProviderBuilder: () -> SirModuleProvider,
 ) : SirSession {
 
@@ -25,7 +27,7 @@ internal class StandaloneSirSession(
             sirSession = sirSession,
         )
     )
-    override val parentProvider = SirParentProviderImpl(sirSession, SirEnumGeneratorImpl())
+    override val parentProvider = SirParentProviderImpl(sirSession, SirEnumGeneratorImpl(moduleForPackageEnums))
     override val typeProvider = SirTypeProviderImpl(
         sirSession,
         errorTypeStrategy = errorTypeStrategy,
