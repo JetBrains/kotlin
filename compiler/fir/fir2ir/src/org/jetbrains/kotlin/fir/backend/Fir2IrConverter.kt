@@ -646,12 +646,12 @@ class Fir2IrConverter(
             return dependsOnTransitive.associate { it.friendsMapName() to friendNames }
         }
 
-        fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragment {
+        fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragmentImpl {
             val session = components.session
 
             session.lazyDeclarationResolver.disableLazyResolveContractChecks()
 
-            val irModuleFragment = IrModuleFragmentImpl(components.moduleDescriptor, components.builtins)
+            val irModuleFragment = IrModuleFragmentImpl(components.moduleDescriptor)
 
             val allFirFiles = buildList {
                 addAll(firFiles)

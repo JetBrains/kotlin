@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -111,8 +112,8 @@ fun FirResult.convertToIrAndActualize(
 
     val platformComponentsStorage = platformFirOutput.createFir2IrComponentsStorage(predefinedBuiltins = null)
 
-    val dependentIrFragments = mutableListOf<IrModuleFragment>()
-    lateinit var mainIrFragment: IrModuleFragment
+    val dependentIrFragments = mutableListOf<IrModuleFragmentImpl>()
+    lateinit var mainIrFragment: IrModuleFragmentImpl
 
     // We need to build all modules before rebuilding fake overrides
     // to avoid fixing declaration storages
@@ -135,8 +136,11 @@ fun FirResult.convertToIrAndActualize(
         }
     }
 
-    val irBuiltins = mainIrFragment.irBuiltins
+    val irBuiltins = platformComponentsStorage.builtins
     val irTypeSystemContext = typeSystemContextProvider(irBuiltins)
+
+    mainIrFragment.initializeIrBuiltins(irBuiltins)
+    dependentIrFragments.forEach { it.initializeIrBuiltins(irBuiltins) }
 
     val irActualizer = if (dependentIrFragments.isEmpty()) null else IrActualizer(
         KtDiagnosticReporterWithImplicitIrBasedContext(fir2IrConfiguration.diagnosticReporter, fir2IrConfiguration.languageVersionSettings),
