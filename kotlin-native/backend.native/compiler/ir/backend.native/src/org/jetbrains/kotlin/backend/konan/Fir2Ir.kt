@@ -50,7 +50,6 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
     override val irNeedsDeserialization = false
     override val parametersAreAssignable: Boolean get() = false
     override val externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
-    override fun generateOrGetFacadeClass(declaration: IrMemberWithContainerSource, components: Fir2IrComponents) = null
     override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents) = false
     override fun registerDeclarations(symbolTable: SymbolTable) {}
     override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope) = null

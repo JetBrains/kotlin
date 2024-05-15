@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -93,21 +92,6 @@ class JvmFir2IrExtensions(
 
     override val irNeedsDeserialization: Boolean =
         configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
-
-    override fun generateOrGetFacadeClass(declaration: IrMemberWithContainerSource, components: Fir2IrComponents): IrClass? {
-        val deserializedSource = declaration.containerSource ?: return null
-        if (deserializedSource !is FacadeClassSource) return null
-        val facadeName = deserializedSource.facadeClassName ?: deserializedSource.className
-        return JvmFileFacadeClass(
-            if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,
-            facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName(),
-            deserializedSource,
-            deserializeIr = { irClass -> deserializeToplevelClass(irClass, components) }
-        ).also {
-            it.createParameterDeclarations()
-            classNameOverride[it] = facadeName
-        }
-    }
 
     override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean =
         irDeserializer.deserializeTopLevelClass(

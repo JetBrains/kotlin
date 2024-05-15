@@ -26,7 +26,6 @@ interface Fir2IrExtensions {
 
     val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>
 
-    fun generateOrGetFacadeClass(declaration: IrMemberWithContainerSource, components: Fir2IrComponents): IrClass?
     fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean
     fun registerDeclarations(symbolTable: SymbolTable)
     fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue?
@@ -54,7 +53,6 @@ interface Fir2IrExtensions {
             get() = false
 
         override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList()
-        override fun generateOrGetFacadeClass(declaration: IrMemberWithContainerSource, components: Fir2IrComponents): IrClass? = null
         override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean = false
         override fun registerDeclarations(symbolTable: SymbolTable) {}
         override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): Nothing? = null
