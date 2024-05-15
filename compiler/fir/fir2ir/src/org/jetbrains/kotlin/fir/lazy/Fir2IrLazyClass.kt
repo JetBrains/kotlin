@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
+import org.jetbrains.kotlin.fir.scopes.staticScopeForBackend
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -220,7 +221,7 @@ class Fir2IrLazyClass(
         }
 
         addDeclarationsFromScope(scope)
-        addDeclarationsFromScope(fir.staticScope(session, scopeSession))
+        addDeclarationsFromScope(fir.staticScopeForBackend(session, scopeSession))
 
         with(classifierStorage) {
             result.addAll(getFieldsWithContextReceiversForClass(this@Fir2IrLazyClass, fir))

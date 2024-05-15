@@ -85,7 +85,7 @@ class FakeOverrideGenerator(
             // This parameter is only needed for data-class methods that is irrelevant for lazy library classes
             realDeclarationSymbols = emptySet()
         )
-        val staticScope = firClass.scopeProvider.getStaticMemberScopeForCallables(firClass, session, scopeSession)
+        val staticScope = firClass.scopeProvider.getStaticCallableMemberScope(firClass, session, scopeSession)
         if (staticScope != null) {
             generateFakeOverridesForName(
                 irClass, staticScope, name, firClass, this,

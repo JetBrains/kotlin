@@ -94,7 +94,7 @@ class FirKotlinScopeProvider(
         }
     }
 
-    override fun getStaticMemberScopeForCallables(
+    override fun getStaticCallableMemberScope(
         klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
@@ -111,6 +111,12 @@ class FirKotlinScopeProvider(
             else -> null
         }
     }
+
+    override fun getStaticCallableMemberScopeForBackend(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirContainingNamesAwareScope? = getStaticCallableMemberScope(klass, useSiteSession, scopeSession)
 
     override fun getNestedClassifierScope(
         klass: FirClass,

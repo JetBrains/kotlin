@@ -113,13 +113,21 @@ object JavaScopeProvider : FirScopeProvider() {
         }
     }
 
-    override fun getStaticMemberScopeForCallables(
+    override fun getStaticCallableMemberScope(
         klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirContainingNamesAwareScope? {
         val scope = getStaticMemberScopeForCallables(klass, useSiteSession, scopeSession, hashSetOf()) ?: return null
         return FirNameAwareOnlyCallablesScope(FirStaticScope(scope))
+    }
+
+    override fun getStaticCallableMemberScopeForBackend(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirContainingNamesAwareScope? {
+        return getStaticCallableMemberScope(klass, useSiteSession, scopeSession)
     }
 
     private fun getStaticMemberScopeForCallables(
