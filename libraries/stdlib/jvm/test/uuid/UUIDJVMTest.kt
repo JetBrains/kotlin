@@ -5,6 +5,7 @@
 
 package test.uuid
 
+import test.io.serializeAndDeserialize
 import java.nio.BufferOverflowException
 import java.nio.BufferUnderflowException
 import java.nio.ByteBuffer
@@ -151,5 +152,17 @@ class UUIDJVMTest {
                 putUUID(1, uuid)
             }
         }
+    }
+
+    @Test
+    fun serialize() {
+        fun testSerializable(uuid: UUID) {
+            val result = serializeAndDeserialize(uuid)
+            assertEquals(uuid, result)
+        }
+
+        testSerializable(uuid)
+        testSerializable(UUID.NIL)
+        testSerializable(UUID.fromLongs(-1, -1))
     }
 }

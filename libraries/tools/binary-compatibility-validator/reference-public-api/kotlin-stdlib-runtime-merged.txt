@@ -6326,7 +6326,7 @@ public final class kotlin/time/TimedValue {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlin/uuid/UUID {
+public final class kotlin/uuid/UUID : java/io/Serializable {
 	public static final field Companion Lkotlin/uuid/UUID$Companion;
 	public static final field SIZE_BITS I
 	public static final field SIZE_BYTES I

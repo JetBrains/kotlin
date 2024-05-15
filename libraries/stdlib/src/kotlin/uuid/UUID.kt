@@ -22,7 +22,7 @@ import kotlin.internal.InlineOnly
 public class UUID internal constructor(
     @PublishedApi internal val mostSignificantBits: Long,
     @PublishedApi internal val leastSignificantBits: Long
-) {
+) : Serializable {
 
     /**
      * Executes a specified block of code, providing access to the UUID's bits in the form of two [Long] values.
