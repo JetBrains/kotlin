@@ -34,3 +34,9 @@ public open class Throwable(public open val message: String?, public open val ca
         return if (message != null) s + ": " + message.toString() else s
     }
 }
+
+internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
+    get() = this.suppressedExceptionsList
+    set(value) { this.suppressedExceptionsList = value }
+
+internal actual val Throwable.stack: String get() = this.stack

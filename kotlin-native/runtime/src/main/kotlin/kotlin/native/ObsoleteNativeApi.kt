@@ -33,4 +33,5 @@ import kotlin.annotation.AnnotationTarget.*
 )
 @MustBeDocumented
 @SinceKotlin("1.9")
-public annotation class ObsoleteNativeApi
+@Suppress("ACTUAL_WITHOUT_EXPECT") // actual visibility mismatch
+public actual annotation class ObsoleteNativeApi

@@ -13,7 +13,7 @@ import kotlin.experimental.ExperimentalNativeApi
  */
 @Suppress("NOTHING_TO_INLINE")
 @ExperimentalNativeApi
-public inline fun assert(value: Boolean) {
+public actual inline fun assert(value: Boolean) {
     assert(value) { "Assertion failed" }
 }
 
@@ -22,7 +22,7 @@ public inline fun assert(value: Boolean) {
  * and runtime assertions have been enabled during compilation.
  */
 @ExperimentalNativeApi
-public inline fun assert(value: Boolean, lazyMessage: () -> Any) {
+public actual inline fun assert(value: Boolean, lazyMessage: () -> Any) {
     if (!value) {
         val message = lazyMessage()
         throw AssertionError(message)

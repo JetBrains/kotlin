@@ -1005,6 +1005,9 @@ object ArrayOps : TemplateGroupBase() {
             """
         }
         body { "return copyOfUninitializedElements(0, newSize)" }
+        specialFor(InvariantArraysOfObjects) {
+            explicitActual()
+        }
     }
 
     val f_copyOfUninitializedElements_range = fn("copyOfUninitializedElements(fromIndex: Int, toIndex: Int)") {

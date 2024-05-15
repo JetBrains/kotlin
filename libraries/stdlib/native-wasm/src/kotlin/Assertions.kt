@@ -5,21 +5,12 @@
 
 package kotlin
 
-// Note: codegen for these functions must be explicitly enabled with the -Xwasm-enable-asserts command line flag.
-
 /**
  * Throws an [AssertionError] if the [value] is false.
  */
-internal actual fun assert(value: Boolean) {
-    assert(value) { "Assertion failed" }
-}
+internal expect fun assert(value: Boolean)
 
 /**
  * Throws an [AssertionError] calculated by [lazyMessage] if the [value] is false.
  */
-internal actual fun assert(value: Boolean, lazyMessage: () -> Any) {
-    if (!value) {
-        val message = lazyMessage()
-        throw AssertionError(message)
-    }
-}
+internal expect fun assert(value: Boolean, lazyMessage: () -> Any)

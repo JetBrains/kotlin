@@ -34,7 +34,7 @@ public class InvalidMutabilityException(message: String) : RuntimeException(mess
  * @see ensureNeverFrozen
  */
 @FreezingIsDeprecated
-public fun <T> T.freeze(): T {
+public actual fun <T> T.freeze(): T {
     freezeInternal(this)
     return this
 }
@@ -45,7 +45,7 @@ public fun <T> T.freeze(): T {
  * @return true if given object is null or frozen or permanent
  */
 @FreezingIsDeprecated
-public val Any?.isFrozen: Boolean
+public actual val Any?.isFrozen: Boolean
     get() = isFrozenInternal(this)
 
 /**

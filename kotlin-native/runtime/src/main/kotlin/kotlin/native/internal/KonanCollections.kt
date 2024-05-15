@@ -5,11 +5,11 @@
 
 package kotlin.native.internal
 
-internal interface KonanSet<out E> : Set<E> {
+internal actual interface KonanSet<out E> : Set<E> {
     /**
      * Searches for the specified element in this set.
      *
      * @return the element from the set equal to [element], or `null` if no such element found.
      */
-    fun getElement(element: @UnsafeVariance E): E?
+    actual fun getElement(element: @UnsafeVariance E): E?
 }

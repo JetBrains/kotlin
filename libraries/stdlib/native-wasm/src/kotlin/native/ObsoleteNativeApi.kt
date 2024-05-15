@@ -30,4 +30,5 @@ import kotlin.annotation.AnnotationTarget.*
 )
 @MustBeDocumented
 @SinceKotlin("1.9")
-internal actual annotation class ObsoleteNativeApi
+@OptionalExpectation // though it has actuals in all dependent source sets, otherwise it is not possible to make it require opt-in
+internal expect annotation class ObsoleteNativeApi()

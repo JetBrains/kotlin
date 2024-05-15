@@ -9,7 +9,7 @@ package kotlin.io
 
 import kotlin.wasm.internal.*
 
-internal fun printError(error: String?): Unit =
+internal actual fun printError(error: String?): Unit =
     js("console.error(error)")
 
 private fun printlnImpl(message: String?): Unit =
