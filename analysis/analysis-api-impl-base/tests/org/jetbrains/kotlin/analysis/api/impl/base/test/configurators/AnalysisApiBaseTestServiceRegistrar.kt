@@ -21,10 +21,6 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
-import org.jetbrains.kotlin.analysis.providers.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.providers.lifetime.KtReadActionConfinementLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.providers.permissions.KotlinAnalysisPermissionOptions
-import org.jetbrains.kotlin.analysis.providers.permissions.KotlinDefaultAnalysisPermissionOptions
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.libraryIndexingConfiguration
@@ -49,8 +45,6 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         project.apply {
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
             registerService(KotlinGlobalModificationService::class.java, KotlinStaticGlobalModificationService::class.java)
-
-            registerService(KtLifetimeTokenProvider::class.java, KtReadActionConfinementLifetimeTokenProvider::class.java)
 
             //KotlinClassFileDecompiler is registered as application service so it's available for the tests run in parallel as well
             //when the decompiler is registered, for compiled class KtClsFile is created instead of ClsFileImpl
@@ -145,9 +139,5 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
         testServices.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, METADATA_FILE_EXTENSION)
         testServices.environmentManager.getApplicationEnvironment().registerFileType(KlibMetaFileType, KLIB_METADATA_FILE_EXTENSION)
-
-        application.apply {
-            registerService(KotlinAnalysisPermissionOptions::class.java, KotlinDefaultAnalysisPermissionOptions::class.java)
-        }
     }
 }

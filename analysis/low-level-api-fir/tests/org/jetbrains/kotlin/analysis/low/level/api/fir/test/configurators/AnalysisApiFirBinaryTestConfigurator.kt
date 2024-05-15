@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiIdeModeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
@@ -54,6 +55,7 @@ abstract class AnalysisApiFirBinaryTestConfigurator : AnalysisApiTestConfigurato
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> =
         listOf(
             AnalysisApiBaseTestServiceRegistrar,
+            AnalysisApiIdeModeTestServiceRegistrar,
             AnalysisApiDecompiledCodeTestServiceRegistrar,
             FirStandaloneServiceRegistrar,
             AnalysisApiFirTestServiceRegistrar,

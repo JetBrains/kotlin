@@ -221,6 +221,8 @@ public class StandaloneAnalysisAPISessionBuilder(
  * Registers services which are not covered by [FirStandaloneServiceRegistrar]. In general, this concerns services which need to be
  * registered for production Standalone and Standalone test usages, but *not* for IDE mode Analysis API tests, which rely on
  * [FirStandaloneServiceRegistrar] as a basis.
+ *
+ * When using this service registrar in tests, make sure that `AnalysisApiIdeModeTestServiceRegistrar` isn't configured at the same time.
  */
 internal object StandaloneSessionServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
     override fun registerApplicationServices(application: MockApplication) {
