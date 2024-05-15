@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeParameterOfClass2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
@@ -21,8 +21,8 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfClass2Script.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
@@ -42,8 +42,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
@@ -63,8 +63,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
@@ -84,8 +84,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] class MyClass<[ResolvedTo(SUPER_TYPES)] Type> : R|kotlin/Any| {
@@ -105,8 +105,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(TYPES)] class MyClass<[ResolvedTo(TYPES)] Type> : R|kotlin/Any| {
@@ -126,8 +126,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
@@ -147,8 +147,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
@@ -168,8 +168,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
@@ -189,8 +189,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
@@ -210,8 +210,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
@@ -231,8 +231,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
@@ -252,8 +252,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
@@ -273,8 +273,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-typeParameterOfClass2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] Type> : R|kotlin/Any| {
@@ -290,3 +290,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfClass2Script.kts
             }
 
         }
+

@@ -11,8 +11,8 @@
   anchor -> [FirNamedFunctionSymbol /P1.createP2]
 
 FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -44,3 +44,4 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
             }
 
         }
+

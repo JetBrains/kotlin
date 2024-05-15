@@ -23,8 +23,8 @@
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localPropertyWithPropagatedTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -47,3 +47,4 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| = R|foo/explicitType|()
         }
+

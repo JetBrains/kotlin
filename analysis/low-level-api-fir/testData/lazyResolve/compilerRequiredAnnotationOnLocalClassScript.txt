@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -9,8 +9,8 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -18,8 +18,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -27,8 +27,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -36,8 +36,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -45,8 +45,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -54,8 +54,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -63,8 +63,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -72,8 +72,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
@@ -96,8 +96,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
@@ -120,8 +120,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
@@ -144,8 +144,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
@@ -168,8 +168,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
@@ -192,8 +192,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationOnLocalClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-compilerRequiredAnnotationOnLocalClassScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
@@ -212,3 +212,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationOnLocalClassScript.kt
             }
 
         }
+

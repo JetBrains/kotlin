@@ -11,8 +11,8 @@
   anchor -> [FirTypeAliasSymbol BadArgsInTypeAlias]
 
 FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-withMissedArgumentsScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
@@ -26,3 +26,4 @@ FILE: [ResolvedTo(IMPORTS)] withMissedArgumentsScript.kts
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias BadArgsInTypeAlias = R|@R|TypeAnnWithArg|()  kotlin/collections/List<@R|TypeAnnWithArg|()  kotlin/collections/List<@R|TypeAnnWithArg|()  kotlin/Int>>|
+

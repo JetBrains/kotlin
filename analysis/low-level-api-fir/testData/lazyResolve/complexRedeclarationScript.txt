@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] complexRedeclarationScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
@@ -105,8 +105,8 @@ FILE: [ResolvedTo(RAW_FIR)] complexRedeclarationScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
@@ -210,8 +210,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
@@ -315,8 +315,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
@@ -420,8 +420,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
@@ -525,8 +525,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
@@ -630,8 +630,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
@@ -735,8 +735,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
@@ -840,8 +840,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -945,8 +945,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -1050,8 +1050,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -1155,8 +1155,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -1260,8 +1260,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -1365,8 +1365,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] complexRedeclarationScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-complexRedeclarationScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
@@ -1493,3 +1493,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] complexRedeclarationScript.kts
             }
 
         }
+

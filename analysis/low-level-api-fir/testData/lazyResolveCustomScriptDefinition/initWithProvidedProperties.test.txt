@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] initWithProvidedProperties.test.kts
-    context(<script>@org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
         [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
@@ -13,8 +13,8 @@ FILE: [ResolvedTo(RAW_FIR)] initWithProvidedProperties.test.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
         [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
@@ -26,8 +26,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
         [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
@@ -39,8 +39,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
         [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
@@ -52,8 +52,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
         [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
@@ -65,8 +65,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
         [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
@@ -78,8 +78,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
         [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
@@ -91,8 +91,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
         [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
@@ -104,8 +104,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|)
     SCRIPT: [ResolvedTo(TYPES)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(TYPES)] lval fileParameter: R|java/io/File|
@@ -117,8 +117,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|)
     SCRIPT: [ResolvedTo(TYPES)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(TYPES)] lval fileParameter: R|java/io/File|
@@ -130,8 +130,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|)
     SCRIPT: [ResolvedTo(TYPES)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(TYPES)] lval fileParameter: R|java/io/File|
@@ -143,8 +143,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|)
     SCRIPT: [ResolvedTo(TYPES)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(TYPES)] lval fileParameter: R|java/io/File|
@@ -156,8 +156,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
-    context(<script>@R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|)
     SCRIPT: [ResolvedTo(TYPES)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(STATUS)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(STATUS)] lval fileParameter: R|java/io/File|
@@ -171,8 +171,8 @@ FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] initWithProvidedProperties.test.kts
-    context(<script>@R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<out kotlin/String>|
         [ResolvedTo(BODY_RESOLVE)] lval stringParameter: R|kotlin/String|
         [ResolvedTo(BODY_RESOLVE)] lval fileParameter: R|java/io/File|
@@ -183,3 +183,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] initWithProvidedProperties.test.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         }
+

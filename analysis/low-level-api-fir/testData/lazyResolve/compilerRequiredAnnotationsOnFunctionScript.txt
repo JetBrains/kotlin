@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -19,8 +19,8 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -38,8 +38,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -57,8 +57,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -76,8 +76,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -95,8 +95,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -114,8 +114,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -133,8 +133,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -152,8 +152,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -172,8 +172,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -192,8 +192,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -212,8 +212,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -232,8 +232,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -252,8 +252,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
@@ -268,3 +268,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         @R|kotlin/Deprecated|[Types](message = String(function)) @R|Anno|[Types](s = String(function)) public final [ResolvedTo(BODY_RESOLVE)] fun fooo([ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(a)) @R|Anno|[Types](s = String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
+

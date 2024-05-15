@@ -2,8 +2,8 @@ STATUS:
 TARGET: public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegateWithImplicitTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -25,8 +25,8 @@ EXPECT_ACTUAL_MATCHING:
 TARGET: public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegateWithImplicitTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -48,8 +48,8 @@ CONTRACTS:
 TARGET: public open override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -71,8 +71,8 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -96,8 +96,8 @@ CONSTANT_EVALUATION:
 TARGET: public open override [ResolvedTo(CONSTANT_EVALUATION)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -121,8 +121,8 @@ ANNOTATION_ARGUMENTS:
 TARGET: public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -146,8 +146,8 @@ BODY_RESOLVE:
 TARGET: public open override [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegateWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -169,8 +169,8 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-delegateWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -188,3 +188,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithImplicitTypeScript.kts
             }
 
         }
+

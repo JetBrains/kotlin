@@ -9,8 +9,8 @@ public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/String| {
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] memberFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-memberFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {

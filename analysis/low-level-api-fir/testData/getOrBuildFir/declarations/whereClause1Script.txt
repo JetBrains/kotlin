@@ -7,8 +7,8 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] whereClause1Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-whereClause1Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] From : R|To|, [ResolvedTo(BODY_RESOLVE)] To : R|kotlin/Any|> copyNotNull([ResolvedTo(BODY_RESOLVE)] from: R|kotlin/collections/List<From>|, [ResolvedTo(BODY_RESOLVE)] to: R|kotlin/collections/List<To>|): R|kotlin/Unit| {

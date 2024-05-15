@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
@@ -16,8 +16,8 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfNonLocalFunctionScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
@@ -32,8 +32,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
@@ -48,8 +48,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
@@ -64,8 +64,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
@@ -80,8 +80,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(TYPES)] class X : R|kotlin/Any| {
@@ -96,8 +96,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -112,8 +112,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -128,8 +128,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -145,8 +145,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -162,8 +162,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -179,8 +179,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -196,8 +196,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
@@ -213,8 +213,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfNonLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-typeParameterOfNonLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
@@ -226,3 +226,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfNonLocalFunctionScript.kts
             }
 
         }
+

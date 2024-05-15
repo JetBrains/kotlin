@@ -8,8 +8,8 @@ public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariab
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructionWithNoRValueScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-destructionWithNoRValueScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -26,8 +26,8 @@ FILE: [ResolvedTo(RAW_FIR)] resolveTypeFromLocalFunctionScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -52,8 +52,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -78,8 +78,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -104,8 +104,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -130,8 +130,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -156,8 +156,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -182,8 +182,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -208,8 +208,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -245,8 +245,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -282,8 +282,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -319,8 +319,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -356,8 +356,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -393,8 +393,8 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-resolveTypeFromLocalFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class UnusedClass : R|kotlin/Any| {
@@ -426,3 +426,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resolveTypeFromLocalFunctionScript.kts
             }
 
         }
+

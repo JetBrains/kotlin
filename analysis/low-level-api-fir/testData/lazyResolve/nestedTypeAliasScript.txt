@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] nestedTypeAliasScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
@@ -37,8 +37,8 @@ FILE: [ResolvedTo(RAW_FIR)] nestedTypeAliasScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
@@ -74,8 +74,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
@@ -111,8 +111,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : SuperForOuter {
@@ -148,8 +148,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|SuperForOuter| {
@@ -185,8 +185,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(TYPES)] class OuterClass<[ResolvedTo(TYPES)] T1> : R|SuperForOuter| {
@@ -222,8 +222,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
@@ -259,8 +259,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
@@ -296,8 +296,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
@@ -333,8 +333,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
@@ -370,8 +370,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
@@ -407,8 +407,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
@@ -444,8 +444,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
@@ -481,8 +481,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] nestedTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-nestedTypeAliasScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class OuterClass<[ResolvedTo(BODY_RESOLVE)] T1> : R|SuperForOuter| {
@@ -514,3 +514,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedTypeAliasScript.kts
             }
 
         }
+

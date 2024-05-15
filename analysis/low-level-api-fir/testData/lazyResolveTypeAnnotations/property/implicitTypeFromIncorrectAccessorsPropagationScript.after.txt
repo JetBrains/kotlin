@@ -1,6 +1,6 @@
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-implicitTypeFromIncorrectAccessorsPropagationScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -29,3 +29,4 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
 
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = value#
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
+

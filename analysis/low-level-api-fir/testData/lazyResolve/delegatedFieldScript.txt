@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] delegatedFieldScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -30,8 +30,8 @@ FILE: [ResolvedTo(RAW_FIR)] delegatedFieldScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -60,8 +60,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -90,8 +90,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -120,8 +120,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -150,8 +150,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -180,8 +180,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -210,8 +210,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -240,8 +240,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -270,8 +270,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -300,8 +300,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -330,8 +330,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -360,8 +360,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
@@ -390,8 +390,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-delegatedFieldScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class Boo : R|kotlin/Any| {
@@ -417,3 +417,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldScript.kts
             }
 
         }
+

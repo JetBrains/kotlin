@@ -12,8 +12,8 @@ object : R|kotlin/Any| {
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] objectLiteralExpressionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-objectLiteralExpressionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {

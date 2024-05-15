@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
@@ -30,8 +30,8 @@ FILE: [ResolvedTo(RAW_FIR)] nestedClassWithPropertiesOverridesScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
@@ -60,8 +60,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
@@ -90,8 +90,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
@@ -120,8 +120,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] interface OV : R|kotlin/Any| {
@@ -150,8 +150,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(TYPES)] interface OV : R|kotlin/Any| {
@@ -180,8 +180,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
@@ -210,8 +210,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
@@ -240,8 +240,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
@@ -270,8 +270,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
@@ -300,8 +300,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
@@ -330,8 +330,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
@@ -360,8 +360,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
@@ -390,8 +390,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] nestedClassWithPropertiesOverridesScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-nestedClassWithPropertiesOverridesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface OV : R|kotlin/Any| {
@@ -416,3 +416,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedClassWithPropertiesOverridesScript.kts
             }
 
         }
+

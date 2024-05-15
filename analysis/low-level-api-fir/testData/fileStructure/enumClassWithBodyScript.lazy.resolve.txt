@@ -1,6 +1,6 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] enumClassWithBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-enumClassWithBodyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] enum class A : R|kotlin/Enum<A>| {
@@ -43,3 +43,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enumClassWithBodyScript.kts
                 public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<A>|
 
         }
+

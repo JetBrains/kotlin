@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] simpleLoopInOverrideScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
@@ -31,8 +31,8 @@ FILE: [ResolvedTo(RAW_FIR)] simpleLoopInOverrideScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
@@ -62,8 +62,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
@@ -93,8 +93,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
@@ -124,8 +124,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
@@ -155,8 +155,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
@@ -186,8 +186,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
@@ -217,8 +217,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
@@ -248,8 +248,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
@@ -279,8 +279,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
@@ -310,8 +310,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
@@ -341,8 +341,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
@@ -372,8 +372,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
@@ -403,8 +403,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverrideScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] simpleLoopInOverrideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-simpleLoopInOverrideScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
@@ -430,3 +430,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] simpleLoopInOverrideScript.kts
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo3] get(): R|kotlin/String|
 
         }
+

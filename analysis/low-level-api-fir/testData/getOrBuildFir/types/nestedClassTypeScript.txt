@@ -7,8 +7,8 @@ R|Foo.Nested|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {

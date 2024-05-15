@@ -24,14 +24,13 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final class Foo : R|kotlin/Any|
     Element 10
-        Context receivers:
-            FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-            SCRIPT: <script-insideClassBody.kts>
+        Implicit receiver:
+            FirScriptSymbol SCRIPT: <script-insideClassBody.kts>
+                <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
                 lval args: R|kotlin/Array<kotlin/String>|
-
+            
                 public final class Foo : R|kotlin/Any|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
-                Label: <script>
     Element 11
         Implicit receiver:
             FirRegularClassSymbol public final class Foo : R|kotlin/Any|
@@ -40,8 +39,8 @@ Tower Data Context:
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] insideClassBody.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-insideClassBody.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {

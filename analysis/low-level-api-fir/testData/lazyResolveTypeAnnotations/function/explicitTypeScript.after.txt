@@ -51,8 +51,8 @@
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-explicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -74,3 +74,4 @@ FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
         @R|lowlevel/Anno|[Types](position = <strcat>(String(function ), R|lowlevel/prop|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|lowlevel/Anno|[Types](position = <strcat>(String(type parameter ), R|lowlevel/prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|@R|lowlevel/Anno|(position = <strcat>(String(bound type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested bound type ), R|lowlevel/prop|))  kotlin/String>|, R|@R|lowlevel/Anno|(position = <strcat>(String(constraint type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested constraint type ), R|lowlevel/prop|))  kotlin/Int>|> @RECEIVER:R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) R|@R|lowlevel/Anno|(position = <strcat>(String(receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int>>|.function([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|lowlevel/Anno|[Types](position = <strcat>(String(parameter ), R|lowlevel/prop|)) param: R|@R|lowlevel/Anno|(position = <strcat>(String(parameter type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested parameter type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested parameter type ), R|lowlevel/prop|))  kotlin/String>>| = IntegerLiteral(1)): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>| {
             ^function IntegerLiteral(1)
         }
+

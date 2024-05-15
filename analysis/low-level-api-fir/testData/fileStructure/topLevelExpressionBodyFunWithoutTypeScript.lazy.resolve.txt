@@ -1,8 +1,9 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] topLevelExpressionBodyFunWithoutTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-topLevelExpressionBodyFunWithoutTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
             ^foo Int(42)
         }
+

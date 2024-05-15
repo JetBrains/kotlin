@@ -59,8 +59,8 @@
   anchor -> [FirPropertySymbol /propertyToResolve]
 
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-propertyWithExplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -97,3 +97,4 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
             @PROPERTY_SETTER:R|Anno|[Types](position = <strcat>(String(set ), R|/prop|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](position = <strcat>(String(setparam ), R|/prop|)) <set-?>: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue<Inapplicable(CONVENTION_ERROR): /Delegate.setValue>#|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
             }
+

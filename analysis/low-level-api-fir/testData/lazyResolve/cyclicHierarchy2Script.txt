@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] cyclicHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface ResolveMe : A, E {
@@ -25,8 +25,8 @@ FILE: [ResolvedTo(RAW_FIR)] cyclicHierarchy2Script.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] interface ResolveMe : A, E {
@@ -50,8 +50,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] interface ResolveMe : A, E {
@@ -75,8 +75,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(COMPANION_GENERATION)] interface ResolveMe : A, E {
@@ -100,8 +100,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
@@ -125,8 +125,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(TYPES)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
@@ -150,8 +150,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
@@ -175,8 +175,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
@@ -200,8 +200,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(CONTRACTS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
@@ -225,8 +225,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
@@ -250,8 +250,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(CONSTANT_EVALUATION)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
@@ -275,8 +275,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
@@ -300,8 +300,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
@@ -325,8 +325,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] cyclicHierarchy2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-cyclicHierarchy2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
@@ -346,3 +346,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] cyclicHierarchy2Script.kts
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface NonLoopedInterface : R|C| {
         }
+

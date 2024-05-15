@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] primaryConstructorPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
@@ -19,8 +19,8 @@ FILE: [ResolvedTo(RAW_FIR)] primaryConstructorPropertyScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
@@ -38,8 +38,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
@@ -57,8 +57,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
@@ -76,8 +76,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
@@ -95,8 +95,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
@@ -114,8 +114,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -133,8 +133,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class A : R|kotlin/Any| {
@@ -152,8 +152,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] class A : R|kotlin/Any| {
@@ -171,8 +171,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class A : R|kotlin/Any| {
@@ -190,8 +190,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] class A : R|kotlin/Any| {
@@ -209,8 +209,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
@@ -228,8 +228,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
@@ -247,8 +247,8 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructorPropertyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-primaryConstructorPropertyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
@@ -264,3 +264,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructorPropertyScript.kts
             }
 
         }
+

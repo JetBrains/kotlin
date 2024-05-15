@@ -19,8 +19,8 @@
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
 FILE: [ResolvedTo(IMPORTS)] errorTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-errorTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -38,3 +38,4 @@ FILE: [ResolvedTo(IMPORTS)] errorTypeScript.kts
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] F : @R|lowlevel/Anno|[Types](position = <strcat>(String(bound ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for ASF>> @R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Abc>.function([ResolvedTo(ANNOTATION_ARGUMENTS)] param: @R|lowlevel/Anno|[Types](position = <strcat>(String(param ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type1>): @R|lowlevel/Anno|[Types](position = <strcat>(String(return ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type3> {
         }
+

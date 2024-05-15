@@ -1,6 +1,6 @@
 FILE: script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: <script-script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         lval args: R|kotlin/Array<kotlin/String>|
 
         public final val a: R|kotlin/Int| = Int(42)

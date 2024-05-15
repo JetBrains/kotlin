@@ -1,6 +1,6 @@
 FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptClassLevel.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {

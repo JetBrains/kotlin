@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTopSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] Type> Type.x: Int
@@ -10,8 +10,8 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTopSetterScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] Type> Type.x: Int
@@ -20,8 +20,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] Type> Type.x: Int
@@ -30,8 +30,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] val <[ResolvedTo(COMPANION_GENERATION)] Type> Type.x: Int
@@ -40,8 +40,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] val <[ResolvedTo(SUPER_TYPES)] Type> Type.x: Int
@@ -50,8 +50,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] val <[ResolvedTo(TYPES)] Type> R|Type|.x: R|kotlin/Int|
@@ -60,8 +60,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] val <[ResolvedTo(STATUS)] Type> R|Type|.x: R|kotlin/Int|
@@ -70,8 +70,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] Type> R|Type|.x: R|kotlin/Int|
@@ -80,8 +80,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] val <[ResolvedTo(CONTRACTS)] Type> R|Type|.x: R|kotlin/Int|
@@ -92,8 +92,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Type> R|Type|.x: R|kotlin/Int|
@@ -104,8 +104,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] val <[ResolvedTo(CONSTANT_EVALUATION)] Type> R|Type|.x: R|kotlin/Int|
@@ -116,8 +116,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] Type> R|Type|.x: R|kotlin/Int|
@@ -128,8 +128,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] Type> R|Type|.x: R|kotlin/Int|
@@ -140,11 +140,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfTopSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-typeParameterOfTopSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] Type> R|Type|.x: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ Int(42)
             }
+

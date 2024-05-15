@@ -47,8 +47,8 @@
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
 FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localImplicitTypeUnavailableScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -93,3 +93,4 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableScript.kts
 
             [ResolvedTo(BODY_RESOLVE)] lval a: R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| = R|<local>/A.A|().R|<local>/bar|()
         }
+

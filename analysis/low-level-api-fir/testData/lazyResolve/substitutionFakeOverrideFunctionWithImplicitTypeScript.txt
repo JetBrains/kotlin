@@ -2,8 +2,8 @@ STATUS:
 TARGET: public final override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/String}, baseSymbol=FirNamedFunctionSymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
@@ -29,8 +29,8 @@ EXPECT_ACTUAL_MATCHING:
 TARGET: public final override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/String}, baseSymbol=FirNamedFunctionSymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
@@ -56,8 +56,8 @@ CONTRACTS:
 TARGET: public final override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> kotlin/String}, baseSymbol=FirNamedFunctionSymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): <implicit>
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
@@ -83,8 +83,8 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public final override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): R|kotlin/String?|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
@@ -114,8 +114,8 @@ CONSTANT_EVALUATION:
 TARGET: public final override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): R|kotlin/String?|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
@@ -145,8 +145,8 @@ ANNOTATION_ARGUMENTS:
 TARGET: public final override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): R|kotlin/String?|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
@@ -176,8 +176,8 @@ BODY_RESOLVE:
 TARGET: public final override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun R|kotlin/String|.resolveMe(): R|kotlin/String?|
 
 FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<kotlin/String>| {
@@ -205,8 +205,8 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitTypeScri
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideFunctionWithImplicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-substitutionFakeOverrideFunctionWithImplicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|second/AbstractClass<kotlin/String>| {
@@ -230,3 +230,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideFunctionWithImplicitTyp
             }
 
         }
+

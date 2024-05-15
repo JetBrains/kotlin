@@ -59,8 +59,8 @@
   anchor -> [FirPropertySymbol myPack/variableToResolve]
 
 FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-explicitTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -83,3 +83,4 @@ FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
             @R|myPack/Anno|[Types](position = <strcat>(String(setter ), R|myPack/prop|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|myPack/Anno|[Types](position = <strcat>(String(setter parameter ), R|myPack/prop|)) value: R|@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ Unit#
             }
+

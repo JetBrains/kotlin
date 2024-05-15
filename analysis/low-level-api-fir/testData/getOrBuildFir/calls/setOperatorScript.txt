@@ -9,8 +9,8 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] setOperatorScript.kts
     package test
 
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-setOperatorScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {

@@ -23,8 +23,8 @@
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedType.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-resultWithPropagatedType.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -46,3 +46,4 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedType.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol foo/explicitType]] val $$result: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| = R|foo/explicitType|()
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>|
+

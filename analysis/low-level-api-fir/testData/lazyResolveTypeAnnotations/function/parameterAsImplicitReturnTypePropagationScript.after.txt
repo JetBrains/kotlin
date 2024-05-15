@@ -11,8 +11,8 @@
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypePropagationScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-parameterAsImplicitReturnTypePropagationScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -37,3 +37,4 @@ FILE: [ResolvedTo(IMPORTS)] parameterAsImplicitReturnTypePropagationScript.kts
         ): R|@R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>| {
             ^foo R|<local>/param|
         }
+

@@ -7,8 +7,8 @@ this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|Subs
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] argsFromStatement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-argsFromStatement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: foo> = <Unresolved name: foo>#(<L> = [ResolvedTo(BODY_RESOLVE)] foo@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {

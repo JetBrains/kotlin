@@ -11,8 +11,8 @@
   anchor -> [FirPropertySymbol low/resolveMe]
 
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-implicitTypeFromIncorrectSetterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -35,3 +35,4 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterScript.kts
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|low/Anno|(position = <strcat>(String(setter parameter type ), R|low/prop|))  kotlin/collections/List<@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|))  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|))  kotlin/String>>|): R|kotlin/Unit| {
                 ^ value#
             }
+

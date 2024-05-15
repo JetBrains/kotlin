@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -55,8 +55,8 @@ FILE: [ResolvedTo(RAW_FIR)] scriptStatementLevelAsLastStatement.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -110,8 +110,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -165,8 +165,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -220,8 +220,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -275,8 +275,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -330,8 +330,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -385,8 +385,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -440,8 +440,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -495,8 +495,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -550,8 +550,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -605,8 +605,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -660,8 +660,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -715,8 +715,8 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] scriptStatementLevelAsLastStatement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {

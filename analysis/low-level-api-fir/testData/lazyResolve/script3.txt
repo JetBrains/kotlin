@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] script3.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-script3.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -38,8 +38,8 @@ FILE: [ResolvedTo(RAW_FIR)] script3.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-script3.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -76,8 +76,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <script-script3.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -114,8 +114,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(COMPANION_GENERATION)] <script-script3.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(COMPANION_GENERATION)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -152,8 +152,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(SUPER_TYPES)] <script-script3.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(SUPER_TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -190,8 +190,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-script3.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -228,8 +228,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(STATUS)] <script-script3.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(STATUS)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -266,8 +266,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] <script-script3.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(EXPECT_ACTUAL_MATCHING)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -304,8 +304,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(CONTRACTS)] <script-script3.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(CONTRACTS)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -342,8 +342,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <script-script3.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -380,8 +380,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(CONSTANT_EVALUATION)] <script-script3.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(CONSTANT_EVALUATION)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -418,8 +418,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-script3.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -456,8 +456,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] script3.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-script3.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -509,8 +509,8 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] script3.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-script3.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class UnusedClass : R|kotlin/Any| {
@@ -562,3 +562,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script3.kts
         [ResolvedTo(BODY_RESOLVE)] init {
             R|/variable| = String(1)
         }
+

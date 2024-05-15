@@ -23,8 +23,8 @@
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-destructEntry.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

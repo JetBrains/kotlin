@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] destructuringFirstEntry.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -44,8 +44,8 @@ FILE: [ResolvedTo(RAW_FIR)] destructuringFirstEntry.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -88,8 +88,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -132,8 +132,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -176,8 +176,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -220,8 +220,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -264,8 +264,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -308,8 +308,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -352,8 +352,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
@@ -396,8 +396,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
@@ -440,8 +440,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
@@ -484,8 +484,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
@@ -528,8 +528,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
@@ -572,8 +572,8 @@ FILE: [ResolvedTo(IMPORTS)] destructuringFirstEntry.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] destructuringFirstEntry.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-destructuringFirstEntry.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] var a: R|kotlin/Int| = Int(-1)
@@ -612,3 +612,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuringFirstEntry.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val last: R|kotlin/Int| = R|<local>/<destruct>|.R|/MyPair.component2|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
