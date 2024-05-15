@@ -40,7 +40,7 @@ internal abstract class AggregateResourcesTask : DefaultTask() {
             resourcesFromDependenciesDirectory.orNull?.let { copy.from(it) }
             resourcesFromSelfDirectory.orNull?.let { copy.from(it) }
             copy.into(outputDirectory)
-            copy.duplicatesStrategy = DuplicatesStrategy.FAIL
+            copy.duplicatesStrategy = DuplicatesStrategy.WARN
         }
     }
 

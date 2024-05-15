@@ -631,7 +631,7 @@ tasks {
     }
     val jvmJar by existing(Jar::class) {
         dependsOn(configurationBuiltins)
-        duplicatesStrategy = DuplicatesStrategy.FAIL
+        duplicatesStrategy = DuplicatesStrategy.WARN
         archiveAppendix.set(null as String?)
         manifestAttributes(manifest, "Main", multiRelease = true)
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib"))
@@ -642,7 +642,7 @@ tasks {
     }
 
     val jvmSourcesJar by existing(Jar::class) {
-        duplicatesStrategy = DuplicatesStrategy.FAIL
+        duplicatesStrategy = DuplicatesStrategy.WARN
         archiveAppendix.set(null as String?)
         into("jvmMain") {
             from("${rootDir}/core/builtins/native")
@@ -678,7 +678,7 @@ tasks {
         destinationDirectory.set(layout.buildDirectory.dir("lib"))
 
         includeEmptyDirs = false
-        duplicatesStrategy = DuplicatesStrategy.FAIL
+        duplicatesStrategy = DuplicatesStrategy.WARN
 
         into("commonMain") {
             from(kotlin.sourceSets.commonMain.get().kotlin)

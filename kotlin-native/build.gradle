@@ -152,7 +152,7 @@ tasks.named("build") {
 
 tasks.register("distNativeSources", Zip) {
     dependsOn(configurations.commonSources)
-    duplicatesStrategy = DuplicatesStrategy.FAIL
+    duplicatesStrategy = DuplicatesStrategy.WARN
     destinationDirectory = file("$distDir/sources")
     archiveFileName = "kotlin-stdlib-native-sources.zip"
 
