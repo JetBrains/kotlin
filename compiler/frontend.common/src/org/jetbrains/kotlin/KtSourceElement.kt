@@ -56,6 +56,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ImplicitTypeArgument : KtFakeSourceElementKind()
 
     /**
+     * for ConeErrorTypes seen through a typealias expansion
+     */
+    object ErroneousTypealiasExpansion : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
+
+    /**
      * for return types of anonymous functions, because ImplicitTypeRef
      * may sometimes hide the diagnostic turning red code into green
      */

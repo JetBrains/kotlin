@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeResolver
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -182,7 +185,7 @@ class FirSpecificTypeResolverTransformer(
                 }
             } else {
                 typeRef.source
-            }
+            }?.fakeIfAbbreviated(resolvedType)
 
             delegatedTypeRef = typeRef
             type = resolvedType
@@ -202,6 +205,18 @@ class FirSpecificTypeResolverTransformer(
             }
         }
     }
+
+    /**
+     * We don't want to report errors from typealiases' expanded type refs once again
+     * per every use site, but we should remember that some errors on types with abbreviations
+     * are caused by the use site (e.g. `INVISIBLE_REFERENCE`), so those must not be ignored.
+     */
+    private fun KtSourceElement.fakeIfAbbreviated(type: ConeKotlinType): KtSourceElement =
+        takeUnless { kind is KtRealSourceElementKind && type.abbreviatedType?.isTypealiasWithErrorInExpansion == true }
+            ?: fakeElement(KtFakeSourceElementKind.ErroneousTypealiasExpansion)
+
+    private val ConeKotlinType.isTypealiasWithErrorInExpansion: Boolean
+        get() = (toSymbol(session) as? FirTypeAliasSymbol)?.resolvedExpandedTypeRef is FirErrorTypeRef
 
     /**
      * Returns the smallest non-resolvable prefix of the given [qualifiers].

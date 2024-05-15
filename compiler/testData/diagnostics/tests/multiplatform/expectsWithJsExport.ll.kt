@@ -52,7 +52,7 @@ actual typealias Export = kotlin.<!UNRESOLVED_REFERENCE!>js<!>.JsExport
 import kotlin.<!UNRESOLVED_IMPORT!>js<!>.*
 
 @Export
-actual class WithExpor<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>tO<!>nExpect {
+actual class WithExportOnExpect {
     actual fun foo() {}
     actual val bar = 42
 }
