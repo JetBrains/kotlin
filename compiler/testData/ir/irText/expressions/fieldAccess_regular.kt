@@ -2,13 +2,13 @@
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 
-// FILE: J.java
+// FILE: Base.java
 public class Base {
     public int f = 0;
     public static int s = 0;
 }
 
-// FILE: X.java
+// FILE: Derived.java
 public class Derived extends Base {}
 
 // FILE: main.kt

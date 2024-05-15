@@ -2,7 +2,7 @@
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 
-// FILE: foo/J.java
+// FILE: foo/Base.java
 package foo;
 
 class Base {
@@ -10,7 +10,7 @@ class Base {
     public static int s = 0;
 }
 
-// FILE: X.java
+// FILE: foo/Derived.java
 package foo;
 
 public class Derived extends Base {}
