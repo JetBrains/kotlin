@@ -21298,6 +21298,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("staticFakeOverridesInJKKJKHierarchyMultimodule.kt")
+    public void testStaticFakeOverridesInJKKJKHierarchyMultimodule() {
+      runTest("compiler/testData/codegen/box/fakeOverride/staticFakeOverridesInJKKJKHierarchyMultimodule.kt");
+    }
+
+    @Test
     @TestMetadata("substitutionInLocal.kt")
     public void testSubstitutionInLocal() {
       runTest("compiler/testData/codegen/box/fakeOverride/substitutionInLocal.kt");
