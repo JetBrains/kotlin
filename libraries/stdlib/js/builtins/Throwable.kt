@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,17 +12,17 @@ package kotlin
  * @param cause the cause of this throwable.
  */
 @JsName("Error")
-public external open class Throwable {
-    public open val message: String?
-    public open val cause: Throwable?
+public actual open external class Throwable {
+    public actual open val message: String?
+    public actual open val cause: Throwable?
 
-    public constructor(message: String?, cause: Throwable?)
-    public constructor(message: String?)
-    public constructor(cause: Throwable?)
-    public constructor()
+    public actual constructor(message: String?, cause: Throwable?)
+    public actual constructor(message: String?)
+    public actual constructor(cause: Throwable?)
+    public actual constructor()
 
     // TODO: add specialized version to runtime
-//    public override fun equals(other: Any?): Boolean
-//    public override fun hashCode(): Int
+//    public actual override fun equals(other: Any?): Boolean
+//    public actual override fun hashCode(): Int
     public override fun toString(): String
 }
