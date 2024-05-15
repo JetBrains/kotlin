@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
-import org.jetbrains.kotlin.fir.backend.utils.toIrSymbol
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -55,6 +52,7 @@ class IrBuiltInsOverFir(
     private val c: Fir2IrComponents,
     override val languageVersionSettings: LanguageVersionSettings,
     private val moduleDescriptor: FirModuleDescriptor,
+    private val syntheticSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer,
     irMangler: KotlinMangler.IrMangler
 ) : IrBuiltIns() {
     private val session: FirSession
@@ -129,16 +127,6 @@ class IrBuiltInsOverFir(
 
     override val stringClass: IrClassSymbol by lazy { loadClass(StandardClassIds.String) }
     override val stringType: IrType get() = stringClass.defaultTypeWithoutArguments
-
-    val extensionFunctionTypeAnnotationCall: IrConstructorCall? by lazy {
-        val firSymbol =
-            session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.Annotations.ExtensionFunctionType) as? FirRegularClassSymbol
-                ?: return@lazy null
-        val irSymbol = firSymbol.toIrSymbol(c, ConversionTypeOrigin.DEFAULT) as? IrClassSymbol ?: return@lazy null
-        val firConstructorSymbol = firSymbol.unsubstitutedScope(c).getDeclaredConstructors().singleOrNull() ?: return@lazy null
-        val constructorSymbol = c.declarationStorage.getIrConstructorSymbol(firConstructorSymbol)
-        return@lazy IrConstructorCallImpl.fromSymbolOwner(irSymbol.defaultType, constructorSymbol)
-    }
 
     private class IntrinsicConstAnnotation(val classSymbol: IrClassSymbol, val annotationCall: IrConstructorCall)
 
@@ -353,12 +341,13 @@ class IrBuiltInsOverFir(
 
             fun addBuiltinOperatorSymbol(
                 name: String,
+                symbol: IrSimpleFunctionSymbol?,
                 returnType: IrType,
                 vararg valueParameterTypes: Pair<String, IrType>,
                 isIntrinsicConst: Boolean = false,
             ): IrSimpleFunctionSymbol {
                 return createFunction(
-                    name, returnType, valueParameterTypes,
+                    name, symbol, returnType, valueParameterTypes,
                     origin = BUILTIN_OPERATOR,
                     isIntrinsicConst = isIntrinsicConst
                 ).also {
@@ -368,24 +357,34 @@ class IrBuiltInsOverFir(
                 }.symbol
             }
 
-            primitiveFloatingPointIrTypes.forEach { fpType ->
+            syntheticSymbolsContainer.primitiveFloatingPointTypes.forEach { primitiveType ->
+                val fpType = primitiveTypeToIrType.getValue(primitiveType)
                 _ieee754equalsFunByOperandType[fpType.classifierOrFail] = addBuiltinOperatorSymbol(
                     BuiltInOperatorNames.IEEE754_EQUALS,
+                    symbol = syntheticSymbolsContainer.ieee754equalsFunByOperandType.getValue(primitiveType),
                     booleanType,
                     "arg0" to fpType.makeNullable(),
                     "arg1" to fpType.makeNullable(),
                     isIntrinsicConst = true
                 )
             }
-            eqeqeqSymbol =
-                addBuiltinOperatorSymbol(BuiltInOperatorNames.EQEQEQ, booleanType, "" to anyNType, "" to anyNType)
-            eqeqSymbol =
-                addBuiltinOperatorSymbol(BuiltInOperatorNames.EQEQ, booleanType, "" to anyNType, "" to anyNType, isIntrinsicConst = true)
-            throwCceSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_CCE, nothingType)
-            throwIseSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_ISE, nothingType)
+            eqeqeqSymbol = addBuiltinOperatorSymbol(
+                BuiltInOperatorNames.EQEQEQ,
+                symbol = syntheticSymbolsContainer.eqeqeqSymbol,
+                booleanType,
+                "" to anyNType, "" to anyNType
+            )
+            eqeqSymbol = addBuiltinOperatorSymbol(
+                BuiltInOperatorNames.EQEQ,
+                symbol = syntheticSymbolsContainer.eqeqSymbol,
+                booleanType, "" to anyNType, "" to anyNType, isIntrinsicConst = true
+            )
+            throwCceSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_CCE, symbol = null, nothingType)
+            throwIseSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_ISE, symbol = null, nothingType)
             andandSymbol =
                 addBuiltinOperatorSymbol(
                     BuiltInOperatorNames.ANDAND,
+                    symbol = null,
                     booleanType,
                     "" to booleanType,
                     "" to booleanType,
@@ -394,17 +393,35 @@ class IrBuiltInsOverFir(
             ororSymbol =
                 addBuiltinOperatorSymbol(
                     BuiltInOperatorNames.OROR,
+                    symbol = null,
                     booleanType,
                     "" to booleanType,
                     "" to booleanType,
                     isIntrinsicConst = true
                 )
-            noWhenBranchMatchedExceptionSymbol =
-                addBuiltinOperatorSymbol(BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothingType)
-            illegalArgumentExceptionSymbol =
-                addBuiltinOperatorSymbol(BuiltInOperatorNames.ILLEGAL_ARGUMENT_EXCEPTION, nothingType, "" to stringType)
-            dataClassArrayMemberHashCodeSymbol = addBuiltinOperatorSymbol("dataClassArrayMemberHashCode", intType, "" to anyType)
-            dataClassArrayMemberToStringSymbol = addBuiltinOperatorSymbol("dataClassArrayMemberToString", stringType, "" to anyNType)
+            noWhenBranchMatchedExceptionSymbol = addBuiltinOperatorSymbol(
+                BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION,
+                symbol = syntheticSymbolsContainer.noWhenBranchMatchedExceptionSymbol,
+                nothingType
+            )
+            illegalArgumentExceptionSymbol = addBuiltinOperatorSymbol(
+                BuiltInOperatorNames.ILLEGAL_ARGUMENT_EXCEPTION,
+                symbol = null,
+                nothingType,
+                "" to stringType
+            )
+            dataClassArrayMemberHashCodeSymbol = addBuiltinOperatorSymbol(
+                "dataClassArrayMemberHashCode",
+                symbol = null,
+                intType,
+                "" to anyType
+            )
+            dataClassArrayMemberToStringSymbol = addBuiltinOperatorSymbol(
+                "dataClassArrayMemberToString",
+                symbol = null,
+                stringType,
+                "" to anyNType
+            )
 
             checkNotNullSymbol = run {
                 val typeParameter: IrTypeParameter = irFactory.createTypeParameter(
@@ -422,6 +439,7 @@ class IrBuiltInsOverFir(
 
                 createFunction(
                     BuiltInOperatorNames.CHECK_NOT_NULL,
+                    symbol = syntheticSymbolsContainer.checkNotNullSymbol,
                     IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
                     arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
                     typeParameters = listOf(typeParameter),
@@ -433,23 +451,41 @@ class IrBuiltInsOverFir(
                 }.symbol
             }
 
-            fun List<IrType>.defineComparisonOperatorForEachIrType(name: String) =
-                associate {
-                    it.classifierOrFail to addBuiltinOperatorSymbol(
+            fun List<PrimitiveType>.defineComparisonOperatorForEachIrType(
+                name: String,
+                symbols: Map<PrimitiveType, IrSimpleFunctionSymbol>
+            ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
+                return associate { primitiveType ->
+                    val irType = primitiveTypeToIrType.getValue(primitiveType)
+                    irType.classifierOrFail to addBuiltinOperatorSymbol(
                         name,
+                        symbol = symbols.getValue(primitiveType),
                         booleanType,
-                        "" to it,
-                        "" to it,
+                        "" to irType,
+                        "" to irType,
                         isIntrinsicConst = true
                     )
                 }
+            }
 
-            lessFunByOperandType = primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS)
-            lessOrEqualFunByOperandType =
-                primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS_OR_EQUAL)
-            greaterOrEqualFunByOperandType =
-                primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.GREATER_OR_EQUAL)
-            greaterFunByOperandType = primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.GREATER)
+            val primitivesWithComparison = syntheticSymbolsContainer.primitiveIrTypesWithComparisons
+
+            lessFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+                BuiltInOperatorNames.LESS,
+                syntheticSymbolsContainer.lessFunByOperandType
+            )
+            lessOrEqualFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+                BuiltInOperatorNames.LESS_OR_EQUAL,
+                syntheticSymbolsContainer.lessOrEqualFunByOperandType
+            )
+            greaterOrEqualFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+                BuiltInOperatorNames.GREATER_OR_EQUAL,
+                syntheticSymbolsContainer.greaterOrEqualFunByOperandType
+            )
+            greaterFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+                BuiltInOperatorNames.GREATER,
+                syntheticSymbolsContainer.greaterFunByOperandType
+            )
 
         }
     }
@@ -554,20 +590,6 @@ class IrBuiltInsOverFir(
         )
     }
 
-    fun getNonBuiltInFunctionsWithFirCounterpartByExtensionReceiver(
-        name: Name,
-        vararg packageNameSegments: String,
-    ): Map<IrClassifierSymbol, Pair<FirNamedFunctionSymbol, IrSimpleFunctionSymbol>> {
-        return getFunctionsByKey(
-            name,
-            *packageNameSegments,
-            mapKey = { symbol ->
-                symbol.fir.receiverParameter?.typeRef?.toIrType(c)?.classifierOrNull
-            },
-            mapValue = { firSymbol, irSymbol -> firSymbol to irSymbol }
-        )
-    }
-
     private val functionNMap: MutableMap<Int, IrClass> = mutableMapOf()
     private val kFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
     private val suspendFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
@@ -662,6 +684,7 @@ class IrBuiltInsOverFir(
 
     private fun IrDeclarationParent.createFunction(
         name: String,
+        symbol: IrSimpleFunctionSymbol?,
         returnType: IrType,
         valueParameterTypes: Array<out Pair<String, IrType>>,
         typeParameters: List<IrTypeParameter> = emptyList(),
@@ -718,7 +741,7 @@ class IrBuiltInsOverFir(
         val signature = irSignatureBuilder.computeSignature(irFun4SignatureCalculation)
         return c.symbolTable.declareSimpleFunction(
             signature,
-            { IrSimpleFunctionSymbolImpl(null, signature) },
+            { symbol ?: IrSimpleFunctionSymbolImpl(null, signature) },
             ::makeWithSymbol
         )
     }

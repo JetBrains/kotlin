@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.fir.types.isInt
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -36,12 +39,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class Fir2IrBuiltinSymbolsContainer(private val c: Fir2IrComponents) {
-    private val session: FirSession
-        get() = c.session
+class Fir2IrBuiltinSymbolsContainer(
+    private val c: Fir2IrComponents,
+    private val syntheticSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer
+) {
+    private val session: FirSession = c.session
 
-    private val symbolProvider: FirSymbolProvider
-        get() = session.symbolProvider
+    private val symbolProvider: FirSymbolProvider = session.symbolProvider
 
     val irFactory: IrFactory = c.irFactory
 
@@ -112,6 +116,19 @@ class Fir2IrBuiltinSymbolsContainer(private val c: Fir2IrComponents) {
 
     val arrayClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Array) }
 
+    private val primitiveSymbolToPrimitiveType: Map<IrClassSymbol, PrimitiveType> by lazy {
+        mapOf(
+            booleanClass to PrimitiveType.BOOLEAN,
+            charClass to PrimitiveType.CHAR,
+            byteClass to PrimitiveType.BYTE,
+            shortClass to PrimitiveType.SHORT,
+            intClass to PrimitiveType.INT,
+            longClass to PrimitiveType.LONG,
+            floatClass to PrimitiveType.FLOAT,
+            doubleClass to PrimitiveType.DOUBLE,
+        )
+    }
+
     private val primitiveTypeToIrType: Map<PrimitiveType, IrType> by lazy {
         mapOf(
             PrimitiveType.BOOLEAN to booleanType,
@@ -157,19 +174,6 @@ class Fir2IrBuiltinSymbolsContainer(private val c: Fir2IrComponents) {
     val primitiveArrayForType: Map<IrType?, IrClassSymbol>
         get() = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }
 
-    val ieee754equalsFunByOperandType: MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol> get() = TODO()
-
-    val eqeqeqSymbol: IrSimpleFunctionSymbol get() = TODO()
-    val eqeqSymbol: IrSimpleFunctionSymbol get() = TODO()
-    val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol get() = TODO()
-
-    val checkNotNullSymbol: IrSimpleFunctionSymbol get() = TODO()
-
-    val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> get() = TODO()
-    val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> get() = TODO()
-    val greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> get() = TODO()
-    val greaterFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> get() = TODO()
-
     private val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol> by lazy {
         UnsignedType.entries.mapNotNull { unsignedType ->
             val array = loadClassSafe(unsignedType.arrayClassId)
@@ -181,6 +185,42 @@ class Fir2IrBuiltinSymbolsContainer(private val c: Fir2IrComponents) {
     val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
         unsignedTypesToUnsignedArrays.map { (k, v) -> v to loadClass(k.classId).owner.defaultType }.toMap()
     }
+
+    // --------------------------- synthetic symbols ---------------------------
+
+    val eqeqeqSymbol: IrSimpleFunctionSymbol get() = syntheticSymbolsContainer.eqeqeqSymbol
+    val eqeqSymbol: IrSimpleFunctionSymbol get() = syntheticSymbolsContainer.eqeqSymbol
+    val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol get() = syntheticSymbolsContainer.noWhenBranchMatchedExceptionSymbol
+    val checkNotNullSymbol: IrSimpleFunctionSymbol get() = syntheticSymbolsContainer.checkNotNullSymbol
+
+    val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+        operatorMap(syntheticSymbolsContainer.lessFunByOperandType)
+    }
+
+    val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+        operatorMap(syntheticSymbolsContainer.lessOrEqualFunByOperandType)
+    }
+
+    val greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+        operatorMap(syntheticSymbolsContainer.greaterOrEqualFunByOperandType)
+    }
+
+    val greaterFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+        operatorMap(syntheticSymbolsContainer.greaterFunByOperandType)
+    }
+
+    val ieee754equalsFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+        operatorMap(syntheticSymbolsContainer.ieee754equalsFunByOperandType)
+    }
+
+
+    private fun operatorMap(
+        syntheticMap: Map<PrimitiveType, IrSimpleFunctionSymbol>
+    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
+        return primitiveSymbolToPrimitiveType.mapValues { (_, type) -> syntheticMap.getValue(type) }
+    }
+
+    // --------------------------- functions ---------------------------
 
     fun getNonBuiltInFunctionsWithFirCounterpartByExtensionReceiver(
         name: Name,
@@ -202,7 +242,7 @@ class Fir2IrBuiltinSymbolsContainer(private val c: Fir2IrComponents) {
         return builtInClass.functions.filter { it.owner.name == name }.asIterable()
     }
 
-// ---------------
+    // ---------------
 
     private fun loadClass(classId: ClassId): IrClassSymbol {
         return loadClassSafe(classId) ?: error("Class not found: $classId")
