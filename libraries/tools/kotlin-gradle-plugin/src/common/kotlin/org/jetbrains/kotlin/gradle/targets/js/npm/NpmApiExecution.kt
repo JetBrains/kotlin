@@ -32,7 +32,6 @@ interface NpmApiExecution<out T : PackageManagerEnvironment> : Serializable {
         logger: Logger,
         nodeJs: NodeJsEnvironment,
         packageManagerEnvironment: @UnsafeVariance T,
-        npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
         cliArgs: List<String>
     )
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK
+import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_6
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.notExists
 import kotlin.io.path.readText
+import kotlin.test.assertEquals
 
 class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     override val yarn: Boolean = false
@@ -465,6 +467,58 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
                     .resolve("puppeteer")
                     .resolve(".local-chromium")
             )
+        }
+    }
+
+    @DisplayName("Change rootPackageJson after its generation")
+    @GradleTest
+    fun testChangeRootPackageJsonAfterGeneration(gradleVersion: GradleVersion) {
+        project("kotlin-js-package-lock-project", gradleVersion) {
+            buildGradleKts.modify {
+                //language=kotlin
+                """
+                |$it
+                |
+                |plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
+                |    the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().apply {
+                |        rootPackageJsonTaskProvider.configure {
+                |            doLast {
+                |                val file = rootPackageJsonFile.get().asFile
+                |                val rootPackageJson = org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson(file) 
+                |                    ?: error("Null PackageJson from ${"$"}file")
+                |                rootPackageJson.version = "foo"
+                |                rootPackageJson.saveTo(file)
+                |            }
+                |        }
+                |    }
+                |}
+                """.trimMargin()
+            }
+
+            fun assertRootPackageJsonVersion(expectedVersion: String) {
+                val packageJsonFile = projectPath
+                    .resolve("build/js/package.json")
+                    .toFile()
+
+                val packageJson = fromSrcPackageJson(packageJsonFile)
+
+                assertEquals(expectedVersion, packageJson?.version)
+            }
+
+            build("kotlinNpmInstall", storeTaskName) {
+                assertTasksExecuted(":rootPackageJson", ":kotlinNpmInstall")
+                assertRootPackageJsonVersion("foo")
+            }
+
+            projectPath.resolve("build/js/node_modules").deleteRecursively()
+            projectPath.resolve("build/js/$lockFileName").deleteRecursively()
+            projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).deleteRecursively()
+
+            build("kotlinNpmInstall", storeTaskName) {
+                assertTasksUpToDate(":rootPackageJson")
+                assertTasksExecuted(":kotlinNpmInstall")
+                assertRootPackageJsonVersion("foo")
+            }
         }
     }
 }

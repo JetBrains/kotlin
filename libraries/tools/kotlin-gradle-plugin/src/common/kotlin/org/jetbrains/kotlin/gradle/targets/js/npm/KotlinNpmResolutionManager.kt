@@ -17,15 +17,12 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.PackageManagerEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.Installation
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinProjectNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 internal interface UsesKotlinNpmResolutionManager : Task {
     @get:Internal
@@ -73,9 +70,9 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
 
         class Configuring(val resolution: KotlinRootNpmResolution) : ResolutionState()
 
-        open class Prepared(val preparedInstallation: Installation) : ResolutionState()
+        class Prepared : ResolutionState()
 
-        class Installed() : ResolutionState()
+        class Installed : ResolutionState()
 
         class Error(val wrappedException: Throwable) : ResolutionState()
     }
@@ -106,8 +103,13 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
             }
 
             return try {
-                val installation: Installation = prepareIfNeeded(logger = logger, nodeJsEnvironment, packageManagerEnvironment)
-                installation.install(args, services, logger, nodeJsEnvironment, packageManagerEnvironment)
+                nodeJsEnvironment.packageManager.resolveRootProject(
+                    services,
+                    logger,
+                    nodeJsEnvironment,
+                    packageManagerEnvironment,
+                    args
+                )
                 state = ResolutionState.Installed()
             } catch (e: Exception) {
                 state = ResolutionState.Error(e)
@@ -120,27 +122,26 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
         logger: Logger,
         nodeJsEnvironment: NodeJsEnvironment,
         packageManagerEnvironment: PackageManagerEnvironment,
-    ): Installation {
+    ) {
         val state0 = this.state
-        return when (state0) {
+        when (state0) {
             is ResolutionState.Prepared -> {
-                state0.preparedInstallation
+                return
             }
 
             is ResolutionState.Configuring -> {
                 synchronized(this) {
                     val state1 = this.state
                     when (state1) {
-                        is ResolutionState.Prepared -> state1.preparedInstallation
+                        is ResolutionState.Prepared -> return
                         is ResolutionState.Configuring -> {
                             state1.resolution.prepareInstallation(
                                 logger,
                                 nodeJsEnvironment,
                                 packageManagerEnvironment,
                                 this
-                            ).also {
-                                this.state = ResolutionState.Prepared(it)
-                            }
+                            )
+                            this.state = ResolutionState.Prepared()
                         }
 
                         is ResolutionState.Installed -> error("Project already installed")

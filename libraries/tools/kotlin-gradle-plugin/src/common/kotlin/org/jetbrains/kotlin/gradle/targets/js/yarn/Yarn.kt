@@ -38,7 +38,6 @@ class Yarn : NpmApiExecution<YarnEnvironment> {
         logger: Logger,
         nodeJs: NodeJsEnvironment,
         packageManagerEnvironment: YarnEnvironment,
-        npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
         cliArgs: List<String>
     ) {
         yarnWorkspaces
@@ -47,7 +46,6 @@ class Yarn : NpmApiExecution<YarnEnvironment> {
                 logger,
                 nodeJs,
                 packageManagerEnvironment,
-                npmProjects,
                 cliArgs
             )
     }

@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
@@ -21,6 +22,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.asNodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import java.io.File
 
 @DisableCachingByDefault
@@ -64,19 +67,25 @@ abstract class KotlinNpmInstallTask :
         nodeJs.packageManagerExtension.get().packageManager.preparedFiles(nodsJsEnvironment)
     }
 
+    @Deprecated("Use packageJsonFileList instead", replaceWith = ReplaceWith("packageJsonFileList"))
+    @get:Internal
+    val packageJsonFiles: List<RegularFile>
+        get() = packageJsonFileList.get()
+
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
-    val packageJsonFiles: List<RegularFile> by lazy {
-        rootResolver.projectResolvers.values
-            .flatMap { it.compilationResolvers }
-            .map { it.compilationNpmResolution }
-            .map { resolution ->
-                val name = resolution.npmProjectName
-                packagesDir.map { it.dir(name).file(NpmProject.PACKAGE_JSON) }.get()
-            }
-    }
+    val packageJsonFileList: ListProperty<RegularFile> = project.objects.listProperty<RegularFile>().value(
+        project.objects.providerWithLazyConvention {
+            rootResolver.projectResolvers.values
+                .flatMap { it.compilationResolvers }
+                .map { it.npmProject.name }
+                .map { name ->
+                    packagesDir.map { dir -> dir.dir(name).file(NpmProject.PACKAGE_JSON) }.get()
+                }
+        }
+    )
 
     @get:OutputFiles
     val additionalFiles: FileCollection by lazy {
@@ -112,7 +121,7 @@ abstract class KotlinNpmInstallTask :
                 services = services,
                 logger = logger,
                 nodsJsEnvironment,
-                packageManagerEnv
+                packageManagerEnv,
             ) ?: throw (npmResolutionManager.get().state as KotlinNpmResolutionManager.ResolutionState.Error).wrappedException
     }
 
