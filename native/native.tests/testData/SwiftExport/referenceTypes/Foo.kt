@@ -20,3 +20,5 @@ val readGlobalFoo
     get() = globalFoo
 
 fun getGlobalFoo() = globalFoo
+
+typealias FooAsTypealias = Foo

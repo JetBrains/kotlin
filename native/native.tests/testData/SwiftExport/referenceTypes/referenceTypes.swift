@@ -150,6 +150,13 @@ func multipleConstructors() throws {
     try assertEquals(actual: getX(foo: one), expected: getX(foo: two))
 }
 
+func typealiasPreservesIdentity() throws {
+    let a = Foo(x: 1)
+    let typealiased: FooAsTypealias = a
+    try assertTrue(a === typealiased)
+    try assertTrue(Foo.Type.self == FooAsTypealias.Type.self)
+}
+
 class ReferenceTypesTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -177,6 +184,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "objectGetterSetterInObject", method: withAutorelease(objectGetterSetterInObject)),
             TestCase(name: "objectMethodInObject", method: withAutorelease(objectMethodInObject)),
             TestCase(name: "multipleConstructors", method: withAutorelease(multipleConstructors)),
+            TestCase(name: "typealiasPreservesIdentity", method: withAutorelease(typealiasPreservesIdentity)),
         ]
     }
 }
