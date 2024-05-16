@@ -19,7 +19,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -45,7 +45,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -66,7 +66,7 @@ KaConstructorSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: sample/B
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -87,7 +87,7 @@ KaConstructorSymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
@@ -108,7 +108,7 @@ KaConstructorSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: sample/B
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -129,7 +129,7 @@ KaConstructorSymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -155,7 +155,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
@@ -186,7 +186,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -206,7 +206,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
@@ -227,7 +227,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -253,7 +253,7 @@ KaKotlinPropertySymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -279,7 +279,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -305,7 +305,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
@@ -336,7 +336,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -356,7 +356,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
@@ -377,7 +377,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -403,7 +403,7 @@ KaKotlinPropertySymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   setter: KaPropertySetterSymbol:
     annotationsList: []
@@ -433,14 +433,14 @@ KaKotlinPropertySymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -461,7 +461,7 @@ KaKotlinPropertySymbol:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
@@ -492,7 +492,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -518,7 +518,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -539,7 +539,7 @@ KaConstructorSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: sample/B
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -560,7 +560,7 @@ KaConstructorSymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
@@ -581,7 +581,7 @@ KaConstructorSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: sample/B
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -602,7 +602,7 @@ KaConstructorSymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -628,7 +628,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
@@ -659,7 +659,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -679,7 +679,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
@@ -700,7 +700,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -726,7 +726,7 @@ KaKotlinPropertySymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -738,7 +738,7 @@ KaTypeAliasSymbol:
   classId: sample/C
   expandedType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: sample/D
   isActual: true
   isExpect: false
@@ -767,7 +767,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -793,7 +793,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
@@ -824,7 +824,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -844,7 +844,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
@@ -865,7 +865,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -891,7 +891,7 @@ KaKotlinPropertySymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   setter: KaPropertySetterSymbol:
     annotationsList: []
@@ -921,14 +921,14 @@ KaKotlinPropertySymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -949,7 +949,7 @@ KaKotlinPropertySymbol:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []

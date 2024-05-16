@@ -22,7 +22,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -29,7 +29,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Any
         ]
         symbolKind: CLASS_MEMBER
@@ -54,7 +54,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Any
         ]
         symbolKind: CLASS_MEMBER
@@ -91,7 +91,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Any
         ]
         symbolKind: TOP_LEVEL
@@ -116,7 +116,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: test/BaseInterface
         ]
         symbolKind: TOP_LEVEL
@@ -141,7 +141,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: test/Base
         ]
         symbolKind: TOP_LEVEL

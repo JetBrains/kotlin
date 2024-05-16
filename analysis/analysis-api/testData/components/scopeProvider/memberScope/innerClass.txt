@@ -22,7 +22,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -43,7 +43,7 @@ KaFunctionSymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
@@ -55,7 +55,7 @@ KaFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
@@ -86,7 +86,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -94,7 +94,7 @@ KaFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
@@ -125,7 +125,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -133,7 +133,7 @@ KaFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Any
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
@@ -159,7 +159,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
@@ -189,7 +189,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
@@ -219,7 +219,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
@@ -249,7 +249,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
@@ -274,7 +274,7 @@ KaConstructorSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: test/B
   symbolKind: CLASS_MEMBER
   typeParameters: []

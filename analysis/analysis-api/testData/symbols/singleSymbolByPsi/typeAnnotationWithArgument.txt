@@ -22,13 +22,13 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: [
           Anno5(s = "1")
             psi: KtAnnotationEntry
         ]
-        ownTypeArguments: []
+        typeArguments: []
         type: @R|Anno5|(s = String(1))  kotlin/Int
     ]
     type: kotlin/collections/List<@R|Anno5|(s = String(1))  kotlin/Int>?

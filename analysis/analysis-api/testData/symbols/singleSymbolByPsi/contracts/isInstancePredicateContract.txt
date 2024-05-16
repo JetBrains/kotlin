@@ -30,7 +30,7 @@ KaFunctionSymbol:
                   receiverParameter: null
                   returnType: KaUsualClassType:
                     annotationsList: []
-                    ownTypeArguments: []
+                    typeArguments: []
                     type: kotlin/Any
                   symbolKind: LOCAL
                   typeParameters: []
@@ -41,7 +41,7 @@ KaFunctionSymbol:
           type:
             KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: Foo
           isNegated: false
   ]
@@ -64,7 +64,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -85,7 +85,7 @@ KaFunctionSymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Any
       symbolKind: LOCAL
       typeParameters: []

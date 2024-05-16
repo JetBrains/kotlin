@@ -9,7 +9,7 @@ KaApplicableCallCandidateInfo:
           owningCallableSymbol: KaFunctionSymbol(/call)
           type: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: JavaClass
         type = JavaClass
       extensionReceiver = null

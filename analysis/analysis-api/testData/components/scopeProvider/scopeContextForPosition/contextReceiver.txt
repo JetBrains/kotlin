@@ -2,7 +2,7 @@ element: e
 implicit receivers:
   type: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Context
   owner symbol: KaFirFunctionSymbol
 
@@ -41,7 +41,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Unit
         symbolKind: CLASS_MEMBER
         typeParameters: []
@@ -71,7 +71,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Boolean
         symbolKind: CLASS_MEMBER
         typeParameters: []
@@ -92,7 +92,7 @@ scopes:
             receiverParameter: null
             returnType: KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: kotlin/Any?
             symbolKind: LOCAL
             typeParameters: []
@@ -122,7 +122,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Int
         symbolKind: CLASS_MEMBER
         typeParameters: []
@@ -152,7 +152,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/String
         symbolKind: CLASS_MEMBER
         typeParameters: []
@@ -173,7 +173,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: Context
         symbolKind: CLASS_MEMBER
         typeParameters: []
@@ -232,7 +232,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Any
         ]
         symbolKind: TOP_LEVEL
@@ -247,7 +247,7 @@ scopes:
             label: null
             type: KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: Context
         ]
         contractEffects: []
@@ -270,7 +270,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL
         typeParameters: []

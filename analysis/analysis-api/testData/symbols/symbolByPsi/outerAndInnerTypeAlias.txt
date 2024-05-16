@@ -29,7 +29,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -47,10 +47,10 @@ KaTypeAliasSymbol:
   classId: TopLevelAlias
   expandedType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
     ]
     type: X<kotlin/Int>
@@ -70,10 +70,10 @@ KaTypeAliasSymbol:
   classId: A.NestedLevelAlias
   expandedType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
     ]
     type: X<kotlin/String>
@@ -93,10 +93,10 @@ KaTypeAliasSymbol:
   classId: null
   expandedType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
     ]
     type: X<kotlin/String>
@@ -116,10 +116,10 @@ KaTypeAliasSymbol:
   classId: null
   expandedType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
     ]
     type: X<kotlin/String>
@@ -139,10 +139,10 @@ KaTypeAliasSymbol:
   classId: null
   expandedType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
     ]
     type: X<kotlin/String>
@@ -162,10 +162,10 @@ KaTypeAliasSymbol:
   classId: null
   expandedType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
     ]
     type: X<kotlin/String>
@@ -204,7 +204,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -212,7 +212,7 @@ KaFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: <local>/LocalClass
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingJvmClassName: null
@@ -238,7 +238,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: LOCAL
@@ -273,7 +273,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -281,7 +281,7 @@ KaFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: <local>/LocalClass
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingJvmClassName: null
@@ -307,7 +307,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: LOCAL
@@ -342,7 +342,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -350,7 +350,7 @@ KaFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: A
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
   getContainingJvmClassName: A
@@ -376,7 +376,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL

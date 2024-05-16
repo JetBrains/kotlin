@@ -3,7 +3,6 @@ KaUsualClassType:
   annotationsList: []
   classId: B
   nullability: NON_NULLABLE
-  ownTypeArguments: []
   qualifiers: [
     qualifier:
       name: B
@@ -11,6 +10,7 @@ KaUsualClassType:
       typeArguments: []
   ]
   symbol: KaNamedClassOrObjectSymbol(<local>/B)
+  typeArguments: []
 
 Rendered type:
 B

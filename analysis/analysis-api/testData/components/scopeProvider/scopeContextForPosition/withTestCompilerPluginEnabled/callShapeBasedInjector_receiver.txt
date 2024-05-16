@@ -2,7 +2,7 @@ element: column
 implicit receivers:
   type: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: <local>/Scope1
   owner symbol: KaFirFunctionSymbol
 
@@ -24,7 +24,7 @@ scopes:
           receiverParameter: null
           returnType: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
@@ -48,16 +48,16 @@ scopes:
             owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
             type: KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: [
+              typeArguments: [
                 KaUsualClassType:
                   annotationsList: []
-                  ownTypeArguments: []
+                  typeArguments: []
                   type: <local>/Schema1
               ]
               type: DataFrame<<local>/Schema1>
           returnType: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
@@ -86,16 +86,16 @@ scopes:
           owningCallableSymbol: KaKotlinPropertySymbol(<local>/column)
           type: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: [
+            typeArguments: [
               KaUsualClassType:
                 annotationsList: []
-                ownTypeArguments: []
+                typeArguments: []
                 type: <local>/Schema1
             ]
             type: DataFrame<<local>/Schema1>
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
@@ -125,7 +125,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Boolean
         symbolKind: CLASS_MEMBER
         typeParameters: []
@@ -146,7 +146,7 @@ scopes:
             receiverParameter: null
             returnType: KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: kotlin/Any?
             symbolKind: LOCAL
             typeParameters: []
@@ -176,7 +176,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Int
         symbolKind: CLASS_MEMBER
         typeParameters: []
@@ -206,7 +206,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/String
         symbolKind: CLASS_MEMBER
         typeParameters: []
@@ -227,7 +227,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: <local>/Scope1
         symbolKind: CLASS_MEMBER
         typeParameters: []
@@ -260,7 +260,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: [
+          typeArguments: [
             *
           ]
           type: DataFrame<*>
@@ -314,7 +314,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Any
         ]
         symbolKind: TOP_LEVEL
@@ -341,7 +341,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Annotation
         ]
         symbolKind: TOP_LEVEL
@@ -378,7 +378,7 @@ scopes:
           owningCallableSymbol: KaFunctionSymbol(/add)
           type: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: [
+            typeArguments: [
               KaTypeParameterType:
                 annotationsList: []
                 type: T
@@ -386,10 +386,10 @@ scopes:
             type: DataFrame<T>
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: [
+          typeArguments: [
             KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: kotlin/Any?
           ]
           type: DataFrame<kotlin/Any?>
@@ -415,7 +415,7 @@ scopes:
             receiverParameter: null
             returnType: KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: kotlin/String
             symbolKind: LOCAL
             typeParameters: []
@@ -435,7 +435,7 @@ scopes:
             receiverParameter: null
             returnType: KaFunctionalType:
               annotationsList: []
-              ownTypeArguments: [
+              typeArguments: [
                 KaTypeParameterType:
                   annotationsList: []
                   type: R
@@ -469,7 +469,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL
         typeParameters: []
@@ -490,7 +490,7 @@ scopes:
             receiverParameter: null
             returnType: KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: [
+              typeArguments: [
                 *
               ]
               type: DataFrame<*>

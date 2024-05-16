@@ -3,7 +3,6 @@ KaUsualClassType:
   annotationsList: []
   classId: kotlin/Any
   nullability: NON_NULLABLE
-  ownTypeArguments: []
   qualifiers: [
     qualifier:
       name: Any
@@ -11,6 +10,7 @@ KaUsualClassType:
       typeArguments: []
   ]
   symbol: KaNamedClassOrObjectSymbol(kotlin/Any)
+  typeArguments: []
 
 Rendered type:
 kotlin.Any

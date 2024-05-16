@@ -11,7 +11,7 @@ KaErrorCallInfo:
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
             type: KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: Controller
           type = Controller
         extensionReceiver = null

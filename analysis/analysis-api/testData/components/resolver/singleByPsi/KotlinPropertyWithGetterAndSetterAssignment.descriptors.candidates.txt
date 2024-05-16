@@ -105,7 +105,7 @@ KaApplicableCallCandidateInfo:
           owningCallableSymbol: KaFunctionSymbol(/foo)
           type: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: A
         type = A
       extensionReceiver = null
@@ -130,7 +130,7 @@ KaApplicableCallCandidateInfo:
           owningCallableSymbol: KaFunctionSymbol(/foo)
           type: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: A
         type = A
       extensionReceiver = null
@@ -155,7 +155,7 @@ KaApplicableCallCandidateInfo:
           owningCallableSymbol: KaFunctionSymbol(/foo)
           type: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: A
         type = A
       extensionReceiver = null

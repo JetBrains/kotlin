@@ -39,7 +39,7 @@ internal class KaFirFunctionalType(
         builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
             ?: errorWithFirSpecificEntries("Class was not found", coneType = coneType)
     }
-    override val ownTypeArguments: List<KaTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
+    override val typeArguments: List<KaTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
 
     override val qualifiers: List<KaClassTypeQualifier.KaResolvedClassTypeQualifier> by cached {
         UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)

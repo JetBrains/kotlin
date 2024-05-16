@@ -162,7 +162,7 @@ internal fun KtType.translateTypeArgumentsToObjC(): List<ObjCNonNullReferenceTyp
     /* See special casing below */
     val isKnownCollectionType = classId in collectionClassIds
 
-    return ownTypeArguments.map { typeArgument ->
+    return typeArguments.map { typeArgument ->
         when (typeArgument) {
             is KtStarTypeProjection -> ObjCIdType
             is KtTypeArgumentWithVariance -> {

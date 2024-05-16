@@ -10,10 +10,10 @@ KaApplicableCallCandidateInfo:
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
           type: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: [
+            typeArguments: [
               KaUsualClassType:
                 annotationsList: []
-                ownTypeArguments: []
+                typeArguments: []
                 type: kotlin/String
             ]
             type: test/Target<kotlin/String>

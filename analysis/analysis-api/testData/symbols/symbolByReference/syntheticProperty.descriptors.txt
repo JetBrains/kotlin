@@ -21,7 +21,7 @@ KaSyntheticJavaPropertySymbol:
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
       type: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: Derived
       getContainingFileSymbol: null
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
@@ -29,7 +29,7 @@ KaSyntheticJavaPropertySymbol:
       deprecationStatus: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -62,7 +62,7 @@ KaSyntheticJavaPropertySymbol:
     owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: Derived
     getContainingFileSymbol: null
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
@@ -70,7 +70,7 @@ KaSyntheticJavaPropertySymbol:
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
     annotationsList: []
@@ -100,7 +100,7 @@ KaSyntheticJavaPropertySymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
@@ -116,7 +116,7 @@ KaSyntheticJavaPropertySymbol:
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
       type: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: Derived
       getContainingFileSymbol: null
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
@@ -124,7 +124,7 @@ KaSyntheticJavaPropertySymbol:
       deprecationStatus: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -145,7 +145,7 @@ KaSyntheticJavaPropertySymbol:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/String
         symbolKind: LOCAL
         typeParameters: []

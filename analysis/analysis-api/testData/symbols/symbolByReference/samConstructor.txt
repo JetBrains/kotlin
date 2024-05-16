@@ -9,7 +9,7 @@ KaSamConstructorSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: java/lang/Runnable
   symbolKind: SAM_CONSTRUCTOR
   typeParameters: []
@@ -30,10 +30,10 @@ KaSamConstructorSymbol:
       receiverParameter: null
       returnType: KaFunctionalType:
         annotationsList: []
-        ownTypeArguments: [
+        typeArguments: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>

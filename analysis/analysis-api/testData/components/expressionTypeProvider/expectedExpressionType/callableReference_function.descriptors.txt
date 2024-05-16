@@ -1,7 +1,7 @@
 expression: function::apply
 expected type: KaUsualClassType:
   annotationsList: []
-  ownTypeArguments: [
+  typeArguments: [
     in KaTypeParameterType:
       annotationsList: []
       type: T

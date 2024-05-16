@@ -11,7 +11,7 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Boolean
     symbolKind: LOCAL
     typeParameters: []
@@ -45,14 +45,14 @@ KaKotlinPropertySymbol:
           ReceiverTypeAnnotation()
             psi: KtAnnotationEntry
         ]
-        ownTypeArguments: []
+        typeArguments: []
         type: @R|ReceiverTypeAnnotation|()  kotlin/Long
       getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Boolean
     symbolKind: ACCESSOR
     typeParameters: []
@@ -91,14 +91,14 @@ KaKotlinPropertySymbol:
         ReceiverTypeAnnotation()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
     getContainingFileSymbol: KaFileSymbol(propertyReceiverParameter.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Boolean
   setter: null
   symbolKind: TOP_LEVEL

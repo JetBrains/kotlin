@@ -21,7 +21,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: test/Base
         symbolKind: LOCAL
         typeParameters: []
@@ -55,7 +55,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Any
         ]
         symbolKind: TOP_LEVEL
@@ -80,7 +80,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: test/Base
         ]
         symbolKind: TOP_LEVEL

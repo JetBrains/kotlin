@@ -18,7 +18,7 @@ KaFunctionSymbol:
               owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
               type: KaUsualClassType:
                 annotationsList: []
-                ownTypeArguments: []
+                typeArguments: []
                 type: kotlin/Boolean
               getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
               getContainingModule: KtSourceModule "Sources of main"
@@ -46,14 +46,14 @@ KaFunctionSymbol:
     owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Boolean
     getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

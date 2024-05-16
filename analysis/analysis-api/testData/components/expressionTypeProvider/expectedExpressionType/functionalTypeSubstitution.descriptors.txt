@@ -3,7 +3,7 @@ expression: {
     }
 expected type: KaUsualClassType:
   annotationsList: []
-  ownTypeArguments: [
+  typeArguments: [
     KaTypeParameterType:
       annotationsList: []
       type: T

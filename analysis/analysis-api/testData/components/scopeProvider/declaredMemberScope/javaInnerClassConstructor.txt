@@ -12,7 +12,7 @@ KaConstructorSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: JavaClass.InnerClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -44,7 +44,7 @@ KaConstructorSymbol:
   visibility: PackageVisibility
   getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass.InnerClass

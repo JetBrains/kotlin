@@ -3,10 +3,10 @@ expression: {
 }
 expected type: KaFunctionalType:
   annotationsList: []
-  ownTypeArguments: [
+  typeArguments: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Unit
   ]
   type: kotlin/Function0<kotlin/Unit>

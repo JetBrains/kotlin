@@ -33,7 +33,7 @@ KaPropertySetterSymbol:
         Anno1()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
     symbolKind: LOCAL
     typeParameters: []
@@ -44,7 +44,7 @@ KaPropertySetterSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: ACCESSOR
   typeParameters: []
@@ -72,7 +72,7 @@ KaPropertySetterSymbol:
           Anno1()
             psi: KtAnnotationEntry
         ]
-        ownTypeArguments: []
+        typeArguments: []
         type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
       symbolKind: LOCAL
       typeParameters: []

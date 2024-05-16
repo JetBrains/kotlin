@@ -4,7 +4,6 @@ KaClassErrorType:
     annotationsList: []
     classId: expansion/FooAlias
     nullability: NON_NULLABLE
-    ownTypeArguments: []
     qualifiers: [
       qualifier:
         name: FooAlias
@@ -12,6 +11,7 @@ KaClassErrorType:
         typeArguments: []
     ]
     symbol: KaTypeAliasSymbol(expansion/FooAlias)
+    typeArguments: []
   annotationsList: []
   candidateSymbols: []
   errorMessage: Symbol not found for base/Foo

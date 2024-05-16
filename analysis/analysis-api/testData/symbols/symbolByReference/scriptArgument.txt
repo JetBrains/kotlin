@@ -11,10 +11,10 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/String
       ]
       type: kotlin/Array<kotlin/String>
@@ -41,10 +41,10 @@ KaKotlinPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/String
       ]
       type: kotlin/Array<kotlin/String>
@@ -54,7 +54,7 @@ KaKotlinPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/script/templates/standard/ScriptTemplateWithArgs
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -80,10 +80,10 @@ KaKotlinPropertySymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
     ]
     type: kotlin/Array<kotlin/String>
@@ -93,7 +93,7 @@ KaKotlinPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/script/templates/standard/ScriptTemplateWithArgs
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs

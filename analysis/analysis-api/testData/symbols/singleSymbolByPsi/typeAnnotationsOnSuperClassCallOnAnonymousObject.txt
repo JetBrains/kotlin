@@ -16,7 +16,7 @@ KaAnonymousObjectSymbol:
         Anno3()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseClass
   ]
   symbolKind: LOCAL

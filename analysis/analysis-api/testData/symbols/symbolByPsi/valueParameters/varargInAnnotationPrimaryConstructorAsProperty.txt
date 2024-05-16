@@ -12,7 +12,7 @@ KaConstructorSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Foo
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -34,7 +34,7 @@ KaConstructorSymbol:
           receiverParameter: null
           returnType: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/IntArray
           symbolKind: LOCAL
           typeParameters: []
@@ -59,7 +59,7 @@ KaConstructorSymbol:
           receiverParameter: null
           returnType: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/IntArray
           symbolKind: ACCESSOR
           typeParameters: []
@@ -67,7 +67,7 @@ KaConstructorSymbol:
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: Foo
           getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
           getContainingJvmClassName: Foo
@@ -93,7 +93,7 @@ KaConstructorSymbol:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/IntArray
         setter: null
         symbolKind: CLASS_MEMBER
@@ -101,7 +101,7 @@ KaConstructorSymbol:
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: Foo
         getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorAsProperty.kt)
         getContainingJvmClassName: Foo
@@ -122,7 +122,7 @@ KaConstructorSymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -156,7 +156,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL

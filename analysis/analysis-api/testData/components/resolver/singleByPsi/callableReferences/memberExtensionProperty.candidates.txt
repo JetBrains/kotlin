@@ -9,7 +9,7 @@ KaApplicableCallCandidateInfo:
           owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
           type: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: Foo
         type = Foo
       extensionReceiver = null

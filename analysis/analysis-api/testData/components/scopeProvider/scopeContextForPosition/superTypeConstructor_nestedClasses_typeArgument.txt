@@ -29,7 +29,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Any
         ]
         symbolKind: TOP_LEVEL
@@ -54,7 +54,7 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: test/BaseInterface
         ]
         symbolKind: TOP_LEVEL
@@ -81,10 +81,10 @@ scopes:
         superTypes: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: [
+            typeArguments: [
               KaUsualClassType:
                 annotationsList: []
-                ownTypeArguments: []
+                typeArguments: []
                 type: test/Base.NestedFromClass
             ]
             type: test/Base<test/Base.NestedFromClass>

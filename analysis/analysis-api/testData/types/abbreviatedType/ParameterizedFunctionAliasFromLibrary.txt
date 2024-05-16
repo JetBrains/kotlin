@@ -9,58 +9,6 @@ KaFunctionalType:
   isReflectType: false
   isSuspend: false
   nullability: NON_NULLABLE
-  ownTypeArguments: [
-    KaUsualClassType:
-      abbreviatedType: KaUsualClassType:
-        abbreviatedType: null
-        annotationsList: []
-        classId: library1/StringAlias
-        nullability: NON_NULLABLE
-        ownTypeArguments: []
-        qualifiers: [
-          qualifier:
-            name: StringAlias
-            symbol: KaTypeAliasSymbol(library1/StringAlias)
-            typeArguments: []
-        ]
-        symbol: KaTypeAliasSymbol(library1/StringAlias)
-      annotationsList: []
-      classId: kotlin/String
-      nullability: NON_NULLABLE
-      ownTypeArguments: []
-      qualifiers: [
-        qualifier:
-          name: String
-          symbol: KaNamedClassOrObjectSymbol(kotlin/String)
-          typeArguments: []
-      ]
-      symbol: KaNamedClassOrObjectSymbol(kotlin/String)
-    KaUsualClassType:
-      abbreviatedType: KaUsualClassType:
-        abbreviatedType: null
-        annotationsList: []
-        classId: library1/IntAlias
-        nullability: NON_NULLABLE
-        ownTypeArguments: []
-        qualifiers: [
-          qualifier:
-            name: IntAlias
-            symbol: KaTypeAliasSymbol(library1/IntAlias)
-            typeArguments: []
-        ]
-        symbol: KaTypeAliasSymbol(library1/IntAlias)
-      annotationsList: []
-      classId: kotlin/Int
-      nullability: NON_NULLABLE
-      ownTypeArguments: []
-      qualifiers: [
-        qualifier:
-          name: Int
-          symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
-          typeArguments: []
-      ]
-      symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
-  ]
   parameterTypes: [
     KaUsualClassType:
       abbreviatedType: KaUsualClassType:
@@ -68,7 +16,6 @@ KaFunctionalType:
         annotationsList: []
         classId: library1/StringAlias
         nullability: NON_NULLABLE
-        ownTypeArguments: []
         qualifiers: [
           qualifier:
             name: StringAlias
@@ -76,10 +23,10 @@ KaFunctionalType:
             typeArguments: []
         ]
         symbol: KaTypeAliasSymbol(library1/StringAlias)
+        typeArguments: []
       annotationsList: []
       classId: kotlin/String
       nullability: NON_NULLABLE
-      ownTypeArguments: []
       qualifiers: [
         qualifier:
           name: String
@@ -87,6 +34,7 @@ KaFunctionalType:
           typeArguments: []
       ]
       symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+      typeArguments: []
   ]
   qualifiers: [
     qualifier:
@@ -99,7 +47,6 @@ KaFunctionalType:
             annotationsList: []
             classId: library1/StringAlias
             nullability: NON_NULLABLE
-            ownTypeArguments: []
             qualifiers: [
               qualifier:
                 name: StringAlias
@@ -107,10 +54,10 @@ KaFunctionalType:
                 typeArguments: []
             ]
             symbol: KaTypeAliasSymbol(library1/StringAlias)
+            typeArguments: []
           annotationsList: []
           classId: kotlin/String
           nullability: NON_NULLABLE
-          ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: String
@@ -118,13 +65,13 @@ KaFunctionalType:
               typeArguments: []
           ]
           symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
         KaUsualClassType:
           abbreviatedType: KaUsualClassType:
             abbreviatedType: null
             annotationsList: []
             classId: library1/IntAlias
             nullability: NON_NULLABLE
-            ownTypeArguments: []
             qualifiers: [
               qualifier:
                 name: IntAlias
@@ -132,10 +79,10 @@ KaFunctionalType:
                 typeArguments: []
             ]
             symbol: KaTypeAliasSymbol(library1/IntAlias)
+            typeArguments: []
           annotationsList: []
           classId: kotlin/Int
           nullability: NON_NULLABLE
-          ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: Int
@@ -143,6 +90,7 @@ KaFunctionalType:
               typeArguments: []
           ]
           symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+          typeArguments: []
       ]
   ]
   receiverType: null
@@ -152,7 +100,6 @@ KaFunctionalType:
       annotationsList: []
       classId: library1/IntAlias
       nullability: NON_NULLABLE
-      ownTypeArguments: []
       qualifiers: [
         qualifier:
           name: IntAlias
@@ -160,10 +107,10 @@ KaFunctionalType:
           typeArguments: []
       ]
       symbol: KaTypeAliasSymbol(library1/IntAlias)
+      typeArguments: []
     annotationsList: []
     classId: kotlin/Int
     nullability: NON_NULLABLE
-    ownTypeArguments: []
     qualifiers: [
       qualifier:
         name: Int
@@ -171,7 +118,60 @@ KaFunctionalType:
         typeArguments: []
     ]
     symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+    typeArguments: []
   symbol: KaNamedClassOrObjectSymbol(kotlin/Function1)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviatedType: KaUsualClassType:
+        abbreviatedType: null
+        annotationsList: []
+        classId: library1/StringAlias
+        nullability: NON_NULLABLE
+        qualifiers: [
+          qualifier:
+            name: StringAlias
+            symbol: KaTypeAliasSymbol(library1/StringAlias)
+            typeArguments: []
+        ]
+        symbol: KaTypeAliasSymbol(library1/StringAlias)
+        typeArguments: []
+      annotationsList: []
+      classId: kotlin/String
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+      typeArguments: []
+    KaUsualClassType:
+      abbreviatedType: KaUsualClassType:
+        abbreviatedType: null
+        annotationsList: []
+        classId: library1/IntAlias
+        nullability: NON_NULLABLE
+        qualifiers: [
+          qualifier:
+            name: IntAlias
+            symbol: KaTypeAliasSymbol(library1/IntAlias)
+            typeArguments: []
+        ]
+        symbol: KaTypeAliasSymbol(library1/IntAlias)
+        typeArguments: []
+      annotationsList: []
+      classId: kotlin/Int
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Int
+          symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
+      typeArguments: []
+  ]
 
 Rendered type:
 (library1.StringAlias) -> library1.IntAlias

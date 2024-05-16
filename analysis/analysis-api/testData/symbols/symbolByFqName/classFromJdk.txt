@@ -17,15 +17,15 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: java/io/Serializable
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KaFlexibleType:
           annotationsList: []
           type: kotlin/String!
@@ -33,7 +33,7 @@ KaNamedClassOrObjectSymbol:
       type: kotlin/Comparable<kotlin/String!>
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/CharSequence
   ]
   symbolKind: TOP_LEVEL

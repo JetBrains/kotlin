@@ -12,7 +12,7 @@ KaConstructorSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -34,7 +34,7 @@ KaConstructorSymbol:
           receiverParameter: null
           returnType: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
@@ -59,7 +59,7 @@ KaConstructorSymbol:
           receiverParameter: null
           returnType: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
@@ -67,7 +67,7 @@ KaConstructorSymbol:
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: A
           getContainingFileSymbol: KaFileSymbol(classPrimaryConstructor.kt)
           getContainingJvmClassName: A
@@ -93,7 +93,7 @@ KaConstructorSymbol:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
@@ -101,7 +101,7 @@ KaConstructorSymbol:
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: A
         getContainingFileSymbol: KaFileSymbol(classPrimaryConstructor.kt)
         getContainingJvmClassName: A
@@ -122,7 +122,7 @@ KaConstructorSymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -146,7 +146,7 @@ KaConstructorSymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
@@ -180,7 +180,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL

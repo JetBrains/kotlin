@@ -3,21 +3,21 @@ KaTypeAliasSymbol:
   classId: kotlin/DeepRecursiveFunctionBlock
   expandedType: KaFunctionalType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: [
+        typeArguments: [
           *
           *
         ]
         type: kotlin/DeepRecursiveScope<*, *>
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Any?
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Any?
     ]
     type: kotlin/coroutines/SuspendFunction2<kotlin/DeepRecursiveScope<*, *>, kotlin/Any?, kotlin/Any?>

@@ -20,7 +20,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
@@ -53,7 +53,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
@@ -86,7 +86,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
@@ -119,7 +119,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
@@ -144,7 +144,7 @@ KaConstructorSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Anno5
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -166,7 +166,7 @@ KaConstructorSymbol:
           receiverParameter: null
           returnType: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/String
           symbolKind: LOCAL
           typeParameters: []
@@ -191,7 +191,7 @@ KaConstructorSymbol:
           receiverParameter: null
           returnType: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/String
           symbolKind: ACCESSOR
           typeParameters: []
@@ -199,7 +199,7 @@ KaConstructorSymbol:
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: Anno5
           getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
           getContainingJvmClassName: Anno5
@@ -225,7 +225,7 @@ KaConstructorSymbol:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/String
         setter: null
         symbolKind: CLASS_MEMBER
@@ -233,7 +233,7 @@ KaConstructorSymbol:
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: Anno5
         getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
         getContainingJvmClassName: Anno5
@@ -254,7 +254,7 @@ KaConstructorSymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
@@ -291,7 +291,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
@@ -321,7 +321,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -359,7 +359,7 @@ KaFunctionSymbol:
       Anno3()
         psi: KtAnnotationEntry
     ]
-    ownTypeArguments: []
+    typeArguments: []
     type: @R|Anno3|()  I
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -383,7 +383,7 @@ KaFunctionSymbol:
           Anno2()
             psi: KtAnnotationEntry
         ]
-        ownTypeArguments: []
+        typeArguments: []
         type: @R|Anno2|()  I
       symbolKind: LOCAL
       typeParameters: []
@@ -395,7 +395,7 @@ KaFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: X
   getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingJvmClassName: X
@@ -418,7 +418,7 @@ KaKotlinPropertySymbol:
         Anno4()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|Anno4|()  I
     symbolKind: LOCAL
     typeParameters: []
@@ -446,7 +446,7 @@ KaKotlinPropertySymbol:
         Anno4()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|Anno4|()  I
     symbolKind: ACCESSOR
     typeParameters: []
@@ -454,7 +454,7 @@ KaKotlinPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: X
     getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
     getContainingJvmClassName: X
@@ -483,7 +483,7 @@ KaKotlinPropertySymbol:
       Anno4()
         psi: KtAnnotationEntry
     ]
-    ownTypeArguments: []
+    typeArguments: []
     type: @R|Anno4|()  I
   setter: null
   symbolKind: CLASS_MEMBER
@@ -491,7 +491,7 @@ KaKotlinPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: X
   getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingJvmClassName: X
@@ -524,7 +524,7 @@ KaNamedClassOrObjectSymbol:
         Anno1()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|Anno1|()  I
   ]
   symbolKind: TOP_LEVEL
@@ -580,7 +580,7 @@ KaFunctionSymbol:
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaTypeParameterType:
         annotationsList: [
           Anno5(s = "1")
@@ -645,10 +645,10 @@ KaFunctionSymbol:
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: [
+        typeArguments: [
           KaTypeParameterType:
             annotationsList: [
               Anno5(s = "1")

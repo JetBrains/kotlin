@@ -22,10 +22,10 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: [
+          typeArguments: [
             KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: kotlin/Int
           ]
           type: kotlin/collections/Iterator<kotlin/Int>
@@ -59,10 +59,10 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: [
+          typeArguments: [
             KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: kotlin/Int
           ]
           type: kotlin/collections/List<kotlin/Int>
@@ -104,7 +104,7 @@ scopes:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL
         typeParameters: []
@@ -125,10 +125,10 @@ scopes:
             receiverParameter: null
             returnType: KaUsualClassType:
               annotationsList: []
-              ownTypeArguments: [
+              typeArguments: [
                 KaUsualClassType:
                   annotationsList: []
-                  ownTypeArguments: []
+                  typeArguments: []
                   type: kotlin/Int
               ]
               type: kotlin/collections/List<kotlin/Int>

@@ -9,7 +9,7 @@ KaSuccessCallInfo:
           owningCallableSymbol: KaFunctionSymbol(/foo)
           type: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: A
         type = A
       extensionReceiver = null

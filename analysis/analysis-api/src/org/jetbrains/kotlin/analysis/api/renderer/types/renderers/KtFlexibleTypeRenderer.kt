@@ -61,7 +61,7 @@ public interface KaFlexibleTypeRenderer {
                             { typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, printer) },
                             { append(lower.classId.asFqNameString().replace("Mutable", "(Mutable)")) },
                         )
-                        printCollectionIfNotEmpty(lower.ownTypeArguments, prefix = "<", postfix = ">") { typeArgument ->
+                        printCollectionIfNotEmpty(lower.typeArguments, prefix = "<", postfix = ">") { typeArgument ->
                             typeRenderer.typeProjectionRenderer.renderTypeProjection(analysisSession, typeArgument, typeRenderer, this)
                         }
                         if (lower.nullability != type.upperBound.nullability) {
@@ -87,8 +87,8 @@ public interface KaFlexibleTypeRenderer {
                     return true
                 }
                 if (lower is KaNonErrorClassType && upper is KaNonErrorClassType) {
-                    val lowerOwnTypeArguments = lower.ownTypeArguments
-                    val upperOwnTypeArguments = upper.ownTypeArguments
+                    val lowerOwnTypeArguments = lower.typeArguments
+                    val upperOwnTypeArguments = upper.typeArguments
                     if (lowerOwnTypeArguments.size == upperOwnTypeArguments.size) {
                         for ((index, kaTypeProjection) in lowerOwnTypeArguments.withIndex()) {
                             if (upperOwnTypeArguments[index].type != kaTypeProjection.type) {

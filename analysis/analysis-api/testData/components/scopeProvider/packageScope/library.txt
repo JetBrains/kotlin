@@ -22,7 +22,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -57,7 +57,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -92,7 +92,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -130,14 +130,14 @@ KaFunctionSymbol:
     owningCallableSymbol: KaFunctionSymbol(library/api/barApi3)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/FakeI
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -175,14 +175,14 @@ KaFunctionSymbol:
     owningCallableSymbol: KaFunctionSymbol(library/api/internalBarApi3)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/InternalFakeI
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -220,14 +220,14 @@ KaFunctionSymbol:
     owningCallableSymbol: KaFunctionSymbol(library/api/privateBarApi3)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/PrivateFakeI
     getContainingFileSymbol: KaFileSymbol(extension.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -262,7 +262,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -297,7 +297,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -332,7 +332,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -370,14 +370,14 @@ KaFunctionSymbol:
     owningCallableSymbol: KaFunctionSymbol(library/api/barApi2)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/C1
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -415,14 +415,14 @@ KaFunctionSymbol:
     owningCallableSymbol: KaFunctionSymbol(library/api/internalBarApi2)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/InternalC1
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: library/api/InternalI
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -460,14 +460,14 @@ KaFunctionSymbol:
     owningCallableSymbol: KaFunctionSymbol(library/api/privateBarApi2)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/PrivateC1
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -502,7 +502,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -537,7 +537,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -572,7 +572,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -610,14 +610,14 @@ KaFunctionSymbol:
     owningCallableSymbol: KaFunctionSymbol(library/api/barApi1)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/I
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: library/api/I
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -655,14 +655,14 @@ KaFunctionSymbol:
     owningCallableSymbol: KaFunctionSymbol(library/api/internalBarApi1)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/InternalI
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: library/api/InternalI
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -700,14 +700,14 @@ KaFunctionSymbol:
     owningCallableSymbol: KaFunctionSymbol(library/api/privateBarApi1)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/PrivateI
     getContainingFileSymbol: null
     getContainingModule: KtLibraryModule "Library library"
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: library/api/PrivateI
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -737,7 +737,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -767,7 +767,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/I
   ]
   symbolKind: TOP_LEVEL
@@ -797,7 +797,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/I
   ]
   symbolKind: TOP_LEVEL
@@ -827,7 +827,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/InternalI
   ]
   symbolKind: TOP_LEVEL
@@ -857,7 +857,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -887,7 +887,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -917,7 +917,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/I
   ]
   symbolKind: TOP_LEVEL
@@ -947,7 +947,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/I
   ]
   symbolKind: TOP_LEVEL
@@ -977,7 +977,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: library/api/I
   ]
   symbolKind: TOP_LEVEL

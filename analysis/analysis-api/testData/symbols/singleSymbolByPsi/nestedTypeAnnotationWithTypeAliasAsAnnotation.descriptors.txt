@@ -31,10 +31,10 @@ KaFunctionSymbol:
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: [
+        typeArguments: [
           KaTypeParameterType:
             annotationsList: [
               BaseAnnotation()

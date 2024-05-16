@@ -22,7 +22,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -43,10 +43,10 @@ KaFunctionSymbol:
       receiverParameter: null
       returnType: KaFunctionalType:
         annotationsList: []
-        ownTypeArguments: [
+        typeArguments: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Int
         ]
         type: kotlin/Function0<kotlin/Int>
@@ -72,10 +72,10 @@ KaFunctionSymbol:
       receiverParameter: null
       returnType: KaFunctionalType:
         annotationsList: []
-        ownTypeArguments: [
+        typeArguments: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Int
         ]
         type: kotlin/Function0<kotlin/Int>
@@ -101,10 +101,10 @@ KaFunctionSymbol:
       receiverParameter: null
       returnType: KaFunctionalType:
         annotationsList: []
-        ownTypeArguments: [
+        typeArguments: [
           KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Int
         ]
         type: kotlin/Function0<kotlin/Int>

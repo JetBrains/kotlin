@@ -29,7 +29,7 @@ internal fun KtClassOrObjectSymbol.translateSuperClass(): KtObjCSuperClassTransl
             val classSymbol = type.symbol as? KtClassOrObjectSymbol ?: return@find false
             classSymbol.classKind.isClass
         }
-        ?.ownTypeArguments
+        ?.typeArguments
         .orEmpty()
         .mapNotNull { typeProjection -> typeProjection.type?.mapToReferenceTypeIgnoringNullability() }
 

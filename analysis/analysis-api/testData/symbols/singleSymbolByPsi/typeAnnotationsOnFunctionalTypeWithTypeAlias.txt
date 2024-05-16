@@ -29,10 +29,10 @@ KaFunctionSymbol:
       Anno3()
         psi: KtAnnotationEntry
     ]
-    ownTypeArguments: [
+    typeArguments: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Unit
     ]
     type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  kotlin/Function0<kotlin/Unit>

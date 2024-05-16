@@ -17,7 +17,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: test/api/I
   ]
   symbolKind: TOP_LEVEL
@@ -47,7 +47,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: test/api/InternalI
   ]
   symbolKind: TOP_LEVEL
@@ -77,7 +77,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: test/api/I
   ]
   symbolKind: TOP_LEVEL
@@ -107,7 +107,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: test/A
   ]
   symbolKind: TOP_LEVEL
@@ -137,7 +137,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: test/InternalA
   ]
   symbolKind: TOP_LEVEL
@@ -167,7 +167,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: test/A
   ]
   symbolKind: TOP_LEVEL

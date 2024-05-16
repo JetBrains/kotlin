@@ -16,10 +16,10 @@ KaFunctionSymbol:
               owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
               type: KaFunctionalType:
                 annotationsList: []
-                ownTypeArguments: [
+                typeArguments: [
                   KaUsualClassType:
                     annotationsList: []
-                    ownTypeArguments: []
+                    typeArguments: []
                     type: kotlin/Unit
                 ]
                 type: kotlin/Function0<kotlin/Unit>
@@ -50,10 +50,10 @@ KaFunctionSymbol:
     owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
     type: KaFunctionalType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Unit
       ]
       type: kotlin/Function0<kotlin/Unit>
@@ -62,7 +62,7 @@ KaFunctionSymbol:
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -21,7 +21,7 @@ KaSyntheticJavaPropertySymbol:
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/JavaClass.foo)
       type: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: JavaClass
       getContainingFileSymbol: null
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
@@ -29,7 +29,7 @@ KaSyntheticJavaPropertySymbol:
       deprecationStatus: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -62,7 +62,7 @@ KaSyntheticJavaPropertySymbol:
     owningCallableSymbol: KaSyntheticJavaPropertySymbol(/JavaClass.foo)
     type: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: JavaClass
     getContainingFileSymbol: null
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
@@ -70,7 +70,7 @@ KaSyntheticJavaPropertySymbol:
     deprecationStatus: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER

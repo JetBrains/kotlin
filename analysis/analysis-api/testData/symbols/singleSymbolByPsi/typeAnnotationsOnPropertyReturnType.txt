@@ -18,7 +18,7 @@ KaKotlinPropertySymbol:
         Anno3()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
     symbolKind: LOCAL
     typeParameters: []
@@ -50,7 +50,7 @@ KaKotlinPropertySymbol:
         Anno3()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
     symbolKind: ACCESSOR
     typeParameters: []
@@ -87,7 +87,7 @@ KaKotlinPropertySymbol:
       Anno3()
         psi: KtAnnotationEntry
     ]
-    ownTypeArguments: []
+    typeArguments: []
     type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
   setter: null
   symbolKind: TOP_LEVEL

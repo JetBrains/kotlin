@@ -22,7 +22,7 @@ classifiers: 2
     superTypes: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Any
     ]
     symbolKind: TOP_LEVEL
@@ -51,7 +51,7 @@ classifiers: 2
     superTypes: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Any
     ]
     symbolKind: TOP_LEVEL
@@ -86,7 +86,7 @@ callables: 5
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: TOP_LEVEL
     typeParameters: []
@@ -107,7 +107,7 @@ callables: 5
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: generated/GenClass2
         symbolKind: LOCAL
         typeParameters: []
@@ -144,11 +144,11 @@ callables: 5
       owningCallableSymbol: KaFunctionSymbol(generated/genTopLevelExtension1)
       type: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: TOP_LEVEL
     typeParameters: []
@@ -171,7 +171,7 @@ callables: 5
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
@@ -192,7 +192,7 @@ callables: 5
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: ACCESSOR
       typeParameters: []
@@ -218,7 +218,7 @@ callables: 5
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     setter: null
     symbolKind: TOP_LEVEL
@@ -241,7 +241,7 @@ callables: 5
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
@@ -262,7 +262,7 @@ callables: 5
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: ACCESSOR
       typeParameters: []
@@ -288,7 +288,7 @@ callables: 5
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     setter: KaPropertySetterSymbol:
       annotationsList: []
@@ -318,14 +318,14 @@ callables: 5
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Unit
       symbolKind: ACCESSOR
       typeParameters: []
@@ -346,7 +346,7 @@ callables: 5
           receiverParameter: null
           returnType: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/String
           symbolKind: LOCAL
           typeParameters: []
@@ -372,7 +372,7 @@ callables: 5
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -396,11 +396,11 @@ callables: 5
         owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
         type: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: generated/GenClass2
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: ACCESSOR
       typeParameters: []
@@ -429,11 +429,11 @@ callables: 5
       owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
       type: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: generated/GenClass2
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     setter: null
     symbolKind: TOP_LEVEL

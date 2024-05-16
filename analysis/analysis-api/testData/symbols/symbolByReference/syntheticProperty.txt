@@ -18,7 +18,7 @@ KaSyntheticJavaPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -26,7 +26,7 @@ KaSyntheticJavaPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: Derived
     getContainingFileSymbol: null
     getContainingJvmClassName: Derived
@@ -50,7 +50,7 @@ KaSyntheticJavaPropertySymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
     annotationsList: []
@@ -80,7 +80,7 @@ KaSyntheticJavaPropertySymbol:
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
@@ -91,7 +91,7 @@ KaSyntheticJavaPropertySymbol:
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -112,7 +112,7 @@ KaSyntheticJavaPropertySymbol:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
@@ -124,7 +124,7 @@ KaSyntheticJavaPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: Derived
     getContainingFileSymbol: null
     getContainingJvmClassName: Derived
@@ -135,7 +135,7 @@ KaSyntheticJavaPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Derived
   getContainingFileSymbol: null
   getContainingJvmClassName: Derived

@@ -1,5 +1,5 @@
 expression: { /* Variable */ }
 expected type: KaUsualClassType:
   annotationsList: []
-  ownTypeArguments: []
+  typeArguments: []
   type: java/lang/Runnable

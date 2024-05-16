@@ -25,7 +25,7 @@ classifiers: 2
     superTypes: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Any
     ]
     symbolKind: TOP_LEVEL
@@ -54,7 +54,7 @@ classifiers: 2
     superTypes: [
       KaUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Any
     ]
     symbolKind: TOP_LEVEL
@@ -89,7 +89,7 @@ callables: 2
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
     symbolKind: TOP_LEVEL
     typeParameters: []
@@ -123,7 +123,7 @@ callables: 2
     receiverParameter: null
     returnType: KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
     symbolKind: TOP_LEVEL
     typeParameters: []

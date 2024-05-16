@@ -1,7 +1,7 @@
 expression: av
 expected type: KaUsualClassType:
   annotationsList: []
-  ownTypeArguments: [
+  typeArguments: [
     KaTypeParameterType:
       annotationsList: []
       type: K

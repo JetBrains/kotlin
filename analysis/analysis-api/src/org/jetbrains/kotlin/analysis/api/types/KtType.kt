@@ -121,13 +121,17 @@ public typealias KtClassType = KaClassType
 public sealed class KaNonErrorClassType : KaClassType() {
     public abstract val classId: ClassId
     public abstract val symbol: KaClassLikeSymbol
-    public abstract val ownTypeArguments: List<KaTypeProjection>
+    public abstract val typeArguments: List<KaTypeProjection>
 
     abstract override val qualifiers: List<KaClassTypeQualifier.KaResolvedClassTypeQualifier>
 
     @Deprecated("Use 'symbol' instead.", ReplaceWith("symbol"))
     public val classSymbol: KaClassLikeSymbol
         get() = symbol
+
+    @Deprecated("Use 'typeArguments' instead.", ReplaceWith("typeArguments"))
+    public val ownTypeArguments: List<KaTypeProjection>
+        get() = typeArguments
 }
 
 public typealias KtNonErrorClassType = KaNonErrorClassType

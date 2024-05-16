@@ -11,7 +11,7 @@ KaApplicableCallCandidateInfo:
           owningCallableSymbol: KaFunctionSymbol(/test)
           type: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Any
         type = kotlin.String
       signature = KaFunctionLikeSignature:

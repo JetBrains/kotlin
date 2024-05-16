@@ -1,5 +1,5 @@
 expression: ab
 expected type: KaUsualClassType:
   annotationsList: []
-  ownTypeArguments: []
+  typeArguments: []
   type: kotlin/Int

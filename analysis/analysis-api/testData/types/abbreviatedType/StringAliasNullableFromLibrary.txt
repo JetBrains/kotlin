@@ -4,7 +4,6 @@ KaUsualClassType:
     annotationsList: []
     classId: library1/StringAlias
     nullability: NULLABLE
-    ownTypeArguments: []
     qualifiers: [
       qualifier:
         name: StringAlias
@@ -12,10 +11,10 @@ KaUsualClassType:
         typeArguments: []
     ]
     symbol: KaTypeAliasSymbol(library1/StringAlias)
+    typeArguments: []
   annotationsList: []
   classId: kotlin/String
   nullability: NULLABLE
-  ownTypeArguments: []
   qualifiers: [
     qualifier:
       name: String
@@ -23,6 +22,7 @@ KaUsualClassType:
       typeArguments: []
   ]
   symbol: KaNamedClassOrObjectSymbol(kotlin/String)
+  typeArguments: []
 
 Rendered type:
 library1.StringAlias?

@@ -12,7 +12,7 @@ KaConstructorSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Foo
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -34,7 +34,7 @@ KaConstructorSymbol:
           receiverParameter: null
           returnType: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: [
+            typeArguments: [
               out KaTypeErrorType:
                 annotationsList: []
                 type: ERROR_TYPE
@@ -63,7 +63,7 @@ KaConstructorSymbol:
           receiverParameter: null
           returnType: KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: [
+            typeArguments: [
               out KaTypeErrorType:
                 annotationsList: []
                 type: ERROR_TYPE
@@ -75,7 +75,7 @@ KaConstructorSymbol:
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: Foo
           getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
           getContainingJvmClassName: Foo
@@ -101,7 +101,7 @@ KaConstructorSymbol:
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: [
+          typeArguments: [
             out KaTypeErrorType:
               annotationsList: []
               type: ERROR_TYPE
@@ -113,7 +113,7 @@ KaConstructorSymbol:
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: Foo
         getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsPropertyWithoutType.kt)
         getContainingJvmClassName: Foo
@@ -167,7 +167,7 @@ KaNamedClassOrObjectSymbol:
   superTypes: [
     KaUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL

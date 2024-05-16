@@ -205,7 +205,7 @@ fun annotateByKtType(
         yield(explicitTypeAnnotations + listOfNotNull(nullabilityAnnotation))
 
         if (unwrappedType is KaNonErrorClassType) {
-            unwrappedType.ownTypeArguments.forEach { typeProjection ->
+            unwrappedType.typeArguments.forEach { typeProjection ->
                 typeProjection.type?.let {
                     yieldAll(getAnnotationsSequence(it))
                 }

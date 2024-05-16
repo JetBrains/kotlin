@@ -22,7 +22,7 @@ KaFunctionSymbol:
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -50,7 +50,7 @@ KaFunctionSymbol:
           Anno3()
             psi: KtAnnotationEntry
         ]
-        ownTypeArguments: []
+        typeArguments: []
         type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
       symbolKind: LOCAL
       typeParameters: []

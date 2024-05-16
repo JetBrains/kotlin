@@ -40,7 +40,7 @@ internal class KaFirUsualClassType(
         UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)
     }
 
-    override val ownTypeArguments: List<KaTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
+    override val typeArguments: List<KaTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
 
     override val annotationsList: KaAnnotationsList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
