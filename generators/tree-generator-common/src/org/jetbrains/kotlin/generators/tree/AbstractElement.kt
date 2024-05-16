@@ -114,52 +114,44 @@ abstract class AbstractElement<Element, Field, Implementation>(
     }
 
     override val allFields: List<Field> by lazy {
-        val result = LinkedHashSet<Field>()
-        result.addAll(fields.toList().asReversed())
-        result.forEach { overriddenFieldsHaveSameClass[it, it] = false }
-        for (parentField in parentFields.asReversed()) {
-            val overrides = !result.add(parentField)
-            if (overrides) {
-                val existingField = result.first { it == parentField }
-                existingField.fromParent = true
-                val haveSameClass = parentField.typeRef.copy(nullable = false) == existingField.typeRef.copy(nullable = false)
-                if (!haveSameClass) {
-                    existingField.overriddenTypes += parentField.typeRef
+        val result = LinkedHashMap<String, Field>()
+        fields.toList().asReversed().associateByTo(result) { it.name }
+        result.values.forEach { overriddenFieldsHaveSameClass[it, it] = false }
+
+        elementParents.asReversed().forEach { parentRef ->
+            val parent = parentRef.element
+            parent.allFields.asReversed().forEach { originalParentField ->
+                val ownParentField = originalParentField.copy().apply {
+                    substituteType(parentRef.args)
+                    fromParent = true
                 }
-                overriddenFieldsHaveSameClass[existingField, parentField] = haveSameClass
-                existingField.updatePropertiesFromOverriddenField(parentField, haveSameClass)
-            } else {
-                overriddenFieldsHaveSameClass[parentField, parentField] = true
+
+                var existingField = result[ownParentField.name]
+                if (existingField != null) {
+                    if (existingField !in fields) {
+                        existingField = ownParentField
+                        result.remove(existingField.name)
+                        result[existingField.name] = existingField
+                    }
+
+                    existingField.fromParent = true
+                    val haveSameClass = ownParentField.typeRef.copy(nullable = false) == existingField.typeRef.copy(nullable = false)
+                    if (!haveSameClass) {
+                        existingField.overriddenTypes += ownParentField.typeRef
+                    }
+                    overriddenFieldsHaveSameClass[existingField, ownParentField] = haveSameClass
+                    existingField.updatePropertiesFromOverriddenField(ownParentField, haveSameClass)
+                } else {
+                    result[ownParentField.name] = ownParentField
+                    overriddenFieldsHaveSameClass[ownParentField, ownParentField] = true
+                }
             }
         }
-        result.toList().asReversed()
+
+        result.values.toList().asReversed()
     }
 
     val overriddenFieldsHaveSameClass: MutableMap<Field, MutableMap<Field, Boolean>> = mutableMapOf()
-
-    val parentFields: List<Field> by lazy {
-        val result = LinkedHashMap<String, Field>()
-        elementParents.forEach { parentRef ->
-            val parent = parentRef.element
-            val fields = parent.allFields.map { field ->
-                field.copy()
-                    .apply {
-                        substituteType(parentRef.args)
-                        fromParent = true
-                    }
-            }
-            fields.forEach {
-                result.merge(it.name, it) { previousField, thisField ->
-                    val resultField = previousField.copy()
-                    if (thisField.isMutable) {
-                        resultField.isMutable = true
-                    }
-                    resultField
-                }
-            }
-        }
-        result.values.toList()
-    }
 
     /**
      * A custom return type of the corresponding transformer method for this element.
