@@ -20,55 +20,36 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
-class WasmCompiledFileFragment {
-    var functions =
-        ReferencableAndDefinable<IdSignature, WasmFunction>()
-    var globalFields =
-        ReferencableAndDefinable<IdSignature, WasmGlobal>()
-    var globalVTables =
-        ReferencableAndDefinable<IdSignature, WasmGlobal>()
-    var globalClassITables =
-        ReferencableAndDefinable<IdSignature, WasmGlobal>()
-    var functionTypes =
-        ReferencableAndDefinable<IdSignature, WasmFunctionType>()
-    var gcTypes =
-        ReferencableAndDefinable<IdSignature, WasmTypeDeclaration>()
-    var vTableGcTypes =
-        ReferencableAndDefinable<IdSignature, WasmTypeDeclaration>()
-    var classITableGcType =
-        ReferencableAndDefinable<IdSignature, WasmTypeDeclaration>()
-    var classITableInterfaceSlot =
-        ReferencableAndDefinable<IdSignature, Int>()
-    var classITableInterfaceTableSize =
-        ReferencableAndDefinable<IdSignature, Int>()
-    var classITableInterfaceHasImplementors =
-        ReferencableAndDefinable<IdSignature, Int>()
-    var typeInfo =
-        mutableMapOf<IdSignature, ConstantDataElement>()
-    var classIds =
-        ReferencableElements<IdSignature, Int>()
-    var interfaceIds =
-        ReferencableElements<IdSignature, Int>()
-    var stringLiteralAddress =
-        ReferencableElements<String, Int>()
-    var stringLiteralPoolId =
-        ReferencableElements<String, Int>()
-    var constantArrayDataSegmentId =
-        ReferencableElements<Pair<List<Long>, WasmType>, Int>()
-    var interfaceUnions =
-        mutableListOf<List<IdSignature>>()
-    var declaredInterfaces =
-        mutableListOf<IdSignature>()
-    var initFunctions = mutableListOf<FunWithPriority>()
-    var uniqueJsFunNames = ReferencableElements<String, String>()
-    var jsFuns = mutableListOf<JsCodeSnippet>()
-    var jsModuleImports = mutableSetOf<String>()
-    var exports = mutableListOf<WasmExport<*>>()
-    var scratchMemAddr = WasmSymbol<Int>()
-    var stringPoolSize = WasmSymbol<Int>()
-    val throwableTagIndex = WasmSymbol<Int>()
-    val jsExceptionTagIndex = WasmSymbol<Int>()
-}
+class WasmCompiledFileFragment(
+    val functions: ReferencableAndDefinable<IdSignature, WasmFunction> = ReferencableAndDefinable(),
+    val globalFields: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
+    val globalVTables: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
+    val globalClassITables: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
+    val functionTypes: ReferencableAndDefinable<IdSignature, WasmFunctionType> = ReferencableAndDefinable(),
+    val gcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
+    val vTableGcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
+    val classITableGcType: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
+    val classITableInterfaceSlot: ReferencableAndDefinable<IdSignature, Int> = ReferencableAndDefinable(),
+    val classITableInterfaceTableSize: ReferencableAndDefinable<IdSignature, Int> = ReferencableAndDefinable(),
+    val classITableInterfaceHasImplementors: ReferencableAndDefinable<IdSignature, Int> = ReferencableAndDefinable(),
+    val typeInfo: MutableMap<IdSignature, ConstantDataElement> = mutableMapOf(),
+    val classIds: ReferencableElements<IdSignature, Int> = ReferencableElements(),
+    val interfaceIds: ReferencableElements<IdSignature, Int> = ReferencableElements(),
+    val stringLiteralAddress: ReferencableElements<String, Int> = ReferencableElements(),
+    val stringLiteralPoolId: ReferencableElements<String, Int> = ReferencableElements(),
+    val constantArrayDataSegmentId: ReferencableElements<Pair<List<Long>, WasmType>, Int> = ReferencableElements(),
+    val interfaceUnions: MutableList<List<IdSignature>> = mutableListOf(),
+    val declaredInterfaces: MutableList<IdSignature> = mutableListOf(),
+    val initFunctions: MutableList<FunWithPriority> = mutableListOf(),
+    val uniqueJsFunNames: ReferencableElements<String, String> = ReferencableElements(),
+    val jsFuns: MutableList<JsCodeSnippet> = mutableListOf(),
+    val jsModuleImports: MutableSet<String> = mutableSetOf(),
+    val exports: MutableList<WasmExport<*>> = mutableListOf(),
+    val scratchMemAddr: WasmSymbol<Int> = WasmSymbol(),
+    val stringPoolSize: WasmSymbol<Int> = WasmSymbol(),
+    val throwableTagIndex: WasmSymbol<Int> = WasmSymbol<Int>(),
+    val jsExceptionTagIndex: WasmSymbol<Int> = WasmSymbol<Int>(),
+)
 
 class WasmCompiledModuleFragment(
     private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
@@ -80,8 +61,9 @@ class WasmCompiledModuleFragment(
 
     class FunWithPriority(val function: WasmFunction, val priority: String)
 
-    open class ReferencableElements<Ir, Wasm : Any> {
-        var unbound = mutableMapOf<Ir, WasmSymbol<Wasm>>()
+    open class ReferencableElements<Ir, Wasm : Any>(
+        val unbound: MutableMap<Ir, WasmSymbol<Wasm>> = mutableMapOf()
+    ) {
         fun reference(ir: Ir): WasmSymbol<Wasm> {
             val declaration = (ir as? IrSymbol)?.owner as? IrDeclarationWithName
             if (declaration != null) {
@@ -94,7 +76,12 @@ class WasmCompiledModuleFragment(
         }
     }
 
-    class ReferencableAndDefinable<Ir, Wasm : Any> : ReferencableElements<Ir, Wasm>() {
+    class ReferencableAndDefinable<Ir, Wasm : Any>(
+        unbound: MutableMap<Ir, WasmSymbol<Wasm>> = mutableMapOf(),
+        val defined: LinkedHashMap<Ir, Wasm> = LinkedHashMap(),
+        val elements: MutableList<Wasm> = mutableListOf(),
+        val wasmToIr: MutableMap<Wasm, Ir> = mutableMapOf()
+    ) : ReferencableElements<Ir, Wasm>(unbound) {
         fun define(ir: Ir, wasm: Wasm) {
             if (ir in defined)
                 error("Trying to redefine element: IR: $ir Wasm: $wasm")
@@ -103,11 +90,6 @@ class WasmCompiledModuleFragment(
             defined[ir] = wasm
             wasmToIr[wasm] = ir
         }
-
-        var defined = LinkedHashMap<Ir, Wasm>()
-        var elements = mutableListOf<Wasm>()
-
-        var wasmToIr = mutableMapOf<Wasm, Ir>()
     }
 
     private fun <IrSymbolType, WasmDeclarationType : Any, WasmSymbolType : WasmSymbol<WasmDeclarationType>> bindFileFragments(

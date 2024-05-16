@@ -528,19 +528,19 @@ class WasmDeserializer(inputStream: InputStream) {
     private fun <Ir, Wasm : Any> deserializeReferencableElements(
         irDeserializeFunc: () -> Ir,
         wasmDeserializeFunc: () -> Wasm
-    ) = WasmCompiledModuleFragment.ReferencableElements<Ir, Wasm>().apply {
+    ) = WasmCompiledModuleFragment.ReferencableElements(
         unbound = deserializeMap(irDeserializeFunc) { deserializeSymbol(wasmDeserializeFunc) }
-    }
+    )
 
     private fun <Ir, Wasm : Any> deserializeReferencableAndDefinable(
         irDeserializeFunc: () -> Ir,
         wasmDeserializeFunc: () -> Wasm
-    ) = WasmCompiledModuleFragment.ReferencableAndDefinable<Ir, Wasm>().apply {
-        unbound = deserializeMap(irDeserializeFunc) { deserializeSymbol(wasmDeserializeFunc) }
-        defined = deserializeMap(irDeserializeFunc, wasmDeserializeFunc)
-        elements = deserializeList(wasmDeserializeFunc)
+    ) = WasmCompiledModuleFragment.ReferencableAndDefinable(
+        unbound = deserializeMap(irDeserializeFunc) { deserializeSymbol(wasmDeserializeFunc) },
+        defined = deserializeMap(irDeserializeFunc, wasmDeserializeFunc),
+        elements = deserializeList(wasmDeserializeFunc),
         wasmToIr = deserializeMap(wasmDeserializeFunc, irDeserializeFunc)
-    }
+    )
 
     private fun <T : Any> deserializeSymbol(deserializeFunc: () -> T): WasmSymbol<T> =
         deserializeReference {
@@ -550,34 +550,34 @@ class WasmDeserializer(inputStream: InputStream) {
             }
         }
 
-    fun deserializeCompiledFileFragment(): WasmCompiledFileFragment = WasmCompiledFileFragment().apply {
-        functions = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
-        globalFields = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
-        globalVTables = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
-        globalClassITables = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
-        functionTypes = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunctionType)
-        gcTypes = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration)
-        vTableGcTypes = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration)
-        classITableGcType = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration)
-        classITableInterfaceSlot = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeInt)
-        classITableInterfaceTableSize = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeInt)
-        classITableInterfaceHasImplementors = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeInt)
-        typeInfo = deserializeMap(::deserializeIdSignature, ::deserializeConstantDataElement)
-        classIds = deserializeReferencableElements(::deserializeIdSignature, ::deserializeInt)
-        interfaceIds = deserializeReferencableElements(::deserializeIdSignature, ::deserializeInt)
-        stringLiteralAddress = deserializeReferencableElements(::deserializeString, ::deserializeInt)
-        stringLiteralPoolId = deserializeReferencableElements(::deserializeString, ::deserializeInt)
-        constantArrayDataSegmentId = deserializeReferencableElements({ deserializePair({ deserializeList(::deserializeLong) }, ::deserializeType) }, ::deserializeInt)
-        interfaceUnions = deserializeList { deserializeList(::deserializeIdSignature) }
-        declaredInterfaces = deserializeList(::deserializeIdSignature)
-        initFunctions = deserializeList(::deserializeFunWithPriority)
-        uniqueJsFunNames = deserializeReferencableElements(::deserializeString, ::deserializeString)
-        jsFuns = deserializeList(::deserializeJsCodeSnippet)
-        jsModuleImports = deserializeSet(::deserializeString)
-        exports = deserializeList(::deserializeExport)
-        scratchMemAddr = deserializeSymbol(::deserializeInt)
+    private fun deserializeCompiledFileFragment() = WasmCompiledFileFragment(
+        functions = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction),
+        globalFields = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal),
+        globalVTables = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal),
+        globalClassITables = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal),
+        functionTypes = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunctionType),
+        gcTypes = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration),
+        vTableGcTypes = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration),
+        classITableGcType = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration),
+        classITableInterfaceSlot = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeInt),
+        classITableInterfaceTableSize = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeInt),
+        classITableInterfaceHasImplementors = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeInt),
+        typeInfo = deserializeMap(::deserializeIdSignature, ::deserializeConstantDataElement),
+        classIds = deserializeReferencableElements(::deserializeIdSignature, ::deserializeInt),
+        interfaceIds = deserializeReferencableElements(::deserializeIdSignature, ::deserializeInt),
+        stringLiteralAddress = deserializeReferencableElements(::deserializeString, ::deserializeInt),
+        stringLiteralPoolId = deserializeReferencableElements(::deserializeString, ::deserializeInt),
+        constantArrayDataSegmentId = deserializeReferencableElements({ deserializePair({ deserializeList(::deserializeLong) }, ::deserializeType) }, ::deserializeInt),
+        interfaceUnions = deserializeList { deserializeList(::deserializeIdSignature) },
+        declaredInterfaces = deserializeList(::deserializeIdSignature),
+        initFunctions = deserializeList(::deserializeFunWithPriority),
+        uniqueJsFunNames = deserializeReferencableElements(::deserializeString, ::deserializeString),
+        jsFuns = deserializeList(::deserializeJsCodeSnippet),
+        jsModuleImports = deserializeSet(::deserializeString),
+        exports = deserializeList(::deserializeExport),
+        scratchMemAddr = deserializeSymbol(::deserializeInt),
         stringPoolSize = deserializeSymbol(::deserializeInt)
-    }
+    )
 
     private fun <T : WasmNamedModuleField> deserializeNamedModuleField(deserializeFunc: (String) -> T) =
         deserializeNamedModuleField { name, _ -> deserializeFunc(name) }
