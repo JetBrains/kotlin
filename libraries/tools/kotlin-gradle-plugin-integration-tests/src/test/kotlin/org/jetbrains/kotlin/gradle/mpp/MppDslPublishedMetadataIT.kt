@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
@@ -83,7 +84,7 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
                     |// TODO KT-65528 move publishing config into the actual build.gradle
                     |publishing {
                     |    repositories {
-                    |        maven { url "$localRepoDir" }
+                    |        maven { url "${localRepoDir.invariantSeparatorsPathString}" }
                     |    }
                     |}
                     |

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
@@ -37,7 +38,7 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                 """
                 |publishing {
                 |  repositories {
-                |    maven { url = "$localRepoDir" }
+                |    maven { url = "${localRepoDir.invariantSeparatorsPathString}" }
                 |  }
                 |}
                 """.trimMargin()

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import java.nio.file.Path
 import java.util.jar.JarFile
 import kotlin.io.path.appendText
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
@@ -33,7 +34,7 @@ class MppDslSourcesJarIT : KGPBaseTest() {
                   repositories {
                     maven {
                       name = "LocalRepo"
-                      url = uri("$localRepoDir")
+                      url = uri("${localRepoDir.invariantSeparatorsPathString}")
                     }
                   }
                 }
@@ -69,8 +70,9 @@ class MppDslSourcesJarIT : KGPBaseTest() {
     companion object {
         /** Names of the root directories within a JAR file. */
         private fun Path.jarFileRootDirs(): Set<String> {
-            val sourcesJar = JarFile(toFile())
-            return sourcesJar.entries().asSequence().map { it.name.substringBefore("/") }.toSet()
+            JarFile(toFile()).use { sourcesJar ->
+                return sourcesJar.entries().asSequence().map { it.name.substringBefore("/") }.toSet()
+            }
         }
     }
 }
