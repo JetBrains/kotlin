@@ -34,13 +34,8 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
 
     // In IR classes we only print fields that are either declared in this element, or refine the type of a parent field
     // and thus need an override.
-    override fun filterFields(element: Element): Collection<Field> = element.fields.map { field ->
-        field.copy().apply {
-            if (field in element.parentFields) {
-                fromParent = true
-            }
-        }
-    }
+    override fun filterFields(element: Element): Collection<Field> =
+        element.fields
 
     override fun ImportCollectingPrinter.printAdditionalMethods(element: Element) {
         element.generationCallback?.invoke(this)
