@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.generator.model.symbol
 
 import org.jetbrains.kotlin.generators.tree.AbstractField
+import org.jetbrains.kotlin.generators.tree.TypeParameterSubstitutionMap
 import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
 
 /**
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
  */
 class SymbolField(
     override val name: String,
-    override val typeRef: TypeRefWithNullability,
+    override var typeRef: TypeRefWithNullability,
     override var isMutable: Boolean,
 ) : AbstractField<SymbolField>() {
 
@@ -34,8 +35,10 @@ class SymbolField(
     override val isChild: Boolean
         get() = false
 
-    override fun replaceType(newType: TypeRefWithNullability): SymbolField =
-        SymbolField(name, newType, isMutable).apply(this::updateFieldsInCopy)
+    override fun internalCopy(): SymbolField =
+        SymbolField(name, typeRef, isMutable)
 
-    override fun copy(): SymbolField = replaceType(typeRef)
+    override fun substituteType(map: TypeParameterSubstitutionMap) {
+        typeRef = typeRef.substitute(map) as TypeRefWithNullability
+    }
 }

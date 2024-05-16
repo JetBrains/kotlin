@@ -22,10 +22,6 @@ abstract class Field(
 
     override var isFinal: Boolean = false
 
-    abstract fun internalCopy(): Field
-
-    override fun copy() = internalCopy().also(::updateFieldsInCopy)
-
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
         copy.customSetter = customSetter
@@ -35,19 +31,21 @@ abstract class Field(
 
 class SimpleField(
     name: String,
-    override val typeRef: TypeRefWithNullability,
+    override var typeRef: TypeRefWithNullability,
     isMutable: Boolean,
     override val isChild: Boolean,
 ) : Field(name, isMutable) {
 
     override fun internalCopy() = SimpleField(name, typeRef, isMutable, isChild)
 
-    override fun replaceType(newType: TypeRefWithNullability) = SimpleField(name, newType, isMutable, isChild).also(::updateFieldsInCopy)
+    override fun substituteType(map: TypeParameterSubstitutionMap) {
+        typeRef = typeRef.substitute(map) as TypeRefWithNullability
+    }
 }
 
 class ListField(
     name: String,
-    override val baseType: TypeRef,
+    override var baseType: TypeRef,
     private val isMutableList: Boolean,
     isMutable: Boolean,
     override val isChild: Boolean,
@@ -61,5 +59,7 @@ class ListField(
 
     override fun internalCopy() = ListField(name, baseType, isMutableList, isMutable, isChild)
 
-    override fun replaceType(newType: TypeRefWithNullability) = internalCopy().also(::updateFieldsInCopy)
+    override fun substituteType(map: TypeParameterSubstitutionMap) {
+        baseType = baseType.substitute(map)
+    }
 }
