@@ -7,46 +7,83 @@ package org.jetbrains.kotlin
 
 import kotlinBuildProperties
 import org.gradle.api.Project
-import org.gradle.api.logging.Logger
+import org.gradle.api.file.RelativePath
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.bundling.Tar
+import org.gradle.api.tasks.bundling.Zip
+import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 /**
- * "Full K/N Cross-Distribution" stands for the K/N distribution that contains all platform klibs, including
- * for cross-targets. Simply speaking, for MacOS "Full K/N crossdist" is the same as the usual dist, but for
- * Linux/Win it's a dist + Darwin-specific klibs like `Foundation`
+ * "crossBundle" stands for the K/N distribution (bundle) that contains all platform klibs, including
+ * for cross-targets. Simply speaking, for MacOS "crossBundle" is the same as the usual "bundle", but for
+ * Linux/Win it's a "bundle" + Darwin-specific klibs like `Foundation`.
  *
- * We build Full K/N Cross-Distribution iff the [PATH_TO_DARWIN_DIST_PROPERTY] is provided and points to
- * valid K/N distribution
+ * The process of building "crossBundle" is intuitively a merge of "Darwin-dist" ([PATH_TO_DARWIN_DIST_PROPERTY]) into
+ * "Host-dist" ([PATH_TO_HOST_DIST_PROPERTY]) without overwriting.
+ * To be more precise, we copy only klib/platform/<darwin-specific-targets> from Darwin-dist into Host-dist
  *
- * In such case, `setupCrossDistCopyTask` register a task that copies the klibs from the provided Darwin-dist to
- * the current dist.
+ * The result is packed into archive as usual `bundlePrebuilt` tasks do.
  *
- * Full K/N Cross-Dist is expected to be not built by default (as it complicated the build setup by adding a
- * dependency on Mac-generated dist)
+ * Note that this task *DOES NOT USE HOST DIST BUILT FROM SOURCES*. However, it is expected (but not checked in the code)
+ * that the passed [PATH_TO_HOST_DIST_PROPERTY] will point to the host-bundle built from the exact same source revision
+ * as the one current build uses.
+ *
+ * We use such splitting instead of depending directly on usual `bundlePrebuilt` because this allows to run usual bundles in parallel
+ * on TC and then merge them into cross-bundle quickly (rather than first build MacOS bundle and only then start building Linux bundle).
  */
-fun Project.setupCrossDistCopyTask(): TaskProvider<Copy> = tasks.register<Copy>("copyDarwinLibrariesToCrossDist") {
-    val distRoot = pathToDarwinDistProperty
-    onlyIf { distRoot != null && !HostManager.hostIsMac }
-
-    if (distRoot == null) return@register
-    if (HostManager.hostIsMac) {
-        logger.error("Host is Mac, but $PATH_TO_DARWIN_DIST_PROPERTY is used (value is ${distRoot})")
-        return@register
+fun Project.setupCrossBundleTask(taskName: String): TaskProvider<out AbstractArchiveTask>? {
+    val pathToDarwinDistProperty = pathToDarwinDistProperty
+    val pathToHostDistProperty = pathToHostDistProperty
+    val checkPreconditions = tasks.register("checkCrossDistPreconditions") {
+        doLast { requireCrossDistEnabled(pathToDarwinDistProperty, pathToHostDistProperty) }
     }
-    if (!distRoot.ensureIsValidPathToDarwinDist(logger)) return@register
 
-    val platform = File(distRoot).klib.platform
-    val targetNames = getDarwinOnlyTargets().map { it.name }
-
-    from(platform) {
-        include(targetNames.map { "$it/**" })
+    val unpackDarwinDist = setupTaskToUnpackDistToCurrentDist("Darwin", darwinDistFile) {
+        dependsOn(checkPreconditions)
+        include(getDarwinOnlyTargets().map { "*/klib/platform/${it.name}/**" })
     }
-    into(project.kotlinNativeDist.klib.platform)
+    val unpackHostDist = setupTaskToUnpackDistToCurrentDist("Host", hostDistFile) {
+        dependsOn(checkPreconditions)
+    }
+
+    val kotlinVersion: String = rootProject.ext.get("kotlinVersion") as String
+    val simpleOsName = HostManager.platformName()
+    val crossBundleTask = tasks.register(taskName, if (PlatformInfo.isWindows()) Zip::class.java else Tar::class.java) {
+        dependsOn(unpackDarwinDist, unpackHostDist)
+
+        archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
+        archiveVersion.set(kotlinVersion)
+
+        from(kotlinNativeDist) {
+            include("**")
+            exclude("dependencies")
+            exclude("klib/testLibrary")
+            into("${archiveBaseName.get()}-${archiveVersion.get()}")
+        }
+    }
+
+    return crossBundleTask
+}
+
+private fun Project.setupTaskToUnpackDistToCurrentDist(
+        distName: String,
+        source: File,
+        additionalConfig: Copy.() -> Unit = { }
+): TaskProvider<Copy> = tasks.register<Copy>("unpack${distName}Dist") {
+    from(tarTree(source))
+    into(kotlinNativeDist)
+    additionalConfig()
+
+    // this incantation makes it so that we will have something like build/unpackedDonorDarwinDist/<contents of dist>
+    // rather than build/unpackedDonorDarwinDist/kotlin-native-macos-aarch65-2.0.255-SNAPSHOT/<contents of dist>
+    eachFile { relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray<String?>()) }
+    includeEmptyDirs = false
 }
 
 // Assume that all Macs have the same enabled targets, and that Darwin dist is exactly a superset of any other dist
@@ -70,34 +107,29 @@ fun getDarwinOnlyTargets(): Set<KonanTarget> {
 
 private val Project.pathToDarwinDistProperty: String?
     get() = kotlinBuildProperties.getOrNull(PATH_TO_DARWIN_DIST_PROPERTY) as? String
+private val Project.pathToHostDistProperty: String?
+    get() = kotlinBuildProperties.getOrNull(PATH_TO_HOST_DIST_PROPERTY) as? String
 
-private val File.klib: File
-    get() = File(this, "klib")
-private val File.platform: File
-    get() = File(this, "platform")
+private val Project.darwinDistFile: File
+    get() = rootProject.rootDir.resolve(File(pathToDarwinDistProperty!!))
+private val Project.hostDistFile: File
+    get() = rootProject.rootDir.resolve(File(pathToHostDistProperty!!))
 
-private fun String.ensureIsValidPathToDarwinDist(log: Logger): Boolean {
-    val distRoot = File(this)
-    if (!distRoot.exists()) {
-        log.error(
-                "Value of $PATH_TO_DARWIN_DIST_PROPERTY doesn't exist.\n" +
-                        "$PATH_TO_DARWIN_DIST_PROPERTY = $this\n" +
-                        "File checked at ${distRoot.canonicalPath}"
-        )
-        return false
+private fun requireCrossDistEnabled(pathToDarwinDistProperty: String?, pathToHostDistProperty: String?) {
+    fun checkDist(propertyName: String, propertyValue: String?) {
+        requireNotNull(propertyValue) { "Full cross-dist is not enabled, $propertyName is not provided" }
+        val distFile = File(propertyValue)
+
+        require(distFile.exists()) { "$propertyName is specified, but points to non-existing file: ${distFile.absolutePath}" }
+        require(distFile.isFile) {
+            "Expected to receive path to packed dist, but $propertyName is specified and points to a non-file ${distFile.absolutePath}. " +
+                    "Have you passed a path to the folder with unpacked dist?"
+        }
     }
 
-    val klibSubfolder = distRoot.klib
-    if (!klibSubfolder.exists()) {
-        log.error(
-                "Couldn't find 'klib' subfolder under the '$PATH_TO_DARWIN_DIST_PROPERTY'. Is it a valid K/N distribution?\n" +
-                        "$PATH_TO_DARWIN_DIST_PROPERTY = $this\n" +
-                        "klib folder checked at ${klibSubfolder.canonicalPath}"
-        )
-        return false
-    }
-
-    return true
+    checkDist(PATH_TO_DARWIN_DIST_PROPERTY, pathToDarwinDistProperty)
+    checkDist(PATH_TO_HOST_DIST_PROPERTY, pathToHostDistProperty)
 }
 
 const val PATH_TO_DARWIN_DIST_PROPERTY = "kotlin.native.pathToDarwinDist"
+const val PATH_TO_HOST_DIST_PROPERTY = "kotlin.native.pathToHostDist"

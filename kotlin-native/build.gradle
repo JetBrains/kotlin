@@ -403,8 +403,6 @@ tasks.register("dist") {
             "distStdlibCache"
 }
 
-def copyDarwinKlibsForFullCrossDist = NativeFullCrossDistKt.setupCrossDistCopyTask(project)
-
 tasks.register("crossDist") {
     dependsOn "distCompiler",
             "crossDistRuntime",
@@ -458,7 +456,6 @@ def sbomBundlePrebuiltForPublish = tasks.register("sbomBundlePrebuiltForPublish"
 tasks.register("bundlePrebuilt", (PlatformInfo.isWindows()) ? Zip : Tar) {
     dependsOn(sbomBundlePrebuiltForPublish)
     dependsOn("crossDistPlatformLibs")
-    dependsOn(copyDarwinKlibsForFullCrossDist)
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
     archiveVersion.set(kotlinVersion)
@@ -469,6 +466,8 @@ tasks.register("bundlePrebuilt", (PlatformInfo.isWindows()) ? Zip : Tar) {
         into "${archiveBaseName.get()}-${archiveVersion.get()}"
     }
 }
+
+NativeFullCrossDistKt.setupCrossBundleTask(project, "crossBundlePrebuilt")
 
 void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean containsPlatformLibraries) {
     task.from(project.projectDir) {
