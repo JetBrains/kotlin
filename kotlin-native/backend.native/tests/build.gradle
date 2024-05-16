@@ -7,8 +7,6 @@
 import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileNativeBinary
-import org.jetbrains.kotlin.konan.target.Architecture
-import org.jetbrains.kotlin.konan.target.Family
 
 buildscript {
     repositories {
@@ -65,9 +63,6 @@ apply plugin: 'native-dependencies'
 
 configurations {
     update_tests
-
-    nopPluginApi
-    api.extendsFrom nopPluginApi
 }
 
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
@@ -447,63 +442,7 @@ standaloneTest("split_compilation_pipeline") {
     useGoldenData = true
 }
 
-sourceSets {
-    nopPlugin {
-        kotlin {
-            srcDir 'extensions/nop/src/main/kotlin'
-        }
-    }
-}
-
-compileNopPluginKotlin {
-    compilerOptions.freeCompilerArgs.add('-Xskip-prerelease-check')
-}
-
-Task pluginTest(String name, String pluginName, Closure configureClosure) {
-    def jarTask = project.tasks.register("jar-$pluginName", Jar) {
-        it.dependsOn("compile${pluginName.capitalize()}Kotlin")
-        from {
-            sourceSets[pluginName].output
-        }
-        archiveBaseName = pluginName
-        destinationDirectory = project.layout.buildDirectory.get().asFile
-    }
-    def taskName = "$name-with-$pluginName"
-    return KotlinNativeTestKt.createTest(project, taskName, KonanStandaloneTest) { task ->
-        task.configure(configureClosure)
-        task.dependsOn(jarTask)
-        if (task.enabled) {
-            konanArtifacts {
-                program(taskName, targets: [target.name]) {
-                    baseDir   "$testOutputLocal/$taskName"
-                    srcFiles  task.getSources()
-                    extraOpts task.flags + "-Xplugin=${project.layout.buildDirectory.file("nop-plugin.jar").get().asFile}"
-                    extraOpts project.globalTestArgs
-                }
-            }
-        }
-    }
-}
-
-pluginTest("runtime_basic_init", "nopPlugin") {
-    source = "runtime/basic/runtime_basic_init.kt"
-    flags = ["-tr"]
-}
-
 dependencies {
-    nopPluginApi project(":native:kotlin-native-utils")
-    nopPluginApi project(":core:descriptors")
-    nopPluginApi project(":compiler:ir.tree")
-    nopPluginApi project(":compiler:ir.backend.common")
-    nopPluginApi project(":compiler:util")
-    nopPluginApi project(":native:frontend.native")
-    nopPluginApi project(":compiler:cli-common")
-    nopPluginApi project(":compiler:cli-base")
-    nopPluginApi project(":compiler:cli")
-    nopPluginApi project(":kotlin-util-klib")
-    nopPluginApi project(":kotlin-util-klib-metadata")
-    nopPluginApi project(":compiler:ir.serialization.common")
-
     api project(':native:cli-native')
     api libs.junit4
 }
