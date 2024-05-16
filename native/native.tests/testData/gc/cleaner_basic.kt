@@ -129,13 +129,14 @@ val globalInt = AtomicInt(0)
 @Test
 fun testCleanerWithInt() {
     var cleanerWeak: WeakReference<Cleaner>? = null
-    {
+    @NoInline fun local() {
         val cleaner = createCleaner(42) {
             globalInt.value = it
         }
         cleanerWeak = WeakReference(cleaner)
         assertEquals(0, globalInt.value)
-    }()
+    }
+    local()
 
     GC.collect()
     performGCOnCleanerWorker()

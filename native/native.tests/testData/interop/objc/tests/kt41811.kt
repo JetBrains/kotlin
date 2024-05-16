@@ -1,6 +1,7 @@
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 import kotlin.native.ref.WeakReference
+import kotlin.native.NoInline
 import kotlinx.cinterop.*
 import kotlin.test.*
 import objcTests.*
@@ -27,6 +28,7 @@ fun testKT41811() {
     kotlin.native.runtime.GC.collect()
 }
 
+@NoInline
 private fun createGarbageDeallocRetainRelease() {
     autoreleasepool {
         object : DeallocRetainRelease() {}
@@ -93,9 +95,10 @@ fun testKT41811WithGlobal() {
     assertFalse(deallocRetainReleaseDeallocated)
 
     autoreleasepool {
-        {
+        @NoInline fun local() {
             globalDeallocRetainRelease = object: DeallocRetainRelease() {}
-        }()
+        }
+        local()
     }
 
     assertFalse(deallocRetainReleaseDeallocated)
@@ -141,6 +144,7 @@ fun testKT41811WithAccess() {
     kotlin.native.internal.GC.collect()
 }
 
+@NoInline
 private fun createGarbageDeallocRetainAndAccess() {
     autoreleasepool {
         object : DeallocRetainAndAccess() {
