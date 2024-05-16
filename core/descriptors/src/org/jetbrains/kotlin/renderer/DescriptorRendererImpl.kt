@@ -702,8 +702,8 @@ internal class DescriptorRendererImpl(
     private fun renderFunction(function: FunctionDescriptor, builder: StringBuilder) {
         if (!startFromName) {
             if (!startFromDeclarationKeyword) {
-                builder.renderAnnotations(function)
                 renderContextReceivers(function.contextReceiverParameters, builder)
+                builder.renderAnnotations(function)
                 renderVisibility(function.visibility, builder)
                 renderModalityForCallable(function, builder)
 
@@ -953,8 +953,8 @@ internal class DescriptorRendererImpl(
     private fun renderProperty(property: PropertyDescriptor, builder: StringBuilder) {
         if (!startFromName) {
             if (!startFromDeclarationKeyword) {
-                renderPropertyAnnotations(property, builder)
                 renderContextReceivers(property.contextReceiverParameters, builder)
+                renderPropertyAnnotations(property, builder)
                 renderVisibility(property.visibility, builder)
                 renderModifier(builder, DescriptorRendererModifier.CONST in modifiers && property.isConst, "const")
                 renderMemberModifiers(property, builder)
@@ -1039,8 +1039,8 @@ internal class DescriptorRendererImpl(
         val isEnumEntry = klass.kind == ClassKind.ENUM_ENTRY
 
         if (!startFromName) {
-            builder.renderAnnotations(klass)
             renderContextReceivers(klass.contextReceivers, builder)
+            builder.renderAnnotations(klass)
             if (!isEnumEntry) {
                 renderVisibility(klass.visibility, builder)
             }

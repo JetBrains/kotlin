@@ -13866,6 +13866,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("withAnnotations.kt")
+        public void testWithAnnotations() {
+          runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/withAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("withExplicitReceiver.kt")
         public void testWithExplicitReceiver() {
           runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/withExplicitReceiver.kt");
