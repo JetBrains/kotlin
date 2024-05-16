@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.test.services
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.IrMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -28,7 +26,6 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
@@ -143,18 +140,7 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
         configuration[CommonConfigurationKeys.USE_FIR] = true
     }
 
-    val messageCollector = object : MessageCollector {
-        override fun clear() {}
-
-        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-            if (severity == CompilerMessageSeverity.ERROR) {
-                val prefix = if (location == null) "" else "(" + location.path + ":" + location.line + ":" + location.column + ") "
-                throw AssertionError(prefix + message)
-            }
-        }
-
-        override fun hasErrors(): Boolean = false
-    }
+    val messageCollector = PrintingMessageCollector(System.err, CompilerTestMessageRenderer(module), /*verbose=*/false)
     configuration.messageCollector = messageCollector
     configuration[IrMessageLogger.IR_MESSAGE_LOGGER] = IrMessageCollector(messageCollector)
     configuration.languageVersionSettings = module.languageVersionSettings
