@@ -9,14 +9,14 @@
 #include <cstdint>
 
 #include "CustomLogging.hpp"
-#include "CustomAllocConstants.hpp"
 #include "GCApi.hpp"
+#include "NextFitPage.hpp"
 
 namespace kotlin::alloc {
 
 SingleObjectPage* SingleObjectPage::Create(uint64_t cellCount) noexcept {
     CustomAllocInfo("SingleObjectPage::Create(%" PRIu64 ")", cellCount);
-    RuntimeAssert(cellCount > NEXT_FIT_PAGE_MAX_BLOCK_SIZE, "blockSize too small for SingleObjectPage");
+    RuntimeAssert(cellCount > NextFitPage::maxBlockSize(), "blockSize too small for SingleObjectPage");
     uint64_t size = sizeof(SingleObjectPage) + cellCount * sizeof(uint64_t);
     return new (SafeAlloc(size)) SingleObjectPage(size);
 }
@@ -54,9 +54,9 @@ bool SingleObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalize
 
 std::vector<uint8_t*> SingleObjectPage::GetAllocatedBlocks() noexcept {
     std::vector<uint8_t*> allocated;
-    if (isAllocated_) {
-        allocated.push_back(data_);
-    }
+    TraverseAllocatedBlocks([&allocated](uint8_t* block) {
+        allocated.push_back(block);
+    });
     return allocated;
 }
 

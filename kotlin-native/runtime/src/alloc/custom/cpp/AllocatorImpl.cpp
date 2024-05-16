@@ -51,6 +51,14 @@ void alloc::Allocator::clearForTests() noexcept {
     impl_->heap().ClearForTests();
 }
 
+void alloc::Allocator::TraverseAllocatedObjects(std::function<void(ObjHeader*)> fn) noexcept {
+    impl_->heap().TraverseAllocatedObjects(fn);
+}
+
+void alloc::Allocator::TraverseAllocatedExtraObjects(std::function<void(mm::ExtraObjectData*)> fn) noexcept {
+    impl_->heap().TraverseAllocatedExtraObjects(fn);
+}
+
 size_t alloc::Allocator::estimateOverheadPerThread() noexcept {
     if (compiler::disableAllocatorOverheadEstimate()) return 0;
     return impl_->heap().EstimateOverheadPerThread();

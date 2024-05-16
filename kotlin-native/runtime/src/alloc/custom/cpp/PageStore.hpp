@@ -126,6 +126,14 @@ private:
         while (T* page = unswept_.Pop()) page->Destroy();
     }
 
+    template <typename F>
+    void TraversePages(F process) noexcept(noexcept(process(std::declval<T*>()))) {
+        empty_.TraverseElements(process);
+        ready_.TraverseElements(process);
+        used_.TraverseElements(process);
+        unswept_.TraverseElements(process);
+    }
+
     AtomicStack<T> empty_;
     AtomicStack<T> ready_;
     AtomicStack<T> used_;

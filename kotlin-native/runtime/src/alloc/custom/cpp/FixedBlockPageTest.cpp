@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "Cell.hpp"
-#include "CustomAllocConstants.hpp"
 #include "ExtraObjectPage.hpp"
 #include "gtest/gtest.h"
 #include "FixedBlockPage.hpp"
@@ -36,7 +35,7 @@ uint8_t* alloc(FixedBlockPage* page, size_t blockSize) {
 }
 
 TEST(CustomAllocTest, FixedBlockPageConsequtiveAlloc) {
-    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+    for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         uint8_t* prev = alloc(page, size);
         uint8_t* cur;
@@ -52,7 +51,7 @@ TEST(CustomAllocTest, FixedBlockPageSweepEmptyPage) {
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweep();
     kotlin::alloc::FinalizerQueue finalizerQueue;
-    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+    for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
         page->Destroy();
@@ -63,11 +62,11 @@ TEST(CustomAllocTest, FixedBlockPageSweepFullUnmarkedPage) {
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweep();
     kotlin::alloc::FinalizerQueue finalizerQueue;
-    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+    for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         uint32_t count = 0;
         while (alloc(page, size)) ++count;
-        EXPECT_EQ(count, FIXED_BLOCK_PAGE_CELL_COUNT / size);
+        EXPECT_EQ(count, FixedBlockPage::cellCount() / size);
         EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
         page->Destroy();
     }
@@ -77,7 +76,7 @@ TEST(CustomAllocTest, FixedBlockPageSweepSingleMarked) {
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweep();
     kotlin::alloc::FinalizerQueue finalizerQueue;
-    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+    for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         uint8_t* ptr = alloc(page, size);
         mark(ptr);
@@ -90,7 +89,7 @@ TEST(CustomAllocTest, FixedBlockPageSweepSingleReuse) {
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweep();
     kotlin::alloc::FinalizerQueue finalizerQueue;
-    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+    for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         uint8_t* ptr = alloc(page, size);
         EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
@@ -103,7 +102,7 @@ TEST(CustomAllocTest, FixedBlockPageSweepReuse) {
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweep();
     kotlin::alloc::FinalizerQueue finalizerQueue;
-    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+    for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         uint8_t* ptr;
         for (int count = 0; (ptr = alloc(page, size)); ++count) {
@@ -114,7 +113,7 @@ TEST(CustomAllocTest, FixedBlockPageSweepReuse) {
         for (; (ptr = alloc(page, size)); ++count) {
             if (count % 2 == 0) mark(ptr);
         }
-        EXPECT_EQ(count, FIXED_BLOCK_PAGE_CELL_COUNT / size / 2);
+        EXPECT_EQ(count, FixedBlockPage::cellCount() / size / 2);
         page->Destroy();
     }
 }
@@ -125,9 +124,9 @@ TEST(CustomAllocTest, FixedBlockPageRandomExercise) {
     kotlin::alloc::FinalizerQueue finalizerQueue;
     std::minstd_rand r(42);
     uint8_t* ptr;
-    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+    for (uint32_t size = 2; size <= FixedBlockPage::MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
-        uint32_t BLOCK_COUNT = FIXED_BLOCK_PAGE_CELL_COUNT / size;
+        uint32_t BLOCK_COUNT = FixedBlockPage::cellCount() / size;
         std::vector<uint8_t*> seen;
         while ((ptr = alloc(page, size))) seen.push_back(ptr);
         EXPECT_EQ(seen.size(), BLOCK_COUNT);

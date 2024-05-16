@@ -7,7 +7,6 @@
 #include <cstdint>
 
 #include "AtomicStack.hpp"
-#include "CustomAllocConstants.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
 #include "gtest/gtest.h"
@@ -55,7 +54,7 @@ TEST(CustomAllocTest, ExtraObjectPageSweepFullFinalizedPage) {
         ptr->setFlag(Data::FLAGS_SWEEPABLE);
         ++count;
     }
-    EXPECT_EQ(count, EXTRA_OBJECT_COUNT);
+    EXPECT_EQ(count, Page::extraObjectCount());
     kotlin::alloc::FinalizerQueue finalizerQueue;
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweepExtraObjects();

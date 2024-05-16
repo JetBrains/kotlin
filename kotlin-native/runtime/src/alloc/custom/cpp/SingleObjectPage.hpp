@@ -33,6 +33,13 @@ public:
 
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 
+    template <typename F>
+    void TraverseAllocatedBlocks(F process) noexcept(noexcept(process(std::declval<uint8_t*>()))) {
+        if (isAllocated_) {
+            process(data_);
+        }
+    }
+
 private:
     friend class Heap;
 

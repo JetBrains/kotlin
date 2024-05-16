@@ -26,6 +26,7 @@
 #include "ThreadRegistry.hpp"
 #include "ThreadState.hpp"
 #include "Utils.hpp"
+#include "MemoryDump.hpp"
 
 using namespace kotlin;
 
@@ -294,6 +295,14 @@ extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
 
 extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
     mm::GlobalData::Instance().gcScheduler().schedule();
+}
+
+extern "C" bool Kotlin_native_internal_Debugging_dumpMemory(ObjHeader*, int fd) {
+    bool didSuspend = mm::SuspendThreads("Dump");
+    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
+    bool result = mm::DumpMemory(fd);
+    mm::ResumeThreads();
+    return result;
 }
 
 extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
