@@ -484,9 +484,7 @@ class Fir2IrDeclarationStorage(
         val symbol = IrConstructorSymbolImpl()
         if (potentiallyExternal) {
             val irParent = findIrParent(constructor, fakeOverrideOwnerLookupTag = null)
-            val isIntrinsicConstEvaluation =
-                constructor.returnTypeRef.coneType.classId == StandardClassIds.Annotations.IntrinsicConstEvaluation
-            if (irParent.isExternalParent() || isIntrinsicConstEvaluation) {
+            if (irParent.isExternalParent()) {
                 callablesGenerator.createIrConstructor(
                     constructor,
                     irParent as IrClass,
@@ -494,7 +492,7 @@ class Fir2IrDeclarationStorage(
                     constructor.computeExternalOrigin(),
                     allowLazyDeclarationsCreation = true
                 ).also {
-                    check(it is Fir2IrLazyConstructor || isIntrinsicConstEvaluation)
+                    check(it is Fir2IrLazyConstructor)
                 }
             }
         }

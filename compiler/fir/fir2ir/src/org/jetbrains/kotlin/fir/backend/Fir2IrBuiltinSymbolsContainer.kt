@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isBoolean
-import org.jetbrains.kotlin.fir.types.isInt
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -118,7 +116,6 @@ class Fir2IrBuiltinSymbolsContainer(
 
     private val primitiveSymbolToPrimitiveType: Map<IrClassSymbol, PrimitiveType> by lazy {
         mapOf(
-            booleanClass to PrimitiveType.BOOLEAN,
             charClass to PrimitiveType.CHAR,
             byteClass to PrimitiveType.BYTE,
             shortClass to PrimitiveType.SHORT,
@@ -213,11 +210,15 @@ class Fir2IrBuiltinSymbolsContainer(
         operatorMap(syntheticSymbolsContainer.ieee754equalsFunByOperandType)
     }
 
-
     private fun operatorMap(
         syntheticMap: Map<PrimitiveType, IrSimpleFunctionSymbol>
     ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-        return primitiveSymbolToPrimitiveType.mapValues { (_, type) -> syntheticMap.getValue(type) }
+        return buildMap {
+            for ((classSymbol, type) in primitiveSymbolToPrimitiveType) {
+                val functionSymbol = syntheticMap[type] ?: continue
+                put(classSymbol, functionSymbol)
+            }
+        }
     }
 
     // --------------------------- functions ---------------------------

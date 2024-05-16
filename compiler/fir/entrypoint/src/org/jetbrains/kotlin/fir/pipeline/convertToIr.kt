@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrDataClassGeneratedMemberBodyGenerator
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -93,6 +94,7 @@ fun FirResult.convertToIrAndActualize(
     }
 
     val platformFirOutput = outputs.last()
+    val syntheticIrBuiltinsSymbolsContainer = Fir2IrSyntheticIrBuiltinsSymbolsContainer()
 
     fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(): Fir2IrComponentsStorage {
         return Fir2IrComponentsStorage(
@@ -108,6 +110,7 @@ fun FirResult.convertToIrAndActualize(
             kotlinBuiltIns,
             specialAnnotationsProvider,
             firProvidersWithGeneratedFiles.getValue(session.moduleData),
+            syntheticIrBuiltinsSymbolsContainer,
         )
     }
 
@@ -137,7 +140,12 @@ fun FirResult.convertToIrAndActualize(
         }
     }
 
-    val irBuiltins = createIrBuiltins()
+    val irBuiltins = IrBuiltInsOverFir(
+        platformComponentsStorage,
+        FirModuleDescriptor.createSourceModuleDescriptor(platformComponentsStorage.session, kotlinBuiltIns),
+        syntheticIrBuiltinsSymbolsContainer,
+        irMangler
+    )
     val irTypeSystemContext = typeSystemContextProvider(irBuiltins)
     fir2IrExtensions.initializeIrBuiltIns(irBuiltins)
 
@@ -185,8 +193,6 @@ fun FirResult.convertToIrAndActualize(
     pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
     return Fir2IrActualizedResult(mainIrFragment, platformComponentsStorage, pluginContext, actualizationResult, irBuiltins)
 }
-
-private fun createIrBuiltins(): IrBuiltIns = TODO()
 
 private fun Fir2IrComponentsStorage.createFakeOverrideBuilder(irTypeSystemContext: IrTypeSystemContext): IrFakeOverrideBuilder {
     return IrFakeOverrideBuilder(
@@ -258,7 +264,7 @@ private fun IrFakeOverrideBuilder.buildForAll(
             element.acceptChildrenVoid(this)
         }
 
-        private fun isIgnoredClass(declaration: IrClass) : Boolean {
+        private fun isIgnoredClass(declaration: IrClass): Boolean {
             return when {
                 declaration.isExpect -> true
                 declaration.metadata is MetadataSource.CodeFragment -> true

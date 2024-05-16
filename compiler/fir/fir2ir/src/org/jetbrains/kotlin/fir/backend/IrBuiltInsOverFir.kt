@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IrBuiltInsOverFir(
     private val c: Fir2IrComponents,
-    override val languageVersionSettings: LanguageVersionSettings,
     private val moduleDescriptor: FirModuleDescriptor,
     private val syntheticSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer,
     irMangler: KotlinMangler.IrMangler
@@ -60,6 +59,9 @@ class IrBuiltInsOverFir(
 
     private val symbolProvider: FirSymbolProvider
         get() = session.symbolProvider
+
+    override val languageVersionSettings: LanguageVersionSettings
+        get() = session.languageVersionSettings
 
     override val irFactory: IrFactory = c.irFactory
 
@@ -128,51 +130,28 @@ class IrBuiltInsOverFir(
     override val stringClass: IrClassSymbol by lazy { loadClass(StandardClassIds.String) }
     override val stringType: IrType get() = stringClass.defaultTypeWithoutArguments
 
-    private class IntrinsicConstAnnotation(val classSymbol: IrClassSymbol, val annotationCall: IrConstructorCall)
+    private val intrinsicConstAnnotation: IrConstructorCall by lazy {
+        /*
+         * Old versions of stdlib may not contain @IntrinsicConstEvaluation (AV < 1.7), so in this case we should create annotation class manually
+         *
+         * Ideally, we should try to load it from FIR at first, but the thing is that this annotation is used for some generated builtin functions
+         *   (see init section below), so if Fir2IrLazyClass for this annotation is created, it will call for `components.fakeOverrideGenerator`,
+         *   which is not initialized by this moment
+         * As a possible way to fix it we can move `init` section of builtins into the separate function for late initialization and call
+         *   for it after Fir2IrComponentsStorage is fully initialized
+         */
+        val firClassSymbol = session.symbolProvider.getRegularClassSymbolByClassId(StandardClassIds.Annotations.IntrinsicConstEvaluation)
 
-    private val intrinsicConst: IntrinsicConstAnnotation by lazy {
-        val firClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(
-            StandardClassIds.Annotations.IntrinsicConstEvaluation
-        ) as FirRegularClassSymbol?
-
-        val (classSymbol, constructorSymbol) = when {
-            firClassSymbol?.origin == FirDeclarationOrigin.Source -> {
-                /**
-                 * If @IntrinsicConstEvaluation is present in sources, then we are compiling stdlib and there is no need to create IrClass
-                 *   for it manually, as we will create it from the source FIR class
-                 */
-                val irClassSymbol = c.classifierStorage.getIrClassSymbol(firClassSymbol)
-                val firConstructor = firClassSymbol.fir.constructors(session).single()
-                val irConstructorSymbol = c.declarationStorage.getIrConstructorSymbol(firConstructor, potentiallyExternal = false)
-                irClassSymbol to irConstructorSymbol
-            }
-
-            else -> {
-                /*
-                 * Old versions of stdlib may not contain @IntrinsicConstEvaluation (AV < 1.7), so in this case we should create annotation class manually
-                 *
-                 * Ideally, we should try to load it from FIR at first, but the thing is that this annotation is used for some generated builtin functions
-                 *   (see init section below), so if Fir2IrLazyClass for this annotation is created, it will call for `components.fakeOverrideGenerator`,
-                 *   which is not initialized by this moment
-                 * As a possible way to fix it we can move `init` section of builtins into the separate function for late initialization and call
-                 *   for it after Fir2IrComponentsStorage is fully initialized
-                 */
-                val irClass = createIntrinsicConstEvaluationClass()
-                if (firClassSymbol != null) {
-                    /*
-                     * If @IntrinsicConstEvaluation is present in dependencies, we should manually cache relation between FIR and IR class
-                     * Without it classifier storage may create another IR class for @IntrinsicConstEvaluation, if it will be referenced
-                     *   somewhere in the code
-                     */
-                    @OptIn(LeakedDeclarationCaches::class)
-                    c.classifierStorage.cacheIrClass(firClassSymbol.fir, irClass)
-                }
-                // class for intrinsicConst is created manually and it definitely is not a lazy class
-                @OptIn(UnsafeDuringIrConstructionAPI::class)
-                val constructor = irClass.constructors.single()
-                irClass.symbol to constructor.symbol
-            }
+        val classSymbol = if (firClassSymbol == null) {
+            val irClass = createIntrinsicConstEvaluationClass()
+            irClass.symbol
+        } else {
+            loadClass(StandardClassIds.Annotations.IntrinsicConstEvaluation)
         }
+
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        val constructor = classSymbol.owner.constructors.single()
+        val constructorSymbol = constructor.symbol
 
         val annotationCall = IrConstructorCallImpl(
             startOffset = UNDEFINED_OFFSET,
@@ -189,11 +168,8 @@ class IrBuiltInsOverFir(
             valueArgumentsCount = 0,
         )
 
-        IntrinsicConstAnnotation(classSymbol, annotationCall)
+        annotationCall
     }
-
-    private val intrinsicConstAnnotation: IrConstructorCall
-        get() = intrinsicConst.annotationCall
 
     override val iteratorClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Iterator) }
     override val arrayClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Array) }

@@ -32,6 +32,7 @@ class Fir2IrComponentsStorage(
     kotlinBuiltIns: KotlinBuiltIns,
     override val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
     override val firProvider: FirProviderWithGeneratedFiles,
+    syntheticIrBuiltinsSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer,
 ) : Fir2IrComponents {
     override val filesBeingCompiled: Set<FirFile>? = runIf(configuration.allowNonCachedDeclarations) { fir.toSet() }
 
@@ -52,7 +53,7 @@ class Fir2IrComponentsStorage(
     override val dataClassMembersGenerator: Fir2IrDataClassMembersGenerator = Fir2IrDataClassMembersGenerator(this, commonMemberStorage)
 
     // builtins should go after storages and generators, because they use them during initialization
-    override val builtins: Fir2IrBuiltinSymbolsContainer = Fir2IrBuiltinSymbolsContainer(this)
+    override val builtins: Fir2IrBuiltinSymbolsContainer = Fir2IrBuiltinSymbolsContainer(this, syntheticIrBuiltinsSymbolsContainer)
 
     override val irProviders: List<IrProvider> = emptyList()
 
