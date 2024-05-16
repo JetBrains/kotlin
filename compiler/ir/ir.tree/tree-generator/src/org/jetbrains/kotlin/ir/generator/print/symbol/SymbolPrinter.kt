@@ -64,13 +64,8 @@ internal class SymbolPrinter(
         }
     }
 
-    override fun filterFields(element: Symbol) =  element.fields.map { field ->
-        field.copy().apply {
-            if (field in element.parentFields) {
-                fromParent = true
-            }
-        }
-    }
+    override fun filterFields(element: Symbol)
+        = element.fields
 
     override fun ImportCollectingPrinter.printAdditionalMethods(element: Symbol) {}
 }
