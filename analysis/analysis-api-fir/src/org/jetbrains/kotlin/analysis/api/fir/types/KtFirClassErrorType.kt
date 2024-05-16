@@ -51,8 +51,7 @@ internal class KaFirClassErrorType(
         KaFirAnnotationListForType.create(coneType, builder)
     }
 
-
-    override val candidateClassSymbols: Collection<KaClassLikeSymbol> by cached {
+    override val candidateSymbols: Collection<KaClassLikeSymbol> by cached {
         val symbols = coneDiagnostic.getCandidateSymbols().filterIsInstance<FirClassLikeSymbol<*>>()
         symbols.map { builder.classifierBuilder.buildClassLikeSymbol(it) }
     }

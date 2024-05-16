@@ -34,7 +34,8 @@ internal class KaFirFunctionalType(
     override val token: KaLifetimeToken get() = builder.token
 
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
-    override val classSymbol: KaClassLikeSymbol by cached {
+
+    override val symbol: KaClassLikeSymbol by cached {
         builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
             ?: errorWithFirSpecificEntries("Class was not found", coneType = coneType)
     }

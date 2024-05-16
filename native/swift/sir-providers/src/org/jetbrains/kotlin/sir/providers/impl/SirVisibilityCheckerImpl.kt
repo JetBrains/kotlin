@@ -36,7 +36,7 @@ public class SirVisibilityCheckerImpl(
                 val type = ktSymbol.expandedType
 
                 !type.isMarkedNullable && type.fullyExpandedType.isPrimitive ||
-                        (type.expandedClassSymbol as? KaSymbolWithVisibility)
+                        (type.expandedSymbol as? KaSymbolWithVisibility)
                             ?.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC
             }
             else -> false

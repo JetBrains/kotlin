@@ -120,10 +120,14 @@ public typealias KtClassType = KaClassType
 
 public sealed class KaNonErrorClassType : KaClassType() {
     public abstract val classId: ClassId
-    public abstract val classSymbol: KaClassLikeSymbol
+    public abstract val symbol: KaClassLikeSymbol
     public abstract val ownTypeArguments: List<KaTypeProjection>
 
     abstract override val qualifiers: List<KaClassTypeQualifier.KaResolvedClassTypeQualifier>
+
+    @Deprecated("Use 'symbol' instead.", ReplaceWith("symbol"))
+    public val classSymbol: KaClassLikeSymbol
+        get() = symbol
 }
 
 public typealias KtNonErrorClassType = KaNonErrorClassType
@@ -146,7 +150,11 @@ public abstract class KaUsualClassType : KaNonErrorClassType()
 public typealias KtUsualClassType = KaUsualClassType
 
 public abstract class KaClassErrorType : KaClassType(), KaErrorType {
-    public abstract val candidateClassSymbols: Collection<KaClassLikeSymbol>
+    public abstract val candidateSymbols: Collection<KaClassLikeSymbol>
+
+    @Deprecated("Use 'candidateSymbols' instead.", ReplaceWith("candidateSymbols"))
+    public val candidateClassSymbols: Collection<KaClassLikeSymbol>
+        get() = candidateSymbols
 }
 
 public typealias KtClassErrorType = KaClassErrorType

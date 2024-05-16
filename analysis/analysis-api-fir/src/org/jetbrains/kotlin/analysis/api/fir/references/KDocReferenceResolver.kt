@@ -367,8 +367,8 @@ internal object KDocReferenceResolver {
             return type.symbol.upperBounds.all { isPossiblySuperTypeOf(it, actualReceiverType) }
         }
 
-        val receiverExpanded = actualReceiverType.expandedClassSymbol
-        val expectedExpanded = type.expandedClassSymbol
+        val receiverExpanded = actualReceiverType.expandedSymbol
+        val expectedExpanded = type.expandedSymbol
 
         // if the underlying classes are equal, we consider the check successful
         // despite the possibility of different type bounds

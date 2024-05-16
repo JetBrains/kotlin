@@ -2,7 +2,6 @@ KaUsualClassType:
   abbreviatedType: null
   annotationsList: []
   classId: kotlin/Unit
-  classSymbol: KaNamedClassOrObjectSymbol(kotlin/Unit)
   nullability: NON_NULLABLE
   ownTypeArguments: []
   qualifiers: [
@@ -11,6 +10,7 @@ KaUsualClassType:
       symbol: KaNamedClassOrObjectSymbol(kotlin/Unit)
       typeArguments: []
   ]
+  symbol: KaNamedClassOrObjectSymbol(kotlin/Unit)
 
 Rendered type:
 kotlin.Unit

@@ -2,7 +2,6 @@ KaUsualClassType:
   abbreviatedType: null
   annotationsList: []
   classId: <local>/B.C
-  classSymbol: KaNamedClassOrObjectSymbol(<local>/C)
   nullability: NON_NULLABLE
   ownTypeArguments: []
   qualifiers: [
@@ -15,6 +14,7 @@ KaUsualClassType:
       symbol: KaNamedClassOrObjectSymbol(<local>/C)
       typeArguments: []
   ]
+  symbol: KaNamedClassOrObjectSymbol(<local>/C)
 
 Rendered type:
 B.C

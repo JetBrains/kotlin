@@ -1,7 +1,7 @@
 KaClassErrorType:
   abbreviatedType: null
   annotationsList: []
-  candidateClassSymbols: []
+  candidateSymbols: []
   errorMessage: Symbol not found for kotlin/Any
   nullability: NON_NULLABLE
   qualifiers: [

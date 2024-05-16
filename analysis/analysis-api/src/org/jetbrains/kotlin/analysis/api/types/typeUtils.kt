@@ -10,8 +10,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 /**
  * Returns a [KaClassLikeSymbol] for this [KaType] if the type represents a uniquely resolvable class/object/type alias.
  */
-public val KaType.classSymbol: KaClassLikeSymbol?
-    get() = (this as? KaNonErrorClassType)?.classSymbol
+public val KaType.symbol: KaClassLikeSymbol?
+    get() = (this as? KaNonErrorClassType)?.symbol
+
+/**
+ * Returns a [KtClassLikeSymbol] for this [KtType] if the type represents a uniquely resolvable class/object/type alias.
+ */
+@Deprecated("Use 'symbol' instead.", ReplaceWith("this.symbol"))
+public val KtType.classSymbol: KaClassLikeSymbol?
+    get() = symbol
 
 /**
  * Returns the [KaType]'s [abbreviated type][KaType.abbreviatedType], or the type itself if it doesn't have an abbreviated type.

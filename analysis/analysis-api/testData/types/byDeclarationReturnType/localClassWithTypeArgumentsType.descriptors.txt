@@ -2,14 +2,12 @@ KaUsualClassType:
   abbreviatedType: null
   annotationsList: []
   classId: B
-  classSymbol: KaNamedClassOrObjectSymbol(<local>/B)
   nullability: NON_NULLABLE
   ownTypeArguments: [
     KaUsualClassType:
       abbreviatedType: null
       annotationsList: []
       classId: kotlin/Int
-      classSymbol: KaNamedClassOrObjectSymbol(kotlin/Int)
       nullability: NON_NULLABLE
       ownTypeArguments: []
       qualifiers: [
@@ -18,6 +16,7 @@ KaUsualClassType:
           symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
           typeArguments: []
       ]
+      symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
   ]
   qualifiers: [
     qualifier:
@@ -28,7 +27,6 @@ KaUsualClassType:
           abbreviatedType: null
           annotationsList: []
           classId: kotlin/Int
-          classSymbol: KaNamedClassOrObjectSymbol(kotlin/Int)
           nullability: NON_NULLABLE
           ownTypeArguments: []
           qualifiers: [
@@ -37,8 +35,10 @@ KaUsualClassType:
               symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
               typeArguments: []
           ]
+          symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
       ]
   ]
+  symbol: KaNamedClassOrObjectSymbol(<local>/B)
 
 Rendered type:
 B<kotlin.Int>

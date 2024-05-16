@@ -59,7 +59,7 @@ public class SirTypeProviderImpl(
 
         fun buildRegularType(ktType: KaType): SirType = when (ktType) {
             is KaUsualClassType -> with(sirSession) {
-                when (val classSymbol = ktType.classSymbol) {
+                when (val classSymbol = ktType.symbol) {
                     is KaSymbolWithVisibility -> {
                         if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
                             SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)

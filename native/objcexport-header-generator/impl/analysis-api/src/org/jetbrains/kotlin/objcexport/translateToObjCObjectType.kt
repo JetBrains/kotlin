@@ -43,7 +43,7 @@ private val objCProtocolClassId = ClassId(cInteropPackage, Name.identifier("ObjC
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtType.translateToObjCObjectType(): ObjCNonNullReferenceType {
     if (this !is KtNonErrorClassType) return objCErrorType
-    val classSymbol = this.classSymbol as? KtClassOrObjectSymbol ?: return ObjCIdType
+    val classSymbol = this.symbol as? KtClassOrObjectSymbol ?: return ObjCIdType
     return classSymbol.translateToObjCObjectType()
 }
 

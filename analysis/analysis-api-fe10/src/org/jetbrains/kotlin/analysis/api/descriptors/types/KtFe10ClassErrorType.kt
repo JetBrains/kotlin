@@ -42,7 +42,7 @@ internal class KaFe10ClassErrorType(
     override val errorMessage: String
         get() = withValidityAssertion { fe10Type.debugMessage }
 
-    override val candidateClassSymbols: Collection<KaClassLikeSymbol>
+    override val candidateSymbols: Collection<KaClassLikeSymbol>
         get() = withValidityAssertion { emptyList() }
 
     override val nullability: KaTypeNullability

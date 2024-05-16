@@ -496,7 +496,7 @@ internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
                 if (isEnum && this.classId == StandardClassIds.Enum) return false
 
                 // NB: need to expand type alias, e.g., kotlin.Comparator<T> -> java.util.Comparator<T>
-                val classKind = expandedClassSymbol?.classKind
+                val classKind = expandedSymbol?.classKind
                 val isJvmInterface = classKind == KaClassKind.INTERFACE || classKind == KaClassKind.ANNOTATION_CLASS
 
                 forExtendsList == !isJvmInterface
@@ -690,6 +690,6 @@ internal fun KaCallableSymbol.hasTypeForValueClassInSignature(
 context(KaSession)
 internal val KaType.typeForValueClass: Boolean
     get() {
-        val symbol = expandedClassSymbol as? KaNamedClassOrObjectSymbol ?: return false
+        val symbol = expandedSymbol as? KaNamedClassOrObjectSymbol ?: return false
         return symbol.isInline
     }

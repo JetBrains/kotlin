@@ -257,6 +257,7 @@ public class DebugSymbolRenderer(
         val members = value::class.members
             .filter { it.name !in ignoredPropertyNames }
             .filter { it.visibility != KVisibility.PRIVATE && it.visibility != KVisibility.INTERNAL }
+            .filter { !it.hasAnnotation<Deprecated>() }
             .sortedBy { it.name }
             .filterIsInstance<KProperty<*>>()
 
