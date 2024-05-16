@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSigna
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.defaultTypeWithoutArguments
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -409,45 +409,30 @@ class IrBuiltInsOverFir(
             symbol: IrSimpleFunctionSymbol?,
             returnType: IrType,
             valueParameterTypes: Array<out Pair<String, IrType>>,
-            typeParameters: List<IrTypeParameter> = emptyList(),
-            origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-            modality: Modality = Modality.FINAL,
-            isOperator: Boolean = false,
-            isInfix: Boolean = false,
-            isIntrinsicConst: Boolean = false,
-            postBuild: IrSimpleFunction.() -> Unit = {},
-            build: IrFunctionBuilder.() -> Unit = {},
+            typeParameters: List<IrTypeParameter>,
+            origin: IrDeclarationOrigin,
+            isIntrinsicConst: Boolean,
         ): IrSimpleFunction {
-            // TODO: builder seems to be redundant
             fun makeWithSymbol(symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
-                return IrFunctionBuilder().run {
-                    this.name = Name.identifier(name)
-                    this.returnType = returnType
-                    this.origin = origin
-                    this.modality = modality
-                    this.isOperator = isOperator
-                    this.isInfix = isInfix
-                    build()
-                    irFactory.createSimpleFunction(
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        origin = this.origin,
-                        name = this.name,
-                        visibility = visibility,
-                        isInline = isInline,
-                        isExpect = isExpect,
-                        returnType = this.returnType,
-                        modality = this.modality,
-                        symbol = symbol,
-                        isTailrec = isTailrec,
-                        isSuspend = isSuspend,
-                        isOperator = this.isOperator,
-                        isInfix = this.isInfix,
-                        isExternal = isExternal,
-                        containerSource = containerSource,
-                        isFakeOverride = isFakeOverride,
-                    )
-                }.also { fn ->
+                return irFactory.createSimpleFunction(
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = origin,
+                    name = Name.identifier(name),
+                    visibility = DescriptorVisibilities.PUBLIC,
+                    isInline = false,
+                    isExpect = false,
+                    returnType = returnType,
+                    modality = Modality.FINAL,
+                    symbol = symbol,
+                    isTailrec = false,
+                    isSuspend = false,
+                    isOperator = false,
+                    isInfix = false,
+                    isExternal = false,
+                    containerSource = null,
+                    isFakeOverride = false,
+                ).also { fn ->
                     valueParameterTypes.forEachIndexed { index, (pName, irType) ->
                         fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
                     }
@@ -457,7 +442,6 @@ class IrBuiltInsOverFir(
                         fn.annotations += intrinsicConstAnnotation
                     }
                     fn.parent = packageFragment
-                    fn.postBuild()
                 }
             }
 
@@ -480,7 +464,11 @@ class IrBuiltInsOverFir(
             isIntrinsicConst: Boolean = false,
         ): IrSimpleFunctionSymbol {
             return createFunction(
-                name, symbol, returnType, valueParameterTypes,
+                name = name,
+                symbol = symbol,
+                returnType = returnType,
+                valueParameterTypes = valueParameterTypes,
+                typeParameters = emptyList(),
                 origin = BUILTIN_OPERATOR,
                 isIntrinsicConst = isIntrinsicConst
             ).also {
@@ -571,12 +559,13 @@ class IrBuiltInsOverFir(
             }
 
             createFunction(
-                BuiltInOperatorNames.CHECK_NOT_NULL,
+                name = BuiltInOperatorNames.CHECK_NOT_NULL,
                 symbol = syntheticSymbolsContainer.checkNotNullSymbol,
-                IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
-                arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
+                returnType = IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
+                valueParameterTypes = arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
                 typeParameters = listOf(typeParameter),
-                origin = BUILTIN_OPERATOR
+                origin = BUILTIN_OPERATOR,
+                isIntrinsicConst = false,
             ).also {
                 // `kotlinInternalIrPackageFragment` definitely is not a lazy class
                 @OptIn(UnsafeDuringIrConstructionAPI::class)
