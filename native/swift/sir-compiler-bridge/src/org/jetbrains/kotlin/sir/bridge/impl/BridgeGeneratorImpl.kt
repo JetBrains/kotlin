@@ -12,19 +12,19 @@ import org.jetbrains.kotlin.sir.util.*
 private const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
 private const val stdintHeader = "stdint.h"
 
-internal class BridgeGeneratorImpl : BridgeGenerator {
+internal class BridgeGeneratorImpl(val typeNamer: SirTypeNamer) : BridgeGenerator {
     override fun generateFunctionBridges(request: BridgeRequest) = buildList {
         when (request.callable) {
             is SirFunction -> {
                 add(
-                    request.descriptor.createFunctionBridge { args ->
+                    request.descriptor.createFunctionBridge(typeNamer) { args ->
                         "${request.fqName.joinToString(separator = ".")}(${args.joinToString()})"
                     }
                 )
             }
             is SirGetter -> {
                 add(
-                    request.descriptor.createFunctionBridge { args ->
+                    request.descriptor.createFunctionBridge(typeNamer) { args ->
                         val name = request.fqName.joinToString(separator = ".")
                         require(args.isEmpty()) { "Received a getter $name with ${args.size} parameters instead of no parameters, aborting" }
                         name
@@ -33,7 +33,7 @@ internal class BridgeGeneratorImpl : BridgeGenerator {
             }
             is SirSetter -> {
                 add(
-                    request.descriptor.createFunctionBridge { args ->
+                    request.descriptor.createFunctionBridge(typeNamer) { args ->
                         val name = request.fqName.joinToString(separator = ".")
                         require(args.size == 1) { "Received a setter $name with ${args.size} parameters instead of a single one, aborting" }
                         "$name = ${args.single()}"
@@ -42,13 +42,13 @@ internal class BridgeGeneratorImpl : BridgeGenerator {
             }
             is SirInit -> {
                 add(
-                    request.allocationDescriptor.createFunctionBridge { args ->
+                    request.allocationDescriptor.createFunctionBridge(typeNamer) { args ->
                         val typeName = request.fqName.joinToString(separator = ".")
                         "kotlin.native.internal.createUninitializedInstance<$typeName>(${args.joinToString()})"
                     }
                 )
                 add(
-                    request.initializationDescriptor.createFunctionBridge { args ->
+                    request.initializationDescriptor.createFunctionBridge(typeNamer) { args ->
                         val ctorName = request.fqName.joinToString(separator = ".")
                         "kotlin.native.internal.initInstance(${args.first()}, ${ctorName}(${args.drop(1).joinToString()}))"
                     }
@@ -60,12 +60,12 @@ internal class BridgeGeneratorImpl : BridgeGenerator {
     override fun generateSirFunctionBody(request: BridgeRequest) = SirFunctionBody(buildList {
         when (request.callable) {
             is SirFunction, is SirGetter, is SirSetter -> {
-                add("return ${request.descriptor.swiftCall()}")
+                add("return ${request.descriptor.swiftCall(typeNamer)}")
             }
             is SirInit -> {
-                add("let ${obj.name} = ${request.allocationDescriptor.swiftCall()}")
+                add("let ${obj.name} = ${request.allocationDescriptor.swiftCall(typeNamer)}")
                 add("super.init(__externalRCRef: ${obj.name})")
-                add(request.initializationDescriptor.swiftCall())
+                add(request.initializationDescriptor.swiftCall(typeNamer))
             }
         }
     })
@@ -123,13 +123,14 @@ private fun cDeclarationName(bridgeName: String, parameterBridges: List<BridgePa
 }
 
 private inline fun BridgeFunctionDescriptor.createKotlinBridge(
+    typeNamer: SirTypeNamer,
     buildCallSite: (args: List<String>) -> String,
 ) = buildList {
     add("@${exportAnnotationFqName.substringAfterLast('.')}(\"${cName}\")")
     add("public fun $kotlinName(${parameters.joinToString { "${it.name}: ${it.bridge.kotlinType.repr}" }}): ${returnType.kotlinType.repr} {")
     val indent = "    "
     parameters.forEach {
-        add("${indent}val __${it.name} = ${it.bridge.generateSwiftToKotlinConversion(it.name)}")
+        add("${indent}val __${it.name} = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name)}")
     }
     val callSite = buildCallSite(parameters.map { "__${it.name}" })
     if (returnType.swiftType.isVoid) {
@@ -137,19 +138,22 @@ private inline fun BridgeFunctionDescriptor.createKotlinBridge(
     } else {
         val resultName = "_result"
         add("${indent}val $resultName = $callSite")
-        add("${indent}return ${returnType.generateKotlinToSwiftConversion(resultName)}")
+        add("${indent}return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}")
     }
     add("}")
 }
 
-private fun BridgeFunctionDescriptor.swiftCall() = "$cName(${parameters.joinToString { parameter -> parameter.name }})"
+private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String {
+    val call = "$cName(${parameters.joinToString { it.bridge.inSwiftSources.swiftToKotlin(typeNamer, it.name) }})"
+    return returnType.inSwiftSources.kotlinToSwift(typeNamer, call)
+}
 
 private fun BridgeFunctionDescriptor.cDeclaration() =
     "${returnType.cType.repr} ${cName}(${parameters.joinToString { "${it.bridge.cType.repr} ${it.name}" }});"
 
-private inline fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: (args: List<String>) -> String) =
+private inline fun BridgeFunctionDescriptor.createFunctionBridge(typeNamer: SirTypeNamer, kotlinCall: (args: List<String>) -> String) =
     FunctionBridge(
-        KotlinFunctionBridge(createKotlinBridge(kotlinCall), listOf(exportAnnotationFqName)),
+        KotlinFunctionBridge(createKotlinBridge(typeNamer, kotlinCall), listOf(exportAnnotationFqName)),
         CFunctionBridge(listOf(cDeclaration()), listOf(stdintHeader))
     )
 
@@ -176,8 +180,8 @@ private fun bridgeType(type: SirType): Bridge {
         SirSwiftModule.double -> Bridge.AsIs(type, KotlinType.Double, CType.Double)
         SirSwiftModule.float -> Bridge.AsIs(type, KotlinType.Float, CType.Float)
 
-        SirSwiftModule.uint -> Bridge.AsObject(type, KotlinType.Object, CType.Object)
-        
+        SirSwiftModule.uint -> Bridge.AsOpaqueObject(type, KotlinType.Object, CType.Object)
+
         is SirTypealias -> bridgeType(subtype.type)
 
         // TODO: Right now, we just assume everything nominal that we do not recognize is a class. We should make this decision looking at kotlin type?
@@ -248,26 +252,66 @@ private enum class KotlinType(val repr: String) {
     Object(repr = "kotlin.native.internal.NativePtr")
 }
 
+/**
+ * Generate value conversions between Swift and Kotlin.
+ */
+private interface ValueConversion {
+    fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String
+    fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String
+}
+
+private object IdentityValueConversion : ValueConversion {
+    override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
+    override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
+}
+
 private sealed class Bridge(
     val swiftType: SirType,
     val kotlinType: KotlinType,
     val cType: CType,
 ) {
     class AsIs(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
-        override fun generateSwiftToKotlinConversion(parameterName: String): String = parameterName
-
-        override fun generateKotlinToSwiftConversion(parameterName: String): String = parameterName
+        override val inKotlinSources = IdentityValueConversion
+        override val inSwiftSources = IdentityValueConversion
     }
 
     class AsObject(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
-        override fun generateSwiftToKotlinConversion(parameterName: String): String =
-            "kotlin.native.internal.ref.dereferenceExternalRCRef($parameterName)"
+        override val inKotlinSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${typeNamer.kotlinFqName(swiftType)}"
 
-        override fun generateKotlinToSwiftConversion(parameterName: String): String =
-            "kotlin.native.internal.ref.createRetainedExternalRCRef($parameterName)"
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "${typeNamer.swiftFqName(swiftType)}(__externalRCRef: $valueExpression)"
+
+        }
     }
 
-    abstract fun generateSwiftToKotlinConversion(parameterName: String): String
+    class AsOpaqueObject(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
+        override val inKotlinSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression)"
 
-    abstract fun generateKotlinToSwiftConversion(parameterName: String): String
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources = IdentityValueConversion
+    }
+
+    /**
+     * [ValueConversion] to be used when generating Kotlin sources.
+     */
+    abstract val inKotlinSources: ValueConversion
+
+    /**
+     * [ValueConversion] to be used when generating Swift sources.
+     */
+    abstract val inSwiftSources: ValueConversion
 }

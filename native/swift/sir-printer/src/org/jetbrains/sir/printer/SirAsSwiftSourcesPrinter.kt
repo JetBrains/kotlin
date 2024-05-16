@@ -302,22 +302,6 @@ private val SirVisibility.swift
 
 private val SirParameter.swift get(): String = (argumentName ?: "_") + (parameterName?.let { " $it" } ?: "") + ": " + type.swift
 
-private val SirType.swift
-    get(): String = when (this) {
-        is SirExistentialType -> "Any"
-        is SirNominalType -> type.swiftFqName
-        is SirErrorType -> "ERROR_TYPE"
-        is SirUnsupportedType -> "UNSUPPORTED_TYPE"
-    }
-
-private val SirNamedDeclaration.swiftFqName: String
-    get() {
-        val parentName = (parent as? SirNamedDeclaration)?.swiftFqName
-            ?: ((parent as? SirNamed)?.name)
-            ?: ((parent as? SirExtension)?.extendedType?.swift)
-        return parentName?.let { "$it.$name" } ?: name
-    }
-
 private val simpleIdentifierRegex = Regex("[_a-zA-Z][_a-zA-Z0-9]*")
 
 private val String.swiftIdentifier get() = if (simpleIdentifierRegex.matches(this)) this else "`$this`"

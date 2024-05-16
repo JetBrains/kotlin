@@ -85,8 +85,13 @@ public interface BridgePrinter {
     public fun print(): Sequence<String>
 }
 
-public fun createBridgeGenerator(): BridgeGenerator =
-    BridgeGeneratorImpl()
+public interface SirTypeNamer {
+    public fun swiftFqName(type: SirType): String
+    public fun kotlinFqName(type: SirType): String
+}
+
+public fun createBridgeGenerator(namer: SirTypeNamer): BridgeGenerator =
+    BridgeGeneratorImpl(namer)
 
 public fun createCBridgePrinter(): BridgePrinter =
     CBridgePrinter()

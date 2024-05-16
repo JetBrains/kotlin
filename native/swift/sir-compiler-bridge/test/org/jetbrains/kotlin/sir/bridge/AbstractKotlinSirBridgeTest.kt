@@ -22,7 +22,17 @@ abstract class AbstractKotlinSirBridgeTest {
 
         val requests = parseRequestsFromTestDir(testPathFull)
 
-        val generator = createBridgeGenerator()
+        val generator = createBridgeGenerator(object : SirTypeNamer {
+            override fun swiftFqName(type: SirType): String {
+                TODO("Not yet implemented")
+            }
+
+            override fun kotlinFqName(type: SirType): String {
+                require(type is SirNominalType)
+                require(type.type.origin is SirOrigin.ExternallyDefined)
+                return type.type.name
+            }
+        })
         val kotlinBridgePrinter = createKotlinBridgePrinter()
         val cBridgePrinter = createCBridgePrinter()
 

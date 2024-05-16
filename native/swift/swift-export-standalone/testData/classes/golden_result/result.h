@@ -70,3 +70,6 @@ void why_we_need_module_names_CLASS_WITH_SAME_NAME_init_initialize__TypesOfArgum
 
 int32_t why_we_need_module_names_bar();
 
+uintptr_t why_we_need_module_names_foo();
+
+

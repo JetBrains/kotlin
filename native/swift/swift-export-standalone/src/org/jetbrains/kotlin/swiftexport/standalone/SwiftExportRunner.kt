@@ -5,11 +5,16 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.sir.SirImport
+import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.bridge.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
+import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.RENDER_DOC_COMMENTS
@@ -18,6 +23,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
 import org.jetbrains.kotlin.utils.KotlinNativePaths
+import org.jetbrains.sir.printer.swift
 import java.nio.file.Path
 import kotlin.io.path.div
 
@@ -125,7 +131,13 @@ public fun runSwiftExport(
         DEFAULT_BRIDGE_MODULE_NAME
     }
     val swiftModule = buildSwiftModule(input, config)
-    val bridgeGenerator = createBridgeGenerator()
+    val bridgeGenerator = createBridgeGenerator(object : SirTypeNamer {
+        override fun swiftFqName(type: SirType): String = type.swift
+        override fun kotlinFqName(type: SirType): String {
+            require(type is SirNominalType)
+            return ((type.type.origin as KotlinSource).symbol as KtClassLikeSymbol).classIdIfNonLocal!!.asFqNameString()
+        }
+    })
     val bridgeRequests = buildBridgeRequests(bridgeGenerator, swiftModule)
     if (bridgeRequests.isNotEmpty()) {
         swiftModule.updateImports(listOf(SirImport(bridgeModuleName)))

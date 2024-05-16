@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider.ErrorTypeStrategy
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 public class SirTypeProviderImpl(
@@ -57,13 +59,24 @@ public class SirTypeProviderImpl(
 
         fun buildRegularType(ktType: KtType): SirType = when (ktType) {
             is KtUsualClassType -> with(sirSession) {
-                SirNominalType(ktType.classSymbol.sirDeclaration() as SirNamedDeclaration)
-            }
-            is KtFunctionalType,
-            is KtTypeParameterType,
-            -> SirUnsupportedType()
-            is KtErrorType -> SirErrorType(ktType.errorMessage)
-            else -> SirErrorType("Unexpected type ${ktType.asStringForDebugging()}")
+                when (val classSymbol = ktType.classSymbol) {
+                        is KtSymbolWithVisibility -> {
+                            if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
+                                SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
+                            } else {
+                                // Mapping all unexported types to KotlinBase
+                                SirNominalType(KotlinRuntimeModule.kotlinBase)
+                            }
+                        }
+                        else -> SirUnsupportedType()
+                    }
+                }
+                is KtFunctionalType,
+                is KtTypeParameterType,
+                -> SirUnsupportedType()
+                is KtErrorType -> SirErrorType(ktType.errorMessage)
+                else -> SirErrorType("Unexpected type ${ktType.asStringForDebugging()}")
+
         }
 
         return ktType.abbreviatedType?.let { buildRegularType(it) }

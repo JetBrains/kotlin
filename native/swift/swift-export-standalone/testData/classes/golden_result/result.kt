@@ -214,3 +214,10 @@ public fun why_we_need_module_names_bar(): Int {
     return _result
 }
 
+@ExportedBridge("why_we_need_module_names_foo")
+public fun why_we_need_module_names_foo(): kotlin.native.internal.NativePtr {
+    val _result = why_we_need_module_names.foo()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+

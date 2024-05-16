@@ -452,7 +452,7 @@ public extension main.why_we_need_module_names {
         return why_we_need_module_names_bar()
     }
     public static func foo() -> main.CLASS_WITH_SAME_NAME {
-        fatalError()
+        return main.CLASS_WITH_SAME_NAME(__externalRCRef: why_we_need_module_names_foo())
     }
 }
 public enum namespace {
