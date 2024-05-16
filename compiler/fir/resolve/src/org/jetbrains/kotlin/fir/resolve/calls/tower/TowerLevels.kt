@@ -392,10 +392,11 @@ internal class ScopeTowerLevel(
         val declarationReceiverType =
             candidate.resolvedReceiverTypeRef?.coneType as? ConeClassLikeType ?: return false
 
-        if (declarationReceiverType.toSymbol(session) is FirTypeAliasSymbol) return false
 
-        val startProjectedDeclarationReceiverType = declarationReceiverType.lookupTag.constructClassType(
-            declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
+        val fullyExpandedType = declarationReceiverType.fullyExpandedType(session)
+
+        val startProjectedDeclarationReceiverType = fullyExpandedType.lookupTag.constructClassType(
+            fullyExpandedType.typeArguments.map { ConeStarProjection }.toTypedArray(),
             isNullable = true
         )
 
