@@ -64,13 +64,13 @@ public actual annotation class JvmMultifileClass
 internal actual annotation class JvmPackageName(actual val name: String)
 
 /**
- * Sets `ACC_SYNTHETIC` flag on the annotated target in the Java bytecode.
+ * Sets the `ACC_SYNTHETIC` flag on the annotated target in the Java bytecode.
  *
  * Synthetic targets become inaccessible for Java sources at compile time while still being accessible for Kotlin sources.
- * Marking target as synthetic is a binary compatible change, already compiled Java code will be able to access such target.
+ * Marking a target as synthetic is a binary compatible change, already compiled Java code will be able to access such a target.
  *
- * This annotation is intended for *rare cases* when API designer needs to hide Kotlin-specific target from Java API
- * while keeping it a part of Kotlin API so the resulting API is idiomatic for both languages.
+ * This annotation is intended for *rare cases* when an API designer needs to hide a Kotlin-specific target from the Java API
+ * while keeping it a part of the Kotlin API, so the resulting API is idiomatic for both languages.
  */
 @Target(AnnotationTarget.FILE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
@@ -134,13 +134,13 @@ public actual annotation class ImplicitlyActualizedByJvmDeclaration
 public actual annotation class JvmField
 
 /**
- * Instructs compiler to generate or omit wildcards for type arguments corresponding to parameters with
+ * Instructs the compiler to generate or omit wildcards for type arguments corresponding to parameters with
  * declaration-site variance, for example such as `Collection<out T>` has.
  *
  * If the innermost applied `@JvmSuppressWildcards` has `suppress=true`, the type is generated without wildcards.
  * If the innermost applied `@JvmSuppressWildcards` has `suppress=false`, the type is generated with wildcards.
  *
- * It may be helpful only if declaration seems to be inconvenient to use from Java.
+ * It may be helpful only if the declaration seems to be inconvenient to use from Java.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
@@ -148,9 +148,9 @@ public actual annotation class JvmField
 public actual annotation class JvmSuppressWildcards(actual val suppress: Boolean = true)
 
 /**
- * Instructs compiler to generate wildcard for annotated type arguments corresponding to parameters with declaration-site variance.
+ * Instructs the compiler to generate a wildcard for the annotated type arguments corresponding to parameters with declaration-site variance.
  *
- * It may be helpful only if declaration seems to be inconvenient to use from Java without wildcard.
+ * It may be helpful only if the declaration seems to be inconvenient to use from Java without wildcard.
  */
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
@@ -158,10 +158,9 @@ public actual annotation class JvmSuppressWildcards(actual val suppress: Boolean
 public actual annotation class JvmWildcard
 
 /**
- * Specifies that given value class is inline class.
+ * Specifies that the given value class is an inline class.
  *
- * Adding and removing the annotation is binary incompatible change, since inline classes' methods and functions with inline classes
- * in their signature are mangled.
+ * Adding and removing the annotation is a binary incompatible change, since methods and functions of inline classes are mangled.
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -170,7 +169,7 @@ public actual annotation class JvmWildcard
 public actual annotation class JvmInline
 
 /**
- * Instructs compiler to mark the class as a record and generate relevant toString/equals/hashCode methods
+ * Instructs the compiler to mark the class as a record and generate relevant toString/equals/hashCode methods
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
