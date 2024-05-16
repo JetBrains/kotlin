@@ -2967,8 +2967,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModule
     setRuntimeConstGlobal("Kotlin_needDebugInfo", llvm.constInt32(if (shouldContainDebugInfo()) 1 else 0))
     setRuntimeConstGlobal("Kotlin_runtimeAssertsMode", llvm.constInt32(config.runtimeAssertsMode.value))
     setRuntimeConstGlobal("Kotlin_disableMmap", llvm.constInt32(if (config.disableMmap) 1 else 0))
-    setRuntimeConstGlobal("Kotlin_disableAllocatorOverheadEstimate", llvm.constInt32(if (config.disableAllocatorOverheadEstimate) 1 else 0))
-    
+
     val runtimeLogs = ConstArray(llvm.int32Type, LoggingTag.entries.sortedBy { it.ord }.map {
         config.runtimeLogs[it]!!.ord.let { llvm.constInt32(it) }
     })
