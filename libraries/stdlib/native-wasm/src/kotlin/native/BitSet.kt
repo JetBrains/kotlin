@@ -6,7 +6,8 @@
 
 package kotlin.native
 
-private const val ELEMENT_SIZE: Int = 64
+@ObsoleteNativeApi
+internal const val BIT_SET_ELEMENT_SIZE: Int = 64
 
 /**
  * A vector of bits growing if necessary and allowing one to set/clear/read bits from it by a bit index.
@@ -15,7 +16,8 @@ private const val ELEMENT_SIZE: Int = 64
  * @constructor creates an empty bit set with the specified [size]
  * @param size the size of one element in the array used to store bits.
  */
-internal expect class BitSet constructor(size: Int = ELEMENT_SIZE) {
+@ObsoleteNativeApi
+internal expect class BitSet constructor(size: Int = BIT_SET_ELEMENT_SIZE) {
     /** True if this BitSet contains no bits set to true. */
     val isEmpty: Boolean
     var size: Int
