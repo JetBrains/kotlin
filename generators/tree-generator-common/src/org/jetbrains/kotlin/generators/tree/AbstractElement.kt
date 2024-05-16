@@ -142,8 +142,9 @@ abstract class AbstractElement<Element, Field, Implementation>(
         elementParents.forEach { parentRef ->
             val parent = parentRef.element
             val fields = parent.allFields.map { field ->
-                field.replaceType(field.typeRef.substitute(parentRef.args) as TypeRefWithNullability)
+                field.copy()
                     .apply {
+                        substituteType(parentRef.args)
                         fromParent = true
                     }
             }
