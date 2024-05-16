@@ -166,6 +166,12 @@ private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = createFile
         description = "Wrap inline declarations with reified type parameters"
 )
 
+private val inlineCallableReferenceToLambdaPhase = createFileLoweringPhase(
+        lowering = { context: NativeGenerationState -> NativeInlineCallableReferenceToLambdaPhase(context) },
+        name = "NativeInlineCallableReferenceToLambdaPhase",
+        description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
+)
+
 private val postInlinePhase = createFileLoweringPhase(
         { context: Context -> PostInlineLowering(context) },
         name = "PostInline",
@@ -563,6 +569,7 @@ internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingInli
         sharedVariablesPhase,
         lowerOuterThisInInlineFunctionsPhase,
         extractLocalClassesFromInlineBodies,
+        inlineCallableReferenceToLambdaPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
         inlinePhase,
 )

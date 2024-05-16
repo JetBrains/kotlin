@@ -91,6 +91,7 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
             LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, function)
         }
 
+        NativeInlineCallableReferenceToLambdaPhase(generationState).lower(function)
         WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
     }
 
