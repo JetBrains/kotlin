@@ -310,6 +310,7 @@ enum class LanguageFeature(
     DfaBooleanVariables(KOTLIN_2_0), // KT-25747
     LightweightLambdas(KOTLIN_2_0, kind = OTHER), // KT-45375
     ObjCSignatureOverrideAnnotation(KOTLIN_2_0, sinceApiVersion = ApiVersion.KOTLIN_2_0, kind = OTHER), // KT-61323
+
     // 2.1
 
     ReferencesToSyntheticJavaProperties(KOTLIN_2_1), // KT-8575
@@ -326,6 +327,7 @@ enum class LanguageFeature(
     JsExternalPropertyParameters(KOTLIN_2_1), // KT-65965
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_1, kind = BUG_FIX), // KT-11914 Deprecation phase 2
     CorrectSpecificityCheckForSignedAndUnsigned(KOTLIN_2_1, kind = OTHER), // KT-35305
+    AllowAccessToProtectedFieldFromSuperCompanion(KOTLIN_2_1), // KT-39868
 
     // End of 2.* language features --------------------------------------------------
 

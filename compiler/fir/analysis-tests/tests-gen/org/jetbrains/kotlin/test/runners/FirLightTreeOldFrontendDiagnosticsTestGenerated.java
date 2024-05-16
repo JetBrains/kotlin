@@ -7165,6 +7165,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("protectedFieldFromSuperCompanion_after.kt")
+      public void testProtectedFieldFromSuperCompanion_after() {
+        runTest("compiler/testData/diagnostics/tests/classObjects/protectedFieldFromSuperCompanion_after.kt");
+      }
+
+      @Test
+      @TestMetadata("protectedFieldFromSuperCompanion_before.kt")
+      public void testProtectedFieldFromSuperCompanion_before() {
+        runTest("compiler/testData/diagnostics/tests/classObjects/protectedFieldFromSuperCompanion_before.kt");
+      }
+
+      @Test
       @TestMetadata("resolveFunctionInsideClassObject.kt")
       public void testResolveFunctionInsideClassObject() {
         runTest("compiler/testData/diagnostics/tests/classObjects/resolveFunctionInsideClassObject.kt");

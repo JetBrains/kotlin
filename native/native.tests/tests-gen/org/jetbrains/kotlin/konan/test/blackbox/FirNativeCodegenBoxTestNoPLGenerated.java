@@ -7587,6 +7587,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       public void testInlineFunctionCompanionPropertyAccess() {
         runTest("compiler/testData/codegen/box/companion/inlineFunctionCompanionPropertyAccess.kt");
       }
+
+      @Test
+      @TestMetadata("protectedConstValFromSuperCompanion.kt")
+      public void testProtectedConstValFromSuperCompanion() {
+        runTest("compiler/testData/codegen/box/companion/protectedConstValFromSuperCompanion.kt");
+      }
     }
 
     @Nested
