@@ -403,8 +403,6 @@ tasks.register("dist") {
             "distStdlibCache"
 }
 
-def copyDarwinKlibsForFullCrossDist = NativeFullCrossDistKt.setupCrossDistCopyTask(project)
-
 tasks.register("crossDist") {
     dependsOn "distCompiler",
             "crossDistRuntime",
@@ -455,10 +453,15 @@ def sbomBundlePrebuiltForPublish = tasks.register("sbomBundlePrebuiltForPublish"
     }
 }
 
+def mergeCrossBundleTask = NativeFullCrossDistKt.setupMergeCrossBundleTask(project)
+
 tasks.register("bundlePrebuilt", (PlatformInfo.isWindows()) ? Zip : Tar) {
     dependsOn(sbomBundlePrebuiltForPublish)
-    dependsOn("crossDistPlatformLibs")
-    dependsOn(copyDarwinKlibsForFullCrossDist)
+    if (mergeCrossBundleTask == null)
+        dependsOn("crossDistPlatformLibs")
+    else
+        dependsOn(mergeCrossBundleTask)
+
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
     archiveVersion.set(kotlinVersion)
@@ -470,10 +473,11 @@ tasks.register("bundlePrebuilt", (PlatformInfo.isWindows()) ? Zip : Tar) {
     }
 }
 
-void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean containsPlatformLibraries) {
+void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean containsPlatformLibraries, boolean crossBundleEnabled) {
     task.from(project.projectDir) {
         include 'licenses/**'
-        if (!containsPlatformLibraries || !PlatformInfo.isMac()) {
+        def hasXcodeLibraries = PlatformInfo.isMac() || crossBundleEnabled
+        if (!containsPlatformLibraries || !hasXcodeLibraries) {
             exclude '**/xcode_license.pdf'
         }
         if (!containsPlatformLibraries) {
@@ -488,17 +492,29 @@ void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean contains
 }
 
 tasks.named("bundleRegular").configure {
-    configurePackingLicensesToBundle(it, /* containsPlatformLibraries = */ false)
+    configurePackingLicensesToBundle(
+            it,
+            /* containsPlatformLibraries = */ false,
+            /* crossBundleEnabled = */ mergeCrossBundleTask != null
+    )
 }
 tasks.named("bundlePrebuilt").configure {
-    configurePackingLicensesToBundle(it, /* containsPlatformLibraries = */ true)
+    configurePackingLicensesToBundle(
+            it,
+            /* containsPlatformLibraries = */ true,
+            /* crossBundleEnabled = */ mergeCrossBundleTask != null
+    )
 }
 
 configure([bundleRegular, bundlePrebuilt]) {
-    dependsOn("crossDist")
-    dependsOn("crossDistStdlibCache")
-    dependsOn("distSources")
-    dependsOn("distDef")
+    if (mergeCrossBundleTask == null) {
+        dependsOn("crossDist")
+        dependsOn("crossDistStdlibCache")
+        dependsOn("distSources")
+        dependsOn("distDef")
+    } else {
+        dependsOn(mergeCrossBundleTask)
+    }
 
     destinationDirectory.set(file('.'))
 
@@ -513,6 +529,21 @@ configure([bundleRegular, bundlePrebuilt]) {
     def archiveExtension = PlatformInfo.isWindows() ? 'zip' : 'tar.gz'
     def checksumFile = archiveBaseName.zip(archiveVersion) { name, version -> file("${buildDir}/${name}-${version}.${archiveExtension}.sha256") }
     outputs.file(checksumFile).withPropertyName("checksumFile")
+
+    // If `bundleRegular`/`bundlePrebuilt` tasks are executed with CC enabled, you will get a
+    // "Couldn't find method 'calculateChecksum' ... " error. This most likely happens due to bug/issue on Gradle side, somewhere around
+    // capturing mechanisms in doLast-lambda and CC's serialization/deserialization mechanism.
+    //
+    // Issue can be workarounded by converting this file to build.gradle.kts, but it's quite an invasive change, and there's no strict
+    // need for it. Indeed, normally you can't use `bundleRegular/`bundlePrebuilt` tasks with CC because they depend transitively on
+    // `KonanCompileLibraryTask` / `KonanCacheTask` (transitively via `crossDist`), which are inherently not compatible with CC
+    //
+    // Q: If `bundle*`-tasks depend on CC-incompatible tasks anyways, why we need this explicit call?
+    // A: When we're building a cross-dist on CI, we don't depend on 'crossDist' and other tasks, but just reuse the dist built in this
+    // build chain, via `mergeCrossBundleTask`. In such case, there won't be any CC-incompatible tasks in execution plan, and by default,
+    // Gradle will try using CC, leading to aforementioned "Couldn't find method"-issue. To avoid that, we additionally mark `bundle*`
+    // tasks as notCompatibleWithConfigurationCache.
+    notCompatibleWithConfigurationCache("Groovy script evaluation issue workaround")
 
     doLast {
         File bundleFile = archiveFile.get().asFile
