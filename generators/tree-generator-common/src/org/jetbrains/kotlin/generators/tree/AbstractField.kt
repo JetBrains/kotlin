@@ -109,14 +109,17 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     }
 
     /**
-     * Returns a copy of this field with its [typeRef] set to [newType] (if it's possible).
+     * Replaces the type of the field with its substituted [TypeRef.substitute] version,
+     * if it's possible.
      */
-    abstract fun replaceType(newType: TypeRefWithNullability): Field
+    abstract fun substituteType(map: TypeParameterSubstitutionMap)
 
     /**
      * Returns a copy of this field.
      */
-    abstract fun copy(): Field
+    fun copy() = internalCopy().also(::updateFieldsInCopy)
+
+    protected abstract fun internalCopy(): Field
 
     protected open fun updateFieldsInCopy(copy: Field) {
         copy.kDoc = kDoc

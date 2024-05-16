@@ -45,16 +45,12 @@ sealed class Field(
 
     override var isFinal: Boolean = false
 
-    override fun copy() = internalCopy().also(::updateFieldsInCopy)
-
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
         copy.customUseInIrFactoryStrategy = customUseInIrFactoryStrategy
         copy.customSetter = customSetter
         copy.symbolFieldRole = symbolFieldRole
     }
-
-    protected abstract fun internalCopy(): Field
 }
 
 class SingleField(
@@ -70,8 +66,9 @@ class SingleField(
     override val containsElement: Boolean
         get() = (typeRef as? ElementOrRef<*>)?.element is Element
 
-    override fun replaceType(newType: TypeRefWithNullability) =
-        SingleField(name, newType, isMutable, isChild).also(::updateFieldsInCopy)
+    override fun substituteType(map: TypeParameterSubstitutionMap) {
+        typeRef = typeRef.substitute(map) as TypeRefWithNullability
+    }
 
     override fun internalCopy() = SingleField(name, typeRef, isMutable, isChild)
 }
@@ -94,7 +91,9 @@ class ListField(
     override val containsElement: Boolean
         get() = (baseType as? ElementOrRef<*>)?.element is Element
 
-    override fun replaceType(newType: TypeRefWithNullability) = copy()
+    override fun substituteType(map: TypeParameterSubstitutionMap) {
+        baseType = baseType.substitute(map)
+    }
 
     override fun internalCopy() = ListField(name, baseType, isNullable, listType, isMutable, isChild)
 
