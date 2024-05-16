@@ -1,5 +1,18 @@
 import KotlinBridges
+import KotlinRuntime
 
+public class Foo : KotlinRuntime.KotlinBase {
+    public override init() {
+        let __kt = __root___Foo_init_allocate()
+        super.init(__externalRCRef: __kt)
+        __root___Foo_init_initialize__TypesOfArguments__uintptr_t__(__kt)
+    }
+    public override init(
+        __externalRCRef: Swift.UInt
+    ) {
+        super.init(__externalRCRef: __externalRCRef)
+    }
+}
 public var BOOLEAN_CONST: Swift.Bool {
     get {
         return __root___BOOLEAN_CONST_get()
@@ -68,6 +81,14 @@ public var USHORT_CONST: Swift.UInt16 {
 public var baz: Swift.Int32 {
     get {
         return __root___baz_get()
+    }
+}
+public var foo: main.Foo {
+    get {
+        return main.Foo(__externalRCRef: __root___foo_get())
+    }
+    set {
+        return __root___foo_set__TypesOfArguments__uintptr_t__(newValue.__externalRCRef())
     }
 }
 public extension main.namespace.main {

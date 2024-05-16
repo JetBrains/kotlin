@@ -14,13 +14,21 @@ func testConstants() throws {
     try assertEquals(actual: ULONG_CONST, expected: 4)
 }
 
+func testLateinit() throws {
+    lateinitProperty = Foo(value: 15)
+    try assertTrue(compare(a: lateinitProperty, b: Foo(value: 15)))
+    lateinitProperty = Foo(value: 42)
+    try assertTrue(compare(a: lateinitProperty, b: Foo(value: 42)))
+}
+
 class PropertiesTests : TestProvider {
     var tests: [TestCase] = []
 
     init() {
         providers.append(self)
         tests = [
-            TestCase(name: "initProducesNewObject", method: withAutorelease(testConstants))
+            TestCase(name: "testConstants", method: withAutorelease(testConstants)),
+            TestCase(name: "testLateinit", method: withAutorelease(testLateinit)),
         ]
     }
 }

@@ -8,6 +8,10 @@ double __root___DOUBLE_CONST_get();
 
 float __root___FLOAT_CONST_get();
 
+uintptr_t __root___Foo_init_allocate();
+
+void __root___Foo_init_initialize__TypesOfArguments__uintptr_t__(uintptr_t __kt);
+
 int32_t __root___INT_CONST_get();
 
 int64_t __root___LONG_CONST_get();
@@ -23,6 +27,10 @@ uint64_t __root___ULONG_CONST_get();
 uint16_t __root___USHORT_CONST_get();
 
 int32_t __root___baz_get();
+
+uintptr_t __root___foo_get();
+
+void __root___foo_set__TypesOfArguments__uintptr_t__(uintptr_t newValue);
 
 int32_t namespace_main_bar_get();
 
