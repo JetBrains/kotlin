@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
+import org.jetbrains.kotlin.fir.backend.utils.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.fir.backend.utils.toIrSymbol
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -17,16 +18,14 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.isBoolean
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -37,6 +36,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@RequiresOptIn("This declaration can be used only from IrBuiltinsOverFir")
+annotation class Fir2IrBuiltInsInternals
+
+@OptIn(Fir2IrBuiltInsInternals::class)
 class Fir2IrBuiltinSymbolsContainer(
     private val c: Fir2IrComponents,
     private val syntheticSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer
@@ -45,15 +48,14 @@ class Fir2IrBuiltinSymbolsContainer(
 
     private val symbolProvider: FirSymbolProvider = session.symbolProvider
 
-    val irFactory: IrFactory = c.irFactory
-
     val booleanNotSymbol: IrSimpleFunctionSymbol by lazy {
         val firFunction = findFirMemberFunctions(StandardClassIds.Boolean, OperatorNameConventions.NOT)
             .first { it.resolvedReturnType.isBoolean }
         findFunction(firFunction)
     }
 
-    private fun findFirMemberFunctions(classId: ClassId, name: Name): List<FirNamedFunctionSymbol> {
+    @Fir2IrBuiltInsInternals
+    internal fun findFirMemberFunctions(classId: ClassId, name: Name): List<FirNamedFunctionSymbol> {
         val klass = symbolProvider.getClassLikeSymbolByClassId(classId) as FirRegularClassSymbol
         val scope = klass.unsubstitutedScope(c)
         return scope.getFunctions(name)
@@ -114,7 +116,8 @@ class Fir2IrBuiltinSymbolsContainer(
 
     val arrayClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Array) }
 
-    private val primitiveSymbolToPrimitiveType: Map<IrClassSymbol, PrimitiveType> by lazy {
+    @Fir2IrBuiltInsInternals
+    internal val primitiveSymbolToPrimitiveType: Map<IrClassSymbol, PrimitiveType> by lazy {
         mapOf(
             charClass to PrimitiveType.CHAR,
             byteClass to PrimitiveType.BYTE,
@@ -126,7 +129,8 @@ class Fir2IrBuiltinSymbolsContainer(
         )
     }
 
-    private val primitiveTypeToIrType: Map<PrimitiveType, IrType> by lazy {
+    @Fir2IrBuiltInsInternals
+    internal val primitiveTypeToIrType: Map<PrimitiveType, IrType> by lazy {
         mapOf(
             PrimitiveType.BOOLEAN to booleanType,
             PrimitiveType.CHAR to charType,
@@ -152,7 +156,8 @@ class Fir2IrBuiltinSymbolsContainer(
     val floatArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.FLOAT) }
     val doubleArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.DOUBLE) }
 
-    private val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType> by lazy {
+    @Fir2IrBuiltInsInternals
+    internal val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType> by lazy {
         mapOf(
             booleanArray to PrimitiveType.BOOLEAN,
             charArray to PrimitiveType.CHAR,
@@ -243,22 +248,26 @@ class Fir2IrBuiltinSymbolsContainer(
         return builtInClass.functions.filter { it.owner.name == name }.asIterable()
     }
 
-    // ---------------
+    // --------------------------- utilities for declaration loading ---------------------------
 
-    private fun loadClass(classId: ClassId): IrClassSymbol {
+    @Fir2IrBuiltInsInternals
+    internal fun loadClass(classId: ClassId): IrClassSymbol {
         return loadClassSafe(classId) ?: error("Class not found: $classId")
     }
 
-    private fun loadClassSafe(classId: ClassId): IrClassSymbol? {
+    @Fir2IrBuiltInsInternals
+    internal fun loadClassSafe(classId: ClassId): IrClassSymbol? {
         val firClassSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
         return c.classifierStorage.getIrClassSymbol(firClassSymbol)
     }
 
-    private fun findFunctions(packageName: FqName, name: Name): List<IrSimpleFunctionSymbol> {
+    @Fir2IrBuiltInsInternals
+    internal fun findFunctions(packageName: FqName, name: Name): List<IrSimpleFunctionSymbol> {
         return symbolProvider.getTopLevelFunctionSymbols(packageName, name).map { findFunction(it) }
     }
 
-    private inline fun <K : Any, T> getFunctionsByKey(
+    @Fir2IrBuiltInsInternals
+    internal inline fun <K : Any, T> getFunctionsByKey(
         name: Name,
         vararg packageNameSegments: String,
         mapKey: (FirNamedFunctionSymbol) -> K?,
@@ -274,17 +283,20 @@ class Fir2IrBuiltinSymbolsContainer(
         return result
     }
 
-    private fun findFunction(functionSymbol: FirNamedFunctionSymbol): IrSimpleFunctionSymbol {
+    @Fir2IrBuiltInsInternals
+    internal fun findFunction(functionSymbol: FirNamedFunctionSymbol): IrSimpleFunctionSymbol {
         functionSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         return c.declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
     }
 
-    private val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
-        get() = IrSimpleTypeImpl(
-            kotlinType = null,
-            classifier = this,
-            nullability = SimpleTypeNullability.DEFINITELY_NOT_NULL,
-            arguments = emptyList(),
-            annotations = emptyList()
-        )
+    @Fir2IrBuiltInsInternals
+    internal fun findProperties(packageName: FqName, name: Name): List<IrPropertySymbol> {
+        return symbolProvider.getTopLevelPropertySymbols(packageName, name).map { findProperty(it) }
+    }
+
+    @Fir2IrBuiltInsInternals
+    internal fun findProperty(propertySymbol: FirPropertySymbol): IrPropertySymbol {
+        propertySymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        return c.declarationStorage.getIrPropertySymbol(propertySymbol) as IrPropertySymbol
+    }
 }

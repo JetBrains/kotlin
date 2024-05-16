@@ -11,18 +11,12 @@ import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.backend.utils.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.getFunctions
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -39,21 +33,26 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
+@OptIn(Fir2IrBuiltInsInternals::class)
 class IrBuiltInsOverFir(
     private val c: Fir2IrComponents,
     private val moduleDescriptor: FirModuleDescriptor,
     private val syntheticSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer,
     irMangler: KotlinMangler.IrMangler
 ) : IrBuiltIns() {
+
+    // ------------------------------------- basic stuff -------------------------------------
+
     private val session: FirSession
         get() = c.session
 
@@ -65,7 +64,9 @@ class IrBuiltInsOverFir(
 
     override val irFactory: IrFactory = c.irFactory
 
-    private val kotlinPackage = StandardClassIds.BASE_KOTLIN_PACKAGE
+    private val kotlinPackage: FqName = StandardClassIds.BASE_KOTLIN_PACKAGE
+
+    private val fir2irBuiltins = c.builtins
 
     override val kotlinInternalPackageFragment: IrExternalPackageFragment = createPackage(StandardClassIds.BASE_INTERNAL_PACKAGE)
     private val kotlinInternalIrPackageFragment: IrExternalPackageFragment = createPackage(StandardClassIds.BASE_INTERNAL_IR_PACKAGE)
@@ -74,61 +75,266 @@ class IrBuiltInsOverFir(
 
     private val irSignatureBuilder = PublicIdSignatureComputer(irMangler)
 
-    override val booleanNotSymbol: IrSimpleFunctionSymbol by lazy {
-        val firFunction = findFirMemberFunctions(StandardClassIds.Boolean, OperatorNameConventions.NOT)
-            .first { it.resolvedReturnType.isBoolean }
-        findFunction(firFunction)
-    }
+    // ------------------------------------- normal classes and functions -------------------------------------
 
-    private fun findFirMemberFunctions(classId: ClassId, name: Name): List<FirNamedFunctionSymbol> {
-        val klass = symbolProvider.getClassLikeSymbolByClassId(classId) as FirRegularClassSymbol
-        val scope = klass.unsubstitutedScope(c)
-        return scope.getFunctions(name)
-    }
+    override val booleanNotSymbol: IrSimpleFunctionSymbol get() = fir2irBuiltins.booleanNotSymbol
 
-    override val anyClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Any) }
+    override val anyClass: IrClassSymbol get() = fir2irBuiltins.anyClass
 
-    override val anyType: IrType get() = anyClass.defaultTypeWithoutArguments
-    override val anyNType: IrType by lazy { anyType.makeNullable() }
+    override val anyType: IrType get() = fir2irBuiltins.anyType
+    override val anyNType: IrType get() = fir2irBuiltins.anyNType
 
-    override val numberClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Number) }
+    override val numberClass: IrClassSymbol get() = fir2irBuiltins.numberClass
     override val numberType: IrType get() = numberClass.defaultTypeWithoutArguments
 
-    override val nothingClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Nothing) }
-    override val nothingType: IrType get() = nothingClass.defaultTypeWithoutArguments
-    override val nothingNType: IrType by lazy { nothingType.makeNullable() }
+    override val nothingClass: IrClassSymbol get() = fir2irBuiltins.nothingClass
+    override val nothingType: IrType get() = fir2irBuiltins.nothingType
+    override val nothingNType: IrType get() = fir2irBuiltins.nothingNType
 
-    override val unitClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Unit) }
-    override val unitType: IrType get() = unitClass.defaultTypeWithoutArguments
+    override val unitClass: IrClassSymbol get() = fir2irBuiltins.unitClass
+    override val unitType: IrType get() = fir2irBuiltins.unitType
 
-    override val booleanClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Boolean) }
-    override val booleanType: IrType get() = booleanClass.defaultTypeWithoutArguments
+    override val booleanClass: IrClassSymbol get() = fir2irBuiltins.booleanClass
+    override val booleanType: IrType get() = fir2irBuiltins.booleanType
 
-    override val charClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Char) }
-    override val charType: IrType get() = charClass.defaultTypeWithoutArguments
+    override val charClass: IrClassSymbol get() = fir2irBuiltins.charClass
+    override val charType: IrType get() = fir2irBuiltins.charType
 
-    override val byteClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Byte) }
-    override val byteType: IrType get() = byteClass.defaultTypeWithoutArguments
+    override val byteClass: IrClassSymbol get() = fir2irBuiltins.byteClass
+    override val byteType: IrType get() = fir2irBuiltins.byteType
 
-    override val shortClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Short) }
-    override val shortType: IrType get() = shortClass.defaultTypeWithoutArguments
+    override val shortClass: IrClassSymbol get() = fir2irBuiltins.shortClass
+    override val shortType: IrType get() = fir2irBuiltins.shortType
 
-    override val intClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Int) }
-    override val intType: IrType get() = intClass.defaultTypeWithoutArguments
+    override val intClass: IrClassSymbol get() = fir2irBuiltins.intClass
+    override val intType: IrType get() = fir2irBuiltins.intType
 
-    override val longClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Long) }
-    override val longType: IrType get() = longClass.defaultTypeWithoutArguments
+    override val longClass: IrClassSymbol get() = fir2irBuiltins.longClass
+    override val longType: IrType get() = fir2irBuiltins.longType
 
-    override val floatClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Float) }
-    override val floatType: IrType get() = floatClass.defaultTypeWithoutArguments
+    override val floatClass: IrClassSymbol get() = fir2irBuiltins.floatClass
+    override val floatType: IrType get() = fir2irBuiltins.floatType
 
-    override val doubleClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Double) }
-    override val doubleType: IrType get() = doubleClass.defaultTypeWithoutArguments
+    override val doubleClass: IrClassSymbol get() = fir2irBuiltins.doubleClass
+    override val doubleType: IrType get() = fir2irBuiltins.doubleType
 
-    override val charSequenceClass: IrClassSymbol by lazy { loadClass(StandardClassIds.CharSequence) }
+    override val charSequenceClass: IrClassSymbol get() = fir2irBuiltins.charSequenceClass
 
-    override val stringClass: IrClassSymbol by lazy { loadClass(StandardClassIds.String) }
-    override val stringType: IrType get() = stringClass.defaultTypeWithoutArguments
+    override val stringClass: IrClassSymbol get() = fir2irBuiltins.stringClass
+    override val stringType: IrType get() = fir2irBuiltins.stringType
+
+    override val iteratorClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Iterator) }
+    override val arrayClass: IrClassSymbol get() = fir2irBuiltins.arrayClass
+
+    override val annotationClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Annotation) }
+    override val annotationType: IrType get() = annotationClass.defaultTypeWithoutArguments
+
+    override val collectionClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Collection) }
+    override val setClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Set) }
+    override val listClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.List) }
+    override val mapClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Map) }
+    override val mapEntryClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MapEntry) }
+
+    override val iterableClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Iterable) }
+    override val listIteratorClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.ListIterator) }
+    override val mutableCollectionClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableCollection) }
+    override val mutableSetClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableSet) }
+    override val mutableListClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableList) }
+    override val mutableMapClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableMap) }
+    override val mutableMapEntryClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableMapEntry) }
+
+    override val mutableIterableClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableIterable) }
+    override val mutableIteratorClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableIterator) }
+    override val mutableListIteratorClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.MutableListIterator) }
+    override val comparableClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Comparable) }
+    override val throwableType: IrType by lazy { throwableClass.defaultTypeWithoutArguments }
+    override val throwableClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Throwable) }
+
+    override val kCallableClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KCallable) }
+    override val kPropertyClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KProperty) }
+    override val kClassClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KClass) }
+    override val kTypeClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KType) }
+    override val kProperty0Class: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KProperty0) }
+    override val kProperty1Class: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KProperty1) }
+    override val kProperty2Class: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KProperty2) }
+    override val kMutableProperty0Class: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KMutableProperty0) }
+    override val kMutableProperty1Class: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KMutableProperty1) }
+    override val kMutableProperty2Class: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KMutableProperty2) }
+
+    override val functionClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Function) }
+    override val kFunctionClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.KFunction) }
+
+    override val primitiveTypeToIrType: Map<PrimitiveType, IrType> get() = fir2irBuiltins.primitiveTypeToIrType
+    private val primitiveIntegralIrTypes: List<IrType> by lazy { listOf(byteType, shortType, intType, longType) }
+    override val primitiveFloatingPointIrTypes: List<IrType> by lazy { listOf(floatType, doubleType) }
+    private val primitiveNumericIrTypes: List<IrType> by lazy { primitiveIntegralIrTypes + primitiveFloatingPointIrTypes }
+    override val primitiveIrTypesWithComparisons: List<IrType> by lazy { listOf(charType) + primitiveNumericIrTypes }
+    override val primitiveIrTypes: List<IrType> by lazy { listOf(booleanType) + primitiveIrTypesWithComparisons }
+    private val baseIrTypes: List<IrType> by lazy { primitiveIrTypes + stringType }
+
+    private fun primitiveIterator(primitiveType: PrimitiveType): IrClassSymbol {
+        val classId = ClassId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier("${primitiveType.typeName}Iterator"))
+        return fir2irBuiltins.loadClass(classId)
+    }
+
+    override val booleanIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.BOOLEAN) }
+    override val charIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.CHAR) }
+    override val byteIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.BYTE) }
+    override val shortIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.SHORT) }
+    override val intIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.INT) }
+    override val longIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.LONG) }
+    override val floatIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.FLOAT) }
+    override val doubleIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.DOUBLE) }
+
+    override val booleanArray: IrClassSymbol get() = fir2irBuiltins.booleanArray
+    override val charArray: IrClassSymbol get() = fir2irBuiltins.charArray
+    override val byteArray: IrClassSymbol get() = fir2irBuiltins.byteArray
+    override val shortArray: IrClassSymbol get() = fir2irBuiltins.shortArray
+    override val intArray: IrClassSymbol get() = fir2irBuiltins.intArray
+    override val longArray: IrClassSymbol get() = fir2irBuiltins.longArray
+    override val floatArray: IrClassSymbol get() = fir2irBuiltins.floatArray
+    override val doubleArray: IrClassSymbol get() = fir2irBuiltins.doubleArray
+
+    override val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType> get() = fir2irBuiltins.primitiveArraysToPrimitiveTypes
+    override val primitiveTypesToPrimitiveArrays: Map<PrimitiveType, IrClassSymbol>
+        get() = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
+
+    override val primitiveArrayElementTypes: Map<IrClassSymbol, IrType?> get() = fir2irBuiltins.primitiveArrayElementTypes
+    override val primitiveArrayForType: Map<IrType?, IrClassSymbol> get() = fir2irBuiltins.primitiveArrayForType
+
+    override val arrayOfNulls: IrSimpleFunctionSymbol by lazy {
+        val firSymbol = symbolProvider
+            .getTopLevelFunctionSymbols(kotlinPackage, ArrayFqNames.ARRAY_OF_NULLS_FUNCTION).first {
+                it.fir.valueParameters.singleOrNull()?.returnTypeRef?.coneType?.isInt == true
+            }
+        fir2irBuiltins.findFunction(firSymbol)
+    }
+
+    override val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol> by lazy {
+        UnsignedType.entries.mapNotNull { unsignedType ->
+            val array = fir2irBuiltins.loadClassSafe(unsignedType.arrayClassId)
+            if (array == null) null else unsignedType to array
+        }.toMap()
+    }
+
+    override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> get() = fir2irBuiltins.unsignedArraysElementTypes
+
+    override fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol = when (n) {
+        0 -> if (mutable) kMutableProperty0Class else kProperty0Class
+        1 -> if (mutable) kMutableProperty1Class else kProperty1Class
+        2 -> if (mutable) kMutableProperty2Class else kProperty2Class
+        else -> error("No KProperty for n=$n mutable=$mutable")
+    }
+
+    override val enumClass: IrClassSymbol by lazy { fir2irBuiltins.loadClass(StandardClassIds.Enum) }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    override val intPlusSymbol: IrSimpleFunctionSymbol
+        get() = intClass.functions.single {
+            it.owner.name == OperatorNameConventions.PLUS && it.owner.valueParameters[0].type == intType
+        }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    override val intTimesSymbol: IrSimpleFunctionSymbol
+        get() = intClass.functions.single {
+            it.owner.name == OperatorNameConventions.TIMES && it.owner.valueParameters[0].type == intType
+        }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    override val intXorSymbol: IrSimpleFunctionSymbol
+        get() = intClass.functions.single {
+            it.owner.name == OperatorNameConventions.XOR && it.owner.valueParameters[0].type == intType
+        }
+
+    override val extensionToString: IrSimpleFunctionSymbol by lazy {
+        val firFunctionSymbol = symbolProvider.getTopLevelFunctionSymbols(kotlinPackage, OperatorNameConventions.TO_STRING).single {
+            it.receiverParameter?.typeRef?.coneType?.isNullableAny == true
+        }
+        fir2irBuiltins.findFunction(firFunctionSymbol)
+    }
+
+    override val memberToString: IrSimpleFunctionSymbol by lazy {
+        val firFunction = fir2irBuiltins.findFirMemberFunctions(StandardClassIds.Any, OperatorNameConventions.TO_STRING).single {
+            it.fir.valueParameters.isEmpty()
+        }
+        fir2irBuiltins.findFunction(firFunction)
+    }
+
+    override val extensionStringPlus: IrSimpleFunctionSymbol by lazy {
+        val firFunction = symbolProvider.getTopLevelFunctionSymbols(kotlinPackage, OperatorNameConventions.PLUS).single { symbol ->
+            val isStringExtension = symbol.fir.receiverParameter?.typeRef?.coneType?.isNullableString == true
+            isStringExtension && symbol.fir.valueParameters.singleOrNull { it.returnTypeRef.coneType.isNullableAny } != null
+        }
+        fir2irBuiltins.findFunction(firFunction)
+    }
+
+    override val memberStringPlus: IrSimpleFunctionSymbol by lazy {
+        val firFunction = fir2irBuiltins.findFirMemberFunctions(StandardClassIds.String, OperatorNameConventions.PLUS).single {
+            it.fir.valueParameters.singleOrNull()?.returnTypeRef?.coneType?.isNullableAny == true
+        }
+        fir2irBuiltins.findFunction(firFunction)
+    }
+
+    override val arrayOf: IrSimpleFunctionSymbol by lazy {
+        // distinct() is needed because we can get two Fir symbols for arrayOf function (from builtins and from stdlib)
+        //   with the same IR symbol for them
+        fir2irBuiltins.findFunctions(kotlinPackage, ArrayFqNames.ARRAY_OF_FUNCTION).distinct().single()
+    }
+
+    // ------------------------------------- function types -------------------------------------
+
+    override fun getNonBuiltInFunctionsByExtensionReceiver(
+        name: Name,
+        vararg packageNameSegments: String,
+    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
+        return fir2irBuiltins.getFunctionsByKey(
+            name,
+            *packageNameSegments,
+            mapKey = { symbol ->
+                symbol.fir.receiverParameter?.typeRef?.toIrType(c)?.classifierOrNull
+            },
+            mapValue = { _, irSymbol -> irSymbol }
+        )
+    }
+
+    override fun getNonBuiltinFunctionsByReturnType(
+        name: Name,
+        vararg packageNameSegments: String,
+    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
+        return fir2irBuiltins.getFunctionsByKey(
+            name,
+            *packageNameSegments,
+            mapKey = { it.fir.returnTypeRef.toIrType(c).classifierOrNull },
+            mapValue = { _, irSymbol -> irSymbol }
+        )
+    }
+
+    private val functionNMap: MutableMap<Int, IrClass> = mutableMapOf()
+    private val kFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
+    private val suspendFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
+    private val kSuspendFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    override fun functionN(arity: Int): IrClass = functionNMap.getOrPut(arity) {
+        fir2irBuiltins.loadClass(StandardClassIds.FunctionN(arity)).owner
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    override fun kFunctionN(arity: Int): IrClass = kFunctionNMap.getOrPut(arity) {
+        fir2irBuiltins.loadClass(StandardClassIds.KFunctionN(arity)).owner
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    override fun suspendFunctionN(arity: Int): IrClass = suspendFunctionNMap.getOrPut(arity) {
+        fir2irBuiltins.loadClass(StandardClassIds.SuspendFunctionN(arity)).owner
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    override fun kSuspendFunctionN(arity: Int): IrClass = kSuspendFunctionNMap.getOrPut(arity) {
+        fir2irBuiltins.loadClass(StandardClassIds.KSuspendFunctionN(arity)).owner
+    }
+
+    // ------------------------------------- intrinsic const evaluation -------------------------------------
 
     private val intrinsicConstAnnotation: IrConstructorCall by lazy {
         /*
@@ -146,7 +352,7 @@ class IrBuiltInsOverFir(
             val irClass = createIntrinsicConstEvaluationClass()
             irClass.symbol
         } else {
-            loadClass(StandardClassIds.Annotations.IntrinsicConstEvaluation)
+            fir2irBuiltins.loadClass(StandardClassIds.Annotations.IntrinsicConstEvaluation)
         }
 
         @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -171,119 +377,9 @@ class IrBuiltInsOverFir(
         annotationCall
     }
 
-    override val iteratorClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Iterator) }
-    override val arrayClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Array) }
+    // ------------------------------------- synthetics -------------------------------------
 
-    override val annotationClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Annotation) }
-    override val annotationType: IrType get() = annotationClass.defaultTypeWithoutArguments
-
-    override val collectionClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Collection) }
-    override val setClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Set) }
-    override val listClass: IrClassSymbol by lazy { loadClass(StandardClassIds.List) }
-    override val mapClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Map) }
-    override val mapEntryClass: IrClassSymbol by lazy { loadClass(StandardClassIds.MapEntry) }
-
-    override val iterableClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Iterable) }
-    override val listIteratorClass: IrClassSymbol by lazy { loadClass(StandardClassIds.ListIterator) }
-    override val mutableCollectionClass: IrClassSymbol by lazy { loadClass(StandardClassIds.MutableCollection) }
-    override val mutableSetClass: IrClassSymbol by lazy { loadClass(StandardClassIds.MutableSet) }
-    override val mutableListClass: IrClassSymbol by lazy { loadClass(StandardClassIds.MutableList) }
-    override val mutableMapClass: IrClassSymbol by lazy { loadClass(StandardClassIds.MutableMap) }
-    override val mutableMapEntryClass: IrClassSymbol by lazy { loadClass(StandardClassIds.MutableMapEntry) }
-
-    override val mutableIterableClass: IrClassSymbol by lazy { loadClass(StandardClassIds.MutableIterable) }
-    override val mutableIteratorClass: IrClassSymbol by lazy { loadClass(StandardClassIds.MutableIterator) }
-    override val mutableListIteratorClass: IrClassSymbol by lazy { loadClass(StandardClassIds.MutableListIterator) }
-    override val comparableClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Comparable) }
-    override val throwableType: IrType by lazy { throwableClass.defaultTypeWithoutArguments }
-    override val throwableClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Throwable) }
-
-    override val kCallableClass: IrClassSymbol by lazy { loadClass(StandardClassIds.KCallable) }
-    override val kPropertyClass: IrClassSymbol by lazy { loadClass(StandardClassIds.KProperty) }
-    override val kClassClass: IrClassSymbol by lazy { loadClass(StandardClassIds.KClass) }
-    override val kTypeClass: IrClassSymbol by lazy { loadClass(StandardClassIds.KType) }
-    override val kProperty0Class: IrClassSymbol by lazy { loadClass(StandardClassIds.KProperty0) }
-    override val kProperty1Class: IrClassSymbol by lazy { loadClass(StandardClassIds.KProperty1) }
-    override val kProperty2Class: IrClassSymbol by lazy { loadClass(StandardClassIds.KProperty2) }
-    override val kMutableProperty0Class: IrClassSymbol by lazy { loadClass(StandardClassIds.KMutableProperty0) }
-    override val kMutableProperty1Class: IrClassSymbol by lazy { loadClass(StandardClassIds.KMutableProperty1) }
-    override val kMutableProperty2Class: IrClassSymbol by lazy { loadClass(StandardClassIds.KMutableProperty2) }
-
-    override val functionClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Function) }
-    override val kFunctionClass: IrClassSymbol by lazy { loadClass(StandardClassIds.KFunction) }
-
-    override val primitiveTypeToIrType: Map<PrimitiveType, IrType> by lazy {
-        mapOf(
-            PrimitiveType.BOOLEAN to booleanType,
-            PrimitiveType.CHAR to charType,
-            PrimitiveType.BYTE to byteType,
-            PrimitiveType.SHORT to shortType,
-            PrimitiveType.INT to intType,
-            PrimitiveType.LONG to longType,
-            PrimitiveType.FLOAT to floatType,
-            PrimitiveType.DOUBLE to doubleType
-        )
-    }
-
-    private val primitiveIntegralIrTypes: List<IrType> by lazy { listOf(byteType, shortType, intType, longType) }
-    override val primitiveFloatingPointIrTypes: List<IrType> by lazy { listOf(floatType, doubleType) }
-    private val primitiveNumericIrTypes: List<IrType> by lazy { primitiveIntegralIrTypes + primitiveFloatingPointIrTypes }
-    override val primitiveIrTypesWithComparisons: List<IrType> by lazy { listOf(charType) + primitiveNumericIrTypes }
-    override val primitiveIrTypes: List<IrType> by lazy { listOf(booleanType) + primitiveIrTypesWithComparisons }
-    private val baseIrTypes: List<IrType> by lazy { primitiveIrTypes + stringType }
-
-    private fun primitiveIterator(primitiveType: PrimitiveType): IrClassSymbol {
-        return loadClass(ClassId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier("${primitiveType.typeName}Iterator")))
-    }
-
-    override val booleanIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.BOOLEAN) }
-    override val charIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.CHAR) }
-    override val byteIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.BYTE) }
-    override val shortIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.SHORT) }
-    override val intIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.INT) }
-    override val longIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.LONG) }
-    override val floatIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.FLOAT) }
-    override val doubleIterator: IrClassSymbol by lazy { primitiveIterator(PrimitiveType.DOUBLE) }
-
-    private fun loadPrimitiveArray(primitiveType: PrimitiveType): IrClassSymbol {
-        return loadClass(ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("${primitiveType.typeName}Array")))
-    }
-
-    override val booleanArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.BOOLEAN) }
-    override val charArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.CHAR) }
-    override val byteArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.BYTE) }
-    override val shortArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.SHORT) }
-    override val intArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.INT) }
-    override val longArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.LONG) }
-    override val floatArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.FLOAT) }
-    override val doubleArray: IrClassSymbol by lazy { loadPrimitiveArray(PrimitiveType.DOUBLE) }
-
-    override val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType> by lazy {
-        mapOf(
-            booleanArray to PrimitiveType.BOOLEAN,
-            charArray to PrimitiveType.CHAR,
-            byteArray to PrimitiveType.BYTE,
-            shortArray to PrimitiveType.SHORT,
-            intArray to PrimitiveType.INT,
-            longArray to PrimitiveType.LONG,
-            floatArray to PrimitiveType.FLOAT,
-            doubleArray to PrimitiveType.DOUBLE
-        )
-    }
-
-    override val primitiveTypesToPrimitiveArrays: Map<PrimitiveType, IrClassSymbol>
-        get() = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
-
-    override val primitiveArrayElementTypes: Map<IrClassSymbol, IrType?>
-        get() = primitiveArraysToPrimitiveTypes.mapValues { primitiveTypeToIrType[it.value] }
-
-    override val primitiveArrayForType: Map<IrType?, IrClassSymbol>
-        get() = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }
-
-    private val _ieee754equalsFunByOperandType: MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol> = mutableMapOf()
-    override val ieee754equalsFunByOperandType: MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>
-        get() = _ieee754equalsFunByOperandType
-
+    override val ieee754equalsFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
     override val eqeqeqSymbol: IrSimpleFunctionSymbol
     override val eqeqSymbol: IrSimpleFunctionSymbol
     override val throwCceSymbol: IrSimpleFunctionSymbol
@@ -293,19 +389,12 @@ class IrBuiltInsOverFir(
     override val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol
     override val illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol
     override val dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol
-    override val dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol
 
+    override val dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol
     override val checkNotNullSymbol: IrSimpleFunctionSymbol
-    override val arrayOfNulls: IrSimpleFunctionSymbol by lazy {
-        val firSymbol = symbolProvider
-            .getTopLevelFunctionSymbols(kotlinPackage, Name.identifier("arrayOfNulls")).first {
-                it.fir.valueParameters.singleOrNull()?.returnTypeRef?.coneType?.isInt == true
-            }
-        findFunction(firSymbol)
-    }
 
     override val linkageErrorSymbol: IrSimpleFunctionSymbol
-        get() = TODO("Not yet implemented")
+        get() = shouldNotBeCalled()
 
     override val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
     override val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
@@ -313,301 +402,250 @@ class IrBuiltInsOverFir(
     override val greaterFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
 
     init {
-        with(this.kotlinInternalIrPackageFragment) {
+        val packageFragment = kotlinInternalIrPackageFragment
 
-            fun addBuiltinOperatorSymbol(
-                name: String,
-                symbol: IrSimpleFunctionSymbol?,
-                returnType: IrType,
-                vararg valueParameterTypes: Pair<String, IrType>,
-                isIntrinsicConst: Boolean = false,
-            ): IrSimpleFunctionSymbol {
-                return createFunction(
-                    name, symbol, returnType, valueParameterTypes,
-                    origin = BUILTIN_OPERATOR,
-                    isIntrinsicConst = isIntrinsicConst
-                ).also {
-                    // `kotlinInternalIrPackageFragment` definitely is not a lazy class
-                    @OptIn(UnsafeDuringIrConstructionAPI::class)
-                    declarations.add(it)
-                }.symbol
-            }
-
-            syntheticSymbolsContainer.primitiveFloatingPointTypes.forEach { primitiveType ->
-                val fpType = primitiveTypeToIrType.getValue(primitiveType)
-                _ieee754equalsFunByOperandType[fpType.classifierOrFail] = addBuiltinOperatorSymbol(
-                    BuiltInOperatorNames.IEEE754_EQUALS,
-                    symbol = syntheticSymbolsContainer.ieee754equalsFunByOperandType.getValue(primitiveType),
-                    booleanType,
-                    "arg0" to fpType.makeNullable(),
-                    "arg1" to fpType.makeNullable(),
-                    isIntrinsicConst = true
-                )
-            }
-            eqeqeqSymbol = addBuiltinOperatorSymbol(
-                BuiltInOperatorNames.EQEQEQ,
-                symbol = syntheticSymbolsContainer.eqeqeqSymbol,
-                booleanType,
-                "" to anyNType, "" to anyNType
-            )
-            eqeqSymbol = addBuiltinOperatorSymbol(
-                BuiltInOperatorNames.EQEQ,
-                symbol = syntheticSymbolsContainer.eqeqSymbol,
-                booleanType, "" to anyNType, "" to anyNType, isIntrinsicConst = true
-            )
-            throwCceSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_CCE, symbol = null, nothingType)
-            throwIseSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_ISE, symbol = null, nothingType)
-            andandSymbol =
-                addBuiltinOperatorSymbol(
-                    BuiltInOperatorNames.ANDAND,
-                    symbol = null,
-                    booleanType,
-                    "" to booleanType,
-                    "" to booleanType,
-                    isIntrinsicConst = true
-                )
-            ororSymbol =
-                addBuiltinOperatorSymbol(
-                    BuiltInOperatorNames.OROR,
-                    symbol = null,
-                    booleanType,
-                    "" to booleanType,
-                    "" to booleanType,
-                    isIntrinsicConst = true
-                )
-            noWhenBranchMatchedExceptionSymbol = addBuiltinOperatorSymbol(
-                BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION,
-                symbol = syntheticSymbolsContainer.noWhenBranchMatchedExceptionSymbol,
-                nothingType
-            )
-            illegalArgumentExceptionSymbol = addBuiltinOperatorSymbol(
-                BuiltInOperatorNames.ILLEGAL_ARGUMENT_EXCEPTION,
-                symbol = null,
-                nothingType,
-                "" to stringType
-            )
-            dataClassArrayMemberHashCodeSymbol = addBuiltinOperatorSymbol(
-                "dataClassArrayMemberHashCode",
-                symbol = null,
-                intType,
-                "" to anyType
-            )
-            dataClassArrayMemberToStringSymbol = addBuiltinOperatorSymbol(
-                "dataClassArrayMemberToString",
-                symbol = null,
-                stringType,
-                "" to anyNType
-            )
-
-            checkNotNullSymbol = run {
-                val typeParameter: IrTypeParameter = irFactory.createTypeParameter(
-                    startOffset = UNDEFINED_OFFSET,
-                    endOffset = UNDEFINED_OFFSET,
-                    origin = BUILTIN_OPERATOR,
-                    name = Name.identifier("T0"),
-                    symbol = IrTypeParameterSymbolImpl(),
-                    variance = Variance.INVARIANT,
-                    index = 0,
-                    isReified = true
-                ).apply {
-                    superTypes = listOf(anyType)
-                }
-
-                createFunction(
-                    BuiltInOperatorNames.CHECK_NOT_NULL,
-                    symbol = syntheticSymbolsContainer.checkNotNullSymbol,
-                    IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
-                    arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
-                    typeParameters = listOf(typeParameter),
-                    origin = BUILTIN_OPERATOR
-                ).also {
-                    // `kotlinInternalIrPackageFragment` definitely is not a lazy class
-                    @OptIn(UnsafeDuringIrConstructionAPI::class)
-                    declarations.add(it)
-                }.symbol
-            }
-
-            fun List<PrimitiveType>.defineComparisonOperatorForEachIrType(
-                name: String,
-                symbols: Map<PrimitiveType, IrSimpleFunctionSymbol>
-            ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-                return associate { primitiveType ->
-                    val irType = primitiveTypeToIrType.getValue(primitiveType)
-                    irType.classifierOrFail to addBuiltinOperatorSymbol(
-                        name,
-                        symbol = symbols.getValue(primitiveType),
-                        booleanType,
-                        "" to irType,
-                        "" to irType,
-                        isIntrinsicConst = true
+        fun createFunction(
+            name: String,
+            symbol: IrSimpleFunctionSymbol?,
+            returnType: IrType,
+            valueParameterTypes: Array<out Pair<String, IrType>>,
+            typeParameters: List<IrTypeParameter> = emptyList(),
+            origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+            modality: Modality = Modality.FINAL,
+            isOperator: Boolean = false,
+            isInfix: Boolean = false,
+            isIntrinsicConst: Boolean = false,
+            postBuild: IrSimpleFunction.() -> Unit = {},
+            build: IrFunctionBuilder.() -> Unit = {},
+        ): IrSimpleFunction {
+            // TODO: builder seems to be redundant
+            fun makeWithSymbol(symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
+                return IrFunctionBuilder().run {
+                    this.name = Name.identifier(name)
+                    this.returnType = returnType
+                    this.origin = origin
+                    this.modality = modality
+                    this.isOperator = isOperator
+                    this.isInfix = isInfix
+                    build()
+                    irFactory.createSimpleFunction(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        origin = this.origin,
+                        name = this.name,
+                        visibility = visibility,
+                        isInline = isInline,
+                        isExpect = isExpect,
+                        returnType = this.returnType,
+                        modality = this.modality,
+                        symbol = symbol,
+                        isTailrec = isTailrec,
+                        isSuspend = isSuspend,
+                        isOperator = this.isOperator,
+                        isInfix = this.isInfix,
+                        isExternal = isExternal,
+                        containerSource = containerSource,
+                        isFakeOverride = isFakeOverride,
                     )
+                }.also { fn ->
+                    valueParameterTypes.forEachIndexed { index, (pName, irType) ->
+                        fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
+                    }
+                    fn.typeParameters = typeParameters
+                    typeParameters.forEach { it.parent = fn }
+                    if (isIntrinsicConst) {
+                        fn.annotations += intrinsicConstAnnotation
+                    }
+                    fn.parent = packageFragment
+                    fn.postBuild()
                 }
             }
 
-            val primitivesWithComparison = syntheticSymbolsContainer.primitiveIrTypesWithComparisons
-
-            lessFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
-                BuiltInOperatorNames.LESS,
-                syntheticSymbolsContainer.lessFunByOperandType
+            val irFun4SignatureCalculation = makeWithSymbol(IrSimpleFunctionSymbolImpl())
+            val signature = irSignatureBuilder.computeSignature(irFun4SignatureCalculation)
+            return c.symbolTable.declareSimpleFunction(
+                signature,
+                { symbol ?: IrSimpleFunctionSymbolImpl(null, signature) },
+                ::makeWithSymbol
             )
-            lessOrEqualFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
-                BuiltInOperatorNames.LESS_OR_EQUAL,
-                syntheticSymbolsContainer.lessOrEqualFunByOperandType
+        }
+
+        val ieee754equalsFunByOperandType = mutableMapOf<IrClassifierSymbol, IrSimpleFunctionSymbol>()
+
+        fun addBuiltinOperatorSymbol(
+            name: String,
+            symbol: IrSimpleFunctionSymbol?,
+            returnType: IrType,
+            vararg valueParameterTypes: Pair<String, IrType>,
+            isIntrinsicConst: Boolean = false,
+        ): IrSimpleFunctionSymbol {
+            return createFunction(
+                name, symbol, returnType, valueParameterTypes,
+                origin = BUILTIN_OPERATOR,
+                isIntrinsicConst = isIntrinsicConst
+            ).also {
+                // `kotlinInternalIrPackageFragment` definitely is not a lazy class
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                packageFragment.declarations.add(it)
+            }.symbol
+        }
+
+        syntheticSymbolsContainer.primitiveFloatingPointTypes.forEach { primitiveType ->
+            val fpType = primitiveTypeToIrType.getValue(primitiveType)
+            ieee754equalsFunByOperandType[fpType.classifierOrFail] = addBuiltinOperatorSymbol(
+                BuiltInOperatorNames.IEEE754_EQUALS,
+                symbol = syntheticSymbolsContainer.ieee754equalsFunByOperandType.getValue(primitiveType),
+                booleanType,
+                "arg0" to fpType.makeNullable(),
+                "arg1" to fpType.makeNullable(),
+                isIntrinsicConst = true
             )
-            greaterOrEqualFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
-                BuiltInOperatorNames.GREATER_OR_EQUAL,
-                syntheticSymbolsContainer.greaterOrEqualFunByOperandType
-            )
-            greaterFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
-                BuiltInOperatorNames.GREATER,
-                syntheticSymbolsContainer.greaterFunByOperandType
-            )
-
         }
-    }
-
-    override val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol> by lazy {
-        UnsignedType.entries.mapNotNull { unsignedType ->
-            val array = loadClassSafe(unsignedType.arrayClassId)
-            if (array == null) null else unsignedType to array
-        }.toMap()
-    }
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
-        unsignedTypesToUnsignedArrays.map { (k, v) -> v to loadClass(k.classId).owner.defaultType }.toMap()
-    }
-
-    override fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol = when (n) {
-        0 -> if (mutable) kMutableProperty0Class else kProperty0Class
-        1 -> if (mutable) kMutableProperty1Class else kProperty1Class
-        2 -> if (mutable) kMutableProperty2Class else kProperty2Class
-        else -> error("No KProperty for n=$n mutable=$mutable")
-    }
-
-    override val enumClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Enum) }
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    override val intPlusSymbol: IrSimpleFunctionSymbol
-        get() = intClass.functions.single {
-            it.owner.name == OperatorNameConventions.PLUS && it.owner.valueParameters[0].type == intType
-        }
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    override val intTimesSymbol: IrSimpleFunctionSymbol
-        get() = intClass.functions.single {
-            it.owner.name == OperatorNameConventions.TIMES && it.owner.valueParameters[0].type == intType
-        }
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    override val intXorSymbol: IrSimpleFunctionSymbol
-        get() = intClass.functions.single {
-            it.owner.name == OperatorNameConventions.XOR && it.owner.valueParameters[0].type == intType
-        }
-
-    override val extensionToString: IrSimpleFunctionSymbol by lazy {
-        val firFunctionSymbol = symbolProvider.getTopLevelFunctionSymbols(kotlinPackage, OperatorNameConventions.TO_STRING).single {
-            it.receiverParameter?.typeRef?.coneType?.isNullableAny == true
-        }
-        findFunction(firFunctionSymbol)
-    }
-
-    override val memberToString: IrSimpleFunctionSymbol by lazy {
-        val firFunction = findFirMemberFunctions(StandardClassIds.Any, OperatorNameConventions.TO_STRING).single {
-            it.fir.valueParameters.isEmpty()
-        }
-        findFunction(firFunction)
-    }
-
-    override val extensionStringPlus: IrSimpleFunctionSymbol by lazy {
-        val firFunction = symbolProvider.getTopLevelFunctionSymbols(kotlinPackage, OperatorNameConventions.PLUS).single { symbol ->
-            val isStringExtension = symbol.fir.receiverParameter?.typeRef?.coneType?.isNullableString == true
-            isStringExtension && symbol.fir.valueParameters.singleOrNull { it.returnTypeRef.coneType.isNullableAny } != null
-        }
-        findFunction(firFunction)
-    }
-
-    override val memberStringPlus: IrSimpleFunctionSymbol by lazy {
-        val firFunction = findFirMemberFunctions(StandardClassIds.String, OperatorNameConventions.PLUS).single {
-            it.fir.valueParameters.singleOrNull()?.returnTypeRef?.coneType?.isNullableAny == true
-        }
-        findFunction(firFunction)
-    }
-
-    override val arrayOf: IrSimpleFunctionSymbol by lazy {
-        // distinct() is needed because we can get two Fir symbols for arrayOf function (from builtins and from stdlib)
-        //   with the same IR symbol for them
-        findFunctions(kotlinPackage, Name.identifier("arrayOf")).distinct().single()
-    }
-
-    override fun getNonBuiltInFunctionsByExtensionReceiver(
-        name: Name,
-        vararg packageNameSegments: String,
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-        return getFunctionsByKey(
-            name,
-            *packageNameSegments,
-            mapKey = { symbol ->
-                symbol.fir.receiverParameter?.typeRef?.toIrType(c)?.classifierOrNull
-            },
-            mapValue = { _, irSymbol -> irSymbol }
+        eqeqeqSymbol = addBuiltinOperatorSymbol(
+            BuiltInOperatorNames.EQEQEQ,
+            symbol = syntheticSymbolsContainer.eqeqeqSymbol,
+            booleanType,
+            "" to anyNType, "" to anyNType
         )
-    }
-
-    override fun getNonBuiltinFunctionsByReturnType(
-        name: Name,
-        vararg packageNameSegments: String,
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-        return getFunctionsByKey(
-            name,
-            *packageNameSegments,
-            mapKey = { it.fir.returnTypeRef.toIrType(c).classifierOrNull },
-            mapValue = { _, irSymbol -> irSymbol }
+        eqeqSymbol = addBuiltinOperatorSymbol(
+            BuiltInOperatorNames.EQEQ,
+            symbol = syntheticSymbolsContainer.eqeqSymbol,
+            booleanType, "" to anyNType, "" to anyNType, isIntrinsicConst = true
         )
+        throwCceSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_CCE, symbol = null, nothingType)
+        throwIseSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_ISE, symbol = null, nothingType)
+        andandSymbol =
+            addBuiltinOperatorSymbol(
+                BuiltInOperatorNames.ANDAND,
+                symbol = null,
+                booleanType,
+                "" to booleanType,
+                "" to booleanType,
+                isIntrinsicConst = true
+            )
+        ororSymbol =
+            addBuiltinOperatorSymbol(
+                BuiltInOperatorNames.OROR,
+                symbol = null,
+                booleanType,
+                "" to booleanType,
+                "" to booleanType,
+                isIntrinsicConst = true
+            )
+        noWhenBranchMatchedExceptionSymbol = addBuiltinOperatorSymbol(
+            BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION,
+            symbol = syntheticSymbolsContainer.noWhenBranchMatchedExceptionSymbol,
+            nothingType
+        )
+        illegalArgumentExceptionSymbol = addBuiltinOperatorSymbol(
+            BuiltInOperatorNames.ILLEGAL_ARGUMENT_EXCEPTION,
+            symbol = null,
+            nothingType,
+            "" to stringType
+        )
+        dataClassArrayMemberHashCodeSymbol = addBuiltinOperatorSymbol(
+            "dataClassArrayMemberHashCode",
+            symbol = null,
+            intType,
+            "" to anyType
+        )
+        dataClassArrayMemberToStringSymbol = addBuiltinOperatorSymbol(
+            "dataClassArrayMemberToString",
+            symbol = null,
+            stringType,
+            "" to anyNType
+        )
+
+        checkNotNullSymbol = run {
+            val typeParameter: IrTypeParameter = irFactory.createTypeParameter(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = BUILTIN_OPERATOR,
+                name = Name.identifier("T0"),
+                symbol = IrTypeParameterSymbolImpl(),
+                variance = Variance.INVARIANT,
+                index = 0,
+                isReified = true
+            ).apply {
+                superTypes = listOf(anyType)
+            }
+
+            createFunction(
+                BuiltInOperatorNames.CHECK_NOT_NULL,
+                symbol = syntheticSymbolsContainer.checkNotNullSymbol,
+                IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
+                arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
+                typeParameters = listOf(typeParameter),
+                origin = BUILTIN_OPERATOR
+            ).also {
+                // `kotlinInternalIrPackageFragment` definitely is not a lazy class
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                packageFragment.declarations.add(it)
+            }.symbol
+        }
+
+        fun List<PrimitiveType>.defineComparisonOperatorForEachIrType(
+            name: String,
+            symbols: Map<PrimitiveType, IrSimpleFunctionSymbol>
+        ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
+            return associate { primitiveType ->
+                val irType = primitiveTypeToIrType.getValue(primitiveType)
+                irType.classifierOrFail to addBuiltinOperatorSymbol(
+                    name,
+                    symbol = symbols.getValue(primitiveType),
+                    booleanType,
+                    "" to irType,
+                    "" to irType,
+                    isIntrinsicConst = true
+                )
+            }
+        }
+
+        val primitivesWithComparison = syntheticSymbolsContainer.primitiveIrTypesWithComparisons
+
+        lessFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+            BuiltInOperatorNames.LESS,
+            syntheticSymbolsContainer.lessFunByOperandType
+        )
+        lessOrEqualFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+            BuiltInOperatorNames.LESS_OR_EQUAL,
+            syntheticSymbolsContainer.lessOrEqualFunByOperandType
+        )
+        greaterOrEqualFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+            BuiltInOperatorNames.GREATER_OR_EQUAL,
+            syntheticSymbolsContainer.greaterOrEqualFunByOperandType
+        )
+        greaterFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+            BuiltInOperatorNames.GREATER,
+            syntheticSymbolsContainer.greaterFunByOperandType
+        )
+        this@IrBuiltInsOverFir.ieee754equalsFunByOperandType = ieee754equalsFunByOperandType
     }
 
-    private val functionNMap: MutableMap<Int, IrClass> = mutableMapOf()
-    private val kFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
-    private val suspendFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
-    private val kSuspendFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
+    // ------------------------------------- functions -------------------------------------
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    override fun functionN(arity: Int): IrClass = functionNMap.getOrPut(arity) {
-        loadClass(StandardClassIds.FunctionN(arity)).owner
+    override fun findFunctions(name: Name, vararg packageNameSegments: String): Iterable<IrSimpleFunctionSymbol> {
+        return fir2irBuiltins.findFunctions(FqName.fromSegments(packageNameSegments.asList()), name)
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    override fun kFunctionN(arity: Int): IrClass = kFunctionNMap.getOrPut(arity) {
-        loadClass(StandardClassIds.KFunctionN(arity)).owner
+    override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> {
+        return fir2irBuiltins.findFunctions(packageFqName, name)
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    override fun suspendFunctionN(arity: Int): IrClass = suspendFunctionNMap.getOrPut(arity) {
-        loadClass(StandardClassIds.SuspendFunctionN(arity)).owner
+    override fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> {
+        return fir2irBuiltins.findProperties(packageFqName, name)
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    override fun kSuspendFunctionN(arity: Int): IrClass = kSuspendFunctionNMap.getOrPut(arity) {
-        loadClass(StandardClassIds.KSuspendFunctionN(arity)).owner
+    override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? {
+        return loadClassSafe(FqName.fromSegments(packageNameSegments.asList()), name)
     }
 
-    override fun findFunctions(name: Name, vararg packageNameSegments: String): Iterable<IrSimpleFunctionSymbol> =
-        findFunctions(FqName.fromSegments(packageNameSegments.asList()), name)
-
-    override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> =
-        findFunctions(packageFqName, name)
-
-    override fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> =
-        findProperties(packageFqName, name)
-
-    override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? =
-        loadClassSafe(FqName.fromSegments(packageNameSegments.asList()), name)
-
-    override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? =
-        loadClassSafe(packageFqName, name)
+    override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? {
+        return loadClassSafe(packageFqName, name)
+    }
 
     private fun loadClassSafe(packageName: FqName, identifier: Name): IrClassSymbol? {
-        return loadClassSafe(ClassId(packageName, identifier))
+        return fir2irBuiltins.loadClassSafe(ClassId(packageName, identifier))
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -633,135 +671,15 @@ class IrBuiltInsOverFir(
         }.symbol
     }
 
-// ---------------
-
-    private fun loadClassSafe(topLevelFqName: FqName): IrClassSymbol? {
-        return loadClassSafe(ClassId.topLevel(topLevelFqName))
-    }
-
-    private fun loadClass(classId: ClassId): IrClassSymbol {
-        return loadClassSafe(classId) ?: error("Class not found: $classId")
-    }
-
-    private fun loadClassSafe(classId: ClassId): IrClassSymbol? {
-        val firClassSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return null
-        return c.classifierStorage.getIrClassSymbol(firClassSymbol)
-    }
+    // ------------------------------------- private utilities -------------------------------------
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrType.getMaybeBuiltinClass(): IrClass? {
         val lhsClassFqName = classFqName!!
         return baseIrTypes.find { it.classFqName == lhsClassFqName }?.getClass()
-            ?: loadClassSafe(lhsClassFqName)?.owner
+            ?: fir2irBuiltins.loadClassSafe(ClassId.topLevel(lhsClassFqName))?.owner
     }
 
     private fun createPackage(fqName: FqName): IrExternalPackageFragment =
         createEmptyExternalPackageFragment(moduleDescriptor, fqName)
-
-    private fun IrDeclarationParent.createFunction(
-        name: String,
-        symbol: IrSimpleFunctionSymbol?,
-        returnType: IrType,
-        valueParameterTypes: Array<out Pair<String, IrType>>,
-        typeParameters: List<IrTypeParameter> = emptyList(),
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-        modality: Modality = Modality.FINAL,
-        isOperator: Boolean = false,
-        isInfix: Boolean = false,
-        isIntrinsicConst: Boolean = false,
-        postBuild: IrSimpleFunction.() -> Unit = {},
-        build: IrFunctionBuilder.() -> Unit = {},
-    ): IrSimpleFunction {
-
-        fun makeWithSymbol(symbol: IrSimpleFunctionSymbol) = IrFunctionBuilder().run {
-            this.name = Name.identifier(name)
-            this.returnType = returnType
-            this.origin = origin
-            this.modality = modality
-            this.isOperator = isOperator
-            this.isInfix = isInfix
-            build()
-            irFactory.createSimpleFunction(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = this.origin,
-                name = this.name,
-                visibility = visibility,
-                isInline = isInline,
-                isExpect = isExpect,
-                returnType = this.returnType,
-                modality = this.modality,
-                symbol = symbol,
-                isTailrec = isTailrec,
-                isSuspend = isSuspend,
-                isOperator = this.isOperator,
-                isInfix = this.isInfix,
-                isExternal = isExternal,
-                containerSource = containerSource,
-                isFakeOverride = isFakeOverride,
-            )
-        }.also { fn ->
-            valueParameterTypes.forEachIndexed { index, (pName, irType) ->
-                fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
-            }
-            fn.typeParameters = typeParameters
-            typeParameters.forEach { it.parent = fn }
-            if (isIntrinsicConst) {
-                fn.annotations += intrinsicConstAnnotation
-            }
-            fn.parent = this@createFunction
-            fn.postBuild()
-        }
-
-        val irFun4SignatureCalculation = makeWithSymbol(IrSimpleFunctionSymbolImpl())
-        val signature = irSignatureBuilder.computeSignature(irFun4SignatureCalculation)
-        return c.symbolTable.declareSimpleFunction(
-            signature,
-            { symbol ?: IrSimpleFunctionSymbolImpl(null, signature) },
-            ::makeWithSymbol
-        )
-    }
-
-    private fun findFunctions(packageName: FqName, name: Name): List<IrSimpleFunctionSymbol> {
-        return symbolProvider.getTopLevelFunctionSymbols(packageName, name).map { findFunction(it) }
-    }
-
-    private inline fun <K : Any, T> getFunctionsByKey(
-        name: Name,
-        vararg packageNameSegments: String,
-        mapKey: (FirNamedFunctionSymbol) -> K?,
-        mapValue: (FirNamedFunctionSymbol, IrSimpleFunctionSymbol) -> T
-    ): Map<K, T> {
-        val packageName = FqName.fromSegments(packageNameSegments.asList())
-        val result = mutableMapOf<K, T>()
-        for (functionSymbol in symbolProvider.getTopLevelFunctionSymbols(packageName, name)) {
-            val key = mapKey(functionSymbol) ?: continue
-            val irFunctionSymbol = findFunction(functionSymbol)
-            result[key] = mapValue(functionSymbol, irFunctionSymbol)
-        }
-        return result
-    }
-
-    private fun findFunction(functionSymbol: FirNamedFunctionSymbol): IrSimpleFunctionSymbol {
-        functionSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        return c.declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
-    }
-
-    private fun findProperties(packageName: FqName, name: Name): List<IrPropertySymbol> {
-        return symbolProvider.getTopLevelPropertySymbols(packageName, name).map { findProperty(it) }
-    }
-
-    private fun findProperty(propertySymbol: FirPropertySymbol): IrPropertySymbol {
-        propertySymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-        return c.declarationStorage.getIrPropertySymbol(propertySymbol) as IrPropertySymbol
-    }
-
-    private val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
-        get() = IrSimpleTypeImpl(
-            kotlinType = null,
-            classifier = this,
-            nullability = SimpleTypeNullability.DEFINITELY_NOT_NULL,
-            arguments = emptyList(),
-            annotations = emptyList()
-        )
 }

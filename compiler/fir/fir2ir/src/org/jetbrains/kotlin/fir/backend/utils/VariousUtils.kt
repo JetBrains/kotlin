@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.collections.List
 import kotlin.collections.Set
@@ -169,3 +170,11 @@ fun IrType.toArrayOrPrimitiveArrayType(builtins: Fir2IrBuiltinSymbolsContainer):
     }
 }
 
+val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
+    get() = IrSimpleTypeImpl(
+        kotlinType = null,
+        classifier = this,
+        nullability = SimpleTypeNullability.DEFINITELY_NOT_NULL,
+        arguments = emptyList(),
+        annotations = emptyList()
+    )
