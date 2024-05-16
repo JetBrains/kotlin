@@ -20,7 +20,7 @@ context(KtAnalysisSession)
 internal val KtClassOrObjectSymbol.implementsCloneable: Boolean
     get() {
         return superTypes.any {
-            it.expandedClassSymbol?.isCloneable ?: false
+            it.expandedSymbol?.isCloneable ?: false
         }
     }
 

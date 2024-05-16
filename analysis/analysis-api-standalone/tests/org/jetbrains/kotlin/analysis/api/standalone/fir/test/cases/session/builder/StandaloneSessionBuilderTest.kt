@@ -134,7 +134,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
             val type = symbol.returnType as KaNonErrorClassType
             Assertions.assertEquals(
                 ClassId.fromString("kotlin/jvm/JvmInline"),
-                type.classSymbol.annotations.single().classId
+                type.symbol.annotations.single().classId
             )
         }
     }

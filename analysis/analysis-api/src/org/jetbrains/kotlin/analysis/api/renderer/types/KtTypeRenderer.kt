@@ -69,7 +69,7 @@ public class KaTypeRenderer private constructor(
     private fun KaSession.renderExpandedTypeComment(type: KaType, printer: PrettyPrinter) {
         val expandedType = when {
             type.abbreviatedType != null -> type
-            type.classSymbol is KaTypeAliasSymbol -> type.fullyExpandedType
+            type.symbol is KaTypeAliasSymbol -> type.fullyExpandedType
             else -> return
         }
 
@@ -84,7 +84,7 @@ public class KaTypeRenderer private constructor(
 
     private fun KaSession.renderAbbreviatedTypeComment(type: KaType, printer: PrettyPrinter) {
         val abbreviatedType = type.abbreviatedType
-            ?: type.takeIf { it.classSymbol is KaTypeAliasSymbol }
+            ?: type.takeIf { it.symbol is KaTypeAliasSymbol }
             ?: return
 
         printer.append(" /* from: ")

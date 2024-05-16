@@ -3,7 +3,6 @@ KtClassErrorType:
     abbreviatedType: null
     annotationsList: []
     classId: expansion/FooAlias
-    classSymbol: KtTypeAliasSymbol(expansion/FooAlias)
     nullability: NON_NULLABLE
     ownTypeArguments: []
     qualifiers: [
@@ -12,8 +11,9 @@ KtClassErrorType:
         symbol: KtTypeAliasSymbol(expansion/FooAlias)
         typeArguments: []
     ]
+    symbol: KtTypeAliasSymbol(expansion/FooAlias)
   annotationsList: []
-  candidateClassSymbols: []
+  candidateSymbols: []
   errorMessage: Symbol not found for base/Foo
   nullability: NON_NULLABLE
   qualifiers: [

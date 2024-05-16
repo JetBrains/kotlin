@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.backend.konan.KonanFqNames
 context(KtAnalysisSession)
 internal fun KtType.getInlineTargetTypeOrNull(): KtType? {
     if (this !is KtNonErrorClassType) return null
-    val classSymbol = classSymbol as? KtNamedClassOrObjectSymbol ?: return null
+    val classSymbol = symbol as? KtNamedClassOrObjectSymbol ?: return null
     return classSymbol.getInlineTargetTypeOrNull()?.markNullableIf(isMarkedNullable)
 }
 

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
  */
 context(KtAnalysisSession)
 internal fun KtClassOrObjectSymbol.getSuperClassSymbolNotAny(): KtClassOrObjectSymbol? {
-    return getSuperClassTypeNotAny()?.expandedClassSymbol
+    return getSuperClassTypeNotAny()?.expandedSymbol
 }
 
 /**
@@ -47,7 +47,7 @@ internal fun KtClassOrObjectSymbol.getSuperClassTypeNotAny(): KtNonErrorClassTyp
     return superTypes.firstNotNullOfOrNull find@{ superType ->
         if (superType.isAny || superType.isError) return@find null
         if (superType is KtNonErrorClassType) {
-            val classSymbol = superType.expandedClassSymbol ?: return@find null
+            val classSymbol = superType.expandedSymbol ?: return@find null
             if (classSymbol.classKind.isClass) {
                 return superType
             }

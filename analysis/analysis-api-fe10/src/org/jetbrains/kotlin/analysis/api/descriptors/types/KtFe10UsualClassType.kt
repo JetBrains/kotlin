@@ -62,7 +62,7 @@ internal class KaFe10UsualClassType(
     override val classId: ClassId
         get() = withValidityAssertion { descriptor.maybeLocalClassId }
 
-    override val classSymbol: KaClassLikeSymbol
+    override val symbol: KaClassLikeSymbol
         get() = withValidityAssertion { KaFe10DescNamedClassOrObjectSymbol(descriptor, analysisContext) }
 
     override val ownTypeArguments: List<KaTypeProjection>

@@ -3,7 +3,6 @@ KtFunctionalType:
   annotationsList: []
   arity: 1
   classId: kotlin/Function1
-  classSymbol: KtNamedClassOrObjectSymbol(kotlin/Function1)
   contextReceivers: []
   hasContextReceivers: false
   hasReceiver: false
@@ -16,7 +15,6 @@ KtFunctionalType:
         abbreviatedType: null
         annotationsList: []
         classId: expansion/StringAlias
-        classSymbol: KtTypeAliasSymbol(expansion/StringAlias)
         nullability: NON_NULLABLE
         ownTypeArguments: []
         qualifiers: [
@@ -25,9 +23,9 @@ KtFunctionalType:
             symbol: KtTypeAliasSymbol(expansion/StringAlias)
             typeArguments: []
         ]
+        symbol: KtTypeAliasSymbol(expansion/StringAlias)
       annotationsList: []
       classId: kotlin/String
-      classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
       nullability: NON_NULLABLE
       ownTypeArguments: []
       qualifiers: [
@@ -36,12 +34,12 @@ KtFunctionalType:
           symbol: KtNamedClassOrObjectSymbol(kotlin/String)
           typeArguments: []
       ]
+      symbol: KtNamedClassOrObjectSymbol(kotlin/String)
     KtUsualClassType:
       abbreviatedType: KtUsualClassType:
         abbreviatedType: null
         annotationsList: []
         classId: expansion/IntAlias
-        classSymbol: KtTypeAliasSymbol(expansion/IntAlias)
         nullability: NON_NULLABLE
         ownTypeArguments: []
         qualifiers: [
@@ -50,9 +48,9 @@ KtFunctionalType:
             symbol: KtTypeAliasSymbol(expansion/IntAlias)
             typeArguments: []
         ]
+        symbol: KtTypeAliasSymbol(expansion/IntAlias)
       annotationsList: []
       classId: kotlin/Int
-      classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
       nullability: NON_NULLABLE
       ownTypeArguments: []
       qualifiers: [
@@ -61,6 +59,7 @@ KtFunctionalType:
           symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
           typeArguments: []
       ]
+      symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
   ]
   parameterTypes: [
     KtUsualClassType:
@@ -68,7 +67,6 @@ KtFunctionalType:
         abbreviatedType: null
         annotationsList: []
         classId: expansion/StringAlias
-        classSymbol: KtTypeAliasSymbol(expansion/StringAlias)
         nullability: NON_NULLABLE
         ownTypeArguments: []
         qualifiers: [
@@ -77,9 +75,9 @@ KtFunctionalType:
             symbol: KtTypeAliasSymbol(expansion/StringAlias)
             typeArguments: []
         ]
+        symbol: KtTypeAliasSymbol(expansion/StringAlias)
       annotationsList: []
       classId: kotlin/String
-      classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
       nullability: NON_NULLABLE
       ownTypeArguments: []
       qualifiers: [
@@ -88,6 +86,7 @@ KtFunctionalType:
           symbol: KtNamedClassOrObjectSymbol(kotlin/String)
           typeArguments: []
       ]
+      symbol: KtNamedClassOrObjectSymbol(kotlin/String)
   ]
   qualifiers: [
     qualifier:
@@ -99,7 +98,6 @@ KtFunctionalType:
             abbreviatedType: null
             annotationsList: []
             classId: expansion/StringAlias
-            classSymbol: KtTypeAliasSymbol(expansion/StringAlias)
             nullability: NON_NULLABLE
             ownTypeArguments: []
             qualifiers: [
@@ -108,9 +106,9 @@ KtFunctionalType:
                 symbol: KtTypeAliasSymbol(expansion/StringAlias)
                 typeArguments: []
             ]
+            symbol: KtTypeAliasSymbol(expansion/StringAlias)
           annotationsList: []
           classId: kotlin/String
-          classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
           nullability: NON_NULLABLE
           ownTypeArguments: []
           qualifiers: [
@@ -119,12 +117,12 @@ KtFunctionalType:
               symbol: KtNamedClassOrObjectSymbol(kotlin/String)
               typeArguments: []
           ]
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
         KtUsualClassType:
           abbreviatedType: KtUsualClassType:
             abbreviatedType: null
             annotationsList: []
             classId: expansion/IntAlias
-            classSymbol: KtTypeAliasSymbol(expansion/IntAlias)
             nullability: NON_NULLABLE
             ownTypeArguments: []
             qualifiers: [
@@ -133,9 +131,9 @@ KtFunctionalType:
                 symbol: KtTypeAliasSymbol(expansion/IntAlias)
                 typeArguments: []
             ]
+            symbol: KtTypeAliasSymbol(expansion/IntAlias)
           annotationsList: []
           classId: kotlin/Int
-          classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
           nullability: NON_NULLABLE
           ownTypeArguments: []
           qualifiers: [
@@ -144,6 +142,7 @@ KtFunctionalType:
               symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
               typeArguments: []
           ]
+          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
       ]
   ]
   receiverType: null
@@ -152,7 +151,6 @@ KtFunctionalType:
       abbreviatedType: null
       annotationsList: []
       classId: expansion/IntAlias
-      classSymbol: KtTypeAliasSymbol(expansion/IntAlias)
       nullability: NON_NULLABLE
       ownTypeArguments: []
       qualifiers: [
@@ -161,9 +159,9 @@ KtFunctionalType:
           symbol: KtTypeAliasSymbol(expansion/IntAlias)
           typeArguments: []
       ]
+      symbol: KtTypeAliasSymbol(expansion/IntAlias)
     annotationsList: []
     classId: kotlin/Int
-    classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
     nullability: NON_NULLABLE
     ownTypeArguments: []
     qualifiers: [
@@ -172,6 +170,8 @@ KtFunctionalType:
         symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
         typeArguments: []
     ]
+    symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+  symbol: KtNamedClassOrObjectSymbol(kotlin/Function1)
 
 Rendered type:
 (expansion.StringAlias) -> expansion.IntAlias

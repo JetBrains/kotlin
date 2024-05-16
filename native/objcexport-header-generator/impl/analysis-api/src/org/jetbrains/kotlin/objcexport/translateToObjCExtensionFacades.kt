@@ -62,7 +62,7 @@ fun KtResolvedObjCExportFile.translateToObjCExtensionFacades(): List<ObjCInterfa
                  * @see [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapper.getClassIfCategory] which K1 uses
                  * to differentiate extensions and top level callables
                  */
-                type?.expandedClassSymbol?.getObjCClassOrProtocolName()?.objCName
+                type?.expandedSymbol?.getObjCClassOrProtocolName()?.objCName
             }
         }
 

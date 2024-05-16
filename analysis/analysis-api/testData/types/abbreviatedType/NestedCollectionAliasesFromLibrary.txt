@@ -3,7 +3,6 @@ KtUsualClassType:
     abbreviatedType: null
     annotationsList: []
     classId: library1/ListAlias
-    classSymbol: KtTypeAliasSymbol(library1/ListAlias)
     nullability: NON_NULLABLE
     ownTypeArguments: [
       KtUsualClassType:
@@ -11,7 +10,6 @@ KtUsualClassType:
           abbreviatedType: null
           annotationsList: []
           classId: library1/SetAlias
-          classSymbol: KtTypeAliasSymbol(library1/SetAlias)
           nullability: NON_NULLABLE
           ownTypeArguments: [
             KtUsualClassType:
@@ -19,7 +17,6 @@ KtUsualClassType:
                 abbreviatedType: null
                 annotationsList: []
                 classId: library1/StringAlias
-                classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                 nullability: NON_NULLABLE
                 ownTypeArguments: []
                 qualifiers: [
@@ -28,9 +25,9 @@ KtUsualClassType:
                     symbol: KtTypeAliasSymbol(library1/StringAlias)
                     typeArguments: []
                 ]
+                symbol: KtTypeAliasSymbol(library1/StringAlias)
               annotationsList: []
               classId: kotlin/String
-              classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
               nullability: NON_NULLABLE
               ownTypeArguments: []
               qualifiers: [
@@ -39,6 +36,7 @@ KtUsualClassType:
                   symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                   typeArguments: []
               ]
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
           ]
           qualifiers: [
             qualifier:
@@ -50,7 +48,6 @@ KtUsualClassType:
                     abbreviatedType: null
                     annotationsList: []
                     classId: library1/StringAlias
-                    classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                     nullability: NON_NULLABLE
                     ownTypeArguments: []
                     qualifiers: [
@@ -59,9 +56,9 @@ KtUsualClassType:
                         symbol: KtTypeAliasSymbol(library1/StringAlias)
                         typeArguments: []
                     ]
+                    symbol: KtTypeAliasSymbol(library1/StringAlias)
                   annotationsList: []
                   classId: kotlin/String
-                  classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
                   nullability: NON_NULLABLE
                   ownTypeArguments: []
                   qualifiers: [
@@ -70,11 +67,12 @@ KtUsualClassType:
                       symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                       typeArguments: []
                   ]
+                  symbol: KtNamedClassOrObjectSymbol(kotlin/String)
               ]
           ]
+          symbol: KtTypeAliasSymbol(library1/SetAlias)
         annotationsList: []
         classId: kotlin/collections/Set
-        classSymbol: KtNamedClassOrObjectSymbol(kotlin/collections/Set)
         nullability: NON_NULLABLE
         ownTypeArguments: [
           KtUsualClassType:
@@ -82,7 +80,6 @@ KtUsualClassType:
               abbreviatedType: null
               annotationsList: []
               classId: library1/StringAlias
-              classSymbol: KtTypeAliasSymbol(library1/StringAlias)
               nullability: NON_NULLABLE
               ownTypeArguments: []
               qualifiers: [
@@ -91,9 +88,9 @@ KtUsualClassType:
                   symbol: KtTypeAliasSymbol(library1/StringAlias)
                   typeArguments: []
               ]
+              symbol: KtTypeAliasSymbol(library1/StringAlias)
             annotationsList: []
             classId: kotlin/String
-            classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
             nullability: NON_NULLABLE
             ownTypeArguments: []
             qualifiers: [
@@ -102,6 +99,7 @@ KtUsualClassType:
                 symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                 typeArguments: []
             ]
+            symbol: KtNamedClassOrObjectSymbol(kotlin/String)
         ]
         qualifiers: [
           qualifier:
@@ -113,7 +111,6 @@ KtUsualClassType:
                   abbreviatedType: null
                   annotationsList: []
                   classId: library1/StringAlias
-                  classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                   nullability: NON_NULLABLE
                   ownTypeArguments: []
                   qualifiers: [
@@ -122,9 +119,9 @@ KtUsualClassType:
                       symbol: KtTypeAliasSymbol(library1/StringAlias)
                       typeArguments: []
                   ]
+                  symbol: KtTypeAliasSymbol(library1/StringAlias)
                 annotationsList: []
                 classId: kotlin/String
-                classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
                 nullability: NON_NULLABLE
                 ownTypeArguments: []
                 qualifiers: [
@@ -133,8 +130,10 @@ KtUsualClassType:
                     symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                     typeArguments: []
                 ]
+                symbol: KtNamedClassOrObjectSymbol(kotlin/String)
             ]
         ]
+        symbol: KtNamedClassOrObjectSymbol(kotlin/collections/Set)
     ]
     qualifiers: [
       qualifier:
@@ -146,7 +145,6 @@ KtUsualClassType:
               abbreviatedType: null
               annotationsList: []
               classId: library1/SetAlias
-              classSymbol: KtTypeAliasSymbol(library1/SetAlias)
               nullability: NON_NULLABLE
               ownTypeArguments: [
                 KtUsualClassType:
@@ -154,7 +152,6 @@ KtUsualClassType:
                     abbreviatedType: null
                     annotationsList: []
                     classId: library1/StringAlias
-                    classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                     nullability: NON_NULLABLE
                     ownTypeArguments: []
                     qualifiers: [
@@ -163,9 +160,9 @@ KtUsualClassType:
                         symbol: KtTypeAliasSymbol(library1/StringAlias)
                         typeArguments: []
                     ]
+                    symbol: KtTypeAliasSymbol(library1/StringAlias)
                   annotationsList: []
                   classId: kotlin/String
-                  classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
                   nullability: NON_NULLABLE
                   ownTypeArguments: []
                   qualifiers: [
@@ -174,6 +171,7 @@ KtUsualClassType:
                       symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                       typeArguments: []
                   ]
+                  symbol: KtNamedClassOrObjectSymbol(kotlin/String)
               ]
               qualifiers: [
                 qualifier:
@@ -185,7 +183,6 @@ KtUsualClassType:
                         abbreviatedType: null
                         annotationsList: []
                         classId: library1/StringAlias
-                        classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                         nullability: NON_NULLABLE
                         ownTypeArguments: []
                         qualifiers: [
@@ -194,9 +191,9 @@ KtUsualClassType:
                             symbol: KtTypeAliasSymbol(library1/StringAlias)
                             typeArguments: []
                         ]
+                        symbol: KtTypeAliasSymbol(library1/StringAlias)
                       annotationsList: []
                       classId: kotlin/String
-                      classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
                       nullability: NON_NULLABLE
                       ownTypeArguments: []
                       qualifiers: [
@@ -205,11 +202,12 @@ KtUsualClassType:
                           symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                           typeArguments: []
                       ]
+                      symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                   ]
               ]
+              symbol: KtTypeAliasSymbol(library1/SetAlias)
             annotationsList: []
             classId: kotlin/collections/Set
-            classSymbol: KtNamedClassOrObjectSymbol(kotlin/collections/Set)
             nullability: NON_NULLABLE
             ownTypeArguments: [
               KtUsualClassType:
@@ -217,7 +215,6 @@ KtUsualClassType:
                   abbreviatedType: null
                   annotationsList: []
                   classId: library1/StringAlias
-                  classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                   nullability: NON_NULLABLE
                   ownTypeArguments: []
                   qualifiers: [
@@ -226,9 +223,9 @@ KtUsualClassType:
                       symbol: KtTypeAliasSymbol(library1/StringAlias)
                       typeArguments: []
                   ]
+                  symbol: KtTypeAliasSymbol(library1/StringAlias)
                 annotationsList: []
                 classId: kotlin/String
-                classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
                 nullability: NON_NULLABLE
                 ownTypeArguments: []
                 qualifiers: [
@@ -237,6 +234,7 @@ KtUsualClassType:
                     symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                     typeArguments: []
                 ]
+                symbol: KtNamedClassOrObjectSymbol(kotlin/String)
             ]
             qualifiers: [
               qualifier:
@@ -248,7 +246,6 @@ KtUsualClassType:
                       abbreviatedType: null
                       annotationsList: []
                       classId: library1/StringAlias
-                      classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                       nullability: NON_NULLABLE
                       ownTypeArguments: []
                       qualifiers: [
@@ -257,9 +254,9 @@ KtUsualClassType:
                           symbol: KtTypeAliasSymbol(library1/StringAlias)
                           typeArguments: []
                       ]
+                      symbol: KtTypeAliasSymbol(library1/StringAlias)
                     annotationsList: []
                     classId: kotlin/String
-                    classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
                     nullability: NON_NULLABLE
                     ownTypeArguments: []
                     qualifiers: [
@@ -268,13 +265,15 @@ KtUsualClassType:
                         symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                         typeArguments: []
                     ]
+                    symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                 ]
             ]
+            symbol: KtNamedClassOrObjectSymbol(kotlin/collections/Set)
         ]
     ]
+    symbol: KtTypeAliasSymbol(library1/ListAlias)
   annotationsList: []
   classId: kotlin/collections/List
-  classSymbol: KtNamedClassOrObjectSymbol(kotlin/collections/List)
   nullability: NON_NULLABLE
   ownTypeArguments: [
     KtUsualClassType:
@@ -282,7 +281,6 @@ KtUsualClassType:
         abbreviatedType: null
         annotationsList: []
         classId: library1/SetAlias
-        classSymbol: KtTypeAliasSymbol(library1/SetAlias)
         nullability: NON_NULLABLE
         ownTypeArguments: [
           KtUsualClassType:
@@ -290,7 +288,6 @@ KtUsualClassType:
               abbreviatedType: null
               annotationsList: []
               classId: library1/StringAlias
-              classSymbol: KtTypeAliasSymbol(library1/StringAlias)
               nullability: NON_NULLABLE
               ownTypeArguments: []
               qualifiers: [
@@ -299,9 +296,9 @@ KtUsualClassType:
                   symbol: KtTypeAliasSymbol(library1/StringAlias)
                   typeArguments: []
               ]
+              symbol: KtTypeAliasSymbol(library1/StringAlias)
             annotationsList: []
             classId: kotlin/String
-            classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
             nullability: NON_NULLABLE
             ownTypeArguments: []
             qualifiers: [
@@ -310,6 +307,7 @@ KtUsualClassType:
                 symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                 typeArguments: []
             ]
+            symbol: KtNamedClassOrObjectSymbol(kotlin/String)
         ]
         qualifiers: [
           qualifier:
@@ -321,7 +319,6 @@ KtUsualClassType:
                   abbreviatedType: null
                   annotationsList: []
                   classId: library1/StringAlias
-                  classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                   nullability: NON_NULLABLE
                   ownTypeArguments: []
                   qualifiers: [
@@ -330,9 +327,9 @@ KtUsualClassType:
                       symbol: KtTypeAliasSymbol(library1/StringAlias)
                       typeArguments: []
                   ]
+                  symbol: KtTypeAliasSymbol(library1/StringAlias)
                 annotationsList: []
                 classId: kotlin/String
-                classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
                 nullability: NON_NULLABLE
                 ownTypeArguments: []
                 qualifiers: [
@@ -341,11 +338,12 @@ KtUsualClassType:
                     symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                     typeArguments: []
                 ]
+                symbol: KtNamedClassOrObjectSymbol(kotlin/String)
             ]
         ]
+        symbol: KtTypeAliasSymbol(library1/SetAlias)
       annotationsList: []
       classId: kotlin/collections/Set
-      classSymbol: KtNamedClassOrObjectSymbol(kotlin/collections/Set)
       nullability: NON_NULLABLE
       ownTypeArguments: [
         KtUsualClassType:
@@ -353,7 +351,6 @@ KtUsualClassType:
             abbreviatedType: null
             annotationsList: []
             classId: library1/StringAlias
-            classSymbol: KtTypeAliasSymbol(library1/StringAlias)
             nullability: NON_NULLABLE
             ownTypeArguments: []
             qualifiers: [
@@ -362,9 +359,9 @@ KtUsualClassType:
                 symbol: KtTypeAliasSymbol(library1/StringAlias)
                 typeArguments: []
             ]
+            symbol: KtTypeAliasSymbol(library1/StringAlias)
           annotationsList: []
           classId: kotlin/String
-          classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
           nullability: NON_NULLABLE
           ownTypeArguments: []
           qualifiers: [
@@ -373,6 +370,7 @@ KtUsualClassType:
               symbol: KtNamedClassOrObjectSymbol(kotlin/String)
               typeArguments: []
           ]
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
       ]
       qualifiers: [
         qualifier:
@@ -384,7 +382,6 @@ KtUsualClassType:
                 abbreviatedType: null
                 annotationsList: []
                 classId: library1/StringAlias
-                classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                 nullability: NON_NULLABLE
                 ownTypeArguments: []
                 qualifiers: [
@@ -393,9 +390,9 @@ KtUsualClassType:
                     symbol: KtTypeAliasSymbol(library1/StringAlias)
                     typeArguments: []
                 ]
+                symbol: KtTypeAliasSymbol(library1/StringAlias)
               annotationsList: []
               classId: kotlin/String
-              classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
               nullability: NON_NULLABLE
               ownTypeArguments: []
               qualifiers: [
@@ -404,8 +401,10 @@ KtUsualClassType:
                   symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                   typeArguments: []
               ]
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
           ]
       ]
+      symbol: KtNamedClassOrObjectSymbol(kotlin/collections/Set)
   ]
   qualifiers: [
     qualifier:
@@ -417,7 +416,6 @@ KtUsualClassType:
             abbreviatedType: null
             annotationsList: []
             classId: library1/SetAlias
-            classSymbol: KtTypeAliasSymbol(library1/SetAlias)
             nullability: NON_NULLABLE
             ownTypeArguments: [
               KtUsualClassType:
@@ -425,7 +423,6 @@ KtUsualClassType:
                   abbreviatedType: null
                   annotationsList: []
                   classId: library1/StringAlias
-                  classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                   nullability: NON_NULLABLE
                   ownTypeArguments: []
                   qualifiers: [
@@ -434,9 +431,9 @@ KtUsualClassType:
                       symbol: KtTypeAliasSymbol(library1/StringAlias)
                       typeArguments: []
                   ]
+                  symbol: KtTypeAliasSymbol(library1/StringAlias)
                 annotationsList: []
                 classId: kotlin/String
-                classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
                 nullability: NON_NULLABLE
                 ownTypeArguments: []
                 qualifiers: [
@@ -445,6 +442,7 @@ KtUsualClassType:
                     symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                     typeArguments: []
                 ]
+                symbol: KtNamedClassOrObjectSymbol(kotlin/String)
             ]
             qualifiers: [
               qualifier:
@@ -456,7 +454,6 @@ KtUsualClassType:
                       abbreviatedType: null
                       annotationsList: []
                       classId: library1/StringAlias
-                      classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                       nullability: NON_NULLABLE
                       ownTypeArguments: []
                       qualifiers: [
@@ -465,9 +462,9 @@ KtUsualClassType:
                           symbol: KtTypeAliasSymbol(library1/StringAlias)
                           typeArguments: []
                       ]
+                      symbol: KtTypeAliasSymbol(library1/StringAlias)
                     annotationsList: []
                     classId: kotlin/String
-                    classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
                     nullability: NON_NULLABLE
                     ownTypeArguments: []
                     qualifiers: [
@@ -476,11 +473,12 @@ KtUsualClassType:
                         symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                         typeArguments: []
                     ]
+                    symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                 ]
             ]
+            symbol: KtTypeAliasSymbol(library1/SetAlias)
           annotationsList: []
           classId: kotlin/collections/Set
-          classSymbol: KtNamedClassOrObjectSymbol(kotlin/collections/Set)
           nullability: NON_NULLABLE
           ownTypeArguments: [
             KtUsualClassType:
@@ -488,7 +486,6 @@ KtUsualClassType:
                 abbreviatedType: null
                 annotationsList: []
                 classId: library1/StringAlias
-                classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                 nullability: NON_NULLABLE
                 ownTypeArguments: []
                 qualifiers: [
@@ -497,9 +494,9 @@ KtUsualClassType:
                     symbol: KtTypeAliasSymbol(library1/StringAlias)
                     typeArguments: []
                 ]
+                symbol: KtTypeAliasSymbol(library1/StringAlias)
               annotationsList: []
               classId: kotlin/String
-              classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
               nullability: NON_NULLABLE
               ownTypeArguments: []
               qualifiers: [
@@ -508,6 +505,7 @@ KtUsualClassType:
                   symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                   typeArguments: []
               ]
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
           ]
           qualifiers: [
             qualifier:
@@ -519,7 +517,6 @@ KtUsualClassType:
                     abbreviatedType: null
                     annotationsList: []
                     classId: library1/StringAlias
-                    classSymbol: KtTypeAliasSymbol(library1/StringAlias)
                     nullability: NON_NULLABLE
                     ownTypeArguments: []
                     qualifiers: [
@@ -528,9 +525,9 @@ KtUsualClassType:
                         symbol: KtTypeAliasSymbol(library1/StringAlias)
                         typeArguments: []
                     ]
+                    symbol: KtTypeAliasSymbol(library1/StringAlias)
                   annotationsList: []
                   classId: kotlin/String
-                  classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
                   nullability: NON_NULLABLE
                   ownTypeArguments: []
                   qualifiers: [
@@ -539,10 +536,13 @@ KtUsualClassType:
                       symbol: KtNamedClassOrObjectSymbol(kotlin/String)
                       typeArguments: []
                   ]
+                  symbol: KtNamedClassOrObjectSymbol(kotlin/String)
               ]
           ]
+          symbol: KtNamedClassOrObjectSymbol(kotlin/collections/Set)
       ]
   ]
+  symbol: KtNamedClassOrObjectSymbol(kotlin/collections/List)
 
 Rendered type:
 library1.ListAlias<library1.SetAlias<library1.StringAlias>>

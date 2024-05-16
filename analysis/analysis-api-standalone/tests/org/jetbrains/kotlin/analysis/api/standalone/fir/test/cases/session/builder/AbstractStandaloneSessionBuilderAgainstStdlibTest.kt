@@ -67,7 +67,7 @@ abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : TestWithDispo
 
     private fun KtTypeReference.assertIsReferenceTo(classId: ClassId) {
         analyze(this) {
-            val actualClassId = getKtType().expandedClassSymbol?.classId
+            val actualClassId = getKtType().expandedSymbol?.classId
             Assertions.assertEquals(classId, actualClassId)
         }
     }

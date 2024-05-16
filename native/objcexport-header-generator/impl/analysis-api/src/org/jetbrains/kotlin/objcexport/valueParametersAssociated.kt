@@ -57,7 +57,7 @@ private fun MutableList<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>.
 ) {
 
     val receiverType = function.objCReceiverType
-    val receiverTypeName = receiverType?.expandedClassSymbol?.name
+    val receiverTypeName = receiverType?.expandedSymbol?.name
 
     if (receiverType != null && receiverTypeName != null) {
         add(

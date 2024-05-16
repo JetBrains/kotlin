@@ -21,7 +21,7 @@ class IsCloneableTest(
         val file = inlineSourceCodeAnalysis.createKtFile("val foo: Cloneable")
         analyze(file) {
             val foo = file.getPropertyOrFail("foo")
-            assertTrue(foo.getter?.returnType?.expandedClassSymbol?.isCloneable ?: true)
+            assertTrue(foo.getter?.returnType?.expandedSymbol?.isCloneable ?: true)
         }
     }
 
@@ -35,7 +35,7 @@ class IsCloneableTest(
         )
         analyze(file) {
             val foo = file.getPropertyOrFail("foo")
-            assertFalse(foo.getter?.returnType?.expandedClassSymbol?.isCloneable ?: true)
+            assertFalse(foo.getter?.returnType?.expandedSymbol?.isCloneable ?: true)
         }
     }
 
@@ -101,7 +101,7 @@ class IsCloneableTest(
             assertTrue(
                 file
                     .getPropertyOrFail("array")
-                    .getter?.returnType?.expandedClassSymbol?.getMemberScope()
+                    .getter?.returnType?.expandedSymbol?.getMemberScope()
                     ?.getFunctionOrFail("clone")
                     ?.isClone ?: false
             )

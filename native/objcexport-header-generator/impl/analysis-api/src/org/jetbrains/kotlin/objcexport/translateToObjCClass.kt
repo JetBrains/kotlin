@@ -114,6 +114,6 @@ internal fun KtClassOrObjectSymbol.getCallableSymbolsForObjCMemberTranslation():
 
 context(KtAnalysisSession, KtObjCExportSession)
 internal fun KtNonErrorClassType.getSuperClassName(): ObjCExportClassOrProtocolName? {
-    val classSymbol = expandedClassSymbol ?: return null
-    return classSymbol.getObjCClassOrProtocolName()
+    val symbol = expandedSymbol ?: return null
+    return symbol.getObjCClassOrProtocolName()
 }

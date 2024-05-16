@@ -2,7 +2,6 @@ KtUsualClassType:
   abbreviatedType: null
   annotationsList: []
   classId: kotlin/Any
-  classSymbol: KtNamedClassOrObjectSymbol(kotlin/Any)
   nullability: NON_NULLABLE
   ownTypeArguments: []
   qualifiers: [
@@ -11,6 +10,7 @@ KtUsualClassType:
       symbol: KtNamedClassOrObjectSymbol(kotlin/Any)
       typeArguments: []
   ]
+  symbol: KtNamedClassOrObjectSymbol(kotlin/Any)
 
 Rendered type:
 kotlin.Any

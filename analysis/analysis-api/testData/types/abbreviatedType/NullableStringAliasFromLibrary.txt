@@ -3,7 +3,6 @@ KtUsualClassType:
     abbreviatedType: null
     annotationsList: []
     classId: library1/StringAlias
-    classSymbol: KtTypeAliasSymbol(library1/StringAlias)
     nullability: NON_NULLABLE
     ownTypeArguments: []
     qualifiers: [
@@ -12,9 +11,9 @@ KtUsualClassType:
         symbol: KtTypeAliasSymbol(library1/StringAlias)
         typeArguments: []
     ]
+    symbol: KtTypeAliasSymbol(library1/StringAlias)
   annotationsList: []
   classId: kotlin/String
-  classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
   nullability: NULLABLE
   ownTypeArguments: []
   qualifiers: [
@@ -23,6 +22,7 @@ KtUsualClassType:
       symbol: KtNamedClassOrObjectSymbol(kotlin/String)
       typeArguments: []
   ]
+  symbol: KtNamedClassOrObjectSymbol(kotlin/String)
 
 Rendered type:
 library1.StringAlias

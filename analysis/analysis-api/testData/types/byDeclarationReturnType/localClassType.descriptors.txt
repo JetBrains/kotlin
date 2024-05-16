@@ -2,7 +2,6 @@ KtUsualClassType:
   abbreviatedType: null
   annotationsList: []
   classId: B
-  classSymbol: KtNamedClassOrObjectSymbol(<local>/B)
   nullability: NON_NULLABLE
   ownTypeArguments: []
   qualifiers: [
@@ -11,6 +10,7 @@ KtUsualClassType:
       symbol: KtNamedClassOrObjectSymbol(<local>/B)
       typeArguments: []
   ]
+  symbol: KtNamedClassOrObjectSymbol(<local>/B)
 
 Rendered type:
 B

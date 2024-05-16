@@ -123,7 +123,7 @@ class GetSymbolsTest {
 
             val typeAliasASymbol = assertNotNull(typeAliasAAddress.getTypeAliasSymbol())
             assertEquals(Name.identifier("TypeAliasA"), typeAliasASymbol.name)
-            assertEquals(Name.identifier("AClass"), typeAliasASymbol.expandedType.expandedClassSymbol?.name)
+            assertEquals(Name.identifier("AClass"), typeAliasASymbol.expandedType.expandedSymbol?.name)
         }
     }
 

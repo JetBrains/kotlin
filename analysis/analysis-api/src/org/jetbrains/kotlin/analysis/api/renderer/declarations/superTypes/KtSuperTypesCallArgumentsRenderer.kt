@@ -41,7 +41,7 @@ public interface KaSuperTypesCallArgumentsRenderer {
             printer: PrettyPrinter,
         ) {
             with(analysisSession) {
-                if ((type as? KaClassType)?.expandedClassSymbol?.classKind?.isClass != true) {
+                if ((type as? KaClassType)?.expandedSymbol?.classKind?.isClass != true) {
                     return
                 }
                 printer.append("()")

@@ -94,16 +94,22 @@ public interface KaTypeInfoProviderMixIn : KaSessionMixIn {
     public val KaType.isUByte: Boolean get() = withValidityAssertion { isClassTypeWithClassId(StandardNames.FqNames.uByte) }
 
     /** Gets the class symbol backing the given type, if available. */
-    public val KaType.expandedClassSymbol: KaClassOrObjectSymbol?
+    public val KaType.expandedSymbol: KaClassOrObjectSymbol?
         get() = withValidityAssertion {
             return when (this) {
-                is KaNonErrorClassType -> when (val classSymbol = classSymbol) {
-                    is KaClassOrObjectSymbol -> classSymbol
-                    is KaTypeAliasSymbol -> classSymbol.expandedType.expandedClassSymbol
+                is KaNonErrorClassType -> when (val symbol = symbol) {
+                    is KaClassOrObjectSymbol -> symbol
+                    is KaTypeAliasSymbol -> symbol.expandedType.expandedSymbol
                 }
                 else -> null
             }
         }
+
+    /** Gets the class symbol backing the given type, if available. */
+    @Deprecated("Use 'expandedSymbol' instead.", ReplaceWith("expandedSymbol"))
+    public val KaType.expandedClassSymbol: KaClassOrObjectSymbol?
+        get() = expandedSymbol
+
 
     /**
      * Unwraps type aliases.
