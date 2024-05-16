@@ -135,6 +135,8 @@ private fun registerSwiftExportCompilationAndGetBinary(
 
             swiftExportCompilation.compileTaskProvider.configure {
                 it.compilerOptions.optIn.add("kotlin.experimental.ExperimentalNativeApi")
+                it.compilerOptions.optIn.add("kotlinx.cinterop.ExperimentalForeignApi")
+                it.compilerOptions.optIn.add("kotlin.native.internal.InternalForKotlinNative")
             }
 
             binaries.staticLib(swiftExportBinary) { staticLib ->
