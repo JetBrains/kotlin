@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.serialization
 
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 import org.jetbrains.kotlin.wasm.ir.*
@@ -14,13 +15,17 @@ import org.jetbrains.kotlin.wasm.ir.convertors.MyByteReader
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 import kotlin.collections.LinkedHashSet
 
 /**
  * This class is the exact opposite of [WasmSerializer]. See [WasmSerializer] for details.
+ *
+ * When deserializing an object serialized with [WasmSerializer.withFlags], use [withFlags]
+ * When deserializing an object serialized with [WasmSerializer.withId], use [withId]
+ * When deserializing an object serialized with [WasmSerializer.serializeAsReference],
+ *  use [deserializeReference]
  */
 
 class WasmDeserializer(inputStream: InputStream) {
@@ -29,23 +34,21 @@ class WasmDeserializer(inputStream: InputStream) {
 
     private var b: MyByteReader = input
 
-    private val symbolTable: MutableList<Symbol> = mutableListOf()
-
-    private val bStack = Stack<MyByteReader>()
+    private val referenceTable = mutableListOf<Symbol>()
 
     companion object {
         private val OPCODE_TO_WASM_OP by lazy { enumValues<WasmOp>().associateBy { it.opcode } }
     }
 
     fun deserialize(): WasmCompiledFileFragment {
-        // Step 1: load the size of the symbol table
-        val symbolTableSize = b.readUInt16().toInt()
+        // Step 1: load the size of the reference table
+        val referenceTableSize = b.readUInt16().toInt()
 
-        // Step 2: load the elements of the symbol table as bytes
-        repeat(symbolTableSize) {
+        // Step 2: load the elements of the reference table as bytes
+        repeat(referenceTableSize) {
             val slotSize = b.readUInt16()
             val bytes = b.readBytes(slotSize.toInt())
-            symbolTable.add(Symbol(bytes))
+            referenceTable.add(Symbol(bytes))
         }
 
         // Step 3: read the rest of the input
@@ -386,6 +389,7 @@ class WasmDeserializer(inputStream: InputStream) {
                 5 -> deserializeLoweredDeclarationSignature()
                 6 -> deserializeScopeLocalDeclaration()
                 7 -> deserializeSpecialFakeOverrideSignature()
+                8 -> IdSignature.FileSignature(0, FqName(""), "")
                 else -> idError()
             }
         }
@@ -537,22 +541,13 @@ class WasmDeserializer(inputStream: InputStream) {
         wasmToIr = deserializeMap(wasmDeserializeFunc, irDeserializeFunc)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun <T : Any> deserializeSymbol(deserializeFunc: () -> T): WasmSymbol<T> {
-        val index = b.readUInt16().toInt()
-        return symbolTable[index].getOrCreate { bytes ->
-            if (bytes.size == 1 && bytes[0] == 1.toByte()) {
-                // Simple optimization to avoid going through all
-                //  the steps if the owner of the symbol is null
-                return@getOrCreate WasmSymbol<T>(null)
+    private fun <T : Any> deserializeSymbol(deserializeFunc: () -> T): WasmSymbol<T> =
+        deserializeReference {
+            withFlags { flags ->
+                val owner = if (flags.consume()) null else deserializeFunc()
+                WasmSymbol(owner)
             }
-            pushReaderStack()
-            b = MyByteReader(ByteArrayInputStream(bytes))
-            val result: WasmSymbol<T> = deserializeSymbolByBytes(deserializeFunc)
-            popReaderStack()
-            result
-        } as WasmSymbol<T>
-    }
+        }
 
     fun deserializeCompiledFileFragment(): WasmCompiledFileFragment = WasmCompiledFileFragment().apply {
         functions = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
@@ -583,21 +578,17 @@ class WasmDeserializer(inputStream: InputStream) {
         stringPoolSize = deserializeSymbol(::deserializeInt)
     }
 
-    private fun <T : Any> deserializeSymbolByBytes(deserializeFunc: () -> T): WasmSymbol<T> =
-        withFlags { flags ->
-            val owner = if (flags.consume()) null else deserializeFunc()
-            WasmSymbol(owner)
-        }
-
     private fun <T : WasmNamedModuleField> deserializeNamedModuleField(deserializeFunc: (String) -> T) =
         deserializeNamedModuleField { name, _ -> deserializeFunc(name) }
 
     private fun <T : WasmNamedModuleField> deserializeNamedModuleField(deserializeFunc: (String, Flags) -> T) =
-        withFlags { flags ->
-            // Deserializes the common part of WasmNamedModuleField.
-            val id = if (flags.consume()) null else b.readUInt32().toInt()
-            val name = if (flags.consume()) "" else deserializeString()
-            deserializeFunc(name, flags).apply { this.id = id }
+        deserializeReference {
+            withFlags { flags ->
+                // Deserializes the common part of WasmNamedModuleField.
+                val id = if (flags.consume()) null else b.readUInt32().toInt()
+                val name = if (flags.consume()) "" else deserializeString()
+                deserializeFunc(name, flags).apply { this.id = id }
+            }
         }
 
     private fun <T> withId(deserializeFunc: (Int) -> T) =
@@ -606,17 +597,20 @@ class WasmDeserializer(inputStream: InputStream) {
     private fun <T> withFlags(deserializeFunc: (Flags) -> T) =
         deserializeFunc(Flags(b.readUByte().toUInt()))
 
+    private fun <T> deserializeReference(deserializeFunc: () -> T): T {
+        val index = b.readUInt16().toInt()
+        return referenceTable[index].getOrCreate { bytes ->
+            val oldB = b
+            b = MyByteReader(ByteArrayInputStream(bytes))
+            val result = deserializeFunc()
+            b = oldB
+            result
+        }
+    }
+
     private fun UByte.toBoolean(): Boolean = this == 1.toUByte()
 
     private fun idError(): Nothing = error("Invalid id")
-
-    private fun pushReaderStack() {
-        bStack.push(b)
-    }
-
-    private fun popReaderStack() {
-        b = bStack.pop()
-    }
 
     class Flags(private var flags: UInt = 0U) {
         operator fun get(i: Int): Boolean {
@@ -631,8 +625,19 @@ class WasmDeserializer(inputStream: InputStream) {
         }
     }
 
-    private class Symbol(private val bytes: ByteArray, private var symbol: WasmSymbol<*>? = null) {
-        fun getOrCreate(deserialize: (ByteArray) -> WasmSymbol<*>): WasmSymbol<*> =
-            symbol ?: deserialize(bytes).also { symbol = it }
+    @Suppress("UNCHECKED_CAST")
+    private class Symbol(private val bytes: ByteArray, private var obj: Any? = null) {
+        private var inConstruction = false
+        fun <T> getOrCreate(deserialize: (ByteArray) -> T): T {
+            if (obj == null) {
+                if (inConstruction) {
+                    error("Dependency cycle detected between reference table elements.")
+                }
+                inConstruction = true
+                obj = deserialize(bytes)
+                inConstruction = false
+            }
+            return obj as T
+        }
     }
 }
