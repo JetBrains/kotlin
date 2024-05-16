@@ -95,7 +95,7 @@ class Fir2IrDataClassMembersGenerator(
             val toStringContributedFunction = contributedSyntheticFunctions[TO_STRING]
             if (toStringContributedFunction != null) {
                 result.add(toStringContributedFunction)
-                val toStringFunction = createSyntheticIrFunction(
+                val toStringFunction = createSyntheticIrFunctionFromAny(
                     TO_STRING,
                     toStringContributedFunction,
                     c.builtins.stringType,
@@ -107,7 +107,7 @@ class Fir2IrDataClassMembersGenerator(
             val hashcodeNameContributedFunction = contributedSyntheticFunctions[HASHCODE_NAME]
             if (hashcodeNameContributedFunction != null) {
                 result.add(hashcodeNameContributedFunction)
-                val hashCodeFunction = createSyntheticIrFunction(
+                val hashCodeFunction = createSyntheticIrFunctionFromAny(
                     HASHCODE_NAME,
                     hashcodeNameContributedFunction,
                     c.builtins.intType,
@@ -119,7 +119,7 @@ class Fir2IrDataClassMembersGenerator(
             val equalsContributedFunction = contributedSyntheticFunctions[EQUALS]
             if (equalsContributedFunction != null) {
                 result.add(equalsContributedFunction)
-                val equalsFunction = createSyntheticIrFunction(
+                val equalsFunction = createSyntheticIrFunctionFromAny(
                     EQUALS,
                     equalsContributedFunction,
                     c.builtins.booleanType,
@@ -157,7 +157,7 @@ class Fir2IrDataClassMembersGenerator(
             return contributedSyntheticFunctions
         }
 
-        private fun createSyntheticIrFunction(
+        private fun createSyntheticIrFunctionFromAny(
             name: Name,
             syntheticCounterpart: FirSimpleFunction,
             returnType: IrType,
@@ -193,12 +193,6 @@ class Fir2IrDataClassMembersGenerator(
                 setParent(irClass)
                 addDeclarationToParent(this, irClass)
                 dispatchReceiverParameter = generateDispatchReceiverParameter(this)
-                c.builtins.findBuiltInClassMemberFunctions(
-                    c.builtins.anyClass,
-                    this.name
-                ).singleOrNull()?.let {
-                    overriddenSymbols = listOf(it)
-                }
             }
         }
 
