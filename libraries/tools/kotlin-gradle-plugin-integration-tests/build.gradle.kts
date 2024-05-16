@@ -361,6 +361,7 @@ val swiftExportTestsTask = tasks.register<Test>("kgpSwiftExportTests") {
         excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP", "NativeKGP")
         includeEngines("junit-jupiter")
     }
+    applyKotlinNativeFromCurrentBranchIfNeeded()
 }
 
 val jsTestsTask = tasks.register<Test>("kgpJsTests") {
