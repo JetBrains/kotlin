@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
 
@@ -17,7 +16,7 @@ actual typealias MyAnnotation = RealState
 // MODULE: main(lib-jvm)()()
 package foo
 
-@<!COMPILER_REQUIRED_ANNOTATION_AMBIGUITY!>MyAnnotation<!>
+@MyAnnotation
 object CommonBenchmark
 
 fun box() = "OK"

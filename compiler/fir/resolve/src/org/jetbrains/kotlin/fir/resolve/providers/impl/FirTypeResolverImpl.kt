@@ -449,9 +449,18 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingDeclarations.lastOrNull(),
                     isOperandOfIsOperator,
                 )
+                val resolvedTypeSymbol = resolvedType.toSymbol(session)
+                // We can expand typealiases from dependencies right away, as it won't depend on us back,
+                // so there will be no problems with recursion.
+                // In the ideal world, this should also work with some source dependencies as the only case
+                // where it does not is when we are a platform module, and we look at the common module
+                // from our dependencies.
+                // Those are guaranteed to have source sessions, though.
+                val isFromLibraryDependency = resolvedTypeSymbol?.moduleData?.session?.kind == FirSession.Kind.Library
                 val resolvedExpandedType = when {
-                    expandTypeAliases && resolvedType.toSymbol(session) is FirTypeAliasSymbol -> {
-                        resolvedType.fullyExpandedType(session).withAbbreviation(AbbreviatedTypeAttribute(resolvedType))
+                    (expandTypeAliases || isFromLibraryDependency) && resolvedTypeSymbol is FirTypeAliasSymbol -> {
+                        resolvedType.fullyExpandedType(resolvedTypeSymbol.moduleData.session)
+                            .withAbbreviation(AbbreviatedTypeAttribute(resolvedType))
                     }
                     else -> resolvedType
                 }
