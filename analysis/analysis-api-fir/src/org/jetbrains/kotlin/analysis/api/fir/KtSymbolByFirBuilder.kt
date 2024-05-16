@@ -468,8 +468,7 @@ internal class KaSymbolByFirBuilder(
                 is ConeIntersectionType -> KaFirIntersectionType(coneType, this@KaSymbolByFirBuilder)
                 is ConeDefinitelyNotNullType -> KaFirDefinitelyNotNullType(coneType, this@KaSymbolByFirBuilder)
                 is ConeCapturedType -> KaFirCapturedType(coneType, this@KaSymbolByFirBuilder)
-                is ConeIntegerLiteralConstantType -> KaFirIntegerLiteralType(coneType, this@KaSymbolByFirBuilder)
-                is ConeIntegerConstantOperatorType -> buildKtType(coneType.getApproximatedType())
+                is ConeIntegerLiteralType -> buildKtType(coneType.getApproximatedType())
 
                 is ConeTypeVariableType -> {
                     val diagnostic = when ( val typeParameter = coneType.typeConstructor.originalTypeParameter) {

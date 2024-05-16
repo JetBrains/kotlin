@@ -204,33 +204,6 @@ public abstract class KaIntersectionType : KaType {
 public typealias KtIntersectionType = KaIntersectionType
 
 /**
- * Non-denotable type representing some number type. This type generally come when retrieving some integer literal [KaType].
- * It is unknown which number type it exactly is, but possible options based on [value] can be retrieved via [possibleTypes].
- */
-public abstract class KaIntegerLiteralType : KaType {
-    /**
-     * Literal value for which the type was created.
-     */
-    public abstract val value: Long
-
-    /**
-     * Is the type unsigned (i.e. corresponding literal had `u` suffix)
-     */
-    public abstract val isUnsigned: Boolean
-
-    /**
-     * The list of `Number` types the type may be represented as.
-     *
-     * The possible options are: `Byte`, `Short` ,`Int`, `Long`, `UByte`, `UShort` `UInt`, `ULong`
-     */
-    public abstract val possibleTypes: Collection<KaClassType>
-
-    override fun toString(): String = asStringForDebugging()
-}
-
-public typealias KtIntegerLiteralType = KaIntegerLiteralType
-
-/**
  * A special dynamic type, which is used to support interoperability with dynamically typed libraries, platforms or languages.
  *
  * Although this can be viewed as a flexible type (kotlin.Nothing..kotlin.Any?), a platform may assign special meaning to the
