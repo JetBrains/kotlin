@@ -74,5 +74,17 @@ if (kotlinBuildProperties.isApplePrivacyManifestsPluginEnabled) {
         publications.withType(MavenPublication::class.java).all {
             configureKotlinPomAttributes(project)
         }
+
+        publications {
+            withType<MavenPublication>().configureEach {
+                if (name.endsWith("PluginMarkerMaven")) {
+                    pom {
+                        // https://github.com/gradle/gradle/issues/8754
+                        // and https://github.com/gradle/gradle/issues/6155
+                        packaging = "pom"
+                    }
+                }
+            }
+        }
     }
 }
