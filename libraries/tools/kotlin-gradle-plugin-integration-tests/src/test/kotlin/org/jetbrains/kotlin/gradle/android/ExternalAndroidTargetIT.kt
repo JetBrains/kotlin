@@ -25,7 +25,7 @@ import kotlin.test.fail
 @AndroidTestVersions(
     minVersion = TestVersions.AGP.AGP_82,
     maxVersion = TestVersions.AGP.AGP_85,
-    additionalVersions = [TestVersions.AGP.AGP_84],
+    additionalVersions = [TestVersions.AGP.AGP_83, TestVersions.AGP.AGP_84],
 )
 @AndroidGradlePluginTests
 class ExternalAndroidTargetIT : KGPBaseTest() {
