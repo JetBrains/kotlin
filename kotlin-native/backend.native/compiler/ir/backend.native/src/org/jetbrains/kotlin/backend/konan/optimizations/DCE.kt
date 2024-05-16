@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
+import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -73,6 +74,9 @@ internal fun dce(
             super.visitConstructor(declaration)
         }
     })
+
+    // Even if the target gets inlined into the bridge, RTTI generator needs the target to properly build vtables/itables.
+    referencedFunctions.addAll(referencedFunctions.mapNotNull { it.bridgeTarget })
 
     irModule.transformChildrenVoid(object : IrElementTransformerVoid() {
         override fun visitFile(declaration: IrFile): IrFile {
