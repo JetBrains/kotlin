@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
@@ -38,8 +39,8 @@ import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.deferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -53,12 +54,8 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.VALUE_PARAMETER
-import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
-import org.jetbrains.kotlin.load.java.JavaDefaultQualifiers
-import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.*
@@ -270,7 +267,7 @@ class FirSignatureEnhancement(
                 owner.symbol.classId,
                 firMethod.computeJvmDescriptor { it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack) }
             ).let { signature ->
-                PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[signature]
+                PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[signature]?.useWarningsIfErrorModeIsNotEnabledYet()
             }
 
         predefinedEnhancementInfo?.let {
@@ -465,6 +462,16 @@ class FirSignatureEnhancement(
         }
 
         return function.symbol
+    }
+
+    private fun PredefinedFunctionEnhancementInfo.useWarningsIfErrorModeIsNotEnabledYet(): PredefinedFunctionEnhancementInfo {
+        val stringVersionRepresentation = errorsSinceLanguageVersion ?: return this
+        val fromVersionString =
+            LanguageVersion.fromVersionString(stringVersionRepresentation) ?: error("Unexpected LV: $stringVersionRepresentation")
+
+        if (session.languageVersionSettings.languageVersion >= fromVersionString) return this
+
+        return warningModeClone ?: error("For not null LV $errorsSinceLanguageVersion, `warningModeClone` should not be null")
     }
 
     private fun updateIsOperatorFlagIfNeeded(function: FirFunction) {
