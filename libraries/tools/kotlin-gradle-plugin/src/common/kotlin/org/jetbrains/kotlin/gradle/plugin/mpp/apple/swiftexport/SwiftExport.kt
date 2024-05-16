@@ -139,6 +139,8 @@ private fun registerSwiftExportCompilationAndGetBinary(
 
             binaries.staticLib(swiftExportBinary) { staticLib ->
                 staticLib.compilation = swiftExportCompilation
+                staticLib.binaryOption("swiftExport", "true")
+                staticLib.binaryOption("cInterfaceMode", "none")
             }
         }
     )
