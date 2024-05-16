@@ -28,6 +28,12 @@ public class FirSwiftExportTestGenerated extends AbstractNativeSwiftExportTest {
   }
 
   @Test
+  @TestMetadata("properties")
+  public void testProperties() {
+    runTest("native/native.tests/testData/SwiftExport/properties/");
+  }
+
+  @Test
   @TestMetadata("referenceTypes")
   public void testReferenceTypes() {
     runTest("native/native.tests/testData/SwiftExport/referenceTypes/");
