@@ -7,20 +7,20 @@ fun <R> List<R>.a() {}
 
 fun test1(i: Int?) {
     1.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>a<!>()
-    i.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>a<!>()
+    i.<!UNRESOLVED_REFERENCE!>a<!>()
 }
 
 fun <R> test2(c: Collection<R>) {
-    c.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>a<!>()
+    c.<!UNRESOLVED_REFERENCE!>a<!>()
 }
 
 fun Int.foo() {}
 
 fun test3(s: String?) {
-    "".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
-    s.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
-    "".foo(<!TOO_MANY_ARGUMENTS!>1<!>)
-    s.foo(<!TOO_MANY_ARGUMENTS!>"a"<!>)
+    "".<!UNRESOLVED_REFERENCE!>foo<!>()
+    s.<!UNRESOLVED_REFERENCE!>foo<!>()
+    "".<!UNRESOLVED_REFERENCE!>foo<!>(1)
+    s.<!UNRESOLVED_REFERENCE!>foo<!>("a")
 }
 
 interface A

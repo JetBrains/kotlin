@@ -1240,6 +1240,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
       }
 
       @Test
+      @TestMetadata("typeAliasAsAnExtensionReceiver.kt")
+      public void testTypeAliasAsAnExtensionReceiver() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasAsAnExtensionReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("typeAliasWithNotNullBound.kt")
       public void testTypeAliasWithNotNullBound() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasWithNotNullBound.kt");

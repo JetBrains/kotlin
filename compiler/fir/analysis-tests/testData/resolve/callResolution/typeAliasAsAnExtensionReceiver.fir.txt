@@ -1,0 +1,21 @@
+FILE: typeAliasAsAnExtensionReceiver.kt
+    public final object Type1 : R|kotlin/Any| {
+        private constructor(): R|Type1| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final object Type2 : R|kotlin/Any| {
+        private constructor(): R|Type2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias ImmutableMap<K, V> = R|java/util/Map<K, V>|
+    private final typealias ImmutableMultimap<K, V> = R|ImmutableMap<K, kotlin/collections/Set<V>>|
+    public final fun test(t2: R|ImmutableMap<Type1, kotlin/collections/Set<Type2>>|): R|kotlin/Unit| {
+        lvar resultingTypeInfo: R|ImmutableMap<Type1, kotlin/collections/Set<Type2>>| = R|<local>/t2|
+        R|<local>/resultingTypeInfo|.R|/foo|<R|Type1|, R|Type2|>(Q|Type1|, Q|Type2|)
+    }
+    private final fun <K, V> R|ImmutableMultimap<K, V>|.foo(key: R|K|, value: R|V|): R|kotlin/Unit| {
+    }

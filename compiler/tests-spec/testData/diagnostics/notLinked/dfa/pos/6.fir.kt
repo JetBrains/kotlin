@@ -1016,7 +1016,7 @@ fun case_58(a: ((Float) -> Int?)?, b: Float?, z: Nothing?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>b<!>
         if (a != z) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>? & kotlin.Function1<kotlin.Float, kotlin.Int?>")!>a<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>? & kotlin.Function1<kotlin.Float, kotlin.Int?>")!>a<!>.<!UNRESOLVED_REFERENCE!>java<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Float, kotlin.Int?>? & kotlin.Function1<kotlin.Float, kotlin.Int?>")!>a<!>.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>java<!>
         }
     }
 }

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -384,11 +383,17 @@ internal class ScopeTowerLevel(
         }
     }
 
+    // The main goal of this function is the optimization. The function checks at a basic level if a candidate is suitable or not.
+    // Please, don't add performance-heavy logic to this function.
     private fun shouldSkipCandidateWithInconsistentExtensionReceiver(candidate: FirCallableSymbol<*>): Boolean {
         // Pre-check explicit extension receiver for default package top-level members
-        if (scope !is FirDefaultStarImportingScope || !areThereExtensionReceiverOptions()) return false
+        if (!areThereExtensionReceiverOptions()) return false
 
-        val declarationReceiverType = candidate.resolvedReceiverTypeRef?.coneType as? ConeClassLikeType ?: return false
+        val declarationReceiverType =
+            candidate.resolvedReceiverTypeRef?.coneType as? ConeClassLikeType ?: return false
+
+        if (declarationReceiverType.toSymbol(session) is FirTypeAliasSymbol) return false
+
         val startProjectedDeclarationReceiverType = declarationReceiverType.lookupTag.constructClassType(
             declarationReceiverType.typeArguments.map { ConeStarProjection }.toTypedArray(),
             isNullable = true
@@ -398,6 +403,9 @@ internal class ScopeTowerLevel(
             val extensionReceiverType = extensionReceiver.resolvedType
             // If some receiver is non class like, we should not skip it
             if (extensionReceiverType !is ConeClassLikeType) return@none true
+
+            // If a some receiver has function type, we should not skip it due to coercions/conversions
+            if (extensionReceiverType.isSomeFunctionType(session)) return@none true
 
             AbstractTypeChecker.isSubtypeOf(
                 session.typeContext,

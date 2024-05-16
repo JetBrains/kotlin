@@ -5,5 +5,5 @@ class MyClass
 val MyClass.isInterface get() = 4
 
 fun usage(type: MyType) {
-    type.<!FUNCTION_EXPECTED!>isInterface<!>()
+    type.<!UNRESOLVED_REFERENCE!>isInterface<!>()
 }

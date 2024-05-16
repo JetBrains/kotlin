@@ -14,6 +14,6 @@ fun test() {
     A.f2()
     B.f3()
     B.f4()
-    A.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f5<!>()
-    B.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f5<!>()
+    A.<!UNRESOLVED_REFERENCE!>f5<!>()
+    B.<!UNRESOLVED_REFERENCE!>f5<!>()
 }

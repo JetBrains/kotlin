@@ -111,7 +111,7 @@ class case_3_class {
     fun case_3(value_1: Any?, value_2: Number?) {
         val o = case_3_class()
         contracts.case_3(value_1, value_2, o.prop_1, this.prop_1)
-        println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
         println(value_2?.toByte())
         println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
     }
@@ -164,22 +164,22 @@ class case_6_class {
     fun case_6(value_1: Any?, value_2: Number?) {
         val o = case_6_class()
         if (contracts.case_6_1(value_1, value_2, o.prop_1, this.prop_1)) {
-            println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
             println(value_2?.toByte())
             println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (!contracts.case_6_2(value_1, value_2, o.prop_1, this.prop_1)) {
-            println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
             println(value_2?.toByte())
             println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (contracts.case_6_3(value_1, value_2, o.prop_1, this.prop_1) == null) {
-            println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
             println(value_2?.toByte())
             println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (contracts.case_6_4(value_1, value_2, o.prop_1, this.prop_1) != null) {
-            println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
             println(value_2?.toByte())
             println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }

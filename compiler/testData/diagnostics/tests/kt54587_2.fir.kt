@@ -1,7 +1,7 @@
 package one
 
 fun test(f: NextMissing) {
-    for(i in <!NEXT_NONE_APPLICABLE!>f<!>) {} //[NEXT_NONE_APPLICABLE] is expected as in K1
+    for(i in <!NEXT_MISSING!>f<!>) {} //[NEXT_NONE_APPLICABLE] is expected as in K1
 }
 
 interface Doo
