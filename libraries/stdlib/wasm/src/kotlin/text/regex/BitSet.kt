@@ -13,6 +13,7 @@ package kotlin.native
  * @constructor creates an empty bit set with the specified [size]
  * @param size the size of one element in the array used to store bits.
  */
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS")
 internal actual class BitSet
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 actual constructor(size: Int = ELEMENT_SIZE) {

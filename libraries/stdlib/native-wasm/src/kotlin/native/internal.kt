@@ -11,5 +11,4 @@ internal expect interface KonanSet<out E> : Set<E> {
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
-@PublishedApi
 internal expect annotation class CanBePrecreated()
