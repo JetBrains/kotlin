@@ -8,7 +8,7 @@ KtSuccessCallInfo:
           owningCallableSymbol: KtFunctionSymbol(/call)
           type: KtUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: JavaClass
         type = JavaClass
       extensionReceiver = null

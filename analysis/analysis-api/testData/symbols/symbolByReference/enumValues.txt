@@ -22,10 +22,10 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: MyKotlinEnum
     ]
     type: kotlin/Array<MyKotlinEnum>

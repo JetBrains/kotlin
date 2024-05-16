@@ -17,7 +17,7 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
     KtUsualClassType:
       annotationsList: [
@@ -28,7 +28,7 @@ KtNamedClassOrObjectSymbol:
         Anno1()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
   ]
   symbolKind: TOP_LEVEL

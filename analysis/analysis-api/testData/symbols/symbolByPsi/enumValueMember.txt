@@ -12,7 +12,7 @@ KtConstructorSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Style
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -34,7 +34,7 @@ KtConstructorSymbol:
           receiverParameter: null
           returnType: KtUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/String
           symbolKind: LOCAL
           typeParameters: []
@@ -59,7 +59,7 @@ KtConstructorSymbol:
           receiverParameter: null
           returnType: KtUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/String
           symbolKind: ACCESSOR
           typeParameters: []
@@ -67,7 +67,7 @@ KtConstructorSymbol:
           visibility: Public
           getDispatchReceiver(): KtUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: Style
           getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
           getContainingJvmClassName: Style
@@ -93,7 +93,7 @@ KtConstructorSymbol:
         receiverParameter: null
         returnType: KtUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/String
         setter: null
         symbolKind: CLASS_MEMBER
@@ -101,7 +101,7 @@ KtConstructorSymbol:
         visibility: Public
         getDispatchReceiver(): KtUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: Style
         getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
         getContainingJvmClassName: Style
@@ -122,7 +122,7 @@ KtConstructorSymbol:
       receiverParameter: null
       returnType: KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
@@ -150,7 +150,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: LOCAL
     typeParameters: []
@@ -175,7 +175,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -205,7 +205,7 @@ KtKotlinPropertySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
@@ -213,7 +213,7 @@ KtKotlinPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: <anonymous>
   getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
   getContainingJvmClassName: null
@@ -235,7 +235,7 @@ KtEnumEntrySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Style
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -257,7 +257,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: LOCAL
     typeParameters: []
@@ -282,7 +282,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -290,7 +290,7 @@ KtKotlinPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: Style
     getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
     getContainingJvmClassName: Style
@@ -316,7 +316,7 @@ KtKotlinPropertySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
@@ -324,7 +324,7 @@ KtKotlinPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Style
   getContainingFileSymbol: KtFileSymbol(enumValueMember.kt)
   getContainingJvmClassName: Style
@@ -354,10 +354,10 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KtUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: Style
       ]
       type: kotlin/Enum<Style>

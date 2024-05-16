@@ -16,10 +16,10 @@ KtFunctionSymbol:
               owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
               type: KtFunctionalType:
                 annotationsList: []
-                ownTypeArguments: [
+                typeArguments: [
                   KtUsualClassType:
                     annotationsList: []
-                    ownTypeArguments: []
+                    typeArguments: []
                     type: kotlin/Unit
                 ]
                 type: kotlin/Function0<kotlin/Unit>
@@ -50,10 +50,10 @@ KtFunctionSymbol:
     owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
     type: KtFunctionalType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KtUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Unit
       ]
       type: kotlin/Function0<kotlin/Unit>
@@ -62,7 +62,7 @@ KtFunctionSymbol:
     deprecationStatus: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

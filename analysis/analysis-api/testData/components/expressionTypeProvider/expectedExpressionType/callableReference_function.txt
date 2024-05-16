@@ -1,7 +1,7 @@
 expression: function::apply
 expected type: KtFunctionalType:
   annotationsList: []
-  ownTypeArguments: [
+  typeArguments: [
     KtTypeParameterType:
       annotationsList: []
       type: T

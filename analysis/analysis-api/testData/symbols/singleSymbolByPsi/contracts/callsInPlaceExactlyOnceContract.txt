@@ -26,10 +26,10 @@ KtFunctionSymbol:
               receiverParameter: null
               returnType: KtFunctionalType:
                 annotationsList: []
-                ownTypeArguments: [
+                typeArguments: [
                   KtUsualClassType:
                     annotationsList: []
-                    ownTypeArguments: []
+                    typeArguments: []
                     type: kotlin/Unit
                 ]
                 type: kotlin/Function0<kotlin/Unit>
@@ -60,7 +60,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -81,10 +81,10 @@ KtFunctionSymbol:
       receiverParameter: null
       returnType: KtFunctionalType:
         annotationsList: []
-        ownTypeArguments: [
+        typeArguments: [
           KtUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Unit
         ]
         type: kotlin/Function0<kotlin/Unit>

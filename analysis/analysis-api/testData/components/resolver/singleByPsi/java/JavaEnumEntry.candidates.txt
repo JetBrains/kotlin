@@ -21,7 +21,7 @@ KtApplicableCallCandidateInfo:
           receiverParameter: null
           returnType: KtUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: java/lang/annotation/RetentionPolicy
           symbolKind: CLASS_MEMBER
           typeParameters: []

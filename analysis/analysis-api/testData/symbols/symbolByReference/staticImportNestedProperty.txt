@@ -11,7 +11,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
@@ -36,7 +36,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -44,7 +44,7 @@ KtKotlinPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: one/two/TopLevelObject.Nested
     getContainingFileSymbol: KtFileSymbol(dependency.kt)
     getContainingJvmClassName: one.two.TopLevelObject.Nested
@@ -70,7 +70,7 @@ KtKotlinPropertySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -78,7 +78,7 @@ KtKotlinPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: one/two/TopLevelObject.Nested
   getContainingFileSymbol: KtFileSymbol(dependency.kt)
   getContainingJvmClassName: one.two.TopLevelObject.Nested

@@ -3,7 +3,7 @@ expression: {
     }
 expected type: KtUsualClassType:
   annotationsList: []
-  ownTypeArguments: [
+  typeArguments: [
     KtFlexibleType:
       annotationsList: []
       type: kotlin/String!

@@ -18,7 +18,7 @@ KtFunctionSymbol:
               owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
               type: KtUsualClassType:
                 annotationsList: []
-                ownTypeArguments: []
+                typeArguments: []
                 type: kotlin/Boolean
               getContainingFileSymbol: KtFileSymbol(referenceBooleanReceiverInContract.kt)
               getContainingModule: KtSourceModule "Sources of main"
@@ -46,14 +46,14 @@ KtFunctionSymbol:
     owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
     type: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Boolean
     getContainingFileSymbol: KtFileSymbol(referenceBooleanReceiverInContract.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

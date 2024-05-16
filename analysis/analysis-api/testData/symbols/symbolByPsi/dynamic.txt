@@ -42,7 +42,7 @@ KtKotlinPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: Foo
     getContainingFileSymbol: KtFileSymbol(dynamic.kt)
     getContainingJvmClassName: Foo
@@ -75,7 +75,7 @@ KtKotlinPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Foo
   getContainingFileSymbol: KtFileSymbol(dynamic.kt)
   getContainingJvmClassName: Foo
@@ -160,7 +160,7 @@ KtFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Foo
   getContainingFileSymbol: KtFileSymbol(dynamic.kt)
   getContainingJvmClassName: Foo
@@ -186,7 +186,7 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL

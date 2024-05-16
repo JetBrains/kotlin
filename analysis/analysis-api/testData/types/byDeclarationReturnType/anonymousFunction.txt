@@ -3,7 +3,6 @@ KtUsualClassType:
   annotationsList: []
   classId: kotlin/Unit
   nullability: NON_NULLABLE
-  ownTypeArguments: []
   qualifiers: [
     qualifier:
       name: Unit
@@ -11,6 +10,7 @@ KtUsualClassType:
       typeArguments: []
   ]
   symbol: KtNamedClassOrObjectSymbol(kotlin/Unit)
+  typeArguments: []
 
 Rendered type:
 kotlin.Unit

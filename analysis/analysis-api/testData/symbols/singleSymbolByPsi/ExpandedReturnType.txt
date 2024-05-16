@@ -22,7 +22,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Base
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -17,7 +17,7 @@ KtJavaFieldSymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass

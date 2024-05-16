@@ -11,7 +11,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
@@ -25,13 +25,13 @@ KtKotlinPropertySymbol:
       label: null
       type: KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
     KtContextReceiver:
       label: s
       type: KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
   ]
   getter: KtPropertyGetterSymbol:
@@ -49,7 +49,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -79,7 +79,7 @@ KtKotlinPropertySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL

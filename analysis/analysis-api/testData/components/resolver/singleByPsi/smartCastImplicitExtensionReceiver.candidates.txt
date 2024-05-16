@@ -10,7 +10,7 @@ KtApplicableCallCandidateInfo:
           owningCallableSymbol: KtFunctionSymbol(/test)
           type: KtUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/Any
         type = kotlin.String
       signature = KtFunctionLikeSignature:

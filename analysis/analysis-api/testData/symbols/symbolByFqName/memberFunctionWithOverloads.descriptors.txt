@@ -22,7 +22,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KtTypeParameterType:
         annotationsList: []
         type: E
@@ -34,7 +34,7 @@ KtFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KtTypeParameterType:
         annotationsList: []
         type: E
@@ -71,7 +71,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KtTypeParameterType:
         annotationsList: []
         type: E
@@ -96,7 +96,7 @@ KtFunctionSymbol:
       receiverParameter: null
       returnType: KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -110,7 +110,7 @@ KtFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KtTypeParameterType:
         annotationsList: []
         type: E

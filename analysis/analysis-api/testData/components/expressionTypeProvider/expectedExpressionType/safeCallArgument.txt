@@ -1,5 +1,5 @@
 expression: arg
 expected type: KtUsualClassType:
   annotationsList: []
-  ownTypeArguments: []
+  typeArguments: []
   type: kotlin/String

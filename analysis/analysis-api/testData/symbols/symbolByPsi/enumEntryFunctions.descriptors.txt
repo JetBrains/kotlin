@@ -22,7 +22,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -30,7 +30,7 @@ KtFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: MyEnumClass.FirstEntry
   getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: null
@@ -48,7 +48,7 @@ KtEnumEntrySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -68,7 +68,7 @@ KtEnumEntrySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -101,7 +101,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -109,7 +109,7 @@ KtFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: MyEnumClass.ThirdEntry
   getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: null
@@ -140,7 +140,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -161,7 +161,7 @@ KtFunctionSymbol:
       receiverParameter: null
       returnType: KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -173,7 +173,7 @@ KtFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: MyEnumClass.ThirdEntry
   getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: null
@@ -191,7 +191,7 @@ KtEnumEntrySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -219,10 +219,10 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KtUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: MyEnumClass
       ]
       type: kotlin/Enum<MyEnumClass>

@@ -119,6 +119,6 @@ internal class KaFe10FunctionalType(
     override val symbol: KaClassLikeSymbol
         get() = withValidityAssertion { KaFe10DescNamedClassOrObjectSymbol(descriptor, analysisContext) }
 
-    override val ownTypeArguments: List<KaTypeProjection>
+    override val typeArguments: List<KaTypeProjection>
         get() = withValidityAssertion { fe10Type.arguments.map { it.toKtTypeProjection(analysisContext) } }
 }

@@ -22,7 +22,7 @@ KtSuccessCallInfo:
           superTypes: [
             KtUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: one/two/BaseClass
           ]
           symbolKind: TOP_LEVEL

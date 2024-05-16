@@ -22,7 +22,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -30,7 +30,7 @@ KtFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: <no name provided>
   getContainingFileSymbol: KtFileSymbol(anonymousObject.kt)
   getContainingJvmClassName: null
@@ -50,7 +50,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
@@ -75,7 +75,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -83,7 +83,7 @@ KtKotlinPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: <no name provided>
     getContainingFileSymbol: KtFileSymbol(anonymousObject.kt)
     getContainingJvmClassName: null
@@ -109,7 +109,7 @@ KtKotlinPropertySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -117,7 +117,7 @@ KtKotlinPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: <no name provided>
   getContainingFileSymbol: KtFileSymbol(anonymousObject.kt)
   getContainingJvmClassName: null
@@ -139,7 +139,7 @@ KtAnonymousObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: java/lang/Runnable
   ]
   symbolKind: LOCAL
@@ -162,7 +162,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: java/lang/Runnable
     symbolKind: LOCAL
     typeParameters: []
@@ -187,7 +187,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: java/lang/Runnable
     symbolKind: ACCESSOR
     typeParameters: []
@@ -195,7 +195,7 @@ KtKotlinPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: AnonymousContainer
     getContainingFileSymbol: KtFileSymbol(anonymousObject.kt)
     getContainingJvmClassName: AnonymousContainer
@@ -221,7 +221,7 @@ KtKotlinPropertySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: java/lang/Runnable
   setter: null
   symbolKind: CLASS_MEMBER
@@ -229,7 +229,7 @@ KtKotlinPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: AnonymousContainer
   getContainingFileSymbol: KtFileSymbol(anonymousObject.kt)
   getContainingJvmClassName: AnonymousContainer
@@ -259,7 +259,7 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL

@@ -65,7 +65,7 @@ KtSuccessCallInfo:
           superTypes: [
             KtUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: kotlin/Any
           ]
           symbolKind: TOP_LEVEL

@@ -4,7 +4,6 @@ KtUsualClassType:
     annotationsList: []
     classId: library1/StringAlias
     nullability: NON_NULLABLE
-    ownTypeArguments: []
     qualifiers: [
       qualifier:
         name: StringAlias
@@ -12,10 +11,10 @@ KtUsualClassType:
         typeArguments: []
     ]
     symbol: KtTypeAliasSymbol(library1/StringAlias)
+    typeArguments: []
   annotationsList: []
   classId: kotlin/String
   nullability: NON_NULLABLE
-  ownTypeArguments: []
   qualifiers: [
     qualifier:
       name: String
@@ -23,6 +22,7 @@ KtUsualClassType:
       typeArguments: []
   ]
   symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+  typeArguments: []
 
 Rendered type:
 library1.StringAlias

@@ -8,7 +8,7 @@ KtSuccessCallInfo:
           owningCallableSymbol: KtFunctionSymbol(/foo)
           type: KtUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: A
         type = A
       extensionReceiver = null

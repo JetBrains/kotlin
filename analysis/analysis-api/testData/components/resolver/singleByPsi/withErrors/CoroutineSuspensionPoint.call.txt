@@ -10,7 +10,7 @@ KtErrorCallInfo:
             owningCallableSymbol: KtAnonymousFunctionSymbol(<local>/<no name provided>)
             type: KtUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: Controller
           type = Controller
         extensionReceiver = null

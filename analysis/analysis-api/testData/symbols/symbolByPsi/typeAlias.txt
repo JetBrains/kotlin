@@ -29,7 +29,7 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -59,7 +59,7 @@ KtTypeAliasSymbol:
   classId: Y
   expandedType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KtTypeParameterType:
         annotationsList: []
         type: Z

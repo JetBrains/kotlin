@@ -17,15 +17,15 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: java/io/Serializable
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KtFlexibleType:
           annotationsList: []
           type: kotlin/String!
@@ -33,7 +33,7 @@ KtNamedClassOrObjectSymbol:
       type: kotlin/Comparable<kotlin/String!>
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/CharSequence
   ]
   symbolKind: TOP_LEVEL

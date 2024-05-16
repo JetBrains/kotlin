@@ -9,7 +9,7 @@ KtEnumEntrySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: X
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -29,7 +29,7 @@ KtEnumEntrySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: X
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -57,10 +57,10 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KtUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: X
       ]
       type: kotlin/Enum<X>

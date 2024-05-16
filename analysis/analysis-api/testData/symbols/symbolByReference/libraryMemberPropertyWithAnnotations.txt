@@ -14,7 +14,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Short
     symbolKind: LOCAL
     typeParameters: []
@@ -42,7 +42,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Short
     symbolKind: ACCESSOR
     typeParameters: []
@@ -50,7 +50,7 @@ KtKotlinPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: one/SimpleClass
     getContainingFileSymbol: null
     getContainingJvmClassName: one.SimpleClass
@@ -76,7 +76,7 @@ KtKotlinPropertySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Short
   setter: null
   symbolKind: CLASS_MEMBER
@@ -84,7 +84,7 @@ KtKotlinPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: one/SimpleClass
   getContainingFileSymbol: null
   getContainingJvmClassName: one.SimpleClass

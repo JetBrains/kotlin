@@ -27,14 +27,14 @@ KtPropertyGetterSymbol:
         ReceiverTypeAnnotation()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
     getContainingFileSymbol: KtFileSymbol(getterWithReceiverAndAnnotations.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: ACCESSOR
   typeParameters: []

@@ -9,41 +9,12 @@ KtFunctionalType:
   isReflectType: false
   isSuspend: false
   nullability: NULLABLE
-  ownTypeArguments: [
-    KtUsualClassType:
-      abbreviatedType: null
-      annotationsList: []
-      classId: kotlin/String
-      nullability: NON_NULLABLE
-      ownTypeArguments: []
-      qualifiers: [
-        qualifier:
-          name: String
-          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
-          typeArguments: []
-      ]
-      symbol: KtNamedClassOrObjectSymbol(kotlin/String)
-    KtUsualClassType:
-      abbreviatedType: null
-      annotationsList: []
-      classId: kotlin/Int
-      nullability: NON_NULLABLE
-      ownTypeArguments: []
-      qualifiers: [
-        qualifier:
-          name: Int
-          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
-          typeArguments: []
-      ]
-      symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
-  ]
   parameterTypes: [
     KtUsualClassType:
       abbreviatedType: null
       annotationsList: []
       classId: kotlin/String
       nullability: NON_NULLABLE
-      ownTypeArguments: []
       qualifiers: [
         qualifier:
           name: String
@@ -51,6 +22,7 @@ KtFunctionalType:
           typeArguments: []
       ]
       symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      typeArguments: []
   ]
   qualifiers: [
     qualifier:
@@ -62,7 +34,6 @@ KtFunctionalType:
           annotationsList: []
           classId: kotlin/String
           nullability: NON_NULLABLE
-          ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: String
@@ -70,12 +41,12 @@ KtFunctionalType:
               typeArguments: []
           ]
           symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
         KtUsualClassType:
           abbreviatedType: null
           annotationsList: []
           classId: kotlin/Int
           nullability: NON_NULLABLE
-          ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: Int
@@ -83,6 +54,7 @@ KtFunctionalType:
               typeArguments: []
           ]
           symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          typeArguments: []
       ]
   ]
   receiverType: null
@@ -91,7 +63,6 @@ KtFunctionalType:
     annotationsList: []
     classId: kotlin/Int
     nullability: NON_NULLABLE
-    ownTypeArguments: []
     qualifiers: [
       qualifier:
         name: Int
@@ -99,7 +70,36 @@ KtFunctionalType:
         typeArguments: []
     ]
     symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+    typeArguments: []
   symbol: KtNamedClassOrObjectSymbol(kotlin/Function1)
+  typeArguments: [
+    KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: kotlin/String
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      typeArguments: []
+    KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: kotlin/Int
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Int
+          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+      typeArguments: []
+  ]
 
 Rendered type:
 ((kotlin.String) -> kotlin.Int)?

@@ -9,10 +9,10 @@ KtAnonymousObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KtUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/Int
       ]
       type: A<kotlin/Int>

@@ -14,7 +14,7 @@ KtBackingFieldSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []

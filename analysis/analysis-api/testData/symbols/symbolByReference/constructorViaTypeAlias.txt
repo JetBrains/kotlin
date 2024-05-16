@@ -12,7 +12,7 @@ KtConstructorSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KtTypeParameterType:
         annotationsList: []
         type: E

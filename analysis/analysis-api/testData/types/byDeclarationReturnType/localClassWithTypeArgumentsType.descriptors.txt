@@ -3,21 +3,6 @@ KtUsualClassType:
   annotationsList: []
   classId: B
   nullability: NON_NULLABLE
-  ownTypeArguments: [
-    KtUsualClassType:
-      abbreviatedType: null
-      annotationsList: []
-      classId: kotlin/Int
-      nullability: NON_NULLABLE
-      ownTypeArguments: []
-      qualifiers: [
-        qualifier:
-          name: Int
-          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
-          typeArguments: []
-      ]
-      symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
-  ]
   qualifiers: [
     qualifier:
       name: B
@@ -28,7 +13,6 @@ KtUsualClassType:
           annotationsList: []
           classId: kotlin/Int
           nullability: NON_NULLABLE
-          ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: Int
@@ -36,9 +20,25 @@ KtUsualClassType:
               typeArguments: []
           ]
           symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          typeArguments: []
       ]
   ]
   symbol: KtNamedClassOrObjectSymbol(<local>/B)
+  typeArguments: [
+    KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: kotlin/Int
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Int
+          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+      typeArguments: []
+  ]
 
 Rendered type:
 B<kotlin.Int>

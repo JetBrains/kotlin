@@ -10,7 +10,7 @@ KtReceiverParameterSymbol:
       ReceiverTypeAnnotation()
         psi: KtAnnotationEntry
     ]
-    ownTypeArguments: []
+    typeArguments: []
     type: @R|ReceiverTypeAnnotation|()  kotlin/Long
   getContainingFileSymbol: KtFileSymbol(propertyReceiverParameter.kt)
   getContainingModule: KtSourceModule "Sources of main"

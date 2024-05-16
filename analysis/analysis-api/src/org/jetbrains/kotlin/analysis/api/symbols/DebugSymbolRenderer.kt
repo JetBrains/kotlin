@@ -239,8 +239,8 @@ public class DebugSymbolRenderer(
 
                 if (typeToRender is KaNonErrorClassType) {
                     appendLine()
-                    append("ownTypeArguments: ")
-                    renderList(typeToRender.ownTypeArguments, printer, renderSymbolsFully = false)
+                    append("typeArguments: ")
+                    renderList(typeToRender.typeArguments, printer, renderSymbolsFully = false)
                 }
 
                 appendLine()

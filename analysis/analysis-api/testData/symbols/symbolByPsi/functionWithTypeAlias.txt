@@ -17,7 +17,7 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
@@ -33,7 +33,7 @@ KtTypeAliasSymbol:
   classId: TypeAlias
   expandedType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: A
   isActual: false
   isExpect: false
@@ -70,7 +70,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -91,7 +91,7 @@ KtFunctionSymbol:
       receiverParameter: null
       returnType: KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: TypeAlias
       symbolKind: LOCAL
       typeParameters: []
@@ -130,7 +130,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -151,7 +151,7 @@ KtFunctionSymbol:
       receiverParameter: null
       returnType: KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: A
       symbolKind: LOCAL
       typeParameters: []

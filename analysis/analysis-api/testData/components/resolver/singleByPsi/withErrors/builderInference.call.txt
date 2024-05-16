@@ -9,10 +9,10 @@ KtSuccessCallInfo:
           owningCallableSymbol: KtAnonymousFunctionSymbol(<local>/<no name provided>)
           type: KtUsualClassType:
             annotationsList: []
-            ownTypeArguments: [
+            typeArguments: [
               KtUsualClassType:
                 annotationsList: []
-                ownTypeArguments: []
+                typeArguments: []
                 type: kotlin/String
             ]
             type: test/Target<kotlin/String>

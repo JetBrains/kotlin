@@ -17,7 +17,7 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: test/JavaClass
   ]
   symbolKind: TOP_LEVEL
@@ -47,11 +47,11 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Any
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: test/api/SuperInterface
   ]
   symbolKind: TOP_LEVEL
@@ -81,7 +81,7 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: test/SuperClass
   ]
   symbolKind: TOP_LEVEL

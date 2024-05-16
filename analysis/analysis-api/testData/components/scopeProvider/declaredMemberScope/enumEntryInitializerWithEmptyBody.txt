@@ -12,7 +12,7 @@ KtConstructorSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: test/<anonymous>
   symbolKind: CLASS_MEMBER
   typeParameters: []

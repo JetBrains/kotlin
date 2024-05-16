@@ -21,7 +21,7 @@ KtApplicableCallCandidateInfo:
           superTypes: [
             KtUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: kotlin/Any
           ]
           symbolKind: CLASS_MEMBER

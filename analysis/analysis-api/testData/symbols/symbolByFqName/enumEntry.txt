@@ -9,7 +9,7 @@ KtEnumEntrySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/LazyThreadSafetyMode
   symbolKind: CLASS_MEMBER
   typeParameters: []

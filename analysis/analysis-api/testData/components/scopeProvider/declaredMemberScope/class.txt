@@ -22,7 +22,7 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -30,7 +30,7 @@ KtFunctionSymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: test/C
   getContainingFileSymbol: KtFileSymbol(class.kt)
   getContainingJvmClassName: test.C
@@ -50,7 +50,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: LOCAL
     typeParameters: []
@@ -75,7 +75,7 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -83,7 +83,7 @@ KtKotlinPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: test/C
     getContainingFileSymbol: KtFileSymbol(class.kt)
     getContainingJvmClassName: test.C
@@ -109,7 +109,7 @@ KtKotlinPropertySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
@@ -117,7 +117,7 @@ KtKotlinPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: test/C
   getContainingFileSymbol: KtFileSymbol(class.kt)
   getContainingJvmClassName: test.C
@@ -142,7 +142,7 @@ KtConstructorSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: test/C
   symbolKind: CLASS_MEMBER
   typeParameters: []

@@ -31,10 +31,10 @@ KtFunctionSymbol:
     deprecationStatus: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: [
+        typeArguments: [
           KtTypeParameterType:
             annotationsList: [
               BaseAnnotation()

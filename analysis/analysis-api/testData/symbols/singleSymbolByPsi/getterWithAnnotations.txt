@@ -18,7 +18,7 @@ KtPropertyGetterSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: ACCESSOR
   typeParameters: []

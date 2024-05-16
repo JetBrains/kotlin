@@ -3,7 +3,7 @@ expression: {
     }
 expected type: KtUsualClassType:
   annotationsList: []
-  ownTypeArguments: [
+  typeArguments: [
     KtTypeParameterType:
       annotationsList: []
       type: T

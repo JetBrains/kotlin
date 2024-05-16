@@ -31,14 +31,14 @@ KtFunctionSymbol:
         ReceiverTypeAnnotation()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Int
     getContainingFileSymbol: KtFileSymbol(functionWithReceiverAnnotation.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

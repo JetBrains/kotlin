@@ -25,14 +25,14 @@ KtFunctionSymbol:
     owningCallableSymbol: KtFunctionSymbol(/foo)
     type: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     getContainingFileSymbol: KtFileSymbol(extensionFunction.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/Int
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -22,7 +22,7 @@ KtApplicableCallCandidateInfo:
           superTypes: [
             KtUsualClassType:
               annotationsList: []
-              ownTypeArguments: []
+              typeArguments: []
               type: AbstractModule
           ]
           symbolKind: TOP_LEVEL

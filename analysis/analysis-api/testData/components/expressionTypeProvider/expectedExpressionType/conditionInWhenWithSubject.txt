@@ -1,5 +1,5 @@
 expression: av
 expected type: KtUsualClassType:
   annotationsList: []
-  ownTypeArguments: []
+  typeArguments: []
   type: E

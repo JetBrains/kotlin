@@ -18,10 +18,10 @@ KtKotlinPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KtUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: MyKotlinEnum
       ]
       type: kotlin/enums/EnumEntries<MyKotlinEnum>
@@ -53,10 +53,10 @@ KtKotlinPropertySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: MyKotlinEnum
     ]
     type: kotlin/enums/EnumEntries<MyKotlinEnum>

@@ -17,10 +17,10 @@ KtNamedClassOrObjectSymbol:
   superTypes: [
     KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: [
+      typeArguments: [
         KtUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/io/FileWalkDirection
       ]
       type: kotlin/Enum<kotlin/io/FileWalkDirection>

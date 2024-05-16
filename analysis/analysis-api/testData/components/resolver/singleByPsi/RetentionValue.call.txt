@@ -21,7 +21,7 @@ KtSuccessCallInfo:
           receiverParameter: null
           returnType: KtUsualClassType:
             annotationsList: []
-            ownTypeArguments: []
+            typeArguments: []
             type: kotlin/annotation/AnnotationRetention
           symbolKind: CLASS_MEMBER
           typeParameters: []

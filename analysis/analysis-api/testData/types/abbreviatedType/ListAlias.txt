@@ -4,33 +4,6 @@ KtUsualClassType:
     annotationsList: []
     classId: expansion/ListAlias
     nullability: NON_NULLABLE
-    ownTypeArguments: [
-      KtUsualClassType:
-        abbreviatedType: KtUsualClassType:
-          abbreviatedType: null
-          annotationsList: []
-          classId: expansion/StringAlias
-          nullability: NON_NULLABLE
-          ownTypeArguments: []
-          qualifiers: [
-            qualifier:
-              name: StringAlias
-              symbol: KtTypeAliasSymbol(expansion/StringAlias)
-              typeArguments: []
-          ]
-          symbol: KtTypeAliasSymbol(expansion/StringAlias)
-        annotationsList: []
-        classId: kotlin/String
-        nullability: NON_NULLABLE
-        ownTypeArguments: []
-        qualifiers: [
-          qualifier:
-            name: String
-            symbol: KtNamedClassOrObjectSymbol(kotlin/String)
-            typeArguments: []
-        ]
-        symbol: KtNamedClassOrObjectSymbol(kotlin/String)
-    ]
     qualifiers: [
       qualifier:
         name: ListAlias
@@ -42,7 +15,6 @@ KtUsualClassType:
               annotationsList: []
               classId: expansion/StringAlias
               nullability: NON_NULLABLE
-              ownTypeArguments: []
               qualifiers: [
                 qualifier:
                   name: StringAlias
@@ -50,10 +22,10 @@ KtUsualClassType:
                   typeArguments: []
               ]
               symbol: KtTypeAliasSymbol(expansion/StringAlias)
+              typeArguments: []
             annotationsList: []
             classId: kotlin/String
             nullability: NON_NULLABLE
-            ownTypeArguments: []
             qualifiers: [
               qualifier:
                 name: String
@@ -61,39 +33,40 @@ KtUsualClassType:
                 typeArguments: []
             ]
             symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+            typeArguments: []
         ]
     ]
     symbol: KtTypeAliasSymbol(expansion/ListAlias)
+    typeArguments: [
+      KtUsualClassType:
+        abbreviatedType: KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: expansion/StringAlias
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: StringAlias
+              symbol: KtTypeAliasSymbol(expansion/StringAlias)
+              typeArguments: []
+          ]
+          symbol: KtTypeAliasSymbol(expansion/StringAlias)
+          typeArguments: []
+        annotationsList: []
+        classId: kotlin/String
+        nullability: NON_NULLABLE
+        qualifiers: [
+          qualifier:
+            name: String
+            symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+            typeArguments: []
+        ]
+        symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+        typeArguments: []
+    ]
   annotationsList: []
   classId: kotlin/collections/List
   nullability: NON_NULLABLE
-  ownTypeArguments: [
-    KtUsualClassType:
-      abbreviatedType: KtUsualClassType:
-        abbreviatedType: null
-        annotationsList: []
-        classId: expansion/StringAlias
-        nullability: NON_NULLABLE
-        ownTypeArguments: []
-        qualifiers: [
-          qualifier:
-            name: StringAlias
-            symbol: KtTypeAliasSymbol(expansion/StringAlias)
-            typeArguments: []
-        ]
-        symbol: KtTypeAliasSymbol(expansion/StringAlias)
-      annotationsList: []
-      classId: kotlin/String
-      nullability: NON_NULLABLE
-      ownTypeArguments: []
-      qualifiers: [
-        qualifier:
-          name: String
-          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
-          typeArguments: []
-      ]
-      symbol: KtNamedClassOrObjectSymbol(kotlin/String)
-  ]
   qualifiers: [
     qualifier:
       name: List
@@ -105,7 +78,6 @@ KtUsualClassType:
             annotationsList: []
             classId: expansion/StringAlias
             nullability: NON_NULLABLE
-            ownTypeArguments: []
             qualifiers: [
               qualifier:
                 name: StringAlias
@@ -113,10 +85,10 @@ KtUsualClassType:
                 typeArguments: []
             ]
             symbol: KtTypeAliasSymbol(expansion/StringAlias)
+            typeArguments: []
           annotationsList: []
           classId: kotlin/String
           nullability: NON_NULLABLE
-          ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: String
@@ -124,9 +96,37 @@ KtUsualClassType:
               typeArguments: []
           ]
           symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
       ]
   ]
   symbol: KtNamedClassOrObjectSymbol(kotlin/collections/List)
+  typeArguments: [
+    KtUsualClassType:
+      abbreviatedType: KtUsualClassType:
+        abbreviatedType: null
+        annotationsList: []
+        classId: expansion/StringAlias
+        nullability: NON_NULLABLE
+        qualifiers: [
+          qualifier:
+            name: StringAlias
+            symbol: KtTypeAliasSymbol(expansion/StringAlias)
+            typeArguments: []
+        ]
+        symbol: KtTypeAliasSymbol(expansion/StringAlias)
+        typeArguments: []
+      annotationsList: []
+      classId: kotlin/String
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: String
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      typeArguments: []
+  ]
 
 Rendered type:
 expansion.ListAlias<expansion.StringAlias>

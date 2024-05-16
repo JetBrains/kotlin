@@ -18,7 +18,7 @@ KtSyntheticJavaPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -26,7 +26,7 @@ KtSyntheticJavaPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: Derived
     getContainingFileSymbol: null
     getContainingJvmClassName: Derived
@@ -50,7 +50,7 @@ KtSyntheticJavaPropertySymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: kotlin/String
   setter: KtPropertySetterSymbol:
     annotationsList: []
@@ -80,7 +80,7 @@ KtSyntheticJavaPropertySymbol:
       receiverParameter: null
       returnType: KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: []
+        typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
@@ -91,7 +91,7 @@ KtSyntheticJavaPropertySymbol:
     receiverParameter: null
     returnType: KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -112,7 +112,7 @@ KtSyntheticJavaPropertySymbol:
         receiverParameter: null
         returnType: KtUsualClassType:
           annotationsList: []
-          ownTypeArguments: []
+          typeArguments: []
           type: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
@@ -124,7 +124,7 @@ KtSyntheticJavaPropertySymbol:
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
       annotationsList: []
-      ownTypeArguments: []
+      typeArguments: []
       type: Derived
     getContainingFileSymbol: null
     getContainingJvmClassName: Derived
@@ -135,7 +135,7 @@ KtSyntheticJavaPropertySymbol:
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: []
+    typeArguments: []
     type: Derived
   getContainingFileSymbol: null
   getContainingJvmClassName: Derived

@@ -22,10 +22,10 @@ KtFunctionSymbol:
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
-    ownTypeArguments: [
+    typeArguments: [
       KtUsualClassType:
         annotationsList: []
-        ownTypeArguments: [
+        typeArguments: [
           KtUsualClassType:
             annotationsList: [
               Anno1(s = "s")
@@ -35,7 +35,7 @@ KtFunctionSymbol:
               Anno3()
                 psi: KtAnnotationEntry
             ]
-            ownTypeArguments: []
+            typeArguments: []
             type: @R|Anno1|(s = String(s))  @R|Anno2|()  @R|Anno3|()  BaseAnnotation
         ]
         type: kotlin/collections/List<@R|Anno3|()  SecondTypeAlias>
