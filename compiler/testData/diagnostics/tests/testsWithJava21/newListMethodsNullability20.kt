@@ -7,55 +7,55 @@
 // ISSUE: KT-67804
 
 fun <E1> addFirstLast(s: MutableList<String>, e: MutableList<E1>, sa: ArrayList<String>, ea: ArrayList<E1>, ev: E1) {
-    s.addFirst(null)
+    s.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     s.addFirst("")
-    s.addLast(null)
+    s.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     s.addLast("")
 
-    e.addFirst(null)
+    e.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     e.addFirst(ev)
-    e.addLast(null)
+    e.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     e.addLast(ev)
 
-    sa.addFirst(null)
+    sa.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     sa.addFirst("")
-    sa.addLast(null)
+    sa.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     sa.addLast("")
 
-    ea.addFirst(null)
+    ea.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     ea.addFirst(ev)
-    ea.addLast(null)
+    ea.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     ea.addLast(ev)
 }
 
 fun removeFirstLastString(s: MutableList<String>) {
     var x1 = s.removeFirst()
-    x1 = null
+    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 
     var x2 = s.removeLast()
-    x1 = null
+    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 }
 
 fun <E> removeFirstLastE(s: MutableList<E>) {
     var x1 = s.removeFirst()
-    x1 = null
+    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 
     var x2 = s.removeLast()
-    x1 = null
+    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 }
 
 fun removeFirstLastArrayListString(s: ArrayList<String>) {
     var x1 = s.removeFirst()
-    x1 = null
+    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 
     var x2 = s.removeLast()
-    x1 = null
+    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 }
 
 fun <E> removeFirstLastArrayListE(s: ArrayList<E>) {
     var x1 = s.removeFirst()
-    x1 = null
+    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 
     var x2 = s.removeLast()
-    x1 = null
+    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 }
