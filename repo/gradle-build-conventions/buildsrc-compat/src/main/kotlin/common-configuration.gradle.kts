@@ -67,6 +67,14 @@ fun Project.addImplicitDependenciesConfiguration() {
         isCanBeConsumed = false
         isCanBeResolved = false
     }
+
+    if (kotlinBuildProperties.isInIdeaSync) {
+        afterEvaluate {
+            // IDEA manages to download dependencies from `implicitDependencies`, even if it is created with `isCanBeResolved = false`
+            // Clear `implicitDependencies` to avoid downloading unnecessary dependencies during import
+            configurations.implicitDependencies.get().dependencies.clear()
+        }
+    }
 }
 
 fun Project.addEmbeddedConfigurations() {
