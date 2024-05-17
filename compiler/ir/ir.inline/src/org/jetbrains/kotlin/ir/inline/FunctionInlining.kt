@@ -41,7 +41,7 @@ abstract class InlineFunctionResolver {
     open val allowExternalInlining: Boolean
         get() = false
 
-    open val IrFunction.needsInlining get() = this.isInline && (allowExternalInlining || !this.isExternal)
+    open fun needsInlining(function: IrFunction) = function.isInline && (allowExternalInlining || !function.isExternal)
 
     open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         if (shouldExcludeFunctionFromInlining(symbol)) return null
@@ -51,7 +51,7 @@ abstract class InlineFunctionResolver {
     }
 
     protected open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
-        return !symbol.owner.needsInlining || Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
+        return !needsInlining(symbol.owner) || Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
     }
 }
 

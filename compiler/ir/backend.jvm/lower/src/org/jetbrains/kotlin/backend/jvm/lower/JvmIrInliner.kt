@@ -34,6 +34,5 @@ class JvmIrInliner(context: JvmBackendContext) : FunctionInlining(
 }
 
 class JvmInlineFunctionResolver(private val context: JvmBackendContext) : InlineFunctionResolver() {
-    override val IrFunction.needsInlining: Boolean
-        get() = this.isInlineFunctionCall(context)
+    override fun needsInlining(function: IrFunction): Boolean = function.isInlineFunctionCall(context)
 }

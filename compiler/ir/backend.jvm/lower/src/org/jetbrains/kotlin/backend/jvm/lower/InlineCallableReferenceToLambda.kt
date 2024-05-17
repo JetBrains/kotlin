@@ -12,11 +12,6 @@ import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.irArray
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -26,6 +21,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
@@ -41,24 +37,34 @@ import org.jetbrains.kotlin.name.Name
 //      foo(::smth) -> foo { a -> smth(a) }
 //
 @PhaseDescription(
-    name = "InlineCallableReferenceToLambdaPhase",
+    name = "JvmInlineCallableReferenceToLambdaPhase",
     description = "Transform callable reference to inline lambdas, mark inline lambdas for later passes"
 )
-internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendContext) : FileLoweringPass {
+internal class JvmInlineCallableReferenceToLambdaPhase(
+    context: JvmBackendContext,
+) : InlineCallableReferenceToLambdaPhase(context, JvmInlineFunctionResolver(context))
+
+internal abstract class InlineCallableReferenceToLambdaPhase(
+    val context: JvmBackendContext,
+    private val inlineFunctionResolver: InlineFunctionResolver,
+) : FileLoweringPass {
     override fun lower(irFile: IrFile) =
-        irFile.accept(InlineCallableReferenceToLambdaVisitor(context), null)
+        irFile.accept(InlineCallableReferenceToLambdaVisitor(context, inlineFunctionResolver), null)
 }
 
 const val STUB_FOR_INLINING = "stub_for_inlining"
 
-private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendContext) : IrElementVisitor<Unit, IrDeclaration?> {
+private class InlineCallableReferenceToLambdaVisitor(
+    val context: JvmBackendContext,
+    val inlineFunctionResolver: InlineFunctionResolver,
+) : IrElementVisitor<Unit, IrDeclaration?> {
     override fun visitElement(element: IrElement, data: IrDeclaration?) =
         element.acceptChildren(this, element as? IrDeclaration ?: data)
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration?) {
         expression.acceptChildren(this, data)
         val function = expression.symbol.owner
-        if (function.isInlineFunctionCall(context)) {
+        if (inlineFunctionResolver.needsInlining(function)) {
             for (parameter in function.valueParameters) {
                 if (parameter.isInlineParameter()) {
                     expression.putValueArgument(parameter.index, expression.getValueArgument(parameter.index)?.transform(data))
@@ -75,8 +81,10 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
             statements[statements.lastIndex] = reference.replaceOrigin(LoweredStatementOrigins.INLINE_LAMBDA)
         }
 
-        this is IrFunctionReference -> // ::function -> { args... -> function(args...) }
+        this is IrFunctionReference -> {
+            // ::function -> { args... -> function(args...) }
             wrapFunction(symbol.owner).toLambda(this, scope!!)
+        }
 
         this is IrPropertyReference -> {
             val isReferenceToSyntheticJavaProperty = symbol.owner.origin.let {
