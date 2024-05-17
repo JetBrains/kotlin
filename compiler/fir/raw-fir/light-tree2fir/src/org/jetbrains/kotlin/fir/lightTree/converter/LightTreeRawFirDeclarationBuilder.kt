@@ -1576,10 +1576,11 @@ class LightTreeRawFirDeclarationBuilder(
             accessorVisibility = propertyVisibility
         }
         val status =
-            // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
+            // Downward propagation of `inline`, `external` and `expect` modifiers (from property to its accessors)
             FirDeclarationStatusImpl(accessorVisibility, calculatedModifiers.getModality(isClassOrObject = false)).apply {
                 isInline = propertyModifiers.hasInline() || calculatedModifiers.hasInline()
                 isExternal = propertyModifiers.hasExternal() || calculatedModifiers.hasExternal()
+                isExpect = propertyModifiers.hasExpect() || calculatedModifiers.hasExpect()
             }
         val sourceElement = getterOrSetter.toFirSourceElement()
         val accessorAdditionalAnnotations = propertyAnnotations.filterUseSiteTarget(
