@@ -25,7 +25,13 @@ abstract class GlobalDeclarationTable(private val mangler: KotlinMangler.IrMangl
     protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
         builtIns.knownBuiltins.forEach {
             val symbol = (it as IrSymbolOwner).symbol
-            table[it] = symbol.signature!!.also { id -> clashDetector.trackDeclaration(it, id) }
+            when (val signature = symbol.signature) {
+                null -> computeSignatureByDeclaration(it, compatibleMode = false, recordInSignatureClashDetector = true)
+                else -> {
+                    table[it] = signature
+                    clashDetector.trackDeclaration(it, signature)
+                }
+            }
         }
     }
 
