@@ -30795,6 +30795,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
       }
 
       @Test
+      @TestMetadata("redCodeInOverloadByLambdaReturnTypeLambda.kt")
+      public void testRedCodeInOverloadByLambdaReturnTypeLambda() {
+        runTest("compiler/testData/diagnostics/tests/resolve/redCodeInOverloadByLambdaReturnTypeLambda.kt");
+      }
+
+      @Test
       @TestMetadata("resolveAnnotatedLambdaArgument.kt")
       public void testResolveAnnotatedLambdaArgument() {
         runTest("compiler/testData/diagnostics/tests/resolve/resolveAnnotatedLambdaArgument.kt");
