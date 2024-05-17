@@ -9,65 +9,65 @@ FILE: test.kt
 
     }
     public final fun box(): R|kotlin/String| {
-        lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenS_1203452542>| = R|kotlin/collections/listOf|<R|S|>(R|/S.S|(R|/JavaRecord.JavaRecord|())).R|kotlin/let|<R|kotlin/collections/List<S>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenS_1203452542>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<S>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenS_1203452542>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class TokenS_1203452542I : R|kotlin/Any| {
-                public abstract val javaRecord: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenJavaRecord_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenJavaRecord_1203452584>|
+        lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>| = R|kotlin/collections/listOf|<R|S|>(R|/S.S|(R|/JavaRecord.JavaRecord|())).R|kotlin/let|<R|kotlin/collections/List<S>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<S>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class S_43I : R|kotlin/Any| {
+                public abstract val javaRecord: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
 
-                public constructor(): R|<local>/TokenS_1203452542I|
+                public constructor(): R|<local>/S_43I|
 
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenS_1203452542I>|.javaRecord: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenJavaRecord_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenJavaRecord_1203452584>|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/S_43I>|.javaRecord: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenS_1203452542I>|.javaRecord: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/TokenJavaRecord_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/TokenJavaRecord_1203452584>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/S_43I>|.javaRecord: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/JavaRecord_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/JavaRecord_771>|
 
                 public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenJavaRecord_1203452584 : R|kotlin/Any| {
-                public abstract val aaa: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenAaa_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenAaa_1203452584>|
+            local abstract class JavaRecord_771 : R|kotlin/Any| {
+                public abstract val aaa: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
 
-                public abstract val bean: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenBean_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenBean_1203452584>|
+                public abstract val bean: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
 
                 public abstract val i: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public constructor(): R|<local>/TokenJavaRecord_1203452584|
+                public constructor(): R|<local>/JavaRecord_771|
 
             }
 
             local final class Scope1 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenJavaRecord_1203452584>|.aaa: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenAaa_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenAaa_1203452584>|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|.aaa: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenJavaRecord_1203452584>|.aaa: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/TokenAaa_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/TokenAaa_1203452584>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/JavaRecord_771>|.aaa: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Aaa_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Aaa_771>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenJavaRecord_1203452584>|.bean: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenBean_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenBean_1203452584>|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|.bean: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenJavaRecord_1203452584>|.bean: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/TokenBean_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/TokenBean_1203452584>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/JavaRecord_771>|.bean: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Bean_771>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Bean_771>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenJavaRecord_1203452584>|.i: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|.i: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenJavaRecord_1203452584>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/JavaRecord_771>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                 public constructor(): R|<local>/Scope1|
 
             }
 
-            local abstract class TokenBean_1203452584 : R|kotlin/Any| {
-                public constructor(): R|<local>/TokenBean_1203452584|
+            local abstract class Bean_771 : R|kotlin/Any| {
+                public constructor(): R|<local>/Bean_771|
 
             }
 
@@ -76,8 +76,8 @@ FILE: test.kt
 
             }
 
-            local abstract class TokenAaa_1203452584 : R|kotlin/Any| {
-                public constructor(): R|<local>/TokenAaa_1203452584|
+            local abstract class Aaa_771 : R|kotlin/Any| {
+                public constructor(): R|<local>/Aaa_771|
 
             }
 
@@ -86,7 +86,7 @@ FILE: test.kt
 
             }
 
-            local abstract class TokenS_1203452542 : R|<local>/TokenS_1203452542I| {
+            local abstract class S_43 : R|<local>/S_43I| {
                 public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
                     public set(value: R|<local>/Scope0|): R|kotlin/Unit|
@@ -103,7 +103,7 @@ FILE: test.kt
                     public get(): R|<local>/Scope1|
                     public set(value: R|<local>/Scope1|): R|kotlin/Unit|
 
-                public constructor(): R|<local>/TokenS_1203452542|
+                public constructor(): R|<local>/S_43|
 
             }
 

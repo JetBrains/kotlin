@@ -79,12 +79,10 @@ abstract class TestWithCompileTimeInformation : BaseTestRunner() {
         ) {
             FirExtensionRegistrarAdapter.registerExtension(object : FirExtensionRegistrar() {
                 override fun ExtensionRegistrarContext.configurePlugin() {
-                    with(GeneratedNames()) {
-                        +::ExtensionsGenerator
+                    +::ExtensionsGenerator
 //                        +::ScopesGenerator
 //                        +{ it: FirSession -> RefinedFunctionsGenerator(it, callables, callableState) }
-                        +{ it: FirSession -> InterpretersRunner(it, /*tokenState,*/ getTestFilePath, setTestSubject, onCompile) }
-                    }
+                    +{ it: FirSession -> InterpretersRunner(it, /*tokenState,*/ getTestFilePath, setTestSubject, onCompile) }
                 }
             })
         }

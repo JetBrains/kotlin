@@ -5,41 +5,41 @@ FILE: injectAccessors.kt
 
     }
     public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class TokenCars_3085480I : R|kotlin/Any| {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class Cars_25I : R|kotlin/Any| {
                 public abstract val year: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public constructor(): R|<local>/TokenCars_3085480I|
+                public constructor(): R|<local>/Cars_25I|
 
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenCars_3085480I>|.year: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Cars_25I>|.year: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenCars_3085480I>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Cars_25I>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenCars_3085480I>|.age: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Cars_25I>|.age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenCars_3085480I>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Cars_25I>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                 public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenCars_3085480 : R|<local>/TokenCars_3085480I| {
+            local abstract class Cars_25 : R|<local>/Cars_25I| {
                 public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
                     public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
-                public constructor(): R|<local>/TokenCars_3085480|
+                public constructor(): R|<local>/Cars_25|
 
             }
 
@@ -52,41 +52,41 @@ FILE: injectAccessors.kt
         lval col: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| = (this@R|/Name is evaluated to age|, R|<local>/df1|).R|<local>/Scope0.age|
     }
     public final fun ReturnType is evaluated to Int(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenCars_3085480>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class TokenCars_3085480I : R|kotlin/Any| {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class Cars_25I : R|kotlin/Any| {
                 public abstract val year: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public constructor(): R|<local>/TokenCars_3085480I|
+                public constructor(): R|<local>/Cars_25I|
 
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenCars_3085480I>|.year: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Cars_25I>|.year: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenCars_3085480I>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Cars_25I>|.year: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenCars_3085480I>|.age: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Cars_25I>|.age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenCars_3085480I>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Cars_25I>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                 public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenCars_3085480 : R|<local>/TokenCars_3085480I| {
+            local abstract class Cars_25 : R|<local>/Cars_25I| {
                 public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
                     public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
-                public constructor(): R|<local>/TokenCars_3085480|
+                public constructor(): R|<local>/Cars_25|
 
             }
 

@@ -1,40 +1,40 @@
 FILE: injectAccessorsDsl.kt
     public final fun Dsl is evaluated to (df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class TokenAdd_2988969I : R|kotlin/Any| {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Add_71>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Add_71>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Add_71>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class Add_71I : R|kotlin/Any| {
                 public abstract val col1: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public abstract val col2: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public constructor(): R|<local>/TokenAdd_2988969I|
+                public constructor(): R|<local>/Add_71I|
 
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenAdd_2988969I>|.col1: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Add_71I>|.col1: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenAdd_2988969I>|.col1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Add_71I>|.col1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenAdd_2988969I>|.col2: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Add_71I>|.col2: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenAdd_2988969I>|.col2: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Add_71I>|.col2: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
                 public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenAdd_2988969 : R|<local>/TokenAdd_2988969I| {
+            local abstract class Add_71 : R|<local>/Add_71I| {
                 public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
                     public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
-                public constructor(): R|<local>/TokenAdd_2988969|
+                public constructor(): R|<local>/Add_71|
 
             }
 
