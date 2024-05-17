@@ -44014,6 +44014,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
     @Tag("no-partial-linkage-may-be-skipped")
     public class Typealias {
       @Test
+      @TestMetadata("abbreviationWithCapturedType.kt")
+      public void testAbbreviationWithCapturedType() {
+        runTest("compiler/testData/codegen/box/typealias/abbreviationWithCapturedType.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInTypealias() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
       }

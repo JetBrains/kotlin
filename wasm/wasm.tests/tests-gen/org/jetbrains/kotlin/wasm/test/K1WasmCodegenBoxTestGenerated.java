@@ -40451,6 +40451,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
   @TestDataPath("$PROJECT_ROOT")
   public class Typealias {
     @Test
+    @TestMetadata("abbreviationWithCapturedType.kt")
+    public void testAbbreviationWithCapturedType() {
+      runTest("compiler/testData/codegen/box/typealias/abbreviationWithCapturedType.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInTypealias() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
     }

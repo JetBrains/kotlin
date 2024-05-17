@@ -41165,6 +41165,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
   @TestDataPath("$PROJECT_ROOT")
   public class Typealias {
     @Test
+    @TestMetadata("abbreviationWithCapturedType.kt")
+    public void testAbbreviationWithCapturedType() {
+      runTest("compiler/testData/codegen/box/typealias/abbreviationWithCapturedType.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInTypealias() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/typealias"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
