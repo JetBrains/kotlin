@@ -95,19 +95,19 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFun
                 parameter(JFUnaryOperator, NOT_PLATFORM, NOT_PLATFORM)
             }
 
-            function("addFirst", errorsSinceLanguageVersion = "2.1") {
+            function("addFirst", errorsSinceLanguageVersion = "2.0") {
                 parameter(JLObject, NOT_PLATFORM)
             }
 
-            function("addLast", errorsSinceLanguageVersion = "2.1") {
+            function("addLast", errorsSinceLanguageVersion = "2.0") {
                 parameter(JLObject, NOT_PLATFORM)
             }
 
-            function("removeFirst", errorsSinceLanguageVersion = "2.1") {
+            function("removeFirst", errorsSinceLanguageVersion = "2.0") {
                 returns(JLObject, NOT_PLATFORM)
             }
 
-            function("removeLast", errorsSinceLanguageVersion = "2.1") {
+            function("removeLast", errorsSinceLanguageVersion = "2.0") {
                 returns(JLObject, NOT_PLATFORM)
             }
         }
@@ -115,19 +115,19 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFun
         // But we still want to report preventing warnings (and eventually errors) for usages that would be treated as error since JDK 21
         @Suppress("DuplicatedCode")
         forClass(javaUtil("LinkedList")) {
-            function("addFirst", errorsSinceLanguageVersion = "2.1") {
+            function("addFirst", errorsSinceLanguageVersion = "2.0") {
                 parameter(JLObject, NOT_PLATFORM)
             }
 
-            function("addLast", errorsSinceLanguageVersion = "2.1") {
+            function("addLast", errorsSinceLanguageVersion = "2.0") {
                 parameter(JLObject, NOT_PLATFORM)
             }
 
-            function("removeFirst", errorsSinceLanguageVersion = "2.1") {
+            function("removeFirst", errorsSinceLanguageVersion = "2.0") {
                 returns(JLObject, NOT_PLATFORM)
             }
 
-            function("removeLast", errorsSinceLanguageVersion = "2.1") {
+            function("removeLast", errorsSinceLanguageVersion = "2.0") {
                 returns(JLObject, NOT_PLATFORM)
             }
         }
