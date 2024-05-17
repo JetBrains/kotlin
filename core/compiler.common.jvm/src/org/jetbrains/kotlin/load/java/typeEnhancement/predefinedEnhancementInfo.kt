@@ -95,21 +95,21 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFun
                 parameter(JFUnaryOperator, NOT_PLATFORM, NOT_PLATFORM)
             }
 
-            function("addFirst", errorsSinceLanguageVersion = "2.1") {
-                parameter(JLObject, NOT_PLATFORM)
-            }
-
-            function("addLast", errorsSinceLanguageVersion = "2.1") {
-                parameter(JLObject, NOT_PLATFORM)
-            }
-
-            function("removeFirst", errorsSinceLanguageVersion = "2.1") {
-                returns(JLObject, NOT_PLATFORM)
-            }
-
-            function("removeLast", errorsSinceLanguageVersion = "2.1") {
-                returns(JLObject, NOT_PLATFORM)
-            }
+//            function("addFirst", errorsSinceLanguageVersion = "2.1") {
+//                parameter(JLObject, NOT_PLATFORM)
+//            }
+//
+//            function("addLast", errorsSinceLanguageVersion = "2.1") {
+//                parameter(JLObject, NOT_PLATFORM)
+//            }
+//
+//            function("removeFirst", errorsSinceLanguageVersion = "2.1") {
+//                returns(JLObject, NOT_PLATFORM)
+//            }
+//
+//            function("removeLast", errorsSinceLanguageVersion = "2.1") {
+//                returns(JLObject, NOT_PLATFORM)
+//            }
         }
         // Signatures' duplication is necessary because for JDKs < 21, there's no relevant methods in `MutableList` declaration.
         // But we still want to report preventing warnings (and eventually errors) for usages that would be treated as error since JDK 21
