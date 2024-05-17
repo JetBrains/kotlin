@@ -100,7 +100,7 @@ fun <T> KotlinTypeFacade.interpret(
                                     toKPropertyApproximation(it, session)
                                 }
 
-                                else -> TODO(it::class.toString())
+                                else -> null
                             }
 
                         }
@@ -109,9 +109,10 @@ fun <T> KotlinTypeFacade.interpret(
 
                     is FirFunctionCall -> {
                         val interpreter = expression.loadInterpreter()
-                            ?: TODO("receiver ${expression.calleeReference} is not annotated with Interpretable.")
-                        val result = interpret(expression, interpreter, emptyMap(), reporter)
-                        result
+                        interpreter?.let {
+                            val result = interpret(expression, interpreter, emptyMap(), reporter)
+                            result
+                        }
                     }
 
                     is FirPropertyAccessExpression -> {
@@ -155,12 +156,12 @@ fun <T> KotlinTypeFacade.interpret(
 
                             is FirErrorExpression -> null
 
-                            else -> TODO(result::class.toString())
+                            else -> null
                         }
                         col?.let { Interpreter.Success(it) }
                     }
 
-                    else -> TODO(expression::class.toString())
+                    else -> null
                 }
             }
 
