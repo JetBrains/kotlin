@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
@@ -80,7 +81,6 @@ import kotlin.math.abs
 class CandidateInterceptor(
     val path: String?,
     session: FirSession,
-    val nextName: (String) -> ClassId,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     companion object {
         val DEFAULT_NAME = "DataFrameType"
@@ -97,13 +97,15 @@ class CandidateInterceptor(
             return null
         }
         val lookupTag = ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID)
-        var hash = callInfo.name.hashCode() + callInfo.arguments.sumOf {
-            when (it) {
-                is FirLiteralExpression<*> -> it.value.hashCode()
-                else -> 42
+        val hash = run {
+            val hash = callInfo.name.hashCode() + callInfo.arguments.sumOf {
+                when (it) {
+                    is FirLiteralExpression<*> -> it.value.hashCode()
+                    else -> it.source?.text?.hashCode() ?: 42
+                }
             }
+            hashToTwoCharString(abs(hash))
         }
-        hash = abs(hash)
 
         fun Name.asTokenName() = identifierOrNullIfSpecial?.titleCase() ?: DEFAULT_NAME
 
@@ -126,7 +128,6 @@ class CandidateInterceptor(
             }
         }
         val tokenId = nextName("${suggestedName}I")
-
         val token = buildSchema(tokenId)
 
         val dataFrameTypeId = nextName(suggestedName)
@@ -165,6 +166,23 @@ class CandidateInterceptor(
         }
         return CallReturnType(typeRef)
     }
+
+    private fun hashToTwoCharString(hash: Int): String {
+        val baseChars = "0123456789"
+        val base = baseChars.length
+
+        // Ensure the hash is positive
+        val positiveHash = abs(hash)
+
+        // Convert the hash to a string with the base characters
+        val char1 = baseChars[positiveHash % base]
+        val char2 = baseChars[(positiveHash / base) % base]
+
+        return "$char1$char2"
+    }
+
+    private fun nextName(s: String) = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName(s), true)
+
 
     @OptIn(SymbolInternals::class)
     override fun transform(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall {
@@ -214,8 +232,8 @@ class CandidateInterceptor(
 
             val properties = columns().map {
                 fun PluginDataFrameSchema.materialize(column: SimpleCol): DataSchemaApi {
-                    // TODO
-                    val name = "${column.name.titleCase().replEscapeLineBreaks()}_${abs(call.calleeReference.name.hashCode())}"
+                    val text = call.source?.text ?: call.calleeReference.name
+                    val name = "${column.name.titleCase().replEscapeLineBreaks()}_${abs(text.hashCode())}"
                     return materialize(suggestedName = name)
                 }
 

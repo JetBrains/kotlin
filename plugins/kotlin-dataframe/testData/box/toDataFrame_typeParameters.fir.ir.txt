@@ -209,21 +209,21 @@ FILE fqName:<root> fileName:/toDataFrame_typeParameters.kt
   FUN name:f visibility:public modality:FINAL <> (l:kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>>) returnType:kotlin.Unit
     VALUE_PARAMETER name:l index:0 type:kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>>
     BLOCK_BODY
-      VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584> [val]
-        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584> origin=null
+      VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48> [val]
+        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48> origin=null
           <T>: kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>>
-          <R>: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584>
+          <R>: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48>
           $receiver: GET_VAR 'l: kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>> declared in <root>.f' type=kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>> origin=null
-          block: FUN_EXPR type=kotlin.Function1<kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>>, org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584>> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>>) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584>
+          block: FUN_EXPR type=kotlin.Function1<kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>>, org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>>) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48>
               VALUE_PARAMETER name:it index:0 type:kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>>
               BLOCK_BODY
-                CLASS CLASS name:TokenClassWithNullableAnyTypeArg_1203452584I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
-                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I [primary]
+                CLASS CLASS name:ClassWithNullableAnyTypeArg_48I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenClassWithNullableAnyTypeArg_1203452584I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ClassWithNullableAnyTypeArg_48I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
                       public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -238,38 +238,38 @@ FILE fqName:<root> fileName:/toDataFrame_typeParameters.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:v visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I) returnType:kotlin.Any?
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I) returnType:kotlin.Any?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:v visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I
+                      $this: VALUE_PARAMETER name:<this> type:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I
                 CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.f.<anonymous>.Scope0
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:v visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.Any? visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-v> visibility:public modality:FINAL <> ($this:<root>.f.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I>) returnType:kotlin.Any?
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-v> visibility:public modality:FINAL <> ($this:<root>.f.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I>) returnType:kotlin.Any?
                       annotations:
-                        JvmName(name = "TokenClassWithNullableAnyTypeArg_1203452584I_v")
+                        JvmName(name = "ClassWithNullableAnyTypeArg_48I_v")
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:v visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.f.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I>
                       BLOCK_BODY
                         RETURN type=kotlin.Any? from='public final fun <get-v> (): kotlin.Any? declared in <root>.f.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I> declared in <root>.f.<anonymous>.Scope0.<get-v>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I> origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I> declared in <root>.f.<anonymous>.Scope0.<get-v>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I> origin=null
                               name: CONST String type=kotlin.String value="v"
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:v visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:v type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any?> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-v> visibility:public modality:FINAL <> ($this:<root>.f.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any?>
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-v> visibility:public modality:FINAL <> ($this:<root>.f.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any?>
                       annotations:
-                        JvmName(name = "TokenClassWithNullableAnyTypeArg_1203452584I_v")
+                        JvmName(name = "ClassWithNullableAnyTypeArg_48I_v")
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:v visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.f.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I>
                       BLOCK_BODY
                         RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any?> from='public final fun <get-v> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any?> declared in <root>.f.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any?> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any?>
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I> declared in <root>.f.<anonymous>.Scope0.<get-v>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I> origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I> declared in <root>.f.<anonymous>.Scope0.<get-v>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I> origin=null
                               columnName: CONST String type=kotlin.String value="v"
                   CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.f.<anonymous>.Scope0 [primary]
                     BLOCK_BODY
@@ -288,72 +288,72 @@ FILE fqName:<root> fileName:/toDataFrame_typeParameters.kt
                     overridden:
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                CLASS CLASS name:TokenClassWithNullableAnyTypeArg_1203452584 modality:ABSTRACT visibility:local superTypes:[<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I]
-                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584 [primary]
+                CLASS CLASS name:ClassWithNullableAnyTypeArg_48 modality:ABSTRACT visibility:local superTypes:[<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48 [primary]
                     BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenClassWithNullableAnyTypeArg_1203452584 modality:ABSTRACT visibility:local superTypes:[<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I]'
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ClassWithNullableAnyTypeArg_48 modality:ABSTRACT visibility:local superTypes:[<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I]'
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
-                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     VALUE_PARAMETER name:other index:0 type:kotlin.Any?
                   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
                     overridden:
-                      public open fun hashCode (): kotlin.Int declared in <root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I
+                      public open fun hashCode (): kotlin.Int declared in <root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
                     overridden:
-                      public open fun toString (): kotlin.String declared in <root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I
+                      public open fun toString (): kotlin.String declared in <root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:v visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract v: kotlin.Any? declared in <root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I
-                    FUN FAKE_OVERRIDE name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I) returnType:kotlin.Any? [fake_override]
+                      public abstract v: kotlin.Any? declared in <root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I
+                    FUN FAKE_OVERRIDE name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I) returnType:kotlin.Any? [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:v visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
-                        public abstract fun <get-v> (): kotlin.Any? declared in <root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I
-                      $this: VALUE_PARAMETER name:<this> type:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584I
+                        public abstract fun <get-v> (): kotlin.Any? declared in <root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I
+                      $this: VALUE_PARAMETER name:<this> type:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584) returnType:<root>.f.<anonymous>.Scope0
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48) returnType:<root>.f.<anonymous>.Scope0
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
-                      $this: VALUE_PARAMETER name:<this> type:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584, <set-?>:<root>.f.<anonymous>.Scope0) returnType:kotlin.Unit
+                      $this: VALUE_PARAMETER name:<this> type:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48, <set-?>:<root>.f.<anonymous>.Scope0) returnType:kotlin.Unit
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
-                      $this: VALUE_PARAMETER name:<this> type:<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584
+                      $this: VALUE_PARAMETER name:<this> type:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48
                       VALUE_PARAMETER name:<set-?> index:0 type:<root>.f.<anonymous>.Scope0
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584> declared in <root>.f'
-                  CALL 'public final fun toDataFrame <T> (): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.toDataFrame> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584> origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48> declared in <root>.f'
+                  CALL 'public final fun toDataFrame <T> (): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.toDataFrame> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48> origin=null
                     <T>: <root>.ClassWithNullableAnyTypeArg<kotlin.Int>
                     $receiver: GET_VAR 'it: kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>> declared in <root>.f.<anonymous>' type=kotlin.collections.List<<root>.ClassWithNullableAnyTypeArg<kotlin.Int>> origin=null
       VAR name:v type:kotlin.Any? [val]
         CALL 'public final fun <get-v> (): kotlin.Any? declared in <root>.f.<anonymous>.Scope0' type=kotlin.Any? origin=GET_PROPERTY
           $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.f.<anonymous>.Scope0' type=<root>.f.<anonymous>.Scope0 origin=null
-          $receiver: CALL 'public abstract fun get (index: kotlin.Int): org.jetbrains.kotlinx.dataframe.DataRow<T of org.jetbrains.kotlinx.dataframe.DataFrame> declared in org.jetbrains.kotlinx.dataframe.DataFrame' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584> origin=GET_ARRAY_ELEMENT
-            $this: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584> declared in <root>.f' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584> origin=null
+          $receiver: CALL 'public abstract fun get (index: kotlin.Int): org.jetbrains.kotlinx.dataframe.DataRow<T of org.jetbrains.kotlinx.dataframe.DataFrame> declared in org.jetbrains.kotlinx.dataframe.DataFrame' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48> declared in <root>.f' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48> origin=null
             index: CONST Int type=kotlin.Int value=0
       CALL 'public final fun print (): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api' type=kotlin.Unit origin=null
         $receiver: CALL 'public final fun schema (): org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema origin=null
-          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584> declared in <root>.f' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.TokenClassWithNullableAnyTypeArg_1203452584> origin=null
+          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48> declared in <root>.f' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48> origin=null
   FUN name:f1 visibility:public modality:FINAL <> (l:kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>>) returnType:kotlin.Unit
     VALUE_PARAMETER name:l index:0 type:kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>>
     BLOCK_BODY
-      VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584> [val]
-        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584> origin=null
+      VAR name:df type:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48> [val]
+        CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48> origin=null
           <T>: kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>>
-          <R>: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584>
+          <R>: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48>
           $receiver: GET_VAR 'l: kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>> declared in <root>.f1' type=kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>> origin=null
-          block: FUN_EXPR type=kotlin.Function1<kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>>, org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584>> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>>) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584>
+          block: FUN_EXPR type=kotlin.Function1<kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>>, org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>>) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48>
               VALUE_PARAMETER name:it index:0 type:kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>>
               BLOCK_BODY
-                CLASS CLASS name:TokenClassWithAnyTypeArg_1203452584I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
-                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I [primary]
+                CLASS CLASS name:ClassWithAnyTypeArg_48I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenClassWithAnyTypeArg_1203452584I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ClassWithAnyTypeArg_48I modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
                       public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -368,38 +368,38 @@ FILE fqName:<root> fileName:/toDataFrame_typeParameters.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:v visibility:public modality:ABSTRACT [val]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I) returnType:kotlin.Any
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I) returnType:kotlin.Any
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:v visibility:public modality:ABSTRACT [val]
-                      $this: VALUE_PARAMETER name:<this> type:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I
+                      $this: VALUE_PARAMETER name:<this> type:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I
                 CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]
                   $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.f1.<anonymous>.Scope0
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:v visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.Any visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-v> visibility:public modality:FINAL <> ($this:<root>.f1.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I>) returnType:kotlin.Any
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-v> visibility:public modality:FINAL <> ($this:<root>.f1.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I>) returnType:kotlin.Any
                       annotations:
-                        JvmName(name = "TokenClassWithAnyTypeArg_1203452584I_v")
+                        JvmName(name = "ClassWithAnyTypeArg_48I_v")
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:v visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.f1.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I>
                       BLOCK_BODY
                         RETURN type=kotlin.Any from='public final fun <get-v> (): kotlin.Any declared in <root>.f1.<anonymous>.Scope0'
                           TYPE_OP type=kotlin.Any origin=CAST typeOperand=kotlin.Any
                             CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I> declared in <root>.f1.<anonymous>.Scope0.<get-v>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I> origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I> declared in <root>.f1.<anonymous>.Scope0.<get-v>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I> origin=null
                               name: CONST String type=kotlin.String value="v"
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:v visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:v type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-v> visibility:public modality:FINAL <> ($this:<root>.f1.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any>
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-v> visibility:public modality:FINAL <> ($this:<root>.f1.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any>
                       annotations:
-                        JvmName(name = "TokenClassWithAnyTypeArg_1203452584I_v")
+                        JvmName(name = "ClassWithAnyTypeArg_48I_v")
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:v visibility:public modality:FINAL [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.f1.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I>
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I>
                       BLOCK_BODY
                         RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any> from='public final fun <get-v> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any> declared in <root>.f1.<anonymous>.Scope0'
                           TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Any>
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I> declared in <root>.f1.<anonymous>.Scope0.<get-v>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I> origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I> declared in <root>.f1.<anonymous>.Scope0.<get-v>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I> origin=null
                               columnName: CONST String type=kotlin.String value="v"
                   CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.f1.<anonymous>.Scope0 [primary]
                     BLOCK_BODY
@@ -418,51 +418,51 @@ FILE fqName:<root> fileName:/toDataFrame_typeParameters.kt
                     overridden:
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-                CLASS CLASS name:TokenClassWithAnyTypeArg_1203452584 modality:ABSTRACT visibility:local superTypes:[<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I]
-                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584
-                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584 [primary]
+                CLASS CLASS name:ClassWithAnyTypeArg_48 modality:ABSTRACT visibility:local superTypes:[<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48 [primary]
                     BLOCK_BODY
-                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I'
-                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenClassWithAnyTypeArg_1203452584 modality:ABSTRACT visibility:local superTypes:[<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I]'
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.f1.<anonymous>.ClassWithAnyTypeArg_48I'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ClassWithAnyTypeArg_48 modality:ABSTRACT visibility:local superTypes:[<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I]'
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
-                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.f1.<anonymous>.ClassWithAnyTypeArg_48I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                     VALUE_PARAMETER name:other index:0 type:kotlin.Any?
                   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
                     overridden:
-                      public open fun hashCode (): kotlin.Int declared in <root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I
+                      public open fun hashCode (): kotlin.Int declared in <root>.f1.<anonymous>.ClassWithAnyTypeArg_48I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
                     overridden:
-                      public open fun toString (): kotlin.String declared in <root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I
+                      public open fun toString (): kotlin.String declared in <root>.f1.<anonymous>.ClassWithAnyTypeArg_48I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:v visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
-                      public abstract v: kotlin.Any declared in <root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I
-                    FUN FAKE_OVERRIDE name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I) returnType:kotlin.Any [fake_override]
+                      public abstract v: kotlin.Any declared in <root>.f1.<anonymous>.ClassWithAnyTypeArg_48I
+                    FUN FAKE_OVERRIDE name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I) returnType:kotlin.Any [fake_override]
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:v visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
-                        public abstract fun <get-v> (): kotlin.Any declared in <root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I
-                      $this: VALUE_PARAMETER name:<this> type:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584I
+                        public abstract fun <get-v> (): kotlin.Any declared in <root>.f1.<anonymous>.ClassWithAnyTypeArg_48I
+                      $this: VALUE_PARAMETER name:<this> type:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584) returnType:<root>.f1.<anonymous>.Scope0
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48) returnType:<root>.f1.<anonymous>.Scope0
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
-                      $this: VALUE_PARAMETER name:<this> type:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584
-                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584, <set-?>:<root>.f1.<anonymous>.Scope0) returnType:kotlin.Unit
+                      $this: VALUE_PARAMETER name:<this> type:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48, <set-?>:<root>.f1.<anonymous>.Scope0) returnType:kotlin.Unit
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
-                      $this: VALUE_PARAMETER name:<this> type:<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584
+                      $this: VALUE_PARAMETER name:<this> type:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48
                       VALUE_PARAMETER name:<set-?> index:0 type:<root>.f1.<anonymous>.Scope0
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584> declared in <root>.f1'
-                  CALL 'public final fun toDataFrame <T> (): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.toDataFrame> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584> origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48> declared in <root>.f1'
+                  CALL 'public final fun toDataFrame <T> (): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.toDataFrame> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48> origin=null
                     <T>: <root>.ClassWithAnyTypeArg<kotlin.Int>
                     $receiver: GET_VAR 'it: kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>> declared in <root>.f1.<anonymous>' type=kotlin.collections.List<<root>.ClassWithAnyTypeArg<kotlin.Int>> origin=null
       VAR name:v type:kotlin.Any [val]
         CALL 'public final fun <get-v> (): kotlin.Any declared in <root>.f1.<anonymous>.Scope0' type=kotlin.Any origin=GET_PROPERTY
           $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.f1.<anonymous>.Scope0' type=<root>.f1.<anonymous>.Scope0 origin=null
-          $receiver: CALL 'public abstract fun get (index: kotlin.Int): org.jetbrains.kotlinx.dataframe.DataRow<T of org.jetbrains.kotlinx.dataframe.DataFrame> declared in org.jetbrains.kotlinx.dataframe.DataFrame' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584> origin=GET_ARRAY_ELEMENT
-            $this: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584> declared in <root>.f1' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584> origin=null
+          $receiver: CALL 'public abstract fun get (index: kotlin.Int): org.jetbrains.kotlinx.dataframe.DataRow<T of org.jetbrains.kotlinx.dataframe.DataFrame> declared in org.jetbrains.kotlinx.dataframe.DataFrame' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48> origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48> declared in <root>.f1' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48> origin=null
             index: CONST Int type=kotlin.Int value=0
       CALL 'public final fun print (): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.api' type=kotlin.Unit origin=null
         $receiver: CALL 'public final fun schema (): org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema origin=null
-          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584> declared in <root>.f1' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.TokenClassWithAnyTypeArg_1203452584> origin=null
+          $receiver: GET_VAR 'val df: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48> declared in <root>.f1' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.f1.<anonymous>.ClassWithAnyTypeArg_48> origin=null

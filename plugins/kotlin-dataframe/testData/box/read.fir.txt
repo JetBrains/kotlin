@@ -2,8 +2,8 @@ FILE: read.kt
     package org.jetbrains.kotlinx.dataframe
 
     public final fun box(): R|kotlin/String| {
-        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenRead_23832161>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenRead_23832161>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenRead_23832161>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class TokenRead_23832161I : R|kotlin/Any| {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Read_16>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Read_16>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Read_16>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class Read_16I : R|kotlin/Any| {
                 public abstract val full_name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -19,51 +19,51 @@ FILE: read.kt
                 public abstract val html_url: R|java/net/URL|
                     public get(): R|java/net/URL|
 
-                public constructor(): R|<local>/TokenRead_23832161I|
+                public constructor(): R|<local>/Read_16I|
 
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenRead_23832161I>|.full_name: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.full_name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenRead_23832161I>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenRead_23832161I>|.topics: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.topics: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenRead_23832161I>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenRead_23832161I>|.watchers: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.watchers: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenRead_23832161I>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenRead_23832161I>|.stargazers_count: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.stargazers_count: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenRead_23832161I>|.stargazers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.stargazers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenRead_23832161I>|.html_url: R|java/net/URL|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Read_16I>|.html_url: R|java/net/URL|
                     public get(): R|java/net/URL|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenRead_23832161I>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Read_16I>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
 
                 public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenRead_23832161 : R|<local>/TokenRead_23832161I| {
+            local abstract class Read_16 : R|<local>/Read_16I| {
                 public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
                     public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
-                public constructor(): R|<local>/TokenRead_23832161|
+                public constructor(): R|<local>/Read_16|
 
             }
 

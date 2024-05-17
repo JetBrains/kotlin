@@ -36,10 +36,10 @@ FILE: dropNulls.kt
 
     }
     public final fun box(): R|kotlin/String| {
-        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenRecord_1203452542>| = R|kotlin/collections/listOf|<R|Record|>(R|/Record.Record|(String(112), Int(42), R|/Nested.Nested|(Double(3.0)))).R|kotlin/let|<R|kotlin/collections/List<Record>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenRecord_1203452542>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<Record>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenRecord_1203452542>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class TokenRecord_1203452542I : R|kotlin/Any| {
-                public abstract val nested: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenNested_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenNested_1203452584>|
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>| = R|kotlin/collections/listOf|<R|Record|>(R|/Record.Record|(String(112), Int(42), R|/Nested.Nested|(Double(3.0)))).R|kotlin/let|<R|kotlin/collections/List<Record>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<Record>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class Record_33I : R|kotlin/Any| {
+                public abstract val nested: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_101>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_101>|
 
                 public abstract val b: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
@@ -47,53 +47,53 @@ FILE: dropNulls.kt
                 public abstract val a: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
-                public constructor(): R|<local>/TokenRecord_1203452542I|
+                public constructor(): R|<local>/Record_33I|
 
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenRecord_1203452542I>|.nested: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenNested_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenNested_1203452584>|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Record_33I>|.nested: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_101>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_101>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenRecord_1203452542I>|.nested: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/TokenNested_1203452584>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/TokenNested_1203452584>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Record_33I>|.nested: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Nested_101>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Nested_101>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenRecord_1203452542I>|.b: R|kotlin/Int?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Record_33I>|.b: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenRecord_1203452542I>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Record_33I>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenRecord_1203452542I>|.a: R|kotlin/String?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Record_33I>|.a: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenRecord_1203452542I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Record_33I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
                 public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenNested_1203452584 : R|kotlin/Any| {
+            local abstract class Nested_101 : R|kotlin/Any| {
                 public abstract val i: R|kotlin/Double?|
                     public get(): R|kotlin/Double?|
 
-                public constructor(): R|<local>/TokenNested_1203452584|
+                public constructor(): R|<local>/Nested_101|
 
             }
 
             local final class Scope1 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenNested_1203452584>|.i: R|kotlin/Double?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_101>|.i: R|kotlin/Double?|
                     public get(): R|kotlin/Double?|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenNested_1203452584>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Double?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Nested_101>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Double?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Double?>|
 
                 public constructor(): R|<local>/Scope1|
 
             }
 
-            local abstract class TokenRecord_1203452542 : R|<local>/TokenRecord_1203452542I| {
+            local abstract class Record_33 : R|<local>/Record_33I| {
                 public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
                     public set(value: R|<local>/Scope0|): R|kotlin/Unit|
@@ -102,17 +102,17 @@ FILE: dropNulls.kt
                     public get(): R|<local>/Scope1|
                     public set(value: R|<local>/Scope1|): R|kotlin/Unit|
 
-                public constructor(): R|<local>/TokenRecord_1203452542|
+                public constructor(): R|<local>/Record_33|
 
             }
 
             ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/toDataFrame|<R|Record|>(Int(1))
         }
         )
-        R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenRecord_1203452542>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenRecord_776173997>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenRecord_1203452542>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenRecord_776173997>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            local abstract class TokenRecord_776173997I : R|kotlin/Any| {
-                public abstract val nested: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenNested_776173955>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenNested_776173955>|
+        R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_18>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_18>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class Record_18I : R|kotlin/Any| {
+                public abstract val nested: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_381>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_381>|
 
                 public abstract val b: R|kotlin/Int|
                     public get(): R|kotlin/Int|
@@ -120,53 +120,53 @@ FILE: dropNulls.kt
                 public abstract val a: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public constructor(): R|<local>/TokenRecord_776173997I|
+                public constructor(): R|<local>/Record_18I|
 
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenRecord_776173997I>|.nested: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenNested_776173955>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenNested_776173955>|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Record_18I>|.nested: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_381>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_381>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenRecord_776173997I>|.nested: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/TokenNested_776173955>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/TokenNested_776173955>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Record_18I>|.nested: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Nested_381>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Nested_381>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenRecord_776173997I>|.b: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Record_18I>|.b: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenRecord_776173997I>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Record_18I>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenRecord_776173997I>|.a: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Record_18I>|.a: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenRecord_776173997I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Record_18I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
                 public constructor(): R|<local>/Scope0|
 
             }
 
-            local abstract class TokenNested_776173955 : R|kotlin/Any| {
+            local abstract class Nested_381 : R|kotlin/Any| {
                 public abstract val i: R|kotlin/Double?|
                     public get(): R|kotlin/Double?|
 
-                public constructor(): R|<local>/TokenNested_776173955|
+                public constructor(): R|<local>/Nested_381|
 
             }
 
             local final class Scope1 : R|kotlin/Any| {
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenNested_776173955>|.i: R|kotlin/Double?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_381>|.i: R|kotlin/Double?|
                     public get(): R|kotlin/Double?|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenNested_776173955>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Double?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Nested_381>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Double?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Double?>|
 
                 public constructor(): R|<local>/Scope1|
 
             }
 
-            local abstract class TokenRecord_776173997 : R|<local>/TokenRecord_776173997I| {
+            local abstract class Record_18 : R|<local>/Record_18I| {
                 public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
                     public set(value: R|<local>/Scope0|): R|kotlin/Unit|
@@ -175,11 +175,11 @@ FILE: dropNulls.kt
                     public get(): R|<local>/Scope1|
                     public set(value: R|<local>/Scope1|): R|kotlin/Unit|
 
-                public constructor(): R|<local>/TokenRecord_776173997|
+                public constructor(): R|<local>/Record_18|
 
             }
 
-            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/dropNulls|<R|<local>/TokenRecord_1203452542|>(<L> = dropNulls@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/TokenRecord_1203452542>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/TokenRecord_1203452542>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<*>| <inline=NoInline>  {
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/dropNulls|<R|<local>/Record_33|>(<L> = dropNulls@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Record_33>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Record_33>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<*>| <inline=NoInline>  {
                 ^ (this@R|special/anonymous|, (this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.a|).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl.and: R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<C>|>|<R|it(kotlin/Comparable<*>? & java/io/Serializable?)|>((this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.b|)
             }
             )
