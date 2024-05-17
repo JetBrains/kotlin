@@ -76,15 +76,18 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
         this is IrFunctionReference -> // ::function -> { args... -> function(args...) }
             wrapFunction(symbol.owner).toLambda(this, scope!!)
 
-        this is IrPropertyReference ->
-            // References to generic synthetic Java properties aren't inlined in K1. Fixes KT-57103
-            if (typeArgumentsCount > 0 &&
-                symbol.owner.origin.let {
-                    it == IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE || it == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
-                }
-            ) this
-            // ::property -> { receiver -> receiver.property }; prefer direct field access if allowed.
-            else (if (field != null) wrapField(field!!.owner) else wrapFunction(getter!!.owner)).toLambda(this, scope!!)
+        this is IrPropertyReference -> {
+            val isReferenceToSyntheticJavaProperty = symbol.owner.origin.let {
+                it == IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE || it == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+            }
+            when {
+                // References to generic synthetic Java properties aren't inlined in K1. Fixes KT-57103
+                typeArgumentsCount > 0 && isReferenceToSyntheticJavaProperty -> this
+                // ::property -> { receiver -> receiver.property }; prefer direct field access if allowed.
+                field != null -> wrapField(field!!.owner).toLambda(this, scope!!)
+                else -> wrapFunction(getter!!.owner).toLambda(this, scope!!)
+            }
+        }
 
 
         else -> this // not an inline argument
@@ -132,16 +135,13 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
                     for (parameter in referencedFunction.explicitParameters) {
                         val next = valueParameters.size
                         when {
-                            boundReceiverParameter == parameter ->
-                                irGet(addExtensionReceiver(boundReceiver!!.type))
+                            boundReceiverParameter == parameter -> irGet(addExtensionReceiver(boundReceiver!!.type))
                             parameter.isVararg && next < argumentTypes.size && parameter.type == argumentTypes[next] ->
                                 irGet(addValueParameter("p$next", argumentTypes[next]))
                             parameter.isVararg && (next < argumentTypes.size || !parameter.hasDefaultValue()) ->
                                 error("Callable reference with vararg should not appear at this stage.\n${this@wrapFunction.render()}")
-                            next >= argumentTypes.size ->
-                                null
-                            else ->
-                                irGet(addValueParameter("p$next", argumentTypes[next]))
+                            next >= argumentTypes.size -> null
+                            else -> irGet(addValueParameter("p$next", argumentTypes[next]))
                         }?.let { putArgument(referencedFunction, parameter, it) }
                     }
                 })
