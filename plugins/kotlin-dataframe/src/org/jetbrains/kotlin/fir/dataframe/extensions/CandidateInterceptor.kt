@@ -82,8 +82,6 @@ class CandidateInterceptor(
     session: FirSession,
     val nextName: (String) -> ClassId,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
-    val Key = DataFramePlugin
-
     companion object {
         val DEFAULT_NAME = "DataFrameType"
     }
@@ -269,7 +267,7 @@ class CandidateInterceptor(
                 }
             }
             schema.callShapeData = CallShapeData.Schema(properties)
-            scope.callShapeData = CallShapeData.Scope(schema.symbol, properties)
+            scope.callShapeData = CallShapeData.Scope(properties)
             val schemaApi = DataSchemaApi(schema, scope)
             dataSchemaApis.add(schemaApi)
             return schemaApi
