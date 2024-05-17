@@ -118,7 +118,7 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
             returnType = ((type as IrSimpleType).arguments.last() as IrTypeProjection).type
             isSuspend = referencedFunction.isSuspend
         }.apply {
-            body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
+            body = context.createIrBuilder(symbol, startOffset, endOffset).run {
                 // TODO: could there be a star projection here?
                 val argumentTypes = (type as IrSimpleType).arguments.dropLast(1).map { (it as IrTypeProjection).type }
                 val boundReceiver = dispatchReceiver ?: extensionReceiver
@@ -137,11 +137,7 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
                             parameter.isVararg && next < argumentTypes.size && parameter.type == argumentTypes[next] ->
                                 irGet(addValueParameter("p$next", argumentTypes[next]))
                             parameter.isVararg && (next < argumentTypes.size || !parameter.hasDefaultValue()) ->
-                                irArray(parameter.type) {
-                                    for (i in next until argumentTypes.size) {
-                                        +irGet(addValueParameter("p$i", argumentTypes[i]))
-                                    }
-                                }
+                                error("Callable reference with vararg should not appear at this stage.\n${this@wrapFunction.render()}")
                             next >= argumentTypes.size ->
                                 null
                             else ->

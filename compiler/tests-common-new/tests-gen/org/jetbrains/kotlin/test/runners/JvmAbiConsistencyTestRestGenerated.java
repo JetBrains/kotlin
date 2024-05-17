@@ -1251,6 +1251,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         }
 
         @Test
+        @TestMetadata("inlineVarargWithLetCall.kt")
+        public void testInlineVarargWithLetCall() {
+          runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/inlineVarargWithLetCall.kt");
+        }
+
+        @Test
         @TestMetadata("multipleCallableReferenceUsage.kt")
         public void testMultipleCallableReferenceUsage() {
           runTest("compiler/testData/codegen/boxInline/callableReference/adaptedReferences/multipleCallableReferenceUsage.kt");
