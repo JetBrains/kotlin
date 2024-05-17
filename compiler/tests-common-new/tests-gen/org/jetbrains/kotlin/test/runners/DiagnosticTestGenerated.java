@@ -23872,6 +23872,42 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("newListMethodsNullabilityLinkedList20.kt")
+        public void testNewListMethodsNullabilityLinkedList20() {
+          runTest("compiler/testData/diagnostics/tests/j+k/types/newListMethodsNullabilityLinkedList20.kt");
+        }
+
+        @Test
+        @TestMetadata("newListMethodsNullabilityLinkedList21.kt")
+        public void testNewListMethodsNullabilityLinkedList21() {
+          runTest("compiler/testData/diagnostics/tests/j+k/types/newListMethodsNullabilityLinkedList21.kt");
+        }
+
+        @Test
+        @TestMetadata("newListMethodsNullabilityLinkedListLatest.kt")
+        public void testNewListMethodsNullabilityLinkedListLatest() {
+          runTest("compiler/testData/diagnostics/tests/j+k/types/newListMethodsNullabilityLinkedListLatest.kt");
+        }
+
+        @Test
+        @TestMetadata("newListMethodsNullabilityOverridesLinkedList20.kt")
+        public void testNewListMethodsNullabilityOverridesLinkedList20() {
+          runTest("compiler/testData/diagnostics/tests/j+k/types/newListMethodsNullabilityOverridesLinkedList20.kt");
+        }
+
+        @Test
+        @TestMetadata("newListMethodsNullabilityOverridesLinkedList21.kt")
+        public void testNewListMethodsNullabilityOverridesLinkedList21() {
+          runTest("compiler/testData/diagnostics/tests/j+k/types/newListMethodsNullabilityOverridesLinkedList21.kt");
+        }
+
+        @Test
+        @TestMetadata("newListMethodsNullabilityOverridesLinkedListLatest.kt")
+        public void testNewListMethodsNullabilityOverridesLinkedListLatest() {
+          runTest("compiler/testData/diagnostics/tests/j+k/types/newListMethodsNullabilityOverridesLinkedListLatest.kt");
+        }
+
+        @Test
         @TestMetadata("noOverrideKeyword.kt")
         public void testNoOverrideKeyword() {
           runTest("compiler/testData/diagnostics/tests/j+k/types/noOverrideKeyword.kt");
@@ -40301,6 +40337,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("newListMethodsNullabilityLinkedList20.kt")
+      public void testNewListMethodsNullabilityLinkedList20() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityLinkedList20.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsNullabilityLinkedList21.kt")
+      public void testNewListMethodsNullabilityLinkedList21() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityLinkedList21.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsNullabilityLinkedListLatest.kt")
+      public void testNewListMethodsNullabilityLinkedListLatest() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityLinkedListLatest.kt");
+      }
+
+      @Test
       @TestMetadata("newListMethodsNullabilityOverrides20.kt")
       public void testNewListMethodsNullabilityOverrides20() {
         runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityOverrides20.kt");
@@ -40316,6 +40370,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("newListMethodsNullabilityOverridesLatest.kt")
       public void testNewListMethodsNullabilityOverridesLatest() {
         runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityOverridesLatest.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsNullabilityOverridesLinkedList20.kt")
+      public void testNewListMethodsNullabilityOverridesLinkedList20() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityOverridesLinkedList20.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsNullabilityOverridesLinkedList21.kt")
+      public void testNewListMethodsNullabilityOverridesLinkedList21() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityOverridesLinkedList21.kt");
+      }
+
+      @Test
+      @TestMetadata("newListMethodsNullabilityOverridesLinkedListLatest.kt")
+      public void testNewListMethodsNullabilityOverridesLinkedListLatest() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsNullabilityOverridesLinkedListLatest.kt");
       }
 
       @Test
