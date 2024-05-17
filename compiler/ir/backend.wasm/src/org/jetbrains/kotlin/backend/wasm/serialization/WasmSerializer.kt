@@ -142,16 +142,12 @@ class WasmSerializer(outputStream: OutputStream) {
 
         // Output the size of the reference table first
         val size = tableElementsInBytes.size
-        if (size > 65535) {
-            error("The symbol table size $size (and ids) doesn't fit in a 16-bit integer. Consider using 32-bit integers.")
-        }
-        out.writeUInt16(size.toUShort())
+        out.writeUInt32(size.toUInt())
 
         // Output each element in the form: sizeInBytes data
         tableElementsInBytes.forEach {
             val bytesCount = it.size
-            if (bytesCount > 65535) error("The symbol size $bytesCount can't fit in a 16-bit integer. Consider using 32-bit integers.")
-            out.writeUInt16(bytesCount.toUShort())
+            out.writeUInt32(bytesCount.toUInt())
             out.writeBytes(it)
         }
 
@@ -658,8 +654,7 @@ class WasmSerializer(outputStream: OutputStream) {
                 newReferences.add(it)
             }
         }.id
-        assert(id <= 65535)
-        b.writeUInt16(id.toUShort())
+        serialize(id)
     }
 
     private fun <T : Any> WasmSymbolReadOnly<T>.getOwner() =
