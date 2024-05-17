@@ -36,7 +36,7 @@ internal fun FirFunctionCall.loadInterpreter(session: FirSession): Interpreter<*
     return symbol.annotations
         .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
         ?.let { annotation ->
-            val name = (annotation.findArgumentByName(argName) as FirLiteralExpression<*>).value as String
+            val name = (annotation.findArgumentByName(argName) as FirLiteralExpression).value as String
             name.load<Interpreter<*>>()
         }
 }
@@ -48,7 +48,7 @@ internal fun FirFunctionCall.interpreterName(session: FirSession): String? {
     return symbol.annotations
         .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
         ?.let { annotation ->
-            val name = (annotation.findArgumentByName(argName) as FirLiteralExpression<*>).value as String
+            val name = (annotation.findArgumentByName(argName) as FirLiteralExpression).value as String
             name
         }
 }

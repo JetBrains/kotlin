@@ -100,7 +100,7 @@ class CandidateInterceptor(
         val hash = run {
             val hash = callInfo.name.hashCode() + callInfo.arguments.sumOf {
                 when (it) {
-                    is FirLiteralExpression<*> -> it.value.hashCode()
+                    is FirLiteralExpression -> it.value.hashCode()
                     else -> it.source?.text?.hashCode() ?: 42
                 }
             }
