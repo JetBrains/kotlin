@@ -206,12 +206,14 @@ class CandidateInterceptor(
 
         var i = 0
         val dataSchemaApis = mutableListOf<DataSchemaApi>()
+        val usedNames = mutableMapOf<String, Int>()
         fun PluginDataFrameSchema.materialize(schema: FirRegularClass? = null, suggestedName: String? = null): DataSchemaApi {
             val schema = if (schema != null) {
                 schema
             } else {
                 requireNotNull(suggestedName)
-                val name = nextName(suggestedName)
+                val uniqueSuffix = usedNames.compute(suggestedName) { _, i -> (i ?: 0) + 1 }
+                val name = nextName(suggestedName + uniqueSuffix)
                 buildSchema(name)
             }
 
@@ -233,7 +235,7 @@ class CandidateInterceptor(
             val properties = columns().map {
                 fun PluginDataFrameSchema.materialize(column: SimpleCol): DataSchemaApi {
                     val text = call.source?.text ?: call.calleeReference.name
-                    val name = "${column.name.titleCase().replEscapeLineBreaks()}_${abs(text.hashCode())}"
+                    val name = "${column.name.titleCase().replEscapeLineBreaks()}_${hashToTwoCharString(abs(text.hashCode()))}"
                     return materialize(suggestedName = name)
                 }
 
