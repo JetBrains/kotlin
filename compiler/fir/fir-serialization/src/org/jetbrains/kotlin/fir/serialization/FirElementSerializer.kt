@@ -898,7 +898,7 @@ class FirElementSerializer private constructor(
         // So, the abbreviated type may have been set already by an inner call.
         // Note that in case of an `expect typealias`, the second expansion will
         // erase `AbbreviatedTypeAttribute` of `type`.
-        if (abbreviation != mainType && !mainTypeProto.hasAbbreviatedType()) {
+        if (abbreviation != mainType && !mainTypeProto.hasAbbreviatedType() && !abbreviation.containsCapturedTypes) {
             val abbreviationProto = typeOrTypealiasProto(
                 abbreviation, toSuper, correspondingTypeRef, isDefinitelyNotNullType,
                 abbreviationOnly = false,
@@ -914,6 +914,8 @@ class FirElementSerializer private constructor(
 
         return mainTypeProto
     }
+
+    private val ConeKotlinType.containsCapturedTypes get() = contains { it is ConeCapturedType }
 
     private fun typeOrTypealiasProto(
         type: ConeKotlinType,

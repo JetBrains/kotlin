@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: ANY
 
 interface DynamoColumnType<V>
 interface DynamoKeyColumnType<V> : DynamoColumnType<V>
