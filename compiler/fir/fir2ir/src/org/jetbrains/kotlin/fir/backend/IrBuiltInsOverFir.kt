@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.ClassId
@@ -47,8 +45,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 class IrBuiltInsOverFir(
     private val c: Fir2IrComponents,
     private val moduleDescriptor: FirModuleDescriptor,
-    private val syntheticSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer,
-    irMangler: KotlinMangler.IrMangler
+    private val syntheticSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer
 ) : IrBuiltIns() {
 
     // ------------------------------------- basic stuff -------------------------------------
@@ -72,8 +69,6 @@ class IrBuiltInsOverFir(
     private val kotlinInternalIrPackageFragment: IrExternalPackageFragment = createPackage(StandardClassIds.BASE_INTERNAL_IR_PACKAGE)
     override val operatorsPackageFragment: IrExternalPackageFragment
         get() = kotlinInternalIrPackageFragment
-
-    private val irSignatureBuilder = PublicIdSignatureComputer(irMangler)
 
     // ------------------------------------- normal classes and functions -------------------------------------
 
@@ -413,45 +408,35 @@ class IrBuiltInsOverFir(
             origin: IrDeclarationOrigin,
             isIntrinsicConst: Boolean,
         ): IrSimpleFunction {
-            fun makeWithSymbol(symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
-                return irFactory.createSimpleFunction(
-                    startOffset = UNDEFINED_OFFSET,
-                    endOffset = UNDEFINED_OFFSET,
-                    origin = origin,
-                    name = Name.identifier(name),
-                    visibility = DescriptorVisibilities.PUBLIC,
-                    isInline = false,
-                    isExpect = false,
-                    returnType = returnType,
-                    modality = Modality.FINAL,
-                    symbol = symbol,
-                    isTailrec = false,
-                    isSuspend = false,
-                    isOperator = false,
-                    isInfix = false,
-                    isExternal = false,
-                    containerSource = null,
-                    isFakeOverride = false,
-                ).also { fn ->
-                    valueParameterTypes.forEachIndexed { index, (pName, irType) ->
-                        fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
-                    }
-                    fn.typeParameters = typeParameters
-                    typeParameters.forEach { it.parent = fn }
-                    if (isIntrinsicConst) {
-                        fn.annotations += intrinsicConstAnnotation
-                    }
-                    fn.parent = packageFragment
+            return irFactory.createSimpleFunction(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = origin,
+                name = Name.identifier(name),
+                visibility = DescriptorVisibilities.PUBLIC,
+                isInline = false,
+                isExpect = false,
+                returnType = returnType,
+                modality = Modality.FINAL,
+                symbol = symbol ?: IrSimpleFunctionSymbolImpl(),
+                isTailrec = false,
+                isSuspend = false,
+                isOperator = false,
+                isInfix = false,
+                isExternal = false,
+                containerSource = null,
+                isFakeOverride = false,
+            ).also { fn ->
+                valueParameterTypes.forEachIndexed { index, (pName, irType) ->
+                    fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
                 }
+                fn.typeParameters = typeParameters
+                typeParameters.forEach { it.parent = fn }
+                if (isIntrinsicConst) {
+                    fn.annotations += intrinsicConstAnnotation
+                }
+                fn.parent = packageFragment
             }
-
-            val irFun4SignatureCalculation = makeWithSymbol(IrSimpleFunctionSymbolImpl())
-            val signature = irSignatureBuilder.computeSignature(irFun4SignatureCalculation)
-            return c.symbolTable.declareSimpleFunction(
-                signature,
-                { symbol ?: IrSimpleFunctionSymbolImpl(null, signature) },
-                ::makeWithSymbol
-            )
         }
 
         val ieee754equalsFunByOperandType = mutableMapOf<IrClassifierSymbol, IrSimpleFunctionSymbol>()

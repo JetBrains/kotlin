@@ -144,7 +144,6 @@ fun FirResult.convertToIrAndActualize(
         platformComponentsStorage,
         FirModuleDescriptor.createSourceModuleDescriptor(platformComponentsStorage.session, kotlinBuiltIns),
         syntheticIrBuiltinsSymbolsContainer,
-        irMangler
     )
     val irTypeSystemContext = typeSystemContextProvider(irBuiltins)
     fir2IrExtensions.initializeIrBuiltIns(irBuiltins)
