@@ -374,98 +374,11 @@ class IrBuiltInsOverFir(
 
     // ------------------------------------- synthetics -------------------------------------
 
-    override val ieee754equalsFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-    override val eqeqeqSymbol: IrSimpleFunctionSymbol
-    override val eqeqSymbol: IrSimpleFunctionSymbol
-    override val throwCceSymbol: IrSimpleFunctionSymbol
-    override val throwIseSymbol: IrSimpleFunctionSymbol
-    override val andandSymbol: IrSimpleFunctionSymbol
-    override val ororSymbol: IrSimpleFunctionSymbol
-    override val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol
-    override val illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol
-    override val dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol
-
-    override val dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol
-    override val checkNotNullSymbol: IrSimpleFunctionSymbol
-
-    override val linkageErrorSymbol: IrSimpleFunctionSymbol
-        get() = shouldNotBeCalled()
-
-    override val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-    override val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-    override val greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-    override val greaterFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-
-    init {
-        val packageFragment = kotlinInternalIrPackageFragment
-
-        fun createFunction(
-            name: String,
-            symbol: IrSimpleFunctionSymbol?,
-            returnType: IrType,
-            valueParameterTypes: Array<out Pair<String, IrType>>,
-            typeParameters: List<IrTypeParameter>,
-            origin: IrDeclarationOrigin,
-            isIntrinsicConst: Boolean,
-        ): IrSimpleFunction {
-            return irFactory.createSimpleFunction(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = origin,
-                name = Name.identifier(name),
-                visibility = DescriptorVisibilities.PUBLIC,
-                isInline = false,
-                isExpect = false,
-                returnType = returnType,
-                modality = Modality.FINAL,
-                symbol = symbol ?: IrSimpleFunctionSymbolImpl(),
-                isTailrec = false,
-                isSuspend = false,
-                isOperator = false,
-                isInfix = false,
-                isExternal = false,
-                containerSource = null,
-                isFakeOverride = false,
-            ).also { fn ->
-                valueParameterTypes.forEachIndexed { index, (pName, irType) ->
-                    fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
-                }
-                fn.typeParameters = typeParameters
-                typeParameters.forEach { it.parent = fn }
-                if (isIntrinsicConst) {
-                    fn.annotations += intrinsicConstAnnotation
-                }
-                fn.parent = packageFragment
-            }
-        }
-
-        val ieee754equalsFunByOperandType = mutableMapOf<IrClassifierSymbol, IrSimpleFunctionSymbol>()
-
-        fun addBuiltinOperatorSymbol(
-            name: String,
-            symbol: IrSimpleFunctionSymbol?,
-            returnType: IrType,
-            vararg valueParameterTypes: Pair<String, IrType>,
-            isIntrinsicConst: Boolean = false,
-        ): IrSimpleFunctionSymbol {
-            return createFunction(
-                name = name,
-                symbol = symbol,
-                returnType = returnType,
-                valueParameterTypes = valueParameterTypes,
-                typeParameters = emptyList(),
-                origin = BUILTIN_OPERATOR,
-                isIntrinsicConst = isIntrinsicConst
-            ).also {
-                // `kotlinInternalIrPackageFragment` definitely is not a lazy class
-                @OptIn(UnsafeDuringIrConstructionAPI::class)
-                packageFragment.declarations.add(it)
-            }.symbol
-        }
-
-        syntheticSymbolsContainer.primitiveFloatingPointTypes.forEach { primitiveType ->
+    override val ieee754equalsFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
+        syntheticSymbolsContainer.primitiveFloatingPointTypes.associate { primitiveType ->
             val fpType = primitiveTypeToIrType.getValue(primitiveType)
-            ieee754equalsFunByOperandType[fpType.classifierOrFail] = addBuiltinOperatorSymbol(
+            val primitiveClass = fpType.classifierOrFail
+            val operator = addBuiltinOperatorSymbol(
                 BuiltInOperatorNames.IEEE754_EQUALS,
                 symbol = syntheticSymbolsContainer.ieee754equalsFunByOperandType.getValue(primitiveType),
                 booleanType,
@@ -473,128 +386,131 @@ class IrBuiltInsOverFir(
                 "arg1" to fpType.makeNullable(),
                 isIntrinsicConst = true
             )
-        }
-        eqeqeqSymbol = addBuiltinOperatorSymbol(
-            BuiltInOperatorNames.EQEQEQ,
-            symbol = syntheticSymbolsContainer.eqeqeqSymbol,
-            booleanType,
-            "" to anyNType, "" to anyNType
-        )
-        eqeqSymbol = addBuiltinOperatorSymbol(
-            BuiltInOperatorNames.EQEQ,
-            symbol = syntheticSymbolsContainer.eqeqSymbol,
-            booleanType, "" to anyNType, "" to anyNType, isIntrinsicConst = true
-        )
-        throwCceSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_CCE, symbol = null, nothingType)
-        throwIseSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_ISE, symbol = null, nothingType)
-        andandSymbol =
-            addBuiltinOperatorSymbol(
-                BuiltInOperatorNames.ANDAND,
-                symbol = null,
-                booleanType,
-                "" to booleanType,
-                "" to booleanType,
-                isIntrinsicConst = true
-            )
-        ororSymbol =
-            addBuiltinOperatorSymbol(
-                BuiltInOperatorNames.OROR,
-                symbol = null,
-                booleanType,
-                "" to booleanType,
-                "" to booleanType,
-                isIntrinsicConst = true
-            )
-        noWhenBranchMatchedExceptionSymbol = addBuiltinOperatorSymbol(
-            BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION,
-            symbol = syntheticSymbolsContainer.noWhenBranchMatchedExceptionSymbol,
-            nothingType
-        )
-        illegalArgumentExceptionSymbol = addBuiltinOperatorSymbol(
-            BuiltInOperatorNames.ILLEGAL_ARGUMENT_EXCEPTION,
-            symbol = null,
-            nothingType,
-            "" to stringType
-        )
-        dataClassArrayMemberHashCodeSymbol = addBuiltinOperatorSymbol(
-            "dataClassArrayMemberHashCode",
-            symbol = null,
-            intType,
-            "" to anyType
-        )
-        dataClassArrayMemberToStringSymbol = addBuiltinOperatorSymbol(
-            "dataClassArrayMemberToString",
-            symbol = null,
-            stringType,
-            "" to anyNType
-        )
-
-        checkNotNullSymbol = run {
-            val typeParameter: IrTypeParameter = irFactory.createTypeParameter(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = BUILTIN_OPERATOR,
-                name = Name.identifier("T0"),
-                symbol = IrTypeParameterSymbolImpl(),
-                variance = Variance.INVARIANT,
-                index = 0,
-                isReified = true
-            ).apply {
-                superTypes = listOf(anyType)
-            }
-
-            createFunction(
-                name = BuiltInOperatorNames.CHECK_NOT_NULL,
-                symbol = syntheticSymbolsContainer.checkNotNullSymbol,
-                returnType = IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
-                valueParameterTypes = arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
-                typeParameters = listOf(typeParameter),
-                origin = BUILTIN_OPERATOR,
-                isIntrinsicConst = false,
-            ).also {
-                // `kotlinInternalIrPackageFragment` definitely is not a lazy class
-                @OptIn(UnsafeDuringIrConstructionAPI::class)
-                packageFragment.declarations.add(it)
-            }.symbol
+            primitiveClass to operator
         }
 
-        fun List<PrimitiveType>.defineComparisonOperatorForEachIrType(
-            name: String,
-            symbols: Map<PrimitiveType, IrSimpleFunctionSymbol>
-        ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-            return associate { primitiveType ->
-                val irType = primitiveTypeToIrType.getValue(primitiveType)
-                irType.classifierOrFail to addBuiltinOperatorSymbol(
-                    name,
-                    symbol = symbols.getValue(primitiveType),
-                    booleanType,
-                    "" to irType,
-                    "" to irType,
-                    isIntrinsicConst = true
-                )
-            }
+    override val eqeqeqSymbol: IrSimpleFunctionSymbol = addBuiltinOperatorSymbol(
+        BuiltInOperatorNames.EQEQEQ,
+        symbol = syntheticSymbolsContainer.eqeqeqSymbol,
+        booleanType,
+        "" to anyNType, "" to anyNType
+    )
+
+    override val eqeqSymbol: IrSimpleFunctionSymbol = addBuiltinOperatorSymbol(
+        BuiltInOperatorNames.EQEQ,
+        symbol = syntheticSymbolsContainer.eqeqSymbol,
+        booleanType, "" to anyNType, "" to anyNType, isIntrinsicConst = true
+    )
+
+    override val throwCceSymbol: IrSimpleFunctionSymbol = addBuiltinOperatorSymbol(
+        BuiltInOperatorNames.THROW_CCE,
+        symbol = null,
+        nothingType
+    )
+
+    override val throwIseSymbol: IrSimpleFunctionSymbol = addBuiltinOperatorSymbol(
+        BuiltInOperatorNames.THROW_ISE,
+        symbol = null,
+        nothingType
+    )
+
+    override val andandSymbol: IrSimpleFunctionSymbol = addBuiltinOperatorSymbol(
+        BuiltInOperatorNames.ANDAND,
+        symbol = null,
+        booleanType,
+        "" to booleanType,
+        "" to booleanType,
+        isIntrinsicConst = true
+    )
+
+    override val ororSymbol: IrSimpleFunctionSymbol = addBuiltinOperatorSymbol(
+        BuiltInOperatorNames.OROR,
+        symbol = null,
+        booleanType,
+        "" to booleanType,
+        "" to booleanType,
+        isIntrinsicConst = true
+    )
+
+    override val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol = addBuiltinOperatorSymbol(
+        BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION,
+        symbol = syntheticSymbolsContainer.noWhenBranchMatchedExceptionSymbol,
+        nothingType
+    )
+
+    override val illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol = addBuiltinOperatorSymbol(
+        BuiltInOperatorNames.ILLEGAL_ARGUMENT_EXCEPTION,
+        symbol = null,
+        nothingType,
+        "" to stringType
+    )
+
+    override val dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol = addBuiltinOperatorSymbol(
+        "dataClassArrayMemberHashCode",
+        symbol = null,
+        intType,
+        "" to anyType
+    )
+
+
+    override val dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol = addBuiltinOperatorSymbol(
+        "dataClassArrayMemberToString",
+        symbol = null,
+        stringType,
+        "" to anyNType
+    )
+
+    override val checkNotNullSymbol: IrSimpleFunctionSymbol = run {
+        val typeParameter = irFactory.createTypeParameter(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = BUILTIN_OPERATOR,
+            name = Name.identifier("T0"),
+            symbol = IrTypeParameterSymbolImpl(),
+            variance = Variance.INVARIANT,
+            index = 0,
+            isReified = true
+        ).apply {
+            superTypes = listOf(anyType)
         }
 
-        val primitivesWithComparison = syntheticSymbolsContainer.primitiveIrTypesWithComparisons
+        createFunction(
+            name = BuiltInOperatorNames.CHECK_NOT_NULL,
+            symbol = syntheticSymbolsContainer.checkNotNullSymbol,
+            returnType = IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
+            valueParameterTypes = arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
+            typeParameters = listOf(typeParameter),
+            origin = BUILTIN_OPERATOR,
+            isIntrinsicConst = false,
+        )
+    }
 
-        lessFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+    override val linkageErrorSymbol: IrSimpleFunctionSymbol
+        get() = shouldNotBeCalled()
+
+    override val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
+        syntheticSymbolsContainer.primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(
             BuiltInOperatorNames.LESS,
             syntheticSymbolsContainer.lessFunByOperandType
         )
-        lessOrEqualFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+
+    override val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
+        syntheticSymbolsContainer.primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(
             BuiltInOperatorNames.LESS_OR_EQUAL,
             syntheticSymbolsContainer.lessOrEqualFunByOperandType
         )
-        greaterOrEqualFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+
+    override val greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
+        syntheticSymbolsContainer.primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(
             BuiltInOperatorNames.GREATER_OR_EQUAL,
             syntheticSymbolsContainer.greaterOrEqualFunByOperandType
         )
-        greaterFunByOperandType = primitivesWithComparison.defineComparisonOperatorForEachIrType(
+
+    override val greaterFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
+        syntheticSymbolsContainer.primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(
             BuiltInOperatorNames.GREATER,
             syntheticSymbolsContainer.greaterFunByOperandType
         )
-        this@IrBuiltInsOverFir.ieee754equalsFunByOperandType = ieee754equalsFunByOperandType
-    }
 
     // ------------------------------------- functions -------------------------------------
 
@@ -656,4 +572,82 @@ class IrBuiltInsOverFir(
 
     private fun createPackage(fqName: FqName): IrExternalPackageFragment =
         createEmptyExternalPackageFragment(moduleDescriptor, fqName)
+
+    private fun createFunction(
+        name: String,
+        symbol: IrSimpleFunctionSymbol?,
+        returnType: IrType,
+        valueParameterTypes: Array<out Pair<String, IrType>>,
+        typeParameters: List<IrTypeParameter>,
+        origin: IrDeclarationOrigin,
+        isIntrinsicConst: Boolean,
+    ): IrSimpleFunctionSymbol {
+        return irFactory.createSimpleFunction(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = origin,
+            name = Name.identifier(name),
+            visibility = DescriptorVisibilities.PUBLIC,
+            isInline = false,
+            isExpect = false,
+            returnType = returnType,
+            modality = Modality.FINAL,
+            symbol = symbol ?: IrSimpleFunctionSymbolImpl(),
+            isTailrec = false,
+            isSuspend = false,
+            isOperator = false,
+            isInfix = false,
+            isExternal = false,
+            containerSource = null,
+            isFakeOverride = false,
+        ).also { fn ->
+            valueParameterTypes.forEachIndexed { index, (pName, irType) ->
+                fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
+            }
+            fn.typeParameters = typeParameters
+            typeParameters.forEach { it.parent = fn }
+            if (isIntrinsicConst) {
+                fn.annotations += intrinsicConstAnnotation
+            }
+            fn.parent = kotlinInternalIrPackageFragment
+            // `kotlinInternalIrPackageFragment` definitely is not a lazy class
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            kotlinInternalIrPackageFragment.declarations.add(fn)
+        }.symbol
+    }
+
+    private fun addBuiltinOperatorSymbol(
+        name: String,
+        symbol: IrSimpleFunctionSymbol?,
+        returnType: IrType,
+        vararg valueParameterTypes: Pair<String, IrType>,
+        isIntrinsicConst: Boolean = false,
+    ): IrSimpleFunctionSymbol {
+        return createFunction(
+            name = name,
+            symbol = symbol,
+            returnType = returnType,
+            valueParameterTypes = valueParameterTypes,
+            typeParameters = emptyList(),
+            origin = BUILTIN_OPERATOR,
+            isIntrinsicConst = isIntrinsicConst
+        )
+    }
+
+    private fun List<PrimitiveType>.defineComparisonOperatorForEachIrType(
+        name: String,
+        symbols: Map<PrimitiveType, IrSimpleFunctionSymbol>
+    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
+        return associate { primitiveType ->
+            val irType = primitiveTypeToIrType.getValue(primitiveType)
+            irType.classifierOrFail to addBuiltinOperatorSymbol(
+                name,
+                symbol = symbols.getValue(primitiveType),
+                booleanType,
+                "" to irType,
+                "" to irType,
+                isIntrinsicConst = true
+            )
+        }
+    }
 }
