@@ -42,12 +42,12 @@ class WasmDeserializer(inputStream: InputStream) {
 
     fun deserialize(): WasmCompiledFileFragment {
         // Step 1: load the size of the reference table
-        val referenceTableSize = b.readUInt16().toInt()
+        val referenceTableSize = deserializeInt()
 
         // Step 2: load the elements of the reference table as bytes
         repeat(referenceTableSize) {
-            val slotSize = b.readUInt16()
-            val bytes = b.readBytes(slotSize.toInt())
+            val slotSize = deserializeInt()
+            val bytes = b.readBytes(slotSize)
             referenceTable.add(Symbol(bytes))
         }
 
@@ -599,7 +599,7 @@ class WasmDeserializer(inputStream: InputStream) {
         deserializeFunc(Flags(b.readUByte().toUInt()))
 
     private fun <T> deserializeReference(deserializeFunc: () -> T): T {
-        val index = b.readUInt16().toInt()
+        val index = deserializeInt()
         return referenceTable[index].getOrCreate { bytes ->
             val oldB = b
             b = MyByteReader(ByteArrayInputStream(bytes))
