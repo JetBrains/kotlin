@@ -78,27 +78,10 @@ abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<Bu
 
         val snapshotOutputFile = outputs.file(classpathEntryInputDirOrJar.name.replace('.', '_') + "-snapshot.bin")
 
-        val granularity = getClassSnapshotGranularity(classpathEntryInputDirOrJar, parameters.gradleUserHomeDir.get().asFile)
-
         val classLoader = parameters.classLoadersCachingService.get()
             .getClassLoader(parameters.classpath.toList(), SharedApiClassesClassLoaderProvider)
         val compilationService = CompilationService.loadImplementation(classLoader)
-        val snapshot = compilationService.calculateClasspathSnapshot(classpathEntryInputDirOrJar, granularity)
+        val snapshot = compilationService.calculateClasspathSnapshot(classpathEntryInputDirOrJar, CLASS_MEMBER_LEVEL)
         snapshot.saveSnapshot(snapshotOutputFile)
-    }
-
-    /**
-     * Determines the [ClassSnapshotGranularity] when taking a snapshot of the given [classpathEntryDirOrJar].
-     *
-     * As mentioned in [ClassSnapshotGranularity]'s kdoc, we will take [CLASS_LEVEL] snapshots for classes that are infrequently changed
-     * (e.g., external libraries which are typically stored/transformed inside the Gradle user home, or a few hard-coded cases), and take
-     * [CLASS_MEMBER_LEVEL] snapshots for the others.
-     */
-    private fun getClassSnapshotGranularity(classpathEntryDirOrJar: File, gradleUserHomeDir: File): ClassSnapshotGranularity {
-        return if (
-            classpathEntryDirOrJar.startsWith(gradleUserHomeDir) ||
-            classpathEntryDirOrJar.name == "android.jar"
-        ) CLASS_LEVEL
-        else CLASS_MEMBER_LEVEL
     }
 }
