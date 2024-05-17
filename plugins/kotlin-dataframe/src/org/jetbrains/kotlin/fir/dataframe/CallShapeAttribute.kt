@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.fir.dataframe
 
-import org.jetbrains.kotlin.fir.dataframe.extensions.SchemaProperty
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry

@@ -3,17 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.dataframe.extensions
+package org.jetbrains.kotlin.fir.dataframe
 
-import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.Names.DF_CLASS_ID
 import org.jetbrains.kotlin.fir.dataframe.api.CreateDataFrameConfiguration
 import org.jetbrains.kotlin.fir.dataframe.api.TraverseConfiguration
 import org.jetbrains.kotlin.fir.dataframe.api.toDataFrame
-import org.jetbrains.kotlin.fir.dataframe.interpret
-import org.jetbrains.kotlin.fir.dataframe.interpreterName
-import org.jetbrains.kotlin.fir.dataframe.load
-import org.jetbrains.kotlin.fir.dataframe.loadInterpreter
+import org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression

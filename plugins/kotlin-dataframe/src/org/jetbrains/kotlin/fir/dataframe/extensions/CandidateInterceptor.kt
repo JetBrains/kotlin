@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.CallShapeData
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.Names
+import org.jetbrains.kotlin.fir.dataframe.SchemaProperty
+import org.jetbrains.kotlin.fir.dataframe.analyzeRefinedCallShape
 import org.jetbrains.kotlin.fir.dataframe.callShapeData
 import org.jetbrains.kotlin.fir.dataframe.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.EmptyDeprecationsProvider
