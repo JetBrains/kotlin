@@ -6,10 +6,16 @@
 package org.jetbrains.kotlin.sir.providers.source
 
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.sir.SirOrigin
+import org.jetbrains.kotlin.sir.SirParameter
 
 public data class KotlinSource(
     val symbol: KtSymbol,
 ) : SirOrigin.Foreign.SourceCode
 
 public class KotlinRuntimeElement : SirOrigin.Foreign.SourceCode
+
+public sealed class KotlinParameterOrigin : SirParameter.Origin {
+    public class ValueParameter(public val parameter: KtValueParameterSymbol) : KotlinParameterOrigin()
+}
