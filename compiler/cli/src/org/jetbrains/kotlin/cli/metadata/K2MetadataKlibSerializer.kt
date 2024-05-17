@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -64,7 +65,7 @@ internal class K2MetadataKlibSerializer(
             produceHeaderKlib = false,
         ).serializeModule(module)
 
-        buildKotlinMetadataLibrary(configuration, serializedMetadata, destDir)
+        buildKotlinMetadataLibrary(serializedMetadata, destDir, configuration[CommonConfigurationKeys.MODULE_NAME]!!)
     }
 }
 

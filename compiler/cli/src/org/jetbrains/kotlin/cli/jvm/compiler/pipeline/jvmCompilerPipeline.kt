@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
@@ -62,6 +63,7 @@ import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
@@ -71,6 +73,7 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
+import kotlin.io.path.createTempDirectory
 
 fun compileModulesUsingFrontendIrAndLightTree(
     projectEnvironment: VfsBasedProjectEnvironment,
@@ -313,9 +316,17 @@ fun compileModuleToAnalyzedFir(
     )
 
     val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
+    val metadataDestinationBaseDir =
+        moduleConfiguration.get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY) ?: createTempDirectory("kotlinMetadata").toFile()
+    val metadataVersion = moduleConfiguration.get(CommonConfigurationKeys.METADATA_VERSION) ?: BuiltInsBinaryVersion.INSTANCE
 
     val outputs = sessionWithSources.map { (session, sources) ->
-        buildResolveAndCheckFirViaLightTree(session, sources, diagnosticsReporter, countFilesAndLines)
+        buildResolveAndCheckFirViaLightTree(
+            session, sources,
+            File(metadataDestinationBaseDir, "${session.moduleData.name.asString()}-metadata"),
+            metadataVersion, moduleConfiguration.languageVersionSettings,
+            diagnosticsReporter, countFilesAndLines
+        )
     }
     outputs.runPlatformCheckers(diagnosticsReporter)
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
@@ -13,11 +14,21 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
+import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
+import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
+import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.buildKotlinMetadataLibrary
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.readSourceFileWithMapping
+import java.io.File
 import kotlin.reflect.KFunction2
 
 fun FirSession.buildFirViaLightTree(
@@ -81,9 +92,69 @@ fun resolveAndCheckFir(
 fun buildResolveAndCheckFirViaLightTree(
     session: FirSession,
     ktFiles: Collection<KtSourceFile>,
+    metadataDestinationDir: File,
+    metadataVersion: BinaryVersion,
+    languageVersionSettings: LanguageVersionSettings,
     diagnosticsReporter: BaseDiagnosticsCollector,
     countFilesAndLines: KFunction2<Int, Int, Unit>?
 ): ModuleCompilerAnalyzedOutput {
     val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines)
-    return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
+    val analyzedOutput = resolveAndCheckFir(session, firFiles, diagnosticsReporter)
+    if (session.moduleData.isCommon) {
+        val fragments = sortedMapOf<String, MutableList<ByteArray>>()
+        analyzedOutput.serializeFragmentsTo(fragments, languageVersionSettings, metadataVersion)
+
+        val moduleName = session.moduleData.name.asString()
+        val serializedMetadata = makeSerializedMetadataFromFragments(fragments, languageVersionSettings, moduleName)
+        buildKotlinMetadataLibrary(serializedMetadata, metadataDestinationDir, moduleName)
+    }
+    return analyzedOutput
+}
+
+fun ModuleCompilerAnalyzedOutput.serializeFragmentsTo(
+    fragments: MutableMap<String, MutableList<ByteArray>>,
+    languageVersionSettings: LanguageVersionSettings,
+    metadataVersion: BinaryVersion,
+) {
+    for (firFile in fir) {
+        val packageFragment = serializeSingleFirFile(
+            firFile,
+            session,
+            scopeSession,
+            actualizedExpectDeclarations = null,
+            FirKLibSerializerExtension(
+                session, scopeSession, session.firProvider, metadataVersion, constValueProvider = null,
+                allowErrorTypes = false, exportKDoc = false,
+                additionalMetadataProvider = null
+            ),
+            languageVersionSettings,
+        )
+        fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }.add(packageFragment.toByteArray())
+    }
+}
+
+fun makeSerializedMetadataFromFragments(
+    fragments: Map<String, List<ByteArray>>,
+    languageVersionSettings: LanguageVersionSettings,
+    moduleName: String
+): SerializedMetadata {
+    val header = KlibMetadataProtoBuf.Header.newBuilder()
+    header.moduleName = moduleName
+
+    if (languageVersionSettings.isPreRelease()) {
+        header.flags = KlibMetadataHeaderFlags.PRE_RELEASE
+    }
+
+    val fragmentNames = mutableListOf<String>()
+    val fragmentParts = mutableListOf<List<ByteArray>>()
+
+    for ((fqName, fragment) in fragments) {
+        fragmentNames += fqName
+        fragmentParts += fragment
+        header.addPackageFragmentName(fqName)
+    }
+
+    val module = header.build().toByteArray()
+
+    return SerializedMetadata(module, fragmentParts, fragmentNames)
 }

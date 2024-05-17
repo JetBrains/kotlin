@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.KlibIcData
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
@@ -44,7 +46,9 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import java.io.File
 import java.nio.file.Paths
+import kotlin.io.path.createTempDirectory
 
 inline fun <F> compileModuleToAnalyzedFir(
     moduleStructure: ModulesStructure,
@@ -181,6 +185,12 @@ fun compileModulesToAnalyzedFirWithLightTree(
     lookupTracker: LookupTracker?,
     useWasmPlatform: Boolean,
 ): AnalyzedFirOutput {
+    val metadataDestinationBaseDir =
+        moduleStructure.compilerConfiguration.get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY)
+            ?: createTempDirectory("kotlinMetadata").toFile()
+    val metadataVersion =
+        moduleStructure.compilerConfiguration.get(CommonConfigurationKeys.METADATA_VERSION) ?: BuiltInsBinaryVersion.INSTANCE
+
     val output = compileModuleToAnalyzedFir(
         moduleStructure,
         ktSourceFiles,
@@ -191,7 +201,12 @@ fun compileModulesToAnalyzedFirWithLightTree(
         isCommonSource = { groupedSources.isCommonSourceForLt(it) },
         fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
         buildResolveAndCheckFir = { session, files ->
-            buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
+            buildResolveAndCheckFirViaLightTree(
+                session, files,
+                File(metadataDestinationBaseDir, "${session.moduleData.name.asString()}-metadata"),
+                metadataVersion, moduleStructure.compilerConfiguration.languageVersionSettings,
+                diagnosticsReporter, null,
+            )
         },
         useWasmPlatform = useWasmPlatform,
     )
