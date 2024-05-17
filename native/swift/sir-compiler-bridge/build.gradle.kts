@@ -13,6 +13,7 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     api(project(":native:swift:sir"))
+    implementation(project(":native:swift:sir-providers"))
 
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
