@@ -941,7 +941,7 @@ internal class DokkaSymbolVisitor(
         ExtraModifiers.KotlinOnlyModifiers.Suspend.takeIf { isSuspend },
         ExtraModifiers.KotlinOnlyModifiers.Operator.takeIf { isOperator },
 //ExtraModifiers.JavaOnlyModifiers.Static.takeIf { isJvmStaticInObjectOrClassOrInterface() },
-        ExtraModifiers.KotlinOnlyModifiers.TailRec.takeIf { (psi as? KtNamedFunction)?.hasModifier(KtTokens.TAILREC_KEYWORD) == true },
+        ExtraModifiers.KotlinOnlyModifiers.TailRec.takeIf { isTailRec },
         ExtraModifiers.KotlinOnlyModifiers.External.takeIf { isExternal },
         ExtraModifiers.KotlinOnlyModifiers.Override.takeIf { isOverride }
     ).toSet().takeUnless { it.isEmpty() }
