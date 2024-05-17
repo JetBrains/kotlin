@@ -7,5 +7,14 @@ fun foo(x: Int): String {
     }
 }
 
-// 1 LOOKUPSWITCH
+fun foo(p: Char): String {
+    return when (p) {
+        'a' -> "a"
+        'g' -> "g"
+        'h' -> "h"
+        else -> "else"
+    }
+}
+
+// 2 LOOKUPSWITCH
 // 0 TABLESWITCH

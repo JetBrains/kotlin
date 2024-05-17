@@ -7,5 +7,19 @@ fun foo(x: Int): String {
     }
 }
 
+fun foo(p: Char): String {
+    return when (p) {
+        'a' -> "a"
+        'b' -> "b"
+        'c' -> "c"
+        'd' -> "d"
+        'e' -> "e"
+        'f' -> "f"
+        'g' -> "g"
+        'h' -> "h"
+        else -> "else"
+    }
+}
+
 // 0 LOOKUPSWITCH
-// 1 TABLESWITCH
+// 2 TABLESWITCH
