@@ -1,18 +1,16 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower
+package org.jetbrains.kotlin.ir.inline
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
@@ -36,16 +33,8 @@ import org.jetbrains.kotlin.name.Name
 //
 //      foo(::smth) -> foo { a -> smth(a) }
 //
-@PhaseDescription(
-    name = "JvmInlineCallableReferenceToLambdaPhase",
-    description = "Transform callable reference to inline lambdas, mark inline lambdas for later passes"
-)
-internal class JvmInlineCallableReferenceToLambdaPhase(
-    context: JvmBackendContext,
-) : InlineCallableReferenceToLambdaPhase(context, JvmInlineFunctionResolver(context))
-
-internal abstract class InlineCallableReferenceToLambdaPhase(
-    val context: JvmBackendContext,
+abstract class InlineCallableReferenceToLambdaPhase(
+    val context: CommonBackendContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
 ) : FileLoweringPass {
     override fun lower(irFile: IrFile) =
@@ -55,7 +44,7 @@ internal abstract class InlineCallableReferenceToLambdaPhase(
 const val STUB_FOR_INLINING = "stub_for_inlining"
 
 private class InlineCallableReferenceToLambdaVisitor(
-    val context: JvmBackendContext,
+    val context: CommonBackendContext,
     val inlineFunctionResolver: InlineFunctionResolver,
 ) : IrElementVisitor<Unit, IrDeclaration?> {
     override fun visitElement(element: IrElement, data: IrDeclaration?) =
