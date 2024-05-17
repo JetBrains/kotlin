@@ -131,6 +131,15 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
                     cases
                 )
             }
+            subject is IrGetValue && areConstCharComparisons(conditions) -> {
+                val cases = extractSwitchCasesAndFilterUnreachableLabels(callToLabels, expressionToLabels)
+                IntSwitch(
+                    subject,
+                    elseExpression,
+                    expressionToLabels,
+                    cases.map { ValueToLabel((it.value as Char).code, it.label) }
+                )
+            }
             areConstStringComparisons(conditions) -> {
                 val cases = extractSwitchCasesAndFilterUnreachableLabels(callToLabels, expressionToLabels)
                 StringSwitch(
@@ -191,6 +200,10 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
     private fun areConstIntComparisons(conditions: List<IrCall>): Boolean {
         return checkTypeSpecifics(conditions, { it.isInt() }, { it.kind == IrConstKind.Int })
+    }
+
+    private fun areConstCharComparisons(conditions: List<IrCall>): Boolean {
+        return checkTypeSpecifics(conditions, { it.isChar() }, { it.kind == IrConstKind.Char })
     }
 
     private fun areConstStringComparisons(conditions: List<IrCall>): Boolean {
