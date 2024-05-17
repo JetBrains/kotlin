@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.TailrecLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.defaultValue
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -24,7 +24,7 @@ internal class JvmTailrecLowering(context: JvmBackendContext) : TailrecLowering(
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.ProperComputationOrderOfTailrecDefaultParameters)
 
     override fun followFunctionReference(reference: IrFunctionReference): Boolean =
-        reference.origin == JvmLoweredStatementOrigin.INLINE_LAMBDA
+        reference.origin == LoweredStatementOrigins.INLINE_LAMBDA
 
     override fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression =
         type.defaultValue(startOffset, endOffset, context as JvmBackendContext)

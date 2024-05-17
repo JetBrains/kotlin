@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -490,7 +491,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
             it.putValueArgument(i + if (i >= continuationParameter.index) 1 else 0, getValueArgument(i))
         }
         if (caller != null) {
-            val continuation = if (caller.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA)
+            val continuation = if (caller.origin == LoweredDeclarationOrigins.INLINE_LAMBDA)
                 IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, continuationParameter.type, JvmLoweredStatementOrigin.FAKE_CONTINUATION)
             else
                 IrGetValueImpl(

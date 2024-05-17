@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
+import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -69,8 +71,8 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
         this is IrBlock && origin.isInlinable -> apply {
             // Already a lambda or similar, just mark it with an origin.
             val reference = statements.last() as IrFunctionReference
-            reference.symbol.owner.origin = JvmLoweredDeclarationOrigin.INLINE_LAMBDA
-            statements[statements.lastIndex] = reference.replaceOrigin(JvmLoweredStatementOrigin.INLINE_LAMBDA)
+            reference.symbol.owner.origin = LoweredDeclarationOrigins.INLINE_LAMBDA
+            statements[statements.lastIndex] = reference.replaceOrigin(LoweredStatementOrigins.INLINE_LAMBDA)
         }
 
         this is IrFunctionReference -> // ::function -> { args... -> function(args...) }
@@ -96,7 +98,7 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
     private fun IrPropertyReference.wrapField(field: IrField): IrSimpleFunction =
         context.irFactory.buildFun {
             setSourceRange(this@wrapField)
-            origin = JvmLoweredDeclarationOrigin.INLINE_LAMBDA
+            origin = LoweredDeclarationOrigins.INLINE_LAMBDA
             name = Name.identifier(STUB_FOR_INLINING)
             visibility = DescriptorVisibilities.LOCAL
             returnType = field.type
@@ -115,7 +117,7 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
     private fun IrCallableReference<*>.wrapFunction(referencedFunction: IrFunction): IrSimpleFunction =
         context.irFactory.buildFun {
             setSourceRange(this@wrapFunction)
-            origin = JvmLoweredDeclarationOrigin.INLINE_LAMBDA
+            origin = LoweredDeclarationOrigins.INLINE_LAMBDA
             name = Name.identifier(STUB_FOR_INLINING)
             visibility = DescriptorVisibilities.LOCAL
             returnType = ((type as IrSimpleType).arguments.last() as IrTypeProjection).type
@@ -154,7 +156,7 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
             +this@toLambda
             +IrFunctionReferenceImpl.fromSymbolOwner(
                 startOffset, endOffset, original.type, symbol, typeArgumentsCount = 0, reflectionTarget = null,
-                origin = JvmLoweredStatementOrigin.INLINE_LAMBDA
+                origin = LoweredStatementOrigins.INLINE_LAMBDA
             ).apply {
                 copyAttributes(original)
                 extensionReceiver = original.dispatchReceiver ?: original.extensionReceiver

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrStatement
@@ -62,7 +62,7 @@ private val IrDeclaration.original: IrDeclaration
 
 fun IrStatement.unwrapInlineLambda(): IrFunctionReference? = when (this) {
     is IrBlock -> statements.lastOrNull()?.unwrapInlineLambda()
-    is IrFunctionReference -> takeIf { it.origin == JvmLoweredStatementOrigin.INLINE_LAMBDA }
+    is IrFunctionReference -> takeIf { it.origin == LoweredStatementOrigins.INLINE_LAMBDA }
     else -> null
 }
 

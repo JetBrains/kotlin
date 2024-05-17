@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.backend.common.ir.getDefaultAdditionalStatementsFrom
 import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.lower.LoweredDeclarationOrigins
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -56,7 +56,7 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
     private val capturedConstructors = context.mapping.capturedConstructors
 
     private fun removeUselessDeclarationsFromCapturedConstructors(irClass: IrClass, data: Data) {
-        irClass.parents.first { it !is IrFunction || it.origin != JvmLoweredDeclarationOrigin.INLINE_LAMBDA }
+        irClass.parents.first { it !is IrFunction || it.origin != LoweredDeclarationOrigins.INLINE_LAMBDA }
             .accept(this, data.copy(classDeclaredOnCallSiteOrIsDefaultLambda = false, modifyTree = false))
     }
 
