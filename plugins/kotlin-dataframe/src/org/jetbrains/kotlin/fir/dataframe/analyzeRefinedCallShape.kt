@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.fir.dataframe.Names.DF_CLASS_ID
 import org.jetbrains.kotlin.fir.dataframe.api.CreateDataFrameConfiguration
 import org.jetbrains.kotlin.fir.dataframe.api.TraverseConfiguration
 import org.jetbrains.kotlin.fir.dataframe.api.toDataFrame
-import org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.Interpreter
@@ -35,14 +32,6 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
     // it's implied by "refined call"
     // thus ConeClassLikeType
     if (rootMarker !is ConeClassLikeType) {
-        return null
-    }
-
-    val origin = rootMarker.toSymbol(session)?.origin
-    val notFromPlugin = origin !is FirDeclarationOrigin.Plugin || origin.key != DataFramePlugin
-    // temporary hack to workaround Token classes not existing when toSymbol is called
-    val notToken = rootMarker.classId?.shortClassName?.asString()?.startsWith("Token") != true
-    if (notFromPlugin && notToken) {
         return null
     }
 
