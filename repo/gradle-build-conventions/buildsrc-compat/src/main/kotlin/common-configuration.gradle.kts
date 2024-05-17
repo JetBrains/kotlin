@@ -54,6 +54,7 @@ afterEvaluate {
         }
         val bootstrapBuildToolsApiClasspath by rootProject.buildscript.configurations
         configurations.findByName("kotlinBuildToolsApiClasspath")?.let {
+            it.dependencies.clear() // it's different from `bootstrapCompilerClasspath` as this configuration does not use "default dependencies"
             dependencies.add(it.name, files(bootstrapBuildToolsApiClasspath))
         }
 
