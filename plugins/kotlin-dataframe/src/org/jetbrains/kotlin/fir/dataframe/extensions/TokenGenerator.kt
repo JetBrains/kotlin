@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -46,14 +45,11 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                         type = property.dataRowReturnType
                     }
                     val propertyName = Name.identifier(property.name)
-                    val firPropertySymbol = FirPropertySymbol(propertyName)
-                    propertyName to listOf(buildProperty(resolvedTypeRef, firPropertySymbol, k.classId, propertyName, k))
+                    propertyName to listOf(buildProperty(resolvedTypeRef, propertyName, k))
                 }
                 is CallShapeData.RefinedType -> callShapeData.scopes.associate {
-                    callShapeData.scopes
                     val propertyName = Name.identifier(it.name.identifier.replaceFirstChar { it.lowercaseChar() })
-                    val firPropertySymbol = FirPropertySymbol(propertyName)
-                    propertyName to listOf(buildProperty(it.defaultType().toFirResolvedTypeRef(), firPropertySymbol, k.classId, propertyName, k))
+                    propertyName to listOf(buildProperty(it.defaultType().toFirResolvedTypeRef(), propertyName, k))
                 }
                 is CallShapeData.Scope -> callShapeData.columns.associate { schemaProperty ->
                     val propertyName = Name.identifier(schemaProperty.name)
@@ -107,7 +103,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
         return properties.map { it.symbol }
     }
 
-    private fun buildProperty(resolvedTypeRef: FirResolvedTypeRef, firPropertySymbol: FirPropertySymbol, classId1: ClassId, propertyName: Name, k: FirClassSymbol<*>): FirProperty {
+    private fun buildProperty(resolvedTypeRef: FirResolvedTypeRef, propertyName: Name, k: FirClassSymbol<*>): FirProperty {
         return createMemberProperty(k, Key, propertyName, resolvedTypeRef.type) {
             modality = Modality.ABSTRACT
             visibility = Visibilities.Public
