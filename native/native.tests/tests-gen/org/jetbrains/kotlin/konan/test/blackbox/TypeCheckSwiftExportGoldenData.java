@@ -42,6 +42,12 @@ public class TypeCheckSwiftExportGoldenData extends SwiftTypeCheckBaseTest {
   }
 
   @Test
+  @TestMetadata("inner_classes")
+  public void testInner_classes() {
+    runTest("native/swift/swift-export-standalone/testData/inner_classes/");
+  }
+
+  @Test
   @TestMetadata("no_package")
   public void testNo_package() {
     runTest("native/swift/swift-export-standalone/testData/no_package/");

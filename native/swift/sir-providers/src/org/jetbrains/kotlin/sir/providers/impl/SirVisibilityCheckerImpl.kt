@@ -49,6 +49,7 @@ public class SirVisibilityCheckerImpl : SirVisibilityChecker {
         with(ktAnalysisSession) {
             ((classKind == KtClassKind.CLASS) || classKind == KtClassKind.OBJECT)
                     && !isData // KT-67362
+                    && !isInner // KT-66822
                     && (superTypes.count() == 1 && superTypes.first().isAny) // Every class has Any as a superclass
                     && !isInline
                     && modality == Modality.FINAL
