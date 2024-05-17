@@ -197,12 +197,12 @@ class FirCallResolver(
             resolutionMode = resolutionMode,
         )
         towerResolver.reset()
-        val result = towerResolver.runResolver(info, resolutionContext, collector)
 
-        var (reducedCandidates, newApplicability) = reduceCandidates(result, explicitReceiver, resolutionContext)
+        val result = towerResolver.runResolver(info, resolutionContext, collector)
+        var (reducedCandidates, applicability) = reduceCandidates(result, explicitReceiver, resolutionContext)
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
-        return ResolutionResult(info, newApplicability ?: result.currentApplicability, reducedCandidates)
+        return ResolutionResult(info, applicability, reducedCandidates)
     }
 
     /**
@@ -212,7 +212,7 @@ class FirCallResolver(
         collector: CandidateCollector,
         explicitReceiver: FirExpression? = null,
         resolutionContext: ResolutionContext = transformer.resolutionContext,
-    ): Pair<Set<Candidate>, CandidateApplicability?> {
+    ): Pair<Set<Candidate>, CandidateApplicability> {
         fun chooseMostSpecific(list: List<Candidate>): Set<Candidate> {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
             return conflictResolver.chooseMaximallySpecificCandidates(list, discriminateAbstracts = onSuperReference)
@@ -221,7 +221,7 @@ class FirCallResolver(
         val candidates = collector.bestCandidates()
 
         if (collector.isSuccess) {
-            return chooseMostSpecific(candidates) to null
+            return chooseMostSpecific(candidates) to collector.currentApplicability
         }
 
         if (candidates.size > 1) {
@@ -237,7 +237,7 @@ class FirCallResolver(
             }
         }
 
-        return candidates.toSet() to null
+        return candidates.toSet() to collector.currentApplicability
     }
 
     fun resolveVariableAccessAndSelectCandidate(
@@ -430,9 +430,8 @@ class FirCallResolver(
             )
         }
 
-        val (reducedCandidates, newApplicability) = reduceCandidates(result, callableReferenceAccess.explicitReceiver)
+        val (reducedCandidates, applicability) = reduceCandidates(result, callableReferenceAccess.explicitReceiver)
         val nonEmptyAndAllSuccessful = reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isSuccessful }
-        val applicability = newApplicability ?: result.currentApplicability
 
         (callableReferenceAccess.explicitReceiver as? FirResolvedQualifier)?.replaceResolvedToCompanionObject(
             reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isFromCompanionObjectTypeScope }
@@ -712,14 +711,14 @@ class FirCallResolver(
     private fun selectDelegatingConstructorCall(
         call: FirDelegatedConstructorCall, name: Name, result: CandidateCollector, callInfo: CallInfo
     ): FirDelegatedConstructorCall {
-        val (reducedCandidates, newApplicability) = reduceCandidates(result)
+        val (reducedCandidates, applicability) = reduceCandidates(result)
 
         val nameReference = createResolvedNamedReference(
             call.calleeReference,
             name,
             callInfo,
             reducedCandidates,
-            newApplicability ?: result.currentApplicability,
+            applicability,
         )
 
         return call.apply {
