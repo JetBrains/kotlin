@@ -144,6 +144,12 @@ func objectMethodInObject() throws {
     try assertSame(actual: Baz.shared.foo, expected: two)
 }
 
+func multipleConstructors() throws {
+    let one = Foo(x: 1)
+    let two = Foo(f: 1.1)
+    try assertEquals(actual: getX(foo: one), expected: getX(foo: two))
+}
+
 class ReferenceTypesTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -170,6 +176,7 @@ class ReferenceTypesTests : TestProvider {
             TestCase(name: "primitiveMethodInObject", method: withAutorelease(primitiveMethodInObject)),
             TestCase(name: "objectGetterSetterInObject", method: withAutorelease(objectGetterSetterInObject)),
             TestCase(name: "objectMethodInObject", method: withAutorelease(objectMethodInObject)),
+            TestCase(name: "multipleConstructors", method: withAutorelease(multipleConstructors)),
         ]
     }
 }

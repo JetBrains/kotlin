@@ -58,8 +58,6 @@ uintptr_t __root___Foo_init_allocate();
 
 void __root___Foo_init_initialize__TypesOfArguments__uintptr_t_int32_t__(uintptr_t __kt, int32_t a);
 
-uintptr_t __root___Foo_init_allocate();
-
 void __root___Foo_init_initialize__TypesOfArguments__uintptr_t_float__(uintptr_t __kt, float f);
 
 uintptr_t __root___OBJECT_NO_PACKAGE_get();

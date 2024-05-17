@@ -1,4 +1,6 @@
 class Foo(var x: Int) {
+    constructor(f: Float) : this(f.toInt())
+
     fun getAndSetX(newX: Int): Int {
         val oldX = x
         x = newX
