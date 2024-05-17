@@ -37,8 +37,9 @@ FILE: parametrizedDataFrame.kt
             }
 
             local abstract class TokenSchema_3097929 : R|<local>/TokenSchema_3097929I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenSchema_3097929|
 

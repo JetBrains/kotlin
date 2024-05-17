@@ -117,8 +117,9 @@ FILE: diff.kt
             }
 
             local abstract class TokenWith_113141796 : R|<local>/TokenWith_113141796I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenWith_113141796|
 
@@ -216,8 +217,9 @@ FILE: diff.kt
             }
 
             local abstract class TokenWith_862661939 : R|<local>/TokenWith_862661939I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenWith_862661939|
 
@@ -327,8 +329,9 @@ FILE: diff.kt
             }
 
             local abstract class TokenWith_1438061604 : R|<local>/TokenWith_1438061604I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenWith_1438061604|
 

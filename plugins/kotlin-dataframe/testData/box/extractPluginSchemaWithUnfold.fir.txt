@@ -273,17 +273,21 @@ FILE: extractPluginSchemaWithUnfold.kt
             }
 
             local abstract class TokenFunction_101304426 : R|<local>/TokenFunction_101304426I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
-                public abstract val scope3: R|<local>/Scope3|
+                public abstract var scope3: R|<local>/Scope3|
                     public get(): R|<local>/Scope3|
+                    public set(value: R|<local>/Scope3|): R|kotlin/Unit|
 
-                public abstract val scope2: R|<local>/Scope2|
+                public abstract var scope2: R|<local>/Scope2|
                     public get(): R|<local>/Scope2|
+                    public set(value: R|<local>/Scope2|): R|kotlin/Unit|
 
-                public abstract val scope1: R|<local>/Scope1|
+                public abstract var scope1: R|<local>/Scope1|
                     public get(): R|<local>/Scope1|
+                    public set(value: R|<local>/Scope1|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenFunction_101304426|
 

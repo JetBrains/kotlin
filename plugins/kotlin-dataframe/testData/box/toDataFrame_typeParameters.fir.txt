@@ -47,8 +47,9 @@ FILE: toDataFrame_typeParameters.kt
             }
 
             local abstract class TokenClassWithNullableAnyTypeArg_1203452584 : R|<local>/TokenClassWithNullableAnyTypeArg_1203452584I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenClassWithNullableAnyTypeArg_1203452584|
 
@@ -82,8 +83,9 @@ FILE: toDataFrame_typeParameters.kt
             }
 
             local abstract class TokenClassWithAnyTypeArg_1203452584 : R|<local>/TokenClassWithAnyTypeArg_1203452584I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenClassWithAnyTypeArg_1203452584|
 

@@ -30,8 +30,9 @@ FILE: injectAccessorsDsl.kt
             }
 
             local abstract class TokenAdd_2988969 : R|<local>/TokenAdd_2988969I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenAdd_2988969|
 

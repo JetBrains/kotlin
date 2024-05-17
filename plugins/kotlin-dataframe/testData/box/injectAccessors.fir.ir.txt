@@ -169,10 +169,14 @@ FILE fqName:<root> fileName:/injectAccessors.kt
                       overridden:
                         public abstract fun <get-year> (): kotlin.Int declared in <root>.Name is evaluated to age.<anonymous>.TokenCars_3085480I
                       $this: VALUE_PARAMETER name:<this> type:<root>.Name is evaluated to age.<anonymous>.TokenCars_3085480I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.Name is evaluated to age.<anonymous>.TokenCars_3085480) returnType:<root>.Name is evaluated to age.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Name is evaluated to age.<anonymous>.TokenCars_3085480
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.Name is evaluated to age.<anonymous>.TokenCars_3085480, <set-?>:<root>.Name is evaluated to age.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.Name is evaluated to age.<anonymous>.TokenCars_3085480
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.Name is evaluated to age.<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.Cars>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.Name is evaluated to age.<anonymous>.TokenCars_3085480> declared in <root>.Name is evaluated to age'
                   CALL 'public final fun add <R, T> (name: kotlin.String, infer: org.jetbrains.kotlinx.dataframe.api.Infer, expression: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, R of org.jetbrains.kotlinx.dataframe.api.add>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.add> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.Name is evaluated to age.<anonymous>.TokenCars_3085480> origin=null
                     <R>: kotlin.Int
@@ -342,10 +346,14 @@ FILE fqName:<root> fileName:/injectAccessors.kt
                       overridden:
                         public abstract fun <get-year> (): kotlin.Int declared in <root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480I
                       $this: VALUE_PARAMETER name:<this> type:<root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480) returnType:<root>.ReturnType is evaluated to Int.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480, <set-?>:<root>.ReturnType is evaluated to Int.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.ReturnType is evaluated to Int.<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.Cars>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480> declared in <root>.ReturnType is evaluated to Int'
                   CALL 'public final fun add <R, T> (name: kotlin.String, infer: org.jetbrains.kotlinx.dataframe.api.Infer, expression: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.AddDataRow<T of org.jetbrains.kotlinx.dataframe.api.add>, R of org.jetbrains.kotlinx.dataframe.api.add>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.add> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.ReturnType is evaluated to Int.<anonymous>.TokenCars_3085480> origin=null
                     <R>: kotlin.Int
