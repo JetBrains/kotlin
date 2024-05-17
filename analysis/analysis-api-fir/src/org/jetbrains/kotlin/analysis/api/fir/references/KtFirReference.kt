@@ -9,6 +9,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaSymbolBasedReference
 import org.jetbrains.kotlin.analysis.api.fir.findReferencePsi
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.psi.KtImportDirective
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -31,6 +38,33 @@ interface KaFirReference : KtReference, KaSymbolBasedReference {
         }
 
     override val resolver get() = KaFirReferenceResolver
+
+    fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return getImportAlias(alias.importDirective) != null
+    }
+
+    fun getImportAlias(importDirective: KtImportDirective?): KtImportAlias? {
+        val importedReference = importDirective?.importedReference ?: return null
+        val importResults =
+            when (importedReference) {
+                is KtDotQualifiedExpression -> importedReference.selectorExpression?.mainReference?.multiResolve(false)
+                is KtSimpleNameExpression -> importedReference.mainReference.multiResolve(false)
+                else -> null
+            } ?: return null
+        val targets = multiResolve(false).mapNotNull { it.element }
+        val adjustedImportTargets = importResults.mapNotNull { it.element }
+        val manager = importDirective.manager
+        if (adjustedImportTargets.any { importTarget ->
+                targets.any { target ->
+                    manager.areElementsEquivalent(target, importTarget) ||
+                            target.isConstructorOf(importTarget) ||
+                            importTarget is KtObjectDeclaration && importTarget.isCompanion() && importTarget.getNonStrictParentOfType<KtClass>() == target
+                }
+            }) {
+            return importDirective.alias
+        }
+        return null
+    }
 }
 
 internal fun KaSession.getPsiDeclarations(symbol: KaFirSymbol<*>): Collection<PsiElement> {

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtImportAlias
 
 class KaFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KaFirReference {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
@@ -22,5 +23,9 @@ class KaFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunct
                 ?.symbol
                 ?.takeUnless { it is KaFunctionSymbol && it.isBuiltinFunctionInvoke }
         }
+    }
+
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KaFirReference>.isReferenceToImportAlias(alias)
     }
 }

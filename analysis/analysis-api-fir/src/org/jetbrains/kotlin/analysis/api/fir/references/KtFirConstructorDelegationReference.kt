@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression
+import org.jetbrains.kotlin.psi.KtImportAlias
 
 class KaFirConstructorDelegationReference(
     expression: KtConstructorDelegationReferenceExpression
@@ -21,5 +22,9 @@ class KaFirConstructorDelegationReference(
         check(this is KaFirSession)
         val fir = expression.getOrBuildFirSafe<FirDelegatedConstructorCall>(firResolveSession) ?: return emptyList()
         return listOfNotNull(fir.calleeReference.getResolvedKtSymbolOfNameReference(firSymbolBuilder))
+    }
+
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KaFirReference>.isReferenceToImportAlias(alias)
     }
 }

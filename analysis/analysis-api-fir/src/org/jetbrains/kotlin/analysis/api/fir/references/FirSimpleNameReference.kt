@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 internal class KaFirSimpleNameReference(
     expression: KtSimpleNameExpression,
@@ -42,7 +41,7 @@ internal class KaFirSimpleNameReference(
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
-        return getImportAlias(alias.importDirective) != null
+        return super<KaFirReference>.isReferenceToImportAlias(alias)
     }
 
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
@@ -83,31 +82,6 @@ internal class KaFirSimpleNameReference(
     // Extension point used for deprecated Android Extensions. Not going to implement for FIR.
     override fun isReferenceToViaExtension(element: PsiElement): Boolean {
         return false
-    }
-
-    private fun getImportAlias(importDirective: KtImportDirective?): KtImportAlias? {
-        val fqName = importDirective?.importedFqName ?: return null
-        val codeFragment = KtPsiFactory(element.project).createExpressionCodeFragment(fqName.asString(), element)
-        val contentElement = codeFragment.getContentElement()
-        val importResults =
-            when (contentElement) {
-                is KtDotQualifiedExpression -> contentElement.selectorExpression?.mainReference?.multiResolve(false)
-                is KtSimpleNameExpression -> contentElement.mainReference.multiResolve(false)
-                else -> null
-            } ?: return null
-        val resolveResults = multiResolve(false)
-        if (resolveResults.any { it in importResults }) {
-            return importDirective.alias
-        }
-        val targets = resolveResults.mapNotNull { it.element }
-        val adjustedImportTargets = importResults.mapNotNull {
-            val e = it.element
-            if (e is KtObjectDeclaration && e.isCompanion()) e.containingClassOrObject else null
-        }
-        if (adjustedImportTargets.any { it in targets }) {
-            return importDirective.alias
-        }
-        return null
     }
 
     override fun getImportAlias(): KtImportAlias? {

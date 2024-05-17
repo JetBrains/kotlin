@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import kotlin.test.assertNotNull
 
 abstract class AbstractReferenceImportAliasTest : AbstractAnalysisApiBasedTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
@@ -25,10 +25,15 @@ abstract class AbstractReferenceImportAliasTest : AbstractAnalysisApiBasedTest()
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtSimpleNameExpression>(mainFile)
-        val alias = element.mainReference.getImportAlias()
-        val expectedAlias = mainModule.testModule.directives[Directives.TYPE_ALIAS].joinToString(" ")
-        testServices.assertions.assertEquals(expectedAlias, alias?.text)
+        val position = testServices.expressionMarkerProvider.getCaretPosition(mainFile)
+        val reference = mainFile.findReferenceAt(position)
+        assertNotNull(reference)
+        val expectedAlias = mainModule.testModule.directives.singleValue(Directives.TYPE_ALIAS)
+        val importDirective = mainFile.importDirectives.find { it.aliasName == expectedAlias }
+        assertNotNull(importDirective)
+        val importAlias = importDirective.alias
+        assertNotNull(importAlias)
+        testServices.assertions.assertTrue(reference.isReferenceTo(importAlias))
     }
 
     private object Directives : SimpleDirectivesContainer() {

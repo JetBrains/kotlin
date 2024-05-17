@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtImportAlias
 
 open class KaFirForLoopInReference(expression: KtForExpression) : KtForLoopInReference(expression), KaFirReference {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
@@ -37,4 +38,9 @@ open class KaFirForLoopInReference(expression: KtForExpression) : KtForLoopInRef
 
     private fun FirProperty.getInitializerFunctionCall() =
         (initializer as? FirFunctionCall)?.calleeReference?.getResolvedSymbolOfNameReference()
+
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KaFirReference>.isReferenceToImportAlias(alias)
+    }
+
 }

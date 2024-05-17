@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KaFirReference
 import org.jetbrains.kotlin.idea.references.getPsiDeclarations
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.psi.KtImportAlias
 
 internal class KaFirKDocReference(element: KDocName) : KDocReference(element), KaFirReference {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
@@ -34,4 +35,9 @@ internal class KaFirKDocReference(element: KDocName) : KDocReference(element), K
             }
         }
     }
+
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KaFirReference>.isReferenceToImportAlias(alias)
+    }
+
 }

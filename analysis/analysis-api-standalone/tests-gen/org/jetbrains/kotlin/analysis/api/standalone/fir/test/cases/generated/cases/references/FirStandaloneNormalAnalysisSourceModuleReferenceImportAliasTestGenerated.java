@@ -58,9 +58,21 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceImportAliasTestGene
   }
 
   @Test
+  @TestMetadata("constructorAlias.kt")
+  public void testConstructorAlias() {
+    runTest("analysis/analysis-api/testData/imports/importAliases/constructorAlias.kt");
+  }
+
+  @Test
   @TestMetadata("functionAlias.kt")
   public void testFunctionAlias() {
     runTest("analysis/analysis-api/testData/imports/importAliases/functionAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("kdocReferenceAlias.kt")
+  public void testKdocReferenceAlias() {
+    runTest("analysis/analysis-api/testData/imports/importAliases/kdocReferenceAlias.kt");
   }
 
   @Test

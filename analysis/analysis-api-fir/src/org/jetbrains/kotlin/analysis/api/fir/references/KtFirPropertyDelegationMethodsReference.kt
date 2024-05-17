@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 
 class KtFirPropertyDelegationMethodsReference(
@@ -36,4 +37,9 @@ class KtFirPropertyDelegationMethodsReference(
 
     private inline fun <reified S : FirStatement> FirPropertyAccessor.singleStatementOfType(): S? =
         body?.statements?.singleOrNull() as? S
+
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KaFirReference>.isReferenceToImportAlias(alias)
+    }
+
 }

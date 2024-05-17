@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtImportAlias
 
 class KaFirDestructuringDeclarationReference(
     element: KtDestructuringDeclarationEntry
@@ -33,4 +34,9 @@ class KaFirDestructuringDeclarationReference(
         val componentFunctionSymbol = (fir.initializer as? FirComponentCall)?.getCalleeSymbol() ?: return null
         return componentFunctionSymbol.fir.buildSymbol(firSymbolBuilder)
     }
+
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KaFirReference>.isReferenceToImportAlias(alias)
+    }
+
 }

@@ -129,15 +129,6 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
                 && element.parent !is KtCallExpression
                 && !element.isInImportDirective()
     }
-
-    private fun PsiElement.isConstructorOf(unwrappedCandidate: PsiElement) =
-        when {
-            // call to Java constructor
-            this is PsiMethod && isConstructor && containingClass == unwrappedCandidate -> true
-            // call to Kotlin constructor
-            this is KtConstructor<*> && getContainingClassOrObject().isEquivalentTo(unwrappedCandidate) -> true
-            else -> false
-        }
 }
 
 abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression)

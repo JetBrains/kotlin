@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
+import org.jetbrains.kotlin.psi.KtImportAlias
 
 class KaFirCollectionLiteralReference(
     expression: KtCollectionLiteralExpression
@@ -28,5 +29,9 @@ class KaFirCollectionLiteralReference(
         val type = fir.resolvedType as? ConeClassLikeType ?: return listOfNotNull(arrayOfSymbol(arrayOf))
         val call = arrayTypeToArrayOfCall[type.lookupTag.classId] ?: arrayOf
         return listOfNotNull(arrayOfSymbol(call))
+    }
+
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KaFirReference>.isReferenceToImportAlias(alias)
     }
 }
