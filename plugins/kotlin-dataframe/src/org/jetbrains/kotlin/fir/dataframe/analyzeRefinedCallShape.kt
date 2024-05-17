@@ -62,7 +62,7 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
                 val argument = list.mapping.entries.firstOrNull { it.value.name == Name.identifier("maxDepth") }?.key
                 val maxDepth = when (argument) {
                     null -> 0
-                    is FirLiteralExpression<*> -> (argument.value as Number).toInt()
+                    is FirLiteralExpression -> (argument.value as Number).toInt()
                     else -> null
                 }
                 if (maxDepth != null) {
