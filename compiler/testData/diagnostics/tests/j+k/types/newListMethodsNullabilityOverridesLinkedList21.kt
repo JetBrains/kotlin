@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE_VERSION: 2.1
 // ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
 // DIAGNOSTICS: -JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE
@@ -18,11 +17,11 @@ abstract class A1<E5> : LinkedList<E5>() {
 }
 
 abstract class A2<E6> : LinkedList<E6>()  {
-    override fun addFirst(element: E6?) {}
-    override fun addLast(element: E6?) {}
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: E6?) {}
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: E6?) {}
 
-    override fun removeFirst(): E6? = super.removeFirst()
-    override fun removeLast(): E6? = super.removeLast()
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): E6? = super.removeFirst()
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): E6? = super.removeLast()
 }
 
 abstract class A3 : LinkedList<String>() {
@@ -34,9 +33,9 @@ abstract class A3 : LinkedList<String>() {
 }
 
 abstract class A4 : LinkedList<String>() {
-    override fun addFirst(element: String?) {}
-    override fun addLast(element: String?) {}
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: String?) {}
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: String?) {}
 
-    override fun removeFirst(): String? = super.removeFirst()
-    override fun removeLast(): String? = super.removeLast()
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): String? = super.removeFirst()
+    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): String? = super.removeLast()
 }

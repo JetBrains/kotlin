@@ -87,11 +87,34 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFun
                 returns(JUStream, NOT_PLATFORM, NOT_PLATFORM)
             }
         }
+        // See duplications here and in the LinkedList section
+        // Currently it looks redundant to try avoiding duplicated code here
+        @Suppress("DuplicatedCode")
         forClass(javaUtil("List")) {
             function("replaceAll") {
                 parameter(JFUnaryOperator, NOT_PLATFORM, NOT_PLATFORM)
             }
 
+            function("addFirst", errorsSinceLanguageVersion = "2.1") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+
+            function("addLast", errorsSinceLanguageVersion = "2.1") {
+                parameter(JLObject, NOT_PLATFORM)
+            }
+
+            function("removeFirst", errorsSinceLanguageVersion = "2.1") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+
+            function("removeLast", errorsSinceLanguageVersion = "2.1") {
+                returns(JLObject, NOT_PLATFORM)
+            }
+        }
+        // Signatures' duplication is necessary because for JDKs < 21, there's no relevant methods in `MutableList` declaration.
+        // But we still want to report preventing warnings (and eventually errors) for usages that would be treated as error since JDK 21
+        @Suppress("DuplicatedCode")
+        forClass(javaUtil("LinkedList")) {
             function("addFirst", errorsSinceLanguageVersion = "2.1") {
                 parameter(JLObject, NOT_PLATFORM)
             }
