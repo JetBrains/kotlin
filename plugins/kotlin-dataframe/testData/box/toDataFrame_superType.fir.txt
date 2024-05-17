@@ -52,8 +52,9 @@ FILE: toDataFrame_superType.kt
             }
 
             local abstract class TokenMyInterface_1203452584 : R|<local>/TokenMyInterface_1203452584I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenMyInterface_1203452584|
 

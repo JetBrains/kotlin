@@ -49,7 +49,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                 }
                 is CallShapeData.RefinedType -> callShapeData.scopes.associate {
                     val propertyName = Name.identifier(it.name.identifier.replaceFirstChar { it.lowercaseChar() })
-                    propertyName to listOf(buildProperty(it.defaultType().toFirResolvedTypeRef(), propertyName, k))
+                    propertyName to listOf(buildProperty(it.defaultType().toFirResolvedTypeRef(), propertyName, k, false))
                 }
                 is CallShapeData.Scope -> callShapeData.columns.associate { schemaProperty ->
                     val propertyName = Name.identifier(schemaProperty.name)
@@ -103,8 +103,13 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
         return properties.map { it.symbol }
     }
 
-    private fun buildProperty(resolvedTypeRef: FirResolvedTypeRef, propertyName: Name, k: FirClassSymbol<*>): FirProperty {
-        return createMemberProperty(k, Key, propertyName, resolvedTypeRef.type) {
+    private fun buildProperty(
+        resolvedTypeRef: FirResolvedTypeRef,
+        propertyName: Name,
+        k: FirClassSymbol<*>,
+        isVal: Boolean = true
+    ): FirProperty {
+        return createMemberProperty(k, Key, propertyName, resolvedTypeRef.type, isVal) {
             modality = Modality.ABSTRACT
             visibility = Visibilities.Public
         }

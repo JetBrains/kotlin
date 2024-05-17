@@ -59,8 +59,9 @@ FILE: read.kt
             }
 
             local abstract class TokenRead_23832161 : R|<local>/TokenRead_23832161I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenRead_23832161|
 

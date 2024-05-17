@@ -287,10 +287,14 @@ FILE fqName:<root> fileName:/ungroup.kt
                       overridden:
                         public abstract fun <get-b> (): kotlin.Int declared in <root>.box.<anonymous>.TokenRecord_1203452542I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenRecord_1203452542I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenRecord_1203452542) returnType:<root>.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenRecord_1203452542
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenRecord_1203452542, <set-?>:<root>.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenRecord_1203452542
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<<root>.Record>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenRecord_1203452542> declared in <root>.box'
                   CALL 'public final fun toDataFrame <T> (vararg props: kotlin.reflect.KProperty<*>, maxDepth: kotlin.Int): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.toDataFrame> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenRecord_1203452542> origin=null
                     <T>: <root>.Record
@@ -522,14 +526,22 @@ FILE fqName:<root> fileName:/ungroup.kt
                       overridden:
                         public abstract fun <get-c> (): org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.TokenC_100361632> declared in <root>.box.<anonymous>.TokenInto_100361731I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361731I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_100361731) returnType:<root>.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361731
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_100361731, <set-?>:<root>.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361731
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope0
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope1> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_100361731) returnType:<root>.box.<anonymous>.Scope1
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361731
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope1> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_100361731, <set-?>:<root>.box.<anonymous>.Scope1) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361731
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope1
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.api.GroupClause<<root>.box.<anonymous>.TokenRecord_1203452542, out kotlin.Any>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_100361731> declared in <root>.box'
                   CALL 'public final fun into <T, C> (column: kotlin.String): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.into> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_100361731> origin=null
                     <T>: <root>.box.<anonymous>.TokenRecord_1203452542
@@ -838,18 +850,30 @@ FILE fqName:<root> fileName:/ungroup.kt
                       overridden:
                         public abstract fun <get-d> (): org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.TokenD_100361632> declared in <root>.box.<anonymous>.TokenInto_100361732I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361732I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_100361732) returnType:<root>.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361732
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_100361732, <set-?>:<root>.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361732
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope0
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope1> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_100361732) returnType:<root>.box.<anonymous>.Scope1
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361732
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope2 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope1> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_100361732, <set-?>:<root>.box.<anonymous>.Scope1) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361732
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope1
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope2 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope2> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_100361732) returnType:<root>.box.<anonymous>.Scope2
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope2 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope2 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361732
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope2> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_100361732, <set-?>:<root>.box.<anonymous>.Scope2) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope2 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_100361732
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope2
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.api.GroupClause<<root>.box.<anonymous>.TokenInto_100361731, org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.TokenC_100361632>>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_100361732> declared in <root>.box'
                   CALL 'public final fun into <T, C> (column: kotlin.String): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.into> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_100361732> origin=null
                     <T>: <root>.box.<anonymous>.TokenInto_100361731
@@ -1072,14 +1096,22 @@ FILE fqName:<root> fileName:/ungroup.kt
                       overridden:
                         public abstract fun <get-c> (): org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.TokenC_350957254> declared in <root>.box.<anonymous>.TokenInto_350957212I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_350957212) returnType:<root>.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_350957212, <set-?>:<root>.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope0
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope1> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_350957212) returnType:<root>.box.<anonymous>.Scope1
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope1> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_350957212, <set-?>:<root>.box.<anonymous>.Scope1) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope1
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_100361732>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_350957212> declared in <root>.box'
                   CALL 'public final fun ungroup <T, C> (columns: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.ungroup>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.ungroup>, org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<C of org.jetbrains.kotlinx.dataframe.api.ungroup>>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.ungroup> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_350957212> origin=null
                     <T>: <root>.box.<anonymous>.TokenInto_100361732
@@ -1325,14 +1357,22 @@ FILE fqName:<root> fileName:/ungroup.kt
                         overridden:
                           public abstract fun <get-c> (): org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.TokenC_350957254> declared in <root>.box.<anonymous>.TokenInto_350957212I
                         $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212I
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_350957212) returnType:<root>.box.<anonymous>.Scope0
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                         $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212
-                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_350957212, <set-?>:<root>.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                        $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212
+                        VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope0
+                    PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope1> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_350957212) returnType:<root>.box.<anonymous>.Scope1
-                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                         $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212
+                      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope1> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_350957212, <set-?>:<root>.box.<anonymous>.Scope1) returnType:kotlin.Unit
+                        correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
+                        $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212
+                        VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope1
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_100361732>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_350957212> declared in <root>.box'
                     CALL 'public final fun ungroup <T, C> (columns: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.ungroup>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.ungroup>, org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<C of org.jetbrains.kotlinx.dataframe.api.ungroup>>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.ungroup> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_350957212> origin=null
                       <T>: <root>.box.<anonymous>.TokenInto_100361732
@@ -1488,10 +1528,14 @@ FILE fqName:<root> fileName:/ungroup.kt
                       overridden:
                         public abstract fun <get-b> (): kotlin.Int declared in <root>.box.<anonymous>.TokenInto_350957212I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_350957212) returnType:<root>.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.TokenInto_350957212, <set-?>:<root>.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.TokenInto_350957212
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.box.<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_350957212>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_350957212> declared in <root>.box'
                   CALL 'public final fun ungroup <T, C> (columns: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.ungroup>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.ungroup>, org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<C of org.jetbrains.kotlinx.dataframe.api.ungroup>>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.ungroup> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.TokenInto_350957212> origin=null
                     <T>: <root>.box.<anonymous>.TokenInto_350957212

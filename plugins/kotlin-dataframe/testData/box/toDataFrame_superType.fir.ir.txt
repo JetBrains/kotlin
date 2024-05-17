@@ -255,10 +255,14 @@ FILE fqName:<root> fileName:/toDataFrame_superType.kt
                       overridden:
                         public abstract fun <get-i> (): kotlin.Int declared in <root>.test.<anonymous>.TokenMyInterface_1203452584I
                       $this: VALUE_PARAMETER name:<this> type:<root>.test.<anonymous>.TokenMyInterface_1203452584I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.test.<anonymous>.TokenMyInterface_1203452584) returnType:<root>.test.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.test.<anonymous>.TokenMyInterface_1203452584
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.test.<anonymous>.TokenMyInterface_1203452584, <set-?>:<root>.test.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.test.<anonymous>.TokenMyInterface_1203452584
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.test.<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<<root>.MyInterface>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.test.<anonymous>.TokenMyInterface_1203452584> declared in <root>.test'
                   CALL 'public final fun toDataFrame <T> (): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.toDataFrame> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.test.<anonymous>.TokenMyInterface_1203452584> origin=null
                     <T>: <root>.MyInterface

@@ -94,11 +94,13 @@ FILE: select.kt
             }
 
             local abstract class TokenRecord_1203452542 : R|<local>/TokenRecord_1203452542I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
-                public abstract val scope1: R|<local>/Scope1|
+                public abstract var scope1: R|<local>/Scope1|
                     public get(): R|<local>/Scope1|
+                    public set(value: R|<local>/Scope1|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenRecord_1203452542|
 
@@ -146,8 +148,9 @@ FILE: select.kt
             }
 
             local abstract class TokenRecord_1978100398 : R|<local>/TokenRecord_1978100398I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenRecord_1978100398|
 

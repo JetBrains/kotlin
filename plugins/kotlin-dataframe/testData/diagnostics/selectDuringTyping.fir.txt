@@ -28,8 +28,9 @@ FILE: selectDuringTyping.kt
             }
 
             local abstract class TokenExplodeSchema_1928912023 : R|<local>/TokenExplodeSchema_1928912023I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenExplodeSchema_1928912023|
 

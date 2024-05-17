@@ -37,8 +37,9 @@ FILE: Schema.kt
             }
 
             local abstract class TokenSchema_124773672 : R|<local>/TokenSchema_124773672I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenSchema_124773672|
 
@@ -85,8 +86,9 @@ FILE: Schema.kt
             }
 
             local abstract class TokenWith_113141796 : R|<local>/TokenWith_113141796I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenWith_113141796|
 

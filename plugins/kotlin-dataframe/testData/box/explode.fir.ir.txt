@@ -148,10 +148,14 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explode.kt
                       overridden:
                         public abstract fun <get-timestamps> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenExplodeSchema_1928912023I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenExplodeSchema_1928912023I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenExplodeSchema_1928912023) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenExplodeSchema_1928912023
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenExplodeSchema_1928912023, <set-?>:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenExplodeSchema_1928912023
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ExplodeSchema>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenExplodeSchema_1928912023> declared in org.jetbrains.kotlinx.dataframe.box'
                   CALL 'public final fun explode <T> (selector: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.explode>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.explode>, org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<*>>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.explode> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenExplodeSchema_1928912023> origin=null
                     <T>: org.jetbrains.kotlinx.dataframe.ExplodeSchema
@@ -282,10 +286,14 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explode.kt
                       overridden:
                         public abstract fun <get-timestamps> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.explode.<anonymous>.TokenExplodeSchema_1928912023I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.TokenExplodeSchema_1928912023I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.TokenExplodeSchema_1928912023) returnType:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.TokenExplodeSchema_1928912023
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.TokenExplodeSchema_1928912023, <set-?>:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.TokenExplodeSchema_1928912023
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.ExplodeSchema>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.explode.<anonymous>.TokenExplodeSchema_1928912023> declared in org.jetbrains.kotlinx.dataframe.explode'
                   CALL 'public final fun explode <T> (selector: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.explode>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.explode>, org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<*>>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.explode> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.explode.<anonymous>.TokenExplodeSchema_1928912023> origin=null
                     <T>: org.jetbrains.kotlinx.dataframe.ExplodeSchema

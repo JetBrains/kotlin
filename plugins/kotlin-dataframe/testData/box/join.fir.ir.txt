@@ -569,14 +569,22 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       overridden:
                         public abstract fun <get-originalId> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510, <set-?>:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510, <set-?>:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510> declared in org.jetbrains.kotlinx.dataframe.box'
                   CALL 'public final fun readJson (path: kotlin.String, header: kotlin.collections.List<kotlin.String>, keyValuePaths: kotlin.collections.List<org.jetbrains.kotlinx.dataframe.api.JsonPath>, typeClashTactic: org.jetbrains.kotlinx.dataframe.io.JSON.TypeClashTactic): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.io' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510> origin=null
                     $receiver: GET_VAR 'it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion origin=null
@@ -1149,14 +1157,22 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       overridden:
                         public abstract fun <get-originalId> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023, <set-?>:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023, <set-?>:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023> declared in org.jetbrains.kotlinx.dataframe.box'
                   CALL 'public final fun explode <T> (selector: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.explode>, @[ParameterName(name = "it")] org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<T of org.jetbrains.kotlinx.dataframe.api.explode>, org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<*>>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.explode> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023> origin=null
                     <T>: org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_897935510
@@ -1652,10 +1668,14 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       overridden:
                         public abstract fun <get-originalId1> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_101304426I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_101304426I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_101304426) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_101304426
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_101304426, <set-?>:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_101304426
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_101304426> declared in org.jetbrains.kotlinx.dataframe.box'
                   CALL 'public final fun join <A, B> (other: org.jetbrains.kotlinx.dataframe.DataFrame<B of org.jetbrains.kotlinx.dataframe.api.join>, type: org.jetbrains.kotlinx.dataframe.api.JoinType, selector: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.JoinDsl<A of org.jetbrains.kotlinx.dataframe.api.join, B of org.jetbrains.kotlinx.dataframe.api.join>, org.jetbrains.kotlinx.dataframe.ColumnsContainer<A of org.jetbrains.kotlinx.dataframe.api.join>, org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<*>>?): org.jetbrains.kotlinx.dataframe.DataFrame<A of org.jetbrains.kotlinx.dataframe.api.join> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_101304426> origin=null
                     <A>: org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadJson_1928912023

@@ -59,8 +59,9 @@ FILE: readCSV.kt
             }
 
             local abstract class TokenReadCSV_1000286747 : R|<local>/TokenReadCSV_1000286747I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenReadCSV_1000286747|
 

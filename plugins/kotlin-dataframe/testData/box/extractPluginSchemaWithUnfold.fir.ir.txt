@@ -1164,22 +1164,38 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/extractPluginSchemaWithUnf
                       overridden:
                         public abstract fun <get-supported> (): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426) returnType:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426, <set-?>:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope0
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426) returnType:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope1
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope2 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426, <set-?>:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope1) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope1
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope2 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope2> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426) returnType:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope2
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope2 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope2 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope3 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope2> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426, <set-?>:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope2) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope2 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope2
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope3 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope3> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426) returnType:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope3
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope3 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope3 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope3> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426, <set-?>:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope3) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope3 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.refine.<anonymous>.Scope3
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.Function>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426> declared in org.jetbrains.kotlinx.dataframe.refine'
                   CALL 'public final fun join <A, B> (other: org.jetbrains.kotlinx.dataframe.DataFrame<B of org.jetbrains.kotlinx.dataframe.api.join>, type: org.jetbrains.kotlinx.dataframe.api.JoinType, selector: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.JoinDsl<A of org.jetbrains.kotlinx.dataframe.api.join, B of org.jetbrains.kotlinx.dataframe.api.join>, org.jetbrains.kotlinx.dataframe.ColumnsContainer<A of org.jetbrains.kotlinx.dataframe.api.join>, org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<*>>?): org.jetbrains.kotlinx.dataframe.DataFrame<A of org.jetbrains.kotlinx.dataframe.api.join> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.refine.<anonymous>.TokenFunction_101304426> origin=null
                     <A>: org.jetbrains.kotlinx.dataframe.Function

@@ -148,10 +148,14 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                       overridden:
                         public abstract fun <get-col2> (): kotlin.Int declared in <root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969I
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969) returnType:<root>.Dsl is evaluated to .<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969, <set-?>:<root>.Dsl is evaluated to .<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969
+                      VALUE_PARAMETER name:<set-?> index:0 type:<root>.Dsl is evaluated to .<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<*>): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969> declared in <root>.Dsl is evaluated to'
                   CALL 'public final fun add <T> (body: @[ExtensionFunctionType] kotlin.Function1<org.jetbrains.kotlinx.dataframe.api.AddDsl<T of org.jetbrains.kotlinx.dataframe.api.add>, kotlin.Unit>): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.api.add> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<<root>.Dsl is evaluated to .<anonymous>.TokenAdd_2988969> origin=null
                     <T>: kotlin.Any?

@@ -267,10 +267,14 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/readCSV.kt
                       overridden:
                         public abstract fun <get-watchers> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747I
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [val]
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope0> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747, <set-?>:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747> declared in org.jetbrains.kotlinx.dataframe.box'
                   CALL 'public final fun readCSV (fileOrUrl: kotlin.String, delimiter: kotlin.Char, header: kotlin.collections.List<kotlin.String>, colTypes: kotlin.collections.Map<kotlin.String, org.jetbrains.kotlinx.dataframe.io.ColType>, skipLines: kotlin.Int, readLines: kotlin.Int?, duplicate: kotlin.Boolean, charset: java.nio.charset.Charset, parserOptions: org.jetbrains.kotlinx.dataframe.api.ParserOptions?): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.io' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.TokenReadCSV_1000286747> origin=null
                     $receiver: GET_VAR 'it: org.jetbrains.kotlinx.dataframe.DataFrame.Companion declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataFrame.Companion origin=null

@@ -26,8 +26,9 @@ FILE: lowerGeneratedImplicitReceiver.kt
             }
 
             local abstract class TokenCars_3085480 : R|<local>/TokenCars_3085480I| {
-                public abstract val scope0: R|<local>/Scope0|
+                public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
 
                 public constructor(): R|<local>/TokenCars_3085480|
 
