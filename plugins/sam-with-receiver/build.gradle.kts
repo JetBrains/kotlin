@@ -30,7 +30,7 @@ dependencies {
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
-
+    testRuntimeOnly(toolsJar())
 
     testApi(intellijCore())
 }

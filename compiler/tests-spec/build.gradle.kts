@@ -16,7 +16,7 @@ dependencies {
     api(libs.jsoup)
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
-
+    testRuntimeOnly(toolsJar())
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

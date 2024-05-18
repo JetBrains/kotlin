@@ -21,7 +21,8 @@ dependencies {
     testImplementation(projectTests(":analysis:low-level-api-fir"))
 
     testImplementation(kotlinTest("junit"))
-    testImplementation(toolsJar())
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

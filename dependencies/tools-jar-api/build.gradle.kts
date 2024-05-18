@@ -27,8 +27,15 @@ val toolsJarStubs by tasks.registering {
     val outDir = layout.buildDirectory.dir(name)
     outputs.dir(outDir)
 
-    val usedInternalApiPackages = listOf(
-        "com/sun/tools/javac" // Used in KAPT
+    val includedNonExportedPackages = listOf(
+        "com/sun/tools/javac" // javac is used in KAPT
+    )
+
+    val includedNonExportedClasses = listOf(
+        // some jdi classes are used in debugger tests
+        "com/sun/tools/jdi/SocketAttachingConnector",
+        "com/sun/tools/jdi/GenericAttachingConnector",
+        "com/sun/tools/jdi/ConnectorImpl"
     )
 
     doLast {
@@ -40,7 +47,7 @@ val toolsJarStubs by tasks.registering {
             .forEach { zipEntry ->
                 zipFile.getInputStream(zipEntry).use { entryStream ->
                     val classReader = ClassReader(entryStream)
-                    val classWriter = ClassWriter( 0)
+                    val classWriter = ClassWriter(0)
                     var isExported = false
                     classReader.accept(object : ClassVisitor(API_VERSION, classWriter) {
                         override fun visit(
@@ -52,12 +59,15 @@ val toolsJarStubs by tasks.registering {
                             interfaces: Array<out String>?
                         ) {
                             val isPublic = access and ACC_PUBLIC != 0
-                            if (isPublic && usedInternalApiPackages.any { name?.startsWith(it) == true }) {
+                            if ((isPublic && includedNonExportedPackages.any { name?.startsWith(it) == true }) ||
+                                name in includedNonExportedClasses
+                            ) {
                                 isExported = true
                             }
 
                             super.visit(version, access, name, signature, superName, interfaces)
                         }
+
                         override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
                             if (descriptor == "Ljdk/Exported;") {
                                 isExported = true
