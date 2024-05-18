@@ -49,7 +49,9 @@ dependencies {
     testImplementation(kotlinTest("junit"))
     testApi(projectTests(":analysis:analysis-test-framework"))
 
-    testImplementation(toolsJar())
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
+
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

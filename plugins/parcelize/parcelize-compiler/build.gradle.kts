@@ -57,6 +57,8 @@ dependencies {
 
     testImplementation(libs.junit4)
 
+    testRuntimeOnly(toolsJar())
+
     robolectricDependency("org.robolectric:android-all:5.0.2_r3-robolectric-r0")
 
     robolectricClasspath(commonDependency("org.robolectric", "robolectric"))

@@ -9,6 +9,7 @@ dependencies {
 
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:tests-common-new"))
+    testRuntimeOnly(toolsJar())
 
     testApi(commonDependency("com.google.code.gson:gson"))
     testApi(commonDependency("org.jetbrains.intellij.deps:jdom"))

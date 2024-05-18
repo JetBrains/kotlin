@@ -50,7 +50,10 @@ dependencies {
 
     testImplementation(libs.opentest4j)
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
-    testImplementation(toolsJar())
+
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
+
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testImplementation(projectTests(":analysis:analysis-api-impl-barebone"))

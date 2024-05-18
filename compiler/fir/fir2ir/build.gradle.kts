@@ -41,6 +41,8 @@ dependencies {
     testCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
 
+    testRuntimeOnly(toolsJar())
+
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     testRuntimeOnly(commonDependency("one.util:streamex"))

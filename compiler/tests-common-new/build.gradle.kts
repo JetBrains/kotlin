@@ -41,7 +41,7 @@ dependencies {
     testApi(intellijJavaRt()) // for FileComparisonFailure
     testApi(libs.junit4) // for ComparisonFailure
 
-    testApi(toolsJar())
+    testApi(toolsJarApi())
 }
 
 optInToExperimentalCompilerApi()
