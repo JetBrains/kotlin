@@ -203,7 +203,7 @@ public data class SimpleFrameColumn(
         return columns
     }
 
-    override fun rename(s: String): SimpleCol {
+    override fun rename(s: String): SimpleFrameColumn {
         return SimpleFrameColumn(name1, columns, nullable, anyFrameType)
     }
 
