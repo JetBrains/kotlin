@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.dataframe.api.Exclude1
 import org.jetbrains.kotlin.fir.dataframe.api.Preserve0
 import org.jetbrains.kotlin.fir.dataframe.api.Preserve1
 import org.jetbrains.kotlin.fir.dataframe.api.Properties0
+import org.jetbrains.kotlin.fir.dataframe.api.Rename
+import org.jetbrains.kotlin.fir.dataframe.api.RenameInto
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -114,6 +116,7 @@ internal inline fun <reified T> String.load(): T {
         "Preserve1" -> Preserve1()
         "Exclude0" -> Exclude0()
         "Exclude1" -> Exclude1()
+        "RenameInto" -> RenameInto()
         else -> error("$this")
     } as T
 }

@@ -178,6 +178,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("rename.kt")
+  public void testRename() {
+    runTest("testData/box/rename.kt");
+  }
+
+  @Test
   @TestMetadata("Schema.kt")
   public void testSchema() {
     runTest("testData/box/Schema.kt");

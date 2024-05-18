@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe.plugin
 
+import org.jetbrains.kotlin.fir.dataframe.api.RenameClauseApproximation
 import org.jetbrains.kotlinx.dataframe.annotations.Absent
 import org.jetbrains.kotlinx.dataframe.annotations.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.annotations.AbstractInterpreter.*
