@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_6
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.deleteExisting
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.notExists
 import kotlin.io.path.readText
@@ -510,7 +511,6 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
                 assertRootPackageJsonVersion("foo")
             }
 
-            projectPath.resolve("build/js/node_modules").deleteRecursively()
             projectPath.resolve("build/js/$lockFileName").deleteRecursively()
             projectPath.resolve(LockCopyTask.KOTLIN_JS_STORE).deleteRecursively()
 
