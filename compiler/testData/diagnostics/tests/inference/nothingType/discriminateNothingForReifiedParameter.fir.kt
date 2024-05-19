@@ -47,6 +47,6 @@ fun test7(): Bound? =
 fun test8() {
     select(
         null,
-        <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>materializeReifiedUnbound<!>()
+        materializeReifiedUnbound()
     )
 }
