@@ -95,7 +95,7 @@ internal abstract class PropertiesBuildService @Inject constructor(
                 val result = when (property) {
                     is BooleanGradleProperty -> property.toBooleanFromString(it)
                     is NullableBooleanGradleProperty -> property.toNullableBooleanFromString(it)
-                    is StringGradleProperty -> it
+                    is StringGradleProperty, is NullableStringGradleProperty -> it
                     is IntGradleProperty -> property.toIntFromString(it)
                     else -> throw IllegalStateException("Unknown Gradle property type $property")
                 }
@@ -193,6 +193,12 @@ internal abstract class PropertiesBuildService @Inject constructor(
         override val name: String,
         override val defaultValue: String
     ) : GradleProperty<String>
+
+    internal class NullableStringGradleProperty(
+        override val name: String,
+    ) : GradleProperty<String?> {
+        override val defaultValue: String? = null
+    }
 
     internal class IntGradleProperty(
         override val name: String,
