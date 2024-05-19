@@ -311,12 +311,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property("kotlin.native.linkArgs").orNull.orEmpty().split(' ').filterNot { it.isBlank() }
 
     /**
-     * Forces to run a compilation in a separate JVM.
-     */
-    val nativeDisableCompilerDaemon: Boolean?
-        get() = booleanProperty("kotlin.native.disableCompilerDaemon")
-
-    /**
      * Switches Kotlin/Native tasks to using embeddable compiler jar,
      * allowing to apply backend-agnostic compiler plugin artifacts.
      * Will be default after proper migration.

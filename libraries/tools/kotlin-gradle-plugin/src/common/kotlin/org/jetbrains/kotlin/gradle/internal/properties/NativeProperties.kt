@@ -16,6 +16,7 @@ internal interface NativeProperties {
     val isUseXcodeMessageStyleEnabled: Provider<Boolean>
     val kotlinNativeVersion: Provider<String>
     val jvmArgs: Provider<List<String>>
+    val forceDisableRunningInProcess: Provider<Boolean>
 }
 
 private class NativePropertiesLoader(project: Project) : NativeProperties {
@@ -38,6 +39,10 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
                 it!!.split("\\s+".toRegex())
             }
             .orElse(emptyList())
+    }
+
+    override val forceDisableRunningInProcess: Provider<Boolean> = propertiesService.flatMap {
+        it.property(NATIVE_FORCE_DISABLE_IN_PROCESS, project)
     }
 
     companion object {
@@ -67,6 +72,14 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
 
         private val NATIVE_JVM_ARGS_DEPRECATED = PropertiesBuildService.NullableStringGradleProperty(
             name = "org.jetbrains.kotlin.native.jvmArgs",
+        )
+
+        /**
+         * Forces to run a compilation in a separate JVM.
+         */
+        private val NATIVE_FORCE_DISABLE_IN_PROCESS = PropertiesBuildService.BooleanGradleProperty(
+            name = "$PROPERTIES_PREFIX.disableCompilerDaemon",
+            defaultValue = false
         )
     }
 }

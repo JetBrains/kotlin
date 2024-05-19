@@ -39,9 +39,6 @@ internal val Project.konanHome: File
         ?: PropertiesProvider(this).nativeHome?.let { file(it) }
         ?: NativeCompilerDownloader(project).compilerDirectory).absoluteFile
 
-internal val Project.disableKonanDaemon: Boolean
-    get() = PropertiesProvider(this).nativeDisableCompilerDaemon == true
-
 internal val Project.konanDataDir: String?
     get() = PropertiesProvider(this).konanDataDir
 
@@ -251,7 +248,7 @@ internal abstract class KotlinNativeCompilerRunner @Inject constructor(
         companion object {
             fun of(konanHome: String, konanDataDir: String?, project: Project) = Settings(
                 parent = KotlinNativeToolRunner.Settings.of(konanHome, konanDataDir, project),
-                disableKonanDaemon = project.disableKonanDaemon,
+                disableKonanDaemon = project.nativeProperties.forceDisableRunningInProcess.get(),
             )
         }
     }
