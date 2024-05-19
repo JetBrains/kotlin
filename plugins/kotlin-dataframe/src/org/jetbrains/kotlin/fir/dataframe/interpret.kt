@@ -242,7 +242,7 @@ fun <T> KotlinTypeFacade.interpret(
 
 internal fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrameSchema {
     val symbol = coneClassLikeType.toSymbol(session) as FirRegularClassSymbol
-    val declarationSymbols = if (symbol.isLocal && symbol.resolvedSuperTypes.isNotEmpty()) {
+    val declarationSymbols = if (symbol.isLocal && symbol.resolvedSuperTypes.firstOrNull() != session.builtinTypes.anyType.type) {
         val rootSchemaSymbol = symbol.resolvedSuperTypes.first().toSymbol(session) as FirRegularClassSymbol
         rootSchemaSymbol.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
     } else {
