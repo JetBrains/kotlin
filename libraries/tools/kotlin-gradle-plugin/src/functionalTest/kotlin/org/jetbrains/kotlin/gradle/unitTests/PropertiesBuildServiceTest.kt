@@ -85,7 +85,7 @@ class PropertiesBuildServiceTest {
 
     private fun testLoadingGradleProperty(
         configuredPropValue: Any?,
-        expected: Any,
+        expected: Any?,
         property: PropertiesBuildService.GradleProperty<*>
     ) {
         val project = buildProject()
@@ -100,6 +100,7 @@ class PropertiesBuildServiceTest {
                 is PropertiesBuildService.BooleanGradleProperty -> properties.property(property, project).get()
                 is PropertiesBuildService.StringGradleProperty -> properties.property(property, project).get()
                 is PropertiesBuildService.IntGradleProperty -> properties.property(property, project).get()
+                is PropertiesBuildService.NullableBooleanGradleProperty -> properties.property(property, project).orNull
                 else -> error("Unexpected property type ${property::class}")
             }
         )
@@ -138,6 +139,42 @@ class PropertiesBuildServiceTest {
             "Kodee!",
             false,
             PropertiesBuildService.BooleanGradleProperty("some.prop", false)
+        )
+    }
+
+    @Test
+    fun testLoadingTrueAsNullableBooleanValue() {
+        testLoadingGradleProperty(
+            "true",
+            true,
+            PropertiesBuildService.NullableBooleanGradleProperty("some.prop")
+        )
+    }
+
+    @Test
+    fun testLoadingFalseAsNullableBooleanValue() {
+        testLoadingGradleProperty(
+            "false",
+            false,
+            PropertiesBuildService.NullableBooleanGradleProperty("some.prop")
+        )
+    }
+
+    @Test
+    fun testLoadingIncorrectValueAsNullableBooleanValue() {
+        testLoadingGradleProperty(
+            "Kodee!",
+            null,
+            PropertiesBuildService.NullableBooleanGradleProperty("some.prop")
+        )
+    }
+
+    @Test
+    fun testLoadingNotConfiguredNullableBooleanValue() {
+        testLoadingGradleProperty(
+            null,
+            null,
+            PropertiesBuildService.NullableBooleanGradleProperty("some.prop")
         )
     }
 
