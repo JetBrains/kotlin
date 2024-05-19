@@ -303,11 +303,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val nativeReinstall: Boolean
         get() = booleanProperty("kotlin.native.reinstall") ?: false
 
-    /**
-     * Allows a user to specify additional arguments of a JVM executing a K/N compiler.
-     */
-    val nativeJvmArgs: String?
-        get() = propertyWithDeprecatedVariant("kotlin.native.jvmArgs", "org.jetbrains.kotlin.native.jvmArgs")
 
     /**
      * Allows a user to specify free compiler arguments for K/N linker.

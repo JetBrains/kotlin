@@ -15,17 +15,29 @@ internal val Project.nativeProperties: NativeProperties
 internal interface NativeProperties {
     val isUseXcodeMessageStyleEnabled: Provider<Boolean>
     val kotlinNativeVersion: Provider<String>
+    val jvmArgs: Provider<List<String>>
 }
 
 private class NativePropertiesLoader(project: Project) : NativeProperties {
 
-    override val isUseXcodeMessageStyleEnabled: Provider<Boolean> = project.propertiesService.flatMap {
+    private val propertiesService = project.propertiesService
+
+    override val isUseXcodeMessageStyleEnabled: Provider<Boolean> = propertiesService.flatMap {
         it.property(USE_XCODE_MESSAGE_STYLE, project)
     }
 
-    override val kotlinNativeVersion: Provider<String> = project.propertiesService.flatMap {
+    override val kotlinNativeVersion: Provider<String> = propertiesService.flatMap {
         it.propertyWithDeprecatedName(NATIVE_VERSION, NATIVE_VERSION_DEPRECATED, project)
             .orElse(NativeCompilerDownloader.DEFAULT_KONAN_VERSION)
+    }
+
+    override val jvmArgs: Provider<List<String>> = project.propertiesService.flatMap { propertiesService ->
+        propertiesService.propertyWithDeprecatedName(NATIVE_JVM_ARGS, NATIVE_JVM_ARGS_DEPRECATED, project)
+            .map {
+                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+                it!!.split("\\s+".toRegex())
+            }
+            .orElse(emptyList())
     }
 
     companion object {
@@ -44,6 +56,17 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
 
         private val NATIVE_VERSION_DEPRECATED = PropertiesBuildService.NullableStringGradleProperty(
             name = "org.jetbrains.kotlin.native.version"
+        )
+
+        /**
+         * Allows a user to specify additional arguments of a JVM executing a K/N compiler.
+         */
+        private val NATIVE_JVM_ARGS = PropertiesBuildService.NullableStringGradleProperty(
+            name = "$PROPERTIES_PREFIX.jvmArgs",
+        )
+
+        private val NATIVE_JVM_ARGS_DEPRECATED = PropertiesBuildService.NullableStringGradleProperty(
+            name = "org.jetbrains.kotlin.native.jvmArgs",
         )
     }
 }

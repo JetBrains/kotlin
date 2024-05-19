@@ -34,9 +34,6 @@ import java.nio.file.Files
 import java.util.*
 import javax.inject.Inject
 
-private val Project.jvmArgs
-    get() = PropertiesProvider(this).nativeJvmArgs?.split("\\s+".toRegex()).orEmpty()
-
 internal val Project.konanHome: File
     get() = (PropertiesProvider(this).konanDataDir?.let { NativeCompilerDownloader(project).compilerDirectory }
         ?: PropertiesProvider(this).nativeHome?.let { file(it) }
@@ -107,7 +104,7 @@ internal abstract class KotlinNativeToolRunner(
                 konanHome = konanHome,
                 konanPropertiesFile = project.file("${konanHome}/konan/konan.properties"),
                 useXcodeMessageStyle = project.useXcodeMessageStyle.get(),
-                jvmArgs = project.jvmArgs,
+                jvmArgs = project.nativeProperties.jvmArgs.get(),
                 classpath = project.files(project.kotlinNativeCompilerJar, "${konanHome}/konan/lib/trove4j.jar"),
                 konanDataDir = konanDataDir,
                 kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
