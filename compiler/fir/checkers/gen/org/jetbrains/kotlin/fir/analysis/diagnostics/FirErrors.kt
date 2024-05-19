@@ -732,7 +732,7 @@ object FirErrors {
     val CAPTURED_MEMBER_VAL_INITIALIZATION: KtDiagnosticFactory1<FirPropertySymbol> by error1<KtExpression, FirPropertySymbol>()
     val NON_INLINE_MEMBER_VAL_INITIALIZATION: KtDiagnosticFactory1<FirPropertySymbol> by error1<KtExpression, FirPropertySymbol>()
     val SETTER_PROJECTED_OUT: KtDiagnosticFactory1<FirPropertySymbol> by error1<KtBinaryExpression, FirPropertySymbol>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
-    val WRONG_INVOCATION_KIND: KtDiagnosticFactory3<FirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange> by warning3<PsiElement, FirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange>()
+    val WRONG_INVOCATION_KIND: KtDiagnosticFactory3<FirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange> by error3<PsiElement, FirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange>()
     val LEAKED_IN_PLACE_LAMBDA: KtDiagnosticFactory1<FirBasedSymbol<*>> by warning1<PsiElement, FirBasedSymbol<*>>()
     val WRONG_IMPLIES_CONDITION: KtDiagnosticFactory0 by warning0<PsiElement>()
     val VARIABLE_WITH_NO_TYPE_NO_INITIALIZER: KtDiagnosticFactory0 by error0<KtVariableDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)

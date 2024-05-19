@@ -1436,7 +1436,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SETTER_PROJECTED_OUT by error<KtBinaryExpression>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<FirPropertySymbol>("property")
         }
-        val WRONG_INVOCATION_KIND by warning<PsiElement> {
+        val WRONG_INVOCATION_KIND by error<PsiElement> {
             parameter<Symbol>("declaration")
             parameter<EventOccurrencesRange>("requiredRange")
             parameter<EventOccurrencesRange>("actualRange")

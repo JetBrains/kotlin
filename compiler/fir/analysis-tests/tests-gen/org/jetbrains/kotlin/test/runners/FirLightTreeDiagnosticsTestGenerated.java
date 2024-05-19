@@ -6195,6 +6195,24 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             }
 
             @Test
+            @TestMetadata("atLeastOnceBroken.kt")
+            public void testAtLeastOnceBroken() {
+              runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/atLeastOnceBroken.kt");
+            }
+
+            @Test
+            @TestMetadata("atMostOnceBroken.kt")
+            public void testAtMostOnceBroken() {
+              runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/atMostOnceBroken.kt");
+            }
+
+            @Test
+            @TestMetadata("exactlyOnceBroken.kt")
+            public void testExactlyOnceBroken() {
+              runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/exactlyOnceBroken.kt");
+            }
+
+            @Test
             @TestMetadata("inAnonymousObject.kt")
             public void testInAnonymousObject() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/inAnonymousObject.kt");
