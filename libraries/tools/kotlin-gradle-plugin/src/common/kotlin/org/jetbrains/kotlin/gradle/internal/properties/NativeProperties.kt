@@ -18,6 +18,7 @@ internal interface NativeProperties {
     val jvmArgs: Provider<List<String>>
     val forceDisableRunningInProcess: Provider<Boolean>
     val konanDataDir: Provider<String?>
+    val downloadFromMaven: Provider<Boolean>
 }
 
 private class NativePropertiesLoader(project: Project) : NativeProperties {
@@ -48,6 +49,10 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
 
     override val konanDataDir: Provider<String?> = propertiesService.flatMap {
         it.property(KONAN_DATA_DIR, project)
+    }
+
+    override val downloadFromMaven: Provider<Boolean> = propertiesService.flatMap {
+        it.property(NATIVE_DOWNLOAD_FROM_MAVEN, project)
     }
 
     companion object {
@@ -93,6 +98,16 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
          */
         private val KONAN_DATA_DIR = PropertiesBuildService.NullableStringGradleProperty(
             name = "konan.data.dir"
+        )
+
+        /**
+         * Allows downloading Kotlin/Native distribution with maven.
+         *
+         * Makes downloader search for bundles in maven repositories specified in the project.
+         */
+        private val NATIVE_DOWNLOAD_FROM_MAVEN = PropertiesBuildService.BooleanGradleProperty(
+            name = "$PROPERTIES_PREFIX.distribution.downloadFromMaven",
+            defaultValue = true
         )
     }
 }

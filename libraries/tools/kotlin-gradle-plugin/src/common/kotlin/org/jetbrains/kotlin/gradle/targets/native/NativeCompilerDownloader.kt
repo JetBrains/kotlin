@@ -100,6 +100,7 @@ class NativeCompilerDownloader(
 
     private val kotlinProperties get() = PropertiesProvider(project)
 
+    private val downloadFromMaven = project.nativeProperties.downloadFromMaven
 
     private val dependencyNameWithOsAndVersion: String
         get() = getDependencyNameWithOsAndVersion(project)
@@ -141,11 +142,11 @@ class NativeCompilerDownloader(
     }
 
     private fun downloadAndExtract() {
-        val repo = if (!kotlinProperties.nativeDownloadFromMaven) {
+        val repo = if (!downloadFromMaven.get()) {
             setupRepo(repoUrl)
         } else null
 
-        val compilerDependency = if (kotlinProperties.nativeDownloadFromMaven) {
+        val compilerDependency = if (downloadFromMaven.get()) {
             project.dependencies.create(getCompilerDependencyNotation(project))
         } else {
             project.dependencies.create(
@@ -160,7 +161,7 @@ class NativeCompilerDownloader(
         val configuration = project.configurations.detachedResolvable(compilerDependency)
         logger.lifecycle("\nPlease wait while Kotlin/Native compiler ${getCompilerVersion(project)} is being installed.")
 
-        if (!kotlinProperties.nativeDownloadFromMaven) {
+        if (!downloadFromMaven.get()) {
             val dependencyUrl = "$repoUrl/$dependencyFileName"
             val lengthSuffix = project.probeRemoteFileLength(dependencyUrl, probingTimeoutMs = 200)
                 ?.let { " (${formatContentLength(it)})" }

@@ -40,7 +40,7 @@ internal val Project.konanHome: File
         ?: NativeCompilerDownloader(project).compilerDirectory).absoluteFile
 
 internal val Project.kotlinNativeToolchainEnabled: Boolean
-    get() = PropertiesProvider(this).kotlinNativeToolchainEnabled && PropertiesProvider(this).nativeDownloadFromMaven
+    get() = PropertiesProvider(this).kotlinNativeToolchainEnabled && nativeProperties.downloadFromMaven.get()
 
 internal fun Project.getKonanCacheKind(target: KonanTarget): NativeCacheKind =
     kotlinPropertiesProvider.getKonanCacheKind(target, KonanPropertiesBuildService.registerIfAbsent(this))
