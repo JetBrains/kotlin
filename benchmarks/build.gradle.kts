@@ -1,11 +1,19 @@
 import kotlinx.benchmark.gradle.benchmark
 
-val benchmarks_version = "0.3.1"
-
 plugins {
     java
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.benchmark") version "0.4.6"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.6-1"
+}
+
+val benchmarks_version = "0.4.6-1"
+
+repositories {
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies") {
+        content {
+            includeModuleByRegex("org\\.jetbrains\\.kotlinx", "kotlinx-benchmark-runtime.*")
+        }
+    }
 }
 
 dependencies {
