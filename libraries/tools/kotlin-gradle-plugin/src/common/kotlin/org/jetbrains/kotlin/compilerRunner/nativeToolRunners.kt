@@ -35,12 +35,9 @@ import java.util.*
 import javax.inject.Inject
 
 internal val Project.konanHome: File
-    get() = (PropertiesProvider(this).konanDataDir?.let { NativeCompilerDownloader(project).compilerDirectory }
+    get() = (nativeProperties.konanDataDir.orNull?.let { NativeCompilerDownloader(project).compilerDirectory }
         ?: PropertiesProvider(this).nativeHome?.let { file(it) }
         ?: NativeCompilerDownloader(project).compilerDirectory).absoluteFile
-
-internal val Project.konanDataDir: String?
-    get() = PropertiesProvider(this).konanDataDir
 
 internal val Project.kotlinNativeToolchainEnabled: Boolean
     get() = PropertiesProvider(this).kotlinNativeToolchainEnabled && PropertiesProvider(this).nativeDownloadFromMaven
@@ -289,7 +286,11 @@ internal abstract class KotlinNativeLibraryGenerationRunner @Inject constructor(
 
     companion object {
         fun fromProject(project: Project) = project.objects.KotlinNativeLibraryGenerationRunner(
-            settings = Settings.of(project.konanHome.absolutePath, project.konanDataDir, project),
+            settings = Settings.of(
+                project.konanHome.absolutePath,
+                project.nativeProperties.konanDataDir.orNull,
+                project
+            ),
             metricsReporter = GradleBuildMetricsReporter()
         )
     }

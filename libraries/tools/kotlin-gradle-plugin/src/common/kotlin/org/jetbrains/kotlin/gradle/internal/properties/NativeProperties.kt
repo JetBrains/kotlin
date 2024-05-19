@@ -17,6 +17,7 @@ internal interface NativeProperties {
     val kotlinNativeVersion: Provider<String>
     val jvmArgs: Provider<List<String>>
     val forceDisableRunningInProcess: Provider<Boolean>
+    val konanDataDir: Provider<String?>
 }
 
 private class NativePropertiesLoader(project: Project) : NativeProperties {
@@ -43,6 +44,10 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
 
     override val forceDisableRunningInProcess: Provider<Boolean> = propertiesService.flatMap {
         it.property(NATIVE_FORCE_DISABLE_IN_PROCESS, project)
+    }
+
+    override val konanDataDir: Provider<String?> = propertiesService.flatMap {
+        it.property(KONAN_DATA_DIR, project)
     }
 
     companion object {
@@ -80,6 +85,14 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
         private val NATIVE_FORCE_DISABLE_IN_PROCESS = PropertiesBuildService.BooleanGradleProperty(
             name = "$PROPERTIES_PREFIX.disableCompilerDaemon",
             defaultValue = false
+        )
+
+        /**
+         * Allows the user to specify a custom location for the Kotlin/Native distribution.
+         * This property takes precedence over the 'KONAN_DATA_DIR' environment variable.
+         */
+        private val KONAN_DATA_DIR = PropertiesBuildService.NullableStringGradleProperty(
+            name = "konan.data.dir"
         )
     }
 }

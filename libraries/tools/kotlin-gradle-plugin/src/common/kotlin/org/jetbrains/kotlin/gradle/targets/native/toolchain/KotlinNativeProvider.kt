@@ -12,9 +12,9 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.compilerRunner.konanDataDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -38,7 +38,7 @@ internal class KotlinNativeProvider(
     ) : this(project, setOf(konanTarget), kotlinNativeBundleBuildService)
 
     @get:Internal
-    val konanDataDir: Provider<String?> = project.provider { project.konanDataDir }
+    val konanDataDir: Provider<String?> = project.nativeProperties.konanDataDir
 
     @get:Internal
     val bundleDirectory: DirectoryProperty = project.objects.directoryProperty().fileProvider(

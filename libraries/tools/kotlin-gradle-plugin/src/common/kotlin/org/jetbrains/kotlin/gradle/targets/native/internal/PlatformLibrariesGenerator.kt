@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.compilerRunner.KotlinNativeLibraryGenerationRunner
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
@@ -39,7 +40,7 @@ internal class PlatformLibrariesGenerator(
 
     private val distribution = customerDistribution(
         konanHome.absolutePath,
-        konanDataDir = propertiesProvider.konanDataDir
+        konanDataDir = project.nativeProperties.konanDataDir.orNull
     )
 
     private val platformLibsDirectory =

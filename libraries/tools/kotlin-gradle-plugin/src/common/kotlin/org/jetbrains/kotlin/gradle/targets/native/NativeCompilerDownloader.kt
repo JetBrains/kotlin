@@ -14,7 +14,6 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner
-import org.jetbrains.kotlin.compilerRunner.konanDataDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
@@ -58,7 +57,7 @@ class NativeCompilerDownloader(
 
         internal fun getCompilerDirectory(project: Project): File {
             return DependencyDirectories
-                .getLocalKonanDir(project.konanDataDir)
+                .getLocalKonanDir(project.nativeProperties.konanDataDir.orNull)
                 .resolve(getDependencyNameWithOsAndVersion(project))
         }
 
@@ -213,7 +212,13 @@ class NativeCompilerDownloader(
 
     private fun checkClassPath() {
         project.providers.of(NativeCompilerDownloaderClassPathChecker::class.java) {
-            it.parameters.classPath.setFrom(KotlinNativeToolRunner.Settings.of(project.konanHome.absolutePath, project.konanDataDir, project).classpath)
+            it.parameters.classPath.setFrom(
+                KotlinNativeToolRunner.Settings.of(
+                    project.konanHome.absolutePath,
+                    project.nativeProperties.konanDataDir.orNull,
+                    project
+                ).classpath
+            )
         }.usedAtConfigurationTime(project.configurationTimePropertiesAccessor).get()
     }
 

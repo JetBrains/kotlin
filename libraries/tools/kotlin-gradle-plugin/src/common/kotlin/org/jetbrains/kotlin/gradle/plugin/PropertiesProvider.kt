@@ -510,13 +510,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val swiftExportEnabled: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_SWIFT_EXPORT_ENABLED) ?: false
 
-    /**
-     * Allows the user to specify a custom location for the Kotlin/Native distribution.
-     * This property takes precedence over the 'KONAN_DATA_DIR' environment variable.
-     */
-    val konanDataDir: String?
-        get() = property(PropertyNames.KONAN_DATA_DIR).orNull
-
     val appleIgnoreXcodeVersionCompatibility: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_APPLE_XCODE_COMPATIBILITY_NOWARN) ?: false
 
@@ -685,7 +678,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = property(KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY)
         val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = property("kotlin.native.ignoreDisabledTargets")
         val KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING = property("kotlin.native.suppressExperimentalArtifactsDslWarning")
-        val KONAN_DATA_DIR = property("konan.data.dir")
         val KOTLIN_SUPPRESS_BUILD_TOOLS_API_VERSION_CONSISTENCY_CHECKS =
             property("kotlin.internal.suppress.buildToolsApiVersionConsistencyChecks")
         val KOTLIN_USER_HOME_DIR = property("kotlin.user.home")
