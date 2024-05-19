@@ -42938,6 +42938,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/reified/kt39256_privateInlineWithAnonymousObject.kt");
     }
 
+    @TestMetadata("kt54227_1.kt")
+    public void testKt54227_1() {
+      runTest("compiler/testData/codegen/box/reified/kt54227_1.kt");
+    }
+
+    @TestMetadata("kt54227_2.kt")
+    public void testKt54227_2() {
+      runTest("compiler/testData/codegen/box/reified/kt54227_2.kt");
+    }
+
     @TestMetadata("nestedReified.kt")
     public void testNestedReified() {
       runTest("compiler/testData/codegen/box/reified/nestedReified.kt");
