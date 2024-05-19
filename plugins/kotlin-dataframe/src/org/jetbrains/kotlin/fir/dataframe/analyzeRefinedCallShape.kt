@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.dataframe.Names.DF_CLASS_ID
 import org.jetbrains.kotlin.fir.dataframe.api.CreateDataFrameConfiguration
+import org.jetbrains.kotlin.fir.dataframe.api.GroupBy
+import org.jetbrains.kotlin.fir.dataframe.api.GroupByDsl
 import org.jetbrains.kotlin.fir.dataframe.api.TraverseConfiguration
+import org.jetbrains.kotlin.fir.dataframe.api.createPluginDataFrameSchema
 import org.jetbrains.kotlin.fir.dataframe.api.toDataFrame
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -22,7 +26,9 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.Interpreter
+import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 
 fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: InterpretationErrorReporter): CallResult? {
     val callReturnType = call.resolvedType
@@ -75,6 +81,15 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
                 val maxDepth = 0
                 toDataFrame(maxDepth, call, TraverseConfiguration())
             }
+            "Aggregate" -> {
+                val groupByCall = call.explicitReceiver as? FirFunctionCall
+                val interpreter = groupByCall?.loadInterpreter(session)
+                if (interpreter != null) {
+                    groupBy(groupByCall, interpreter, reporter, call)
+                } else {
+                    PluginDataFrameSchema(emptyList())
+                }
+            }
             else -> it.load<Interpreter<*>>().let { processor ->
                 val dataFrameSchema = interpret(call, processor, reporter = reporter)
                     .let {
@@ -93,6 +108,41 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
     } ?: return null
 
     return CallResult(rootMarker, dataFrameSchema)
+}
+
+fun KotlinTypeFacade.groupBy(
+    groupByCall: FirFunctionCall,
+    interpreter: Interpreter<*>,
+    reporter: InterpretationErrorReporter,
+    call: FirFunctionCall
+): PluginDataFrameSchema? {
+    val groupBy = interpret(groupByCall, interpreter, reporter = reporter)?.value as? GroupBy ?: return null
+    val aggregate = call.argumentList.arguments.singleOrNull() as? FirAnonymousFunctionExpression
+    val body = aggregate?.anonymousFunction?.body ?: return null
+    val lastExpression = (body.statements.lastOrNull() as? FirReturnExpression)?.result
+    val type = lastExpression?.resolvedType
+    return if (type != session.builtinTypes.unitType) {
+        val dsl = GroupByDsl()
+        val calls = buildList {
+            body.statements.filterIsInstance<FirFunctionCall>().let { addAll(it) }
+            if (lastExpression is FirFunctionCall) add(lastExpression)
+        }
+        calls.forEach { call ->
+            val schemaProcessor = call.loadInterpreter() ?: return@forEach
+            interpret(
+                call,
+                schemaProcessor,
+                mapOf("dsl" to Interpreter.Success(dsl)),
+                reporter
+            )
+        }
+
+        // important to create FrameColumns?
+        val cols = createPluginDataFrameSchema(groupBy.keys).columns() + dsl.columns.map { SimpleCol(it.name, TypeApproximation(it.type)) }
+        PluginDataFrameSchema(cols)
+    } else {
+        null
+    }
 }
 
 data class CallResult(val rootMarker: ConeClassLikeType, val dataFrameSchema: PluginDataFrameSchema)

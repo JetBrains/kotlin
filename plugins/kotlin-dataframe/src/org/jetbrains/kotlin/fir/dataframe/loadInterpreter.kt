@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.Names.INTERPRETABLE_FQNAME
+import org.jetbrains.kotlin.fir.dataframe.api.DataFrameGroupBy
 import org.jetbrains.kotlin.fir.dataframe.api.Exclude0
 import org.jetbrains.kotlin.fir.dataframe.api.Exclude1
+import org.jetbrains.kotlin.fir.dataframe.api.GroupByInto
 import org.jetbrains.kotlin.fir.dataframe.api.Preserve0
 import org.jetbrains.kotlin.fir.dataframe.api.Preserve1
 import org.jetbrains.kotlin.fir.dataframe.api.Properties0
@@ -117,6 +119,8 @@ internal inline fun <reified T> String.load(): T {
         "Exclude0" -> Exclude0()
         "Exclude1" -> Exclude1()
         "RenameInto" -> RenameInto()
+        "DataFrameGroupBy" -> DataFrameGroupBy()
+        "GroupByInto" -> GroupByInto()
         else -> error("$this")
     } as T
 }
