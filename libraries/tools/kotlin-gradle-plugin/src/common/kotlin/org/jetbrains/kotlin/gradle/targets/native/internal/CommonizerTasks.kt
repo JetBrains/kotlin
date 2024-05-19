@@ -15,9 +15,9 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.commonizer.konanTargets
-import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -136,7 +136,7 @@ internal suspend fun Project.copyCommonizeCInteropForIdeTask(): TaskProvider<Cop
 internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistributionCommonizerTask>?
     get() {
         if (!isAllowCommonizer()) return null
-        if (rootProject.kotlinNativeToolchainEnabled) {
+        if (rootProject.nativeProperties.isToolchainEnabled.get()) {
             KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(rootProject.dependencies.attributesSchema)
             KotlinNativeBundleArtifactFormat.setupTransform(rootProject)
             addKotlinNativeBundleConfiguration(rootProject)

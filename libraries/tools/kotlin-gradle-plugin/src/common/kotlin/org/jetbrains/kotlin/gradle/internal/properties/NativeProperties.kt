@@ -19,6 +19,7 @@ internal interface NativeProperties {
     val forceDisableRunningInProcess: Provider<Boolean>
     val konanDataDir: Provider<String?>
     val downloadFromMaven: Provider<Boolean>
+    val isToolchainEnabled: Provider<Boolean>
 }
 
 private class NativePropertiesLoader(project: Project) : NativeProperties {
@@ -53,6 +54,12 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
 
     override val downloadFromMaven: Provider<Boolean> = propertiesService.flatMap {
         it.property(NATIVE_DOWNLOAD_FROM_MAVEN, project)
+    }
+
+    override val isToolchainEnabled: Provider<Boolean> = propertiesService.flatMap {
+        it.property(NATIVE_TOOLCHAIN_ENABLED, project).zip(downloadFromMaven) { isToolchainEnabled, isDownloadFromMavenEnabled ->
+            isToolchainEnabled && isDownloadFromMavenEnabled
+        }
     }
 
     companion object {
@@ -107,6 +114,14 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
          */
         private val NATIVE_DOWNLOAD_FROM_MAVEN = PropertiesBuildService.BooleanGradleProperty(
             name = "$PROPERTIES_PREFIX.distribution.downloadFromMaven",
+            defaultValue = true
+        )
+
+        /**
+         * Enables kotlin native toolchain in native projects.
+         */
+        private val NATIVE_TOOLCHAIN_ENABLED = PropertiesBuildService.BooleanGradleProperty(
+            name = "$PROPERTIES_PREFIX.toolchain.enabled",
             defaultValue = true
         )
     }

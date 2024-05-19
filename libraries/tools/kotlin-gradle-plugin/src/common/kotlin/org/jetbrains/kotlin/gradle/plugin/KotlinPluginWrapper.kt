@@ -24,13 +24,13 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.*
@@ -81,7 +81,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         addKotlinCompilerConfiguration(project)
 
-        if (project.kotlinNativeToolchainEnabled) {
+        if (project.nativeProperties.isToolchainEnabled.get()) {
             addKotlinNativeBundleConfiguration(project)
         }
 
@@ -235,7 +235,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             CInteropCommonizerArtifactTypeAttribute.setupTransform(project)
         }
 
-        if (project.kotlinNativeToolchainEnabled) {
+        if (project.nativeProperties.isToolchainEnabled.get()) {
             KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(this)
             KotlinNativeBundleArtifactFormat.setupTransform(project)
         }

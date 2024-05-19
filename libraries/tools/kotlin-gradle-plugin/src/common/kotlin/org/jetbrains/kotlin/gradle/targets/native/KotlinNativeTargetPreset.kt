@@ -10,8 +10,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.compilerRunner.kotlinNativeToolchainEnabled
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
@@ -44,7 +44,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
     protected abstract fun instantiateTarget(name: String): T
 
     override fun createTargetInternal(name: String): T {
-        if (!project.kotlinNativeToolchainEnabled) {
+        if (!project.nativeProperties.isToolchainEnabled.get()) {
             @Suppress("DEPRECATION")
             project.setupNativeCompiler(konanTarget)
         }
