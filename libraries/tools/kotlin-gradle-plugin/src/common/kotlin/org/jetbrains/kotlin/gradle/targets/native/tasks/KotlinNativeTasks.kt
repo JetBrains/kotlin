@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner.Companion.
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
@@ -219,7 +220,7 @@ abstract class AbstractKotlinNativeCompile<
     // endregion.
 
     @get:Input
-    val kotlinNativeVersion: String = project.konanVersion
+    val kotlinNativeVersion: String = project.nativeProperties.kotlinNativeVersion.get()
 
     @get:Input
     val artifactVersion = project.version.toString()
@@ -1059,7 +1060,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     val konanTarget: KonanTarget = params.konanTarget
 
     @get:Input
-    val konanVersion: String = project.konanVersion
+    val konanVersion: String = project.nativeProperties.kotlinNativeVersion.get()
 
     @Suppress("unused")
     @get:Input

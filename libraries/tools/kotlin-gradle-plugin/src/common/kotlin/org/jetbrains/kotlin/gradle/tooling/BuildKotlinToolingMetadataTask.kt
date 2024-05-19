@@ -12,8 +12,8 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.GeneratedSubclass
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -187,7 +187,7 @@ private fun buildNativeExtrasOrNull(target: KotlinTarget): KotlinToolingMetadata
     if (target !is KotlinNativeTarget) return null
     return KotlinToolingMetadata.ProjectTargetMetadata.NativeExtras(
         konanTarget = target.konanTarget.name,
-        konanVersion = target.project.konanVersion,
+        konanVersion = target.project.nativeProperties.kotlinNativeVersion.get(),
         konanAbiVersion = KotlinAbiVersion.CURRENT.toString()
     )
 }

@@ -16,7 +16,7 @@ import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanDataDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.compilerRunner.konanVersion
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -70,7 +70,7 @@ class NativeCompilerDownloader(
         private val simpleOsName = HostManager.platformName()
 
         private fun getCompilerVersion(project: Project): String {
-            return project.konanVersion
+            return project.nativeProperties.kotlinNativeVersion.get()
         }
 
         private fun getDependencyName(project: Project): String {

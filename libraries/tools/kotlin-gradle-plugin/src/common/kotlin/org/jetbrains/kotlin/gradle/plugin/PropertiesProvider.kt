@@ -292,12 +292,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = propertyWithDeprecatedVariant(KOTLIN_NATIVE_HOME, "org.jetbrains.kotlin.native.home")
 
     /**
-     * Allows a user to override Kotlin/Native version.
-     */
-    val nativeVersion: String?
-        get() = propertyWithDeprecatedVariant("kotlin.native.version", "org.jetbrains.kotlin.native.version")
-
-    /**
      * Forces reinstalling a K/N distribution.
      *
      * The current distribution directory will be removed along with generated platform libraries and precompiled dependencies.

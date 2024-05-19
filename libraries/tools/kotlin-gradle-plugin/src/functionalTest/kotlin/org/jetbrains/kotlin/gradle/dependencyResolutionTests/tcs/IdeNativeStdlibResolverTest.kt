@@ -7,10 +7,10 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
-import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeNativeStdlibDependencyResolver
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.junit.Test
@@ -30,7 +30,7 @@ class IdeNativeStdlibResolverTest {
         val linuxX64Main = kotlin.sourceSets.getByName("linuxX64Main")
         val linuxX64Test = kotlin.sourceSets.getByName("linuxX64Test")
 
-        val stdlibCoordinates = binaryCoordinates("org.jetbrains.kotlin.native:stdlib:${project.konanVersion}")
+        val stdlibCoordinates = binaryCoordinates("org.jetbrains.kotlin.native:stdlib:${project.nativeProperties.kotlinNativeVersion.get()}")
 
         IdeNativeStdlibDependencyResolver.resolve(commonMain).assertMatches(stdlibCoordinates)
         IdeNativeStdlibDependencyResolver.resolve(commonTest).assertMatches(stdlibCoordinates)
@@ -49,7 +49,7 @@ class IdeNativeStdlibResolverTest {
         val linuxX64Main = kotlin.sourceSets.getByName("linuxX64Main")
         val linuxX64Test = kotlin.sourceSets.getByName("linuxX64Test")
 
-        val stdlibCoordinates = binaryCoordinates("org.jetbrains.kotlin.native:stdlib:${project.konanVersion}")
+        val stdlibCoordinates = binaryCoordinates("org.jetbrains.kotlin.native:stdlib:${project.nativeProperties.kotlinNativeVersion.get()}")
 
         IdeNativeStdlibDependencyResolver.resolve(linuxX64Main).assertMatches(stdlibCoordinates)
         IdeNativeStdlibDependencyResolver.resolve(linuxX64Test).assertMatches(stdlibCoordinates)
@@ -81,7 +81,7 @@ class IdeNativeStdlibResolverTest {
             linuxX64Main.dependsOn(linuxTest)
         }
 
-        val stdlibCoordinates = binaryCoordinates("org.jetbrains.kotlin.native:stdlib:${project.konanVersion}")
+        val stdlibCoordinates = binaryCoordinates("org.jetbrains.kotlin.native:stdlib:${project.nativeProperties.kotlinNativeVersion.get()}")
 
         IdeNativeStdlibDependencyResolver.resolve(linuxX64Main).assertMatches(stdlibCoordinates)
         IdeNativeStdlibDependencyResolver.resolve(linuxX64Test).assertMatches(stdlibCoordinates)
