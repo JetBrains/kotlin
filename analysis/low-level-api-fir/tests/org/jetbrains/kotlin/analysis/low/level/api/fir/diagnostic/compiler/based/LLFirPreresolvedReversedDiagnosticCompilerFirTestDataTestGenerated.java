@@ -6195,6 +6195,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
             }
 
             @Test
+            @TestMetadata("coercedInvocationKind.kt")
+            public void testCoercedInvocationKind() {
+              runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/coercedInvocationKind.kt");
+            }
+
+            @Test
             @TestMetadata("inAnonymousObject.kt")
             public void testInAnonymousObject() {
               runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/inAnonymousObject.kt");
