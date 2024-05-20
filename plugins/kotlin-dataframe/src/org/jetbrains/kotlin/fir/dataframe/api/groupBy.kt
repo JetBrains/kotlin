@@ -1,8 +1,18 @@
 package org.jetbrains.kotlin.fir.dataframe.api
 
+import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
+import org.jetbrains.kotlin.fir.dataframe.interpret
+import org.jetbrains.kotlin.fir.dataframe.loadInterpreter
+import org.jetbrains.kotlin.fir.dataframe.pluginDataFrameSchema
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeNullability
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlinx.dataframe.DATA_ROW_CLASS_ID
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.annotations.Arguments
@@ -39,6 +49,61 @@ class GroupByInto : AbstractInterpreter<Unit>() {
 
     override fun Arguments.interpret() {
         dsl.columns.add(A(name, receiver.resolvedType))
+    }
+}
+
+fun KotlinTypeFacade.groupBy(
+    groupByCall: FirFunctionCall,
+    interpreter: Interpreter<*>,
+    reporter: InterpretationErrorReporter,
+    call: FirFunctionCall
+): PluginDataFrameSchema? {
+    val groupBy = interpret(groupByCall, interpreter, reporter = reporter)?.value as? GroupBy ?: return null
+    val aggregate = call.argumentList.arguments.singleOrNull() as? FirAnonymousFunctionExpression
+    val body = aggregate?.anonymousFunction?.body ?: return null
+    val lastExpression = (body.statements.lastOrNull() as? FirReturnExpression)?.result
+    val type = lastExpression?.resolvedType
+    return if (type != session.builtinTypes.unitType) {
+        val dsl = GroupByDsl()
+        val calls = buildList {
+            body.statements.filterIsInstance<FirFunctionCall>().let { addAll(it) }
+            if (lastExpression is FirFunctionCall) add(lastExpression)
+        }
+        calls.forEach { call ->
+            val schemaProcessor = call.loadInterpreter() ?: return@forEach
+            interpret(
+                call,
+                schemaProcessor,
+                mapOf("dsl" to Interpreter.Success(dsl)),
+                reporter
+            )
+        }
+
+        // important to create FrameColumns, nullable DataRows?
+        val cols = createPluginDataFrameSchema(groupBy.keys, groupBy.moveToTop).columns() + dsl.columns.map {
+            when (it.type.classId) {
+                DATA_ROW_CLASS_ID -> {
+                    when (it.type.nullability) {
+                        ConeNullability.NULLABLE -> SimpleCol(
+                            it.name,
+                            org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation(it.type)
+                        )
+                        ConeNullability.UNKNOWN -> SimpleCol(
+                            it.name,
+                            org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation(it.type)
+                        )
+                        ConeNullability.NOT_NULL -> {
+                            val typeProjection = it.type.typeArguments[0]
+                            SimpleColumnGroup(it.name, pluginDataFrameSchema(typeProjection).columns(), anyRow)
+                        }
+                    }
+                }
+                else -> SimpleCol(it.name, org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation(it.type))
+            }
+        }
+        PluginDataFrameSchema(cols)
+    } else {
+        null
     }
 }
 
