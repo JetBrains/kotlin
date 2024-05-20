@@ -158,7 +158,7 @@ fun convertAnalyzedFirToIr(
     analysisResults: FirResult,
     environment: ModuleCompilerEnvironment
 ): ModuleCompilerIrBackendInput {
-    val extensions = JvmFir2IrExtensions(input.configuration, JvmIrDeserializerImpl(), JvmIrMangler)
+    val extensions = JvmFir2IrExtensions(input.configuration, JvmIrDeserializerImpl())
 
     val irGenerationExtensions =
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {

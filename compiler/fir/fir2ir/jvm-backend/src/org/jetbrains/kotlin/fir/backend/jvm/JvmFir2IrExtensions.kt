@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOverridabilityCondition
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 class JvmFir2IrExtensions(
     configuration: CompilerConfiguration,
     private val irDeserializer: JvmIrDeserializer,
-    private val mangler: KotlinMangler.IrMangler,
 ) : Fir2IrExtensions, JvmGeneratorExtensions {
     private var irBuiltIns: IrBuiltIns? = null
 
@@ -80,13 +78,6 @@ class JvmFir2IrExtensions(
         IrFactoryImpl.createSpecialAnnotationClass(fqn, parent).apply {
             specialAnnotationConstructors.add(constructors.single())
         }
-
-    override fun registerDeclarations(symbolTable: SymbolTable) {
-        val signatureComputer = PublicIdSignatureComputer(mangler)
-        specialAnnotationConstructors.forEach { constructor ->
-            symbolTable.declareConstructorWithSignature(signatureComputer.composePublicIdSignature(constructor, false), constructor.symbol)
-        }
-    }
 
     override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue? {
         return null

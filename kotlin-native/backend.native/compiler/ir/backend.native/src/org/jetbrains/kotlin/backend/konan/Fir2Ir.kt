@@ -51,7 +51,6 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
     override val parametersAreAssignable: Boolean get() = false
     override val externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
     override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents) = false
-    override fun registerDeclarations(symbolTable: SymbolTable) {}
     override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope) = null
     override fun hasBackingField(property: FirProperty, session: FirSession): Boolean =
             if (property.isExternalObjCClassProperty(session))

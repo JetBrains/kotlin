@@ -85,7 +85,6 @@ fun FirResult.convertToIrAndActualize(
     require(outputs.isNotEmpty()) { "No modules found" }
 
     val commonMemberStorage = Fir2IrCommonMemberStorage(firMangler)
-    fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
 
     val firProvidersWithGeneratedFiles: MutableMap<FirModuleData, FirProviderWithGeneratedFiles> = mutableMapOf()
     for (firOutput in outputs) {

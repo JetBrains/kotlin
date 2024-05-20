@@ -205,7 +205,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val fir2IrExtensions = JvmFir2IrExtensions(
             configuration,
             JvmIrDeserializerImpl(),
-            JvmIrMangler
         )
 
         val fir2IrResult = analysisResult.firResult.convertToIrAndActualizeForJvm(

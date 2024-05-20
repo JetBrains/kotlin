@@ -78,9 +78,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -155,7 +153,7 @@ internal class KaFirCompilerFacility(
 
         val irGeneratorExtensions = IrGenerationExtension.getInstances(project)
 
-        val dependencyFir2IrResults = dependencyFiles
+        dependencyFiles
             .map(::getFullyResolvedFirFile)
             .groupBy { it.llFirSession }
             .map { (dependencySession, dependencyFiles) ->
@@ -166,7 +164,7 @@ internal class KaFirCompilerFacility(
                         put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, dependencySession.languageVersionSettings)
                     }
 
-                val dependencyFir2IrExtensions = JvmFir2IrExtensions(dependencyConfiguration, jvmIrDeserializer, JvmIrMangler)
+                val dependencyFir2IrExtensions = JvmFir2IrExtensions(dependencyConfiguration, jvmIrDeserializer)
                 runFir2Ir(
                     dependencySession, dependencyFiles, dependencyFir2IrExtensions,
                     diagnosticReporter, dependencyConfiguration, irGeneratorExtensions
@@ -179,10 +177,9 @@ internal class KaFirCompilerFacility(
                 put(CommonConfigurationKeys.USE_FIR, true)
             }
 
-        val jvmGeneratorExtensions = JvmFir2IrExtensions(targetConfiguration, jvmIrDeserializer, JvmIrMangler)
+        val jvmGeneratorExtensions = JvmFir2IrExtensions(targetConfiguration, jvmIrDeserializer)
         val targetFir2IrExtensions = CompilerFacilityFir2IrExtensions(
             jvmGeneratorExtensions,
-            dependencyFir2IrResults,
             codeFragmentMappings?.injectedValueProvider
         )
 
@@ -463,21 +460,10 @@ internal class KaFirCompilerFacility(
 
     private class CompilerFacilityFir2IrExtensions(
         delegate: Fir2IrExtensions,
-        private val dependencyFir2IrResults: List<Fir2IrActualizedResult>,
         private val injectedValueProvider: InjectedSymbolProvider?
     ) : Fir2IrExtensions by delegate {
         override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue? {
             return injectedValueProvider?.invoke(calleeReference, conversionScope)
-        }
-
-        override fun registerDeclarations(symbolTable: SymbolTable) {
-            val visitor = DeclarationRegistrarVisitor(symbolTable)
-
-            for (dependencyFir2IrResult in dependencyFir2IrResults) {
-                for (dependencyFile in dependencyFir2IrResult.irModuleFragment.files) {
-                    dependencyFile.acceptVoid(visitor)
-                }
-            }
         }
     }
 
@@ -646,69 +632,6 @@ private class IrDeclarationPatchingVisitor(private val mapping: Map<FirDeclarati
                 patcher(correctedIrSymbol)
             }
         }
-    }
-}
-
-private class DeclarationRegistrarVisitor(private val consumer: SymbolTable) : IrElementVisitorVoid {
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitClass(declaration: IrClass) {
-        register(declaration, consumer::declareClassIfNotExists)
-        super.visitClass(declaration)
-    }
-
-    override fun visitTypeAlias(declaration: IrTypeAlias) {
-        register(declaration, consumer::declareTypeAliasIfNotExists)
-        super.visitTypeAlias(declaration)
-    }
-
-    override fun visitScript(declaration: IrScript) {
-        register(declaration, consumer::declareScript)
-        super.visitScript(declaration)
-    }
-
-    override fun visitTypeParameter(declaration: IrTypeParameter) {
-        if (declaration.parent is IrClass) {
-            register(declaration, consumer::declareGlobalTypeParameter)
-        }
-
-        super.visitTypeParameter(declaration)
-    }
-
-    override fun visitConstructor(declaration: IrConstructor) {
-        register(declaration, consumer::declareConstructorIfNotExists)
-        super.visitConstructor(declaration)
-    }
-
-    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        register(declaration, consumer::declareSimpleFunctionIfNotExists)
-        super.visitSimpleFunction(declaration)
-    }
-
-    override fun visitProperty(declaration: IrProperty) {
-        register(declaration, consumer::declarePropertyIfNotExists)
-        super.visitProperty(declaration)
-    }
-
-    override fun visitField(declaration: IrField) {
-        register(declaration, consumer::declareField)
-        super.visitField(declaration)
-    }
-
-    override fun visitEnumEntry(declaration: IrEnumEntry) {
-        register(declaration, consumer::declareEnumEntry)
-        super.visitEnumEntry(declaration)
-    }
-
-    private inline fun <reified S : IrSymbol, D : IrDeclaration> register(
-        declaration: D,
-        registrar: (IdSignature, () -> S, (S) -> D) -> Unit,
-    ) {
-        val symbol = declaration.symbol as S
-        val signature = symbol.signature ?: return
-        registrar(signature, { symbol }, { declaration })
     }
 }
 

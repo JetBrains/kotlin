@@ -69,7 +69,7 @@ class Fir2IrJvmResultsConverter(
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val irMangler = JvmIrMangler
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), irMangler)
+        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
 
         // Create and initialize the module and its dependencies
         val project = compilerConfigurationProvider.getProject(module)
