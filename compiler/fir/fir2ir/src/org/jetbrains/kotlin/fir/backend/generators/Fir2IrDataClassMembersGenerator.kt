@@ -164,7 +164,7 @@ class Fir2IrDataClassMembersGenerator(
             otherParameterNeeded: Boolean = false,
             isOperator: Boolean = false,
         ): IrSimpleFunction {
-            val symbol = c.declarationStorage.createFunctionSymbol(signature = null)
+            val symbol = c.declarationStorage.createFunctionSymbol()
             return c.irFactory.createSimpleFunction(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,

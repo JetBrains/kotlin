@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -132,7 +131,6 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     }
 
     private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
-        symbolTable.enterScope(this)
         val typeArguments = typeParameters.map {
             val typeParameter = classifierStorage.getIrTypeParameterSymbol(it.symbol, ConversionTypeOrigin.DEFAULT)
             IrSimpleTypeImpl(typeParameter, hasQuestionMark = false, emptyList(), emptyList())
@@ -142,7 +140,6 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
             thisType = IrSimpleTypeImpl(symbol, hasQuestionMark = false, typeArguments, emptyList()),
             thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
         )
-        symbolTable.leaveScope(this)
     }
 
     private fun IrClass.declareSupertypes(klass: FirClass) {
@@ -404,42 +401,31 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
 
     fun createIrClassForNotFoundClass(classLikeLookupTag: ConeClassLikeLookupTag): IrClass {
         val classId = classLikeLookupTag.classId
-        val signature = IdSignature.CommonSignature(
-            packageFqName = classId.packageFqName.asString(),
-            declarationFqName = classId.relativeClassName.asString(),
-            id = 0,
-            mask = 0,
-            description = null,
-        )
-
         val parentId = classId.outerClassId
         val parentClass = parentId?.let { createIrClassForNotFoundClass(it.toLookupTag()) }
         val irParent = parentClass ?: declarationStorage.getIrExternalPackageFragment(
             classId.packageFqName, session.moduleData.dependencies.first()
         )
 
-        return symbolTable.declareClassIfNotExists(signature, { IrClassSymbolImpl(signature = signature) }) {
-            irFactory.createClass(
-                startOffset = UNDEFINED_OFFSET,
-                endOffset = UNDEFINED_OFFSET,
-                origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-                name = classId.shortClassName,
-                visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
-                symbol = it,
-                kind = ClassKind.CLASS,
-                modality = Modality.FINAL,
-            ).apply {
-                setParent(irParent)
-                addDeclarationToParent(this, irParent)
-                typeParameters = emptyList()
-                thisReceiver = declareThisReceiverParameter(
-                    c,
-                    thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
-                    thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER,
-                )
-                superTypes = listOf(builtins.anyType)
-            }
+        return irFactory.createClass(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
+            name = classId.shortClassName,
+            visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
+            symbol = IrClassSymbolImpl(),
+            kind = ClassKind.CLASS,
+            modality = Modality.FINAL,
+        ).apply {
+            setParent(irParent)
+            addDeclarationToParent(this, irParent)
+            typeParameters = emptyList()
+            thisReceiver = declareThisReceiverParameter(
+                c,
+                thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
+                thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER,
+            )
+            superTypes = listOf(builtins.anyType)
         }
     }
-
 }

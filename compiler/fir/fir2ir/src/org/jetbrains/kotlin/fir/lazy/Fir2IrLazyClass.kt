@@ -131,7 +131,6 @@ class Fir2IrLazyClass(
     }
 
     override var thisReceiver: IrValueParameter? by lazyVar(lock) {
-        symbolTable.enterScope(this)
         val typeArguments = fir.typeParameters.map {
             IrSimpleTypeImpl(
                 classifierStorage.getCachedIrTypeParameter(it.symbol.fir)!!.symbol,
@@ -143,7 +142,6 @@ class Fir2IrLazyClass(
             thisType = IrSimpleTypeImpl(symbol, hasQuestionMark = false, arguments = typeArguments, annotations = emptyList()),
             thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
         )
-        symbolTable.leaveScope(this)
         receiver
     }
 

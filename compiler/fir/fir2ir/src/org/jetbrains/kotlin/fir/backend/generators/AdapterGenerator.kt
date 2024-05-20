@@ -209,7 +209,6 @@ internal class AdapterGenerator(
             isInfix = firMemberAdaptee.isInfix,
             isExternal = false,
         ).also { irAdapterFunction ->
-            symbolTable.enterScope(irAdapterFunction)
             irAdapterFunction.dispatchReceiverParameter = null
             val boundReceiver = boundDispatchReceiver ?: boundExtensionReceiver
             when {
@@ -236,8 +235,6 @@ internal class AdapterGenerator(
                     IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE
                 )
             }
-            symbolTable.leaveScope(irAdapterFunction)
-
             irAdapterFunction.parent = conversionScope.parent()!!
         }
     }
@@ -646,7 +643,6 @@ internal class AdapterGenerator(
             isInfix = false,
             isExternal = false,
         ).also { irAdapterFunction ->
-            symbolTable.enterScope(irAdapterFunction)
             irAdapterFunction.extensionReceiverParameter = createAdapterParameter(
                 irAdapterFunction,
                 Name.identifier("\$callee"),
@@ -671,7 +667,6 @@ internal class AdapterGenerator(
                     statements.add(IrReturnImpl(startOffset, endOffset, builtins.nothingType, irAdapterFunction.symbol, irCall))
                 }
             }
-            symbolTable.leaveScope(irAdapterFunction)
             irAdapterFunction.parent = conversionScope.parent()!!
         }
     }
@@ -769,7 +764,6 @@ internal class AdapterGenerator(
             isInfix = false,
             isExternal = false,
         ).also { irAdapterFunction ->
-            symbolTable.enterScope(irAdapterFunction)
             irAdapterFunction.dispatchReceiverParameter = null
             irAdapterFunction.extensionReceiverParameter = null
             val irFunctionParameter = createAdapterParameter(
@@ -798,7 +792,6 @@ internal class AdapterGenerator(
                     )
                 )
             )
-            symbolTable.leaveScope(irAdapterFunction)
             irAdapterFunction.parent = conversionScope.parent()!!
         }
     }
