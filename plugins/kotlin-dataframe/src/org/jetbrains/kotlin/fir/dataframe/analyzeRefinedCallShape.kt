@@ -138,7 +138,7 @@ fun KotlinTypeFacade.groupBy(
         }
 
         // important to create FrameColumns?
-        val cols = createPluginDataFrameSchema(groupBy.keys).columns() + dsl.columns.map { SimpleCol(it.name, TypeApproximation(it.type)) }
+        val cols = createPluginDataFrameSchema(groupBy.keys, groupBy.moveToTop).columns() + dsl.columns.map { SimpleCol(it.name, TypeApproximation(it.type)) }
         PluginDataFrameSchema(cols)
     } else {
         null

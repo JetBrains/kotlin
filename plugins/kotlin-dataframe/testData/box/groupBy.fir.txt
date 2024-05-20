@@ -72,6 +72,192 @@ FILE: groupBy.kt
             )
         }
         )
+        lval nested: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_13>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/group|<R|Record|, R|it(kotlin/Comparable<*> & java/io/Serializable)|>(<L> = group@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<Record>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<Record>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<it(kotlin/Comparable<*> & java/io/Serializable)>| <inline=NoInline>  {
+            ^ (this@R|special/anonymous|, this@R|special/anonymous|.R|/a|).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl.and: R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<C>|>|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(this@R|special/anonymous|.R|/b|)
+        }
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupClause<Record, it(kotlin/Comparable<*> & java/io/Serializable)>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_13>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupClause<Record, it(kotlin/Comparable<*> & java/io/Serializable)>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_13>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class Into_13I : R|kotlin/Any| {
+                public abstract val c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
+
+                public constructor(): R|<local>/Into_13I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Into_13I>|.c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Into_13I>|.c: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/C_511>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/C_511>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class C_511 : R|kotlin/Any| {
+                public abstract val b: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public abstract val a: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public constructor(): R|<local>/C_511|
+
+            }
+
+            local final class Scope1 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|.b: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/C_511>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|.a: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/C_511>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public constructor(): R|<local>/Scope1|
+
+            }
+
+            local abstract class Into_13 : R|<local>/Into_13I| {
+                public abstract var scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
+
+                public abstract var scope1: R|<local>/Scope1|
+                    public get(): R|<local>/Scope1|
+                    public set(value: R|<local>/Scope1|): R|kotlin/Unit|
+
+                public constructor(): R|<local>/Into_13|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/into|<R|Record|, R|it(kotlin/Comparable<*> & java/io/Serializable)|>(String(c))
+        }
+        )
+        lval df2: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_94>| = R|<local>/nested|.R|org/jetbrains/kotlinx/dataframe/api/groupBy|<R|<local>/Into_13|>(<L> = groupBy@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Into_13>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Into_13>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<*>| <inline=NoInline>  {
+            ^ (this@R|/box|, (this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.c|).R|<local>/Scope1.a|
+        }
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupBy<<local>/Into_13, <local>/Into_13>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_94>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupBy<<local>/Into_13, <local>/Into_13>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_94>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class Aggregate_94I : R|kotlin/Any| {
+                public abstract val ff: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public abstract val a: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public constructor(): R|<local>/Aggregate_94I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aggregate_94I>|.ff: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Aggregate_94I>|.ff: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aggregate_94I>|.a: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Aggregate_94I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class Aggregate_94 : R|<local>/Aggregate_94I| {
+                public abstract var scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
+
+                public constructor(): R|<local>/Aggregate_94|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/aggregate|<R|<local>/Into_13|, R|org/jetbrains/kotlinx/dataframe/aggregation/NamedValue|>(<L> = aggregate@fun R|org/jetbrains/kotlinx/dataframe/aggregation/AggregateGroupedDsl<<local>/Into_13>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/aggregation/AggregateGroupedDsl<<local>/Into_13>|): R|org/jetbrains/kotlinx/dataframe/aggregation/NamedValue| <inline=NoInline>  {
+                ^ (this@R|special/anonymous|, String(123)).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/aggregation/AggregateGroupedDsl.into: R|org/jetbrains/kotlinx/dataframe/aggregation/NamedValue|>|<R|kotlin/String|>(String(ff))
+            }
+            )
+        }
+        )
+        (this@R|/box|, R|<local>/df2|).R|<local>/Scope0.a|
+        lval df3: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_94>| = R|<local>/nested|.R|org/jetbrains/kotlinx/dataframe/api/groupBy|<R|<local>/Into_13|>(Boolean(false), <L> = groupBy@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Into_13>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Into_13>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<*>| <inline=NoInline>  {
+            ^ (this@R|/box|, (this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.c|).R|<local>/Scope1.a|
+        }
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupBy<<local>/Into_13, <local>/Into_13>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_94>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupBy<<local>/Into_13, <local>/Into_13>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_94>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class Aggregate_94I : R|kotlin/Any| {
+                public abstract val ff: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public abstract val c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_241>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_241>|
+
+                public constructor(): R|<local>/Aggregate_94I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aggregate_94I>|.ff: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Aggregate_94I>|.ff: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aggregate_94I>|.c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_241>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_241>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Aggregate_94I>|.c: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/C_241>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/C_241>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class C_241 : R|kotlin/Any| {
+                public abstract val a: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public constructor(): R|<local>/C_241|
+
+            }
+
+            local final class Scope1 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_241>|.a: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/C_241>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public constructor(): R|<local>/Scope1|
+
+            }
+
+            local abstract class Aggregate_94 : R|<local>/Aggregate_94I| {
+                public abstract var scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
+
+                public abstract var scope1: R|<local>/Scope1|
+                    public get(): R|<local>/Scope1|
+                    public set(value: R|<local>/Scope1|): R|kotlin/Unit|
+
+                public constructor(): R|<local>/Aggregate_94|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/aggregate|<R|<local>/Into_13|, R|org/jetbrains/kotlinx/dataframe/aggregation/NamedValue|>(<L> = aggregate@fun R|org/jetbrains/kotlinx/dataframe/aggregation/AggregateGroupedDsl<<local>/Into_13>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/aggregation/AggregateGroupedDsl<<local>/Into_13>|): R|org/jetbrains/kotlinx/dataframe/aggregation/NamedValue| <inline=NoInline>  {
+                ^ (this@R|special/anonymous|, String(123)).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/aggregation/AggregateGroupedDsl.into: R|org/jetbrains/kotlinx/dataframe/aggregation/NamedValue|>|<R|kotlin/String|>(String(ff))
+            }
+            )
+        }
+        )
+        (this@R|/box|, (this@R|/box|, R|<local>/df3|).R|<local>/Scope0.c|).R|<local>/Scope1.a|
         ^box String(OK)
     }
 FILE: __GENERATED DECLARATIONS__.kt

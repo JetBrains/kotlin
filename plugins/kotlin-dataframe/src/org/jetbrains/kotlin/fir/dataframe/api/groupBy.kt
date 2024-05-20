@@ -8,13 +8,11 @@ import org.jetbrains.kotlinx.dataframe.annotations.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.annotations.Arguments
 import org.jetbrains.kotlinx.dataframe.annotations.Interpreter
 import org.jetbrains.kotlinx.dataframe.annotations.Present
-import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.dataFrame
-import org.jetbrains.kotlinx.dataframe.plugin.type
 
 class GroupBy(val df: PluginDataFrameSchema, val keys: List<ColumnWithPathApproximation>, val moveToTop: Boolean)
 
@@ -44,7 +42,7 @@ class GroupByInto : AbstractInterpreter<Unit>() {
     }
 }
 
-fun KotlinTypeFacade.createPluginDataFrameSchema(keys: List<ColumnWithPathApproximation>): PluginDataFrameSchema {
+fun KotlinTypeFacade.createPluginDataFrameSchema(keys: List<ColumnWithPathApproximation>, moveToTop: Boolean): PluginDataFrameSchema {
     fun addToHierarchy(
         path: List<String>,
         column: SimpleCol,
@@ -77,11 +75,16 @@ fun KotlinTypeFacade.createPluginDataFrameSchema(keys: List<ColumnWithPathApprox
 
     var rootColumns: List<SimpleCol> = emptyList()
 
-    for (key in keys) {
-        val path = key.path.path
-        val column = key.column
-        rootColumns = addToHierarchy(path, column, rootColumns)
+    if (moveToTop) {
+        rootColumns = keys.map { it.column }
+    } else {
+        for (key in keys) {
+            val path = key.path.path
+            val column = key.column
+            rootColumns = addToHierarchy(path, column, rootColumns)
+        }
     }
+
 
     return PluginDataFrameSchema(rootColumns)
 }
