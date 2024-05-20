@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firVisitorType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
@@ -19,7 +19,7 @@ internal class TransformerPrinter(
 ) : AbstractTransformerPrinter<Element, Field>(printer) {
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(firVisitorType.withArgs(AbstractFirTreeBuilder.baseFirElement, visitorDataType))
+        get() = listOf(firVisitorType.withArgs(FirTreeBuilder.baseFirElement, visitorDataType))
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = listOf(dataTypeVariable)

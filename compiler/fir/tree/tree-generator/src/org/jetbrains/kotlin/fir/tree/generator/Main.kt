@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.printer.*
 import org.jetbrains.kotlin.generators.tree.printer.TreeGenerator
@@ -21,7 +20,7 @@ fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }
         ?: File("../../tree/gen").canonicalFile
     NodeConfigurator.configureFields()
-    val model = Model(FirTreeBuilder.elements, AbstractFirTreeBuilder.baseFirElement)
+    val model = Model(FirTreeBuilder.elements, FirTreeBuilder.baseFirElement)
 
     TreeGenerator(generationPath, "compiler/fir/tree/tree-generator/Readme.md").run {
         generateTree(

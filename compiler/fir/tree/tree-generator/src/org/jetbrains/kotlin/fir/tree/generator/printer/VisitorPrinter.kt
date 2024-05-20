@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firVisitorType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
@@ -37,6 +37,6 @@ internal class VisitorPrinter(
     override fun parentInVisitor(element: Element): Element? = when {
         element.isRootElement -> null
         visitSuperTypeByDefault -> element.parentInVisitor
-        else -> AbstractFirTreeBuilder.baseFirElement
+        else -> FirTreeBuilder.baseFirElement
     }
 }

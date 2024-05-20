@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.*
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
@@ -31,7 +30,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 element = element,
                 transformerClass = firTransformerType,
                 implementation = "transformer.transform${element.name}(this, data)",
-                returnType = TypeVariable("E", listOf(AbstractFirTreeBuilder.baseFirElement)),
+                returnType = TypeVariable("E", listOf(FirTreeBuilder.baseFirElement)),
                 treeName = treeName,
             )
 
@@ -95,7 +94,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 printTransformChildrenMethod(
                     element = element,
                     transformerClass = firTransformerType,
-                    returnType = AbstractFirTreeBuilder.baseFirElement,
+                    returnType = FirTreeBuilder.baseFirElement,
                 )
                 println()
             }
