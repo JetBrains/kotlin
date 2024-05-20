@@ -130,6 +130,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("join_1.kt")
+  public void testJoin_1() {
+    runTest("testData/box/join_1.kt");
+  }
+
+  @Test
   @TestMetadata("lowerGeneratedImplicitReceiver.kt")
   public void testLowerGeneratedImplicitReceiver() {
     runTest("testData/box/lowerGeneratedImplicitReceiver.kt");

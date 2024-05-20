@@ -22,8 +22,9 @@ fun box(): String {
 
     val df2 = df.explode { achievements }
 
-    df2
+    val df3 = df2
         .filter { achievements.preStage != null }
         .join(df2) { achievements.preStage.match(right.achievements.id) }
+    df3.achievements.name1
     return "OK"
 }

@@ -1186,7 +1186,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                             CALL 'public final fun <get-achievements> (): org.jetbrains.kotlinx.dataframe.DataColumn<org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291>> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.DataColumn<org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291>> origin=GET_PROPERTY
                               $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 origin=null
                               $receiver: GET_VAR '$this$explode: org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.ColumnsSelectionDsl<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01> origin=null
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+      VAR name:df3 type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47> [val]
         CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47> origin=null
           <T>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77>
           <R>: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47>
@@ -1237,6 +1237,10 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:_id1 visibility:public modality:ABSTRACT [val]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_id1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:_id1 visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:achievements visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-achievements> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:achievements visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.String
@@ -1552,10 +1556,492 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-name>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> origin=null
                               columnName: CONST String type=kotlin.String value="name"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:achievements visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:achievements type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-achievements> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>) returnType:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      annotations:
+                        JvmName(name = "ReadJson_47I_achievements")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:achievements visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> from='public final fun <get-achievements> (): org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-achievements>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> origin=null
+                              name: CONST String type=kotlin.String value="achievements"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:achievements visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:achievements type:org.jetbrains.kotlinx.dataframe.columns.ColumnGroup<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-achievements> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>) returnType:org.jetbrains.kotlinx.dataframe.columns.ColumnGroup<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      annotations:
+                        JvmName(name = "ReadJson_47I_achievements")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:achievements visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.columns.ColumnGroup<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> from='public final fun <get-achievements> (): org.jetbrains.kotlinx.dataframe.columns.ColumnGroup<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.columns.ColumnGroup<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.columns.ColumnGroup<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-achievements>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> origin=null
+                              columnName: CONST String type=kotlin.String value="achievements"
                   CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                       INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope0 modality:FINAL visibility:local superTypes:[kotlin.Any]'
+                  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+                    overridden:
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                    VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+                  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+                    overridden:
+                      public open fun hashCode (): kotlin.Int declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+                    overridden:
+                      public open fun toString (): kotlin.String declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                CLASS CLASS name:Achievements_541 modality:ABSTRACT visibility:local superTypes:[kotlin.Any]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541 [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Achievements_541 modality:ABSTRACT visibility:local superTypes:[kotlin.Any]'
+                  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+                    overridden:
+                      public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                    VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+                  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+                    overridden:
+                      public open fun hashCode (): kotlin.Int declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+                    overridden:
+                      public open fun toString (): kotlin.String declared in kotlin.Any
+                    $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-desc> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.String
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-desc1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.String
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc1 visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-hidden> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Boolean
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-hidden1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Boolean
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden1 visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.String
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.String
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name1 visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-order1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order1 visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-preStage> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int?
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-preStage1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int?
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage1 visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-reward> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward1 visibility:public modality:ABSTRACT [val]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-reward1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward1 visibility:public modality:ABSTRACT [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
+                CLASS CLASS name:Scope1 modality:FINAL visibility:local superTypes:[kotlin.Any]
+                  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:id visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-id> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.Int
+                      annotations:
+                        JvmName(name = "Achievements_541_id")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:id visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int from='public final fun <get-id> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-id>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="id"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:id visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:id type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-id> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      annotations:
+                        JvmName(name = "Achievements_541_id")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:id visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> from='public final fun <get-id> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-id>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="id"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:hidden1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:hidden1 type:kotlin.Boolean visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-hidden1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.Boolean
+                      annotations:
+                        JvmName(name = "Achievements_541_hidden1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:hidden1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Boolean from='public final fun <get-hidden1> (): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-hidden1>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="hidden1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:hidden1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:hidden1 type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-hidden1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean>
+                      annotations:
+                        JvmName(name = "Achievements_541_hidden1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:hidden1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean> from='public final fun <get-hidden1> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-hidden1>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="hidden1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:name1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:name1 type:kotlin.String visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-name1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.String
+                      annotations:
+                        JvmName(name = "Achievements_541_name1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:name1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.String from='public final fun <get-name1> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-name1>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="name1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:name1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:name1 type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-name1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                      annotations:
+                        JvmName(name = "Achievements_541_name1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:name1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-name1> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-name1>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="name1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:reward1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:reward1 type:kotlin.Int visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-reward1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.Int
+                      annotations:
+                        JvmName(name = "Achievements_541_reward1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:reward1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int from='public final fun <get-reward1> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-reward1>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="reward1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:reward1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:reward1 type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-reward1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      annotations:
+                        JvmName(name = "Achievements_541_reward1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:reward1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> from='public final fun <get-reward1> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-reward1>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="reward1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:desc1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:desc1 type:kotlin.String visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-desc1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.String
+                      annotations:
+                        JvmName(name = "Achievements_541_desc1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:desc1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.String from='public final fun <get-desc1> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-desc1>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="desc1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:desc1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:desc1 type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-desc1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                      annotations:
+                        JvmName(name = "Achievements_541_desc1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:desc1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-desc1> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-desc1>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="desc1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:reward visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:reward type:kotlin.Int visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-reward> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.Int
+                      annotations:
+                        JvmName(name = "Achievements_541_reward")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:reward visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int from='public final fun <get-reward> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-reward>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="reward"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:reward visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:reward type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-reward> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      annotations:
+                        JvmName(name = "Achievements_541_reward")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:reward visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> from='public final fun <get-reward> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-reward>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="reward"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:order visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:order type:kotlin.Int visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-order> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.Int
+                      annotations:
+                        JvmName(name = "Achievements_541_order")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:order visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int from='public final fun <get-order> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-order>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="order"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:order visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:order type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-order> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      annotations:
+                        JvmName(name = "Achievements_541_order")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:order visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> from='public final fun <get-order> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-order>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="order"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:name visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-name> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.String
+                      annotations:
+                        JvmName(name = "Achievements_541_name")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:name visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.String from='public final fun <get-name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-name>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="name"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:name visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:name type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-name> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                      annotations:
+                        JvmName(name = "Achievements_541_name")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:name visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-name> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-name>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="name"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:order1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:order1 type:kotlin.Int visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-order1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.Int
+                      annotations:
+                        JvmName(name = "Achievements_541_order1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:order1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int from='public final fun <get-order1> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-order1>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="order1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:order1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:order1 type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-order1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                      annotations:
+                        JvmName(name = "Achievements_541_order1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:order1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> from='public final fun <get-order1> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-order1>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="order1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:hidden visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:hidden type:kotlin.Boolean visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-hidden> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.Boolean
+                      annotations:
+                        JvmName(name = "Achievements_541_hidden")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:hidden visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Boolean from='public final fun <get-hidden> (): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-hidden>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="hidden"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:hidden visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:hidden type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-hidden> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean>
+                      annotations:
+                        JvmName(name = "Achievements_541_hidden")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:hidden visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean> from='public final fun <get-hidden> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Boolean>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-hidden>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="hidden"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:preStage1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:preStage1 type:kotlin.Int? visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-preStage1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.Int?
+                      annotations:
+                        JvmName(name = "Achievements_541_preStage1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:preStage1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int? from='public final fun <get-preStage1> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.Int? origin=CAST typeOperand=kotlin.Int?
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-preStage1>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="preStage1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:preStage1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:preStage1 type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-preStage1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?>
+                      annotations:
+                        JvmName(name = "Achievements_541_preStage1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:preStage1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> from='public final fun <get-preStage1> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-preStage1>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="preStage1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:preStage visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:preStage type:kotlin.Int? visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-preStage> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.Int?
+                      annotations:
+                        JvmName(name = "Achievements_541_preStage")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:preStage visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int? from='public final fun <get-preStage> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.Int? origin=CAST typeOperand=kotlin.Int?
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-preStage>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="preStage"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:preStage visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:preStage type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-preStage> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?>
+                      annotations:
+                        JvmName(name = "Achievements_541_preStage")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:preStage visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> from='public final fun <get-preStage> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-preStage>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="preStage"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:desc visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:desc type:kotlin.String visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-desc> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:kotlin.String
+                      annotations:
+                        JvmName(name = "Achievements_541_desc")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:desc visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=kotlin.String from='public final fun <get-desc> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-desc>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              name: CONST String type=kotlin.String value="desc"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:desc visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:desc type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-desc> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                      annotations:
+                        JvmName(name = "Achievements_541_desc")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:desc visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> from='public final fun <get-desc> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1.<get-desc>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=null
+                              columnName: CONST String type=kotlin.String value="desc"
+                  CONSTRUCTOR GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] visibility:public <> () returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1 [primary]
+                    BLOCK_BODY
+                      DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+                      INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Scope1 modality:FINAL visibility:local superTypes:[kotlin.Any]'
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                     overridden:
                       public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -1603,6 +2089,14 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       correspondingProperty: PROPERTY FAKE_OVERRIDE name:_id1 visibility:public modality:ABSTRACT [fake_override,val]
                       overridden:
                         public abstract fun <get-_id1> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
+                  PROPERTY FAKE_OVERRIDE name:achievements visibility:public modality:ABSTRACT [fake_override,val]
+                    overridden:
+                      public abstract achievements: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
+                    FUN FAKE_OVERRIDE name:<get-achievements> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> [fake_override]
+                      correspondingProperty: PROPERTY FAKE_OVERRIDE name:achievements visibility:public modality:ABSTRACT [fake_override,val]
+                      overridden:
+                        public abstract fun <get-achievements> (): org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
                     overridden:
@@ -1676,6 +2170,14 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope0 visibility:public modality:ABSTRACT [var]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47
                       VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-scope1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47) returnType:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47
+                    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-scope1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47, <set-?>:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1) returnType:kotlin.Unit
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:scope1 visibility:public modality:ABSTRACT [var]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47
+                      VALUE_PARAMETER name:<set-?> index:0 type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77>): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47> declared in org.jetbrains.kotlinx.dataframe.box'
                   CALL 'public final fun join <A, B> (other: org.jetbrains.kotlinx.dataframe.DataFrame<B of org.jetbrains.kotlinx.dataframe.api.join>, type: org.jetbrains.kotlinx.dataframe.api.JoinType, selector: @[ExtensionFunctionType] kotlin.Function2<org.jetbrains.kotlinx.dataframe.api.JoinDsl<A of org.jetbrains.kotlinx.dataframe.api.join, B of org.jetbrains.kotlinx.dataframe.api.join>, org.jetbrains.kotlinx.dataframe.ColumnsContainer<A of org.jetbrains.kotlinx.dataframe.api.join>, org.jetbrains.kotlinx.dataframe.columns.ColumnsResolver<*>>?): org.jetbrains.kotlinx.dataframe.DataFrame<A of org.jetbrains.kotlinx.dataframe.api.join> declared in org.jetbrains.kotlinx.dataframe.api' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47> origin=null
                     <A>: org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77
@@ -1702,5 +2204,11 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                                   $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 origin=null
                                   $receiver: CALL 'public abstract fun <get-right> (): org.jetbrains.kotlinx.dataframe.DataFrame<B of org.jetbrains.kotlinx.dataframe.api.JoinDsl> declared in org.jetbrains.kotlinx.dataframe.api.JoinDsl' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77> origin=GET_PROPERTY
                                     $this: GET_VAR '$this$join: org.jetbrains.kotlinx.dataframe.api.JoinDsl<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77, org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.<anonymous>' type=org.jetbrains.kotlinx.dataframe.api.JoinDsl<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77, org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun <get-name1> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1' type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=GET_PROPERTY
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1' type=org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope1 origin=null
+          $receiver: CALL 'public final fun <get-achievements> (): org.jetbrains.kotlinx.dataframe.columns.ColumnGroup<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.columns.ColumnGroup<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> origin=GET_PROPERTY
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0 origin=null
+            $receiver: GET_VAR 'val df3: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47> declared in org.jetbrains.kotlinx.dataframe.box' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47> origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in org.jetbrains.kotlinx.dataframe'
         CONST String type=kotlin.String value="OK"

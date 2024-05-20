@@ -122,6 +122,9 @@ FILE: extractPluginSchemaWithUnfold.kt
                 public abstract val approximation: R|kotlin/String|
                     public get(): R|kotlin/String|
 
+                public abstract val type: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Type_501>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Type_501>|
+
                 public constructor(): R|<local>/Function_30I|
 
             }
@@ -175,7 +178,32 @@ FILE: extractPluginSchemaWithUnfold.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Function_30I>|.approximation: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Function_30I>|.type: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Type_501>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Type_501>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Function_30I>|.type: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Type_501>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Type_501>|
+
                 public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class Type_501 : R|kotlin/Any| {
+                public abstract val vararg: R|kotlin/Boolean|
+                    public get(): R|kotlin/Boolean|
+
+                public constructor(): R|<local>/Type_501|
+
+            }
+
+            local final class Scope4 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Type_501>|.vararg: R|kotlin/Boolean|
+                    public get(): R|kotlin/Boolean|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Type_501>|.vararg: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Boolean>|
+
+                public constructor(): R|<local>/Scope4|
 
             }
 
@@ -276,6 +304,10 @@ FILE: extractPluginSchemaWithUnfold.kt
                 public abstract var scope0: R|<local>/Scope0|
                     public get(): R|<local>/Scope0|
                     public set(value: R|<local>/Scope0|): R|kotlin/Unit|
+
+                public abstract var scope4: R|<local>/Scope4|
+                    public get(): R|<local>/Scope4|
+                    public set(value: R|<local>/Scope4|): R|kotlin/Unit|
 
                 public abstract var scope3: R|<local>/Scope3|
                     public get(): R|<local>/Scope3|
