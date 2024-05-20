@@ -147,7 +147,7 @@ abstract class AbstractElement<Element, Field, Implementation>(
             }
 
             val inheritedFields = inheritedFieldsByParent.map { it.second }
-            field.fromParent = true
+            field.isOverride = true
             field.updatePropertiesFromOverriddenFields(inheritedFields)
         }
 
