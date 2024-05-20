@@ -136,8 +136,7 @@ abstract class AbstractElement<Element, Field, Implementation>(
 
                     existingField.fromParent = true
                     existingField.overriddenFields += ownParentField
-                    val haveSameClass = ownParentField.typeRef.copy(nullable = false) == existingField.typeRef.copy(nullable = false)
-                    existingField.updatePropertiesFromOverriddenField(ownParentField, haveSameClass)
+                    existingField.updatePropertiesFromOverriddenField(ownParentField)
                 } else {
                     result[ownParentField.name] = ownParentField
                 }
