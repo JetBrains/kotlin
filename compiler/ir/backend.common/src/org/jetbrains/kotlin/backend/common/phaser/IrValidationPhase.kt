@@ -18,11 +18,11 @@ abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Co
     final override fun lower(irModule: IrModuleFragment) {
         val verificationMode = context.configuration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
         validateIr(context, verificationMode) {
-            validate(irModule, verificationMode, phaseName = this@IrValidationPhase.javaClass.simpleName)
+            validate(irModule, phaseName = this@IrValidationPhase.javaClass.simpleName)
         }
     }
 
-    protected open fun IrValidationContext.validate(irModule: IrModuleFragment, mode: IrVerificationMode, phaseName: String) {
+    protected open fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
         performBasicIrValidation(irModule, context.irBuiltIns, phaseName)
     }
 }
