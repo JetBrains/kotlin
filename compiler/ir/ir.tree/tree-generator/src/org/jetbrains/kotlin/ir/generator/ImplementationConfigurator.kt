@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
+import org.jetbrains.kotlin.generators.tree.StandardTypes
+import org.jetbrains.kotlin.generators.tree.Visibility
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
+import org.jetbrains.kotlin.generators.tree.isSubclassOf
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
@@ -360,7 +363,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         for (element in model.elements) {
             for (implementation in element.implementations) {
                 // Generation of implementation classes of IrMemberAccessExpression are left out for subsequent MR, as a part of KT-65773.
-                if (element == IrTree.const || element.elementAncestorsAndSelfDepthFirst().any { it == IrTree.memberAccessExpression }) {
+                if (element == IrTree.const || element.isSubclassOf(IrTree.memberAccessExpression)) {
                     implementation.doPrint = false
                 }
 

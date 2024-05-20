@@ -52,6 +52,9 @@ fun <Element : AbstractElement<Element, *, *>> Element.elementDescendantsDepthFi
 fun <Element : AbstractElement<Element, *, *>> Element.elementDescendantsAndSelfDepthFirst(): Sequence<Element> =
     sequenceOf(this) + elementDescendantsDepthFirst()
 
+fun <Element : AbstractElement<Element, *, *>> Element.isSubclassOf(other: Element): Boolean =
+    elementAncestorsAndSelfDepthFirst().any { it == other }
+
 /**
  * For each tree element, sets its [AbstractElement.baseTransformerType] to one of its parents if that parent type is used at least once as
  * a type of a field, except when that field is explicitly opted out of it via

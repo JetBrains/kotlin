@@ -121,7 +121,7 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, BuilderField
             .mapNotNullTo(mutableSetOf()) { implementation ->
                 if (!implementationPredicate(implementation)) return@mapNotNullTo null
                 if (implementation.element == element) return@mapNotNullTo null
-                val hasElementInParents = implementation.element.elementAncestorsAndSelfDepthFirst().any { it == element }
+                val hasElementInParents = implementation.element.isSubclassOf(element)
                 implementation.takeIf { hasElementInParents }
             }
     }
