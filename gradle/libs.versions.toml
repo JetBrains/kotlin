@@ -1,6 +1,6 @@
 [versions]
 dexMemberList = "4.1.1"
-dokka = "1.9.10"
+dokka = "1.9.20"
 gradle-custom-user-data = "1.12.1"
 gradle-enterprise = "3.16.2"
 gradle-plugin-publish = "1.2.1"
