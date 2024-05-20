@@ -75,6 +75,7 @@ interface KotlinTypeFacade {
     }
 
     fun KType.classId(): ClassId {
+        if (classifier == Void::class) return session.builtinTypes.nullableNothingType.id
         val classifier = classifier ?: error("")
         val klass = classifier as? KClass<*> ?: error("")
         val fqName = klass.qualifiedName ?: error("")
