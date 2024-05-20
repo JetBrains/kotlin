@@ -10,42 +10,42 @@ const val MaxL = Long.MAX_VALUE
 const val MaxC = Char.MAX_VALUE
 
 // CHECK-LABEL: define i32 @"kfun:#testIntSumOf(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testIntSumOf(): Int {
     return (0..10).sumOf { it }
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testUIntSumOf(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testUIntSumOf(): Int {
     return (0u .. 10u).sumOf { it }.toInt()
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testByteSumOf(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue
 fun testByteSumOf(): Int {
     return (MaxB .. MaxB).sumOf { it }
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testShortSumOf(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testShortSumOf(): Int {
     return (MaxS .. MaxS).sumOf { it }
 }
 
 // CHECK-LABEL: define i64 @"kfun:#testLongSumOf(){}kotlin.Long
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testLongSumOf(): Long {
     return (MaxL .. MaxL).sumOf { it }
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntRangeForEach(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testIntRangeForEach(): Int {
     var s = 0
@@ -56,7 +56,7 @@ fun testIntRangeForEach(): Int {
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testUIntRangeForEach(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testUIntRangeForEach(): Int {
     var s = 0
@@ -67,7 +67,7 @@ fun testUIntRangeForEach(): Int {
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntForEachIndexed(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testIntForEachIndexed(): Int {
     var s = 0
@@ -78,7 +78,7 @@ fun testIntForEachIndexed(): Int {
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testUIntForEachIndexed(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testUIntForEachIndexed(): Int {
     var s = 0
@@ -89,28 +89,28 @@ fun testUIntForEachIndexed(): Int {
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntIndexOfFirst(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testIntIndexOfFirst(): Int {
     return (1 .. 5).indexOfFirst { it == 3 }
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testUIntIndexOfFirst(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testUIntIndexOfFirst(): Int {
     return (1u .. 5u).indexOfFirst { it == 3u }
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntFirst(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testIntFirst(): Int {
     return (1 .. 5).first { it == 3 }
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testUIntFirst(){}kotlin.Int
-// CHECK: Iterable#iterator
+// CHECK-NOT: Iterable#iterator
 // CHECK-LABEL: epilogue:
 fun testUIntFirst(): Int {
     return (1u .. 5u).first { it == 3u }.toInt()
