@@ -116,7 +116,6 @@ abstract class AbstractElement<Element, Field, Implementation>(
     override val allFields: List<Field> by lazy {
         val result = LinkedHashMap<String, Field>()
         fields.toList().asReversed().associateByTo(result) { it.name }
-        result.values.forEach { overriddenFieldsHaveSameClass[it, it] = false }
 
         elementParents.asReversed().forEach { parentRef ->
             val parent = parentRef.element
@@ -124,6 +123,7 @@ abstract class AbstractElement<Element, Field, Implementation>(
                 val ownParentField = originalParentField.copy().apply {
                     substituteType(parentRef.args)
                     fromParent = true
+                    overriddenFields += originalParentField
                 }
 
                 var existingField = result[ownParentField.name]
@@ -135,23 +135,17 @@ abstract class AbstractElement<Element, Field, Implementation>(
                     }
 
                     existingField.fromParent = true
+                    existingField.overriddenFields += ownParentField
                     val haveSameClass = ownParentField.typeRef.copy(nullable = false) == existingField.typeRef.copy(nullable = false)
-                    if (!haveSameClass) {
-                        existingField.overriddenTypes += ownParentField.typeRef
-                    }
-                    overriddenFieldsHaveSameClass[existingField, ownParentField] = haveSameClass
                     existingField.updatePropertiesFromOverriddenField(ownParentField, haveSameClass)
                 } else {
                     result[ownParentField.name] = ownParentField
-                    overriddenFieldsHaveSameClass[ownParentField, ownParentField] = true
                 }
             }
         }
 
         result.values.toList().asReversed()
     }
-
-    val overriddenFieldsHaveSameClass: MutableMap<Field, MutableMap<Field, Boolean>> = mutableMapOf()
 
     /**
      * A custom return type of the corresponding transformer method for this element.

@@ -114,8 +114,8 @@ class FieldWithDefault(override val origin: Field) : Field() {
     override var isMutableInInterface: Boolean = origin.isMutableInInterface
     override var customSetter: String? = null
     override var fromDelegate: Boolean = false
-    override val overriddenTypes: MutableSet<TypeRefWithNullability>
-        get() = origin.overriddenTypes
+    override val overriddenFields: MutableSet<Field>
+        get() = origin.overriddenFields
 
     override val arbitraryImportables: MutableList<Importable>
         get() = origin.arbitraryImportables

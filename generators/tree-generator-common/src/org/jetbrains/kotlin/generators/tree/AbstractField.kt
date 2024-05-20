@@ -88,24 +88,12 @@ abstract class AbstractField<Field : AbstractField<Field>> {
      */
     abstract val isChild: Boolean
 
-    open val overriddenTypes: MutableSet<TypeRefWithNullability> = mutableSetOf()
+    open val overriddenFields: MutableSet<Field> = mutableSetOf<Field>()
 
     open fun updatePropertiesFromOverriddenField(parentField: Field, haveSameClass: Boolean) {}
 
     override fun toString(): String {
         return name
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null) return false
-        if (javaClass != other.javaClass) return false
-        other as AbstractField<*>
-        return name == other.name
-    }
-
-    override fun hashCode(): Int {
-        return name.hashCode()
     }
 
     /**
@@ -131,7 +119,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
         copy.visibility = visibility
         copy.fromParent = fromParent
         copy.useInBaseTransformerDetection = useInBaseTransformerDetection
-        copy.overriddenTypes += overriddenTypes
+        copy.overriddenFields += overriddenFields
         copy.implementationDefaultStrategy = implementationDefaultStrategy
     }
 
