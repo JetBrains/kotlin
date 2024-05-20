@@ -317,8 +317,9 @@ internal class ImplementationPrinter(
                     }
                 }
 
-                for (overridenType in field.overriddenTypes) {
-                    generateReplace(field, overridenType) {
+                val additionalOverriddenTypes = field.overriddenFields.map { it.typeRef.copy(nullable = false) }.toSet() - field.typeRef.copy(false)
+                for (overriddenType in additionalOverriddenTypes) {
+                    generateReplace(field, overriddenType) {
                         println("require($newValue is ${field.typeRef.render()})")
                         println("replace$capitalizedFieldName($newValue)")
                     }
