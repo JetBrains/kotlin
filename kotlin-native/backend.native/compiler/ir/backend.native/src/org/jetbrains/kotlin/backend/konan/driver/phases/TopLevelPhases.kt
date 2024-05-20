@@ -410,10 +410,16 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     }
     val moduleDFG = runPhase(BuildDFGPhase, module, disable = !optimize)
     // TODO: Do not inline box/unbox yet, and value classes properties accessors
+    System.gc()
+    println("After BuildDFGPhase: ${getMemoryUsage()}. IR size = ${module.irNodesCount()}")
     val emptyDevirtualizationAnalysisResult = DevirtualizationAnalysis.AnalysisResult(mutableMapOf(), DevirtualizationAnalysis.DevirtualizationAnalysisImpl.EmptyTypeHierarchy)
     runPhase(BackendInlinerPhase, BackendInlinerInput(module, moduleDFG, emptyDevirtualizationAnalysisResult, BackendInlinerOptions(inlineBoxUnbox = false)),
             disable = !optimize || !enableBackendInliner)
+    System.gc()
+    println("After BackendInlinerPhase: ${getMemoryUsage()}. IR size = ${module.irNodesCount()}")
     val devirtualizationAnalysisResults = runPhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
+    System.gc()
+    println("After DevirtualizationAnalysisPhase: ${getMemoryUsage()}. IR size = ${module.irNodesCount()}")
     //val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
     runPhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, devirtualizationAnalysisResults, module), disable = !optimize)
     runPhase(DevirtualizationPhase, DevirtualizationInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
@@ -430,6 +436,8 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     runPhase(BackendInlinerPhase,
             BackendInlinerInput(module, moduleDFG, devirtualizationAnalysisResults, BackendInlinerOptions(inlineBoxUnbox = true)),
             disable = !optimize || !enableBackendInliner) // TODO: Can inline box/unbox.
+    System.gc()
+    println("After BackendInlinerPhase: ${getMemoryUsage()}. IR size = ${module.irNodesCount()}")
     val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = true)//!optimize) TODO
     module.files.forEach {
         runPhase(CoroutinesVarSpillingPhase, it)
@@ -437,10 +445,16 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
 //    println("QXXQXX")
 //    println(module.dump())
     runPhase(CreateLLVMDeclarationsPhase, module)
+    System.gc()
+    println("After CreateLLVMDeclarationsPhase: ${getMemoryUsage()}. IR size = ${module.irNodesCount()}")
     runPhase(GHAPhase, module, disable = !optimize)
     runPhase(RTTIPhase, RTTIInput(module, dceResult))
     val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
+    System.gc()
+    println("After EscapeAnalysisPhase: ${getMemoryUsage()}. IR size = ${module.irNodesCount()}")
     runPhase(CodegenPhase, CodegenInput(module, lifetimes))
+    System.gc()
+    println("After CodegenPhase: ${getMemoryUsage()}. IR size = ${module.irNodesCount()}")
 }
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {

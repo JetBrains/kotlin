@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -20,9 +21,24 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 internal val DECLARATION_ORIGIN_ENTRY_POINT = IrDeclarationOriginImpl("ENTRY_POINT")
+
+internal fun getMemoryUsage(): Int = ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024).toInt()
+
+internal fun IrElement.irNodesCount(): Int {
+    var count = 0
+    this.acceptChildrenVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            ++count
+            element.acceptChildrenVoid(this)
+        }
+    })
+    return count
+}
 
 internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction {
     val context = generationState.context

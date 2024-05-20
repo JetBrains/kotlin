@@ -26,6 +26,9 @@ import kotlin.math.min
 internal fun createLlvmDeclarations(generationState: NativeGenerationState, irModule: IrModuleFragment): LlvmDeclarations {
     val generator = DeclarationsGeneratorVisitor(generationState)
     irModule.acceptChildrenVoid(generator)
+
+    println("During CreateLLVMDeclarationsPhase: ${generator.maxMemoryUsage}")
+
     return LlvmDeclarations(generator.uniques)
 }
 
@@ -134,6 +137,14 @@ private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutB
 private class DeclarationsGeneratorVisitor(override val generationState: NativeGenerationState)
     : IrElementVisitorVoid, ContextUtils {
 
+    var maxMemoryUsage = getMemoryUsage()
+
+    private fun updateMemoryUsage() {
+        val currentMemoryUsage = getMemoryUsage()
+        if (maxMemoryUsage < currentMemoryUsage)
+            maxMemoryUsage = currentMemoryUsage
+    }
+
     val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
 
     class Namer(val prefix: String) {
@@ -186,6 +197,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     }
 
     override fun visitClass(declaration: IrClass) {
+        updateMemoryUsage()
         if (declaration.requiresRtti()) {
             val classLlvmDeclarations = createClassDeclarations(declaration)
             declaration.metadata = KonanMetadata.Class(declaration, classLlvmDeclarations, context.getLayoutBuilder(declaration))
@@ -440,6 +452,8 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         super.visitFunction(declaration)
 
         if (!declaration.isReal) return
+
+        updateMemoryUsage()
 
         val llvmFunction = if (declaration.isExternal) {
             if (declaration.isTypedIntrinsic || declaration.isObjCBridgeBased()

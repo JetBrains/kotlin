@@ -361,6 +361,14 @@ internal object EscapeAnalysis {
 
         val escapeAnalysisResults = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, FunctionEscapeAnalysisResult>()
 
+        private var maxMemoryUsage = getMemoryUsage()
+
+        private fun updateMemoryUsage() {
+            val currentMemoryUsage = getMemoryUsage()
+            if (maxMemoryUsage < currentMemoryUsage)
+                maxMemoryUsage = currentMemoryUsage
+        }
+
         fun analyze() {
             context.logMultiple {
                 +"CALL GRAPH"
@@ -380,6 +388,8 @@ internal object EscapeAnalysis {
             }
 
             val condensation = DirectedGraphCondensationBuilder(callGraph).build()
+
+            updateMemoryUsage()
 
             context.logMultiple {
                 +"CONDENSATION"
@@ -408,8 +418,10 @@ internal object EscapeAnalysis {
                 escapeAnalysisResults[functionSymbol] = FunctionEscapeAnalysisResult.optimistic()
             }
 
-            for (multiNode in condensation.topologicalOrder.reversed())
+            for (multiNode in condensation.topologicalOrder.reversed()) {
+                updateMemoryUsage()
                 analyze(callGraph, multiNode)
+            }
 
             context.logMultiple {
                 with(stats) {
@@ -423,6 +435,9 @@ internal object EscapeAnalysis {
                     +"Total data flow graph size: $totalDFGSize"
                 }
             }
+
+            println("During EscapeAnalysisPhase: $maxMemoryUsage")
+
         }
 
         private enum class ComputationState {
@@ -473,6 +488,7 @@ internal object EscapeAnalysis {
             toAnalyze.addAll(nodes)
             val numberOfRuns = nodes.associateWith { 0 }.toMutableMap()
             while (!failedToConverge && toAnalyze.isNotEmpty()) {
+                updateMemoryUsage()
                 val function = toAnalyze.first()
                 toAnalyze.remove(function)
                 numberOfRuns[function] = numberOfRuns[function]!! + 1

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
+import org.jetbrains.kotlin.backend.konan.getMemoryUsage
 import org.jetbrains.kotlin.backend.konan.ir.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.optimizations.*
@@ -92,6 +93,7 @@ internal val BackendInlinerPhase = createSimpleNamedCompilerPhase<NativeGenerati
                     devirtualizedCallSitesUnfoldFactor = 0,
                     nonDevirtualizedCallSitesUnfoldFactor = 0,
             ).build()
+//            println("After CallGraphBuilder for BackendInlinerPhase: ${getMemoryUsage()}")
             BackendInliner(generationState, moduleDFG, devirtualizationAnalysisResult.devirtualizedCallSites, callGraph, options).run()
         }
 )
@@ -177,6 +179,9 @@ internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerati
                     DevirtualizationUnfoldFactors.DFG_DEVIRTUALIZED_CALL,
                     nonDevirtualizedCallSitesUnfoldFactor
             ).build()
+
+//            println("After CallGraphBuilder: ${getMemoryUsage()}")
+
             EscapeAnalysis.computeLifetimes(context, generationState, input.moduleDFG, callGraph, lifetimes)
             lifetimes
         }

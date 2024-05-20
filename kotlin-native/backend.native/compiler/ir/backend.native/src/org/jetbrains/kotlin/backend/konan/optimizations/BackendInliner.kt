@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.descriptors.isArray
+import org.jetbrains.kotlin.backend.konan.getMemoryUsage
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
@@ -62,6 +62,14 @@ internal class BackendInliner(
     private val invokeSuspendFunction = symbols.invokeSuspendFunction
 
     private val rootSet = callGraph.rootSet
+
+    private var maxMemoryUsage = getMemoryUsage()
+
+    private fun updateMemoryUsage() {
+        val currentMemoryUsage = getMemoryUsage()
+        if (maxMemoryUsage < currentMemoryUsage)
+            maxMemoryUsage = currentMemoryUsage
+    }
 
     fun run() {
         val computationStates = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, ComputationState>()
@@ -162,6 +170,8 @@ internal class BackendInliner(
                             }
                         }
                     }
+
+                    updateMemoryUsage()
 
                     if (functionsToInline.isEmpty()) {
 //                        println("Nothing to inline to ${irFunction.render()}")
@@ -283,6 +293,8 @@ internal class BackendInliner(
                                 devirtualizedCallSites[node] = devirtualizedCallSite
                         }
 
+                        updateMemoryUsage()
+
                         /*
                         +                    val body = when (declaration) {
                         +                        is IrFunction -> {
@@ -324,6 +336,9 @@ internal class BackendInliner(
                 }
             }
         }
+
+        println("During BackendInlinerPhase: $maxMemoryUsage")
+
     }
 
     private enum class ComputationState {

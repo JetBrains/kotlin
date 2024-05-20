@@ -825,6 +825,13 @@ internal class ModuleDFGBuilder(val generationState: NativeGenerationState, val 
     private val context = generationState.context
     private val module = DataFlowIR.Module()
     private val symbolTable = DataFlowIR.SymbolTable(context, module)
+    private var maxMemoryUsage = getMemoryUsage()
+
+    private fun updateMemoryUsage() {
+        val currentMemoryUsage = getMemoryUsage()
+        if (maxMemoryUsage < currentMemoryUsage)
+            maxMemoryUsage = currentMemoryUsage
+    }
 
     fun build(): ModuleDFG {
         symbolTable.populateWith(irModule)
@@ -876,6 +883,7 @@ internal class ModuleDFGBuilder(val generationState: NativeGenerationState, val 
             private fun analyze(declaration: IrDeclaration, body: IrElement?) {
                 val function = FunctionDFGBuilder(generationState, symbolTable).build(declaration, body)
                 functions[function.symbol] = function
+                updateMemoryUsage()
             }
         }, data = null)
 
@@ -892,6 +900,8 @@ internal class ModuleDFGBuilder(val generationState: NativeGenerationState, val 
                 type.itable.forEach { +"            ${it.key} -> ${it.value}" }
             }
         }
+
+        println("During BuildDFGPhase: $maxMemoryUsage")
 
         return ModuleDFG(functions, symbolTable)
     }

@@ -127,6 +127,14 @@ internal object DevirtualizationAnalysis {
                                                 val irModule: IrModuleFragment,
                                                 val moduleDFG: ModuleDFG) {
 
+        private var maxMemoryUsage = getMemoryUsage()
+
+        private fun updateMemoryUsage() {
+            val currentMemoryUsage = getMemoryUsage()
+            if (maxMemoryUsage < currentMemoryUsage)
+                maxMemoryUsage = currentMemoryUsage
+        }
+
         private val entryPoint = context.ir.symbols.entryPoint?.owner
 
         private val symbolTable = moduleDFG.symbolTable
@@ -437,6 +445,7 @@ internal object DevirtualizationAnalysis {
             val nodesMap = mutableMapOf<DataFlowIR.Node, Node>()
 
             val (instantiatingClasses, directEdges, reversedEdges) = buildConstraintGraph(nodesMap, functions, typeHierarchy, rootSet)
+            updateMemoryUsage()
 
             context.logMultiple {
                 +"FULL CONSTRAINT GRAPH"
@@ -471,6 +480,7 @@ internal object DevirtualizationAnalysis {
 
             val condensation = CondensationBuilder(directEdges, reversedEdges).build()
             val topologicalOrder = condensation.topologicalOrder.map { constraintGraph.nodes[it] }
+            updateMemoryUsage()
 
             context.logMultiple {
                 +"CONDENSATION"
@@ -501,6 +511,7 @@ internal object DevirtualizationAnalysis {
                 // Handle all 'right-directed' edges.
                 // TODO: this is pessimistic handling of [DataFlowIR.Type.Virtual], think how to do it better.
                 for (multiNode in topologicalOrder) {
+                    updateMemoryUsage()
                     if (multiNode.multiNodeSize == 1 && multiNode is Node.Source)
                         continue // A source has no incoming edges.
                     val types = BitSet()
@@ -553,6 +564,7 @@ internal object DevirtualizationAnalysis {
             }
 
             while (frontSize > 0) {
+                updateMemoryUsage()
                 val prevFrontSize = frontSize
                 frontSize = 0
                 val temp = front
@@ -612,6 +624,7 @@ internal object DevirtualizationAnalysis {
             val nothing = symbolTable.classMap[context.ir.symbols.nothing.owner]
             for (function in functions.values) {
                 if (!constraintGraph.functions.containsKey(function.symbol)) continue
+                updateMemoryUsage()
                 function.body.forEachNonScopeNode { node ->
                     val virtualCall = node as? DataFlowIR.Node.VirtualCall ?: return@forEachNonScopeNode
                     assert(nodesMap[virtualCall] != null) { "Node for virtual call $virtualCall has not been built" }
@@ -686,6 +699,8 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
+            println("During DevirtualizationAnalysisPhase: $maxMemoryUsage")
+
             return AnalysisResult(result.asSequence().associateBy({ it.key }, { it.value.first }).toMutableMap(), typeHierarchy)
         }
 
@@ -749,6 +764,7 @@ internal object DevirtualizationAnalysis {
                                          rootSet: List<DataFlowIR.FunctionSymbol>
         ): ConstraintGraphBuildResult {
             val precursor = buildConstraintGraphPrecursor(nodesMap, functions, typeHierarchy, rootSet)
+            updateMemoryUsage()
             return ConstraintGraphBuildResult(precursor.instantiatingClasses, precursor.directEdges,
                     buildReversedEdges(precursor.directEdges, precursor.reversedEdgesCount))
         }
@@ -1014,6 +1030,7 @@ internal object DevirtualizationAnalysis {
 
             private fun addInstantiatingClass(type: DataFlowIR.Type) {
                 if (instantiatingClasses[type.index]) return
+                updateMemoryUsage()
                 instantiatingClasses.set(type.index)
                 context.log { "Adding instantiating class: $type" }
                 checkSupertypes(type, type, BitSet())
@@ -1139,6 +1156,7 @@ internal object DevirtualizationAnalysis {
              * For variable nodes edges must be created separately, otherwise recursion can be too deep.
              */
             private fun dfgNodeToConstraintNode(function: Function, node: DataFlowIR.Node): Node {
+                updateMemoryUsage()
 
                 fun edgeToConstraintNode(edge: DataFlowIR.Edge): Node =
                         edgeToConstraintNode(function, edge)
