@@ -263,7 +263,7 @@ open class IncrementalFirJvmCompilerRunner(
 
             val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
             val irGenerationExtensions = projectEnvironment.project.let { IrGenerationExtension.getInstances(it) }
-            val (irModuleFragment, components, pluginContext, irActualizedResult) = cycleResult.convertToIrAndActualizeForJvm(
+            val (irModuleFragment, components, pluginContext, irActualizedResult, _, symbolTable) = cycleResult.convertToIrAndActualizeForJvm(
                 extensions, configuration, compilerEnvironment.diagnosticsReporter, irGenerationExtensions,
             )
 
@@ -274,7 +274,8 @@ open class IncrementalFirJvmCompilerRunner(
                 irModuleFragment,
                 components,
                 pluginContext,
-                irActualizedResult
+                irActualizedResult,
+                symbolTable,
             )
 
             val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)

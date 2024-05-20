@@ -246,7 +246,10 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
         )
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, irModuleFragment, components.symbolTable, components.irProviders,
+            generationState,
+            irModuleFragment,
+            frontendResult.firResult.symbolTable,
+            components.irProviders,
             frontendResult.generatorExtensions,
             FirJvmBackendExtension(
                 components,

@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.IrLock
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -20,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
  * See `/docs/fir/k2_kmp.md`
  */
 class Fir2IrCommonMemberStorage(val mangler: FirMangler) {
-    val symbolTable: SymbolTable = SymbolTable(signaturer = null, irFactory = IrFactoryImpl)
+    val lock: IrLock = IrLock()
 
     val classCache: MutableMap<FirRegularClass, IrClassSymbol> = mutableMapOf()
 

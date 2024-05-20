@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
+import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface Fir2IrExtensions {
     val irNeedsDeserialization: Boolean
@@ -43,7 +44,7 @@ interface Fir2IrExtensions {
      */
     fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean
 
-    fun initializeIrBuiltIns(irBuiltIns: IrBuiltIns)
+    fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable)
 
     object Default : Fir2IrExtensions {
         override val irNeedsDeserialization: Boolean
@@ -57,6 +58,6 @@ interface Fir2IrExtensions {
         override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): Nothing? = null
         override fun hasBackingField(property: FirProperty, session: FirSession): Boolean = property.hasBackingField
         override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
-        override fun initializeIrBuiltIns(irBuiltIns: IrBuiltIns) {}
+        override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
     }
 }

@@ -234,7 +234,7 @@ object FirKotlinToJvmBytecodeCompiler {
         fir2IrActualizedResult: Fir2IrActualizedResult,
         diagnosticsReporter: BaseDiagnosticsCollector,
     ): GenerationState {
-        val (moduleFragment, components, pluginContext, irActualizedResult) = fir2IrActualizedResult
+        val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) = fir2IrActualizedResult
         val irInput = ModuleCompilerIrBackendInput(
             TargetId(module),
             configuration,
@@ -242,7 +242,8 @@ object FirKotlinToJvmBytecodeCompiler {
             moduleFragment,
             components,
             pluginContext,
-            irActualizedResult
+            irActualizedResult,
+            symbolTable
         )
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

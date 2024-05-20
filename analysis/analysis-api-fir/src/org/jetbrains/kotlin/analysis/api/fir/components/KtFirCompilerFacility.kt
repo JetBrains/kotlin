@@ -223,7 +223,7 @@ internal class KaFirCompilerFacility(
             codegenFactory.generateModuleInFrontendIRMode(
                 generationState,
                 targetFir2IrResult.irModuleFragment,
-                targetFir2IrResult.components.symbolTable,
+                targetFir2IrResult.symbolTable,
                 targetFir2IrResult.components.irProviders,
                 CompilerFacilityJvmGeneratorExtensions(jvmGeneratorExtensions),
                 FirJvmBackendExtension(targetFir2IrResult.components, null),

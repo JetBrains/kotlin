@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrComponentsStorage(
@@ -34,11 +33,11 @@ class Fir2IrComponentsStorage(
     override val firProvider: FirProviderWithGeneratedFiles,
     syntheticIrBuiltinsSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer,
 ) : Fir2IrComponents {
+    override val lock: IrLock = commonMemberStorage.lock
+
     override val filesBeingCompiled: Set<FirFile>? = runIf(configuration.allowNonCachedDeclarations) { fir.toSet() }
 
     val moduleDescriptor: FirModuleDescriptor = FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns)
-
-    override val symbolTable: SymbolTable = commonMemberStorage.symbolTable
 
     private val conversionScope = Fir2IrConversionScope(configuration)
 
@@ -69,9 +68,6 @@ class Fir2IrComponentsStorage(
     override val symbolsMappingForLazyClasses: Fir2IrSymbolsMappingForLazyClasses = Fir2IrSymbolsMappingForLazyClasses()
 
     override val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar = Fir2IrIrGeneratedDeclarationsRegistrar(this)
-
-    override val lock: IrLock
-        get() = symbolTable.lock
 
     override val manglers: Fir2IrComponents.Manglers = object : Fir2IrComponents.Manglers {
         override val irMangler: KotlinMangler.IrMangler

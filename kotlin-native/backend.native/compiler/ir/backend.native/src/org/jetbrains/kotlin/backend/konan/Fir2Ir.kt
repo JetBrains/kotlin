@@ -59,7 +59,7 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
                 Fir2IrExtensions.Default.hasBackingField(property, session)
 
     override fun isTrueStatic(declaration: FirCallableDeclaration, session: FirSession): Boolean = false
-    override fun initializeIrBuiltIns(irBuiltIns: IrBuiltIns) {}
+    override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
 }
 
 internal fun PhaseContext.fir2Ir(

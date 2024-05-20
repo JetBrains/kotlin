@@ -17,12 +17,11 @@ private fun <SymbolOwner : IrSymbolOwner, Symbol : IrBindableSymbol<*, SymbolOwn
 
 @OptIn(SymbolTableInternals::class)
 open class SymbolTable(
-    val signaturer: IdSignatureComposer?, // TODO: This is `null` only in FIR2IR. Make non-nullable again after KT-64990 is fixed.
+    val signaturer: IdSignatureComposer?, // TODO: This is `null` only in FIR2IR. Consider to update API in the scope of KT-68475
     val irFactory: IrFactory,
     val nameProvider: NameProvider = NameProvider.DEFAULT,
-) : ReferenceSymbolTable {
     val lock: IrLock = IrLock()
-
+) : ReferenceSymbolTable {
     private val scriptSlice = IdSignatureSymbolTableSlice<IrScript, IrScriptSymbol>(lock)
     private val classSlice = IdSignatureSymbolTableSlice<IrClass, IrClassSymbol>(lock)
     private val constructorSlice = IdSignatureSymbolTableSlice<IrConstructor, IrConstructorSymbol>(lock)

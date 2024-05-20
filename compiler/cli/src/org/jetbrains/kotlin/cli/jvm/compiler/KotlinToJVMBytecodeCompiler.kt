@@ -335,7 +335,7 @@ object KotlinToJVMBytecodeCompiler {
         val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
         return codegenFactory to JvmIrCodegenFactory.JvmIrBackendInput(
             irModuleFragment,
-            components.symbolTable,
+            symbolTable,
             phaseConfig,
             components.irProviders,
             JvmGeneratorExtensionsImpl(configuration),

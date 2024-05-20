@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -29,7 +30,6 @@ interface Fir2IrComponents {
 
     val converter: Fir2IrConverter
 
-    val symbolTable: SymbolTable
     val builtins: Fir2IrBuiltinSymbolsContainer
     val specialAnnotationsProvider: IrSpecialAnnotationsProvider?
     val manglers: Manglers

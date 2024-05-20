@@ -164,7 +164,7 @@ fun convertAnalyzedFirToIr(
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
             IrGenerationExtension.getInstances(it)
         } ?: emptyList()
-    val (moduleFragment, components, pluginContext, irActualizedResult) =
+    val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
         analysisResults.convertToIrAndActualizeForJvm(
             extensions, input.configuration, environment.diagnosticsReporter, irGenerationExtensions,
         )
@@ -176,7 +176,8 @@ fun convertAnalyzedFirToIr(
         moduleFragment,
         components,
         pluginContext,
-        irActualizedResult
+        irActualizedResult,
+        symbolTable
     )
 }
 
@@ -244,7 +245,7 @@ fun generateCodeFromIr(
     codegenFactory.generateModuleInFrontendIRMode(
         generationState,
         input.irModuleFragment,
-        input.components.symbolTable,
+        input.symbolTable,
         input.components.irProviders,
         input.extensions,
         FirJvmBackendExtension(

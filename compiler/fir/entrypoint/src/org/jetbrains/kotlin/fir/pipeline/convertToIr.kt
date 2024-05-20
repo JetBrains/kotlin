@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -58,6 +59,7 @@ data class Fir2IrActualizedResult(
     val pluginContext: Fir2IrPluginContext,
     val irActualizedResult: IrActualizedResult?,
     val irBuiltIns: IrBuiltIns,
+    val symbolTable: SymbolTable,
 )
 
 fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnosticsCollector) {
@@ -144,11 +146,13 @@ fun FirResult.convertToIrAndActualize(
         FirModuleDescriptor.createSourceModuleDescriptor(platformComponentsStorage.session, kotlinBuiltIns),
         syntheticIrBuiltinsSymbolsContainer,
     )
-    val irTypeSystemContext = typeSystemContextProvider(irBuiltins)
-    fir2IrExtensions.initializeIrBuiltIns(irBuiltins)
+    val symbolTable = SymbolTable(signaturer = null, IrFactoryImpl, lock = commonMemberStorage.lock)
+    fir2IrExtensions.initializeIrBuiltInsAndSymbolTable(irBuiltins, symbolTable)
 
     mainIrFragment.initializeIrBuiltins(irBuiltins)
     dependentIrFragments.forEach { it.initializeIrBuiltins(irBuiltins) }
+
+    val irTypeSystemContext = typeSystemContextProvider(irBuiltins)
 
     val irActualizer = if (dependentIrFragments.isEmpty()) null else IrActualizer(
         KtDiagnosticReporterWithImplicitIrBasedContext(fir2IrConfiguration.diagnosticReporter, fir2IrConfiguration.languageVersionSettings),
@@ -166,7 +170,7 @@ fun FirResult.convertToIrAndActualize(
     irActualizer?.actualizeClassifiers()
 
     Fir2IrDataClassGeneratedMemberBodyGenerator(irBuiltins)
-        .generateBodiesForClassesWithSyntheticDataClassMembers(commonMemberStorage.generatedDataValueClassSyntheticFunctions)
+        .generateBodiesForClassesWithSyntheticDataClassMembers(commonMemberStorage.generatedDataValueClassSyntheticFunctions, symbolTable)
 
     val temporaryResolver = SpecialFakeOverrideSymbolsResolver(emptyMap())
 
@@ -187,9 +191,16 @@ fun FirResult.convertToIrAndActualize(
 
     (fakeOverrideBuilder.strategy as Fir2IrFakeOverrideStrategy).clearFakeOverrideFields()
 
-    val pluginContext = Fir2IrPluginContext(platformComponentsStorage, irBuiltins, platformComponentsStorage.moduleDescriptor)
+    val pluginContext = Fir2IrPluginContext(platformComponentsStorage, irBuiltins, platformComponentsStorage.moduleDescriptor, symbolTable)
     pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
-    return Fir2IrActualizedResult(mainIrFragment, platformComponentsStorage, pluginContext, actualizationResult, irBuiltins)
+    return Fir2IrActualizedResult(
+        mainIrFragment,
+        platformComponentsStorage,
+        pluginContext,
+        actualizationResult,
+        irBuiltins,
+        symbolTable,
+    )
 }
 
 private fun Fir2IrComponentsStorage.createFakeOverrideBuilder(irTypeSystemContext: IrTypeSystemContext): IrFakeOverrideBuilder {
