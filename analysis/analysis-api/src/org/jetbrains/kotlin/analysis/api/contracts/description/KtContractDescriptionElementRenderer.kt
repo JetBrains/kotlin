@@ -80,7 +80,8 @@ private fun Context.renderKaParameterSymbol(value: KaParameterSymbol, endWithNew
 internal data class Context(val session: KaSession, val printer: PrettyPrinter, val symbolRenderer: DebugSymbolRenderer)
 
 private fun PrettyPrinter.appendHeader(clazz: KClass<*>, body: PrettyPrinter.() -> Unit) {
-    appendLine(clazz.simpleName + ":")
+    append(DebugSymbolRenderer.computeApiEntityName(clazz))
+    appendLine(":")
     withIndent { body() }
 }
 

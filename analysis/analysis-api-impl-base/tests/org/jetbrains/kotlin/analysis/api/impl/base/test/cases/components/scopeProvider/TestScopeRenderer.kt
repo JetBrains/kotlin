@@ -40,7 +40,7 @@ internal object TestScopeRenderer {
                     for (implicitReceiver in scopeContext.implicitReceivers) {
                         val type = implicitReceiver.type
                         appendLine("type: ${renderType(type, printPretty)}")
-                        appendLine("owner symbol: ${implicitReceiver.ownerSymbol::class.simpleName}")
+                        append("owner symbol: ").appendLine(DebugSymbolRenderer.computeApiEntityName(implicitReceiver.ownerSymbol::class))
                         appendLine()
                     }
                 }

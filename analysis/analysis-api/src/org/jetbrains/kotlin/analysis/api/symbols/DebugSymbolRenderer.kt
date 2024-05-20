@@ -170,7 +170,7 @@ public class DebugSymbolRenderer(
 
     private fun renderFrontendIndependentKClassNameOf(instanceOfClassToRender: Any, printer: PrettyPrinter) {
         val apiClass = getFrontendIndependentKClassOf(instanceOfClassToRender)
-        printer.append(apiClass.simpleName).append(':')
+        printer.append(computeApiEntityName(apiClass)).append(':')
     }
 
     private fun KaSession.renderList(values: List<*>, printer: PrettyPrinter, renderSymbolsFully: Boolean) {
@@ -203,7 +203,7 @@ public class DebugSymbolRenderer(
         }
 
         with(printer) {
-            append(getFrontendIndependentKClassOf(symbol).simpleName)
+            append(computeApiEntityName(getFrontendIndependentKClassOf(symbol)))
             append("(")
             when (symbol) {
                 is KaClassLikeSymbol -> renderId(symbol.classIdIfNonLocal, symbol)
@@ -373,7 +373,7 @@ public class DebugSymbolRenderer(
 
     private fun renderKtModule(ktModule: KtModule, printer: PrettyPrinter) {
         val ktModuleClass = ktModule::class.allSuperclasses.first { it in ktModuleSubclasses }
-        printer.append("${ktModuleClass.simpleName} \"${ktModule.moduleDescription}\"")
+        printer.append(computeApiEntityName(ktModuleClass) + " \"" + ktModule.moduleDescription + "\"")
     }
 
     private fun KClass<*>.allSealedSubClasses(): List<KClass<*>> = buildList {
@@ -437,19 +437,32 @@ public class DebugSymbolRenderer(
         else lines.first() + " ..."
     }
 
-    private val ignoredPropertyNames = setOf(
-        "psi",
-        "token",
-        "builder",
-        "coneType",
-        "analysisContext",
-        "fe10Type"
-    )
+    public companion object {
+        public fun computeApiEntityName(klass: KClass<*>): String {
+            val simpleName = klass.simpleName ?: return "null"
 
-    private val symbolImplementationPackageNames = listOf(
-        "org.jetbrains.kotlin.analysis.api.fir",
-        "org.jetbrains.kotlin.analysis.api.descriptors",
-    )
+            if (simpleName.startsWith("Ka")) {
+                // A temporary replacement to ease the 'Kt' -> 'Ka' prefix migration
+                return "Kt" + simpleName.drop(2)
+            }
+
+            return simpleName
+        }
+
+        private val ignoredPropertyNames = setOf(
+            "psi",
+            "token",
+            "builder",
+            "coneType",
+            "analysisContext",
+            "fe10Type"
+        )
+
+        private val symbolImplementationPackageNames = listOf(
+            "org.jetbrains.kotlin.analysis.api.fir",
+            "org.jetbrains.kotlin.analysis.api.descriptors",
+        )
+    }
 }
 
 private val PrettyPrinter.printer: PrettyPrinter

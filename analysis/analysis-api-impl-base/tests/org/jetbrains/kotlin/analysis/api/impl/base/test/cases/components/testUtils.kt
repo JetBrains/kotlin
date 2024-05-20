@@ -108,7 +108,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
         is KaCallableSignature<*> -> stringRepresentation(this)
         else -> buildString {
             val clazz = this@with::class
-            val className = clazz.simpleName!!
+            val className = DebugSymbolRenderer.computeApiEntityName(clazz)
             append(className)
             appendLine(":")
             clazz.memberProperties
@@ -131,8 +131,8 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
 
 private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): String = buildString {
     when (signature) {
-        is KaFunctionLikeSignature<*> -> append(KaFunctionLikeSignature::class.simpleName)
-        is KaVariableLikeSignature<*> -> append(KaVariableLikeSignature::class.simpleName)
+        is KaFunctionLikeSignature<*> -> append(DebugSymbolRenderer.computeApiEntityName(KaFunctionLikeSignature::class))
+        is KaVariableLikeSignature<*> -> append(DebugSymbolRenderer.computeApiEntityName(KaVariableLikeSignature::class))
     }
     appendLine(":")
     val memberProperties = listOfNotNull(
