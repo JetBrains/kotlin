@@ -1240,6 +1240,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("projectionProblemInIsExpression.kt")
+    public void testProjectionProblemInIsExpression() {
+      runTest("compiler/testData/diagnostics/tests/projectionProblemInIsExpression.kt");
+    }
+
+    @Test
     @TestMetadata("ProjectionsInSupertypes.kt")
     public void testProjectionsInSupertypes() {
       runTest("compiler/testData/diagnostics/tests/ProjectionsInSupertypes.kt");
