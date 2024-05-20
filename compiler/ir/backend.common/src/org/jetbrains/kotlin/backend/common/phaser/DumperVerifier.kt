@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.common.validateIr
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -78,32 +79,6 @@ private fun dumpIrElement(actionState: ActionState, data: IrElement): String {
     val title = "// --- IR for $elementName $beforeOrAfterStr ${actionState.phase.description}\n"
     return title + dumpText
 }
-
-abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Context) : ModuleLoweringPass {
-
-    final override fun lower(irModule: IrModuleFragment) {
-        val verificationMode = context.configuration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
-        validateIr(context, verificationMode) {
-            validate(irModule, verificationMode, phaseName = this@IrValidationPhase.javaClass.simpleName)
-        }
-    }
-
-    protected open fun IrValidationContext.validate(irModule: IrModuleFragment, mode: IrVerificationMode, phaseName: String) {
-        performBasicIrValidation(irModule, context.irBuiltIns, phaseName)
-    }
-}
-
-@PhaseDescription(
-    name = "ValidateIrBeforeLowering",
-    description = "Validate IR before lowering",
-)
-open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context)
-
-@PhaseDescription(
-    name = "ValidateIrAfterLowering",
-    description = "Validate IR after lowering",
-)
-open class IrValidationAfterLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context)
 
 fun <Context, Data> findKotlinBackendIr(context: Context, data: Data): IrElement? = when {
     data is IrElement -> data
