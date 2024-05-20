@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.base
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KtFe10AnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KaFe10AnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
-internal interface KtFe10AnnotatedSymbol : KtAnnotatedSymbol, KtFe10Symbol {
+internal interface KaFe10AnnotatedSymbol : KaAnnotatedSymbol, KaFe10Symbol {
     val annotationsObject: Annotations
 
-    override val annotationsList: KtAnnotationsList
+    override val annotationsList: KaAnnotationsList
         get() = withValidityAssertion {
-            KtFe10AnnotationsList.create(annotationsObject, analysisContext)
+            KaFe10AnnotationsList.create(annotationsObject, analysisContext)
         }
 }

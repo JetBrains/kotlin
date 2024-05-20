@@ -5,26 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirEnumEntryInitializerSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirEnumEntryInitializerSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-internal class KtFirEnumEntryInitializerSymbolPointer(
-    private val ownerPointer: KtSymbolPointer<KtFirEnumEntrySymbol>,
-) : KtSymbolPointer<KtFirEnumEntryInitializerSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtFirEnumEntryInitializerSymbol? {
-        require(analysisSession is KtFirAnalysisSession)
+internal class KaFirEnumEntryInitializerSymbolPointer(
+    private val ownerPointer: KaSymbolPointer<KaFirEnumEntrySymbol>,
+) : KaSymbolPointer<KaFirEnumEntryInitializerSymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): KaFirEnumEntryInitializerSymbol? {
+        require(analysisSession is KaFirSession)
         val owner = with(analysisSession) {
             ownerPointer.restoreSymbol()
         }
         return owner?.enumEntryInitializer
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFirEnumEntryInitializerSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFirEnumEntryInitializerSymbolPointer &&
             other.ownerPointer.pointsToTheSameSymbolAs(ownerPointer)
 }

@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractDanglingFileReferenceResolveTest.Directives.COPY_RESOLUTION_MODE
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -42,7 +42,7 @@ abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResol
 
     }
 
-    override fun KtAnalysisSession.getAdditionalSymbolInfo(symbol: KtSymbol): String? {
+    override fun KaSession.getAdditionalSymbolInfo(symbol: KaSymbol): String? {
         val containingFile = symbol.psi?.containingFile ?: return null
         return containingFile.name
     }
@@ -60,7 +60,7 @@ abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResol
         doTestByFileStructure(fakeKtFile, caretPositions, mainModule, testServices)
     }
 
-    override fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KtAnalysisSession.() -> R): R {
+    override fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KaSession.() -> R): R {
         val resolutionMode = mainModule.testModule.directives.singleOrZeroValue(COPY_RESOLUTION_MODE)
         return if (resolutionMode != null) {
             analyzeCopy(element, resolutionMode) { action() }

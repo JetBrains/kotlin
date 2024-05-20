@@ -5,25 +5,25 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KtContextReceiversRenderer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KaContextReceiversRenderer
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.renderer.render
 
-public interface KtContextReceiverLabelRenderer {
+public interface KaContextReceiverLabelRenderer {
     public fun renderLabel(
-        analysisSession: KtAnalysisSession,
-        contextReceiver: KtContextReceiver,
-        contextReceiversRenderer: KtContextReceiversRenderer,
+        analysisSession: KaSession,
+        contextReceiver: KaContextReceiver,
+        contextReceiversRenderer: KaContextReceiversRenderer,
         printer: PrettyPrinter,
     )
 
-    public object WITH_LABEL : KtContextReceiverLabelRenderer {
+    public object WITH_LABEL : KaContextReceiverLabelRenderer {
         override fun renderLabel(
-            analysisSession: KtAnalysisSession,
-            contextReceiver: KtContextReceiver,
-            contextReceiversRenderer: KtContextReceiversRenderer,
+            analysisSession: KaSession,
+            contextReceiver: KaContextReceiver,
+            contextReceiversRenderer: KaContextReceiversRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -34,3 +34,5 @@ public interface KtContextReceiverLabelRenderer {
         }
     }
 }
+
+public typealias KtContextReceiverLabelRenderer = KaContextReceiverLabelRenderer

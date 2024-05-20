@@ -5,30 +5,30 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
-public interface KtRendererModalityModifierProvider {
-    public fun getModalityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithModality): KtModifierKeywordToken?
+public interface KaRendererModalityModifierProvider {
+    public fun getModalityModifier(analysisSession: KaSession, symbol: KaSymbolWithModality): KtModifierKeywordToken?
 
     public fun onlyIf(
-        condition: KtAnalysisSession.(symbol: KtSymbolWithModality) -> Boolean
-    ): KtRendererModalityModifierProvider {
+        condition: KaSession.(symbol: KaSymbolWithModality) -> Boolean
+    ): KaRendererModalityModifierProvider {
         val self = this
-        return object : KtRendererModalityModifierProvider {
-            override fun getModalityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithModality): KtModifierKeywordToken? =
+        return object : KaRendererModalityModifierProvider {
+            override fun getModalityModifier(analysisSession: KaSession, symbol: KaSymbolWithModality): KtModifierKeywordToken? =
                 if (condition(analysisSession, symbol)) self.getModalityModifier(analysisSession, symbol)
                 else null
         }
     }
 
-    public object WITH_IMPLICIT_MODALITY : KtRendererModalityModifierProvider {
-        override fun getModalityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithModality): KtModifierKeywordToken? {
-            if (symbol is KtPropertyAccessorSymbol) return null
+    public object WITH_IMPLICIT_MODALITY : KaRendererModalityModifierProvider {
+        override fun getModalityModifier(analysisSession: KaSession, symbol: KaSymbolWithModality): KtModifierKeywordToken? {
+            if (symbol is KaPropertyAccessorSymbol) return null
             return when (symbol.modality) {
                 Modality.SEALED -> KtTokens.SEALED_KEYWORD
                 Modality.OPEN -> KtTokens.OPEN_KEYWORD
@@ -38,15 +38,15 @@ public interface KtRendererModalityModifierProvider {
         }
     }
 
-    public object WITHOUT_IMPLICIT_MODALITY : KtRendererModalityModifierProvider {
-        override fun getModalityModifier(analysisSession: KtAnalysisSession, symbol: KtSymbolWithModality): KtModifierKeywordToken? {
+    public object WITHOUT_IMPLICIT_MODALITY : KaRendererModalityModifierProvider {
+        override fun getModalityModifier(analysisSession: KaSession, symbol: KaSymbolWithModality): KtModifierKeywordToken? {
             with(analysisSession) {
                 when (symbol) {
-                    is KtFunctionSymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
-                    is KtPropertySymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
+                    is KaFunctionSymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
+                    is KaPropertySymbol -> if (symbol.isOverride && symbol.modality != Modality.FINAL) return null
                 }
-                if ((symbol as? KtClassOrObjectSymbol)?.classKind == KtClassKind.INTERFACE) return null
-                if ((symbol.getContainingSymbol() as? KtClassOrObjectSymbol)?.classKind == KtClassKind.INTERFACE) return null
+                if ((symbol as? KaClassOrObjectSymbol)?.classKind == KaClassKind.INTERFACE) return null
+                if ((symbol.getContainingSymbol() as? KaClassOrObjectSymbol)?.classKind == KaClassKind.INTERFACE) return null
 
                 return when (symbol.modality) {
                     Modality.FINAL -> null
@@ -56,3 +56,5 @@ public interface KtRendererModalityModifierProvider {
         }
     }
 }
+
+public typealias KtRendererModalityModifierProvider = KaRendererModalityModifierProvider

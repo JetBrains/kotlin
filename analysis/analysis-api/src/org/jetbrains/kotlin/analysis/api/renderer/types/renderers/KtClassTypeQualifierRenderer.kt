@@ -5,40 +5,40 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KtClassType
-import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.renderer.render
 
-public interface KtClassTypeQualifierRenderer {
+public interface KaClassTypeQualifierRenderer {
     public fun renderClassTypeQualifier(
-        analysisSession: KtAnalysisSession,
-        type: KtClassType,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        type: KaClassType,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object WITH_SHORT_NAMES : KtClassTypeQualifierRenderer {
+    public object WITH_SHORT_NAMES : KaClassTypeQualifierRenderer {
         override fun renderClassTypeQualifier(
-            analysisSession: KtAnalysisSession,
-            type: KtClassType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaClassType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             type.qualifiers.last().render(analysisSession, type, typeRenderer, printer)
         }
     }
 
-    public object WITH_SHORT_NAMES_WITH_NESTED_CLASSIFIERS : KtClassTypeQualifierRenderer {
+    public object WITH_SHORT_NAMES_WITH_NESTED_CLASSIFIERS : KaClassTypeQualifierRenderer {
         override fun renderClassTypeQualifier(
-            analysisSession: KtAnalysisSession,
-            type: KtClassType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaClassType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -49,17 +49,17 @@ public interface KtClassTypeQualifierRenderer {
         }
     }
 
-    public object WITH_QUALIFIED_NAMES : KtClassTypeQualifierRenderer {
+    public object WITH_QUALIFIED_NAMES : KaClassTypeQualifierRenderer {
         override fun renderClassTypeQualifier(
-            analysisSession: KtAnalysisSession,
-            type: KtClassType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaClassType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
                 ".".separated(
                     {
-                        if (type is KtNonErrorClassType && type.classId.packageFqName != CallableId.PACKAGE_FQ_NAME_FOR_LOCAL) {
+                        if (type is KaNonErrorClassType && type.classId.packageFqName != CallableId.PACKAGE_FQ_NAME_FOR_LOCAL) {
                             append(type.classId.packageFqName.render())
                         }
                     },
@@ -70,10 +70,12 @@ public interface KtClassTypeQualifierRenderer {
     }
 }
 
-private fun KtClassTypeQualifier.render(
-    analysisSession: KtAnalysisSession,
-    type: KtType,
-    typeRenderer: KtTypeRenderer,
+public typealias KtClassTypeQualifierRenderer = KaClassTypeQualifierRenderer
+
+private fun KaClassTypeQualifier.render(
+    analysisSession: KaSession,
+    type: KaType,
+    typeRenderer: KaTypeRenderer,
     printer: PrettyPrinter,
 ) {
     printer {

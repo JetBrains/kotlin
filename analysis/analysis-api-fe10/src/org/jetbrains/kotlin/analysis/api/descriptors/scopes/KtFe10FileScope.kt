@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.analysis.api.descriptors.scopes
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
-internal class KtFe10FileScope(
+internal class KaFe10FileScope(
     private val ktFile: KtFile,
     private val analysisContext: Fe10AnalysisContext,
-    override val token: KtLifetimeToken,
-) : KtScope {
+    override val token: KaLifetimeToken,
+) : KaScope {
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         ktFile.declarations.mapNotNullTo(mutableSetOf()) { (it as? KtCallableDeclaration)?.nameAsName }
     }
@@ -37,7 +37,7 @@ internal class KtFe10FileScope(
         ktFile.declarations.mapNotNullTo(mutableSetOf()) { (it as? KtClassLikeDeclaration)?.nameAsName }
     }
 
-    override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
+    override fun getCallableSymbols(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
         val context = analysisContext.analyze(ktFile)
 
         sequence {
@@ -51,13 +51,13 @@ internal class KtFe10FileScope(
         }
     }
 
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> = withValidityAssertion {
+    override fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
         return getCallableSymbols { it in namesSet }
     }
 
-    override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
+    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
         val context = analysisContext.analyze(ktFile)
 
         sequence {
@@ -71,17 +71,17 @@ internal class KtFe10FileScope(
         }
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> = withValidityAssertion {
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
         return getClassifierSymbols { it in namesSet }
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
+    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion {
         emptySequence()
     }
 
-    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
 }

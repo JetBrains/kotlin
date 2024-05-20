@@ -5,21 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.annotations
 
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KtAnnotationArgumentsRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KtAnnotationListRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KtAnnotationQualifierRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KtAnnotationUseSiteTargetRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationArgumentsRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationListRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationQualifierRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers.KaAnnotationUseSiteTargetRenderer
 
-public object KtAnnotationRendererForSource {
-    public val WITH_QUALIFIED_NAMES: KtAnnotationRenderer = KtAnnotationRenderer {
-        annotationListRenderer = KtAnnotationListRenderer.FOR_SOURCE
-        annotationFilter = KtRendererAnnotationsFilter.NO_NULLABILITY and KtRendererAnnotationsFilter.NO_PARAMETER_NAME
-        annotationsQualifiedNameRenderer = KtAnnotationQualifierRenderer.WITH_QUALIFIED_NAMES
-        annotationUseSiteTargetRenderer = KtAnnotationUseSiteTargetRenderer.WITH_NON_DEFAULT_USE_SITE
-        annotationArgumentsRenderer = KtAnnotationArgumentsRenderer.IF_ANY
+public object KaAnnotationRendererForSource {
+    public val WITH_QUALIFIED_NAMES: KaAnnotationRenderer = KaAnnotationRenderer {
+        annotationListRenderer = KaAnnotationListRenderer.FOR_SOURCE
+        annotationFilter = KaRendererAnnotationsFilter.NO_NULLABILITY and KaRendererAnnotationsFilter.NO_PARAMETER_NAME
+        annotationsQualifiedNameRenderer = KaAnnotationQualifierRenderer.WITH_QUALIFIED_NAMES
+        annotationUseSiteTargetRenderer = KaAnnotationUseSiteTargetRenderer.WITH_NON_DEFAULT_USE_SITE
+        annotationArgumentsRenderer = KaAnnotationArgumentsRenderer.IF_ANY
     }
 
-    public val WITH_SHORT_NAMES: KtAnnotationRenderer = WITH_QUALIFIED_NAMES.with {
-        annotationsQualifiedNameRenderer = KtAnnotationQualifierRenderer.WITH_SHORT_NAMES
+    public val WITH_SHORT_NAMES: KaAnnotationRenderer = WITH_QUALIFIED_NAMES.with {
+        annotationsQualifiedNameRenderer = KaAnnotationQualifierRenderer.WITH_SHORT_NAMES
     }
 }
+
+public typealias KtAnnotationRendererForSource = KaAnnotationRendererForSource

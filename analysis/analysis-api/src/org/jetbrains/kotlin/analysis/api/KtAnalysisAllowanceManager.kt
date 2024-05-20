@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api
 
-public object KtAnalysisAllowanceManager {
-    @OptIn(KtAnalysisApiInternals::class)
+public object KaAnalysisAllowanceManager {
+    @OptIn(KaAnalysisApiInternals::class)
     public inline fun <R> forbidAnalysisInside(actionName: String, action: () -> R): R {
         if (resolveIsForbiddenInActionWithName.get() != null) return action()
         resolveIsForbiddenInActionWithName.set(actionName)
@@ -17,6 +17,8 @@ public object KtAnalysisAllowanceManager {
         }
     }
 
-    @KtAnalysisApiInternals
+    @KaAnalysisApiInternals
     public val resolveIsForbiddenInActionWithName: ThreadLocal<String?> = ThreadLocal.withInitial { null }
 }
+
+public typealias KtAnalysisAllowanceManager = KaAnalysisAllowanceManager

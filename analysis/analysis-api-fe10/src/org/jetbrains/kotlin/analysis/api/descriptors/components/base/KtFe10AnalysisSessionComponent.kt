@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components.base
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 
-interface Fe10KtAnalysisSessionComponent {
-    val analysisSession: KtFe10AnalysisSession
+interface KaFe10AnalysisSessionComponent {
+    val analysisSession: KaFe10Session
 
     val analysisContext: Fe10AnalysisContext
         get() = analysisSession.analysisContext

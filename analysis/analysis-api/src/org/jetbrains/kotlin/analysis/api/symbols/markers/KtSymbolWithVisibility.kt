@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.analysis.api.symbols.markers
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
-public interface KtSymbolWithVisibility : KtSymbol {
+public interface KaSymbolWithVisibility : KaSymbol {
     public val visibility: Visibility
 }
 
+public typealias KtSymbolWithVisibility = KaSymbolWithVisibility
 
 public fun Visibility.isPrivateOrPrivateToThis(): Boolean =
     this == Visibilities.Private || this == Visibilities.PrivateToThis

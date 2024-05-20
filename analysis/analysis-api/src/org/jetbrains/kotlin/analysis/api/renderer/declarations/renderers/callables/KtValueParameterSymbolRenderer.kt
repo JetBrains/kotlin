@@ -5,24 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtValueParameterSymbolRenderer {
+public interface KaValueParameterSymbolRenderer {
     public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtValueParameterSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaValueParameterSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_SOURCE : KtValueParameterSymbolRenderer {
+    public object AS_SOURCE : KaValueParameterSymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtValueParameterSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaValueParameterSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -37,11 +37,11 @@ public interface KtValueParameterSymbolRenderer {
         }
     }
 
-    public object TYPE_ONLY : KtValueParameterSymbolRenderer {
+    public object TYPE_ONLY : KaValueParameterSymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtValueParameterSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaValueParameterSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -50,3 +50,5 @@ public interface KtValueParameterSymbolRenderer {
         }
     }
 }
+
+public typealias KtValueParameterSymbolRenderer = KaValueParameterSymbolRenderer

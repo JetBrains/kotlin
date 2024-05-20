@@ -5,25 +5,25 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.types.Variance
 
-public interface KtCallableReceiverRenderer {
+public interface KaCallableReceiverRenderer {
     public fun renderReceiver(
-        analysisSession: KtAnalysisSession,
-        symbol: KtReceiverParameterSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaReceiverParameterSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_TYPE_WITH_IN_APPROXIMATION : KtCallableReceiverRenderer {
+    public object AS_TYPE_WITH_IN_APPROXIMATION : KaCallableReceiverRenderer {
         override fun renderReceiver(
-            analysisSession: KtAnalysisSession,
-            symbol: KtReceiverParameterSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaReceiverParameterSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -42,3 +42,5 @@ public interface KtCallableReceiverRenderer {
         }
     }
 }
+
+public typealias KtCallableReceiverRenderer = KaCallableReceiverRenderer

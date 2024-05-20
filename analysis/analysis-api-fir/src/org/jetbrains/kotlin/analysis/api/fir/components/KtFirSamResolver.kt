@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtSamResolver
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.components.KaSamResolver
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 
-internal class KtFirSamResolver(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
-) : KtSamResolver(), KtFirAnalysisSessionComponent {
+internal class KaFirSamResolver(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
+) : KaSamResolver(), KaFirSessionComponent {
 
-    override fun getSamConstructor(ktClassLikeSymbol: KtClassLikeSymbol): KtSamConstructorSymbol? {
+    override fun getSamConstructor(ktClassLikeSymbol: KaClassLikeSymbol): KaSamConstructorSymbol? {
         val classId = ktClassLikeSymbol.classIdIfNonLocal ?: return null
         val owner = analysisSession.getClassLikeSymbol(classId) as? FirRegularClass ?: return null
         val firSession = analysisSession.useSiteSession

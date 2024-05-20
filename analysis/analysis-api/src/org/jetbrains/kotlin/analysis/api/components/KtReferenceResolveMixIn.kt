@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 
-public interface KtReferenceResolveMixIn : KtAnalysisSessionMixIn {
-    public fun KtReference.resolveToSymbols(): Collection<KtSymbol> = withValidityAssertion {
+public interface KaReferenceResolveMixIn : KaAnalysisSessionMixIn {
+    public fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
         return analysisSession.referenceResolveProvider.resolveToSymbols(this)
     }
 
-    public fun KtReference.resolveToSymbol(): KtSymbol? = withValidityAssertion {
+    public fun KtReference.resolveToSymbol(): KaSymbol? = withValidityAssertion {
         return resolveToSymbols().singleOrNull()
     }
 
@@ -39,3 +39,5 @@ public interface KtReferenceResolveMixIn : KtAnalysisSessionMixIn {
         analysisSession.referenceResolveProvider.isImplicitReferenceToCompanion(this)
     }
 }
+
+public typealias KtReferenceResolveMixIn = KaReferenceResolveMixIn

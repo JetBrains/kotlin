@@ -13,15 +13,15 @@ import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtil
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.KtPsiTypeProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.components.KaPsiTypeProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
@@ -66,15 +66,15 @@ import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.text.StringCharacterIterator
 
-internal class KtFirPsiTypeProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
-) : KtPsiTypeProvider(), KtFirAnalysisSessionComponent {
+internal class KaFirPsiTypeProvider(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
+) : KaPsiTypeProvider(), KaFirSessionComponent {
     override fun asPsiType(
-        type: KtType,
+        type: KaType,
         useSitePosition: PsiElement,
         allowErrorTypes: Boolean,
-        mode: KtTypeMappingMode,
+        mode: KaTypeMappingMode,
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
         preserveAnnotations: Boolean,
@@ -99,7 +99,7 @@ internal class KtFirPsiTypeProvider(
         val psiType = typeElement.type
         if (!preserveAnnotations) return psiType
 
-        @OptIn(KtAnalysisNonPublicApi::class)
+        @OptIn(KaAnalysisNonPublicApi::class)
         return with(analysisSession) {
             annotateByKtType(
                 psiType = psiType,
@@ -109,24 +109,24 @@ internal class KtFirPsiTypeProvider(
         }
     }
 
-    private fun KtTypeMappingMode.toTypeMappingMode(
-        type: KtType,
+    private fun KaTypeMappingMode.toTypeMappingMode(
+        type: KaType,
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
     ): TypeMappingMode {
-        require(type is KtFirType)
+        require(type is KaFirType)
         val expandedType = type.coneType.fullyExpandedType(rootModuleSession)
         return when (this) {
-            KtTypeMappingMode.DEFAULT -> TypeMappingMode.DEFAULT
-            KtTypeMappingMode.DEFAULT_UAST -> TypeMappingMode.DEFAULT_UAST
-            KtTypeMappingMode.GENERIC_ARGUMENT -> TypeMappingMode.GENERIC_ARGUMENT
-            KtTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
-            KtTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
-            KtTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
-            KtTypeMappingMode.RETURN_TYPE -> {
+            KaTypeMappingMode.DEFAULT -> TypeMappingMode.DEFAULT
+            KaTypeMappingMode.DEFAULT_UAST -> TypeMappingMode.DEFAULT_UAST
+            KaTypeMappingMode.GENERIC_ARGUMENT -> TypeMappingMode.GENERIC_ARGUMENT
+            KaTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
+            KaTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
+            KaTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
+            KaTypeMappingMode.RETURN_TYPE -> {
                 rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
             }
-            KtTypeMappingMode.VALUE_PARAMETER -> {
+            KaTypeMappingMode.VALUE_PARAMETER -> {
                 rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
             }
         }.let { typeMappingMode ->
@@ -143,10 +143,10 @@ internal class KtFirPsiTypeProvider(
         }
     }
 
-    override fun asKtType(
+    override fun asKaType(
         psiType: PsiType,
         useSitePosition: PsiElement,
-    ): KtType? {
+    ): KaType? {
         val javaElementSourceFactory = JavaElementSourceFactory.getInstance(project)
         val javaType = JavaTypeImpl.create(psiType, javaElementSourceFactory.createTypeSource(psiType))
 

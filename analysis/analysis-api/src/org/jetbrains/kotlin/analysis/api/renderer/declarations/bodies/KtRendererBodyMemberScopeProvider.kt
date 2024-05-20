@@ -5,44 +5,46 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
 
-public interface KtRendererBodyMemberScopeProvider {
-    public fun getMemberScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): List<KtDeclarationSymbol>
+public interface KaRendererBodyMemberScopeProvider {
+    public fun getMemberScope(analysisSession: KaSession, symbol: KaSymbolWithMembers): List<KaDeclarationSymbol>
 
-    public object ALL : KtRendererBodyMemberScopeProvider {
-        override fun getMemberScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): List<KtDeclarationSymbol> {
+    public object ALL : KaRendererBodyMemberScopeProvider {
+        override fun getMemberScope(analysisSession: KaSession, symbol: KaSymbolWithMembers): List<KaDeclarationSymbol> {
             with(analysisSession) {
                 return symbol.getCombinedDeclaredMemberScope().getAllSymbols().toList()
             }
         }
     }
 
-    public object ALL_DECLARED : KtRendererBodyMemberScopeProvider {
-        override fun getMemberScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): List<KtDeclarationSymbol> {
+    public object ALL_DECLARED : KaRendererBodyMemberScopeProvider {
+        override fun getMemberScope(analysisSession: KaSession, symbol: KaSymbolWithMembers): List<KaDeclarationSymbol> {
             with(analysisSession) {
                 return symbol.getCombinedDeclaredMemberScope().getAllSymbols()
                     .filter { member ->
                         val origin = member.origin
-                        origin != KtSymbolOrigin.DELEGATED &&
-                                origin != KtSymbolOrigin.SOURCE_MEMBER_GENERATED &&
-                                origin != KtSymbolOrigin.SUBSTITUTION_OVERRIDE &&
-                                origin != KtSymbolOrigin.INTERSECTION_OVERRIDE
+                        origin != KaSymbolOrigin.DELEGATED &&
+                                origin != KaSymbolOrigin.SOURCE_MEMBER_GENERATED &&
+                                origin != KaSymbolOrigin.SUBSTITUTION_OVERRIDE &&
+                                origin != KaSymbolOrigin.INTERSECTION_OVERRIDE
                     }.filter { member ->
-                        member !is KtConstructorSymbol || symbol !is KtClassOrObjectSymbol || !symbol.classKind.isObject
+                        member !is KaConstructorSymbol || symbol !is KaClassOrObjectSymbol || !symbol.classKind.isObject
                     }.filterNot { member ->
-                        member is KtConstructorSymbol && symbol is KtEnumEntrySymbol
+                        member is KaConstructorSymbol && symbol is KaEnumEntrySymbol
                     }
                     .toList()
             }
         }
     }
 
-    public object NONE : KtRendererBodyMemberScopeProvider {
-        override fun getMemberScope(analysisSession: KtAnalysisSession, symbol: KtSymbolWithMembers): List<KtDeclarationSymbol> {
+    public object NONE : KaRendererBodyMemberScopeProvider {
+        override fun getMemberScope(analysisSession: KaSession, symbol: KaSymbolWithMembers): List<KaDeclarationSymbol> {
             return emptyList()
         }
     }
 }
+
+public typealias KtRendererBodyMemberScopeProvider = KaRendererBodyMemberScopeProvider

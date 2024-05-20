@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtBuiltinTypes
-import org.jetbrains.kotlin.analysis.api.components.KtTypeProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
+import org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.dispatchReceiverType
-import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.toConeNullability
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
@@ -54,14 +54,14 @@ import org.jetbrains.kotlin.util.bfs
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KtFirTypeProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken
-) : KtTypeProvider(), KtFirAnalysisSessionComponent {
-    override val builtinTypes: KtBuiltinTypes = KtFirBuiltInTypes(rootModuleSession.builtinTypes, firSymbolBuilder, token)
+internal class KaFirTypeProvider(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken
+) : KaTypeProvider(), KaFirSessionComponent {
+    override val builtinTypes: KaBuiltinTypes = KaFirBuiltInTypes(rootModuleSession.builtinTypes, firSymbolBuilder, token)
 
-    override fun approximateToSuperPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
-        require(type is KtFirType)
+    override fun approximateToSuperPublicDenotableType(type: KaType, approximateLocalTypes: Boolean): KaType? {
+        require(type is KaFirType)
         val coneType = type.coneType
         val approximatedConeType = PublicTypeApproximator.approximateTypeToPublicDenotable(
             coneType,
@@ -72,8 +72,8 @@ internal class KtFirTypeProvider(
         return approximatedConeType?.asKtType()
     }
 
-    override fun approximateToSubPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
-        require(type is KtFirType)
+    override fun approximateToSubPublicDenotableType(type: KaType, approximateLocalTypes: Boolean): KaType? {
+        require(type is KaFirType)
         val coneType = type.coneType
         val approximatedConeType = rootModuleSession.typeApproximator.approximateToSubType(
             coneType,
@@ -83,8 +83,8 @@ internal class KtFirTypeProvider(
         return approximatedConeType?.asKtType()
     }
 
-    override fun getEnhancedType(type: KtType): KtType? {
-        require(type is KtFirType)
+    override fun getEnhancedType(type: KaType): KaType? {
+        require(type is KaFirType)
         val coneType = type.coneType
         val substitutor = EnhancedForWarningConeSubstitutor(typeContext)
         val enhancedConeType = substitutor.substituteType(coneType)
@@ -92,8 +92,8 @@ internal class KtFirTypeProvider(
         return enhancedConeType?.asKtType()
     }
 
-    override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType {
-        require(symbol is KtFirNamedClassOrObjectSymbol)
+    override fun buildSelfClassType(symbol: KaNamedClassOrObjectSymbol): KaType {
+        require(symbol is KaFirNamedClassOrObjectSymbol)
         symbol.firSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
         val firClass = symbol.firSymbol.fir
         val type = ConeClassLikeTypeImpl(
@@ -105,13 +105,13 @@ internal class KtFirTypeProvider(
         return type.asKtType()
     }
 
-    override fun commonSuperType(types: Collection<KtType>): KtType? {
+    override fun commonSuperType(types: Collection<KaType>): KaType? {
         return analysisSession.useSiteSession.typeContext
             .commonSuperTypeOrNull(types.map { it.coneType })
             ?.asKtType()
     }
 
-    override fun getKtType(ktTypeReference: KtTypeReference): KtType {
+    override fun getKtType(ktTypeReference: KtTypeReference): KaType {
         val fir = ktTypeReference.getFirBySymbols() ?: ktTypeReference.getOrBuildFirOfType<FirElement>(firResolveSession)
         return when (fir) {
             is FirResolvedTypeRef -> fir.coneType.asKtType()
@@ -185,7 +185,7 @@ internal class KtFirTypeProvider(
         }
     }
 
-    override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? {
+    override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KaType? {
         return when (val fir = expression.getOrBuildFir(firResolveSession)) {
             is FirGetClassCall -> {
                 fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
@@ -222,19 +222,19 @@ internal class KtFirTypeProvider(
         return typeArguments.firstOrNull()?.type
     }
 
-    override fun withNullability(type: KtType, newNullability: KtTypeNullability): KtType {
-        require(type is KtFirType)
+    override fun withNullability(type: KaType, newNullability: KaTypeNullability): KaType {
+        require(type is KaFirType)
         return type.coneType.withNullability(newNullability.toConeNullability(), rootModuleSession.typeContext).asKtType()
     }
 
-    override fun haveCommonSubtype(a: KtType, b: KtType): Boolean {
+    override fun haveCommonSubtype(a: KaType, b: KaType): Boolean {
         return analysisSession.useSiteSession.typeContext.isCompatible(
             a.coneType,
             b.coneType
         ) == ConeTypeCompatibilityChecker.Compatibility.COMPATIBLE
     }
 
-    override fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KtType> {
+    override fun getImplicitReceiverTypesAtPosition(position: KtElement): List<KaType> {
         val ktFile = position.containingKtFile
         val firFile = ktFile.getOrBuildFirFile(firResolveSession)
 
@@ -249,8 +249,8 @@ internal class KtFirTypeProvider(
         return context.towerDataContext.implicitReceiverStack.map { it.type.asKtType() }
     }
 
-    override fun getDirectSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType> {
-        require(type is KtFirType)
+    override fun getDirectSuperTypes(type: KaType, shouldApproximate: Boolean): List<KaType> {
+        require(type is KaFirType)
         return type.coneType.getDirectSuperTypes(shouldApproximate).mapTo(mutableListOf()) { it.asKtType() }
     }
 
@@ -303,16 +303,16 @@ internal class KtFirTypeProvider(
         }
     }
 
-    override fun getAllSuperTypes(type: KtType, shouldApproximate: Boolean): List<KtType> {
-        require(type is KtFirType)
+    override fun getAllSuperTypes(type: KaType, shouldApproximate: Boolean): List<KaType> {
+        require(type is KaFirType)
         return listOf(type.coneType)
             .bfs { it.getDirectSuperTypes(shouldApproximate).iterator() }
             .drop(1)
             .mapTo(mutableListOf()) { it.asKtType() }
     }
 
-    override fun getDispatchReceiverType(symbol: KtCallableSymbol): KtType? {
-        require(symbol is KtFirSymbol<*>)
+    override fun getDispatchReceiverType(symbol: KaCallableSymbol): KaType? {
+        require(symbol is KaFirSymbol<*>)
         val firSymbol = symbol.firSymbol
         check(firSymbol is FirCallableSymbol<*>) {
             "Fir declaration should be FirCallableDeclaration; instead it was ${firSymbol::class}"
@@ -320,8 +320,8 @@ internal class KtFirTypeProvider(
         return firSymbol.dispatchReceiverType(analysisSession.firSymbolBuilder)
     }
 
-    override fun getArrayElementType(type: KtType): KtType? {
-        require(type is KtFirType)
+    override fun getArrayElementType(type: KaType): KaType? {
+        require(type is KaFirType)
         return type.coneType.arrayElementType()?.asKtType()
     }
 }

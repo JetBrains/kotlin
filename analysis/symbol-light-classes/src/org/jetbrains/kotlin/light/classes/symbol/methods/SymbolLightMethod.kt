@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightReferenceListBuilder
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.util.*
 
-internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private constructor(
-    protected val functionSymbolPointer: KtSymbolPointer<FType>,
+internal abstract class SymbolLightMethod<FType : KaFunctionLikeSymbol> private constructor(
+    protected val functionSymbolPointer: KaSymbolPointer<FType>,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
@@ -47,7 +47,7 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
     methodIndex,
 ) {
     internal constructor(
-        ktAnalysisSession: KtAnalysisSession,
+        ktAnalysisSession: KaSession,
         functionSymbol: FType,
         lightMemberOrigin: LightMemberOrigin?,
         containingClass: SymbolLightClassBase,
@@ -56,7 +56,7 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
     ) : this(
         functionSymbolPointer = with(ktAnalysisSession) {
             @Suppress("UNCHECKED_CAST")
-            functionSymbol.createPointer() as KtSymbolPointer<FType>
+            functionSymbol.createPointer() as KaSymbolPointer<FType>
         },
         lightMemberOrigin = lightMemberOrigin,
         containingClass = containingClass,
@@ -66,7 +66,7 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
         kotlinOrigin = functionSymbol.sourcePsiSafe() ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>(),
     )
 
-    protected inline fun <T> withFunctionSymbol(crossinline action: KtAnalysisSession.(FType) -> T): T =
+    protected inline fun <T> withFunctionSymbol(crossinline action: KaSession.(FType) -> T): T =
         functionSymbolPointer.withSymbol(ktModule, action)
 
     private val _isVarArgs: Boolean by lazyPub {
@@ -100,11 +100,11 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
                     }
                 }
 
-                if ((functionSymbol as? KtFunctionSymbol)?.isSuspend == true) {
+                if ((functionSymbol as? KaFunctionSymbol)?.isSuspend == true) {
                     builder.addParameter(
                         @Suppress("UNCHECKED_CAST")
                         SymbolLightSuspendContinuationParameter(
-                            functionSymbolPointer = functionSymbolPointer as KtSymbolPointer<KtFunctionSymbol>,
+                            functionSymbolPointer = functionSymbolPointer as KaSymbolPointer<KaFunctionSymbol>,
                             containingMethod = this@SymbolLightMethod,
                         )
                     )

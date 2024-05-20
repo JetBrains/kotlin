@@ -49,7 +49,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
         optIn.addAll(
             listOf(
                 "kotlin.RequiresOptIn",
-                "org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals"
+                "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals"
             )
         )
         freeCompilerArgs.add("-Xcontext-receivers")

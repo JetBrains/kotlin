@@ -5,26 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-class KtFirPsiBasedPropertySymbolPointer(
-    private val variableSymbolPointer: KtPsiBasedSymbolPointer<KtVariableLikeSymbol>,
-) : KtSymbolPointer<KtKotlinPropertySymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtKotlinPropertySymbol? =
+class KaFirPsiBasedPropertySymbolPointer(
+    private val variableSymbolPointer: KaPsiBasedSymbolPointer<KaVariableLikeSymbol>,
+) : KaSymbolPointer<KaKotlinPropertySymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): KaKotlinPropertySymbol? =
         when (val variable = with(analysisSession) { variableSymbolPointer.restoreSymbol() }) {
-            is KtKotlinPropertySymbol -> variable
-            is KtValueParameterSymbol -> variable.generatedPrimaryConstructorProperty
+            is KaKotlinPropertySymbol -> variable
+            is KaValueParameterSymbol -> variable.generatedPrimaryConstructorProperty
             else -> null
         }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFirPsiBasedPropertySymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFirPsiBasedPropertySymbolPointer &&
             other.variableSymbolPointer.pointsToTheSameSymbolAs(variableSymbolPointer)
 }

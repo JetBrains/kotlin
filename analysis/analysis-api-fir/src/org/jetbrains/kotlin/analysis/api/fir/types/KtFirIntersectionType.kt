@@ -5,34 +5,34 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForType
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KtIntersectionType
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
+import org.jetbrains.kotlin.analysis.api.types.KaIntersectionType
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
-internal class KtFirIntersectionType(
+internal class KaFirIntersectionType(
     override val coneType: ConeIntersectionType,
-    private val builder: KtSymbolByFirBuilder,
-) : KtIntersectionType(), KtFirType {
-    override val token: KtLifetimeToken get() = builder.token
+    private val builder: KaSymbolByFirBuilder,
+) : KaIntersectionType(), KaFirType {
+    override val token: KaLifetimeToken get() = builder.token
 
-    override val conjuncts: List<KtType> by cached {
+    override val conjuncts: List<KaType> by cached {
         coneType.intersectedTypes.map { conjunct -> builder.typeBuilder.buildKtType(conjunct) }
     }
-    override val annotationsList: KtAnnotationsList by cached {
-        KtFirAnnotationListForType.create(coneType, builder)
+    override val annotationsList: KaAnnotationsList by cached {
+        KaFirAnnotationListForType.create(coneType, builder)
     }
-    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
-    override val abbreviatedType: KtUsualClassType?
+    override val abbreviatedType: KaUsualClassType?
         get() = withValidityAssertion { null }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }

@@ -5,36 +5,37 @@
 
 package org.jetbrains.kotlin.analysis.api.types
 
-import org.jetbrains.kotlin.analysis.api.KtTypeProjection
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.KaTypeProjection
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.name.Name
 
-public sealed interface KtClassTypeQualifier : KtLifetimeOwner {
+public sealed interface KaClassTypeQualifier : KaLifetimeOwner {
     public val name: Name
-    public val typeArguments: List<KtTypeProjection>
+    public val typeArguments: List<KaTypeProjection>
 
-    public class KtResolvedClassTypeQualifier(
-        private val backingSymbol: KtClassifierSymbol,
-        typeArguments: List<KtTypeProjection>,
-        override val token: KtLifetimeToken
-    ) : KtClassTypeQualifier {
+    public class KaResolvedClassTypeQualifier(
+        private val backingSymbol: KaClassifierSymbol,
+        typeArguments: List<KaTypeProjection>,
+        override val token: KaLifetimeToken
+    ) : KaClassTypeQualifier {
         override val name: Name get() = withValidityAssertion { backingSymbol.nameOrAnonymous }
-        public val symbol: KtClassifierSymbol get() = withValidityAssertion { backingSymbol }
-        override val typeArguments: List<KtTypeProjection> by validityAsserted(typeArguments)
+        public val symbol: KaClassifierSymbol get() = withValidityAssertion { backingSymbol }
+        override val typeArguments: List<KaTypeProjection> by validityAsserted(typeArguments)
     }
 
-    public class KtUnresolvedClassTypeQualifier(
+    public class KaUnresolvedClassTypeQualifier(
         name: Name,
-        typeArguments: List<KtTypeProjection>,
-        override val token: KtLifetimeToken
-    ) : KtClassTypeQualifier {
+        typeArguments: List<KaTypeProjection>,
+        override val token: KaLifetimeToken
+    ) : KaClassTypeQualifier {
         override val name: Name by validityAsserted(name)
-        override val typeArguments: List<KtTypeProjection> by validityAsserted(typeArguments)
+        override val typeArguments: List<KaTypeProjection> by validityAsserted(typeArguments)
     }
 }
 
+public typealias KtClassTypeQualifier = KaClassTypeQualifier

@@ -1,8 +1,8 @@
 <idea-plugin>
   <extensionPoints>
     <extensionPoint
-        qualifiedName="org.jetbrains.kotlin.ktResolveExtensionProvider"
-        interface="org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider"
+        qualifiedName="org.jetbrains.kotlin.kaResolveExtensionProvider"
+        interface="org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider"
         area="IDEA_PROJECT"
         dynamic="true"
     />

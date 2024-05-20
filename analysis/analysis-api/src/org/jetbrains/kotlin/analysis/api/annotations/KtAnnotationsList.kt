@@ -5,33 +5,33 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.name.ClassId
 
 /**
  * A list of annotations applied for some entity.
  *
- * Annotation owners are usually implement [KtAnnotated]
+ * Annotation owners are usually implement [KaAnnotated]
  */
-public abstract class KtAnnotationsList : KtLifetimeOwner {
+public abstract class KaAnnotationsList : KaLifetimeOwner {
     /**
      * A list of annotations applied.
      *
      * To check if annotation is present, please use [hasAnnotation].
      * [annotationInfos] is more preferable if suits your needs as a lightweight.
      *
-     * @see KtAnnotationApplication
+     * @see KaAnnotationApplication
      */
-    public abstract val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
+    public abstract val annotations: List<KaAnnotationApplicationWithArgumentsInfo>
 
     /**
      * A list of annotation infos.
      *
      * Can be used instead of [annotations] if applicable to reduce resolve.
      *
-     * @see KtAnnotationApplicationInfo
+     * @see KaAnnotationApplicationInfo
      */
-    public abstract val annotationInfos: List<KtAnnotationApplicationInfo>
+    public abstract val annotationInfos: List<KaAnnotationApplicationInfo>
 
     /**
      * Checks if entity contains annotation with specified [classId] and filtered by [useSiteTargetFilter].
@@ -62,12 +62,12 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
      * }
      * ```
      *
-     * @see KtAnnotationApplicationWithArgumentsInfo
+     * @see KaAnnotationApplicationWithArgumentsInfo
      */
     public abstract fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-    ): List<KtAnnotationApplicationWithArgumentsInfo>
+    ): List<KaAnnotationApplicationWithArgumentsInfo>
 
     /**
      * A list of annotations [ClassId].
@@ -81,3 +81,5 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
      */
     public abstract val annotationClassIds: Collection<ClassId>
 }
+
+public typealias KtAnnotationsList = KaAnnotationsList

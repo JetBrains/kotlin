@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.assertions
  * of [modificationEventKind]. This allows [AbstractSessionInvalidationTest] to check all modification event kinds with the same original
  * test data.
  *
- * [AbstractSessionInvalidationTest] is a base class for invalidation tests of `KtAnalysisSession` and `LLFirSession`, which share the test
+ * [AbstractSessionInvalidationTest] is a base class for invalidation tests of `KaSession` and `LLFirSession`, which share the test
  * data but not necessarily the result data (see also [resultFileSuffix]).
  */
 abstract class AbstractSessionInvalidationTest<SESSION> : AbstractAnalysisApiBasedTest() {

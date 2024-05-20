@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
+public interface KaAnnotatedSymbol : KaSymbol, KaAnnotated
 
-public interface KtAnnotatedSymbol : KtSymbol, KtAnnotated
+public typealias KtAnnotatedSymbol = KaAnnotatedSymbol

@@ -5,82 +5,88 @@
 
 package org.jetbrains.kotlin.analysis.api.calls
 
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 
 /**
  * Call information at call site.
  */
-public sealed class KtCallInfo : KtLifetimeOwner
+public sealed class KaCallInfo : KaLifetimeOwner
+
+public typealias KtCallInfo = KaCallInfo
 
 /**
  * Successfully resolved call.
  */
-public class KtSuccessCallInfo(private val backingCall: KtCall) : KtCallInfo() {
-    override val token: KtLifetimeToken get() = backingCall.token
-    public val call: KtCall get() = withValidityAssertion { backingCall }
+public class KaSuccessCallInfo(private val backingCall: KaCall) : KaCallInfo() {
+    override val token: KaLifetimeToken get() = backingCall.token
+    public val call: KaCall get() = withValidityAssertion { backingCall }
 }
+
+public typealias KtSuccessCallInfo = KaSuccessCallInfo
 
 /**
  * Call that contains errors.
  */
-public class KtErrorCallInfo(
-    candidateCalls: List<KtCall>,
-    diagnostic: KtDiagnostic,
-    override val token: KtLifetimeToken,
-) : KtCallInfo() {
-    public val candidateCalls: List<KtCall> by validityAsserted(candidateCalls)
-    public val diagnostic: KtDiagnostic by validityAsserted(diagnostic)
+public class KaErrorCallInfo(
+    candidateCalls: List<KaCall>,
+    diagnostic: KaDiagnostic,
+    override val token: KaLifetimeToken,
+) : KaCallInfo() {
+    public val candidateCalls: List<KaCall> by validityAsserted(candidateCalls)
+    public val diagnostic: KaDiagnostic by validityAsserted(diagnostic)
 }
 
-public val KtCallInfo.calls: List<KtCall>
+public typealias KtErrorCallInfo = KaErrorCallInfo
+
+public val KaCallInfo.calls: List<KaCall>
     get() = when (this) {
-        is KtErrorCallInfo -> candidateCalls
-        is KtSuccessCallInfo -> listOf(call)
+        is KaErrorCallInfo -> candidateCalls
+        is KaSuccessCallInfo -> listOf(call)
     }
 
-public inline fun <reified T : KtCall> KtCallInfo.singleCallOrNull(): T? {
+public inline fun <reified T : KaCall> KaCallInfo.singleCallOrNull(): T? {
     return calls.singleOrNull { it is T } as T?
 }
 
-public fun KtCallInfo.singleFunctionCallOrNull(): KtFunctionCall<*>? = singleCallOrNull()
-public fun KtCallInfo.singleVariableAccessCall(): KtVariableAccessCall? = singleCallOrNull()
+public fun KaCallInfo.singleFunctionCallOrNull(): KaFunctionCall<*>? = singleCallOrNull()
+public fun KaCallInfo.singleVariableAccessCall(): KaVariableAccessCall? = singleCallOrNull()
 
 @Suppress("UNCHECKED_CAST")
-public fun KtCallInfo.singleConstructorCallOrNull(): KtFunctionCall<KtConstructorSymbol>? =
-    singleCallOrNull<KtFunctionCall<*>>()?.takeIf { it.symbol is KtConstructorSymbol } as KtFunctionCall<KtConstructorSymbol>?
+public fun KaCallInfo.singleConstructorCallOrNull(): KaFunctionCall<KaConstructorSymbol>? =
+    singleCallOrNull<KaFunctionCall<*>>()?.takeIf { it.symbol is KaConstructorSymbol } as KaFunctionCall<KaConstructorSymbol>?
 
-public inline fun <reified T : KtCall> KtCallInfo.successfulCallOrNull(): T? {
-    return (this as? KtSuccessCallInfo)?.call as? T
+public inline fun <reified T : KaCall> KaCallInfo.successfulCallOrNull(): T? {
+    return (this as? KaSuccessCallInfo)?.call as? T
 }
 
-public fun KtCallInfo.successfulFunctionCallOrNull(): KtFunctionCall<*>? = successfulCallOrNull()
-public fun KtCallInfo.successfulVariableAccessCall(): KtVariableAccessCall? = successfulCallOrNull()
+public fun KaCallInfo.successfulFunctionCallOrNull(): KaFunctionCall<*>? = successfulCallOrNull()
+public fun KaCallInfo.successfulVariableAccessCall(): KaVariableAccessCall? = successfulCallOrNull()
 
 @Suppress("UNCHECKED_CAST")
-public fun KtCallInfo.successfulConstructorCallOrNull(): KtFunctionCall<KtConstructorSymbol>? =
-    successfulCallOrNull<KtFunctionCall<*>>()?.takeIf { it.symbol is KtConstructorSymbol } as KtFunctionCall<KtConstructorSymbol>?
+public fun KaCallInfo.successfulConstructorCallOrNull(): KaFunctionCall<KaConstructorSymbol>? =
+    successfulCallOrNull<KaFunctionCall<*>>()?.takeIf { it.symbol is KaConstructorSymbol } as KaFunctionCall<KaConstructorSymbol>?
 
 /**
  * A candidate considered for a call. I.e., one of the overload candidates in scope at the call site.
  */
-public sealed class KtCallCandidateInfo(
-    candidate: KtCall,
+public sealed class KaCallCandidateInfo(
+    candidate: KaCall,
     isInBestCandidates: Boolean,
-) : KtLifetimeOwner {
-    private val backingCandidate: KtCall = candidate
+) : KaLifetimeOwner {
+    private val backingCandidate: KaCall = candidate
 
-    override val token: KtLifetimeToken get() = backingCandidate.token
-    public val candidate: KtCall get() = withValidityAssertion { backingCandidate }
+    override val token: KaLifetimeToken get() = backingCandidate.token
+    public val candidate: KaCall get() = withValidityAssertion { backingCandidate }
 
     /**
      * Returns true if the [candidate] is in the final set of candidates that the call is actually resolved to. There can be multiple
@@ -89,48 +95,56 @@ public sealed class KtCallCandidateInfo(
     public val isInBestCandidates: Boolean by validityAsserted(isInBestCandidates)
 }
 
+public typealias KtCallCandidateInfo = KaCallCandidateInfo
+
 /**
  * A candidate that is applicable for a call. A candidate is applicable if the call's arguments are complete and are assignable to the
  * candidate's parameters, AND the call's type arguments are complete and fit all the constraints of the candidate's type parameters.
  */
-public class KtApplicableCallCandidateInfo(
-    candidate: KtCall,
+public class KaApplicableCallCandidateInfo(
+    candidate: KaCall,
     isInBestCandidates: Boolean,
-) : KtCallCandidateInfo(candidate, isInBestCandidates)
+) : KaCallCandidateInfo(candidate, isInBestCandidates)
+
+public typealias KtApplicableCallCandidateInfo = KaApplicableCallCandidateInfo
 
 /**
  * A candidate that is NOT applicable for a call. A candidate is inapplicable if a call argument is missing or is not assignable to the
  * candidate's parameters, OR a call type argument is missing or does not fit the constraints of the candidate's type parameters.
  */
-public class KtInapplicableCallCandidateInfo(
-    candidate: KtCall,
+public class KaInapplicableCallCandidateInfo(
+    candidate: KaCall,
     isInBestCandidates: Boolean,
-    diagnostic: KtDiagnostic,
-) : KtCallCandidateInfo(candidate, isInBestCandidates) {
+    diagnostic: KaDiagnostic,
+) : KaCallCandidateInfo(candidate, isInBestCandidates) {
     /**
      * The reason the [candidate] was not applicable for the call (e.g., argument type mismatch, or no value for parameter).
      */
-    public val diagnostic: KtDiagnostic by validityAsserted(diagnostic)
+    public val diagnostic: KaDiagnostic by validityAsserted(diagnostic)
 }
+
+public typealias KtInapplicableCallCandidateInfo = KaInapplicableCallCandidateInfo
 
 /**
  * A call to a function, a simple/compound access to a property, or a simple/compound access through `get` and `set` convention.
  */
-public sealed class KtCall : KtLifetimeOwner
+public sealed class KaCall : KaLifetimeOwner
+
+public typealias KtCall = KaCall
 
 /**
  * A callable symbol partially applied with receivers and type arguments. Essentially, this is a call that misses some information. For
  * properties, the missing information is the type of access (read, write, or compound access) to this property. For functions, the missing
  * information is the value arguments for the call.
  */
-public class KtPartiallyAppliedSymbol<out S : KtCallableSymbol, out C : KtCallableSignature<S>>(
+public class KaPartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCallableSignature<S>>(
     signature: C,
-    dispatchReceiver: KtReceiverValue?,
-    extensionReceiver: KtReceiverValue?,
-) : KtLifetimeOwner {
+    dispatchReceiver: KaReceiverValue?,
+    extensionReceiver: KaReceiverValue?,
+) : KaLifetimeOwner {
     private val backingSignature: C = signature
 
-    override val token: KtLifetimeToken get() = backingSignature.token
+    override val token: KaLifetimeToken get() = backingSignature.token
 
     /**
      * The function or variable (property) declaration.
@@ -140,65 +154,73 @@ public class KtPartiallyAppliedSymbol<out S : KtCallableSymbol, out C : KtCallab
     /**
      * The dispatch receiver for this symbol access. Dispatch receiver is available if the symbol is declared inside a class or object.
      */
-    public val dispatchReceiver: KtReceiverValue? by validityAsserted(dispatchReceiver)
+    public val dispatchReceiver: KaReceiverValue? by validityAsserted(dispatchReceiver)
 
     /**
      * The extension receiver for this symbol access. Extension receiver is available if the symbol is declared with an extension receiver.
      */
-    public val extensionReceiver: KtReceiverValue? by validityAsserted(extensionReceiver)
+    public val extensionReceiver: KaReceiverValue? by validityAsserted(extensionReceiver)
 }
 
-public val <S : KtCallableSymbol, C : KtCallableSignature<S>> KtPartiallyAppliedSymbol<S, C>.symbol: S get() = signature.symbol
+public typealias KtPartiallyAppliedSymbol<S, C> = KaPartiallyAppliedSymbol<S, C>
+
+public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaPartiallyAppliedSymbol<S, C>.symbol: S get() = signature.symbol
 
 /**
  * A call to a function, or a simple/compound access to a property.
  */
-public sealed class KtCallableMemberCall<S : KtCallableSymbol, C : KtCallableSignature<S>> : KtCall() {
-    public abstract val partiallyAppliedSymbol: KtPartiallyAppliedSymbol<S, C>
+public sealed class KaCallableMemberCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaCall() {
+    public abstract val partiallyAppliedSymbol: KaPartiallyAppliedSymbol<S, C>
 
     /**
      * This map returns inferred type arguments. If the type placeholders was used, actual inferred type will be used as a value.
      * Keys for this map is from the set [partiallyAppliedSymbol].signature.typeParameters.
      * In case of resolution or inference error could return empty map.
      */
-    public abstract val typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType>
+    public abstract val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>
 }
 
-public val <S : KtCallableSymbol, C : KtCallableSignature<S>> KtCallableMemberCall<S, C>.symbol: S get() = partiallyAppliedSymbol.symbol
+public typealias KtCallableMemberCall<S, C> = KaCallableMemberCall<S, C>
 
-public sealed class KtFunctionCall<S : KtFunctionLikeSymbol>(
-    argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
-) : KtCallableMemberCall<S, KtFunctionLikeSignature<S>>() {
+public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCall<S, C>.symbol: S get() = partiallyAppliedSymbol.symbol
+
+public sealed class KaFunctionCall<S : KaFunctionLikeSymbol>(
+    argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
+) : KaCallableMemberCall<S, KaFunctionLikeSignature<S>>() {
 
     /**
      * The mapping from argument to parameter declaration. In case of vararg parameters, multiple arguments may be mapped to the same
-     * `KtValueParameterSymbol`.
+     * [KaValueParameterSymbol].
      */
-    public val argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>
+    public val argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>
             by validityAsserted(argumentMapping)
 }
 
-public typealias KtPartiallyAppliedFunctionSymbol<S> = KtPartiallyAppliedSymbol<S, KtFunctionLikeSignature<S>>
+public typealias KtFunctionCall<S> = KaFunctionCall<S>
+
+public typealias KaPartiallyAppliedFunctionSymbol<S> = KaPartiallyAppliedSymbol<S, KaFunctionLikeSignature<S>>
+
+public typealias KtPartiallyAppliedFunctionSymbol<S> = KaPartiallyAppliedFunctionSymbol<S>
 
 /**
  * A call to a function.
  */
-public class KtSimpleFunctionCall(
-    partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionLikeSymbol>,
-    argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
-    typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType>,
+public class KaSimpleFunctionCall(
+    partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionLikeSymbol>,
+    argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
+    typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     isImplicitInvoke: Boolean,
-) : KtFunctionCall<KtFunctionLikeSymbol>(argumentMapping) {
-    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionLikeSymbol> = partiallyAppliedSymbol
+) : KaFunctionCall<KaFunctionLikeSymbol>(argumentMapping) {
+    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionLikeSymbol> = partiallyAppliedSymbol
 
-    override val token: KtLifetimeToken get() = backingPartiallyAppliedSymbol.token
+    override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     /**
      * The function and receivers for this call.
      */
-    override val partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionLikeSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+    override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionLikeSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
 
-    override val typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType> by validityAsserted(typeArgumentsMapping)
+    override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> by validityAsserted(typeArgumentsMapping)
 
     /**
      * Whether this function call is an implicit invoke call on a value that has an `invoke` member function. See
@@ -207,6 +229,8 @@ public class KtSimpleFunctionCall(
     public val isImplicitInvoke: Boolean by validityAsserted(isImplicitInvoke)
 }
 
+public typealias KtSimpleFunctionCall = KaSimpleFunctionCall
+
 /**
  * A call to an annotation. For example
  * ```
@@ -214,21 +238,23 @@ public class KtSimpleFunctionCall(
  * fun foo() {}
  * ```
  */
-public class KtAnnotationCall(
-    partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol>,
-    argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
-) : KtFunctionCall<KtConstructorSymbol>(argumentMapping) {
-    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol> = partiallyAppliedSymbol
+public class KaAnnotationCall(
+    partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
+    argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
+) : KaFunctionCall<KaConstructorSymbol>(argumentMapping) {
+    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol> = partiallyAppliedSymbol
 
-    override val token: KtLifetimeToken get() = backingPartiallyAppliedSymbol.token
+    override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     /**
      * The function and receivers for this call.
      */
-    override val partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+    override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
 
-    override val typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType> get() = withValidityAssertion { emptyMap() }
+    override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { emptyMap() }
 }
+
+public typealias KtAnnotationCall = KaAnnotationCall
 
 /**
  * A delegated call to constructors. For example
@@ -241,59 +267,67 @@ public class KtAnnotationCall(
  * }
  * ```
  */
-public class KtDelegatedConstructorCall(
-    partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol>,
+public class KaDelegatedConstructorCall(
+    partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
     kind: Kind,
-    argumentMapping: LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>,
-    typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType>,
-) : KtFunctionCall<KtConstructorSymbol>(argumentMapping) {
-    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol> = partiallyAppliedSymbol
+    argumentMapping: LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>,
+    typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
+) : KaFunctionCall<KaConstructorSymbol>(argumentMapping) {
+    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol> = partiallyAppliedSymbol
 
-    override val token: KtLifetimeToken get() = backingPartiallyAppliedSymbol.token
+    override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     /**
      * The function and receivers for this call.
      */
-    override val partiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtConstructorSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+    override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
 
-    override val typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType> by validityAsserted(typeArgumentsMapping)
+    override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> by validityAsserted(typeArgumentsMapping)
 
     public val kind: Kind by validityAsserted(kind)
 
     public enum class Kind { SUPER_CALL, THIS_CALL }
 }
 
+public typealias KtDelegatedConstructorCall = KaDelegatedConstructorCall
+
 /**
  * An access to variables (including properties).
  */
-public sealed class KtVariableAccessCall : KtCallableMemberCall<KtVariableLikeSymbol, KtVariableLikeSignature<KtVariableLikeSymbol>>()
+public sealed class KaVariableAccessCall : KaCallableMemberCall<KaVariableLikeSymbol, KaVariableLikeSignature<KaVariableLikeSymbol>>()
 
-public typealias KtPartiallyAppliedVariableSymbol<S> = KtPartiallyAppliedSymbol<S, KtVariableLikeSignature<S>>
+public typealias KtVariableAccessCall = KaVariableAccessCall
+
+public typealias KaPartiallyAppliedVariableSymbol<S> = KaPartiallyAppliedSymbol<S, KaVariableLikeSignature<S>>
+
+public typealias KtPartiallyAppliedVariableSymbol<S> = KaPartiallyAppliedVariableSymbol<S>
 
 /**
  * A simple read or write to a variable or property.
  */
-public class KtSimpleVariableAccessCall(
-    partiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>,
-    typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType>,
-    simpleAccess: KtSimpleVariableAccess,
-) : KtVariableAccessCall() {
-    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol> = partiallyAppliedSymbol
+public class KaSimpleVariableAccessCall(
+    partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol>,
+    typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
+    simpleAccess: KaSimpleVariableAccess,
+) : KaVariableAccessCall() {
+    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol> = partiallyAppliedSymbol
 
-    override val token: KtLifetimeToken get() = backingPartiallyAppliedSymbol.token
+    override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
-    override val partiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+    override val partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
 
-    override val typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType> by validityAsserted(typeArgumentsMapping)
+    override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> by validityAsserted(typeArgumentsMapping)
 
     /**
      * The type of access to this property.
      */
-    public val simpleAccess: KtSimpleVariableAccess by validityAsserted(simpleAccess)
+    public val simpleAccess: KaSimpleVariableAccess by validityAsserted(simpleAccess)
 }
 
-public sealed class KtSimpleVariableAccess {
-    public object Read : KtSimpleVariableAccess()
+public typealias KtSimpleVariableAccessCall = KaSimpleVariableAccessCall
+
+public sealed class KaSimpleVariableAccess {
+    public object Read : KaSimpleVariableAccess()
 
     public class Write(
         /**
@@ -301,15 +335,19 @@ public sealed class KtSimpleVariableAccess {
          * and misses the new value.
          */
         public val value: KtExpression?,
-    ) : KtSimpleVariableAccess()
+    ) : KaSimpleVariableAccess()
 }
 
-public interface KtCompoundAccessCall {
+public typealias KtSimpleVariableAccess = KaSimpleVariableAccess
+
+public interface KaCompoundAccessCall {
     /**
      * The type of this compound access.
      */
-    public val compoundAccess: KtCompoundAccess
+    public val compoundAccess: KaCompoundAccess
 }
+
+public typealias KtCompoundAccessCall = KaCompoundAccessCall
 
 /**
  * A compound access of a mutable variable.  For example
@@ -341,26 +379,28 @@ public interface KtCompoundAccessCall {
  *   // }
  * }
  * ```
- * Note that if the variable has a `<op>Assign` member, then it's represented as a simple `KtFunctionCall`. For example,
+ * Note that if the variable has a `<op>Assign` member, then it's represented as a simple `KaFunctionCall`. For example,
  * ```
  * fun test(m: MutableList<String>) {
- *   m += "a" // A simple `KtFunctionCall` to `MutableList.plusAssign`, not a `KtVariableAccessCall`. However, the dispatch receiver of this
- *            // call, `m`, is a simple read access represented as a `KtVariableAccessCall`
+ *   m += "a" // A simple `KaFunctionCall` to `MutableList.plusAssign`, not a `KaVariableAccessCall`. However, the dispatch receiver of this
+ *            // call, `m`, is a simple read access represented as a `KaVariableAccessCall`
  * }
  * ```
  */
-public class KtCompoundVariableAccessCall(
-    partiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol>,
-    typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType>,
-    compoundAccess: KtCompoundAccess,
-) : KtVariableAccessCall(), KtCompoundAccessCall {
-    private val backingPartiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol> = partiallyAppliedSymbol
-    override val token: KtLifetimeToken get() = backingPartiallyAppliedSymbol.token
+public class KaCompoundVariableAccessCall(
+    partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol>,
+    typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
+    compoundAccess: KaCompoundAccess,
+) : KaVariableAccessCall(), KaCompoundAccessCall {
+    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol> = partiallyAppliedSymbol
+    override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
-    override val partiallyAppliedSymbol: KtPartiallyAppliedVariableSymbol<KtVariableLikeSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
-    override val typeArgumentsMapping: Map<KtTypeParameterSymbol, KtType> by validityAsserted(typeArgumentsMapping)
-    override val compoundAccess: KtCompoundAccess by validityAsserted(compoundAccess)
+    override val partiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableLikeSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+    override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> by validityAsserted(typeArgumentsMapping)
+    override val compoundAccess: KaCompoundAccess by validityAsserted(compoundAccess)
 }
+
+public typealias KtCompoundVariableAccessCall = KaCompoundVariableAccessCall
 
 /**
  * A compound access using the array access convention. For example,
@@ -395,59 +435,61 @@ public class KtCompoundVariableAccessCall(
  *   m["a"] += "b"
  * }
  * ```
- * The above call is represented as a simple `KtFunctionCall` to `MutableList.plusAssign`, with the dispatch receiver referencing the
- * `m["a"]`, which is again a simple `KtFunctionCall` to `ThrowingMap.get`.
+ * The above call is represented as a simple `KaFunctionCall` to `MutableList.plusAssign`, with the dispatch receiver referencing the
+ * `m["a"]`, which is again a simple `KaFunctionCall` to `ThrowingMap.get`.
  */
-public class KtCompoundArrayAccessCall(
-    compoundAccess: KtCompoundAccess,
+public class KaCompoundArrayAccessCall(
+    compoundAccess: KaCompoundAccess,
     indexArguments: List<KtExpression>,
-    getPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>,
-    setPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>,
-) : KtCall(), KtCompoundAccessCall {
-    private val backingCompoundAccess: KtCompoundAccess = compoundAccess
+    getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+    setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+) : KaCall(), KaCompoundAccessCall {
+    private val backingCompoundAccess: KaCompoundAccess = compoundAccess
 
-    override val token: KtLifetimeToken get() = backingCompoundAccess.token
+    override val token: KaLifetimeToken get() = backingCompoundAccess.token
 
-    override val compoundAccess: KtCompoundAccess get() = withValidityAssertion { backingCompoundAccess }
+    override val compoundAccess: KaCompoundAccess get() = withValidityAssertion { backingCompoundAccess }
 
     public val indexArguments: List<KtExpression> by validityAsserted(indexArguments)
 
     /**
      * The `get` function that's invoked when reading values corresponding to the given [indexArguments].
      */
-    public val getPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol> by validityAsserted(getPartiallyAppliedSymbol)
+    public val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> by validityAsserted(getPartiallyAppliedSymbol)
 
     /**
      * The `set` function that's invoked when writing values corresponding to the given [indexArguments] and computed value from the
      * operation.
      */
-    public val setPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol> by validityAsserted(setPartiallyAppliedSymbol)
+    public val setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> by validityAsserted(setPartiallyAppliedSymbol)
 }
+
+public typealias KtCompoundArrayAccessCall = KaCompoundArrayAccessCall
 
 /**
  * The type of access to a variable or using the array access convention.
  */
-public sealed class KtCompoundAccess(
-    operationPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>
-) : KtLifetimeOwner {
-    private val backingOperationPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol> = operationPartiallyAppliedSymbol
+public sealed class KaCompoundAccess(
+    operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>
+) : KaLifetimeOwner {
+    private val backingOperationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> = operationPartiallyAppliedSymbol
 
-    override val token: KtLifetimeToken get() = backingOperationPartiallyAppliedSymbol.token
+    override val token: KaLifetimeToken get() = backingOperationPartiallyAppliedSymbol.token
 
     /**
      * The function that compute the value for this compound access. For example, if the access is `+=`, this is the resolved `plus`
      * function. If the access is `++`, this is the resolved `inc` function.
      */
-    public val operationPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol> get() = withValidityAssertion { backingOperationPartiallyAppliedSymbol }
+    public val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> get() = withValidityAssertion { backingOperationPartiallyAppliedSymbol }
 
     /**
      * A compound access that read, compute, and write the computed value back. Note that calls to `<op>Assign` is not represented by this.
      */
     public class CompoundAssign(
-        operationPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>,
+        operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
         kind: Kind,
         operand: KtExpression,
-    ) : KtCompoundAccess(operationPartiallyAppliedSymbol) {
+    ) : KaCompoundAccess(operationPartiallyAppliedSymbol) {
         public val kind: Kind by validityAsserted(kind)
         public val operand: KtExpression by validityAsserted(operand)
 
@@ -461,10 +503,10 @@ public sealed class KtCompoundAccess(
      * A compound access that read, increment or decrement, and write the computed value back.
      */
     public class IncOrDecOperation(
-        operationPartiallyAppliedSymbol: KtPartiallyAppliedFunctionSymbol<KtFunctionSymbol>,
+        operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
         kind: Kind,
         precedence: Precedence,
-    ) : KtCompoundAccess(operationPartiallyAppliedSymbol) {
+    ) : KaCompoundAccess(operationPartiallyAppliedSymbol) {
         public val kind: Kind by validityAsserted(kind)
         public val precedence: Precedence by validityAsserted(precedence)
 
@@ -478,19 +520,23 @@ public sealed class KtCompoundAccess(
     }
 }
 
+public typealias KtCompoundAccess = KaCompoundAccess
+
 /**
  * A receiver value of a call.
  */
-public sealed class KtReceiverValue : KtLifetimeOwner {
+public sealed class KaReceiverValue : KaLifetimeOwner {
     /**
-     * Returns inferred [KtType] of the receiver.
+     * Returns inferred [KaType] of the receiver.
      *
      * In case of smart cast on the receiver returns smart cast type.
      *
      * For builder inference in FIR implementation it currently works incorrectly, see KT-50916.
      */
-    public abstract val type: KtType
+    public abstract val type: KaType
 }
+
+public typealias KtReceiverValue = KaReceiverValue
 
 /**
  * An explicit expression receiver. For example
@@ -498,12 +544,12 @@ public sealed class KtReceiverValue : KtLifetimeOwner {
  *   "".length // explicit receiver `""`
  * ```
  */
-public class KtExplicitReceiverValue(
+public class KaExplicitReceiverValue(
     expression: KtExpression,
-    type: KtType,
+    type: KaType,
     isSafeNavigation: Boolean,
-    override val token: KtLifetimeToken,
-) : KtReceiverValue() {
+    override val token: KaLifetimeToken,
+) : KaReceiverValue() {
     public val expression: KtExpression by validityAsserted(expression)
 
     /**
@@ -517,8 +563,10 @@ public class KtExplicitReceiverValue(
      */
     public val isSafeNavigation: Boolean by validityAsserted(isSafeNavigation)
 
-    override val type: KtType by validityAsserted(type)
+    override val type: KaType by validityAsserted(type)
 }
+
+public typealias KtExplicitReceiverValue = KaExplicitReceiverValue
 
 /**
  * An implicit receiver. For example
@@ -531,38 +579,42 @@ public class KtExplicitReceiverValue(
  * }
  *
  * fun String.test() {
- *   length // implicit receiver bound to the `KtReceiverParameterSymbol` of type `String` declared by `test`.
+ *   length // implicit receiver bound to the `KaReceiverParameterSymbol` of type `String` declared by `test`.
  * }
  * ```
  */
-public class KtImplicitReceiverValue(
-    symbol: KtSymbol,
-    type: KtType,
-) : KtReceiverValue() {
-    private val backingSymbol: KtSymbol = symbol
+public class KaImplicitReceiverValue(
+    symbol: KaSymbol,
+    type: KaType,
+) : KaReceiverValue() {
+    private val backingSymbol: KaSymbol = symbol
 
-    override val token: KtLifetimeToken get() = backingSymbol.token
-    public val symbol: KtSymbol get() = withValidityAssertion { backingSymbol }
-    override val type: KtType by validityAsserted(type)
+    override val token: KaLifetimeToken get() = backingSymbol.token
+    public val symbol: KaSymbol get() = withValidityAssertion { backingSymbol }
+    override val type: KaType by validityAsserted(type)
 }
+
+public typealias KtImplicitReceiverValue = KaImplicitReceiverValue
 
 /**
  * A smart-casted receiver. For example
  * ```
  * fun Any.test() {
  *   if (this is String) {
- *     length // smart-casted implicit receiver bound to the `KtReceiverParameterSymbol` of type `String` declared by `test`.
+ *     length // smart-casted implicit receiver bound to the `KaReceiverParameterSymbol` of type `String` declared by `test`.
  *   }
  * }
  * ```
  */
-public class KtSmartCastedReceiverValue(
-    original: KtReceiverValue,
-    smartCastType: KtType,
-) : KtReceiverValue() {
-    private val backingOriginal: KtReceiverValue = original
+public class KaSmartCastedReceiverValue(
+    original: KaReceiverValue,
+    smartCastType: KaType,
+) : KaReceiverValue() {
+    private val backingOriginal: KaReceiverValue = original
 
-    override val token: KtLifetimeToken get() = backingOriginal.token
-    public val original: KtReceiverValue get() = withValidityAssertion { backingOriginal }
-    public override val type: KtType by validityAsserted(smartCastType)
+    override val token: KaLifetimeToken get() = backingOriginal.token
+    public val original: KaReceiverValue get() = withValidityAssertion { backingOriginal }
+    public override val type: KaType by validityAsserted(smartCastType)
 }
+
+public typealias KtSmartCastedReceiverValue = KaSmartCastedReceiverValue

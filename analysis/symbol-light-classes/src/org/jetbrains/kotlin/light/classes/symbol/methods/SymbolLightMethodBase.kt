@@ -12,11 +12,11 @@ import com.intellij.psi.impl.light.LightReferenceListBuilder
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.toFilter
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.checkIsMangled
@@ -116,13 +116,13 @@ internal abstract class SymbolLightMethodBase(
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null
 
-    context(KtAnalysisSession)
+    context(KaSession)
     protected fun <T> T.computeJvmMethodName(
         defaultName: String,
         containingClass: SymbolLightClassBase,
         annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
         visibility: Visibility = this.visibility,
-    ): String where T : KtAnnotatedSymbol, T : KtSymbolWithVisibility, T : KtCallableSymbol {
+    ): String where T : KaAnnotatedSymbol, T : KaSymbolWithVisibility, T : KaCallableSymbol {
         getJvmNameFromAnnotation(annotationUseSiteTarget.toOptionalFilter())?.let { return it }
 
         if (visibility != Visibilities.Internal) return defaultName

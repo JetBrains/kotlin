@@ -6,18 +6,18 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 /**
- * A [KtFirSymbol] that is backed by some [PsiElement] and builds [firSymbol] lazily (by convention), allowing some properties to be
+ * A [KaFirSymbol] that is backed by some [PsiElement] and builds [firSymbol] lazily (by convention), allowing some properties to be
  * calculated without the need to build a [firSymbol].
  */
-internal interface KtFirPsiSymbol<P : PsiElement, out S : FirBasedSymbol<*>> : KtFirSymbol<S> {
+internal interface KaFirPsiSymbol<P : PsiElement, out S : FirBasedSymbol<*>> : KaFirSymbol<S> {
     override val psi: P
 
     /**
      * The origin should be provided without using [firSymbol], if possible.
      */
-    abstract override val origin: KtSymbolOrigin
+    abstract override val origin: KaSymbolOrigin
 }

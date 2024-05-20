@@ -102,7 +102,7 @@ allprojects {
             listOf(
                 "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
                 "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
-                "org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals",
+                "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals",
             )
         )
     }

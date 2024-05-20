@@ -5,28 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirFileScope(
-    private val owner: KtFirFileSymbol,
-    private val builder: KtSymbolByFirBuilder
-) : KtScope {
-    override val token: KtLifetimeToken get() = builder.token
+internal class KaFirFileScope(
+    private val owner: KaFirFileSymbol,
+    private val builder: KaSymbolByFirBuilder
+) : KaScope {
+    override val token: KaLifetimeToken get() = builder.token
 
     private val allNamesCached by cached {
         backingCallableNames + _classifierNames
@@ -62,7 +62,7 @@ internal class KtFirFileScope(
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion { _classifierNames }
 
-    override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
+    override fun getCallableSymbols(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
         sequence {
             owner.firSymbol.fir.declarations.forEach { firDeclaration ->
                 val callableDeclaration = when (firDeclaration) {
@@ -78,13 +78,13 @@ internal class KtFirFileScope(
         }
     }
 
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> = withValidityAssertion {
+    override fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
         return getCallableSymbols { it in namesSet }
     }
 
-    override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
+    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
         sequence {
             owner.firSymbol.fir.declarations.forEach { firDeclaration ->
                 val classLikeDeclaration = when (firDeclaration) {
@@ -99,15 +99,15 @@ internal class KtFirFileScope(
         }
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> = withValidityAssertion {
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         val namesSet = names.toSet()
         return getClassifierSymbols { it in namesSet }
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
+    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion { emptySequence() }
 
-    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
 }

@@ -5,35 +5,35 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.types.Variance
 
-public interface KtSingleTypeParameterSymbolRenderer {
+public interface KaSingleTypeParameterSymbolRenderer {
     public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtTypeParameterSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaTypeParameterSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object NO : KtSingleTypeParameterSymbolRenderer {
+    public object NO : KaSingleTypeParameterSymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtTypeParameterSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaTypeParameterSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {}
     }
 
 
-    public object WITHOUT_BOUNDS : KtSingleTypeParameterSymbolRenderer {
+    public object WITHOUT_BOUNDS : KaSingleTypeParameterSymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtTypeParameterSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaTypeParameterSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -46,11 +46,11 @@ public interface KtSingleTypeParameterSymbolRenderer {
         }
     }
 
-    public object WITH_COMMA_SEPARATED_BOUNDS : KtSingleTypeParameterSymbolRenderer {
+    public object WITH_COMMA_SEPARATED_BOUNDS : KaSingleTypeParameterSymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtTypeParameterSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaTypeParameterSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -75,3 +75,5 @@ public interface KtSingleTypeParameterSymbolRenderer {
         }
     }
 }
+
+public typealias KtSingleTypeParameterSymbolRenderer = KaSingleTypeParameterSymbolRenderer

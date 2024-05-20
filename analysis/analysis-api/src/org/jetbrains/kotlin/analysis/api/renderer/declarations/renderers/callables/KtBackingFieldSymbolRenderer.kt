@@ -5,25 +5,25 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtBackingFieldSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
-public interface KtBackingFieldSymbolRenderer {
+public interface KaBackingFieldSymbolRenderer {
     public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtBackingFieldSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaBackingFieldSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_FIELD_KEYWORD : KtBackingFieldSymbolRenderer {
+    public object AS_FIELD_KEYWORD : KaBackingFieldSymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtBackingFieldSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaBackingFieldSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -37,3 +37,5 @@ public interface KtBackingFieldSymbolRenderer {
         }
     }
 }
+
+public typealias KtBackingFieldSymbolRenderer = KaBackingFieldSymbolRenderer

@@ -6,42 +6,42 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 
-internal class KtFirAnonymousFunctionSymbol(
+internal class KaFirAnonymousFunctionSymbol(
     override val firSymbol: FirAnonymousFunctionSymbol,
-    override val analysisSession: KtFirAnalysisSession,
-) : KtAnonymousFunctionSymbol(), KtFirSymbol<FirAnonymousFunctionSymbol> {
+    override val analysisSession: KaFirSession,
+) : KaAnonymousFunctionSymbol(), KaFirSymbol<FirAnonymousFunctionSymbol> {
 
     override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
 
-    override val annotationsList: KtAnnotationsList
+    override val annotationsList: KaAnnotationsList
         get() = withValidityAssertion {
-            KtFirAnnotationListForDeclaration.create(firSymbol, builder)
+            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
-    override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(analysisSession.firSymbolBuilder) }
-    override val receiverParameter: KtReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
+    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(analysisSession.firSymbolBuilder) }
+    override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
 
-    override val contextReceivers: List<KtContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
+    override val contextReceivers: List<KaContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
 
-    override val valueParameters: List<KtValueParameterSymbol> by cached { firSymbol.createKtValueParameters(builder) }
+    override val valueParameters: List<KaValueParameterSymbol> by cached { firSymbol.createKtValueParameters(builder) }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion {
@@ -50,8 +50,8 @@ internal class KtFirAnonymousFunctionSymbol(
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
 
 
-    override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtAnonymousFunctionSymbol>(this)
+    override fun createPointer(): KaSymbolPointer<KaAnonymousFunctionSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaAnonymousFunctionSymbol>(this)
             ?: throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(this::class)
     }
 

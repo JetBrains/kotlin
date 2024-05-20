@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compil
 
 import com.intellij.openapi.extensions.LoadingOrder
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.components.KtCompilationResult
-import org.jetbrains.kotlin.analysis.api.components.KtCompiledFile
-import org.jetbrains.kotlin.analysis.api.components.KtCompilerFacility
-import org.jetbrains.kotlin.analysis.api.components.KtCompilerTarget
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
+import org.jetbrains.kotlin.analysis.api.components.KaCompiledFile
+import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
+import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -105,26 +105,26 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             put(JVMConfigurationKeys.IR, true)
 
             testFile.directives[Directives.CODE_FRAGMENT_CLASS_NAME].singleOrNull()
-                ?.let { put(KtCompilerFacility.CODE_FRAGMENT_CLASS_NAME, it) }
+                ?.let { put(KaCompilerFacility.CODE_FRAGMENT_CLASS_NAME, it) }
 
             testFile.directives[Directives.CODE_FRAGMENT_METHOD_NAME].singleOrNull()
-                ?.let { put(KtCompilerFacility.CODE_FRAGMENT_METHOD_NAME, it) }
+                ?.let { put(KaCompilerFacility.CODE_FRAGMENT_METHOD_NAME, it) }
         }
 
         analyze(mainFile) {
-            val target = KtCompilerTarget.Jvm(ClassBuilderFactories.TEST)
-            val allowedErrorFilter: (KtDiagnostic) -> Boolean = { it.factoryName in ALLOWED_ERRORS }
+            val target = KaCompilerTarget.Jvm(ClassBuilderFactories.TEST)
+            val allowedErrorFilter: (KaDiagnostic) -> Boolean = { it.factoryName in ALLOWED_ERRORS }
 
             val result = compile(mainFile, compilerConfiguration, target, allowedErrorFilter)
 
             val actualText = when (result) {
-                is KtCompilationResult.Failure -> result.errors.joinToString("\n") { dumpDiagnostic(it) }
-                is KtCompilationResult.Success -> dumpClassFiles(result.output)
+                is KaCompilationResult.Failure -> result.errors.joinToString("\n") { dumpDiagnostic(it) }
+                is KaCompilationResult.Success -> dumpClassFiles(result.output)
             }
 
             testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
 
-            if (result is KtCompilationResult.Success) {
+            if (result is KaCompilationResult.Success) {
                 testServices.assertions.assertEqualsToTestDataFileSibling(irCollector.result, extension = ".ir.txt")
             }
 
@@ -151,9 +151,9 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun dumpDiagnostic(diagnostic: KtDiagnostic): String {
+    private fun dumpDiagnostic(diagnostic: KaDiagnostic): String {
         val textRanges = when (diagnostic) {
-            is KtDiagnosticWithPsi<*> -> {
+            is KaDiagnosticWithPsi<*> -> {
                 diagnostic.textRanges.singleOrNull()?.toString()
                     ?: diagnostic.textRanges.joinToString(prefix = "[", postfix = "]")
             }
@@ -171,7 +171,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun dumpClassFiles(outputFiles: List<KtCompiledFile>): String {
+    private fun dumpClassFiles(outputFiles: List<KaCompiledFile>): String {
         val classes = outputFiles
             .filter { it.path.endsWith(".class", ignoreCase = true) }
             .also { check(it.isNotEmpty()) }

@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.types.Variance
 
-public interface KtRendererTypeApproximator {
-    public fun approximateType(analysisSession: KtAnalysisSession, type: KtType, position: Variance): KtType
+public interface KaRendererTypeApproximator {
+    public fun approximateType(analysisSession: KaSession, type: KaType, position: Variance): KaType
 
-    public object TO_DENOTABLE : KtRendererTypeApproximator {
-        override fun approximateType(analysisSession: KtAnalysisSession, type: KtType, position: Variance): KtType {
+    public object TO_DENOTABLE : KaRendererTypeApproximator {
+        override fun approximateType(analysisSession: KaSession, type: KaType, position: Variance): KaType {
             with(analysisSession) {
                 val effectiveType = type.getEnhancedType() ?: type
 
@@ -26,9 +26,11 @@ public interface KtRendererTypeApproximator {
         }
     }
 
-    public object NO_APPROXIMATION : KtRendererTypeApproximator {
-        override fun approximateType(analysisSession: KtAnalysisSession, type: KtType, position: Variance): KtType {
+    public object NO_APPROXIMATION : KaRendererTypeApproximator {
+        override fun approximateType(analysisSession: KaSession, type: KaType, position: Variance): KaType {
             return type
         }
     }
 }
+
+public typealias KtRendererTypeApproximator = KaRendererTypeApproximator

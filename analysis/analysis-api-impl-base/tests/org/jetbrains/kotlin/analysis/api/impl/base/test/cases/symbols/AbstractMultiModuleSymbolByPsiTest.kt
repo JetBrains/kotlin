@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
@@ -41,7 +41,7 @@ abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest
                     debugPrinter.appendLine()
 
                     prettyPrinter.withIndents(indentCount = declaration.parentsOfType<KtDeclaration>(withSelf = false).count()) {
-                        prettyPrinter.appendLine(symbol.render(KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES))
+                        prettyPrinter.appendLine(symbol.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES))
                         prettyPrinter.appendLine()
                     }
                 }

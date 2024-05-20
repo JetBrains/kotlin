@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValue
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
 
-public enum class KtConstantEvaluationMode {
+public enum class KaConstantEvaluationMode {
     /**
      * In this mode, what a compiler views as constants will be evaluated. In other words,
      * expressions and properties that are free from runtime behaviors/changes will be evaluated,
@@ -28,27 +28,33 @@ public enum class KtConstantEvaluationMode {
     CONSTANT_LIKE_EXPRESSION_EVALUATION;
 }
 
-public abstract class KtCompileTimeConstantProvider : KtAnalysisSessionComponent() {
+public typealias KtConstantEvaluationMode = KaConstantEvaluationMode
+
+public abstract class KaCompileTimeConstantProvider : KaAnalysisSessionComponent() {
     public abstract fun evaluate(
         expression: KtExpression,
-        mode: KtConstantEvaluationMode,
-    ): KtConstantValue?
+        mode: KaConstantEvaluationMode,
+    ): KaConstantValue?
 
-    public abstract fun evaluateAsAnnotationValue(expression: KtExpression): KtAnnotationValue?
+    public abstract fun evaluateAsAnnotationValue(expression: KtExpression): KaAnnotationValue?
 }
 
-public interface KtCompileTimeConstantProviderMixIn : KtAnalysisSessionMixIn {
+public typealias KtCompileTimeConstantProvider = KaCompileTimeConstantProvider
+
+public interface KaCompileTimeConstantProviderMixIn : KaAnalysisSessionMixIn {
     /**
      * Tries to evaluate the provided expression using the specified mode.
-     * Returns a [KtConstantValue] if the expression evaluates to a compile-time constant, otherwise returns null..
+     * Returns a [KaConstantValue] if the expression evaluates to a compile-time constant, otherwise returns null..
      */
-    public fun KtExpression.evaluate(mode: KtConstantEvaluationMode): KtConstantValue? =
+    public fun KtExpression.evaluate(mode: KaConstantEvaluationMode): KaConstantValue? =
         withValidityAssertion { analysisSession.compileTimeConstantProvider.evaluate(this, mode) }
 
     /**
-     * Returns a [KtConstantValue] if the expression evaluates to a value that can be used as an annotation parameter value,
+     * Returns a [KaConstantValue] if the expression evaluates to a value that can be used as an annotation parameter value,
      * e.g. an array of constants, otherwise returns null.
      */
-    public fun KtExpression.evaluateAsAnnotationValue(): KtAnnotationValue? =
+    public fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue? =
         withValidityAssertion { analysisSession.compileTimeConstantProvider.evaluateAsAnnotationValue(this) }
 }
+
+public typealias KtCompileTimeConstantProviderMixIn = KaCompileTimeConstantProviderMixIn

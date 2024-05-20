@@ -5,50 +5,52 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValueRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRenderer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValueRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRenderer
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.renderer.render
 
-public interface KtAnnotationArgumentsRenderer {
+public interface KaAnnotationArgumentsRenderer {
     public fun renderAnnotationArguments(
-        analysisSession: KtAnalysisSession,
-        annotation: KtAnnotationApplication,
-        owner: KtAnnotated,
-        annotationRenderer: KtAnnotationRenderer,
+        analysisSession: KaSession,
+        annotation: KaAnnotationApplication,
+        owner: KaAnnotated,
+        annotationRenderer: KaAnnotationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object NONE : KtAnnotationArgumentsRenderer {
+    public object NONE : KaAnnotationArgumentsRenderer {
         override fun renderAnnotationArguments(
-            analysisSession: KtAnalysisSession,
-            annotation: KtAnnotationApplication,
-            owner: KtAnnotated,
-            annotationRenderer: KtAnnotationRenderer,
+            analysisSession: KaSession,
+            annotation: KaAnnotationApplication,
+            owner: KaAnnotated,
+            annotationRenderer: KaAnnotationRenderer,
             printer: PrettyPrinter,
         ) {}
     }
 
-    public object IF_ANY : KtAnnotationArgumentsRenderer {
+    public object IF_ANY : KaAnnotationArgumentsRenderer {
         override fun renderAnnotationArguments(
-            analysisSession: KtAnalysisSession,
-            annotation: KtAnnotationApplication,
-            owner: KtAnnotated,
-            annotationRenderer: KtAnnotationRenderer,
+            analysisSession: KaSession,
+            annotation: KaAnnotationApplication,
+            owner: KaAnnotated,
+            annotationRenderer: KaAnnotationRenderer,
             printer: PrettyPrinter,
         ) {
-            if (annotation !is KtAnnotationApplicationWithArgumentsInfo) return
+            if (annotation !is KaAnnotationApplicationWithArgumentsInfo) return
 
             if (annotation.arguments.isEmpty()) return
             printer.printCollection(annotation.arguments, prefix = "(", postfix = ")") { argument ->
                 append(argument.name.render())
                 append(" = ")
-                append(KtAnnotationValueRenderer.render(argument.expression))
+                append(KaAnnotationValueRenderer.render(argument.expression))
             }
         }
     }
 }
+
+public typealias KtAnnotationArgumentsRenderer = KaAnnotationArgumentsRenderer

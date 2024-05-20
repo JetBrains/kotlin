@@ -6,31 +6,31 @@
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.name.ClassId
 
-internal class KtFirAnnotationListForDeclaration private constructor(
+internal class KaFirAnnotationListForDeclaration private constructor(
     val firSymbol: FirBasedSymbol<*>,
-    private val builder: KtSymbolByFirBuilder,
-) : KtAnnotationsList() {
-    override val token: KtLifetimeToken get() = builder.token
+    private val builder: KaSymbolByFirBuilder,
+) : KaAnnotationsList() {
+    override val token: KaLifetimeToken get() = builder.token
     private val useSiteSession: FirSession get() = builder.rootSession
 
-    override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
+    override val annotations: List<KaAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
             annotations(firSymbol, builder)
         }
 
-    override val annotationInfos: List<KtAnnotationApplicationInfo>
+    override val annotationInfos: List<KaAnnotationApplicationInfo>
         get() = withValidityAssertion {
             annotationInfos(firSymbol, useSiteSession, token)
         }
@@ -42,7 +42,7 @@ internal class KtFirAnnotationListForDeclaration private constructor(
     override fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
+    ): List<KaAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
         annotationsByClassId(firSymbol, classId, useSiteTargetFilter, builder)
     }
 
@@ -52,14 +52,14 @@ internal class KtFirAnnotationListForDeclaration private constructor(
         }
 
     companion object {
-        fun create(firSymbol: FirBasedSymbol<*>, builder: KtSymbolByFirBuilder): KtAnnotationsList {
+        fun create(firSymbol: FirBasedSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationsList {
             return when {
                 firSymbol is FirBackingFieldSymbol && firSymbol.propertySymbol.annotations.any { it.useSiteTarget == null } ->
-                    KtFirAnnotationListForDeclaration(firSymbol, builder)
+                    KaFirAnnotationListForDeclaration(firSymbol, builder)
                 firSymbol.annotations.isEmpty() ->
-                    KtEmptyAnnotationsList(builder.token)
+                    KaEmptyAnnotationsList(builder.token)
                 else ->
-                    KtFirAnnotationListForDeclaration(firSymbol, builder)
+                    KaFirAnnotationListForDeclaration(firSymbol, builder)
             }
         }
     }

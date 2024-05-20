@@ -6,32 +6,32 @@
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.ClassId
 
-internal class KtFirAnnotationListForReceiverParameter private constructor(
+internal class KaFirAnnotationListForReceiverParameter private constructor(
     private val firCallableSymbol: FirCallableSymbol<*>,
     private val receiverParameter: FirAnnotationContainer,
-    private val builder: KtSymbolByFirBuilder,
-) : KtAnnotationsList() {
+    private val builder: KaSymbolByFirBuilder,
+) : KaAnnotationsList() {
     private val useSiteSession: FirSession get() = builder.rootSession
-    override val token: KtLifetimeToken get() = builder.token
+    override val token: KaLifetimeToken get() = builder.token
 
-    override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
+    override val annotations: List<KaAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
             annotations(firCallableSymbol, builder, receiverParameter)
         }
 
-    override val annotationInfos: List<KtAnnotationApplicationInfo>
+    override val annotationInfos: List<KaAnnotationApplicationInfo>
         get() = withValidityAssertion {
             annotationInfos(firCallableSymbol, useSiteSession, token, receiverParameter)
         }
@@ -43,7 +43,7 @@ internal class KtFirAnnotationListForReceiverParameter private constructor(
     override fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
+    ): List<KaAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
         annotationsByClassId(firCallableSymbol, classId, useSiteTargetFilter, builder, receiverParameter)
     }
 
@@ -53,12 +53,12 @@ internal class KtFirAnnotationListForReceiverParameter private constructor(
         }
 
     companion object {
-        fun create(firCallableSymbol: FirCallableSymbol<*>, builder: KtSymbolByFirBuilder): KtAnnotationsList {
+        fun create(firCallableSymbol: FirCallableSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationsList {
             val receiverParameter = firCallableSymbol.receiverParameter
             return if (receiverParameter?.annotations?.isEmpty() != false) {
-                KtEmptyAnnotationsList(builder.token)
+                KaEmptyAnnotationsList(builder.token)
             } else {
-                KtFirAnnotationListForReceiverParameter(firCallableSymbol, receiverParameter, builder)
+                KaFirAnnotationListForReceiverParameter(firCallableSymbol, receiverParameter, builder)
             }
         }
     }

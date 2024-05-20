@@ -5,26 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsModifiersAndContextReceivers
-import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtTokens
 
-public interface KtAnonymousObjectSymbolRenderer {
+public interface KaAnonymousObjectSymbolRenderer {
     public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtAnonymousObjectSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaAnonymousObjectSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_SOURCE : KtAnonymousObjectSymbolRenderer {
+    public object AS_SOURCE : KaAnonymousObjectSymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtAnonymousObjectSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaAnonymousObjectSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ): Unit = printer {
             " ".separated(
@@ -39,3 +39,5 @@ public interface KtAnonymousObjectSymbolRenderer {
         }
     }
 }
+
+public typealias KtAnonymousObjectSymbolRenderer = KaAnonymousObjectSymbolRenderer

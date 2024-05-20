@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -51,7 +50,7 @@ fun FirFunctionCall.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
 fun FirReference.getResolvedSymbolOfNameReference(): FirBasedSymbol<*>? =
     (this as? FirResolvedNamedReference)?.resolvedSymbol
 
-internal fun FirReference.getResolvedKtSymbolOfNameReference(builder: KtSymbolByFirBuilder): KtSymbol? =
+internal fun FirReference.getResolvedKtSymbolOfNameReference(builder: KaSymbolByFirBuilder): KaSymbol? =
     getResolvedSymbolOfNameReference()?.fir?.let(builder::buildSymbol)
 
 internal fun FirErrorNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
@@ -76,19 +75,19 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
     }
 
 internal fun FirAnnotation.toKtAnnotationApplication(
-    builder: KtSymbolByFirBuilder,
+    builder: KaSymbolByFirBuilder,
     index: Int,
-    arguments: List<KtNamedAnnotationValue> = FirAnnotationValueConverter.toNamedConstantValue(
+    arguments: List<KaNamedAnnotationValue> = FirAnnotationValueConverter.toNamedConstantValue(
         builder.analysisSession,
         mapAnnotationParameters(this),
         builder,
     )
-): KtAnnotationApplicationWithArgumentsInfo {
+): KaAnnotationApplicationWithArgumentsInfo {
     val constructorSymbol = (this as? FirAnnotationCall)?.calleeReference
         ?.toResolvedConstructorSymbol()
         ?.let(builder.functionLikeBuilder::buildConstructorSymbol)
 
-    return KtAnnotationApplicationWithArgumentsInfo(
+    return KaAnnotationApplicationWithArgumentsInfo(
         classId = toAnnotationClassId(builder.rootSession),
         psi = psi as? KtCallElement,
         useSiteTarget = useSiteTarget,
@@ -102,8 +101,8 @@ internal fun FirAnnotation.toKtAnnotationApplication(
 internal fun FirAnnotation.toKtAnnotationInfo(
     useSiteSession: FirSession,
     index: Int,
-    token: KtLifetimeToken
-): KtAnnotationApplicationInfo = KtAnnotationApplicationInfo(
+    token: KaLifetimeToken
+): KaAnnotationApplicationInfo = KaAnnotationApplicationInfo(
     classId = toAnnotationClassId(useSiteSession),
     psi = psi as? KtCallElement,
     useSiteTarget = useSiteTarget,

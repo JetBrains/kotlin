@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.dataFl
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -24,7 +24,7 @@ abstract class AbstractExitPointSnapshotTest : AbstractAnalysisApiBasedTest() {
         val textRange = testServices.expressionMarkerProvider.getSelectedRange(mainFile)
         val statements = findStatements(mainFile, textRange)
 
-        @OptIn(KtAnalysisNonPublicApi::class)
+        @OptIn(KaAnalysisNonPublicApi::class)
         val actualText = analyseForTest(mainFile) {
             val snapshot = getExitPointSnapshot(statements)
             stringRepresentation(snapshot)

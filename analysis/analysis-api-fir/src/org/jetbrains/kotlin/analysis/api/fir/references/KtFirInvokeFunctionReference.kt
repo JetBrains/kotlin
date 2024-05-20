@@ -5,23 +5,22 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.calls.KtSimpleFunctionCall
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.calls.KaSimpleFunctionCall
 import org.jetbrains.kotlin.analysis.api.calls.calls
 import org.jetbrains.kotlin.analysis.api.calls.symbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtExpression
 
-class KtFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KtFirReference {
-    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
+class KaFirInvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KaFirReference {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         return expression.resolveCall()?.calls.orEmpty().mapNotNull { call ->
-            (call as? KtSimpleFunctionCall)
+            (call as? KaSimpleFunctionCall)
                 ?.takeIf { it.isImplicitInvoke }
                 ?.partiallyAppliedSymbol
                 ?.symbol
-                ?.takeUnless { it is KtFunctionSymbol && it.isBuiltinFunctionInvoke }
+                ?.takeUnless { it is KaFunctionSymbol && it.isBuiltinFunctionInvoke }
         }
     }
 }

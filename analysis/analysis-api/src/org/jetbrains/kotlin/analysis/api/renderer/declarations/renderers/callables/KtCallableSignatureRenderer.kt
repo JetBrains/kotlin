@@ -5,29 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderAnnotationsModifiersAndContextReceivers
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
-public interface KtCallableSignatureRenderer {
+public interface KaCallableSignatureRenderer {
     public fun renderCallableSignature(
-        analysisSession: KtAnalysisSession,
-        symbol: KtCallableSymbol,
+        analysisSession: KaSession,
+        symbol: KaCallableSymbol,
         keyword: KtKeywordToken?,
-        declarationRenderer: KtDeclarationRenderer,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object FOR_SOURCE : KtCallableSignatureRenderer {
+    public object FOR_SOURCE : KaCallableSignatureRenderer {
         override fun renderCallableSignature(
-            analysisSession: KtAnalysisSession,
-            symbol: KtCallableSymbol,
+            analysisSession: KaSession,
+            symbol: KaCallableSymbol,
             keyword: KtKeywordToken?,
-            declarationRenderer: KtDeclarationRenderer,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ): Unit = printer {
             " ".separated(
@@ -48,7 +48,7 @@ public interface KtCallableSignatureRenderer {
                         }
                     }
 
-                    if (symbol is KtNamedSymbol) {
+                    if (symbol is KaNamedSymbol) {
                         declarationRenderer.nameRenderer.renderName(analysisSession, symbol, declarationRenderer, printer)
                     }
                 },
@@ -65,3 +65,5 @@ public interface KtCallableSignatureRenderer {
         }
     }
 }
+
+public typealias KtCallableSignatureRenderer = KaCallableSignatureRenderer

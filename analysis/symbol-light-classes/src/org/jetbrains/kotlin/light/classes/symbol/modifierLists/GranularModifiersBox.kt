@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 import com.intellij.psi.PsiModifier
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.toPersistentHashMap
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithModality
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.computeSimpleModality
@@ -66,7 +66,7 @@ internal class GranularModifiersBox(
 
         internal fun computeVisibilityForMember(
             ktModule: KtModule,
-            declarationPointer: KtSymbolPointer<KtSymbolWithVisibility>,
+            declarationPointer: KaSymbolPointer<KaSymbolWithVisibility>,
         ): PersistentMap<String, Boolean> {
             val visibility = declarationPointer.withSymbol(ktModule) {
                 it.toPsiVisibilityForMember()
@@ -77,7 +77,7 @@ internal class GranularModifiersBox(
 
         internal fun computeVisibilityForClass(
             ktModule: KtModule,
-            declarationPointer: KtSymbolPointer<KtSymbolWithVisibility>,
+            declarationPointer: KaSymbolPointer<KaSymbolWithVisibility>,
             isTopLevel: Boolean,
         ): PersistentMap<String, Boolean> {
             val visibility = declarationPointer.withSymbol(ktModule) {
@@ -89,10 +89,10 @@ internal class GranularModifiersBox(
 
         internal fun computeSimpleModality(
             ktModule: KtModule,
-            declarationPointer: KtSymbolPointer<KtSymbolWithModality>,
+            declarationPointer: KaSymbolPointer<KaSymbolWithModality>,
         ): PersistentMap<String, Boolean> {
             val modality = declarationPointer.withSymbol(ktModule) {
-                if ((it as? KtClassOrObjectSymbol)?.classKind == KtClassKind.ENUM_CLASS) {
+                if ((it as? KaClassOrObjectSymbol)?.classKind == KaClassKind.ENUM_CLASS) {
                     it.enumClassModality()
                 } else {
                     it.computeSimpleModality()

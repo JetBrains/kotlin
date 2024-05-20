@@ -6,30 +6,30 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForReceiverParameter
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirReceiverParameterSymbolPointer
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForReceiverParameter
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirReceiverParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
-internal class KtFirReceiverParameterSymbol(
+internal class KaFirReceiverParameterSymbol(
     val firSymbol: FirCallableSymbol<*>,
-    val analysisSession: KtFirAnalysisSession,
-) : KtReceiverParameterSymbol(), KtLifetimeOwner {
-    override val token: KtLifetimeToken get() = analysisSession.token
+    val analysisSession: KaFirSession,
+) : KaReceiverParameterSymbol(), KaLifetimeOwner {
+    override val token: KaLifetimeToken get() = analysisSession.token
     override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.receiverParameter?.typeRef?.psi }
 
     init {
@@ -38,28 +38,28 @@ internal class KtFirReceiverParameterSymbol(
         }
     }
 
-    override val type: KtType by cached {
+    override val type: KaType by cached {
         firSymbol.receiverType(analysisSession.firSymbolBuilder)
             ?: errorWithAttachment("${firSymbol::class} doesn't have an extension receiver") {
                 withFirEntry("callable", firSymbol.fir)
             }
     }
 
-    override val owningCallableSymbol: KtCallableSymbol by cached { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(firSymbol) }
+    override val owningCallableSymbol: KaCallableSymbol by cached { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(firSymbol) }
 
-    override val origin: KtSymbolOrigin = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
+    override val origin: KaSymbolOrigin = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
 
-    override fun createPointer(): KtSymbolPointer<KtReceiverParameterSymbol> = withValidityAssertion {
-        KtFirReceiverParameterSymbolPointer(owningCallableSymbol.createPointer())
+    override fun createPointer(): KaSymbolPointer<KaReceiverParameterSymbol> = withValidityAssertion {
+        KaFirReceiverParameterSymbolPointer(owningCallableSymbol.createPointer())
     }
 
-    override val annotationsList: KtAnnotationsList by cached {
-        KtFirAnnotationListForReceiverParameter.create(firSymbol, builder = analysisSession.firSymbolBuilder)
+    override val annotationsList: KaAnnotationsList by cached {
+        KaFirAnnotationListForReceiverParameter.create(firSymbol, builder = analysisSession.firSymbolBuilder)
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        return other is KtFirReceiverParameterSymbol && this.firSymbol == other.firSymbol
+        return other is KaFirReceiverParameterSymbol && this.firSymbol == other.firSymbol
     }
 
     override fun hashCode(): Int = 31 * firSymbol.hashCode()

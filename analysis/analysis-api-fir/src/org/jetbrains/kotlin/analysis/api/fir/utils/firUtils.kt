@@ -5,15 +5,15 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.KtConstantValueForAnnotation
-import org.jetbrains.kotlin.analysis.api.KtInitializerValue
-import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
+import org.jetbrains.kotlin.analysis.api.KaInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.components.KaConstantEvaluationMode
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
@@ -45,10 +45,10 @@ internal fun KtExpression.unwrap(): KtExpression {
     } ?: this
 }
 
-internal fun KtTypeNullability.toConeNullability() = when (this) {
-    KtTypeNullability.NULLABLE -> ConeNullability.NULLABLE
-    KtTypeNullability.NON_NULLABLE -> ConeNullability.NOT_NULL
-    KtTypeNullability.UNKNOWN -> ConeNullability.UNKNOWN
+internal fun KaTypeNullability.toConeNullability() = when (this) {
+    KaTypeNullability.NULLABLE -> ConeNullability.NULLABLE
+    KaTypeNullability.NON_NULLABLE -> ConeNullability.NOT_NULL
+    KaTypeNullability.UNKNOWN -> ConeNullability.UNKNOWN
 }
 
 /**
@@ -78,21 +78,21 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
     return if (canBeImported) callableId.asSingleFqName() else null
 }
 
-internal fun FirExpression.asKtInitializerValue(builder: KtSymbolByFirBuilder, forAnnotationDefaultValue: Boolean): KtInitializerValue {
+internal fun FirExpression.asKtInitializerValue(builder: KaSymbolByFirBuilder, forAnnotationDefaultValue: Boolean): KaInitializerValue {
     val ktExpression = psi as? KtExpression
-    val evaluated = FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(this, KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
+    val evaluated = FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(this, KaConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
 
     return when (evaluated) {
         null -> if (forAnnotationDefaultValue) {
             val annotationConstantValue = FirAnnotationValueConverter.toConstantValue(this, builder)
             if (annotationConstantValue != null) {
-                KtConstantValueForAnnotation(annotationConstantValue, ktExpression)
+                KaConstantValueForAnnotation(annotationConstantValue, ktExpression)
             } else {
-                KtNonConstantInitializerValue(ktExpression)
+                KaNonConstantInitializerValue(ktExpression)
             }
         } else {
-            KtNonConstantInitializerValue(ktExpression)
+            KaNonConstantInitializerValue(ktExpression)
         }
-        else -> KtConstantInitializerValue(evaluated, ktExpression)
+        else -> KaConstantInitializerValue(evaluated, ktExpression)
     }
 }

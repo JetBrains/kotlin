@@ -5,36 +5,36 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 import java.util.Objects
 
 /**
- * @see KtAnnotated.annotations
- * @see KtAnnotationApplicationInfo
+ * @see KaAnnotated.annotations
+ * @see KaAnnotationApplicationInfo
  */
-public class KtAnnotationApplicationWithArgumentsInfo(
+public class KaAnnotationApplicationWithArgumentsInfo(
     classId: ClassId?,
     psi: KtCallElement?,
     useSiteTarget: AnnotationUseSiteTarget?,
 
     /**
-     * A list of annotation arguments which were applied when constructing annotation. Every argument is [KtAnnotationValue]
+     * A list of annotation arguments which were applied when constructing annotation. Every argument is [KaAnnotationValue]
      */
-    arguments: List<KtNamedAnnotationValue>,
+    arguments: List<KaNamedAnnotationValue>,
     index: Int?,
 
     /**
      * The constructor symbol into which this annotation resolves if the annotation is correctly resolved
      */
-    constructorSymbolPointer: KtSymbolPointer<KtConstructorSymbol>?,
-    public override val token: KtLifetimeToken
-) : KtAnnotationApplication {
+    constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
+    public override val token: KaLifetimeToken
+) : KaAnnotationApplication {
     private val backingClassId: ClassId? = classId
 
     public override val classId: ClassId?
@@ -53,9 +53,9 @@ public class KtAnnotationApplicationWithArgumentsInfo(
     override val isCallWithArguments: Boolean
         get() = withValidityAssertion { backingArguments.isNotEmpty() }
 
-    private val backingArguments: List<KtNamedAnnotationValue> = arguments
+    private val backingArguments: List<KaNamedAnnotationValue> = arguments
 
-    public val arguments: List<KtNamedAnnotationValue>
+    public val arguments: List<KaNamedAnnotationValue>
         get() = withValidityAssertion { backingArguments }
 
     private val backingIndex: Int? = index
@@ -63,13 +63,13 @@ public class KtAnnotationApplicationWithArgumentsInfo(
     override val index: Int?
         get() = withValidityAssertion { backingIndex }
 
-    private val backingConstructorSymbolPointer: KtSymbolPointer<KtConstructorSymbol>? = constructorSymbolPointer
+    private val backingConstructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>? = constructorSymbolPointer
 
-    public val constructorSymbolPointer: KtSymbolPointer<KtConstructorSymbol>?
+    public val constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?
         get() = withValidityAssertion { backingConstructorSymbolPointer }
 
     override fun equals(other: Any?): Boolean {
-        return this === other || other is KtAnnotationApplicationWithArgumentsInfo &&
+        return this === other || other is KaAnnotationApplicationWithArgumentsInfo &&
                 backingClassId == other.backingClassId &&
                 backingPsi == other.backingPsi &&
                 backingUseSiteTarget == other.backingUseSiteTarget &&
@@ -90,8 +90,10 @@ public class KtAnnotationApplicationWithArgumentsInfo(
     }
 
     override fun toString(): String {
-        return "KtAnnotationApplicationWithArgumentsInfo(classId=" + backingClassId + ", psi=" + backingPsi + ", useSiteTarget=" +
+        return "KaAnnotationApplicationWithArgumentsInfo(classId=" + backingClassId + ", psi=" + backingPsi + ", useSiteTarget=" +
                 backingUseSiteTarget + ", arguments=" + backingArguments + ", index=" + backingIndex + ", constructorSymbolPointer=" +
                 backingConstructorSymbolPointer + ")"
     }
 }
+
+public typealias KtAnnotationApplicationWithArgumentsInfo = KaAnnotationApplicationWithArgumentsInfo

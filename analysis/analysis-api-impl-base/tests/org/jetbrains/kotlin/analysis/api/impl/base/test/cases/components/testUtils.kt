@@ -6,66 +6,67 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.calls.KtApplicableCallCandidateInfo
-import org.jetbrains.kotlin.analysis.api.calls.KtCall
-import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
-import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
-import org.jetbrains.kotlin.analysis.api.calls.KtCallableMemberCall
-import org.jetbrains.kotlin.analysis.api.calls.KtCompoundArrayAccessCall
-import org.jetbrains.kotlin.analysis.api.calls.KtCompoundVariableAccessCall
-import org.jetbrains.kotlin.analysis.api.calls.KtErrorCallInfo
-import org.jetbrains.kotlin.analysis.api.calls.KtInapplicableCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.calls.KaApplicableCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.calls.KaCall
+import org.jetbrains.kotlin.analysis.api.calls.KaCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.calls.KaCallInfo
+import org.jetbrains.kotlin.analysis.api.calls.KaCallableMemberCall
+import org.jetbrains.kotlin.analysis.api.calls.KaCompoundArrayAccessCall
+import org.jetbrains.kotlin.analysis.api.calls.KaCompoundVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.calls.KaErrorCallInfo
+import org.jetbrains.kotlin.analysis.api.calls.KaInapplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.calls
 import org.jetbrains.kotlin.analysis.api.calls.symbol
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.analysis.api.impl.base.KtChainedSubstitutor
-import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KtRendererKeywordFilter
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
+import org.jetbrains.kotlin.analysis.api.impl.base.KaChainedSubstitutor
+import org.jetbrains.kotlin.analysis.api.impl.base.KaMapBackedSubstitutor
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaRendererKeywordFilter
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
 
-@OptIn(KtAnalysisApiInternals::class)
-internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(any) {
-    fun KtType.render() = asStringForDebugging().replace('/', '.')
+@OptIn(KaAnalysisApiInternals::class)
+internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
+    fun KaType.render() = asStringForDebugging().replace('/', '.')
     return when (this) {
         null -> "null"
-        is KtFunctionLikeSymbol -> buildString {
+        is KaFunctionLikeSymbol -> buildString {
             append(
                 when (this@with) {
-                    is KtFunctionSymbol -> callableIdIfNonLocal ?: name
-                    is KtSamConstructorSymbol -> callableIdIfNonLocal ?: name
-                    is KtConstructorSymbol -> "<constructor>"
-                    is KtPropertyGetterSymbol -> callableIdIfNonLocal ?: "<getter>"
-                    is KtPropertySetterSymbol -> callableIdIfNonLocal ?: "<setter>"
-                    else -> error("unexpected symbol kind in KtCall: ${this@with::class}")
+                    is KaFunctionSymbol -> callableIdIfNonLocal ?: name
+                    is KaSamConstructorSymbol -> callableIdIfNonLocal ?: name
+                    is KaConstructorSymbol -> "<constructor>"
+                    is KaPropertyGetterSymbol -> callableIdIfNonLocal ?: "<getter>"
+                    is KaPropertySetterSymbol -> callableIdIfNonLocal ?: "<setter>"
+                    else -> error("unexpected symbol kind in KaCall: ${this@with::class}")
                 }
             )
             append("(")
-            (this@with as? KtFunctionSymbol)?.receiverParameter?.let { receiver ->
+            (this@with as? KaFunctionSymbol)?.receiverParameter?.let { receiver ->
                 append("<extension receiver>: ${receiver.type.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
 
             @Suppress("DEPRECATION")
-            (this@with as? KtCallableSymbol)?.getDispatchReceiverType()?.let { dispatchReceiverType ->
+            (this@with as? KaCallableSymbol)?.getDispatchReceiverType()?.let { dispatchReceiverType ->
                 append("<dispatch receiver>: ${dispatchReceiverType.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
@@ -73,10 +74,10 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(an
             append(")")
             append(": ${returnType.render()}")
         }
-        is KtValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
-        is KtTypeParameterSymbol -> this.nameOrAnonymous.asString()
-        is KtVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
-        is KtSymbol -> DebugSymbolRenderer().render(analysisSession, this)
+        is KaValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
+        is KaTypeParameterSymbol -> this.nameOrAnonymous.asString()
+        is KaVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
+        is KaSymbol -> DebugSymbolRenderer().render(analysisSession, this)
         is Boolean -> toString()
         is Map<*, *> -> if (isEmpty()) "{}" else entries.joinToString(
             separator = ",\n  ",
@@ -91,20 +92,20 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(an
             it?.let { stringRepresentation(it).indented() } ?: "null"
         }
         is PsiElement -> this.text
-        is KtSubstitutor.Empty -> "<empty substitutor>"
-        is KtMapBackedSubstitutor -> {
+        is KaSubstitutor.Empty -> "<empty substitutor>"
+        is KaMapBackedSubstitutor -> {
             val mappingText = getAsMap().entries
                 .joinToString(prefix = "{", postfix = "}") { (k, v) -> stringRepresentation(k) + " = " + v.asStringForDebugging() }
             "<map substitutor: $mappingText>"
         }
-        is KtChainedSubstitutor -> "${stringRepresentation(first)} then ${stringRepresentation(second)}"
-        is KtSubstitutor -> "<complex substitutor>"
-        is KtDiagnostic -> "$severity<$factoryName: $defaultMessage>"
-        is KtType -> render()
+        is KaChainedSubstitutor -> "${stringRepresentation(first)} then ${stringRepresentation(second)}"
+        is KaSubstitutor -> "<complex substitutor>"
+        is KaDiagnostic -> "$severity<$factoryName: $defaultMessage>"
+        is KaType -> render()
         is Enum<*> -> name
         is Name -> asString()
         is CallableId -> toString()
-        is KtCallableSignature<*> -> stringRepresentation(this)
+        is KaCallableSignature<*> -> stringRepresentation(this)
         else -> buildString {
             val clazz = this@with::class
             val className = clazz.simpleName!!
@@ -118,7 +119,7 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(an
                     @Suppress("UNCHECKED_CAST")
                     val value = (property as KProperty1<Any, *>).get(this@with)?.let {
                         if (className == "KtErrorCallInfo" && name == "candidateCalls") {
-                            sortedCalls(it as Collection<KtCall>)
+                            sortedCalls(it as Collection<KaCall>)
                         } else it
                     }
                     val valueAsString = value?.let { stringRepresentation(it).indented() }
@@ -128,19 +129,19 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any?): String = with(an
     }
 }
 
-private fun KtAnalysisSession.stringRepresentation(signature: KtCallableSignature<*>): String = buildString {
+private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): String = buildString {
     when (signature) {
-        is KtFunctionLikeSignature<*> -> append(KtFunctionLikeSignature::class.simpleName)
-        is KtVariableLikeSignature<*> -> append(KtVariableLikeSignature::class.simpleName)
+        is KaFunctionLikeSignature<*> -> append(KaFunctionLikeSignature::class.simpleName)
+        is KaVariableLikeSignature<*> -> append(KaVariableLikeSignature::class.simpleName)
     }
     appendLine(":")
     val memberProperties = listOfNotNull(
-        KtVariableLikeSignature<*>::name.takeIf { signature is KtVariableLikeSignature<*> },
-        KtCallableSignature<*>::receiverType,
-        KtCallableSignature<*>::returnType,
-        KtCallableSignature<*>::symbol,
-        KtFunctionLikeSignature<*>::valueParameters.takeIf { signature is KtFunctionLikeSignature<*> },
-        KtCallableSignature<*>::callableIdIfNonLocal
+        KaVariableLikeSignature<*>::name.takeIf { signature is KaVariableLikeSignature<*> },
+        KaCallableSignature<*>::receiverType,
+        KaCallableSignature<*>::returnType,
+        KaCallableSignature<*>::symbol,
+        KaFunctionLikeSignature<*>::valueParameters.takeIf { signature is KaFunctionLikeSignature<*> },
+        KaCallableSignature<*>::callableIdIfNonLocal
     )
     memberProperties.joinTo(this, separator = "\n  ", prefix = "  ") { property ->
         @Suppress("UNCHECKED_CAST")
@@ -152,12 +153,12 @@ private fun KtAnalysisSession.stringRepresentation(signature: KtCallableSignatur
 
 private fun String.indented() = replace("\n", "\n  ")
 
-internal fun KtAnalysisSession.prettyPrintSignature(signature: KtCallableSignature<*>): String = prettyPrint {
+internal fun KaSession.prettyPrintSignature(signature: KaCallableSignature<*>): String = prettyPrint {
     when (signature) {
-        is KtFunctionLikeSignature -> {
+        is KaFunctionLikeSignature -> {
             append("fun ")
             signature.receiverType?.let { append('.'); append(it.render(position = Variance.INVARIANT)) }
-            append((signature.symbol as KtNamedSymbol).name.asString())
+            append((signature.symbol as KaNamedSymbol).name.asString())
             printCollection(signature.valueParameters, prefix = "(", postfix = ")") { parameter ->
                 append(parameter.name.asString())
                 append(": ")
@@ -166,45 +167,45 @@ internal fun KtAnalysisSession.prettyPrintSignature(signature: KtCallableSignatu
             append(": ")
             append(signature.returnType.render(position = Variance.INVARIANT))
         }
-        is KtVariableLikeSignature -> {
+        is KaVariableLikeSignature -> {
             val symbol = signature.symbol
-            if (symbol is KtVariableSymbol) {
+            if (symbol is KaVariableSymbol) {
                 append(if (symbol.isVal) "val" else "var")
                 append(" ")
             }
             signature.receiverType?.let { append('.'); append(it.render(position = Variance.INVARIANT)) }
-            append((symbol as KtNamedSymbol).name.asString())
+            append((symbol as KaNamedSymbol).name.asString())
             append(": ")
             append(signature.returnType.render(position = Variance.INVARIANT))
         }
     }
 }
 
-internal fun KtAnalysisSession.sortedCalls(collection: Collection<KtCall>): Collection<KtCall> = collection.sortedWith { call1, call2 ->
+internal fun KaSession.sortedCalls(collection: Collection<KaCall>): Collection<KaCall> = collection.sortedWith { call1, call2 ->
     compareCalls(call1, call2)
 }
 
-internal fun KtCall.symbols(): List<KtSymbol> = when (this) {
-    is KtCompoundVariableAccessCall -> listOfNotNull(symbol, compoundAccess.operationPartiallyAppliedSymbol.symbol)
-    is KtCompoundArrayAccessCall -> listOfNotNull(
+internal fun KaCall.symbols(): List<KaSymbol> = when (this) {
+    is KaCompoundVariableAccessCall -> listOfNotNull(symbol, compoundAccess.operationPartiallyAppliedSymbol.symbol)
+    is KaCompoundArrayAccessCall -> listOfNotNull(
         getPartiallyAppliedSymbol.symbol,
         setPartiallyAppliedSymbol.symbol,
         compoundAccess.operationPartiallyAppliedSymbol.symbol,
     )
 
-    is KtCallableMemberCall<*, *> -> listOf(symbol)
+    is KaCallableMemberCall<*, *> -> listOf(symbol)
 }
 
-internal fun KtAnalysisSession.compareCalls(call1: KtCall, call2: KtCall): Int {
+internal fun KaSession.compareCalls(call1: KaCall, call2: KaCall): Int {
     // The order of candidate calls is non-deterministic. Sort by symbol string value.
-    if (call1 !is KtCallableMemberCall<*, *> || call2 !is KtCallableMemberCall<*, *>) return 0
+    if (call1 !is KaCallableMemberCall<*, *> || call2 !is KaCallableMemberCall<*, *>) return 0
     return stringRepresentation(call1.partiallyAppliedSymbol).compareTo(stringRepresentation(call2.partiallyAppliedSymbol))
 }
 
-internal fun KtAnalysisSession.assertStableSymbolResult(
+internal fun KaSession.assertStableSymbolResult(
     testServices: TestServices,
-    firstCandidates: List<KtCallCandidateInfo>,
-    secondCandidates: List<KtCallCandidateInfo>,
+    firstCandidates: List<KaCallCandidateInfo>,
+    secondCandidates: List<KaCallCandidateInfo>,
 ) {
     val assertions = testServices.assertions
     assertions.assertEquals(firstCandidates.size, secondCandidates.size)
@@ -215,19 +216,19 @@ internal fun KtAnalysisSession.assertStableSymbolResult(
         assertions.assertEquals(firstCandidate.isInBestCandidates, secondCandidate.isInBestCandidates)
 
         when (firstCandidate) {
-            is KtApplicableCallCandidateInfo -> {}
-            is KtInapplicableCallCandidateInfo -> {
+            is KaApplicableCallCandidateInfo -> {}
+            is KaInapplicableCallCandidateInfo -> {
                 assertStableResult(
                     testServices = testServices,
                     firstDiagnostic = firstCandidate.diagnostic,
-                    secondDiagnostic = (secondCandidate as KtInapplicableCallCandidateInfo).diagnostic,
+                    secondDiagnostic = (secondCandidate as KaInapplicableCallCandidateInfo).diagnostic,
                 )
             }
         }
     }
 }
 
-internal fun KtAnalysisSession.assertStableResult(testServices: TestServices, firstInfo: KtCallInfo?, secondInfo: KtCallInfo?) {
+internal fun KaSession.assertStableResult(testServices: TestServices, firstInfo: KaCallInfo?, secondInfo: KaCallInfo?) {
     val assertions = testServices.assertions
     if (firstInfo == null || secondInfo == null) {
         assertions.assertEquals(firstInfo, secondInfo)
@@ -235,11 +236,11 @@ internal fun KtAnalysisSession.assertStableResult(testServices: TestServices, fi
     }
 
     assertions.assertEquals(firstInfo::class, secondInfo::class)
-    if (firstInfo is KtErrorCallInfo) {
+    if (firstInfo is KaErrorCallInfo) {
         assertStableResult(
             testServices = testServices,
             firstDiagnostic = firstInfo.diagnostic,
-            secondDiagnostic = (secondInfo as KtErrorCallInfo).diagnostic,
+            secondDiagnostic = (secondInfo as KaErrorCallInfo).diagnostic,
         )
     }
 
@@ -252,7 +253,7 @@ internal fun KtAnalysisSession.assertStableResult(testServices: TestServices, fi
     }
 }
 
-internal fun KtAnalysisSession.assertStableResult(testServices: TestServices, firstCall: KtCall, secondCall: KtCall) {
+internal fun KaSession.assertStableResult(testServices: TestServices, firstCall: KaCall, secondCall: KaCall) {
     val assertions = testServices.assertions
     assertions.assertEquals(firstCall::class, secondCall::class)
 
@@ -261,10 +262,10 @@ internal fun KtAnalysisSession.assertStableResult(testServices: TestServices, fi
     assertions.assertEquals(symbolsFromFirstCall, symbolsFromSecondCall)
 }
 
-internal fun KtAnalysisSession.assertStableResult(
+internal fun KaSession.assertStableResult(
     testServices: TestServices,
-    firstDiagnostic: KtDiagnostic,
-    secondDiagnostic: KtDiagnostic,
+    firstDiagnostic: KaDiagnostic,
+    secondDiagnostic: KaDiagnostic,
 ) {
     val assertions = testServices.assertions
     assertions.assertEquals(firstDiagnostic.defaultMessage, secondDiagnostic.defaultMessage)
@@ -272,22 +273,22 @@ internal fun KtAnalysisSession.assertStableResult(
     assertions.assertEquals(firstDiagnostic.severity, secondDiagnostic.severity)
 }
 
-internal fun KtAnalysisSession.renderScopeWithParentDeclarations(scope: KtScope): String = prettyPrint {
-    fun KtSymbol.qualifiedNameString() = when (this) {
-        is KtConstructorSymbol -> "<constructor> ${containingClassIdIfNonLocal?.asString()}"
-        is KtClassLikeSymbol -> classIdIfNonLocal!!.asString()
-        is KtCallableSymbol -> callableIdIfNonLocal!!.toString()
+internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String = prettyPrint {
+    fun KaSymbol.qualifiedNameString() = when (this) {
+        is KaConstructorSymbol -> "<constructor> ${containingClassIdIfNonLocal?.asString()}"
+        is KaClassLikeSymbol -> classIdIfNonLocal!!.asString()
+        is KaCallableSymbol -> callableIdIfNonLocal!!.toString()
         else -> error("unknown symbol $this")
     }
 
-    val renderingOptions = KtDeclarationRendererForSource.WITH_SHORT_NAMES.with {
+    val renderingOptions = KaDeclarationRendererForSource.WITH_SHORT_NAMES.with {
         modifiersRenderer = modifiersRenderer.with {
-            keywordsRenderer = keywordsRenderer.with { keywordFilter = KtRendererKeywordFilter.NONE }
+            keywordsRenderer = keywordsRenderer.with { keywordFilter = KaRendererKeywordFilter.NONE }
         }
     }
 
     printCollection(scope.getAllSymbols().toList(), separator = "\n\n") { symbol ->
-        val containingDeclaration = symbol.getContainingSymbol() as KtClassLikeSymbol
+        val containingDeclaration = symbol.getContainingSymbol() as KaClassLikeSymbol
         append(symbol.render(renderingOptions))
         append(" fromClass ")
         append(containingDeclaration.classIdIfNonLocal?.asString())
@@ -303,7 +304,7 @@ internal fun KtAnalysisSession.renderScopeWithParentDeclarations(scope: KtScope)
             }
         }
 
-        if (symbol is KtFunctionLikeSymbol && symbol.valueParameters.isNotEmpty()) {
+        if (symbol is KaFunctionLikeSymbol && symbol.valueParameters.isNotEmpty()) {
             appendLine()
             withIndent {
                 printCollection(symbol.valueParameters, separator = "\n") { typeParameter ->

@@ -7,23 +7,23 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.codeInsight.PsiEquivalenceUtil
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirClassLikeSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 /**
- * [KtFirNamedClassOrObjectSymbolBase] provides shared equality and hash code implementations for FIR-based named class or object symbols so
+ * [KaFirNamedClassOrObjectSymbolBase] provides shared equality and hash code implementations for FIR-based named class or object symbols so
  * that symbols of different kinds can be compared and remain interchangeable.
  */
-internal sealed class KtFirNamedClassOrObjectSymbolBase : KtNamedClassOrObjectSymbol(), KtFirSymbol<FirRegularClassSymbol> {
+internal sealed class KaFirNamedClassOrObjectSymbolBase : KaNamedClassOrObjectSymbol(), KaFirSymbol<FirRegularClassSymbol> {
     /**
      * Whether [firSymbol] is computed lazily. Equality will fall back to PSI-equality if one of the symbols is lazy and both classes have
      * an associated [PsiClass].
@@ -32,7 +32,7 @@ internal sealed class KtFirNamedClassOrObjectSymbolBase : KtNamedClassOrObjectSy
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is KtFirNamedClassOrObjectSymbolBase) return false
+        if (other == null || other !is KaFirNamedClassOrObjectSymbolBase) return false
 
         if (hasLazyFirSymbol || other.hasLazyFirSymbol) {
             val psiClass = psi as? PsiClass ?: return symbolEquals(other)
@@ -51,19 +51,19 @@ internal sealed class KtFirNamedClassOrObjectSymbolBase : KtNamedClassOrObjectSy
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Shared Operations
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    override val superTypes: List<KtType> by cached {
+    override val superTypes: List<KaType> by cached {
         firSymbol.superTypesList(builder)
     }
 
-    override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtNamedClassOrObjectSymbol>(this)?.let { return it }
+    override fun createPointer(): KaSymbolPointer<KaNamedClassOrObjectSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaNamedClassOrObjectSymbol>(this)?.let { return it }
 
         return when (val symbolKind = symbolKind) {
-            KtSymbolKind.LOCAL ->
+            KaSymbolKind.LOCAL ->
                 throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString() ?: name.asString())
 
-            KtSymbolKind.CLASS_MEMBER, KtSymbolKind.TOP_LEVEL ->
-                KtFirClassLikeSymbolPointer(classIdIfNonLocal!!, KtNamedClassOrObjectSymbol::class)
+            KaSymbolKind.CLASS_MEMBER, KaSymbolKind.TOP_LEVEL ->
+                KaFirClassLikeSymbolPointer(classIdIfNonLocal!!, KaNamedClassOrObjectSymbol::class)
 
             else -> throw UnsupportedSymbolKind(this::class, symbolKind)
         }

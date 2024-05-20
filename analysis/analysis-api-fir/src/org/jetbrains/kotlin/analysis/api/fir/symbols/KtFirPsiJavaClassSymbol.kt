@@ -6,21 +6,21 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.getModule
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
 import org.jetbrains.kotlin.analysis.utils.classIdIfNonLocal
 import org.jetbrains.kotlin.descriptors.Modality
@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Implements [KtNamedClassOrObjectSymbol] for a Java class. The underlying [firSymbol] is built lazily and only when needed. Many simple
+ * Implements [KaNamedClassOrObjectSymbol] for a Java class. The underlying [firSymbol] is built lazily and only when needed. Many simple
  * properties are computed from the given [PsiClass] instead of [firSymbol]. This improves performance when "slow" properties don't need to
  * be accessed.
  */
-internal class KtFirPsiJavaClassSymbol(
+internal class KaFirPsiJavaClassSymbol(
     override val psi: PsiClass,
-    override val analysisSession: KtFirAnalysisSession,
-) : KtFirNamedClassOrObjectSymbolBase(), KtFirPsiSymbol<PsiClass, FirRegularClassSymbol> {
+    override val analysisSession: KaFirSession,
+) : KaFirNamedClassOrObjectSymbolBase(), KaFirPsiSymbol<PsiClass, FirRegularClassSymbol> {
     /**
      * [javaClass] is used to defer some properties to the compiler's view of a Java class.
      */
@@ -52,22 +52,22 @@ internal class KtFirPsiJavaClassSymbol(
     override val name: Name = withValidityAssertion { javaClass.name }
 
     override val classIdIfNonLocal: ClassId = withValidityAssertion {
-        psi.classIdIfNonLocal ?: error("${KtFirPsiJavaClassSymbol::class.simpleName} requires a non-local PSI class.")
+        psi.classIdIfNonLocal ?: error("${KaFirPsiJavaClassSymbol::class.simpleName} requires a non-local PSI class.")
     }
 
-    override val origin: KtSymbolOrigin
-        get() = withValidityAssertion { KtSymbolOrigin.JAVA }
+    override val origin: KaSymbolOrigin
+        get() = withValidityAssertion { KaSymbolOrigin.JAVA }
 
-    override val symbolKind: KtSymbolKind
+    override val symbolKind: KaSymbolKind
         get() = withValidityAssertion {
             when {
-                classIdIfNonLocal.outerClassId != null -> KtSymbolKind.CLASS_MEMBER
-                else -> KtSymbolKind.TOP_LEVEL
+                classIdIfNonLocal.outerClassId != null -> KaSymbolKind.CLASS_MEMBER
+                else -> KaSymbolKind.TOP_LEVEL
             }
         }
 
-    @OptIn(KtAnalysisApiInternals::class)
-    override val classKind: KtClassKind
+    @OptIn(KaAnalysisApiInternals::class)
+    override val classKind: KaClassKind
         get() = withValidityAssertion { javaClass.classKind.toKtClassKind(isCompanionObject = false) }
 
     override val modality: Modality
@@ -79,14 +79,14 @@ internal class KtFirPsiJavaClassSymbol(
     override val isInner: Boolean
         get() = withValidityAssertion { classIdIfNonLocal.outerClassId != null && !javaClass.isStatic }
 
-    val outerClass: KtFirPsiJavaClassSymbol?
-        get() = psi.containingClass?.let { KtFirPsiJavaClassSymbol(it, analysisSession) }
+    val outerClass: KaFirPsiJavaClassSymbol?
+        get() = psi.containingClass?.let { KaFirPsiJavaClassSymbol(it, analysisSession) }
 
-    override val typeParameters: List<KtTypeParameterSymbol> by cached {
+    override val typeParameters: List<KaTypeParameterSymbol> by cached {
         // The parent Java class might contribute type parameters to the Java type parameter stack, but for this KtSymbol, parent type 
         // parameters aren't relevant.
         psi.typeParameters.mapIndexed { index, psiTypeParameter ->
-            KtFirPsiJavaTypeParameterSymbol(psiTypeParameter, analysisSession) {
+            KaFirPsiJavaTypeParameterSymbol(psiTypeParameter, analysisSession) {
                 // `psi.typeParameters` should align with the list of regular `FirTypeParameter`s, making the use of `index` valid.
                 val firTypeParameter = firSymbol.fir.typeParameters.filterIsInstance<FirTypeParameter>().getOrNull(index)
                 require(firTypeParameter != null) {
@@ -110,9 +110,9 @@ internal class KtFirPsiJavaClassSymbol(
     override val isActual: Boolean get() = withValidityAssertion { false }
     override val isExpect: Boolean get() = withValidityAssertion { false }
 
-    override val companionObject: KtNamedClassOrObjectSymbol? get() = withValidityAssertion { null }
+    override val companionObject: KaNamedClassOrObjectSymbol? get() = withValidityAssertion { null }
 
-    override val contextReceivers: List<KtContextReceiver> get() = withValidityAssertion { emptyList() }
+    override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Slow Operations (requiring access to the underlying FIR class symbol)
@@ -125,13 +125,13 @@ internal class KtFirPsiJavaClassSymbol(
         val firClassSymbol = provider.getFirClass(psi)
 
         require(firClassSymbol != null) {
-            "A FIR class symbol should be available for ${KtFirPsiJavaClassSymbol::class.simpleName} `$classIdIfNonLocal`."
+            "A FIR class symbol should be available for ${KaFirPsiJavaClassSymbol::class.simpleName} `$classIdIfNonLocal`."
         }
         firClassSymbol
     }
 
-    override val annotationsList: KtAnnotationsList by cached {
-        if (hasAnnotations) KtFirAnnotationListForDeclaration.create(firSymbol, builder)
-        else KtEmptyAnnotationsList(token)
+    override val annotationsList: KaAnnotationsList by cached {
+        if (hasAnnotations) KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+        else KaEmptyAnnotationsList(token)
     }
 }

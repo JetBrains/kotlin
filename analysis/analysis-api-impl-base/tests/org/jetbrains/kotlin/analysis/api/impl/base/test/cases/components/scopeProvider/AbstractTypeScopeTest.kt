@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.prettyPrintSignature
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KtRendererKeywordFilter
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.scopes.KtScopeLike
-import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaRendererKeywordFilter
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.scopes.KaScopeLike
+import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -29,7 +29,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val expression = testServices.expressionMarkerProvider.getSelectedElementOfType<KtExpression>(mainFile)
         analyseForTest(expression) {
-            val type = expression.getKtType()
+            val type = expression.getKaType()
                 ?: error("expression $expression is not typable")
             val typeScope = type.getTypeScope()
             val declaredScopeByTypeScope = typeScope?.getDeclarationScope()
@@ -72,7 +72,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun KtAnalysisSession.renderForTests(typeScope: KtTypeScope): String {
+    private fun KaSession.renderForTests(typeScope: KaTypeScope): String {
         val callables = typeScope.getCallableSignatures().toList()
         return prettyPrint {
             callables.forEach {
@@ -81,7 +81,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun KtAnalysisSession.prettyPrintForTests(typeScope: KtTypeScope): String {
+    private fun KaSession.prettyPrintForTests(typeScope: KaTypeScope): String {
         val callables = typeScope.getCallableSignatures().toList()
         return prettyPrint {
             callables.forEach {
@@ -91,7 +91,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
     }
 
     @Suppress("unused")
-    private fun KtAnalysisSession.renderForTests(scope: KtScope): String {
+    private fun KaSession.renderForTests(scope: KaScope): String {
         val callables = scope.getCallableSymbols().toList()
         return prettyPrint {
             callables.forEach {
@@ -100,7 +100,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun KtAnalysisSession.prettyPrintForTests(scope: KtScope): String {
+    private fun KaSession.prettyPrintForTests(scope: KaScope): String {
         val callables = scope.getCallableSymbols().toList()
         return prettyPrint {
             callables.forEach {
@@ -109,7 +109,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun PrettyPrinter.renderContainedNamesIfExists(scope: KtScopeLike?) {
+    private fun PrettyPrinter.renderContainedNamesIfExists(scope: KaScopeLike?) {
         withIndent {
             if (scope != null) {
                 renderNamesContainedInScope(scope)
@@ -120,9 +120,9 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
     }
 
     companion object {
-        private val renderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
+        private val renderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
             modifiersRenderer = modifiersRenderer.with {
-                keywordsRenderer = keywordsRenderer.with { keywordFilter = KtRendererKeywordFilter.NONE }
+                keywordsRenderer = keywordsRenderer.with { keywordFilter = KaRendererKeywordFilter.NONE }
             }
         }
     }

@@ -6,20 +6,20 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10AnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10AnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescSyntheticFieldSymbolPointer
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10DescSyntheticFieldSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtBackingFieldSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
@@ -27,32 +27,32 @@ import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-internal class KtFe10DescSyntheticFieldSymbol(
+internal class KaFe10DescSyntheticFieldSymbol(
     val descriptor: SyntheticFieldDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KtBackingFieldSymbol(), KtFe10Symbol, KtFe10AnnotatedSymbol {
-    override val owningProperty: KtKotlinPropertySymbol
+) : KaBackingFieldSymbol(), KaFe10Symbol, KaFe10AnnotatedSymbol {
+    override val owningProperty: KaKotlinPropertySymbol
         get() = withValidityAssertion {
             val kotlinProperty = descriptor.propertyDescriptor as PropertyDescriptorImpl
-            KtFe10DescKotlinPropertySymbol(kotlinProperty, analysisContext)
+            KaFe10DescKotlinPropertySymbol(kotlinProperty, analysisContext)
         }
 
     override val annotationsObject: Annotations
         get() = withValidityAssertion { descriptor.annotations }
 
-    override val returnType: KtType
+    override val returnType: KaType
         get() = withValidityAssertion { descriptor.propertyDescriptor.type.toKtType(analysisContext) }
 
-    override fun createPointer(): KtSymbolPointer<KtBackingFieldSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
         val accessorPsi = descriptor.containingDeclaration.toSourceElement.getPsi()
         if (accessorPsi is KtPropertyAccessor) {
-            val accessorPointer = KtPsiBasedSymbolPointer.createForSymbolFromPsi<KtPropertyAccessorSymbol>(accessorPsi)
+            val accessorPointer = KaPsiBasedSymbolPointer.createForSymbolFromPsi<KaPropertyAccessorSymbol>(accessorPsi)
             if (accessorPointer != null) {
-                return KtFe10DescSyntheticFieldSymbolPointer(accessorPointer)
+                return KaFe10DescSyntheticFieldSymbolPointer(accessorPointer)
             }
         }
 
-        return KtFe10NeverRestoringSymbolPointer()
+        return KaFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

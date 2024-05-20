@@ -9,37 +9,37 @@ import com.intellij.psi.PsiArrayType
 import com.intellij.psi.PsiEllipsisType
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.receiverType
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 
 // TODO replace with structural type comparison?
 internal object PsiDeclarationAndKtSymbolEqualityChecker {
-    fun KtAnalysisSession.representsTheSameDeclaration(psi: PsiMethod, symbol: KtCallableSymbol): Boolean {
+    fun KaSession.representsTheSameDeclaration(psi: PsiMethod, symbol: KaCallableSymbol): Boolean {
         // TODO: receiver type comparison?
         if (!returnTypesMatch(psi, symbol)) return false
         if (!typeParametersMatch(psi, symbol)) return false
-        if (symbol is KtFunctionLikeSymbol && !valueParametersMatch(psi, symbol)) return false
+        if (symbol is KaFunctionLikeSymbol && !valueParametersMatch(psi, symbol)) return false
         return true
     }
 
-    private fun KtAnalysisSession.returnTypesMatch(psi: PsiMethod, symbol: KtCallableSymbol): Boolean {
-        if (symbol is KtConstructorSymbol) return true
+    private fun KaSession.returnTypesMatch(psi: PsiMethod, symbol: KaCallableSymbol): Boolean {
+        if (symbol is KaConstructorSymbol) return true
         return psi.returnType?.let {
             isTheSameTypes(
                 psi,
                 it,
                 symbol.returnType,
-                KtTypeMappingMode.RETURN_TYPE,
+                KaTypeMappingMode.RETURN_TYPE,
             )
         } ?: false
     }
 
-    private fun typeParametersMatch(psi: PsiMethod, symbol: KtCallableSymbol): Boolean {
+    private fun typeParametersMatch(psi: PsiMethod, symbol: KaCallableSymbol): Boolean {
         if (psi.typeParameters.size != symbol.typeParameters.size) return false
         psi.typeParameters.zip(symbol.typeParameters) { psiTypeParameter, typeParameterSymbol ->
             if (psiTypeParameter.name != typeParameterSymbol.name.asString()) return false
@@ -48,7 +48,7 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
         return true
     }
 
-    private fun KtAnalysisSession.valueParametersMatch(psi: PsiMethod, symbol: KtFunctionLikeSymbol): Boolean {
+    private fun KaSession.valueParametersMatch(psi: PsiMethod, symbol: KaFunctionLikeSymbol): Boolean {
         val valueParameterCount = if (symbol.isExtension) symbol.valueParameters.size + 1 else symbol.valueParameters.size
         if (psi.parameterList.parametersCount != valueParameterCount) return false
         if (symbol.isExtension) {
@@ -72,7 +72,7 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
                     psi,
                     psiParameter.type,
                     valueParameterSymbol.returnType,
-                    KtTypeMappingMode.VALUE_PARAMETER,
+                    KaTypeMappingMode.VALUE_PARAMETER,
                     valueParameterSymbol.isVararg,
                     psiParameter.isVarArgs,
                 )
@@ -81,11 +81,11 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
         return true
     }
 
-    private fun KtAnalysisSession.isTheSameTypes(
+    private fun KaSession.isTheSameTypes(
         context: PsiMethod,
         psi: PsiType,
-        ktType: KtType,
-        mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
+        ktType: KaType,
+        mode: KaTypeMappingMode = KaTypeMappingMode.DEFAULT,
         isVararg: Boolean = false,
         isVarargs: Boolean = false, // isVarargs == isVararg && last param
     ): Boolean {

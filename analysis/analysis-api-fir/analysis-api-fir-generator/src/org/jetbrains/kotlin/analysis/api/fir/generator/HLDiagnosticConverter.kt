@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.generator
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -227,7 +227,7 @@ internal object FirToKtConversionCreator {
         // ------------------ symbols ------------------
         FirRegularClass::class to HLFunctionCallConversion(
             "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0}.symbol) as KtNamedClassOrObjectSymbol",
-            KtNamedClassOrObjectSymbol::class.createType(),
+            KaNamedClassOrObjectSymbol::class.createType(),
             importsToAdd = listOf(
                 "org.jetbrains.kotlin.fir.declarations.FirRegularClass",
                 "org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol"
@@ -235,86 +235,86 @@ internal object FirToKtConversionCreator {
         ),
         FirValueParameterSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.buildSymbol({0})",
-            KtSymbol::class.createType(),
+            KaSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirDeclaration")
         ),
         FirEnumEntrySymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.buildSymbol({0})",
-            KtSymbol::class.createType(),
+            KaSymbol::class.createType(),
         ),
         FirRegularClassSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0})",
-            KtClassLikeSymbol::class.createType()
+            KaClassLikeSymbol::class.createType()
         ),
         FirNamedFunctionSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol({0})",
-            KtFunctionLikeSymbol::class.createType()
+            KaFunctionLikeSymbol::class.createType()
         ),
         FirPropertySymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.variableLikeBuilder.buildVariableSymbol({0})",
-            KtVariableSymbol::class.createType()
+            KaVariableSymbol::class.createType()
         ),
         FirBackingFieldSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.variableLikeBuilder.buildVariableSymbol({0}.fir.propertySymbol)",
-            KtVariableSymbol::class.createType()
+            KaVariableSymbol::class.createType()
         ),
         FirVariableSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol({0})",
-            KtVariableLikeSymbol::class.createType()
+            KaVariableLikeSymbol::class.createType()
         ),
         FirTypeParameterSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol({0})",
-            KtTypeParameterSymbol::class.createType()
+            KaTypeParameterSymbol::class.createType()
         ),
         FirCallableSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.callableBuilder.buildCallableSymbol({0})",
-            KtCallableSymbol::class.createType()
+            KaCallableSymbol::class.createType()
         ),
         FirClassSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0})",
-            KtClassLikeSymbol::class.createType()
+            KaClassLikeSymbol::class.createType()
         ),
         FirClassLikeSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0})",
-            KtClassLikeSymbol::class.createType()
+            KaClassLikeSymbol::class.createType()
         ),
         FirBasedSymbol::class to HLFunctionCallConversion(
             "firSymbolBuilder.buildSymbol({0})",
-            KtSymbol::class.createType()
+            KaSymbol::class.createType()
         ),
         // ------------------ FIR elements ------------------
         FirClass::class to HLFunctionCallConversion(
             "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0}.symbol)",
-            KtClassLikeSymbol::class.createType()
+            KaClassLikeSymbol::class.createType()
         ),
         FirTypeParameter::class to HLFunctionCallConversion(
             "firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol({0}.symbol)",
-            KtTypeParameterSymbol::class.createType(),
+            KaTypeParameterSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirTypeParameter")
         ),
         FirValueParameter::class to HLFunctionCallConversion(
             "firSymbolBuilder.buildSymbol({0}.symbol)",
-            KtSymbol::class.createType(),
+            KaSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirDeclaration")
         ),
         FirFunction::class to HLFunctionCallConversion(
             "firSymbolBuilder.buildSymbol({0})",
-            KtSymbol::class.createType(),
+            KaSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirFunction")
         ),
         FirCallableDeclaration::class to HLFunctionCallConversion(
             "firSymbolBuilder.callableBuilder.buildCallableSymbol({0}.symbol)",
-            KtCallableSymbol::class.createType(),
+            KaCallableSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration")
         ),
         FirMemberDeclaration::class to HLFunctionCallConversion(
             "firSymbolBuilder.buildSymbol({0} as FirDeclaration)",
-            KtSymbol::class.createType(),
+            KaSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirDeclaration")
         ),
         FirDeclaration::class to HLFunctionCallConversion(
             "firSymbolBuilder.buildSymbol({0})",
-            KtSymbol::class.createType(),
+            KaSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirDeclaration")
         ),
         FirQualifiedAccessExpression::class to HLFunctionCallConversion(
@@ -337,11 +337,11 @@ internal object FirToKtConversionCreator {
 
         ConeKotlinType::class to HLFunctionCallConversion(
             "firSymbolBuilder.typeBuilder.buildKtType({0})",
-            KtType::class.createType()
+            KaType::class.createType()
         ),
         FirTypeRef::class to HLFunctionCallConversion(
             "firSymbolBuilder.typeBuilder.buildKtType({0})",
-            KtType::class.createType()
+            KaType::class.createType()
         ),
         KtSourceElement::class to HLFunctionCallConversion(
             "({0} as KtPsiSourceElement).psi",

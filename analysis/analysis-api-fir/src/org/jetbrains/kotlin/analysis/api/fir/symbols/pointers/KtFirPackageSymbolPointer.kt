@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.FqName
 
-class KtFirPackageSymbolPointer(private val fqName: FqName) : KtSymbolPointer<KtPackageSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtPackageSymbol? {
-        check(analysisSession is KtFirAnalysisSession)
+class KaFirPackageSymbolPointer(private val fqName: FqName) : KaSymbolPointer<KaPackageSymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): KaPackageSymbol? {
+        check(analysisSession is KaFirSession)
         return analysisSession.firSymbolBuilder.createPackageSymbolIfOneExists(fqName)
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFirPackageSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFirPackageSymbolPointer &&
             other.fqName == fqName
 }

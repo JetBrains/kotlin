@@ -6,22 +6,22 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-internal class KtFirSimpleNameReference(
+internal class KaFirSimpleNameReference(
     expression: KtSimpleNameExpression,
     val isRead: Boolean,
-) : KtSimpleNameReference(expression), KtFirReference {
+) : KtSimpleNameReference(expression), KaFirReference {
 
     private val isAnnotationCall: Boolean
         get() {
@@ -31,11 +31,11 @@ internal class KtFirSimpleNameReference(
             return ktConstructorCalleeExpression.parent is KtAnnotationEntry
         }
 
-    private fun KtAnalysisSession.fixUpAnnotationCallResolveToCtor(resultsToFix: Collection<KtSymbol>): Collection<KtSymbol> {
+    private fun KaSession.fixUpAnnotationCallResolveToCtor(resultsToFix: Collection<KaSymbol>): Collection<KaSymbol> {
         if (resultsToFix.isEmpty() || !isAnnotationCall) return resultsToFix
 
         return resultsToFix.map { targetSymbol ->
-            if (targetSymbol is KtFirNamedClassOrObjectSymbol && targetSymbol.classKind == KtClassKind.ANNOTATION_CLASS) {
+            if (targetSymbol is KaFirNamedClassOrObjectSymbol && targetSymbol.classKind == KaClassKind.ANNOTATION_CLASS) {
                 targetSymbol.getMemberScope().getConstructors().firstOrNull() ?: targetSymbol
             } else targetSymbol
         }
@@ -45,16 +45,16 @@ internal class KtFirSimpleNameReference(
         return getImportAlias(alias.importDirective) != null
     }
 
-    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        check(this is KtFirAnalysisSession)
-        val results = FirReferenceResolveHelper.resolveSimpleNameReference(this@KtFirSimpleNameReference, this)
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+        check(this is KaFirSession)
+        val results = FirReferenceResolveHelper.resolveSimpleNameReference(this@KaFirSimpleNameReference, this)
         //This fix-up needed to resolve annotation call into annotation constructor (but not into the annotation type)
         return fixUpAnnotationCallResolveToCtor(results)
     }
 
-    override fun getResolvedToPsi(analysisSession: KtAnalysisSession): Collection<PsiElement> = with(analysisSession) {
+    override fun getResolvedToPsi(analysisSession: KaSession): Collection<PsiElement> = with(analysisSession) {
         if (expression is KtLabelReferenceExpression) {
-            val fir = expression.getOrBuildFir((analysisSession as KtFirAnalysisSession).firResolveSession)
+            val fir = expression.getOrBuildFir((analysisSession as KaFirSession).firResolveSession)
             if (fir is FirLoopJump) {
                 return listOfNotNull(fir.target.labeledElement.psi)
             }
@@ -64,7 +64,7 @@ internal class KtFirSimpleNameReference(
         if (psiOfReferenceTarget.isNotEmpty()) return psiOfReferenceTarget
         referenceTargetSymbols.flatMap { symbol ->
             when (symbol) {
-                is KtFirSyntheticJavaPropertySymbol ->
+                is KaFirSyntheticJavaPropertySymbol ->
                     if (isRead) {
                         listOfNotNull(symbol.javaGetterSymbol.psi)
                     } else {

@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-internal class KtFe10NeverRestoringSymbolPointer<T : KtSymbol> : KtSymbolPointer<T>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol", ReplaceWith("null"))
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): T? {
+internal class KaFe10NeverRestoringSymbolPointer<T : KaSymbol> : KaSymbolPointer<T>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol", ReplaceWith("null"))
+    override fun restoreSymbol(analysisSession: KaSession): T? {
         return null
     }
 }

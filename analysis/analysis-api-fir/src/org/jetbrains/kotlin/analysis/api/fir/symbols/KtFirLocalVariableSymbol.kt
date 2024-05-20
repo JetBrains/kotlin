@@ -7,19 +7,19 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirScriptParameterSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtLocalVariableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
@@ -28,27 +28,27 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-internal abstract class KtFirLocalOrErrorVariableSymbol<E : FirVariable, S : FirVariableSymbol<E>>(
+internal abstract class KaFirLocalOrErrorVariableSymbol<E : FirVariable, S : FirVariableSymbol<E>>(
     override val firSymbol: S,
-    override val analysisSession: KtFirAnalysisSession,
-) : KtLocalVariableSymbol(), KtFirSymbol<S> {
+    override val analysisSession: KaFirSession,
+) : KaLocalVariableSymbol(), KaFirSymbol<S> {
     override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
 
-    override val annotationsList: KtAnnotationsList
+    override val annotationsList: KaAnnotationsList
         get() = withValidityAssertion {
-            KtFirAnnotationListForDeclaration.create(firSymbol, builder)
+            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }
-    override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
+    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
 
-    override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.LOCAL }
+    override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.LOCAL }
 
-    override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtLocalVariableSymbol>(this)?.let { return it }
+    override fun createPointer(): KaSymbolPointer<KaLocalVariableSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaLocalVariableSymbol>(this)?.let { return it }
 
         if (firSymbol.fir.source?.kind == KtFakeSourceElementKind.ScriptParameter) {
-            return KtFirScriptParameterSymbolPointer(name, analysisSession.createOwnerPointer(this))
+            return KaFirScriptParameterSymbolPointer(name, analysisSession.createOwnerPointer(this))
         }
 
         throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
@@ -58,8 +58,8 @@ internal abstract class KtFirLocalOrErrorVariableSymbol<E : FirVariable, S : Fir
     override fun hashCode(): Int = symbolHashCode()
 }
 
-internal class KtFirLocalVariableSymbol(firSymbol: FirPropertySymbol, analysisSession: KtFirAnalysisSession) :
-    KtFirLocalOrErrorVariableSymbol<FirProperty, FirPropertySymbol>(firSymbol, analysisSession) {
+internal class KaFirLocalVariableSymbol(firSymbol: FirPropertySymbol, analysisSession: KaFirSession) :
+    KaFirLocalOrErrorVariableSymbol<FirProperty, FirPropertySymbol>(firSymbol, analysisSession) {
     init {
         assert(firSymbol.isLocal)
     }
@@ -67,10 +67,10 @@ internal class KtFirLocalVariableSymbol(firSymbol: FirPropertySymbol, analysisSe
     override val isVal: Boolean get() = withValidityAssertion { firSymbol.isVal }
 }
 
-internal class KtFirErrorVariableSymbol(
+internal class KaFirErrorVariableSymbol(
     firSymbol: FirErrorPropertySymbol,
-    analysisSession: KtFirAnalysisSession,
-) : KtFirLocalOrErrorVariableSymbol<FirErrorProperty, FirErrorPropertySymbol>(firSymbol, analysisSession),
-    KtFirSymbol<FirErrorPropertySymbol> {
+    analysisSession: KaFirSession,
+) : KaFirLocalOrErrorVariableSymbol<FirErrorProperty, FirErrorPropertySymbol>(firSymbol, analysisSession),
+    KaFirSymbol<FirErrorPropertySymbol> {
     override val isVal: Boolean get() = withValidityAssertion { firSymbol.fir.isVal }
 }

@@ -11,9 +11,9 @@ import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import com.intellij.psi.util.ClassUtil
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.KtMetadataCalculator
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.components.KaMetadataCalculator
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -54,9 +54,9 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.util.*
 
-@OptIn(KtAnalysisNonPublicApi::class)
-internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalysisSession) : KtMetadataCalculator(),
-    KtFirAnalysisSessionComponent {
+@OptIn(KaAnalysisNonPublicApi::class)
+internal class KaFirMetadataCalculator(override val analysisSession: KaFirSession) : KaMetadataCalculator(),
+    KaFirSessionComponent {
     private val firSession: FirSession
         get() = rootModuleSession
 

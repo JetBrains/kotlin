@@ -6,50 +6,54 @@
 package org.jetbrains.kotlin.analysis.api.contracts.description.booleans
 
 import com.google.common.base.Objects
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 
 /**
- * See: [KtContractBooleanExpression].
+ * See: [KaContractBooleanExpression].
  */
-public class KtContractBinaryLogicExpression(
-    private val backingLeft: KtContractBooleanExpression,
-    private val backingRight: KtContractBooleanExpression,
-    private val backingOperation: KtLogicOperation
-) : KtContractBooleanExpression {
+public class KaContractBinaryLogicExpression(
+    private val backingLeft: KaContractBooleanExpression,
+    private val backingRight: KaContractBooleanExpression,
+    private val backingOperation: KaLogicOperation
+) : KaContractBooleanExpression {
     init {
         check(left.token === right.token) { "$left and $right should have the same lifetime token" }
     }
 
-    override val token: KtLifetimeToken get() = backingLeft.token
-    public val left: KtContractBooleanExpression get() = withValidityAssertion { backingLeft }
-    public val right: KtContractBooleanExpression get() = withValidityAssertion { backingRight }
-    public val operation: KtLogicOperation get() = withValidityAssertion { backingOperation }
+    override val token: KaLifetimeToken get() = backingLeft.token
+    public val left: KaContractBooleanExpression get() = withValidityAssertion { backingLeft }
+    public val right: KaContractBooleanExpression get() = withValidityAssertion { backingRight }
+    public val operation: KaLogicOperation get() = withValidityAssertion { backingOperation }
 
     override fun hashCode(): Int = Objects.hashCode(backingLeft, backingRight, backingOperation)
     override fun equals(other: Any?): Boolean {
         return this === other ||
-                other is KtContractBinaryLogicExpression &&
+                other is KaContractBinaryLogicExpression &&
                 other.backingLeft == backingLeft &&
                 other.backingRight == backingRight &&
                 other.backingOperation == backingOperation
     }
 
-    public enum class KtLogicOperation {
+    public enum class KaLogicOperation {
         AND, OR
     }
 }
 
+public typealias KtContractBinaryLogicExpression = KaContractBinaryLogicExpression
+
 /**
- * See: [KtContractBooleanExpression].
+ * See: [KaContractBooleanExpression].
  */
-public class KtContractLogicalNotExpression(private val backingArgument: KtContractBooleanExpression) : KtContractBooleanExpression {
-    override val token: KtLifetimeToken get() = backingArgument.token
-    public val argument: KtContractBooleanExpression get() = withValidityAssertion { backingArgument }
+public class KaContractLogicalNotExpression(private val backingArgument: KaContractBooleanExpression) : KaContractBooleanExpression {
+    override val token: KaLifetimeToken get() = backingArgument.token
+    public val argument: KaContractBooleanExpression get() = withValidityAssertion { backingArgument }
 
     override fun equals(other: Any?): Boolean {
-        return this === other || other is KtContractLogicalNotExpression && other.backingArgument == backingArgument
+        return this === other || other is KaContractLogicalNotExpression && other.backingArgument == backingArgument
     }
 
     override fun hashCode(): Int = backingArgument.hashCode()
 }
+
+public typealias KtContractLogicalNotExpression = KaContractLogicalNotExpression

@@ -7,19 +7,19 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirValueParameterSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.varargElementType
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirValueParameterSymbol(
+internal class KaFirValueParameterSymbol(
     override val firSymbol: FirValueParameterSymbol,
-    override val analysisSession: KtFirAnalysisSession,
-) : KtValueParameterSymbol(), KtFirSymbol<FirValueParameterSymbol> {
+    override val analysisSession: KaFirSession,
+) : KaValueParameterSymbol(), KaFirSymbol<FirValueParameterSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }
@@ -59,28 +59,28 @@ internal class KtFirValueParameterSymbol(
     override val hasDefaultValue: Boolean get() = withValidityAssertion { firSymbol.hasDefaultValue }
 
     override val annotationsList by cached {
-        KtFirAnnotationListForDeclaration.create(firSymbol, builder)
+        KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 
-    override val generatedPrimaryConstructorProperty: KtKotlinPropertySymbol? by cached {
+    override val generatedPrimaryConstructorProperty: KaKotlinPropertySymbol? by cached {
         val propertySymbol = firSymbol.fir.correspondingProperty?.symbol ?: return@cached null
         val ktPropertySymbol = builder.variableLikeBuilder.buildPropertySymbol(propertySymbol)
-        check(ktPropertySymbol is KtKotlinPropertySymbol) {
+        check(ktPropertySymbol is KaKotlinPropertySymbol) {
             "Unexpected symbol for primary constructor property ${ktPropertySymbol.javaClass} for fir: ${firSymbol.fir.renderWithType()}"
         }
 
         ktPropertySymbol
     }
 
-    override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtValueParameterSymbol>(this)?.let { return it }
+    override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaValueParameterSymbol>(this)?.let { return it }
 
         val ownerSymbol = with(analysisSession) { getContainingSymbol() }
             ?: error("Containing function is expected for a value parameter symbol")
 
-        requireIsInstance<KtFunctionLikeSymbol>(ownerSymbol)
+        requireIsInstance<KaFunctionLikeSymbol>(ownerSymbol)
 
-        return KtFirValueParameterSymbolPointer(
+        return KaFirValueParameterSymbolPointer(
             ownerPointer = analysisSession.createOwnerPointer(this),
             name = name,
             index = (ownerSymbol.firSymbol.fir as FirFunction).valueParameters.indexOf(firSymbol.fir),

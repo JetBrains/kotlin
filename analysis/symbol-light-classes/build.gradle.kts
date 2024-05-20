@@ -43,7 +43,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.lifetime.KtAllowProhibitedAnalyzeFromWriteAction")
+    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.lifetime.KaAllowProhibitedAnalyzeFromWriteAction")
 }
 
 

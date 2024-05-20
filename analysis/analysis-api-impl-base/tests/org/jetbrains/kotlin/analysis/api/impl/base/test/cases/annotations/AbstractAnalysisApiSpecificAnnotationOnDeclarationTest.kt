@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -31,11 +31,11 @@ abstract class AbstractAnalysisApiSpecificAnnotationOnDeclarationTest : Abstract
         val classIdString = mainModule.testModule.directives.singleValue(Directives.CLASS_ID)
 
         val actual = analyseForTest(ktDeclaration) {
-            val declarationSymbol = ktDeclaration.getSymbol() as KtAnnotatedSymbol
+            val declarationSymbol = ktDeclaration.getSymbol() as KaAnnotatedSymbol
             val annotationList = declarationSymbol.annotationsList
             val classId = ClassId.fromString(classIdString)
             val renderer = DebugSymbolRenderer()
-            fun renderAnnotation(application: KtAnnotationApplication): String = buildString {
+            fun renderAnnotation(application: KaAnnotationApplication): String = buildString {
                 appendLine("KtDeclaration: ${ktDeclaration::class.simpleName} ${ktDeclaration.name}")
                 append(renderer.renderAnnotationApplication(analysisSession, application))
             }

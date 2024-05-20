@@ -6,39 +6,39 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.createDynamicType
 
-internal class KtFe10DynamicFunctionDescValueParameterSymbol(
-    val owner: KtFe10DescFunctionSymbol,
-) : KtValueParameterSymbol(), KtFe10Symbol {
+internal class KaFe10DynamicFunctionDescValueParameterSymbol(
+    val owner: KaFe10DescFunctionSymbol,
+) : KaValueParameterSymbol(), KaFe10Symbol {
     override val analysisContext: Fe10AnalysisContext
         get() = owner.analysisContext
 
-    override val token: KtLifetimeToken
+    override val token: KaLifetimeToken
         get() = owner.token
 
-    override val origin: KtSymbolOrigin
-        get() = withValidityAssertion { KtSymbolOrigin.JS_DYNAMIC }
+    override val origin: KaSymbolOrigin
+        get() = withValidityAssertion { KaSymbolOrigin.JS_DYNAMIC }
 
     override val psi: PsiElement?
         get() = withValidityAssertion { null }
 
-    override val annotationsList: KtAnnotationsList
-        get() = withValidityAssertion { KtEmptyAnnotationsList(token) }
+    override val annotationsList: KaAnnotationsList
+        get() = withValidityAssertion { KaEmptyAnnotationsList(token) }
 
     override val name: Name
         get() = withValidityAssertion { Name.identifier("args") }
@@ -58,23 +58,23 @@ internal class KtFe10DynamicFunctionDescValueParameterSymbol(
     override val isImplicitLambdaParameter: Boolean
         get() = withValidityAssertion { false }
 
-    override val returnType: KtType
+    override val returnType: KaType
         get() = withValidityAssertion { createDynamicType(analysisContext.builtIns).toKtType(analysisContext) }
 
-    override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
+    override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
         Pointer(owner.createPointer())
     }
 
-    override fun equals(other: Any?): Boolean = other is KtFe10DynamicFunctionDescValueParameterSymbol && other.owner == this.owner
+    override fun equals(other: Any?): Boolean = other is KaFe10DynamicFunctionDescValueParameterSymbol && other.owner == this.owner
     override fun hashCode(): Int = owner.hashCode()
 
 
-    private class Pointer(val ownerPointer: KtSymbolPointer<KtFunctionSymbol>) : KtSymbolPointer<KtValueParameterSymbol>() {
-        @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-        override fun restoreSymbol(analysisSession: KtAnalysisSession): KtValueParameterSymbol? {
+    private class Pointer(val ownerPointer: KaSymbolPointer<KaFunctionSymbol>) : KaSymbolPointer<KaValueParameterSymbol>() {
+        @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+        override fun restoreSymbol(analysisSession: KaSession): KaValueParameterSymbol? {
             @Suppress("DEPRECATION")
-            val owner = ownerPointer.restoreSymbol(analysisSession) as? KtFe10DescFunctionSymbol ?: return null
-            return KtFe10DynamicFunctionDescValueParameterSymbol(owner)
+            val owner = ownerPointer.restoreSymbol(analysisSession) as? KaFe10DescFunctionSymbol ?: return null
+            return KaFe10DynamicFunctionDescValueParameterSymbol(owner)
         }
     }
 }

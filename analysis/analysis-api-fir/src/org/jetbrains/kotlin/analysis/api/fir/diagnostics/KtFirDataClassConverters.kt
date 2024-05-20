@@ -71,7 +71,7 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConverter {
+internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConverter {
     add(FirErrors.UNSUPPORTED) { firDiagnostic ->
         UnsupportedImpl(
             firDiagnostic.a,

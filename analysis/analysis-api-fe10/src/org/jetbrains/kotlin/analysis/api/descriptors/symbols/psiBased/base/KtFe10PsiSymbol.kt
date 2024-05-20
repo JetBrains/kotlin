@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base
 
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10AnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10AnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtElement
 
-internal interface KtFe10PsiSymbol<P : KtElement, D : DeclarationDescriptor> : KtFe10Symbol, KtFe10AnnotatedSymbol {
+internal interface KaFe10PsiSymbol<P : KtElement, D : DeclarationDescriptor> : KaFe10Symbol, KaFe10AnnotatedSymbol {
     override val psi: P
     val descriptor: D?
 
     override val annotationsObject: Annotations
         get() = withValidityAssertion { descriptor?.annotations ?: Annotations.EMPTY }
 
-    override val origin: KtSymbolOrigin
-        get() = withValidityAssertion { psi.ktSymbolOrigin }
+    override val origin: KaSymbolOrigin
+        get() = withValidityAssertion { psi.kaSymbolOrigin }
 }

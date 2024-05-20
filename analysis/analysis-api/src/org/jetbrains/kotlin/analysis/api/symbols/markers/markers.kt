@@ -5,27 +5,33 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.name.Name
 
-public interface KtPossiblyNamedSymbol : KtSymbol {
+public interface KaPossiblyNamedSymbol : KaSymbol {
     public val name: Name?
 }
 
-public interface KtNamedSymbol : KtPossiblyNamedSymbol {
+public typealias KtPossiblyNamedSymbol = KaPossiblyNamedSymbol
+
+public interface KaNamedSymbol : KaPossiblyNamedSymbol {
     override val name: Name
 }
 
-public interface KtSymbolWithTypeParameters : KtSymbol {
-    public val typeParameters: List<KtTypeParameterSymbol>
+public typealias KtNamedSymbol = KaNamedSymbol
+
+public interface KaSymbolWithTypeParameters : KaSymbol {
+    public val typeParameters: List<KaTypeParameterSymbol>
 }
+
+public typealias KtSymbolWithTypeParameters = KaSymbolWithTypeParameters
 
 /**
  * A marker interface for symbols which could potentially be `expect` or `actual`. For more details about `expect` and `actual`
  * declarations, see [documentation](https://kotlinlang.org/docs/multiplatform-connect-to-apis.html).
  */
-public interface KtPossibleMultiplatformSymbol : KtSymbol {
+public interface KaPossibleMultiplatformSymbol : KaSymbol {
     /**
      * Returns true if the declaration is a platform-specific implementation in a multiplatform project.
      */
@@ -43,3 +49,5 @@ public interface KtPossibleMultiplatformSymbol : KtSymbol {
      */
     public val isExpect: Boolean
 }
+
+public typealias KtPossibleMultiplatformSymbol = KaPossibleMultiplatformSymbol

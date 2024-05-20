@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
 /**
  * A marker interface for symbols which could potentially be members of some class.
  *
- * @see org.jetbrains.kotlin.analysis.api.components.KtTypeProviderMixIn.getDispatchReceiverType
+ * @see org.jetbrains.kotlin.analysis.api.components.KaTypeProviderMixIn.getDispatchReceiverType
  */
-public interface KtPossibleMemberSymbol : KtSymbol
+public interface KaPossibleMemberSymbol : KaSymbol
+
+public typealias KtPossibleMemberSymbol = KaPossibleMemberSymbol

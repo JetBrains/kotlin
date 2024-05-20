@@ -39,8 +39,8 @@ import java.util.concurrent.atomic.AtomicLongFieldUpdater
  *
  * Because of this, it's important that cached entities which depend on a session's lifetime (and therefore its session invalidation events)
  * are *exactly as softly reachable* as the [LLFirSession]. This means that the cached entity should keep a strong reference to the session,
- * but the entity itself should be softly reachable if not currently in use. For example, `KtFirAnalysisSession`s are softly reachable via
- * `KtFirAnalysisSessionProvider`, but keep a strong reference to the [LLFirSession].
+ * but the entity itself should be softly reachable if not currently in use. For example, `KaFirSession`s are softly reachable via
+ * `KaFirSessionProvider`, but keep a strong reference to the [LLFirSession].
  */
 @OptIn(PrivateSessionConstructor::class)
 abstract class LLFirSession(
@@ -79,7 +79,7 @@ abstract class LLFirSession(
 
     /**
      * Returns an already registered [Disposable] which is alive until the session is invalidated. It can be used as a parent disposable for
-     * disposable session components, such as [resolve extensions][org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtension].
+     * disposable session components, such as [resolve extensions][org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension].
      * When the session is invalidated or garbage-collected, all disposable session components will be disposed with this parent disposable.
      *
      * Because not all sessions have disposable components, this disposable is created and registered on-demand with the first call to

@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot
-import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot.DefaultExpressionInfo
-import org.jetbrains.kotlin.analysis.api.components.KtDataFlowExitPointSnapshot.VariableReassignment
-import org.jetbrains.kotlin.analysis.api.components.KtDataFlowInfoProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot
+import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot.DefaultExpressionInfo
+import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot.VariableReassignment
+import org.jetbrains.kotlin.analysis.api.components.KaDataFlowInfoProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
@@ -68,12 +68,12 @@ import kotlin.collections.ArrayList
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.sign
 
-@OptIn(KtAnalysisNonPublicApi::class)
-internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnalysisSession) : KtDataFlowInfoProvider() {
+@OptIn(KaAnalysisNonPublicApi::class)
+internal class KaFirDataFlowInfoProvider(override val analysisSession: KaFirSession) : KaDataFlowInfoProvider() {
     private val firResolveSession: LLFirResolveSession
         get() = analysisSession.firResolveSession
 
-    override fun getExitPointSnapshot(statements: List<KtExpression>): KtDataFlowExitPointSnapshot {
+    override fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot {
         val firStatements = computeStatements(statements)
 
         val collector = FirElementCollector()
@@ -99,7 +99,7 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
             add(collector.firContinueExpressions)
         }
 
-        return KtDataFlowExitPointSnapshot(
+        return KaDataFlowExitPointSnapshot(
             defaultExpressionInfo = defaultExpressionInfo,
             valuedReturnExpressions = firValuedReturnExpressions.mapNotNull { it.psi as? KtExpression },
             returnValueType = computeReturnType(firValuedReturnExpressions),
@@ -222,7 +222,7 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         return null
     }
 
-    private fun computeReturnType(firReturnExpressions: List<FirReturnExpression>): KtType? {
+    private fun computeReturnType(firReturnExpressions: List<FirReturnExpression>): KaType? {
         val coneTypes = ArrayList<ConeKotlinType>(firReturnExpressions.size)
 
         for (firReturnExpression in firReturnExpressions) {
@@ -514,7 +514,7 @@ internal class KtFirDataFlowInfoProvider(override val analysisSession: KtFirAnal
         }
     }
 
-    private fun ConeKotlinType.toKtType(): KtType {
+    private fun ConeKotlinType.toKtType(): KaType {
         return analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
     }
 }

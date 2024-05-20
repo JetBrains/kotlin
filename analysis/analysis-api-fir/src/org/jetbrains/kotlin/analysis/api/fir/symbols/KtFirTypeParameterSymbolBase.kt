@@ -5,46 +5,46 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTypeParameterSymbolPointer
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirTypeParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
 import org.jetbrains.kotlin.fir.types.isNullableAny
 
 /**
- * [KtFirTypeParameterSymbolBase] provides shared implementations for [KtFirTypeParameterSymbol] and [KtFirPsiJavaTypeParameterSymbol].
+ * [KaFirTypeParameterSymbolBase] provides shared implementations for [KaFirTypeParameterSymbol] and [KaFirPsiJavaTypeParameterSymbol].
  */
-internal sealed class KtFirTypeParameterSymbolBase : KtTypeParameterSymbol(), KtFirSymbol<FirTypeParameterSymbol> {
-    override val annotationsList: KtAnnotationsList
+internal sealed class KaFirTypeParameterSymbolBase : KaTypeParameterSymbol(), KaFirSymbol<FirTypeParameterSymbol> {
+    override val annotationsList: KaAnnotationsList
         get() = withValidityAssertion {
-            KtFirAnnotationListForDeclaration.create(firSymbol, builder)
+            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
     @OptIn(UnexpandedTypeCheck::class)
-    override val upperBounds: List<KtType> by cached {
+    override val upperBounds: List<KaType> by cached {
         firSymbol.resolvedBounds.mapNotNull { type ->
             if (type.isNullableAny) return@mapNotNull null
             builder.typeBuilder.buildKtType(type)
         }
     }
 
-    override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtTypeParameterSymbol>(this)?.let { return it }
+    override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaTypeParameterSymbol>(this)?.let { return it }
 
         val containingDeclarationSymbol = firSymbol.containingDeclarationSymbol
         val typeParameters = containingDeclarationSymbol.typeParameterSymbols
         requireNotNull(typeParameters) { "Containing declaration symbol: ${containingDeclarationSymbol::class.simpleName}" }
 
-        KtFirTypeParameterSymbolPointer(
+        KaFirTypeParameterSymbolPointer(
             ownerPointer = analysisSession.createOwnerPointer(this),
             name = name,
             index = typeParameters.indexOf(firSymbol),

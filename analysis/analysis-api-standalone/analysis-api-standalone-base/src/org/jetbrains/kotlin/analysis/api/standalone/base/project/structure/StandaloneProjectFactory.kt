@@ -31,9 +31,8 @@ import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil.JAR_PROTOCOL
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import com.intellij.util.messages.ListenerDescriptor
-import org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSourceWithSmartPointerFactory
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProviderCliImpl
@@ -56,8 +55,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
-import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
@@ -135,8 +132,8 @@ object StandaloneProjectFactory {
         @Suppress("UnstableApiUsage")
         CoreApplicationEnvironment.registerExtensionPoint(
             project.extensionArea,
-            KtResolveExtensionProvider.EP_NAME.name,
-            KtResolveExtensionProvider::class.java
+            KaResolveExtensionProvider.EP_NAME.name,
+            KaResolveExtensionProvider::class.java
         )
     }
 

@@ -6,37 +6,37 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classIdForAnnotation
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.useSiteTarget
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 
-internal class KtFe10AnnotationsList private constructor(
+internal class KaFe10AnnotationsList private constructor(
     private val fe10Annotations: Annotations,
     private val annotationsToIgnore: Set<ClassId>,
     private val analysisContext: Fe10AnalysisContext
-) : KtAnnotationsList() {
-    override val token: KtLifetimeToken
+) : KaAnnotationsList() {
+    override val token: KaLifetimeToken
         get() = analysisContext.token
 
-    override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
+    override val annotations: List<KaAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
             mapNotIgnoredAnnotationsWithIndex { index, annotation ->
                 annotation.toKtAnnotationApplication(analysisContext, index)
             }
         }
 
-    override val annotationInfos: List<KtAnnotationApplicationInfo>
+    override val annotationInfos: List<KaAnnotationApplicationInfo>
         get() = withValidityAssertion {
             mapNotIgnoredAnnotationsWithIndex { index, annotation ->
                 annotation.toKtAnnotationInfo(analysisContext, index)
@@ -64,7 +64,7 @@ internal class KtFe10AnnotationsList private constructor(
     override fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
+    ): List<KaAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
         if (classId in annotationsToIgnore) return@withValidityAssertion emptyList()
 
         fe10Annotations.mapIndexedNotNull { index, annotation ->
@@ -93,11 +93,11 @@ internal class KtFe10AnnotationsList private constructor(
             fe10Annotations: Annotations,
             analysisContext: Fe10AnalysisContext,
             ignoreAnnotations: Set<ClassId> = emptySet(),
-        ): KtAnnotationsList {
+        ): KaAnnotationsList {
             return if (!fe10Annotations.isEmpty()) {
-                KtFe10AnnotationsList(fe10Annotations, ignoreAnnotations, analysisContext)
+                KaFe10AnnotationsList(fe10Annotations, ignoreAnnotations, analysisContext)
             } else {
-                KtEmptyAnnotationsList(analysisContext.token)
+                KaEmptyAnnotationsList(analysisContext.token)
             }
         }
     }

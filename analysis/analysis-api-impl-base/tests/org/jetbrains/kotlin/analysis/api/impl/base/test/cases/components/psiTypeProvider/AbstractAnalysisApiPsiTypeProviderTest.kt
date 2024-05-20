@@ -31,7 +31,7 @@ abstract class AbstractAnalysisApiPsiTypeProviderTest : AbstractAnalysisApiBased
         val actual = buildString {
             executeOnPooledThreadInReadAction {
                 analyze(declaration) {
-                    val ktType = declaration.getReturnKtType()
+                    val ktType = declaration.getReturnKaType()
                     appendLine("KtType: ${AnalysisApiPsiTypeProviderTestUtils.render(analysisSession, ktType)}")
                     val psiType = ktType.asPsiType(psiContext, allowErrorTypes = false)
                     appendLine("PsiType: ${AnalysisApiPsiTypeProviderTestUtils.render(psiType)}")

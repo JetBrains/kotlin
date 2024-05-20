@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.base
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 
-interface KtFe10Symbol : KtSymbol {
+interface KaFe10Symbol : KaSymbol {
     val analysisContext: Fe10AnalysisContext
 
-    override val token: KtLifetimeToken
+    override val token: KaLifetimeToken
         get() = analysisContext.token
 }

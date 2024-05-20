@@ -5,24 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtUnresolvedClassErrorTypeRenderer {
+public interface KaUnresolvedClassErrorTypeRenderer {
     public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtClassErrorType,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        type: KaClassErrorType,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object UNRESOLVED_QUALIFIER : KtUnresolvedClassErrorTypeRenderer {
+    public object UNRESOLVED_QUALIFIER : KaUnresolvedClassErrorTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtClassErrorType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaClassErrorType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -32,23 +32,22 @@ public interface KtUnresolvedClassErrorTypeRenderer {
         }
     }
 
-
-    public object AS_ERROR_WORD : KtUnresolvedClassErrorTypeRenderer {
+    public object AS_ERROR_WORD : KaUnresolvedClassErrorTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtClassErrorType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaClassErrorType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer.append("ERROR_TYPE")
         }
     }
 
-    public object WITH_ERROR_MESSAGE : KtUnresolvedClassErrorTypeRenderer {
+    public object WITH_ERROR_MESSAGE : KaUnresolvedClassErrorTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtClassErrorType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaClassErrorType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer.append("ERROR_TYPE(${type.errorMessage})")
@@ -56,3 +55,4 @@ public interface KtUnresolvedClassErrorTypeRenderer {
     }
 }
 
+public typealias KtUnresolvedClassErrorTypeRenderer = KaUnresolvedClassErrorTypeRenderer

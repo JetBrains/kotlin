@@ -5,29 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.CallableId
 
-internal class KtFirTopLevelFunctionSymbolPointer(
+internal class KaFirTopLevelFunctionSymbolPointer(
     callableId: CallableId,
     private val signature: FirCallableSignature,
-) : KtTopLevelCallableSymbolPointer<KtFunctionSymbol>(callableId) {
-    override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
+) : KaTopLevelCallableSymbolPointer<KaFunctionSymbol>(callableId) {
+    override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: Collection<FirCallableSymbol<*>>,
         firSession: FirSession
-    ): KtFunctionSymbol? {
+    ): KaFunctionSymbol? {
         val firFunction = candidates.findDeclarationWithSignatureBySymbols<FirSimpleFunction>(signature) ?: return null
         return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firFunction.symbol)
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFirTopLevelFunctionSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFirTopLevelFunctionSymbolPointer &&
             other.signature == signature &&
             hasTheSameOwner(other)
 }

@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 
-class KtEmptyAnnotationsList(override val token: KtLifetimeToken) : KtAnnotationsList() {
-    override val annotations: List<KtAnnotationApplicationWithArgumentsInfo> get() = withValidityAssertion { emptyList() }
+class KaEmptyAnnotationsList(override val token: KaLifetimeToken) : KaAnnotationsList() {
+    override val annotations: List<KaAnnotationApplicationWithArgumentsInfo> get() = withValidityAssertion { emptyList() }
 
-    override val annotationInfos: List<KtAnnotationApplicationInfo> get() = withValidityAssertion { emptyList() }
+    override val annotationInfos: List<KaAnnotationApplicationInfo> get() = withValidityAssertion { emptyList() }
 
     override fun hasAnnotation(
         classId: ClassId,
@@ -26,7 +26,7 @@ class KtEmptyAnnotationsList(override val token: KtLifetimeToken) : KtAnnotation
     override fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion { emptyList() }
+    ): List<KaAnnotationApplicationWithArgumentsInfo> = withValidityAssertion { emptyList() }
 
     override val annotationClassIds: Collection<ClassId> get() = withValidityAssertion { emptyList() }
 }

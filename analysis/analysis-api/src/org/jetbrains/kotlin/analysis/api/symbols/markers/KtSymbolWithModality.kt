@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
-public interface KtSymbolWithModality : KtSymbol {
+public interface KaSymbolWithModality : KaSymbol {
     public val modality: Modality
 }
+
+public typealias KtSymbolWithModality = KaSymbolWithModality

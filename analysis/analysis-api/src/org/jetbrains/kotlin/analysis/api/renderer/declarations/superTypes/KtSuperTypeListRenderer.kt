@@ -5,24 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtSuperTypeListRenderer {
+public interface KaSuperTypeListRenderer {
     public fun renderSuperTypes(
-        analysisSession: KtAnalysisSession,
-        symbol: KtClassOrObjectSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaClassOrObjectSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_LIST : KtSuperTypeListRenderer {
+    public object AS_LIST : KaSuperTypeListRenderer {
         override fun renderSuperTypes(
-            analysisSession: KtAnalysisSession,
-            symbol: KtClassOrObjectSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaClassOrObjectSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -38,3 +38,5 @@ public interface KtSuperTypeListRenderer {
         }
     }
 }
+
+public typealias KtSuperTypeListRenderer = KaSuperTypeListRenderer

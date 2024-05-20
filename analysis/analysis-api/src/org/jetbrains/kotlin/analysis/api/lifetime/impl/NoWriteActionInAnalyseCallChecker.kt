@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.api.lifetime.impl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationListener
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 
-@KtAnalysisApiInternals
+@KaAnalysisApiInternals
 public class NoWriteActionInAnalyseCallChecker(parentDisposable: Disposable) {
     init {
         val listener = object : ApplicationListener {

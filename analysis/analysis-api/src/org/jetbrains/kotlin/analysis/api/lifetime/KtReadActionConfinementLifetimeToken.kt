@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KtAnalysisApiInternals::class, KtAllowProhibitedAnalyzeFromWriteAction::class)
+@file:OptIn(KaAnalysisApiInternals::class, KaAllowProhibitedAnalyzeFromWriteAction::class)
 
 package org.jetbrains.kotlin.analysis.api.lifetime
 
@@ -15,7 +15,7 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.api.*
 import kotlin.reflect.KClass
 
-public class KtReadActionConfinementLifetimeToken(private val modificationTracker: ModificationTracker) : KtLifetimeToken() {
+public class KaReadActionConfinementLifetimeToken(private val modificationTracker: ModificationTracker) : KaLifetimeToken() {
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
     override fun isValid(): Boolean {
@@ -31,10 +31,10 @@ public class KtReadActionConfinementLifetimeToken(private val modificationTracke
         val application = ApplicationManager.getApplication()
         if (application.isDispatchThread && !allowOnEdt.get()) return false
         if (application.isWriteAccessAllowed && !allowFromWriteAction.get()) return false
-        if (KtAnalysisAllowanceManager.resolveIsForbiddenInActionWithName.get() != null) return false
+        if (KaAnalysisAllowanceManager.resolveIsForbiddenInActionWithName.get() != null) return false
         if (!application.isReadAccessAllowed) return false
-        if (!KtReadActionConfinementLifetimeTokenFactory.isInsideAnalysisContext()) return false
-        if (KtReadActionConfinementLifetimeTokenFactory.currentToken() != this) return false
+        if (!KaReadActionConfinementLifetimeTokenFactory.isInsideAnalysisContext()) return false
+        if (KaReadActionConfinementLifetimeTokenFactory.currentToken() != this) return false
         return true
     }
 
@@ -43,67 +43,71 @@ public class KtReadActionConfinementLifetimeToken(private val modificationTracke
         if (application.isDispatchThread && !allowOnEdt.get()) return "Called in EDT thread"
         if (application.isWriteAccessAllowed && !allowFromWriteAction.get()) return "Called from write action"
         if (!application.isReadAccessAllowed) return "Called outside read action"
-        KtAnalysisAllowanceManager.resolveIsForbiddenInActionWithName.get()?.let { actionName ->
+        KaAnalysisAllowanceManager.resolveIsForbiddenInActionWithName.get()?.let { actionName ->
             return "Resolve is forbidden in $actionName"
         }
-        if (!KtReadActionConfinementLifetimeTokenFactory.isInsideAnalysisContext()) return "Called outside analyse method"
-        if (KtReadActionConfinementLifetimeTokenFactory.currentToken() != this) return "Using KtLifetimeOwner from previous analysis"
+        if (!KaReadActionConfinementLifetimeTokenFactory.isInsideAnalysisContext()) return "Called outside analyse method"
+        if (KaReadActionConfinementLifetimeTokenFactory.currentToken() != this) return "Using KaLifetimeOwner from previous analysis"
 
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
 
 
     public companion object {
-        @KtAnalysisApiInternals
+        @KaAnalysisApiInternals
         public val allowOnEdt: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
-        @KtAnalysisApiInternals
-        @KtAllowProhibitedAnalyzeFromWriteAction
+        @KaAnalysisApiInternals
+        @KaAllowProhibitedAnalyzeFromWriteAction
         public val allowFromWriteAction: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
     }
 
-    public override val factory: KtLifetimeTokenFactory = KtReadActionConfinementLifetimeTokenFactory
+    public override val factory: KaLifetimeTokenFactory = KaReadActionConfinementLifetimeTokenFactory
 }
 
-public object KtReadActionConfinementLifetimeTokenFactory : KtLifetimeTokenFactory() {
-    override val identifier: KClass<out KtLifetimeToken> = KtReadActionConfinementLifetimeToken::class
+public typealias KtReadActionConfinementLifetimeToken = KaReadActionConfinementLifetimeToken
 
-    override fun create(project: Project, modificationTracker: ModificationTracker): KtLifetimeToken =
-        KtReadActionConfinementLifetimeToken(modificationTracker)
+public object KaReadActionConfinementLifetimeTokenFactory : KaLifetimeTokenFactory() {
+    override val identifier: KClass<out KaLifetimeToken> = KaReadActionConfinementLifetimeToken::class
 
-    override fun beforeEnteringAnalysisContext(token: KtLifetimeToken) {
+    override fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken =
+        KaReadActionConfinementLifetimeToken(modificationTracker)
+
+    override fun beforeEnteringAnalysisContext(token: KaLifetimeToken) {
         lifetimeOwnersStack.set(lifetimeOwnersStack.get().add(token))
     }
 
-    override fun afterLeavingAnalysisContext(token: KtLifetimeToken) {
+    override fun afterLeavingAnalysisContext(token: KaLifetimeToken) {
         val stack = lifetimeOwnersStack.get()
         val last = stack.last()
         check(last == token)
         lifetimeOwnersStack.set(stack.removeAt(stack.lastIndex))
     }
 
-    private val lifetimeOwnersStack = ThreadLocal.withInitial<PersistentList<KtLifetimeToken>> { persistentListOf() }
+    private val lifetimeOwnersStack = ThreadLocal.withInitial<PersistentList<KaLifetimeToken>> { persistentListOf() }
 
     internal fun isInsideAnalysisContext() = lifetimeOwnersStack.get().isNotEmpty()
 
     internal fun currentToken() = lifetimeOwnersStack.get().last()
 }
 
+public typealias KtReadActionConfinementLifetimeTokenFactory = KaReadActionConfinementLifetimeTokenFactory
+
 @RequiresOptIn("Analysis should be prohibited to be ran from write action, otherwise it may cause IDE freezes and incorrect behavior in some cases")
-private annotation class KtAllowProhibitedAnalyzeFromWriteAction
+private annotation class KaAllowProhibitedAnalyzeFromWriteAction
 
 /**
- * @see KtAnalysisSession
- * @see KtReadActionConfinementLifetimeToken
+ * @see KaSession
+ * @see KaReadActionConfinementLifetimeToken
  */
-@KtAllowAnalysisOnEdt
+@KaAllowAnalysisOnEdt
 public inline fun <T> allowAnalysisOnEdt(action: () -> T): T {
-    if (KtReadActionConfinementLifetimeToken.allowOnEdt.get()) return action()
-    KtReadActionConfinementLifetimeToken.allowOnEdt.set(true)
+    if (KaReadActionConfinementLifetimeToken.allowOnEdt.get()) return action()
+    KaReadActionConfinementLifetimeToken.allowOnEdt.set(true)
     try {
         return action()
     } finally {
-        KtReadActionConfinementLifetimeToken.allowOnEdt.set(false)
+        KaReadActionConfinementLifetimeToken.allowOnEdt.set(false)
     }
 }
 
@@ -134,17 +138,17 @@ public inline fun <T> allowAnalysisOnEdt(action: () -> T): T {
  * }
  * ```
  *
- * @see KtAnalysisSession
- * @see KtReadActionConfinementLifetimeToken
+ * @see KaSession
+ * @see KaReadActionConfinementLifetimeToken
  */
-@KtAllowAnalysisFromWriteAction
-@KtAllowProhibitedAnalyzeFromWriteAction
+@KaAllowAnalysisFromWriteAction
+@KaAllowProhibitedAnalyzeFromWriteAction
 public inline fun <T> allowAnalysisFromWriteAction(action: () -> T): T {
-    if (KtReadActionConfinementLifetimeToken.allowFromWriteAction.get()) return action()
-    KtReadActionConfinementLifetimeToken.allowFromWriteAction.set(true)
+    if (KaReadActionConfinementLifetimeToken.allowFromWriteAction.get()) return action()
+    KaReadActionConfinementLifetimeToken.allowFromWriteAction.set(true)
     try {
         return action()
     } finally {
-        KtReadActionConfinementLifetimeToken.allowFromWriteAction.set(false)
+        KaReadActionConfinementLifetimeToken.allowFromWriteAction.set(false)
     }
 }

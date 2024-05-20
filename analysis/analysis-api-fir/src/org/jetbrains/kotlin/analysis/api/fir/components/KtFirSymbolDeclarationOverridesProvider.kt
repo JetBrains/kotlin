@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirAnonymousObjectSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirBackingFieldSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KtSymbolDeclarationOverridesProviderBase
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirAnonymousObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirBackingFieldSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSymbolDeclarationOverridesProviderBase
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.scopes.*
@@ -26,16 +26,16 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.analysis.api.fir.utils.isSubClassOf
 
-internal class KtFirSymbolDeclarationOverridesProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken
-) : KtSymbolDeclarationOverridesProviderBase(), KtFirAnalysisSessionComponent {
-    override fun <T : KtSymbol> getAllOverriddenSymbols(
+internal class KaFirSymbolDeclarationOverridesProvider(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken
+) : KaSymbolDeclarationOverridesProviderBase(), KaFirSessionComponent {
+    override fun <T : KaSymbol> getAllOverriddenSymbols(
         callableSymbol: T,
-    ): List<KtCallableSymbol> {
-        require(callableSymbol is KtFirSymbol<*>)
-        if (callableSymbol is KtFirBackingFieldSymbol) return emptyList()
-        if (callableSymbol is KtValueParameterSymbol) {
+    ): List<KaCallableSymbol> {
+        require(callableSymbol is KaFirSymbol<*>)
+        if (callableSymbol is KaFirBackingFieldSymbol) return emptyList()
+        if (callableSymbol is KaValueParameterSymbol) {
             return callableSymbol.getAllOverriddenSymbols()
         }
         (callableSymbol.firSymbol as? FirIntersectionCallableSymbol)?.let { intersectionSymbol ->
@@ -57,13 +57,13 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         return overriddenElement.map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it) }
     }
 
-    override fun <T : KtSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol> {
-        require(callableSymbol is KtFirSymbol<*>)
-        if (callableSymbol is KtFirBackingFieldSymbol) return emptyList()
-        if (callableSymbol is KtValueParameterSymbol) {
+    override fun <T : KaSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): List<KaCallableSymbol> {
+        require(callableSymbol is KaFirSymbol<*>)
+        if (callableSymbol is KaFirBackingFieldSymbol) return emptyList()
+        if (callableSymbol is KaValueParameterSymbol) {
             return callableSymbol.getDirectlyOverriddenSymbols()
         }
-        if (callableSymbol is KtCallableSymbol && callableSymbol.firSymbol is FirIntersectionCallableSymbol) {
+        if (callableSymbol is KaCallableSymbol && callableSymbol.firSymbol is FirIntersectionCallableSymbol) {
             return getIntersectionOverriddenSymbols(callableSymbol)
         }
 
@@ -116,30 +116,30 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         else -> ProcessorAction.STOP
     }
 
-    private inline fun <T : KtSymbol> processOverrides(
+    private inline fun <T : KaSymbol> processOverrides(
         callableSymbol: T,
         crossinline process: (FirTypeScope, FirDeclaration) -> Unit
     ) {
-        if (callableSymbol !is KtCallableSymbol) {
+        if (callableSymbol !is KaCallableSymbol) {
             return
         }
 
-        require(callableSymbol is KtFirSymbol<*>)
+        require(callableSymbol is KaFirSymbol<*>)
 
         val containingDeclaration = with(analysisSession) {
-            callableSymbol.getContainingSymbol() as? KtClassOrObjectSymbol
+            callableSymbol.getContainingSymbol() as? KaClassOrObjectSymbol
         } ?: return
 
         when (containingDeclaration) {
-            is KtFirNamedClassOrObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
-            is KtFirAnonymousObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
+            is KaFirNamedClassOrObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
+            is KaFirAnonymousObjectSymbol -> processOverrides(containingDeclaration, callableSymbol, process)
             else -> throw IllegalStateException("Expected $containingDeclaration to be a KtFirNamedClassOrObjectSymbol or KtFirAnonymousObjectSymbol")
         }
     }
 
     private inline fun processOverrides(
-        containingDeclaration: KtFirSymbol<FirClassSymbol<*>>,
-        callableSymbol: KtFirSymbol<*>,
+        containingDeclaration: KaFirSymbol<FirClassSymbol<*>>,
+        callableSymbol: KaFirSymbol<*>,
         crossinline process: (FirTypeScope, FirDeclaration) -> Unit
     ) {
         containingDeclaration.firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
@@ -172,17 +172,17 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         }
     }
 
-    override fun isSubClassOf(subClass: KtClassOrObjectSymbol, superClass: KtClassOrObjectSymbol): Boolean {
+    override fun isSubClassOf(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol): Boolean {
         return isSubClassOf(subClass, superClass, allowIndirectSubtyping = true)
     }
 
-    override fun isDirectSubClassOf(subClass: KtClassOrObjectSymbol, superClass: KtClassOrObjectSymbol): Boolean {
+    override fun isDirectSubClassOf(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol): Boolean {
         return isSubClassOf(subClass, superClass, allowIndirectSubtyping = false)
     }
 
-    private fun isSubClassOf(subClass: KtClassOrObjectSymbol, superClass: KtClassOrObjectSymbol, allowIndirectSubtyping: Boolean): Boolean {
-        require(subClass is KtFirSymbol<*>)
-        require(superClass is KtFirSymbol<*>)
+    private fun isSubClassOf(subClass: KaClassOrObjectSymbol, superClass: KaClassOrObjectSymbol, allowIndirectSubtyping: Boolean): Boolean {
+        require(subClass is KaFirSymbol<*>)
+        require(superClass is KaFirSymbol<*>)
 
         if (subClass == superClass) return false
         return isSubClassOf(
@@ -193,9 +193,9 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         )
     }
 
-    override fun getIntersectionOverriddenSymbols(symbol: KtCallableSymbol): List<KtCallableSymbol> {
-        require(symbol is KtFirSymbol<*>)
-        if (symbol.origin != KtSymbolOrigin.INTERSECTION_OVERRIDE) return emptyList()
+    override fun getIntersectionOverriddenSymbols(symbol: KaCallableSymbol): List<KaCallableSymbol> {
+        require(symbol is KaFirSymbol<*>)
+        if (symbol.origin != KaSymbolOrigin.INTERSECTION_OVERRIDE) return emptyList()
         return symbol.firSymbol
             .getIntersectionOverriddenSymbols(symbol.analysisSession.useSiteSession)
             .map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it) }

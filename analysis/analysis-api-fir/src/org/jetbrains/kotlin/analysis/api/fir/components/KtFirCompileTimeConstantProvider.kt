@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValue
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
-import org.jetbrains.kotlin.analysis.api.components.KtCompileTimeConstantProvider
-import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.components.KaCompileTimeConstantProvider
+import org.jetbrains.kotlin.analysis.api.components.KaConstantEvaluationMode
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -20,19 +20,19 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.psi.KtExpression
 
-internal class KtFirCompileTimeConstantProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
-) : KtCompileTimeConstantProvider(), KtFirAnalysisSessionComponent {
+internal class KaFirCompileTimeConstantProvider(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
+) : KaCompileTimeConstantProvider(), KaFirSessionComponent {
 
     override fun evaluate(
         expression: KtExpression,
-        mode: KtConstantEvaluationMode,
-    ): KtConstantValue? {
+        mode: KaConstantEvaluationMode,
+    ): KaConstantValue? {
         return evaluateFir(expression.getOrBuildFir(firResolveSession), expression, mode)
     }
 
-    override fun evaluateAsAnnotationValue(expression: KtExpression): KtAnnotationValue? =
+    override fun evaluateAsAnnotationValue(expression: KtExpression): KaAnnotationValue? =
         (expression.getOrBuildFir(firResolveSession) as? FirExpression)?.let {
             FirAnnotationValueConverter.toConstantValue(it, analysisSession.firSymbolBuilder)
         }
@@ -40,14 +40,14 @@ internal class KtFirCompileTimeConstantProvider(
     private fun evaluateFir(
         fir: FirElement?,
         sourcePsi: KtExpression,
-        mode: KtConstantEvaluationMode,
-    ): KtConstantValue? {
+        mode: KaConstantEvaluationMode,
+    ): KaConstantValue? {
         return when {
             fir is FirPropertyAccessExpression || fir is FirExpression || fir is FirNamedReference -> {
                 try {
                     FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(fir, mode)
                 } catch (e: ArithmeticException) {
-                    KtConstantValue.KtErrorConstantValue(e.localizedMessage, sourcePsi)
+                    KaConstantValue.KaErrorConstantValue(e.localizedMessage, sourcePsi)
                 }
             }
             // For invalid code like the following,

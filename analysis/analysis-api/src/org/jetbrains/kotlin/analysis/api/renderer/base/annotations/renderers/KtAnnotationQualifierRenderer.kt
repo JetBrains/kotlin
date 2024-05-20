@@ -5,28 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRenderer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRenderer
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.renderer.render
 
-public interface KtAnnotationQualifierRenderer {
+public interface KaAnnotationQualifierRenderer {
     public fun renderQualifier(
-        analysisSession: KtAnalysisSession,
-        annotation: KtAnnotationApplication,
-        owner: KtAnnotated,
-        annotationRenderer: KtAnnotationRenderer,
+        analysisSession: KaSession,
+        annotation: KaAnnotationApplication,
+        owner: KaAnnotated,
+        annotationRenderer: KaAnnotationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object WITH_QUALIFIED_NAMES : KtAnnotationQualifierRenderer {
+    public object WITH_QUALIFIED_NAMES : KaAnnotationQualifierRenderer {
         override fun renderQualifier(
-            analysisSession: KtAnalysisSession,
-            annotation: KtAnnotationApplication,
-            owner: KtAnnotated,
-            annotationRenderer: KtAnnotationRenderer,
+            analysisSession: KaSession,
+            annotation: KaAnnotationApplication,
+            owner: KaAnnotated,
+            annotationRenderer: KaAnnotationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -40,12 +40,12 @@ public interface KtAnnotationQualifierRenderer {
         }
     }
 
-    public object WITH_SHORT_NAMES : KtAnnotationQualifierRenderer {
+    public object WITH_SHORT_NAMES : KaAnnotationQualifierRenderer {
         override fun renderQualifier(
-            analysisSession: KtAnalysisSession,
-            annotation: KtAnnotationApplication,
-            owner: KtAnnotated,
-            annotationRenderer: KtAnnotationRenderer,
+            analysisSession: KaSession,
+            annotation: KaAnnotationApplication,
+            owner: KaAnnotated,
+            annotationRenderer: KaAnnotationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -59,3 +59,5 @@ public interface KtAnnotationQualifierRenderer {
         }
     }
 }
+
+public typealias KtAnnotationQualifierRenderer = KaAnnotationQualifierRenderer

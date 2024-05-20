@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiParameter
 import com.intellij.psi.PsiParameterList
 import com.intellij.psi.impl.light.LightParameterListBuilder
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtParameterList
 
 internal class SymbolLightParameterList(
     private val parent: SymbolLightMethodBase,
-    private val callableWithReceiverSymbolPointer: KtSymbolPointer<KtCallableSymbol>? = null,
+    private val callableWithReceiverSymbolPointer: KaSymbolPointer<KaCallableSymbol>? = null,
     parameterPopulator: (LightParameterListBuilder) -> Unit = {},
 ) : KtLightElement<KtParameterList, PsiParameterList>,
     // With this, a parent chain is properly built: from SymbolLightParameter through SymbolLightParameterList to SymbolLightMethod

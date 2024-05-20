@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.references
 
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 internal class ReadWriteAccessCheckerDescriptorsImpl : ReadWriteAccessChecker {
     override fun readWriteAccessWithFullExpressionByResolve(assignment: KtBinaryExpression): Pair<ReferenceAccess, KtExpression> {
         val resolvedCall = analyze(assignment) {
-            with((this as KtFe10AnalysisSession).analysisContext.analyze(assignment, Fe10AnalysisFacade.AnalysisMode.PARTIAL)) {
+            with((this as KaFe10Session).analysisContext.analyze(assignment, Fe10AnalysisFacade.AnalysisMode.PARTIAL)) {
                 assignment.getCall(this)?.getResolvedCall(this) ?: return ReferenceAccess.READ_WRITE to assignment
             }
         }

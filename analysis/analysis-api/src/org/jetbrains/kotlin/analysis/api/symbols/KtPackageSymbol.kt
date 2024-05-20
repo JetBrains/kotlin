@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.FqName
 
-public abstract class KtPackageSymbol : KtSymbol {
+public abstract class KaPackageSymbol : KaSymbol {
     public abstract val fqName: FqName
 
-    abstract override fun createPointer(): KtSymbolPointer<KtPackageSymbol>
+    abstract override fun createPointer(): KaSymbolPointer<KaPackageSymbol>
 }
+
+public typealias KtPackageSymbol = KaPackageSymbol

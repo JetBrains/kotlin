@@ -6,42 +6,42 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtSymbolBasedReference
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.KaSymbolBasedReference
 import org.jetbrains.kotlin.analysis.api.fir.findReferencePsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 
-interface KtFirReference : KtReference, KtSymbolBasedReference {
-    fun getResolvedToPsi(analysisSession: KtAnalysisSession, referenceTargetSymbols: Collection<KtSymbol>): Collection<PsiElement> =
+interface KaFirReference : KtReference, KaSymbolBasedReference {
+    fun getResolvedToPsi(analysisSession: KaSession, referenceTargetSymbols: Collection<KaSymbol>): Collection<PsiElement> =
         with(analysisSession) {
             referenceTargetSymbols.flatMap { symbol ->
                 when (symbol) {
-                    is KtFirSymbol<*> -> getPsiDeclarations(symbol)
+                    is KaFirSymbol<*> -> getPsiDeclarations(symbol)
                     else -> listOfNotNull(symbol.psi)
                 }
             }
         }
 
-    fun getResolvedToPsi(analysisSession: KtAnalysisSession): Collection<PsiElement> =
+    fun getResolvedToPsi(analysisSession: KaSession): Collection<PsiElement> =
         with(analysisSession) {
             getResolvedToPsi(analysisSession, resolveToSymbols())
         }
 
-    override val resolver get() = KtFirReferenceResolver
+    override val resolver get() = KaFirReferenceResolver
 }
 
-internal fun KtAnalysisSession.getPsiDeclarations(symbol: KtFirSymbol<*>): Collection<PsiElement> {
+internal fun KaSession.getPsiDeclarations(symbol: KaFirSymbol<*>): Collection<PsiElement> {
     val intersectionOverriddenSymbolsOrSingle = when {
-        symbol.origin == KtSymbolOrigin.INTERSECTION_OVERRIDE && symbol is KtCallableSymbol -> symbol.getIntersectionOverriddenSymbols()
+        symbol.origin == KaSymbolOrigin.INTERSECTION_OVERRIDE && symbol is KaCallableSymbol -> symbol.getIntersectionOverriddenSymbols()
         else -> listOf(symbol)
     }
     return intersectionOverriddenSymbolsOrSingle.mapNotNull { it.findPsiForReferenceResolve() }
 }
 
-private fun KtSymbol.findPsiForReferenceResolve(): PsiElement? {
-    require(this is KtFirSymbol<*>)
+private fun KaSymbol.findPsiForReferenceResolve(): PsiElement? {
+    require(this is KaFirSymbol<*>)
     return firSymbol.fir.findReferencePsi()
 }

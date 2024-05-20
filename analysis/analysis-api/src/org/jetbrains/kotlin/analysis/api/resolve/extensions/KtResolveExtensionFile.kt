@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.name.Name
  * - be lightweight and not build the whole file structure inside.
  * - not use the Kotlin resolve inside, as this function is called during session initialization, so Analysis API access is forbidden.
  *
- * @see KtResolveExtension
+ * @see KaResolveExtension
  */
-public abstract class KtResolveExtensionFile {
+public abstract class KaResolveExtensionFile {
     /**
      * The name a Kotlin file which will be generated.
      *
@@ -26,7 +26,7 @@ public abstract class KtResolveExtensionFile {
      *
      * It will be used as a Java facade name, e.g., for the file name `myFile.kt`, the `MyFileKt` facade is generated if the file contains some properties or functions.
      *
-     * @see KtResolveExtensionFile
+     * @see KaResolveExtensionFile
      */
     public abstract fun getFileName(): String
 
@@ -37,7 +37,7 @@ public abstract class KtResolveExtensionFile {
      *
      * It should be equal to the package name specified in the [buildFileText].
      *
-     * @see KtResolveExtensionFile
+     * @see KaResolveExtensionFile
      */
     public abstract fun getFilePackageName(): FqName
 
@@ -46,7 +46,7 @@ public abstract class KtResolveExtensionFile {
      *
      * The result may have false-positive entries but cannot have false-negative entries. It should contain all the names in the package but may have some additional names that are not there.
      *
-     * @see KtResolveExtensionFile
+     * @see KaResolveExtensionFile
      */
     public abstract fun getTopLevelClassifierNames(): Set<Name>
 
@@ -55,7 +55,7 @@ public abstract class KtResolveExtensionFile {
      *
      * The result may have false-positive entries but cannot have false-negative entries. It should contain all the names in the package but may have some additional names that are not there.
      *
-     * @see KtResolveExtensionFile
+     * @see KaResolveExtensionFile
      */
     public abstract fun getTopLevelCallableNames(): Set<Name>
 
@@ -63,7 +63,7 @@ public abstract class KtResolveExtensionFile {
      * Creates the generated Kotlin source file text.
      *
      * The resulted String should be a valid Kotlin code.
-     * It should be consistent with other declarations which are present in the [KtResolveExtensionFile], more specifically:
+     * It should be consistent with other declarations which are present in the [KaResolveExtensionFile], more specifically:
      * 1. [getFilePackageName] should be equal to the file's package name.
      * 2. All classifier names should be contained in the [getTopLevelClassifierNames].
      * 3. All callable names should be contained in the [getTopLevelCallableNames].
@@ -72,15 +72,17 @@ public abstract class KtResolveExtensionFile {
      * 1. The File should not contain the `kotlin.jvm.JvmMultifileClass` and `kotlin.jvm.JvmName` annotations on the file level.
      * 2. All declaration types should be specified explicitly.
      *
-     * @see KtResolveExtensionFile
+     * @see KaResolveExtensionFile
      */
     public abstract fun buildFileText(): String
 
     /**
-     * Creates a [KtResolveExtensionNavigationTargetsProvider] for this [KtResolveExtensionFile].
+     * Creates a [KaResolveExtensionNavigationTargetsProvider] for this [KaResolveExtensionFile].
      *
-     * @see KtResolveExtensionNavigationTargetsProvider
-     * @see KtResolveExtensionFile
+     * @see KaResolveExtensionNavigationTargetsProvider
+     * @see KaResolveExtensionFile
      */
-    public abstract fun createNavigationTargetsProvider(): KtResolveExtensionNavigationTargetsProvider
+    public abstract fun createNavigationTargetsProvider(): KaResolveExtensionNavigationTargetsProvider
 }
+
+public typealias KtResolveExtensionFile = KaResolveExtensionFile

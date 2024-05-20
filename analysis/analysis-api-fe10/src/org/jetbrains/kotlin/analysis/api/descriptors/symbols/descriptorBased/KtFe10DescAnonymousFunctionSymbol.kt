@@ -5,47 +5,47 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
-internal class KtFe10DescAnonymousFunctionSymbol(
+internal class KaFe10DescAnonymousFunctionSymbol(
     override val descriptor: FunctionDescriptor,
     override val analysisContext: Fe10AnalysisContext
-) : KtAnonymousFunctionSymbol(), KtFe10DescMemberSymbol<FunctionDescriptor> {
+) : KaAnonymousFunctionSymbol(), KaFe10DescMemberSymbol<FunctionDescriptor> {
     override val isExtension: Boolean
         get() = withValidityAssertion { descriptor.isExtension }
 
-    override val valueParameters: List<KtValueParameterSymbol>
-        get() = withValidityAssertion { descriptor.valueParameters.map { KtFe10DescValueParameterSymbol(it, analysisContext) } }
+    override val valueParameters: List<KaValueParameterSymbol>
+        get() = withValidityAssertion { descriptor.valueParameters.map { KaFe10DescValueParameterSymbol(it, analysisContext) } }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { descriptor.ktHasStableParameterNames }
 
-    override val returnType: KtType
+    override val returnType: KaType
         get() = withValidityAssertion { descriptor.returnTypeOrNothing.toKtType(analysisContext) }
 
-    override val receiverParameter: KtReceiverParameterSymbol?
+    override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion { descriptor.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext) }
 
-    override val contextReceivers: List<KtContextReceiver>
+    override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
 
-    override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtAnonymousFunctionSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
+    override fun createPointer(): KaSymbolPointer<KaAnonymousFunctionSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaAnonymousFunctionSymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

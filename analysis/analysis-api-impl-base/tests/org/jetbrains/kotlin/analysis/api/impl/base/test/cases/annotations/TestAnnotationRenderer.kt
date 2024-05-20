@@ -5,24 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.test.framework.utils.indented
 import org.jetbrains.kotlin.name.ClassId
 
 object TestAnnotationRenderer {
-    fun renderAnnotations(analysisSession: KtAnalysisSession, annotations: KtAnnotationsList) = buildString {
+    fun renderAnnotations(analysisSession: KaSession, annotations: KaAnnotationsList) = buildString {
         renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = null, indent = 0)
     }
 
-    fun renderAnnotationsWithMeta(analysisSession: KtAnalysisSession, annotations: KtAnnotationsList) = buildString {
+    fun renderAnnotationsWithMeta(analysisSession: KaSession, annotations: KaAnnotationsList) = buildString {
         renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = setOf(), indent = 0)
     }
 
     private fun StringBuilder.renderAnnotationsRecursive(
-        analysisSession: KtAnalysisSession,
-        annotations: KtAnnotationsList,
+        analysisSession: KaSession,
+        annotations: KaAnnotationsList,
         currentMetaAnnotations: Set<ClassId>?,
         indent: Int
     ) {

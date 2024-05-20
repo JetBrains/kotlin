@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-public abstract class KtFileSymbol : KtAnnotatedSymbol {
-    abstract override fun createPointer(): KtSymbolPointer<KtFileSymbol>
+public abstract class KaFileSymbol : KaAnnotatedSymbol {
+    abstract override fun createPointer(): KaSymbolPointer<KaFileSymbol>
 }
+
+public typealias KtFileSymbol = KaFileSymbol

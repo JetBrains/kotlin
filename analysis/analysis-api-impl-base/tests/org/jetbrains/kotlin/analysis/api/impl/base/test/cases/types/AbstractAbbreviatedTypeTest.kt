@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.SymbolByFqName
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 /**
  * Renders the properties and the textual representation of a callable's return type specified via `// callable: ID`. The varying
  * [TestModuleKind][org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind] supplied by generated tests applies to
- * the expansion-site module instead of the use-site module in these tests, as we want to check the `KtType` when it's built with an
+ * the expansion-site module instead of the use-site module in these tests, as we want to check the `KaType` when it's built with an
  * expanded type from a library vs. from a source module. (Abbreviated types from libraries and from sources aren't necessarily constructed
  * in the same way.)
  *
@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.test.services.TestServices
  * be appropriate to generate [AbstractTypeByDeclarationReturnTypeTest] for `LibraryBinary`.
  */
 abstract class AbstractAbbreviatedTypeTest : AbstractTypeTest() {
-    override fun getType(analysisSession: KtAnalysisSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KtType {
+    override fun getType(analysisSession: KaSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KaType {
         val callableSymbol = with(SymbolByFqName.getSymbolDataFromFile(testDataPath)) {
             with(analysisSession) {
-                toSymbols(ktFile).singleOrNull() as? KtCallableSymbol ?: error("Expected a single callable declaration to be specified.")
+                toSymbols(ktFile).singleOrNull() as? KaCallableSymbol ?: error("Expected a single callable declaration to be specified.")
             }
         }
         return callableSymbol.returnType

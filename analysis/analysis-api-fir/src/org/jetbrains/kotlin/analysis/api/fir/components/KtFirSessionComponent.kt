@@ -7,16 +7,16 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.KtTypeProjection
+import org.jetbrains.kotlin.analysis.api.KaStarTypeProjection
+import org.jetbrains.kotlin.analysis.api.KaTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
-import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirSession
@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.model.convertVariance
 
-internal interface KtFirAnalysisSessionComponent {
-    val analysisSession: KtFirAnalysisSession
+internal interface KaFirSessionComponent {
+    val analysisSession: KaFirSession
 
     val project: Project get() = analysisSession.project
     val rootModuleSession: FirSession get() = analysisSession.firResolveSession.useSiteFirSession
@@ -41,28 +41,28 @@ internal interface KtFirAnalysisSessionComponent {
 
     fun ConeKotlinType.asKtType() = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
 
-    fun KtPsiDiagnostic.asKtDiagnostic(): KtDiagnosticWithPsi<*> =
+    fun KtPsiDiagnostic.asKtDiagnostic(): KaDiagnosticWithPsi<*> =
         KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as KtDiagnostic)
 
     fun ConeDiagnostic.asKtDiagnostic(
         source: KtSourceElement,
         callOrAssignmentSource: KtSourceElement?,
-    ): KtDiagnosticWithPsi<*>? {
+    ): KaDiagnosticWithPsi<*>? {
         val firDiagnostic = toFirDiagnostics(analysisSession.useSiteSession, source, callOrAssignmentSource).firstOrNull() ?: return null
         check(firDiagnostic is KtPsiDiagnostic)
         return firDiagnostic.asKtDiagnostic()
     }
 
-    val KtType.coneType: ConeKotlinType
+    val KaType.coneType: ConeKotlinType
         get() {
-            require(this is KtFirType)
+            require(this is KaFirType)
             return coneType
         }
 
-    val KtTypeProjection.coneTypeProjection: ConeTypeProjection
+    val KaTypeProjection.coneTypeProjection: ConeTypeProjection
         get() = when (this) {
-            is KtStarTypeProjection -> ConeStarProjection
-            is KtTypeArgumentWithVariance -> {
+            is KaStarTypeProjection -> ConeStarProjection
+            is KaTypeArgumentWithVariance -> {
                 typeContext.createTypeArgument(type.coneType, variance.convertVariance()) as ConeTypeProjection
             }
         }
@@ -75,18 +75,18 @@ internal interface KtFirAnalysisSessionComponent {
         )
     }
 
-    fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(discardErrorTypes: Boolean = false): KtSubstitutor? {
+    fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(discardErrorTypes: Boolean = false): KaSubstitutor? {
         return createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes)?.toKtSubstitutor()
     }
 
     fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(
         callableSymbol: FirCallableSymbol<*>,
         discardErrorTypes: Boolean = false
-    ): KtSubstitutor {
+    ): KaSubstitutor {
         return createConeSubstitutorFromTypeArguments(callableSymbol, rootModuleSession, discardErrorTypes).toKtSubstitutor()
     }
 
-    fun ConeSubstitutor.toKtSubstitutor(): KtSubstitutor {
+    fun ConeSubstitutor.toKtSubstitutor(): KaSubstitutor {
         return analysisSession.firSymbolBuilder.typeBuilder.buildSubstitutor(this)
     }
 }

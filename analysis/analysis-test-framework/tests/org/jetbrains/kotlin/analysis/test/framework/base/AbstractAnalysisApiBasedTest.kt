@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
@@ -375,7 +375,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         ?: k1Directive.takeIf { configurator.frontendKind == FrontendKind.Fe10 && it in this }
         ?: k2Directive.takeIf { configurator.frontendKind == FrontendKind.Fir && it in this }
 
-    protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.(KtElement) -> R): R {
+    protected fun <R> analyseForTest(contextElement: KtElement, action: KaSession.(KtElement) -> R): R {
         return if (configurator.analyseInDependentSession) {
             val originalContainingFile = contextElement.containingKtFile
             val fileCopy = originalContainingFile.copy() as KtFile

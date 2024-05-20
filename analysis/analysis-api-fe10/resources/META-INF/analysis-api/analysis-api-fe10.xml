@@ -19,8 +19,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSessionProvider"
+        serviceInterface="org.jetbrains.kotlin.analysis.api.session.KaAnalysisSessionProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.descriptors.KaFe10AnalysisSessionProvider"
     />
 
     <projectService

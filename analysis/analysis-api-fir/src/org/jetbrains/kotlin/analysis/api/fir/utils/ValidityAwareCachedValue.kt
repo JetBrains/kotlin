@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -16,13 +16,13 @@ import kotlin.reflect.KProperty
 @JvmInline
 internal value class ValidityAwareCachedValue<T>(
     private val lazyValue: Lazy<T>,
-) : ReadOnlyProperty<KtLifetimeOwner, T> {
-    override fun getValue(thisRef: KtLifetimeOwner, property: KProperty<*>): T {
+) : ReadOnlyProperty<KaLifetimeOwner, T> {
+    override fun getValue(thisRef: KaLifetimeOwner, property: KProperty<*>): T {
         return thisRef.withValidityAssertion { lazyValue.value }
     }
 }
 
 @Suppress("UnusedReceiverParameter") // we need to have the KtLifetimeOwner as receiver to make sure it's called only for KtLifetimeOwner
-internal fun <T> KtLifetimeOwner.cached(init: () -> T): ValidityAwareCachedValue<T> {
+internal fun <T> KaLifetimeOwner.cached(init: () -> T): ValidityAwareCachedValue<T> {
     return ValidityAwareCachedValue(lazy(LazyThreadSafetyMode.PUBLICATION, init))
 }

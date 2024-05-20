@@ -123,7 +123,7 @@ internal class LLFirSessionInvalidationService(private val project: Project) {
         sessionCache.removeAllSessions(includeLibraryModules)
 
         // We could take `includeLibraryModules` into account here, but this will make the global session invalidation event more
-        // complicated to handle, and it isn't currently necessary for `KtFirAnalysisSession` invalidation to be more granular.
+        // complicated to handle, and it isn't currently necessary for `KaFirSession` invalidation to be more granular.
         project.analysisMessageBus.syncPublisher(LLFirSessionInvalidationTopics.SESSION_INVALIDATION).afterGlobalInvalidation()
     }
 

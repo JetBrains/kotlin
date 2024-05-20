@@ -43,8 +43,8 @@ object ArgumentsConverterGenerator {
 
     private fun SmartPrinter.collectAndPrintImports(convertersMap: Map<KClass<*>, HLParameterConversion>) {
         val imports = buildList {
-            add("org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder")
-            add("org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession")
+            add("org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder")
+            add("org.jetbrains.kotlin.analysis.api.fir.KaFirSession")
             convertersMap.values.flatMapTo(this) { it.importsToAdd }
             convertersMap.keys.mapNotNullTo(this) { it.qualifiedName }
         }
@@ -52,14 +52,14 @@ object ArgumentsConverterGenerator {
     }
 
     private fun SmartPrinter.generateDispatchingConverter(convertersMap: Map<KClass<*>, HLParameterConversion>) {
-        println("internal fun $CONVERT_ARGUMENT(argument: Any?, analysisSession: KtFirAnalysisSession): Any? {")
+        println("internal fun $CONVERT_ARGUMENT(argument: Any?, analysisSession: KaFirSession): Any? {")
         withIndent {
             println("return $CONVERT_ARGUMENT(argument, analysisSession.firSymbolBuilder)")
         }
         println("}")
         println()
 
-        println("private fun $CONVERT_ARGUMENT(argument: Any?, firSymbolBuilder: KtSymbolByFirBuilder): Any? {")
+        println("private fun $CONVERT_ARGUMENT(argument: Any?, firSymbolBuilder: KaSymbolByFirBuilder): Any? {")
         withIndent {
             println("return when (argument) {")
             withIndent {
@@ -76,7 +76,7 @@ object ArgumentsConverterGenerator {
     }
 
     private fun SmartPrinter.generateSingleConverter(type: KClass<*>, converter: HLParameterConversion) {
-        println("private fun $CONVERT_ARGUMENT(argument: ${type.typeWithStars}, firSymbolBuilder: KtSymbolByFirBuilder): Any? {")
+        println("private fun $CONVERT_ARGUMENT(argument: ${type.typeWithStars}, firSymbolBuilder: KaSymbolByFirBuilder): Any? {")
         withIndent {
             println("return ${converter.convertExpression("argument", ConversionContext(currentIndentLengthInUnits, indentUnitLength))}")
         }

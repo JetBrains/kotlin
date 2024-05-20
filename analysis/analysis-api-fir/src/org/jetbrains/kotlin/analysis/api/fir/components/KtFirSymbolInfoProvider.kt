@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.components.KaSymbolInfoProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -29,18 +29,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 
-internal class KtFirSymbolInfoProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken
-) : KtSymbolInfoProvider(), KtFirAnalysisSessionComponent {
+internal class KaFirSymbolInfoProvider(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken
+) : KaSymbolInfoProvider(), KaFirSessionComponent {
     private val apiVersion = analysisSession.useSiteSession.languageVersionSettings.apiVersion
 
-    override fun getDeprecation(symbol: KtSymbol): DeprecationInfo? {
-        if (symbol is KtFirPackageSymbol || symbol is KtReceiverParameterSymbol) return null
-        require(symbol is KtFirSymbol<*>) { "${this::class}" }
+    override fun getDeprecation(symbol: KaSymbol): DeprecationInfo? {
+        if (symbol is KaFirPackageSymbol || symbol is KaReceiverParameterSymbol) return null
+        require(symbol is KaFirSymbol<*>) { "${this::class}" }
 
         // Optimization: Avoid building `firSymbol` of `KtFirPsiJavaClassSymbol` if it definitely isn't deprecated.
-        if (symbol is KtFirPsiJavaClassSymbol && !symbol.mayHaveDeprecation()) {
+        if (symbol is KaFirPsiJavaClassSymbol && !symbol.mayHaveDeprecation()) {
             return null
         }
 
@@ -57,7 +57,7 @@ internal class KtFirSymbolInfoProvider(
         }?.toDeprecationInfo()
     }
 
-    private fun KtFirPsiJavaClassSymbol.mayHaveDeprecation(): Boolean {
+    private fun KaFirPsiJavaClassSymbol.mayHaveDeprecation(): Boolean {
         if (!hasAnnotations) return false
 
         // Check the simple names of the Java annotations. While presence of such an annotation name does not prove deprecation, it is a
@@ -67,8 +67,8 @@ internal class KtFirSymbolInfoProvider(
         return annotationSimpleNames.any { it != null && it in deprecationAnnotationSimpleNames }
     }
 
-    override fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {
-        require(symbol is KtFirSymbol<*>)
+    override fun getDeprecation(symbol: KaSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {
+        require(symbol is KaFirSymbol<*>)
         return if (annotationUseSiteTarget != null) {
             symbol.firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession, annotationUseSiteTarget)
         } else {
@@ -76,8 +76,8 @@ internal class KtFirSymbolInfoProvider(
         }?.toDeprecationInfo()
     }
 
-    override fun getGetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo? {
-        require(symbol is KtFirSymbol<*>)
+    override fun getGetterDeprecation(symbol: KaPropertySymbol): DeprecationInfo? {
+        require(symbol is KaFirSymbol<*>)
         return symbol.firSymbol.getDeprecationForCallSite(
             analysisSession.useSiteSession,
             AnnotationUseSiteTarget.PROPERTY_GETTER,
@@ -86,8 +86,8 @@ internal class KtFirSymbolInfoProvider(
 
     }
 
-    override fun getSetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo? {
-        require(symbol is KtFirSymbol<*>)
+    override fun getSetterDeprecation(symbol: KaPropertySymbol): DeprecationInfo? {
+        require(symbol is KaFirSymbol<*>)
         return symbol.firSymbol.getDeprecationForCallSite(
             analysisSession.useSiteSession,
             AnnotationUseSiteTarget.PROPERTY_SETTER,
@@ -102,9 +102,9 @@ internal class KtFirSymbolInfoProvider(
         return SimpleDeprecationInfo(deprecationLevel, propagatesToOverrides, null)
     }
 
-    override fun getJavaGetterName(symbol: KtPropertySymbol): Name {
-        require(symbol is KtFirSymbol<*>)
-        if (symbol is KtFirSyntheticJavaPropertySymbol) {
+    override fun getJavaGetterName(symbol: KaPropertySymbol): Name {
+        require(symbol is KaFirSymbol<*>)
+        if (symbol is KaFirSyntheticJavaPropertySymbol) {
             return symbol.javaGetterSymbol.name
         }
 
@@ -114,9 +114,9 @@ internal class KtFirSymbolInfoProvider(
         return getJvmName(firProperty, isSetter = false)
     }
 
-    override fun getJavaSetterName(symbol: KtPropertySymbol): Name? {
-        require(symbol is KtFirSymbol<*>)
-        if (symbol is KtFirSyntheticJavaPropertySymbol) {
+    override fun getJavaSetterName(symbol: KaPropertySymbol): Name? {
+        require(symbol is KaFirSymbol<*>)
+        if (symbol is KaFirSyntheticJavaPropertySymbol) {
             return symbol.javaSetterSymbol?.name
         }
 
@@ -128,9 +128,9 @@ internal class KtFirSymbolInfoProvider(
         return getJvmName(firProperty, isSetter = true)
     }
 
-    override fun getAnnotationApplicableTargets(symbol: KtClassOrObjectSymbol): Set<KotlinTarget>? {
-        requireIsInstance<KtFirSymbol<*>>(symbol)
-        if (symbol !is KtFirNamedClassOrObjectSymbolBase) return null
+    override fun getAnnotationApplicableTargets(symbol: KaClassOrObjectSymbol): Set<KotlinTarget>? {
+        requireIsInstance<KaFirSymbol<*>>(symbol)
+        if (symbol !is KaFirNamedClassOrObjectSymbolBase) return null
         if (symbol.firSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
         return symbol.firSymbol.getAllowedAnnotationTargets(analysisSession.useSiteSession)
     }

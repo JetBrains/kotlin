@@ -5,25 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KtIntegerLiteralType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaIntegerLiteralType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-
-public interface KtIntegerLiteralTypeRenderer {
+public interface KaIntegerLiteralTypeRenderer {
     public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtIntegerLiteralType,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        type: KaIntegerLiteralType,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_ILT_WITH_VALUE : KtIntegerLiteralTypeRenderer {
+    public object AS_ILT_WITH_VALUE : KaIntegerLiteralTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtIntegerLiteralType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaIntegerLiteralType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -34,3 +33,5 @@ public interface KtIntegerLiteralTypeRenderer {
         }
     }
 }
+
+public typealias KtIntegerLiteralTypeRenderer = KaIntegerLiteralTypeRenderer

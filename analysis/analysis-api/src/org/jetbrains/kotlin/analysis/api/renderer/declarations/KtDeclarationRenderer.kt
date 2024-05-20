@@ -5,116 +5,116 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.base.KtKeywordsRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KtContextReceiversRenderer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.base.KaKeywordsRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KaContextReceiversRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies.*
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KtDeclarationModifiersRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDeclarationModifiersRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.*
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.*
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KtAnonymousObjectSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KtNamedClassOrObjectSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KtSingleTypeParameterSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KtTypeAliasSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KtSuperTypeListRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KtSuperTypeRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KtSuperTypesCallArgumentsRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KtSuperTypesFilter
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaAnonymousObjectSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaNamedClassOrObjectSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaSingleTypeParameterSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.classifiers.KaTypeAliasSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KaSuperTypeListRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KaSuperTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KaSuperTypesCallArgumentsRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes.KaSuperTypesFilter
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public class KtDeclarationRenderer private constructor(
-    public val nameRenderer: KtDeclarationNameRenderer,
-    public val keywordsRenderer: KtKeywordsRenderer,
-    public val contextReceiversRenderer: KtContextReceiversRenderer,
-    public val codeStyle: KtRendererCodeStyle,
-    public val typeRenderer: KtTypeRenderer,
-    public val annotationRenderer: KtAnnotationRenderer,
-    public val modifiersRenderer: KtDeclarationModifiersRenderer,
-    public val declarationTypeApproximator: KtRendererTypeApproximator,
-    public val classifierBodyRenderer: KtClassifierBodyRenderer,
+public class KaDeclarationRenderer private constructor(
+    public val nameRenderer: KaDeclarationNameRenderer,
+    public val keywordsRenderer: KaKeywordsRenderer,
+    public val contextReceiversRenderer: KaContextReceiversRenderer,
+    public val codeStyle: KaRendererCodeStyle,
+    public val typeRenderer: KaTypeRenderer,
+    public val annotationRenderer: KaAnnotationRenderer,
+    public val modifiersRenderer: KaDeclarationModifiersRenderer,
+    public val declarationTypeApproximator: KaRendererTypeApproximator,
+    public val classifierBodyRenderer: KaClassifierBodyRenderer,
 
 
-    public val superTypeRenderer: KtSuperTypeRenderer,
-    public val superTypeListRenderer: KtSuperTypeListRenderer,
-    public val superTypesFilter: KtSuperTypesFilter,
-    public val superTypesArgumentRenderer: KtSuperTypesCallArgumentsRenderer,
+    public val superTypeRenderer: KaSuperTypeRenderer,
+    public val superTypeListRenderer: KaSuperTypeListRenderer,
+    public val superTypesFilter: KaSuperTypesFilter,
+    public val superTypesArgumentRenderer: KaSuperTypesCallArgumentsRenderer,
 
-    public val bodyMemberScopeProvider: KtRendererBodyMemberScopeProvider,
-    public val bodyMemberScopeSorter: KtRendererBodyMemberScopeSorter,
+    public val bodyMemberScopeProvider: KaRendererBodyMemberScopeProvider,
+    public val bodyMemberScopeSorter: KaRendererBodyMemberScopeSorter,
 
-    public val functionLikeBodyRenderer: KtFunctionLikeBodyRenderer,
-    public val variableInitializerRenderer: KtVariableInitializerRenderer,
-    public val parameterDefaultValueRenderer: KtParameterDefaultValueRenderer,
-    public val accessorBodyRenderer: KtPropertyAccessorBodyRenderer,
+    public val functionLikeBodyRenderer: KaFunctionLikeBodyRenderer,
+    public val variableInitializerRenderer: KaVariableInitializerRenderer,
+    public val parameterDefaultValueRenderer: KaParameterDefaultValueRenderer,
+    public val accessorBodyRenderer: KaPropertyAccessorBodyRenderer,
 
-    public val returnTypeRenderer: KtCallableReturnTypeRenderer,
-    public val callableReceiverRenderer: KtCallableReceiverRenderer,
+    public val returnTypeRenderer: KaCallableReturnTypeRenderer,
+    public val callableReceiverRenderer: KaCallableReceiverRenderer,
 
-    public val valueParametersRenderer: KtCallableParameterRenderer,
-    public val typeParametersRenderer: KtTypeParametersRenderer,
-    public val typeParametersFilter: KtTypeParameterRendererFilter,
+    public val valueParametersRenderer: KaCallableParameterRenderer,
+    public val typeParametersRenderer: KaTypeParametersRenderer,
+    public val typeParametersFilter: KaTypeParameterRendererFilter,
 
-    public val callableSignatureRenderer: KtCallableSignatureRenderer,
+    public val callableSignatureRenderer: KaCallableSignatureRenderer,
 
-    public val anonymousFunctionRenderer: KtAnonymousFunctionSymbolRenderer,
-    public val backingFieldRenderer: KtBackingFieldSymbolRenderer,
-    public val constructorRenderer: KtConstructorSymbolRenderer,
-    public val enumEntryRenderer: KtEnumEntrySymbolRenderer,
-    public val functionSymbolRenderer: KtFunctionSymbolRenderer,
-    public val javaFieldRenderer: KtJavaFieldSymbolRenderer,
-    public val localVariableRenderer: KtLocalVariableSymbolRenderer,
-    public val getterRenderer: KtPropertyGetterSymbolRenderer,
-    public val setterRenderer: KtPropertySetterSymbolRenderer,
-    public val propertyRenderer: KtKotlinPropertySymbolRenderer,
-    public val kotlinPropertyRenderer: KtKotlinPropertySymbolRenderer,
-    public val syntheticJavaPropertyRenderer: KtSyntheticJavaPropertySymbolRenderer,
-    public val valueParameterRenderer: KtValueParameterSymbolRenderer,
-    public val samConstructorRenderer: KtSamConstructorSymbolRenderer,
-    public val propertyAccessorsRenderer: KtPropertyAccessorsRenderer,
-    public val destructuringDeclarationRenderer: KtDestructuringDeclarationRenderer,
+    public val anonymousFunctionRenderer: KaAnonymousFunctionSymbolRenderer,
+    public val backingFieldRenderer: KaBackingFieldSymbolRenderer,
+    public val constructorRenderer: KaConstructorSymbolRenderer,
+    public val enumEntryRenderer: KaEnumEntrySymbolRenderer,
+    public val functionSymbolRenderer: KaFunctionSymbolRenderer,
+    public val javaFieldRenderer: KaJavaFieldSymbolRenderer,
+    public val localVariableRenderer: KaLocalVariableSymbolRenderer,
+    public val getterRenderer: KaPropertyGetterSymbolRenderer,
+    public val setterRenderer: KaPropertySetterSymbolRenderer,
+    public val propertyRenderer: KaKotlinPropertySymbolRenderer,
+    public val kotlinPropertyRenderer: KaKotlinPropertySymbolRenderer,
+    public val syntheticJavaPropertyRenderer: KaSyntheticJavaPropertySymbolRenderer,
+    public val valueParameterRenderer: KaValueParameterSymbolRenderer,
+    public val samConstructorRenderer: KaSamConstructorSymbolRenderer,
+    public val propertyAccessorsRenderer: KaPropertyAccessorsRenderer,
+    public val destructuringDeclarationRenderer: KaDestructuringDeclarationRenderer,
 
-    public val classInitializerRender: KtClassInitializerRenderer,
-    public val classOrObjectRenderer: KtNamedClassOrObjectSymbolRenderer,
-    public val typeAliasRenderer: KtTypeAliasSymbolRenderer,
-    public val anonymousObjectRenderer: KtAnonymousObjectSymbolRenderer,
-    public val singleTypeParameterRenderer: KtSingleTypeParameterSymbolRenderer,
-    public val returnTypeFilter: KtCallableReturnTypeFilter,
+    public val classInitializerRender: KaClassInitializerRenderer,
+    public val classOrObjectRenderer: KaNamedClassOrObjectSymbolRenderer,
+    public val typeAliasRenderer: KaTypeAliasSymbolRenderer,
+    public val anonymousObjectRenderer: KaAnonymousObjectSymbolRenderer,
+    public val singleTypeParameterRenderer: KaSingleTypeParameterSymbolRenderer,
+    public val returnTypeFilter: KaCallableReturnTypeFilter,
 
-    public val scriptRenderer: KtScriptSymbolRenderer,
-    public val scriptInitializerRenderer: KtScriptInitializerRenderer
+    public val scriptRenderer: KaScriptSymbolRenderer,
+    public val scriptInitializerRenderer: KaScriptInitializerRenderer
 ) {
 
-    public fun renderDeclaration(analysisSession: KtAnalysisSession, symbol: KtDeclarationSymbol, printer: PrettyPrinter) {
+    public fun renderDeclaration(analysisSession: KaSession, symbol: KaDeclarationSymbol, printer: PrettyPrinter) {
         when (symbol) {
-            is KtAnonymousObjectSymbol -> anonymousObjectRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtNamedClassOrObjectSymbol -> classOrObjectRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtTypeAliasSymbol -> typeAliasRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtAnonymousFunctionSymbol -> anonymousFunctionRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtConstructorSymbol -> constructorRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtFunctionSymbol -> functionSymbolRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtPropertyGetterSymbol -> getterRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtPropertySetterSymbol -> setterRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtSamConstructorSymbol -> samConstructorRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtBackingFieldSymbol -> backingFieldRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtEnumEntrySymbol -> enumEntryRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtValueParameterSymbol -> valueParameterRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtJavaFieldSymbol -> javaFieldRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtLocalVariableSymbol -> localVariableRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtKotlinPropertySymbol -> kotlinPropertyRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtSyntheticJavaPropertySymbol -> syntheticJavaPropertyRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtTypeParameterSymbol -> singleTypeParameterRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtClassInitializerSymbol -> classInitializerRender.renderClassInitializer(analysisSession, symbol, this, printer)
-            is KtScriptSymbol -> scriptRenderer.renderSymbol(analysisSession, symbol, this, printer)
-            is KtDestructuringDeclarationSymbol -> destructuringDeclarationRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaAnonymousObjectSymbol -> anonymousObjectRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaNamedClassOrObjectSymbol -> classOrObjectRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaTypeAliasSymbol -> typeAliasRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaAnonymousFunctionSymbol -> anonymousFunctionRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaConstructorSymbol -> constructorRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaFunctionSymbol -> functionSymbolRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaPropertyGetterSymbol -> getterRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaPropertySetterSymbol -> setterRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaSamConstructorSymbol -> samConstructorRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaBackingFieldSymbol -> backingFieldRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaEnumEntrySymbol -> enumEntryRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaValueParameterSymbol -> valueParameterRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaJavaFieldSymbol -> javaFieldRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaLocalVariableSymbol -> localVariableRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaKotlinPropertySymbol -> kotlinPropertyRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaSyntheticJavaPropertySymbol -> syntheticJavaPropertyRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaTypeParameterSymbol -> singleTypeParameterRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaClassInitializerSymbol -> classInitializerRender.renderClassInitializer(analysisSession, symbol, this, printer)
+            is KaScriptSymbol -> scriptRenderer.renderSymbol(analysisSession, symbol, this, printer)
+            is KaDestructuringDeclarationSymbol -> destructuringDeclarationRenderer.renderSymbol(analysisSession, symbol, this, printer)
         }
     }
 
-    public fun with(action: Builder.() -> Unit): KtDeclarationRenderer {
+    public fun with(action: Builder.() -> Unit): KaDeclarationRenderer {
         val renderer = this
-        return KtDeclarationRenderer {
+        return KaDeclarationRenderer {
             this.nameRenderer = renderer.nameRenderer
             this.keywordsRenderer = renderer.keywordsRenderer
             this.contextReceiversRenderer = renderer.contextReceiversRenderer
@@ -179,70 +179,70 @@ public class KtDeclarationRenderer private constructor(
     }
 
     public companion object {
-        public operator fun invoke(action: Builder.() -> Unit): KtDeclarationRenderer =
+        public operator fun invoke(action: Builder.() -> Unit): KaDeclarationRenderer =
             Builder().apply(action).build()
     }
 
     public open class Builder {
-        public lateinit var returnTypeFilter: KtCallableReturnTypeFilter
-        public lateinit var nameRenderer: KtDeclarationNameRenderer
-        public lateinit var contextReceiversRenderer: KtContextReceiversRenderer
-        public lateinit var keywordsRenderer: KtKeywordsRenderer
-        public lateinit var codeStyle: KtRendererCodeStyle
-        public lateinit var typeRenderer: KtTypeRenderer
-        public lateinit var annotationRenderer: KtAnnotationRenderer
-        public lateinit var modifiersRenderer: KtDeclarationModifiersRenderer
-        public lateinit var declarationTypeApproximator: KtRendererTypeApproximator
-        public lateinit var classifierBodyRenderer: KtClassifierBodyRenderer
+        public lateinit var returnTypeFilter: KaCallableReturnTypeFilter
+        public lateinit var nameRenderer: KaDeclarationNameRenderer
+        public lateinit var contextReceiversRenderer: KaContextReceiversRenderer
+        public lateinit var keywordsRenderer: KaKeywordsRenderer
+        public lateinit var codeStyle: KaRendererCodeStyle
+        public lateinit var typeRenderer: KaTypeRenderer
+        public lateinit var annotationRenderer: KaAnnotationRenderer
+        public lateinit var modifiersRenderer: KaDeclarationModifiersRenderer
+        public lateinit var declarationTypeApproximator: KaRendererTypeApproximator
+        public lateinit var classifierBodyRenderer: KaClassifierBodyRenderer
 
-        public lateinit var superTypeRenderer: KtSuperTypeRenderer
-        public lateinit var superTypeListRenderer: KtSuperTypeListRenderer
-        public lateinit var superTypesFilter: KtSuperTypesFilter
-        public lateinit var superTypesArgumentRenderer: KtSuperTypesCallArgumentsRenderer
+        public lateinit var superTypeRenderer: KaSuperTypeRenderer
+        public lateinit var superTypeListRenderer: KaSuperTypeListRenderer
+        public lateinit var superTypesFilter: KaSuperTypesFilter
+        public lateinit var superTypesArgumentRenderer: KaSuperTypesCallArgumentsRenderer
 
-        public lateinit var bodyMemberScopeProvider: KtRendererBodyMemberScopeProvider
-        public lateinit var bodyMemberScopeSorter: KtRendererBodyMemberScopeSorter
+        public lateinit var bodyMemberScopeProvider: KaRendererBodyMemberScopeProvider
+        public lateinit var bodyMemberScopeSorter: KaRendererBodyMemberScopeSorter
 
-        public lateinit var functionLikeBodyRenderer: KtFunctionLikeBodyRenderer
-        public lateinit var variableInitializerRenderer: KtVariableInitializerRenderer
-        public lateinit var parameterDefaultValueRenderer: KtParameterDefaultValueRenderer
-        public lateinit var accessorBodyRenderer: KtPropertyAccessorBodyRenderer
+        public lateinit var functionLikeBodyRenderer: KaFunctionLikeBodyRenderer
+        public lateinit var variableInitializerRenderer: KaVariableInitializerRenderer
+        public lateinit var parameterDefaultValueRenderer: KaParameterDefaultValueRenderer
+        public lateinit var accessorBodyRenderer: KaPropertyAccessorBodyRenderer
 
-        public lateinit var returnTypeRenderer: KtCallableReturnTypeRenderer
-        public lateinit var callableReceiverRenderer: KtCallableReceiverRenderer
+        public lateinit var returnTypeRenderer: KaCallableReturnTypeRenderer
+        public lateinit var callableReceiverRenderer: KaCallableReceiverRenderer
 
-        public lateinit var valueParametersRenderer: KtCallableParameterRenderer
-        public lateinit var typeParametersRenderer: KtTypeParametersRenderer
-        public lateinit var typeParametersFilter: KtTypeParameterRendererFilter
-        public lateinit var callableSignatureRenderer: KtCallableSignatureRenderer
+        public lateinit var valueParametersRenderer: KaCallableParameterRenderer
+        public lateinit var typeParametersRenderer: KaTypeParametersRenderer
+        public lateinit var typeParametersFilter: KaTypeParameterRendererFilter
+        public lateinit var callableSignatureRenderer: KaCallableSignatureRenderer
 
-        public lateinit var anonymousFunctionRenderer: KtAnonymousFunctionSymbolRenderer
-        public lateinit var backingFieldRenderer: KtBackingFieldSymbolRenderer
-        public lateinit var constructorRenderer: KtConstructorSymbolRenderer
-        public lateinit var enumEntryRenderer: KtEnumEntrySymbolRenderer
-        public lateinit var functionSymbolRenderer: KtFunctionSymbolRenderer
-        public lateinit var javaFieldRenderer: KtJavaFieldSymbolRenderer
-        public lateinit var localVariableRenderer: KtLocalVariableSymbolRenderer
-        public lateinit var getterRenderer: KtPropertyGetterSymbolRenderer
-        public lateinit var setterRenderer: KtPropertySetterSymbolRenderer
-        public lateinit var propertyRenderer: KtKotlinPropertySymbolRenderer
-        public lateinit var kotlinPropertyRenderer: KtKotlinPropertySymbolRenderer
-        public lateinit var syntheticJavaPropertyRenderer: KtSyntheticJavaPropertySymbolRenderer
-        public lateinit var valueParameterRenderer: KtValueParameterSymbolRenderer
-        public lateinit var samConstructorRenderer: KtSamConstructorSymbolRenderer
-        public lateinit var propertyAccessorsRenderer: KtPropertyAccessorsRenderer
-        public lateinit var destructuringDeclarationRenderer: KtDestructuringDeclarationRenderer
+        public lateinit var anonymousFunctionRenderer: KaAnonymousFunctionSymbolRenderer
+        public lateinit var backingFieldRenderer: KaBackingFieldSymbolRenderer
+        public lateinit var constructorRenderer: KaConstructorSymbolRenderer
+        public lateinit var enumEntryRenderer: KaEnumEntrySymbolRenderer
+        public lateinit var functionSymbolRenderer: KaFunctionSymbolRenderer
+        public lateinit var javaFieldRenderer: KaJavaFieldSymbolRenderer
+        public lateinit var localVariableRenderer: KaLocalVariableSymbolRenderer
+        public lateinit var getterRenderer: KaPropertyGetterSymbolRenderer
+        public lateinit var setterRenderer: KaPropertySetterSymbolRenderer
+        public lateinit var propertyRenderer: KaKotlinPropertySymbolRenderer
+        public lateinit var kotlinPropertyRenderer: KaKotlinPropertySymbolRenderer
+        public lateinit var syntheticJavaPropertyRenderer: KaSyntheticJavaPropertySymbolRenderer
+        public lateinit var valueParameterRenderer: KaValueParameterSymbolRenderer
+        public lateinit var samConstructorRenderer: KaSamConstructorSymbolRenderer
+        public lateinit var propertyAccessorsRenderer: KaPropertyAccessorsRenderer
+        public lateinit var destructuringDeclarationRenderer: KaDestructuringDeclarationRenderer
 
-        public lateinit var classInitializerRender: KtClassInitializerRenderer
-        public lateinit var classOrObjectRenderer: KtNamedClassOrObjectSymbolRenderer
-        public lateinit var typeAliasRenderer: KtTypeAliasSymbolRenderer
-        public lateinit var anonymousObjectRenderer: KtAnonymousObjectSymbolRenderer
-        public lateinit var singleTypeParameterRenderer: KtSingleTypeParameterSymbolRenderer
+        public lateinit var classInitializerRender: KaClassInitializerRenderer
+        public lateinit var classOrObjectRenderer: KaNamedClassOrObjectSymbolRenderer
+        public lateinit var typeAliasRenderer: KaTypeAliasSymbolRenderer
+        public lateinit var anonymousObjectRenderer: KaAnonymousObjectSymbolRenderer
+        public lateinit var singleTypeParameterRenderer: KaSingleTypeParameterSymbolRenderer
 
-        public lateinit var scriptRenderer: KtScriptSymbolRenderer
-        public lateinit var scriptInitializerRenderer: KtScriptInitializerRenderer
+        public lateinit var scriptRenderer: KaScriptSymbolRenderer
+        public lateinit var scriptInitializerRenderer: KaScriptInitializerRenderer
 
-        public fun build(): KtDeclarationRenderer = KtDeclarationRenderer(
+        public fun build(): KaDeclarationRenderer = KaDeclarationRenderer(
             nameRenderer,
             keywordsRenderer,
             contextReceiversRenderer,
@@ -304,3 +304,4 @@ public class KtDeclarationRenderer private constructor(
     }
 }
 
+public typealias KtDeclarationRenderer = KaDeclarationRenderer

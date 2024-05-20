@@ -7,4 +7,6 @@ package org.jetbrains.kotlin.analysis.api.scopes
 
 import org.jetbrains.kotlin.name.Name
 
-public typealias KtScopeNameFilter = (Name) -> Boolean
+public typealias KaScopeNameFilter = (Name) -> Boolean
+
+public typealias KtScopeNameFilter = KaScopeNameFilter

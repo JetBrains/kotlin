@@ -5,24 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
-import org.jetbrains.kotlin.analysis.api.types.KtTypeErrorType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
+import org.jetbrains.kotlin.analysis.api.types.KaTypeErrorType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtTypeErrorTypeRenderer {
+public interface KaTypeErrorTypeRenderer {
     public fun renderType(
-        analysisSession: KtAnalysisSession,
-        type: KtTypeErrorType,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        type: KaTypeErrorType,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_CODE_IF_POSSIBLE : KtTypeErrorTypeRenderer {
+    public object AS_CODE_IF_POSSIBLE : KaTypeErrorTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtTypeErrorType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaTypeErrorType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             type.tryRenderAsNonErrorType()?.let {
@@ -33,22 +33,22 @@ public interface KtTypeErrorTypeRenderer {
         }
     }
 
-    public object AS_ERROR_WORD : KtTypeErrorTypeRenderer {
+    public object AS_ERROR_WORD : KaTypeErrorTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtTypeErrorType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaTypeErrorType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer.append("ERROR")
         }
     }
 
-    public object WITH_ERROR_MESSAGE : KtTypeErrorTypeRenderer {
+    public object WITH_ERROR_MESSAGE : KaTypeErrorTypeRenderer {
         override fun renderType(
-            analysisSession: KtAnalysisSession,
-            type: KtTypeErrorType,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            type: KaTypeErrorType,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             printer.append("ERROR(${type.errorMessage})")
@@ -56,3 +56,4 @@ public interface KtTypeErrorTypeRenderer {
     }
 }
 
+public typealias KtTypeErrorTypeRenderer = KaTypeErrorTypeRenderer

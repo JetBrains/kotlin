@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.psi.*
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.mutate
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -33,15 +33,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
 internal class SymbolLightSimpleMethod(
-    ktAnalysisSession: KtAnalysisSession,
-    functionSymbol: KtFunctionSymbol,
+    ktAnalysisSession: KaSession,
+    functionSymbol: KaFunctionSymbol,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     private val isTopLevel: Boolean,
     argumentsSkipMask: BitSet? = null,
     private val suppressStatic: Boolean = false,
-) : SymbolLightMethod<KtFunctionSymbol>(
+) : SymbolLightMethod<KaFunctionSymbol>(
     ktAnalysisSession = ktAnalysisSession,
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
@@ -157,19 +157,19 @@ internal class SymbolLightSimpleMethod(
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
                     NullabilityAnnotationsProvider {
                         if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) {
-                            KtTypeNullability.UNKNOWN
+                            KaTypeNullability.UNKNOWN
                         } else {
                             withFunctionSymbol { functionSymbol ->
                                 when {
                                     functionSymbol.isSuspend -> { // Any?
-                                        KtTypeNullability.NULLABLE
+                                        KaTypeNullability.NULLABLE
                                     }
                                     forceBoxedReturnType(functionSymbol) -> {
-                                        KtTypeNullability.NON_NULLABLE
+                                        KaTypeNullability.NON_NULLABLE
                                     }
                                     else -> {
                                         val returnType = functionSymbol.returnType
-                                        if (isVoidType(returnType)) KtTypeNullability.UNKNOWN else getTypeNullability(returnType)
+                                        if (isVoidType(returnType)) KaTypeNullability.UNKNOWN else getTypeNullability(returnType)
                                     }
                                 }
                             }
@@ -192,7 +192,7 @@ internal class SymbolLightSimpleMethod(
     }
 
     // Inspired by KotlinTypeMapper#forceBoxedReturnType
-    private fun KtAnalysisSession.forceBoxedReturnType(functionSymbol: KtFunctionSymbol): Boolean {
+    private fun KaSession.forceBoxedReturnType(functionSymbol: KaFunctionSymbol): Boolean {
         val returnType = functionSymbol.returnType
         // 'invoke' methods for lambdas, function literals, and callable references
         // implicitly override generic 'invoke' from a corresponding base class.
@@ -206,13 +206,13 @@ internal class SymbolLightSimpleMethod(
     }
 
     @Suppress("UnusedReceiverParameter")
-    private fun KtAnalysisSession.isInlineClassType(type: KtType): Boolean {
-        return ((type as? KtNonErrorClassType)?.classSymbol as? KtNamedClassOrObjectSymbol)?.isInline == true
+    private fun KaSession.isInlineClassType(type: KaType): Boolean {
+        return ((type as? KaNonErrorClassType)?.classSymbol as? KaNamedClassOrObjectSymbol)?.isInline == true
     }
 
-    private fun KtAnalysisSession.isVoidType(type: KtType): Boolean {
+    private fun KaSession.isVoidType(type: KaType): Boolean {
         val expandedType = type.fullyExpandedType
-        return expandedType.isUnit && expandedType.nullability != KtTypeNullability.NULLABLE
+        return expandedType.isUnit && expandedType.nullability != KaTypeNullability.NULLABLE
     }
 
     private val _returnedType: PsiType by lazyPub {
@@ -224,9 +224,9 @@ internal class SymbolLightSimpleMethod(
             }
 
             val typeMappingMode = if (forceBoxedReturnType(functionSymbol))
-                KtTypeMappingMode.RETURN_TYPE_BOXED
+                KaTypeMappingMode.RETURN_TYPE_BOXED
             else
-                KtTypeMappingMode.RETURN_TYPE
+                KaTypeMappingMode.RETURN_TYPE
 
             ktType.asPsiType(
                 this@SymbolLightSimpleMethod,

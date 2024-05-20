@@ -5,44 +5,44 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassInitializerSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassInitializerSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.psi.KtClassInitializer
 
-class KtFe10PsiClassInitializerSymbol(
+class KaFe10PsiClassInitializerSymbol(
     override val psi: KtClassInitializer,
     override val analysisContext: Fe10AnalysisContext
-) : KtClassInitializerSymbol(), KtFe10Symbol {
-    override val origin: KtSymbolOrigin
+) : KaClassInitializerSymbol(), KaFe10Symbol {
+    override val origin: KaSymbolOrigin
         get() = withValidityAssertion {
             return if (psi.containingKtFile.isCompiled) {
-                KtSymbolOrigin.LIBRARY
+                KaSymbolOrigin.LIBRARY
             } else {
-                KtSymbolOrigin.SOURCE
+                KaSymbolOrigin.SOURCE
             }
         }
 
-    override val symbolKind: KtSymbolKind
-        get() = withValidityAssertion { KtSymbolKind.CLASS_MEMBER }
+    override val symbolKind: KaSymbolKind
+        get() = withValidityAssertion { KaSymbolKind.CLASS_MEMBER }
 
-    override fun createPointer(): KtSymbolPointer<KtClassInitializerSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtClassInitializerSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
+    override fun createPointer(): KaSymbolPointer<KaClassInitializerSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaClassInitializerSymbol>(this) ?: KaFe10NeverRestoringSymbolPointer()
     }
 
-    override val typeParameters: List<KtTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
-    override val annotationsList: KtAnnotationsList get() = withValidityAssertion { KtEmptyAnnotationsList(token) }
+    override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
+    override val annotationsList: KaAnnotationsList get() = withValidityAssertion { KaEmptyAnnotationsList(token) }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)
     override fun hashCode(): Int = calculateHashCode()

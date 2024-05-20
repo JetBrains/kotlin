@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 
-public abstract class KtReferenceResolveProvider {
-    public abstract fun resolveToSymbols(reference: KtReference): Collection<KtSymbol>
+public abstract class KaReferenceResolveProvider {
+    public abstract fun resolveToSymbols(reference: KtReference): Collection<KaSymbol>
 
     public abstract fun isImplicitReferenceToCompanion(reference: KtReference): Boolean
 }
+
+public typealias KtReferenceResolveProvider = KaReferenceResolveProvider

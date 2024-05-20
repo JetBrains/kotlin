@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extension
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionFile
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -103,7 +103,7 @@ object KtResolveExtensionTestSupport {
             val ktResolveExtensionFiles =
                 resolveExtensionTestFiles.map { it.toKtResolveExtensionFile(singleModulePackageName) }
 
-            val provider = KtResolveExtensionProviderForTest(ktResolveExtensionFiles, packageNames, shadowedScope) {
+            val provider = KaResolveExtensionProviderForTest(ktResolveExtensionFiles, packageNames, shadowedScope) {
                 it is KtSourceModule && it.moduleName == name
             }
             provider.register(testServices)
@@ -111,7 +111,7 @@ object KtResolveExtensionTestSupport {
             return this.copy(files = regularFiles)
         }
 
-        private fun TestFile.toKtResolveExtensionFile(moduleSinglePackageName: FqName?): KtResolveExtensionFile {
+        private fun TestFile.toKtResolveExtensionFile(moduleSinglePackageName: FqName?): KaResolveExtensionFile {
             val packageName = directives[Directives.RESOLVE_EXTENSION_PACKAGE].singleOrNull()
                 ?: moduleSinglePackageName
                 ?: error("Extension file $name must specify exactly one RESOLVE_EXTENSION_PACKAGE")
@@ -121,7 +121,7 @@ object KtResolveExtensionTestSupport {
                 "Extension file $name does not specify any RESOLVE_EXTENSION_CLASSIFIER or RESOLVE_EXTENSION_CALLABLE"
             }
 
-            return KtResolveExtensionFileForTests(
+            return KaResolveExtensionFileForTests(
                 fileName = name,
                 packageName = packageName,
                 topLevelClassifiersNames = classifierNames,

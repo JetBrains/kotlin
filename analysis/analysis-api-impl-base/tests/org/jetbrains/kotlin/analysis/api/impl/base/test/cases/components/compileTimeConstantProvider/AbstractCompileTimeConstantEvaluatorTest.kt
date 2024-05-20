@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider
 
-import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
+import org.jetbrains.kotlin.analysis.api.components.KaConstantEvaluationMode
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -26,12 +26,12 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnalysisApiBas
         } ?: testServices.assertions.fail { "Unsupported expression: $element" }
         val constantValue = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
-                expression.evaluate(KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
+                expression.evaluate(KaConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
             }
         }
         val constantLikeValue = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
-                expression.evaluate(KtConstantEvaluationMode.CONSTANT_LIKE_EXPRESSION_EVALUATION)
+                expression.evaluate(KaConstantEvaluationMode.CONSTANT_LIKE_EXPRESSION_EVALUATION)
             }
         }
         val actual = buildString {

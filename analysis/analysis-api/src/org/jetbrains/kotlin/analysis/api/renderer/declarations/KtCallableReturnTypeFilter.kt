@@ -5,29 +5,31 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
 
-public interface KtCallableReturnTypeFilter {
-    public fun shouldRenderReturnType(analysisSession: KtAnalysisSession, type: KtType, symbol: KtCallableSymbol): Boolean
+public interface KaCallableReturnTypeFilter {
+    public fun shouldRenderReturnType(analysisSession: KaSession, type: KaType, symbol: KaCallableSymbol): Boolean
 
-    public object ALWAYS : KtCallableReturnTypeFilter {
-        override fun shouldRenderReturnType(analysisSession: KtAnalysisSession, type: KtType, symbol: KtCallableSymbol): Boolean {
+    public object ALWAYS : KaCallableReturnTypeFilter {
+        override fun shouldRenderReturnType(analysisSession: KaSession, type: KaType, symbol: KaCallableSymbol): Boolean {
             return true
         }
 
     }
 
-    public object NO_UNIT_FOR_FUNCTIONS : KtCallableReturnTypeFilter {
-        override fun shouldRenderReturnType(analysisSession: KtAnalysisSession, type: KtType, symbol: KtCallableSymbol): Boolean {
+    public object NO_UNIT_FOR_FUNCTIONS : KaCallableReturnTypeFilter {
+        override fun shouldRenderReturnType(analysisSession: KaSession, type: KaType, symbol: KaCallableSymbol): Boolean {
             with(analysisSession) {
                 return when (symbol) {
-                    is KtFunctionSymbol -> !type.isUnit
+                    is KaFunctionSymbol -> !type.isUnit
                     else -> true
                 }
             }
         }
     }
 }
+
+public typealias KtCallableReturnTypeFilter = KaCallableReturnTypeFilter

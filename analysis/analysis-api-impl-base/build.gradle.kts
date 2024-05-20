@@ -45,7 +45,7 @@ sourceSets {
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals")
+    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals")
 }
 
 testsJar()

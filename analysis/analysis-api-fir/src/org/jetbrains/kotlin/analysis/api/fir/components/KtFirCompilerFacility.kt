@@ -9,13 +9,13 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
-import org.jetbrains.kotlin.analysis.api.components.KtCompilationResult
-import org.jetbrains.kotlin.analysis.api.components.KtCompilerFacility
-import org.jetbrains.kotlin.analysis.api.components.KtCompilerTarget
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.impl.base.util.KtCompiledFileForOutputFile
+import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
+import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
+import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.impl.base.util.KaCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedId
@@ -97,24 +97,24 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.*
 
-internal class KtFirCompilerFacility(
-    override val analysisSession: KtFirAnalysisSession
-) : KtCompilerFacility(), KtFirAnalysisSessionComponent {
+internal class KaFirCompilerFacility(
+    override val analysisSession: KaFirSession
+) : KaCompilerFacility(), KaFirSessionComponent {
     override fun compile(
         file: KtFile,
         configuration: CompilerConfiguration,
-        target: KtCompilerTarget,
-        allowedErrorFilter: (KtDiagnostic) -> Boolean
-    ): KtCompilationResult {
+        target: KaCompilerTarget,
+        allowedErrorFilter: (KaDiagnostic) -> Boolean
+    ): KaCompilationResult {
         val classBuilderFactory = when (target) {
-            is KtCompilerTarget.Jvm -> target.classBuilderFactory
+            is KaCompilerTarget.Jvm -> target.classBuilderFactory
         }
 
         val syntaxErrors = SyntaxErrorReportingVisitor(analysisSession.useSiteSession) { it.asKtDiagnostic() }
             .also(file::accept).diagnostics
 
         if (syntaxErrors.isNotEmpty()) {
-            return KtCompilationResult.Failure(syntaxErrors)
+            return KaCompilationResult.Failure(syntaxErrors)
         }
 
         val mainFirFile = getFullyResolvedFirFile(file)
@@ -123,7 +123,7 @@ internal class KtFirCompilerFacility(
         val frontendErrors = computeErrors(frontendDiagnostics, allowedErrorFilter)
 
         if (frontendErrors.isNotEmpty()) {
-            return KtCompilationResult.Failure(frontendErrors)
+            return KaCompilationResult.Failure(frontendErrors)
         }
 
         val codeFragmentMappings = runIf(file is KtCodeFragment) {
@@ -240,10 +240,10 @@ internal class KtFirCompilerFacility(
             val backendErrors = computeErrors(backendDiagnostics, allowedErrorFilter)
 
             if (backendErrors.isNotEmpty()) {
-                return KtCompilationResult.Failure(backendErrors)
+                return KaCompilationResult.Failure(backendErrors)
             }
 
-            val outputFiles = generationState.factory.asList().map(::KtCompiledFileForOutputFile)
+            val outputFiles = generationState.factory.asList().map(::KaCompiledFileForOutputFile)
             val capturedValues = buildList {
                 if (codeFragmentMappings != null) {
                     addAll(codeFragmentMappings.capturedValues)
@@ -255,7 +255,7 @@ internal class KtFirCompilerFacility(
                 }
             }
 
-            return KtCompilationResult.Success(outputFiles, capturedValues)
+            return KaCompilationResult.Success(outputFiles, capturedValues)
         } finally {
             generationState.destroy()
         }
@@ -362,8 +362,8 @@ internal class KtFirCompilerFacility(
 
     private fun computeErrors(
         diagnostics: Collection<DiagnosticMarker>,
-        allowedErrorFilter: (KtDiagnostic) -> Boolean,
-    ): List<KtDiagnostic> {
+        allowedErrorFilter: (KaDiagnostic) -> Boolean,
+    ): List<KaDiagnostic> {
         return buildList {
             for (diagnostic in diagnostics) {
                 require(diagnostic is KtPsiDiagnostic)
@@ -714,11 +714,11 @@ private class DeclarationRegistrarVisitor(private val consumer: SymbolTable) : I
 
 private class SyntaxErrorReportingVisitor(
     private val useSiteSession: FirSession,
-    private val diagnosticConverter: (KtPsiDiagnostic) -> KtDiagnosticWithPsi<*>
+    private val diagnosticConverter: (KtPsiDiagnostic) -> KaDiagnosticWithPsi<*>
 ) : KtTreeVisitorVoid() {
-    private val collectedDiagnostics = mutableListOf<KtDiagnostic>()
+    private val collectedDiagnostics = mutableListOf<KaDiagnostic>()
 
-    val diagnostics: List<KtDiagnostic>
+    val diagnostics: List<KaDiagnostic>
         get() = Collections.unmodifiableList(collectedDiagnostics)
 
     override fun visitErrorElement(element: PsiErrorElement) {

@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.api.fe10.test.configurator
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.descriptors.CliFe10AnalysisFacade
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisHandlerExtension
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10AnalysisHandlerExtension
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.PluginStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.services.TestServices
 
-@OptIn(KtAnalysisNonPublicApi::class)
+@OptIn(KaAnalysisNonPublicApi::class)
 object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     private const val PLUGIN_RELATIVE_PATH = "/META-INF/analysis-api/analysis-api-fe10.xml"
 
@@ -42,7 +42,7 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         PluginStructureProvider.registerProjectListeners(project, PLUGIN_RELATIVE_PATH)
     }
 
-    @OptIn(KtAnalysisApiInternals::class, TestInfrastructureInternals::class)
+    @OptIn(KaAnalysisApiInternals::class, TestInfrastructureInternals::class)
     override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
         project.apply {
             registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade())
@@ -51,7 +51,7 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
         testServices.ktTestModuleStructure.mainModules.forEach { ktTestModule ->
             val sourceModule = ktTestModule.ktModule as? KtSourceModule ?: return@forEach
-            AnalysisHandlerExtension.registerExtension(project, KtFe10AnalysisHandlerExtension(sourceModule))
+            AnalysisHandlerExtension.registerExtension(project, KaFe10AnalysisHandlerExtension(sourceModule))
         }
 
         KotlinCoreEnvironment.registerKotlinLightClassSupport(project)

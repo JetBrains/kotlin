@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
 
-public abstract class KtClassInitializerSymbol : KtDeclarationSymbol, KtSymbolWithKind
+public abstract class KaClassInitializerSymbol : KaDeclarationSymbol, KaSymbolWithKind
+
+public typealias KtClassInitializerSymbol = KaClassInitializerSymbol

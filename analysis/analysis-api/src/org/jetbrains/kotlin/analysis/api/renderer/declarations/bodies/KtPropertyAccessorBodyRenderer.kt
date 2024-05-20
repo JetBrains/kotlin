@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertyAccessorSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtPropertyAccessorBodyRenderer {
-    public fun renderBody(analysisSession: KtAnalysisSession, symbol: KtPropertyAccessorSymbol, printer: PrettyPrinter)
+public interface KaPropertyAccessorBodyRenderer {
+    public fun renderBody(analysisSession: KaSession, symbol: KaPropertyAccessorSymbol, printer: PrettyPrinter)
 
-    public object NO_BODY : KtPropertyAccessorBodyRenderer {
-        override fun renderBody(analysisSession: KtAnalysisSession, symbol: KtPropertyAccessorSymbol, printer: PrettyPrinter) {}
+    public object NO_BODY : KaPropertyAccessorBodyRenderer {
+        override fun renderBody(analysisSession: KaSession, symbol: KaPropertyAccessorSymbol, printer: PrettyPrinter) {}
     }
 }
 
+public typealias KtPropertyAccessorBodyRenderer = KaPropertyAccessorBodyRenderer

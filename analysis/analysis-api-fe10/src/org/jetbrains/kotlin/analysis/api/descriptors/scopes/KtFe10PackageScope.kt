@@ -6,26 +6,26 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.scopes
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-internal class KtFe10PackageScope(
+internal class KaFe10PackageScope(
     scope: MemberScope,
-    private val owner: KtPackageSymbol,
+    private val owner: KaPackageSymbol,
     analysisContext: Fe10AnalysisContext
-) : KtFe10ScopeMember(scope, constructors = emptyList(), analysisContext) {
-    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+) : KaFe10ScopeMember(scope, constructors = emptyList(), analysisContext) {
+    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
         val packageFragmentProvider = analysisContext.resolveSession.packageFragmentProvider
         return packageFragmentProvider.getSubPackagesOf(owner.fqName, nameFilter)
             .asSequence()
-            .map { KtFe10PackageSymbol(it, analysisContext) }
+            .map { KaFe10PackageSymbol(it, analysisContext) }
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
+    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion {
         return emptySequence()
     }
 }

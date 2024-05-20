@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.light.classes.symbol.fields
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.FieldAnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.NoAnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.PropertyAnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -33,7 +33,7 @@ internal class SymbolLightFieldForEnumEntry(
     private val enumEntryName: String,
     containingClass: SymbolLightClassForClassOrObject,
 ) : SymbolLightField(containingClass = containingClass, lightMemberOrigin = null), PsiEnumConstant {
-    internal inline fun <T> withEnumEntrySymbol(crossinline action: KtAnalysisSession.(KtEnumEntrySymbol) -> T): T =
+    internal inline fun <T> withEnumEntrySymbol(crossinline action: KaSession.(KaEnumEntrySymbol) -> T): T =
         analyzeForLightClasses(ktModule) {
             action(enumEntry.getEnumEntrySymbol())
         }
@@ -45,7 +45,7 @@ internal class SymbolLightFieldForEnumEntry(
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
-                    annotatedSymbolPointer = enumEntry.symbolPointerOfType<KtEnumEntrySymbol>(),
+                    annotatedSymbolPointer = enumEntry.symbolPointerOfType<KaEnumEntrySymbol>(),
                     annotationUseSiteTargetFilter = annotationUseSiteTargetFilterOf(
                         NoAnnotationUseSiteTargetFilter,
                         FieldAnnotationUseSiteTargetFilter,

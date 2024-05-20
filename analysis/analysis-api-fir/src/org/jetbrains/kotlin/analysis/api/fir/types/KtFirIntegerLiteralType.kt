@@ -5,42 +5,42 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForType
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KtClassType
-import org.jetbrains.kotlin.analysis.api.types.KtIntegerLiteralType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaIntegerLiteralType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralConstantType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
-internal class KtFirIntegerLiteralType(
+internal class KaFirIntegerLiteralType(
     override val coneType: ConeIntegerLiteralConstantType,
-    private val builder: KtSymbolByFirBuilder,
-) : KtIntegerLiteralType(), KtFirType {
-    override val token: KtLifetimeToken get() = builder.token
+    private val builder: KaSymbolByFirBuilder,
+) : KaIntegerLiteralType(), KaFirType {
+    override val token: KaLifetimeToken get() = builder.token
 
     override val isUnsigned: Boolean get() = withValidityAssertion { coneType.isUnsigned }
 
     override val value: Long get() = withValidityAssertion { coneType.value }
 
-    override val possibleTypes: List<KtClassType> by cached {
+    override val possibleTypes: List<KaClassType> by cached {
         coneType.possibleTypes.map { possibleType ->
-            builder.typeBuilder.buildKtType(possibleType) as KtClassType
+            builder.typeBuilder.buildKtType(possibleType) as KaClassType
         }
     }
 
-    override val annotationsList: KtAnnotationsList by cached {
-        KtFirAnnotationListForType.create(coneType, builder)
+    override val annotationsList: KaAnnotationsList by cached {
+        KaFirAnnotationListForType.create(coneType, builder)
     }
 
-    override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+    override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
-    override val abbreviatedType: KtUsualClassType?
+    override val abbreviatedType: KaUsualClassType?
         get() = withValidityAssertion { null }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }

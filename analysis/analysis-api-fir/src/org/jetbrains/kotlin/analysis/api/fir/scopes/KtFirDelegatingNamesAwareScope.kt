@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.name.Name
 
-internal open class KtFirDelegatingNamesAwareScope(
+internal open class KaFirDelegatingNamesAwareScope(
     firScope: FirContainingNamesAwareScope,
-    builder: KtSymbolByFirBuilder,
-) : KtFirBasedScope<FirContainingNamesAwareScope>(firScope, builder) {
+    builder: KaSymbolByFirBuilder,
+) : KaFirBasedScope<FirContainingNamesAwareScope>(firScope, builder) {
     private val allNamesCached by cached {
         getPossibleCallableNames() + getPossibleClassifierNames()
     }

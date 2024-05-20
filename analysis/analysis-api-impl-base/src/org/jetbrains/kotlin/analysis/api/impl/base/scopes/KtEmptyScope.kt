@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.scopes
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
-class KtEmptyScope(override val token: KtLifetimeToken) : KtScope {
+class KaEmptyScope(override val token: KaLifetimeToken) : KaScope {
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion {
         return emptySet()
     }
@@ -25,31 +25,31 @@ class KtEmptyScope(override val token: KtLifetimeToken) : KtScope {
         return emptySet()
     }
 
-    override fun getAllSymbols(): Sequence<KtDeclarationSymbol> = withValidityAssertion {
+    override fun getAllSymbols(): Sequence<KaDeclarationSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
-    override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
+    override fun getCallableSymbols(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> = withValidityAssertion {
+    override fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
-    override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
+    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol>  = withValidityAssertion {
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
+    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion {
         return emptySequence()
     }
 
-    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
 

@@ -5,26 +5,32 @@
 
 package org.jetbrains.kotlin.analysis.api
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.types.Variance
 
-public sealed class KtTypeProjection : KtLifetimeOwner {
-    public abstract val type: KtType?
+public sealed class KaTypeProjection : KaLifetimeOwner {
+    public abstract val type: KaType?
 }
 
-public class KtStarTypeProjection(override val token: KtLifetimeToken) : KtTypeProjection() {
-    override val type: KtType? get() = withValidityAssertion { null }
+public typealias KtTypeProjection = KaTypeProjection
+
+public class KaStarTypeProjection(override val token: KaLifetimeToken) : KaTypeProjection() {
+    override val type: KaType? get() = withValidityAssertion { null }
 }
 
-public class KtTypeArgumentWithVariance(
-    type: KtType,
+public typealias KtStarTypeProjection = KaStarTypeProjection
+
+public class KaTypeArgumentWithVariance(
+    type: KaType,
     variance: Variance,
-    override val token: KtLifetimeToken,
-) : KtTypeProjection() {
-    override val type: KtType by validityAsserted(type)
+    override val token: KaLifetimeToken,
+) : KaTypeProjection() {
+    override val type: KaType by validityAsserted(type)
     public val variance: Variance by validityAsserted(variance)
 }
+
+public typealias KtTypeArgumentWithVariance = KaTypeArgumentWithVariance

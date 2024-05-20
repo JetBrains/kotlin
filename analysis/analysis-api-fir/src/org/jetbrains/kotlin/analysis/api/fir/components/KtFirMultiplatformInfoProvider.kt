@@ -5,29 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtMultiplatformInfoProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.components.KaMultiplatformInfoProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
-internal class KtFirMultiplatformInfoProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
-) : KtMultiplatformInfoProvider(), KtFirAnalysisSessionComponent {
-    override fun getExpectForActual(actual: KtDeclarationSymbol): List<KtDeclarationSymbol> {
-        require(actual is KtFirSymbol<*>)
+internal class KaFirMultiplatformInfoProvider(
+    override val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
+) : KaMultiplatformInfoProvider(), KaFirSessionComponent {
+    override fun getExpectForActual(actual: KaDeclarationSymbol): List<KaDeclarationSymbol> {
+        require(actual is KaFirSymbol<*>)
         val firSymbol = actual.firSymbol
         if (firSymbol !is FirCallableSymbol && firSymbol !is FirClassSymbol && firSymbol !is FirTypeAliasSymbol) {
             return emptyList()
         }
 
         return firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)
-            ?.map { analysisSession.firSymbolBuilder.buildSymbol(it) as KtDeclarationSymbol }.orEmpty()
+            ?.map { analysisSession.firSymbolBuilder.buildSymbol(it) as KaDeclarationSymbol }.orEmpty()
     }
 }

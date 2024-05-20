@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.FqName
 /**
  * Provides a list of Kotlin files which contain additional generated declarations for resolution.
  *
- * It is created by [KtResolveExtensionProvider].
+ * It is created by [KaResolveExtensionProvider].
  *
  * All member implementations should:
  * - consider caching the results for subsequent invocations.
@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.name.FqName
  *
  * #### Lifecycle Management
  *
- * A [KtResolveExtension] is tied to the lifetime of its module's analysis session. It is created by [KtResolveExtensionProvider] during
+ * A [KaResolveExtension] is tied to the lifetime of its module's analysis session. It is created by [KaResolveExtensionProvider] during
  * creation of an analysis session, and disposed after the analysis session has been invalidated.
  *
- * [KtResolveExtension] implements the [Disposable] interface. The resolve extension can then act as a parent disposable, e.g. for a message
+ * [KaResolveExtension] implements the [Disposable] interface. The resolve extension can then act as a parent disposable, e.g. for a message
  * bus connection.
  *
- * You *must not* implement [KtResolveExtension]s as module-level services, due to the following reasons:
+ * You *must not* implement [KaResolveExtension]s as module-level services, due to the following reasons:
  *
  * 1. The IntelliJ platform SDK [discourages](https://plugins.jetbrains.com/docs/intellij/plugin-services.html#types) the use of
  *    module-level services due to memory consumption. In particular, resolve extensions implemented as module-level services live longer
@@ -35,32 +35,32 @@ import org.jetbrains.kotlin.name.FqName
  *    session has been invalidated.
  * 2. The module-level service living longer than the analysis session increases the risk of caching invalidated entities in a resolve
  *    extension.
- * 3. Because the [KtResolveExtension] is a [Disposable], if implemented as a module-level service, the service would be disposed too early
+ * 3. Because the [KaResolveExtension] is a [Disposable], if implemented as a module-level service, the service would be disposed too early
  *    during invalidation of the corresponding analysis session.
  *
- * @see KtResolveExtensionFile
- * @see KtResolveExtensionProvider
+ * @see KaResolveExtensionFile
+ * @see KaResolveExtensionProvider
  */
-public abstract class KtResolveExtension : Disposable {
+public abstract class KaResolveExtension : Disposable {
     /**
      * Get the list of files that should be generated for the module. Returned files should contain valid Kotlin code.
      *
      * If the content of these files becomes invalid (e.g., because the source declarations they were based on changed), the
-     * [KtResolveExtension] must publish an out-of-block modification event via the Analysis API message bus:
+     * [KaResolveExtension] must publish an out-of-block modification event via the Analysis API message bus:
      * [org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics.MODULE_OUT_OF_BLOCK_MODIFICATION].
      *
-     * To react to changes in Kotlin sources, [KtResolveExtension] may subscribe to Analysis API topics:
-     * [org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics]. If the [KtResolveExtension] both subscribes to and
-     * publishes modification events, care needs to be taken that no cycles are introduced. In general, the [KtResolveExtension] should
+     * To react to changes in Kotlin sources, [KaResolveExtension] may subscribe to Analysis API topics:
+     * [org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics]. If the [KaResolveExtension] both subscribes to and
+     * publishes modification events, care needs to be taken that no cycles are introduced. In general, the [KaResolveExtension] should
      * never publish an event for a module A in a listener for the same module A.
      *
-     * An out-of-block modification event for the [KtResolveExtension]'s associated module does not need to be published in response to an
+     * An out-of-block modification event for the [KaResolveExtension]'s associated module does not need to be published in response to an
      * out-of-block modification event for the same module, because the original event suffices for invalidation.
      *
-     * @see KtResolveExtensionFile
-     * @see KtResolveExtension
+     * @see KaResolveExtensionFile
+     * @see KaResolveExtension
      */
-    public abstract fun getKtFiles(): List<KtResolveExtensionFile>
+    public abstract fun getKtFiles(): List<KaResolveExtensionFile>
 
     /**
      * Returns the set of packages that are contained in the files provided by [getKtFiles].
@@ -68,7 +68,7 @@ public abstract class KtResolveExtension : Disposable {
      * The returned package set should be a strict set of all file packages,
      * so `for-all pckg: pckg in getContainedPackages() <=> exists file: file in getKtFiles() && file.getFilePackageName() == pckg`
      *
-     * @see KtResolveExtension
+     * @see KaResolveExtension
      */
     public abstract fun getContainedPackages(): Set<FqName>
 
@@ -88,3 +88,5 @@ public abstract class KtResolveExtension : Disposable {
     override fun dispose() {
     }
 }
+
+public typealias KtResolveExtension = KaResolveExtension

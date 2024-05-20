@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -24,14 +24,14 @@ abstract class AbstractBuiltInTypeTest : AbstractTypeTest() {
         }
     }
 
-    override fun getType(analysisSession: KtAnalysisSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KtType {
+    override fun getType(analysisSession: KaSession, ktFile: KtFile, module: KtTestModule, testServices: TestServices): KaType {
         with(analysisSession) {
             val builtInTypeName = module.testModule.directives.singleValue(Directives.BUILTIN_TYPE_NAME)
             val typeMethod = builtinTypes::class.java.methods.singleOrNull {
                 it.name == "get${builtInTypeName.uppercase(Locale.US)}"
             }!!
             typeMethod.isAccessible = true
-            return typeMethod.invoke(builtinTypes) as KtType
+            return typeMethod.invoke(builtinTypes) as KaType
         }
     }
 

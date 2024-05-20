@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.components.KtDiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -20,7 +20,7 @@ abstract class AbstractElementDiagnosticsTest : AbstractAnalysisApiBasedTest() {
         val targetDeclaration = testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(mainFile)
 
         analyze(mainFile) {
-            val diagnostics = targetDeclaration.getDiagnostics(KtDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
+            val diagnostics = targetDeclaration.getDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
 
             val actualText = buildString {
                 if (diagnostics.isNotEmpty()) {

@@ -5,25 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtScriptSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtScriptInitializerRenderer {
+public interface KaScriptInitializerRenderer {
     public fun renderInitializer(
-        analysisSession: KtAnalysisSession,
-        symbol: KtScriptSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaScriptSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object NO_INITIALIZER : KtScriptInitializerRenderer {
+    public object NO_INITIALIZER : KaScriptInitializerRenderer {
         override fun renderInitializer(
-            analysisSession: KtAnalysisSession,
-            symbol: KtScriptSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaScriptSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter
         ) {}
     }
 }
+
+public typealias KtScriptInitializerRenderer = KaScriptInitializerRenderer

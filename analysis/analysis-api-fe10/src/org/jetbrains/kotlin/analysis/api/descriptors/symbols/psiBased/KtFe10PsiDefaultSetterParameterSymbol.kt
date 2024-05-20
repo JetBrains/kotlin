@@ -6,41 +6,41 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10PsiDefaultSetterParameterSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10PsiDefaultSetterParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.createErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.BindingContext
 
-internal class KtFe10PsiDefaultSetterParameterSymbol(
+internal class KaFe10PsiDefaultSetterParameterSymbol(
     private val accessorPsi: KtPropertyAccessor,
     override val analysisContext: Fe10AnalysisContext
-) : KtValueParameterSymbol(), KtFe10Symbol {
+) : KaValueParameterSymbol(), KaFe10Symbol {
     val descriptor: VariableDescriptor? by cached {
         val bindingContext = analysisContext.analyze(accessorPsi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.PROPERTY_ACCESSOR, accessorPsi]?.valueParameters?.single()
     }
 
-    override val origin: KtSymbolOrigin
-        get() = withValidityAssertion { KtSymbolOrigin.SOURCE_MEMBER_GENERATED }
+    override val origin: KaSymbolOrigin
+        get() = withValidityAssertion { KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
 
     override val hasDefaultValue: Boolean
         get() = withValidityAssertion { false }
@@ -57,7 +57,7 @@ internal class KtFe10PsiDefaultSetterParameterSymbol(
     override val isImplicitLambdaParameter: Boolean
         get() = withValidityAssertion { false }
 
-    override val returnType: KtType
+    override val returnType: KaType
         get() = withValidityAssertion { descriptor?.type?.toKtType(analysisContext) ?: createErrorType() }
 
     override val psi: PsiElement?
@@ -66,13 +66,13 @@ internal class KtFe10PsiDefaultSetterParameterSymbol(
     override val name: Name
         get() = withValidityAssertion { descriptor?.name ?: Name.identifier("value") }
 
-    override val annotationsList: KtAnnotationsList
-        get() = withValidityAssertion { KtEmptyAnnotationsList(token) }
+    override val annotationsList: KaAnnotationsList
+        get() = withValidityAssertion { KaEmptyAnnotationsList(token) }
 
-    override fun createPointer(): KtSymbolPointer<KtValueParameterSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromPsi<KtPropertySetterSymbol>(accessorPsi)
-            ?.let(::KtFe10PsiDefaultSetterParameterSymbolPointer)
-            ?: KtFe10NeverRestoringSymbolPointer()
+    override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromPsi<KaPropertySetterSymbol>(accessorPsi)
+            ?.let(::KaFe10PsiDefaultSetterParameterSymbolPointer)
+            ?: KaFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

@@ -5,29 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtBackingFieldSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-internal class KtFirBackingFieldSymbolPointer(
-    private val propertySymbolPointer: KtSymbolPointer<KtKotlinPropertySymbol>,
-) : KtSymbolPointer<KtBackingFieldSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtBackingFieldSymbol? {
-        require(analysisSession is KtFirAnalysisSession)
+internal class KaFirBackingFieldSymbolPointer(
+    private val propertySymbolPointer: KaSymbolPointer<KaKotlinPropertySymbol>,
+) : KaSymbolPointer<KaBackingFieldSymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): KaBackingFieldSymbol? {
+        require(analysisSession is KaFirSession)
         val propertySymbol = with(analysisSession) {
             propertySymbolPointer.restoreSymbol()
         } ?: return null
 
-        check(propertySymbol is KtFirKotlinPropertySymbol)
+        check(propertySymbol is KaFirKotlinPropertySymbol)
         return analysisSession.firSymbolBuilder.variableLikeBuilder.buildBackingFieldSymbolByProperty(propertySymbol.firSymbol)
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFirBackingFieldSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFirBackingFieldSymbolPointer &&
             other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer)
 }

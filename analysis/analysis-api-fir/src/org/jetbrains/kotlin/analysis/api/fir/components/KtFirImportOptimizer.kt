@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizer
-import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizerResult
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.components.KaImportOptimizer
+import org.jetbrains.kotlin.analysis.api.components.KaImportOptimizerResult
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.isImplicitDispatchReceiver
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.fir.FirElement
@@ -57,26 +57,26 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KtFirImportOptimizer(
-    private val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken,
+internal class KaFirImportOptimizer(
+    private val analysisSession: KaFirSession,
+    override val token: KaLifetimeToken,
     private val firResolveSession: LLFirResolveSession
-) : KtImportOptimizer() {
+) : KaImportOptimizer() {
     private val firSession: FirSession
         get() = firResolveSession.useSiteFirSession
 
-    override fun analyseImports(file: KtFile): KtImportOptimizerResult {
+    override fun analyseImports(file: KtFile): KaImportOptimizerResult {
         val existingImports = file.importDirectives
-        if (existingImports.isEmpty()) return KtImportOptimizerResult()
+        if (existingImports.isEmpty()) return KaImportOptimizerResult()
 
         val (usedDeclarations, unresolvedNames) = collectReferencedEntities(file)
 
-        return KtImportOptimizerResult(usedDeclarations, unresolvedNames)
+        return KaImportOptimizerResult(usedDeclarations, unresolvedNames)
     }
 
-    override fun getImportableName(symbol: KtSymbol): FqName? = when (symbol) {
-        is KtClassLikeSymbol -> symbol.classIdIfNonLocal?.asSingleFqName()
-        is KtCallableSymbol -> symbol.firSymbol.computeImportableName(firSession)
+    override fun getImportableName(symbol: KaSymbol): FqName? = when (symbol) {
+        is KaClassLikeSymbol -> symbol.classIdIfNonLocal?.asSingleFqName()
+        is KaCallableSymbol -> symbol.firSymbol.computeImportableName(firSession)
         else -> null
     }
 
@@ -297,10 +297,10 @@ internal class KtFirImportOptimizer(
                 }
             }
 
-            private fun toImportableFqNames(symbol: KtSymbol, qualifiedNameAsFqName: FqName): List<FqName> =
+            private fun toImportableFqNames(symbol: KaSymbol, qualifiedNameAsFqName: FqName): List<FqName> =
                 buildList {
                     when (symbol) {
-                        is KtCallableSymbol -> {
+                        is KaCallableSymbol -> {
                             val callableId = symbol.callableIdIfNonLocal ?: return emptyList()
                             val fqName = callableId.asSingleFqName()
                             val classFqName = callableId.classId?.asSingleFqName()
@@ -312,7 +312,7 @@ internal class KtFirImportOptimizer(
                             } else if (fqName != qualifiedNameAsFqName) {
                                 // or some kind of top level declaration with potential receiver
                                 this += fqName
-                                val receiverClassType = symbol.receiverParameter?.type as? KtNonErrorClassType
+                                val receiverClassType = symbol.receiverParameter?.type as? KaNonErrorClassType
                                 val receiverFqName = receiverClassType?.classId?.asSingleFqName()
                                 // import has no receiver for receiver kdoc declaration:
                                 // for receiver case kdoc like `[Foo.bar]`
@@ -322,7 +322,7 @@ internal class KtFirImportOptimizer(
                                 }
                             }
                         }
-                        is KtClassLikeSymbol -> {
+                        is KaClassLikeSymbol -> {
                             val fqName = symbol.classIdIfNonLocal?.asSingleFqName()
                             if (fqName != null && fqName != qualifiedNameAsFqName) {
                                 this += fqName

@@ -10,7 +10,7 @@ import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import kotlin.reflect.KClass
 
-public class KtAlwaysAccessibleLifetimeToken(project: Project) : KtLifetimeToken() {
+public class KaAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeToken() {
     private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
@@ -31,12 +31,16 @@ public class KtAlwaysAccessibleLifetimeToken(project: Project) : KtLifetimeToken
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
 
-    override val factory: KtLifetimeTokenFactory = KtAlwaysAccessibleLifetimeTokenFactory
+    override val factory: KaLifetimeTokenFactory = KaAlwaysAccessibleLifetimeTokenFactory
 }
 
-public object KtAlwaysAccessibleLifetimeTokenFactory : KtLifetimeTokenFactory() {
-    override val identifier: KClass<out KtLifetimeToken> = KtAlwaysAccessibleLifetimeToken::class
+public typealias KtAlwaysAccessibleLifetimeToken = KaAlwaysAccessibleLifetimeToken
 
-    override fun create(project: Project, modificationTracker: ModificationTracker): KtLifetimeToken =
-        KtAlwaysAccessibleLifetimeToken(project)
+public object KaAlwaysAccessibleLifetimeTokenFactory : KaLifetimeTokenFactory() {
+    override val identifier: KClass<out KaLifetimeToken> = KaAlwaysAccessibleLifetimeToken::class
+
+    override fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken =
+        KaAlwaysAccessibleLifetimeToken(project)
 }
+
+public typealias KtAlwaysAccessibleLifetimeTokenFactory = KaAlwaysAccessibleLifetimeTokenFactory

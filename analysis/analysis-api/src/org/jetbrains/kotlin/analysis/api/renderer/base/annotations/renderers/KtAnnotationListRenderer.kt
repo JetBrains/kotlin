@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtAnnotationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtAnnotationListRenderer {
+public interface KaAnnotationListRenderer {
     public fun renderAnnotations(
-        analysisSession: KtAnalysisSession,
-        owner: KtAnnotated,
-        annotationRenderer: KtAnnotationRenderer,
+        analysisSession: KaSession,
+        owner: KaAnnotated,
+        annotationRenderer: KaAnnotationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object FOR_SOURCE : KtAnnotationListRenderer {
+    public object FOR_SOURCE : KaAnnotationListRenderer {
         override fun renderAnnotations(
-            analysisSession: KtAnalysisSession,
-            owner: KtAnnotated,
-            annotationRenderer: KtAnnotationRenderer,
+            analysisSession: KaSession,
+            owner: KaAnnotated,
+            annotationRenderer: KaAnnotationRenderer,
             printer: PrettyPrinter,
         ) {
             val annotations = owner.annotations
@@ -35,8 +35,8 @@ public interface KtAnnotationListRenderer {
             printer.printCollection(
                 annotations,
                 separator = when (owner) {
-                    is KtValueParameterSymbol -> " "
-                    is KtDeclarationSymbol -> "\n"
+                    is KaValueParameterSymbol -> " "
+                    is KaDeclarationSymbol -> "\n"
                     else -> " "
                 }
             ) { annotation ->
@@ -55,3 +55,4 @@ public interface KtAnnotationListRenderer {
     }
 }
 
+public typealias KtAnnotationListRenderer = KaAnnotationListRenderer

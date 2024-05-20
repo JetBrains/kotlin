@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KtSymbolBasedReference
-import org.jetbrains.kotlin.analysis.api.components.KtReferenceResolveProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.KaSymbolBasedReference
+import org.jetbrains.kotlin.analysis.api.components.KaReferenceResolveProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 
-internal class KtFirReferenceResolveProvider(
-    override val analysisSession: KtFirAnalysisSession
-) : KtReferenceResolveProvider(), KtFirAnalysisSessionComponent {
-    override fun resolveToSymbols(reference: KtReference): Collection<KtSymbol> {
-        check(reference is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference" }
+internal class KaFirReferenceResolveProvider(
+    override val analysisSession: KaFirSession
+) : KaReferenceResolveProvider(), KaFirSessionComponent {
+    override fun resolveToSymbols(reference: KtReference): Collection<KaSymbol> {
+        check(reference is KaSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference" }
         with(reference) {
             return analysisSession.resolveToSymbols()
         }

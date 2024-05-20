@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdePredicateBasedProvider
@@ -47,14 +47,14 @@ internal fun LLFirSession.registerIdeComponents(project: Project) {
 private fun LLFirSession.registerResolveExtensionTool() {
     val resolveExtensionTool = createResolveExtensionTool() ?: return
 
-    // `KtResolveExtension`s are disposables meant to be tied to the lifetime of the `LLFirSession`.
+    // `KaResolveExtension`s are disposables meant to be tied to the lifetime of the `LLFirSession`.
     resolveExtensionTool.extensions.forEach { Disposer.register(requestDisposable(), it) }
 
     register(LLFirResolveExtensionTool::class, resolveExtensionTool)
 }
 
 private fun LLFirSession.createResolveExtensionTool(): LLFirResolveExtensionTool? {
-    val extensions = KtResolveExtensionProvider.provideExtensionsFor(ktModule)
+    val extensions = KaResolveExtensionProvider.provideExtensionsFor(ktModule)
     if (extensions.isEmpty()) return null
     return LLFirNonEmptyResolveExtensionTool(this, extensions)
 }

@@ -9,8 +9,8 @@ package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -44,11 +44,11 @@ import org.jetbrains.kotlin.psi.KtExpression
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal fun convertArgument(argument: Any?, analysisSession: KtFirAnalysisSession): Any? {
+internal fun convertArgument(argument: Any?, analysisSession: KaFirSession): Any? {
     return convertArgument(argument, analysisSession.firSymbolBuilder)
 }
 
-private fun convertArgument(argument: Any?, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: Any?, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return when (argument) {
         null -> null
         is FirRegularClass -> convertArgument(argument, firSymbolBuilder)
@@ -83,107 +83,107 @@ private fun convertArgument(argument: Any?, firSymbolBuilder: KtSymbolByFirBuild
     }
 }
 
-private fun convertArgument(argument: FirRegularClass, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirRegularClass, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(argument.symbol) as KtNamedClassOrObjectSymbol
 }
 
-private fun convertArgument(argument: FirValueParameterSymbol, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirValueParameterSymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.buildSymbol(argument)
 }
 
-private fun convertArgument(argument: FirEnumEntrySymbol, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirEnumEntrySymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.buildSymbol(argument)
 }
 
-private fun convertArgument(argument: FirRegularClassSymbol, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirRegularClassSymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(argument)
 }
 
-private fun convertArgument(argument: FirNamedFunctionSymbol, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirNamedFunctionSymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(argument)
 }
 
-private fun convertArgument(argument: FirPropertySymbol, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirPropertySymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(argument)
 }
 
-private fun convertArgument(argument: FirBackingFieldSymbol, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirBackingFieldSymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(argument.fir.propertySymbol)
 }
 
-private fun convertArgument(argument: FirVariableSymbol<*>, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirVariableSymbol<*>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.variableLikeBuilder.buildVariableLikeSymbol(argument)
 }
 
-private fun convertArgument(argument: FirTypeParameterSymbol, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirTypeParameterSymbol, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(argument)
 }
 
-private fun convertArgument(argument: FirCallableSymbol<*>, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirCallableSymbol<*>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.callableBuilder.buildCallableSymbol(argument)
 }
 
-private fun convertArgument(argument: FirClassSymbol<*>, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirClassSymbol<*>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(argument)
 }
 
-private fun convertArgument(argument: FirClassLikeSymbol<*>, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirClassLikeSymbol<*>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(argument)
 }
 
-private fun convertArgument(argument: FirBasedSymbol<*>, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirBasedSymbol<*>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.buildSymbol(argument)
 }
 
-private fun convertArgument(argument: FirClass, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirClass, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(argument.symbol)
 }
 
-private fun convertArgument(argument: FirTypeParameter, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirTypeParameter, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(argument.symbol)
 }
 
-private fun convertArgument(argument: FirValueParameter, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirValueParameter, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.buildSymbol(argument.symbol)
 }
 
-private fun convertArgument(argument: FirFunction, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirFunction, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.buildSymbol(argument)
 }
 
-private fun convertArgument(argument: FirCallableDeclaration, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirCallableDeclaration, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.callableBuilder.buildCallableSymbol(argument.symbol)
 }
 
-private fun convertArgument(argument: FirMemberDeclaration, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirMemberDeclaration, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.buildSymbol(argument as FirDeclaration)
 }
 
-private fun convertArgument(argument: FirDeclaration, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirDeclaration, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.buildSymbol(argument)
 }
 
-private fun convertArgument(argument: FirQualifiedAccessExpression, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirQualifiedAccessExpression, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return argument.source!!.psi as KtExpression
 }
 
-private fun convertArgument(argument: FirExpression, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirExpression, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return argument.source!!.psi as KtExpression
 }
 
-private fun convertArgument(argument: ConeKotlinType, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: ConeKotlinType, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.typeBuilder.buildKtType(argument)
 }
 
-private fun convertArgument(argument: FirTypeRef, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirTypeRef, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return firSymbolBuilder.typeBuilder.buildKtType(argument)
 }
 
-private fun convertArgument(argument: KtSourceElement, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: KtSourceElement, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return (argument as KtPsiSourceElement).psi
 }
 
-private fun convertArgument(argument: Map<*, *>, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: Map<*, *>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return argument.mapKeys { (key, _) ->
         convertArgument(key, firSymbolBuilder)
     }.mapValues { (_, value) -> 
@@ -191,13 +191,13 @@ private fun convertArgument(argument: Map<*, *>, firSymbolBuilder: KtSymbolByFir
     }
 }
 
-private fun convertArgument(argument: Collection<*>, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: Collection<*>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return argument.map { value ->
         convertArgument(value, firSymbolBuilder)
     }
 }
 
-private fun convertArgument(argument: Pair<*, *>, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: Pair<*, *>, firSymbolBuilder: KaSymbolByFirBuilder): Any? {
     return convertArgument(argument.first, firSymbolBuilder) to convertArgument(argument.second, firSymbolBuilder)
 }
 

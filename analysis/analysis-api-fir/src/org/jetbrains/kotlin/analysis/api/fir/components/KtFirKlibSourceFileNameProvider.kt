@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.KtKlibSourceFileNameProvider
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.components.KaKlibSourceFileNameProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 
-@OptIn(KtAnalysisNonPublicApi::class)
-internal class KtFirKlibSourceFileNameProvider(
-    override val analysisSession: KtFirAnalysisSession,
-) : KtKlibSourceFileNameProvider() {
-    override fun getKlibSourceFileName(declaration: KtDeclarationSymbol): String? {
-        require(declaration is KtFirSymbol<*>)
+@OptIn(KaAnalysisNonPublicApi::class)
+internal class KaFirKlibSourceFileNameProvider(
+    override val analysisSession: KaFirSession,
+) : KaKlibSourceFileNameProvider() {
+    override fun getKlibSourceFileName(declaration: KaDeclarationSymbol): String? {
+        require(declaration is KaFirSymbol<*>)
         val sourceFile = declaration.firSymbol.klibSourceFile ?: return null
         return sourceFile.name
     }

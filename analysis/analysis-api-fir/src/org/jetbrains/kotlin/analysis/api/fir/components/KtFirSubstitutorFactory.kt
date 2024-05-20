@@ -5,34 +5,34 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtSubstitutorBuilder
-import org.jetbrains.kotlin.analysis.api.components.KtSubstitutorFactory
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.fir.types.KtFirGenericSubstitutor
-import org.jetbrains.kotlin.analysis.api.fir.types.KtFirMapBackedSubstitutor
-import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
+import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorBuilder
+import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorFactory
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirGenericSubstitutor
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirMapBackedSubstitutor
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 
-internal class KtFirSubstitutorFactory(
-    override val analysisSession: KtFirAnalysisSession
-) : KtSubstitutorFactory(), KtFirAnalysisSessionComponent {
+internal class KaFirSubstitutorFactory(
+    override val analysisSession: KaFirSession
+) : KaSubstitutorFactory(), KaFirSessionComponent {
 
-    override fun buildSubstitutor(builder: KtSubstitutorBuilder): KtSubstitutor {
-        if (builder.mappings.isEmpty()) return KtSubstitutor.Empty(token)
+    override fun buildSubstitutor(builder: KaSubstitutorBuilder): KaSubstitutor {
+        if (builder.mappings.isEmpty()) return KaSubstitutor.Empty(token)
 
         val firSubstitution = buildMap {
             builder.mappings.forEach { (ktTypeParameterSymbol, ktType) ->
-                check(ktTypeParameterSymbol is KtFirTypeParameterSymbol)
-                check(ktType is KtFirType)
+                check(ktTypeParameterSymbol is KaFirTypeParameterSymbol)
+                check(ktType is KaFirType)
                 put(ktTypeParameterSymbol.firSymbol, ktType.coneType)
             }
         }
 
         return when (val coneSubstitutor = ConeSubstitutorByMap.create(firSubstitution, analysisSession.useSiteSession)) {
-            is ConeSubstitutorByMap -> KtFirMapBackedSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
-            else -> KtFirGenericSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
+            is ConeSubstitutorByMap -> KaFirMapBackedSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
+            else -> KaFirGenericSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
         }
     }
 }

@@ -8,32 +8,32 @@ package org.jetbrains.kotlin.analysis.api.descriptors.types
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
+import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
-import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
+import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.getAbbreviation
 
-internal class KtFe10ClassErrorType(
+internal class KaFe10ClassErrorType(
     override val fe10Type: ErrorType,
     override val analysisContext: Fe10AnalysisContext
-) : KtClassErrorType(), KtFe10Type {
+) : KaClassErrorType(), KaFe10Type {
     init {
         check(fe10Type.kind.isUnresolved) {
             "Expected unresolved ErrorType but ${fe10Type.kind} found for $fe10Type"
         }
     }
 
-    override val qualifiers: List<KtClassTypeQualifier.KtUnresolvedClassTypeQualifier>
+    override val qualifiers: List<KaClassTypeQualifier.KaUnresolvedClassTypeQualifier>
         get() = withValidityAssertion {
             fe10Type.formatParams.first().split('.').map {
-                KtClassTypeQualifier.KtUnresolvedClassTypeQualifier(Name.guessByFirstCharacter(it), emptyList(), token)
+                KaClassTypeQualifier.KaUnresolvedClassTypeQualifier(Name.guessByFirstCharacter(it), emptyList(), token)
             }
         }
 
@@ -42,12 +42,12 @@ internal class KtFe10ClassErrorType(
     override val errorMessage: String
         get() = withValidityAssertion { fe10Type.debugMessage }
 
-    override val candidateClassSymbols: Collection<KtClassLikeSymbol>
+    override val candidateClassSymbols: Collection<KaClassLikeSymbol>
         get() = withValidityAssertion { emptyList() }
 
-    override val nullability: KtTypeNullability
+    override val nullability: KaTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
 
-    override val abbreviatedType: KtUsualClassType?
-        get() = withValidityAssertion { fe10Type.getAbbreviation()?.toKtType(analysisContext) as? KtUsualClassType }
+    override val abbreviatedType: KaUsualClassType?
+        get() = withValidityAssertion { fe10Type.getAbbreviation()?.toKtType(analysisContext) as? KaUsualClassType }
 }

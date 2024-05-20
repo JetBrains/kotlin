@@ -6,30 +6,30 @@
 package org.jetbrains.kotlin.analysis.api.fir.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KDocReference
-import org.jetbrains.kotlin.idea.references.KtFirReference
+import org.jetbrains.kotlin.idea.references.KaFirReference
 import org.jetbrains.kotlin.idea.references.getPsiDeclarations
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 
-internal class KtFirKDocReference(element: KDocName) : KDocReference(element), KtFirReference {
-    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
+internal class KaFirKDocReference(element: KDocName) : KDocReference(element), KaFirReference {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         val fullFqName = generateSequence(element) { it.parent as? KDocName }.last().getQualifiedNameAsFqName()
         val selectedFqName = element.getQualifiedNameAsFqName()
         return KDocReferenceResolver.resolveKdocFqName(analysisSession, selectedFqName, fullFqName, element)
     }
 
     override fun getResolvedToPsi(
-        analysisSession: KtAnalysisSession,
-        referenceTargetSymbols: Collection<KtSymbol>,
+        analysisSession: KaSession,
+        referenceTargetSymbols: Collection<KaSymbol>,
     ): Collection<PsiElement> = with(analysisSession) {
         referenceTargetSymbols.flatMap { symbol ->
             when (symbol) {
-                is KtFirSyntheticJavaPropertySymbol -> listOfNotNull(symbol.javaGetterSymbol.psi, symbol.javaSetterSymbol?.psi)
-                is KtFirSymbol<*> -> getPsiDeclarations(symbol)
+                is KaFirSyntheticJavaPropertySymbol -> listOfNotNull(symbol.javaGetterSymbol.psi, symbol.javaSetterSymbol?.psi)
+                is KaFirSymbol<*> -> getPsiDeclarations(symbol)
                 else -> listOfNotNull(symbol.psi)
             }
         }

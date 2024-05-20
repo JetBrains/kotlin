@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-public abstract class KtScriptSymbol : KtDeclarationSymbol, KtAnnotatedSymbol, KtNamedSymbol, KtSymbolWithMembers {
-    abstract override fun createPointer(): KtSymbolPointer<KtScriptSymbol>
+public abstract class KaScriptSymbol : KaDeclarationSymbol, KaAnnotatedSymbol, KaNamedSymbol, KaSymbolWithMembers {
+    abstract override fun createPointer(): KaSymbolPointer<KaScriptSymbol>
 }
+
+public typealias KtScriptSymbol = KaScriptSymbol

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10AnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10AnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
-internal interface KtFe10DescSymbol<T : DeclarationDescriptor> : KtFe10Symbol, KtFe10AnnotatedSymbol {
+internal interface KaFe10DescSymbol<T : DeclarationDescriptor> : KaFe10Symbol, KaFe10AnnotatedSymbol {
     val descriptor: T
 
     override val annotationsObject: Annotations
@@ -35,6 +35,6 @@ internal interface KtFe10DescSymbol<T : DeclarationDescriptor> : KtFe10Symbol, K
                     ?.findDecompiledDeclaration(analysisContext.resolveSession.project, descriptor, null)
         }
 
-    override val origin: KtSymbolOrigin
+    override val origin: KaSymbolOrigin
         get() = withValidityAssertion { descriptor.getSymbolOrigin(analysisContext) }
 }

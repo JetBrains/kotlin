@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers
 
-import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.renderers.KtContextReceiverLabelRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.renderers.KtContextReceiverListRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.renderers.KaContextReceiverLabelRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.renderers.KaContextReceiverListRenderer
 
-public object KtContextReceiversRendererForSource {
-    public val WITH_LABELS: KtContextReceiversRenderer = KtContextReceiversRenderer {
-        contextReceiverListRenderer = KtContextReceiverListRenderer.AS_SOURCE
-        contextReceiverLabelRenderer = KtContextReceiverLabelRenderer.WITH_LABEL
+public object KaContextReceiversRendererForSource {
+    public val WITH_LABELS: KaContextReceiversRenderer = KaContextReceiversRenderer {
+        contextReceiverListRenderer = KaContextReceiverListRenderer.AS_SOURCE
+        contextReceiverLabelRenderer = KaContextReceiverLabelRenderer.WITH_LABEL
     }
 }
+
+public typealias KtContextReceiversRendererForSource = KaContextReceiversRendererForSource

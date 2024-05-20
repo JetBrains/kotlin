@@ -47,11 +47,11 @@ interface KtFe10Reference : KtReference {
     }
 
 //    TODO: Implement KtSymbolBasedReference and uncomment the following implementation after FE10 analysis API is made available in IDE
-//    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-//        require(this is KtFe10AnalysisSession)
+//    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+//        require(this is KaFe10Session)
 //        val bindingContext = KtFe10ReferenceResolutionHelper.getInstance().partialAnalyze(element)
 //        return getTargetDescriptors(bindingContext).mapNotNull { descriptor ->
-//            descriptor.toKtSymbol(analysisContext)
+//            descriptor.toKaSymbol(analysisContext)
 //        }
 //    }
 }

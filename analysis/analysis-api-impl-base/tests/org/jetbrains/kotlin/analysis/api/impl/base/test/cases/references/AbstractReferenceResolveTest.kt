@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.TestReferenceResolveResultRenderer.renderResolvedTo
-import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KtRendererAnnotationsFilter
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KtPropertyAccessorsRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaRendererAnnotationsFilter
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KaPropertyAccessorsRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -96,11 +96,11 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
         return resolvedTo
     }
 
-    protected open fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KtAnalysisSession.() -> R): R {
+    protected open fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KaSession.() -> R): R {
         return analyseForTest(element) { action() }
     }
 
-    open fun KtAnalysisSession.getAdditionalSymbolInfo(symbol: KtSymbol): String? = null
+    open fun KaSession.getAdditionalSymbolInfo(symbol: KaSymbol): String? = null
 
     private fun findReferencesAtCaret(mainKtFile: KtFile, caretPosition: Int): List<KtReference> =
         mainKtFile.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
@@ -111,11 +111,11 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
         )
     }
 
-    private val renderingOptions = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES.with {
+    private val renderingOptions = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES.with {
         annotationRenderer = annotationRenderer.with {
-            annotationFilter = KtRendererAnnotationsFilter.NONE
+            annotationFilter = KaRendererAnnotationsFilter.NONE
         }
-        propertyAccessorsRenderer = KtPropertyAccessorsRenderer.NONE
+        propertyAccessorsRenderer = KaPropertyAccessorsRenderer.NONE
     }
 
 }

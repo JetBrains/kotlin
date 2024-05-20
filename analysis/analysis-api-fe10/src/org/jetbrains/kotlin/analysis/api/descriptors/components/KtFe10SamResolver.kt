@@ -5,27 +5,26 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtSamResolver
-import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescSamConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.components.KaSamResolver
+import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.JvmSamConversionOracle
 import org.jetbrains.kotlin.resolve.sam.createSamConstructorFunction
 import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 
-internal class KtFe10SamResolver(
-    override val analysisSession: KtFe10AnalysisSession
-) : KtSamResolver(), Fe10KtAnalysisSessionComponent {
-    override val token: KtLifetimeToken
+internal class KaFe10SamResolver(
+    override val analysisSession: KaFe10Session
+) : KaSamResolver(), KaFe10AnalysisSessionComponent {
+    override val token: KaLifetimeToken
         get() = analysisSession.token
 
-    override fun getSamConstructor(ktClassLikeSymbol: KtClassLikeSymbol): KtSamConstructorSymbol?  {
+    override fun getSamConstructor(ktClassLikeSymbol: KaClassLikeSymbol): KaSamConstructorSymbol?  {
         val descriptor = getSymbolDescriptor(ktClassLikeSymbol)
         if (descriptor is ClassDescriptor && getSingleAbstractMethodOrNull(descriptor) != null) {
             val constructorDescriptor = createSamConstructorFunction(
@@ -35,7 +34,7 @@ internal class KtFe10SamResolver(
                 JvmSamConversionOracle(analysisContext.resolveSession.languageVersionSettings)
             )
 
-            return KtFe10DescSamConstructorSymbol(constructorDescriptor, analysisContext)
+            return KaFe10DescSamConstructorSymbol(constructorDescriptor, analysisContext)
         }
 
         return null

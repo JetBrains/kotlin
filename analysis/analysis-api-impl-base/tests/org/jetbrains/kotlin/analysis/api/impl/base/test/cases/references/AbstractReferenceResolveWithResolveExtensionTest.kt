@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extensions.KtResolveExtensionTestSupport
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 abstract class AbstractReferenceResolveWithResolveExtensionTest : AbstractReferenceResolveTest() {
@@ -16,6 +16,6 @@ abstract class AbstractReferenceResolveWithResolveExtensionTest : AbstractRefere
         KtResolveExtensionTestSupport.configure(builder)
     }
 
-    override fun KtAnalysisSession.getAdditionalSymbolInfo(symbol: KtSymbol): String? =
+    override fun KaSession.getAdditionalSymbolInfo(symbol: KaSymbol): String? =
         "origin = ${symbol.origin}"
 }

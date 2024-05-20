@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KtAlwaysAccessibleLifetimeTokenFactory
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.lifetime.KaAlwaysAccessibleLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenProvider
 
-@OptIn(KtAnalysisApiInternals::class)
-public class KtAlwaysAccessibleLifetimeTokenProvider : KtLifetimeTokenProvider() {
-    override fun getLifetimeTokenFactory(): KtLifetimeTokenFactory {
-        return KtAlwaysAccessibleLifetimeTokenFactory
+@OptIn(KaAnalysisApiInternals::class)
+public class KaAlwaysAccessibleLifetimeTokenProvider : KaLifetimeTokenProvider() {
+    override fun getLifetimeTokenFactory(): KaLifetimeTokenFactory {
+        return KaAlwaysAccessibleLifetimeTokenFactory
     }
 }
+
+public typealias KtAlwaysAccessibleLifetimeTokenProvider = KaAlwaysAccessibleLifetimeTokenProvider

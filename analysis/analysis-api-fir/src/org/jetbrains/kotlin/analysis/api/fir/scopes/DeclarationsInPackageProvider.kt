@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.file.PsiPackageImpl
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.providers.impl.forEachNonKotlinPsiElementFinder
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
  */
 @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
 internal object DeclarationsInPackageProvider {
-    internal fun getTopLevelClassifierNamesInPackageProvider(packageFqName: FqName, analysisSession: KtFirAnalysisSession): Set<Name> {
+    internal fun getTopLevelClassifierNamesInPackageProvider(packageFqName: FqName, analysisSession: KaFirSession): Set<Name> {
         return buildSet {
             addAll(
                 analysisSession.symbolNamesProvider.getTopLevelClassifierNamesInPackage(packageFqName)
@@ -58,7 +58,7 @@ internal object DeclarationsInPackageProvider {
         }
     }
 
-    internal fun getTopLevelCallableNamesInPackageProvider(packageFqName: FqName, analysisSession: KtFirAnalysisSession): Set<Name> {
+    internal fun getTopLevelCallableNamesInPackageProvider(packageFqName: FqName, analysisSession: KaFirSession): Set<Name> {
         return buildSet {
             addAll(
                 analysisSession.symbolNamesProvider.getTopLevelCallableNamesInPackage(packageFqName)
@@ -68,7 +68,7 @@ internal object DeclarationsInPackageProvider {
         }
     }
 
-    private val KtFirAnalysisSession.symbolNamesProvider: FirSymbolNamesProvider
+    private val KaFirSession.symbolNamesProvider: FirSymbolNamesProvider
         get() = useSiteSession.symbolProvider.symbolNamesProvider
 
     private fun collectGeneratedTopLevelClassifiers(packageFqName: FqName, session: FirSession): Set<Name> {

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.signatures
 
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 internal interface FirSymbolBasedSignature {
     val firSymbol: FirCallableSymbol<*>
-    val firSymbolBuilder: KtSymbolByFirBuilder
+    val firSymbolBuilder: KaSymbolByFirBuilder
 }

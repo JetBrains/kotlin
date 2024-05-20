@@ -5,43 +5,43 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractMemberScopeTestBase : AbstractScopeTestBase() {
-    abstract fun KtAnalysisSession.getScope(symbol: KtSymbolWithMembers): KtScope
+    abstract fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope
 
-    final override fun KtAnalysisSession.getScope(mainFile: KtFile, testServices: TestServices): KtScope =
-        getScope(getSingleTestTargetSymbolOfType<KtSymbolWithMembers>(mainFile, testDataPath))
+    final override fun KaSession.getScope(mainFile: KtFile, testServices: TestServices): KaScope =
+        getScope(getSingleTestTargetSymbolOfType<KaSymbolWithMembers>(mainFile, testDataPath))
 }
 
 abstract class AbstractMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KtAnalysisSession.getScope(symbol: KtSymbolWithMembers): KtScope = symbol.getMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getMemberScope()
 }
 
 abstract class AbstractStaticMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KtAnalysisSession.getScope(symbol: KtSymbolWithMembers): KtScope = symbol.getStaticMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getStaticMemberScope()
 }
 
 abstract class AbstractDeclaredMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KtAnalysisSession.getScope(symbol: KtSymbolWithMembers): KtScope = symbol.getDeclaredMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getDeclaredMemberScope()
 }
 
 abstract class AbstractStaticDeclaredMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KtAnalysisSession.getScope(symbol: KtSymbolWithMembers): KtScope = symbol.getStaticDeclaredMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getStaticDeclaredMemberScope()
 }
 
 abstract class AbstractCombinedDeclaredMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KtAnalysisSession.getScope(symbol: KtSymbolWithMembers): KtScope = symbol.getCombinedDeclaredMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getCombinedDeclaredMemberScope()
 }
 
 abstract class AbstractDelegateMemberScopeTest : AbstractMemberScopeTestBase() {
-    override fun KtAnalysisSession.getScope(symbol: KtSymbolWithMembers): KtScope = symbol.getDelegatedMemberScope()
+    override fun KaSession.getScope(symbol: KaSymbolWithMembers): KaScope = symbol.getDelegatedMemberScope()
 
-    override fun KtAnalysisSession.getSymbolsFromScope(scope: KtScope): Sequence<KtDeclarationSymbol> = scope.getCallableSymbols()
+    override fun KaSession.getSymbolsFromScope(scope: KaScope): Sequence<KaDeclarationSymbol> = scope.getCallableSymbols()
 }

@@ -9,9 +9,9 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiReferenceList
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -44,9 +44,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
     constructor(
-        ktAnalysisSession: KtAnalysisSession,
+        ktAnalysisSession: KaSession,
         ktModule: KtModule,
-        classOrObjectSymbol: KtNamedClassOrObjectSymbol,
+        classOrObjectSymbol: KaNamedClassOrObjectSymbol,
         manager: PsiManager,
     ) : super(
         ktAnalysisSession = ktAnalysisSession,
@@ -54,7 +54,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         classOrObjectSymbol = classOrObjectSymbol,
         manager = manager,
     ) {
-        require(classOrObjectSymbol.classKind != KtClassKind.INTERFACE && classOrObjectSymbol.classKind != KtClassKind.ANNOTATION_CLASS)
+        require(classOrObjectSymbol.classKind != KaClassKind.INTERFACE && classOrObjectSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
     }
 
     constructor(
@@ -71,7 +71,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
+        classOrObjectSymbolPointer: KaSymbolPointer<KaNamedClassOrObjectSymbol>,
         ktModule: KtModule,
         manager: PsiManager,
     ) : super(
@@ -117,24 +117,24 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             val visibleDeclarations = declaredMemberScope.getCallableSymbols()
                 .applyIf(classKind().isObject) {
                     filterNot {
-                        it is KtKotlinPropertySymbol && it.isConst
+                        it is KaKotlinPropertySymbol && it.isConst
                     }
                 }.applyIf(classOrObjectSymbol.isData) {
                     // Technically, synthetic members of `data` class, such as `componentN` or `copy`, are visible.
                     // They're just needed to be added later (to be in a backward-compatible order of members).
                     filterNot { function ->
-                        function is KtFunctionSymbol && function.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED
+                        function is KaFunctionSymbol && function.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED
                     }
                 }.applyIf(isEnum && isEnumEntriesDisabled()) {
                     filterNot {
-                        it is KtKotlinPropertySymbol && it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED && it.name == StandardNames.ENUM_ENTRIES
+                        it is KaKotlinPropertySymbol && it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED && it.name == StandardNames.ENUM_ENTRIES
                     }
                 }
                 .filterNot {
                     it.hasTypeForValueClassInSignature()
                 }
 
-            val suppressStatic = classKind() == KtClassKind.COMPANION_OBJECT
+            val suppressStatic = classKind() == KaClassKind.COMPANION_OBJECT
             createMethods(visibleDeclarations, result, suppressStatic = suppressStatic)
 
             createConstructors(declaredMemberScope.getConstructors(), result)
@@ -155,16 +155,16 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             ?.supportsFeature(LanguageFeature.EnumEntries) != true
     }
 
-    context(KtAnalysisSession)
-    private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
+    context(KaSession)
+    private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>, classOrObjectSymbol: KaNamedClassOrObjectSymbol) {
         if (!classOrObjectSymbol.isData) return
 
-        fun createMethodFromAny(ktFunctionSymbol: KtFunctionSymbol) {
+        fun createMethodFromAny(ktFunctionSymbol: KaFunctionSymbol) {
             // Similar to `copy`, synthetic members from `Any` should refer to `data` class as origin, not the function in `Any`.
             val lightMemberOrigin = classOrObjectDeclaration?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.OTHER) }
             result.add(
                 SymbolLightSimpleMethod(
-                    ktAnalysisSession = this@KtAnalysisSession,
+                    ktAnalysisSession = this@KaSession,
                     ktFunctionSymbol,
                     lightMemberOrigin,
                     this,
@@ -179,8 +179,8 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         // That's why we use declared scope for 'component*' and 'copy', and member scope for 'equals/hashCode/toString'
         val componentAndCopyFunctions = classOrObjectSymbol.getDeclaredMemberScope()
             .getCallableSymbols { name -> DataClassResolver.isCopy(name) || DataClassResolver.isComponentLike(name) }
-            .filter { it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED }
-            .filterIsInstance<KtFunctionSymbol>()
+            .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
+            .filterIsInstance<KaFunctionSymbol>()
 
         createMethods(componentAndCopyFunctions, result)
 
@@ -188,8 +188,8 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         // We want to mimic that.
         val generatedFunctionsFromAny = classOrObjectSymbol.getMemberScope()
             .getCallableSymbols(EQUALS, HASHCODE_NAME, TO_STRING)
-            .filterIsInstance<KtFunctionSymbol>()
-            .filter { it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED }
+            .filterIsInstance<KaFunctionSymbol>()
+            .filter { it.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED }
 
         val functionsFromAnyByName = generatedFunctionsFromAny.associateBy { it.name }
 
@@ -199,14 +199,14 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it) }
     }
 
-    context(KtAnalysisSession)
-    private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
-        fun createDelegateMethod(ktFunctionSymbol: KtFunctionSymbol) {
+    context(KaSession)
+    private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>, classOrObjectSymbol: KaNamedClassOrObjectSymbol) {
+        fun createDelegateMethod(ktFunctionSymbol: KaFunctionSymbol) {
             val kotlinOrigin = ktFunctionSymbol.psiSafe<KtDeclaration>() ?: classOrObjectDeclaration
             val lightMemberOrigin = kotlinOrigin?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.DELEGATION) }
             result.add(
                 SymbolLightSimpleMethod(
-                    ktAnalysisSession = this@KtAnalysisSession,
+                    ktAnalysisSession = this@KaSession,
                     ktFunctionSymbol,
                     lightMemberOrigin,
                     this,
@@ -219,7 +219,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         }
 
         classOrObjectSymbol.getDelegatedMemberScope().getCallableSymbols().forEach { functionSymbol ->
-            if (functionSymbol is KtFunctionSymbol) {
+            if (functionSymbol is KaFunctionSymbol) {
                 createDelegateMethod(functionSymbol)
             }
         }
@@ -247,13 +247,13 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         }
     }
 
-    context(KtAnalysisSession)
-    private fun addInstanceFieldIfNeeded(result: MutableList<KtLightField>, namedClassOrObjectSymbol: KtNamedClassOrObjectSymbol) {
-        if (classKind() != KtClassKind.OBJECT || isLocal) return
+    context(KaSession)
+    private fun addInstanceFieldIfNeeded(result: MutableList<KtLightField>, namedClassOrObjectSymbol: KaNamedClassOrObjectSymbol) {
+        if (classKind() != KaClassKind.OBJECT || isLocal) return
 
         result.add(
             SymbolLightFieldForObject(
-                ktAnalysisSession = this@KtAnalysisSession,
+                ktAnalysisSession = this@KaSession,
                 objectSymbol = namedClassOrObjectSymbol,
                 containingClass = this,
                 name = JvmAbi.INSTANCE_FIELD,
@@ -263,12 +263,12 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         )
     }
 
-    context(KtAnalysisSession)
-    private fun addFieldsForEnumEntries(result: MutableList<KtLightField>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {
+    context(KaSession)
+    private fun addFieldsForEnumEntries(result: MutableList<KtLightField>, classOrObjectSymbol: KaNamedClassOrObjectSymbol) {
         if (!isEnum) return
 
         classOrObjectSymbol.getStaticDeclaredMemberScope().getCallableSymbols()
-            .filterIsInstance<KtEnumEntrySymbol>()
+            .filterIsInstance<KaEnumEntrySymbol>()
             .mapNotNullTo(result) {
                 val enumEntry = it.sourcePsiSafe<KtEnumEntry>()
                 val name = enumEntry?.name ?: return@mapNotNullTo null
@@ -282,16 +282,16 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
     override fun isInterface(): Boolean = false
     override fun isAnnotationType(): Boolean = false
-    override fun classKind(): KtClassKind = _classKind
+    override fun classKind(): KaClassKind = _classKind
 
-    private val _classKind: KtClassKind by lazyPub {
+    private val _classKind: KaClassKind by lazyPub {
         when (classOrObjectDeclaration) {
             is KtObjectDeclaration -> {
-                if (classOrObjectDeclaration.isCompanion()) KtClassKind.COMPANION_OBJECT else KtClassKind.OBJECT
+                if (classOrObjectDeclaration.isCompanion()) KaClassKind.COMPANION_OBJECT else KaClassKind.OBJECT
             }
 
             is KtClass -> {
-                if (classOrObjectDeclaration.isEnum()) KtClassKind.ENUM_CLASS else KtClassKind.CLASS
+                if (classOrObjectDeclaration.isEnum()) KaClassKind.ENUM_CLASS else KaClassKind.CLASS
             }
 
             else -> withClassOrObjectSymbol { it.classKind }

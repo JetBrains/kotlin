@@ -9,19 +9,19 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.analysis.api.fir.getCalleeSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 
-class KtFirDestructuringDeclarationReference(
+class KaFirDestructuringDeclarationReference(
     element: KtDestructuringDeclarationEntry
-) : KtDestructuringDeclarationReference(element), KtFirReference {
+) : KtDestructuringDeclarationReference(element), KaFirReference {
     override fun canRename(): Boolean = false //todo
 
-    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        check(this is KtFirAnalysisSession)
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+        check(this is KaFirSession)
         val fir = expression.getOrBuildFirSafe<FirProperty>(firResolveSession) ?: return emptyList()
         return listOfNotNull(
             fir.buildSymbol(firSymbolBuilder),
@@ -29,7 +29,7 @@ class KtFirDestructuringDeclarationReference(
         )
     }
 
-    private fun KtFirAnalysisSession.getComponentNSymbol(fir: FirProperty): KtSymbol? {
+    private fun KaFirSession.getComponentNSymbol(fir: FirProperty): KaSymbol? {
         val componentFunctionSymbol = (fir.initializer as? FirComponentCall)?.getCalleeSymbol() ?: return null
         return componentFunctionSymbol.fir.buildSymbol(firSymbolBuilder)
     }

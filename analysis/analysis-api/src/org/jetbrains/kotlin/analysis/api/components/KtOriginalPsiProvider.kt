@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
-public abstract class KtOriginalPsiProvider : KtAnalysisSessionComponent() {
+public abstract class KaOriginalPsiProvider : KaAnalysisSessionComponent() {
     public abstract fun getOriginalDeclaration(declaration: KtDeclaration): KtDeclaration?
     public abstract fun getOriginalKtFile(file: KtFile): KtFile?
 
@@ -17,7 +17,9 @@ public abstract class KtOriginalPsiProvider : KtAnalysisSessionComponent() {
     public abstract fun recordOriginalKtFile(fakeFile: KtFile, originalFile: KtFile)
 }
 
-public interface KtOriginalPsiProviderMixIn : KtAnalysisSessionMixIn {
+public typealias KtOriginalPsiProvider = KaOriginalPsiProvider
+
+public interface KaOriginalPsiProviderMixIn : KaAnalysisSessionMixIn {
     /**
      * If [KtDeclaration] is a non-local declaration in a fake file analyzed in dependent session, returns the original declaration
      * for [this]. Otherwise, returns `null`.
@@ -45,3 +47,5 @@ public interface KtOriginalPsiProviderMixIn : KtAnalysisSessionMixIn {
         withValidityAssertion { analysisSession.originalPsiProvider.recordOriginalKtFile(this, file) }
     }
 }
+
+public typealias KtOriginalPsiProviderMixIn = KaOriginalPsiProviderMixIn

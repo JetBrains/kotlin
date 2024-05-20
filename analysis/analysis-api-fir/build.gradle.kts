@@ -78,7 +78,7 @@ allprojects {
         compilerOptions.optIn.addAll(
             listOf(
                 "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
-                "org.jetbrains.kotlin.analysis.api.lifetime.KtAllowProhibitedAnalyzeFromWriteAction"
+                "org.jetbrains.kotlin.analysis.api.lifetime.KaAllowProhibitedAnalyzeFromWriteAction"
             )
         )
     }
@@ -113,5 +113,5 @@ compileKotlin.dependsOn(generateCode)
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals")
+    compilerOptions.optIn.add("org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals")
 }

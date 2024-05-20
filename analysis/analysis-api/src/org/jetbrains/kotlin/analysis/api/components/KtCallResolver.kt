@@ -5,22 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
-import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.calls.KaCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.calls.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtElement
 
-public abstract class KtCallResolver : KtAnalysisSessionComponent() {
-    public abstract fun resolveCall(psi: KtElement): KtCallInfo?
+public abstract class KaCallResolver : KaAnalysisSessionComponent() {
+    public abstract fun resolveCall(psi: KtElement): KaCallInfo?
 
-    public abstract fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo>
+    public abstract fun collectCallCandidates(psi: KtElement): List<KaCallCandidateInfo>
 }
 
-@OptIn(KtAnalysisApiInternals::class)
-public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
+public typealias KtCallResolver = KaCallResolver
 
-    public fun KtElement.resolveCall(): KtCallInfo? =
+@OptIn(KaAnalysisApiInternals::class)
+public interface KaCallResolverMixIn : KaAnalysisSessionMixIn {
+
+    public fun KtElement.resolveCall(): KaCallInfo? =
         withValidityAssertion { analysisSession.callResolver.resolveCall(this) }
 
     /**
@@ -30,6 +32,8 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
      * [resolveCall] only returns the final result of overload resolution, i.e., the selected callable after considering candidate
      * applicability and choosing the most specific candidate.
      */
-    public fun KtElement.collectCallCandidates(): List<KtCallCandidateInfo> =
+    public fun KtElement.collectCallCandidates(): List<KaCallCandidateInfo> =
         withValidityAssertion { analysisSession.callResolver.collectCallCandidates(this) }
 }
+
+public typealias KtCallResolverMixIn = KaCallResolverMixIn

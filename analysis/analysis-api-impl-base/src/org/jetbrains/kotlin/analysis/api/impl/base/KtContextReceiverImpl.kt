@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.Name
 
-@KtAnalysisApiInternals
-class KtContextReceiverImpl(
-    type: KtType,
+@KaAnalysisApiInternals
+class KaContextReceiverImpl(
+    type: KaType,
     label: Name?,
-    override val token: KtLifetimeToken
-) : KtContextReceiver() {
+    override val token: KaLifetimeToken
+) : KaContextReceiver() {
     override val label: Name? by validityAsserted(label)
-    override val type: KtType by validityAsserted(type)
+    override val type: KaType by validityAsserted(type)
 }

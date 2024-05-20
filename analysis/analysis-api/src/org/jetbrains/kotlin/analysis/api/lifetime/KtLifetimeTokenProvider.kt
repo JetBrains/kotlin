@@ -6,22 +6,28 @@
 package org.jetbrains.kotlin.analysis.api.lifetime
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 
-@KtAnalysisApiInternals
-public abstract class KtLifetimeTokenProvider {
-    public abstract fun getLifetimeTokenFactory(): KtLifetimeTokenFactory
+@KaAnalysisApiInternals
+public abstract class KaLifetimeTokenProvider {
+    public abstract fun getLifetimeTokenFactory(): KaLifetimeTokenFactory
 
     public companion object {
-        @KtAnalysisApiInternals
-        public fun getService(project: Project): KtLifetimeTokenProvider =
-            project.getService(KtLifetimeTokenProvider::class.java)
+        @KaAnalysisApiInternals
+        public fun getService(project: Project): KaLifetimeTokenProvider =
+            project.getService(KaLifetimeTokenProvider::class.java)
     }
 }
 
-@KtAnalysisApiInternals
-public class KtReadActionConfinementLifetimeTokenProvider : KtLifetimeTokenProvider() {
-    override fun getLifetimeTokenFactory(): KtLifetimeTokenFactory {
-        return KtReadActionConfinementLifetimeTokenFactory
+@KaAnalysisApiInternals
+public typealias KtLifetimeTokenProvider = KaLifetimeTokenProvider
+
+@KaAnalysisApiInternals
+public class KaReadActionConfinementLifetimeTokenProvider : KaLifetimeTokenProvider() {
+    override fun getLifetimeTokenFactory(): KaLifetimeTokenFactory {
+        return KaReadActionConfinementLifetimeTokenFactory
     }
 }
+
+@KaAnalysisApiInternals
+public typealias KtReadActionConfinementLifetimeTokenProvider = KaReadActionConfinementLifetimeTokenProvider

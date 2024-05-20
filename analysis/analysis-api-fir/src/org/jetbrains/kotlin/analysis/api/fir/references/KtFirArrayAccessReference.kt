@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 
-class KtFirArrayAccessReference(
+class KaFirArrayAccessReference(
     expression: KtArrayAccessExpression
-) : KtArrayAccessReference(expression), KtFirReference {
-    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
-        check(this is KtFirAnalysisSession)
+) : KtArrayAccessReference(expression), KaFirReference {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+        check(this is KaFirSession)
         val fir = element.getOrBuildFir(firResolveSession) ?: return emptyList()
         return when (fir) {
             is FirFunctionCall -> fir.getCandidateSymbols().map { it.fir.buildSymbol(firSymbolBuilder) }

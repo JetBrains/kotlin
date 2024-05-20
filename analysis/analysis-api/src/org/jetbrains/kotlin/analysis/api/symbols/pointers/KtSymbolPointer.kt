@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.utils.relfection.renderAsDataClassToString
 
 /**
- * `KtSymbol` is valid only during read action it was created in
+ * [KaSymbol] is valid only during read action it was created in
  * To pass the symbol from one read action to another the KtSymbolPointer should be used
  *
  * We can restore the symbol
@@ -22,37 +22,39 @@ import org.jetbrains.kotlin.analysis.utils.relfection.renderAsDataClassToString
  *    * for class & type alias symbols if its qualified name was not changed
  *    * for package symbol if the package is still exists
  *
- * @see org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetimeToken
+ * @see org.jetbrains.kotlin.analysis.api.lifetime.KaReadActionConfinementLifetimeToken
  */
-public abstract class KtSymbolPointer<out S : KtSymbol> {
+public abstract class KaSymbolPointer<out S : KaSymbol> {
     /**
      * @return restored symbol (possibly the new symbol instance) if one is still valid, `null` otherwise
      *
-     * Consider using [org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol]
+     * Consider using [org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol]
      */
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    public abstract fun restoreSymbol(analysisSession: KtAnalysisSession): S?
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    public abstract fun restoreSymbol(analysisSession: KaSession): S?
 
     /**
      * @return **true** if [other] pointer can be restored to the same symbol. The operation is symmetric and transitive.
      */
-    public open fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other
+    public open fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other
 
     override fun toString(): String = renderAsDataClassToString()
 }
 
-public inline fun <S : KtSymbol> symbolPointer(crossinline getSymbol: (KtAnalysisSession) -> S?): KtSymbolPointer<S> =
-    object : KtSymbolPointer<S>() {
-        @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-        override fun restoreSymbol(analysisSession: KtAnalysisSession): S? = getSymbol(analysisSession)
+public typealias KtSymbolPointer<S> = KaSymbolPointer<S>
+
+public inline fun <S : KaSymbol> symbolPointer(crossinline getSymbol: (KaSession) -> S?): KaSymbolPointer<S> =
+    object : KaSymbolPointer<S>() {
+        @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+        override fun restoreSymbol(analysisSession: KaSession): S? = getSymbol(analysisSession)
     }
 
-public inline fun <T : KtSymbol, R : KtSymbol> symbolPointerDelegator(
-    pointer: KtSymbolPointer<T>,
-    crossinline transformer: KtAnalysisSession.(T) -> R?,
-): KtSymbolPointer<R> = object : KtSymbolPointer<R>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): R? = with(analysisSession) {
+public inline fun <T : KaSymbol, R : KaSymbol> symbolPointerDelegator(
+    pointer: KaSymbolPointer<T>,
+    crossinline transformer: KaSession.(T) -> R?,
+): KaSymbolPointer<R> = object : KaSymbolPointer<R>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): R? = with(analysisSession) {
         val symbol = pointer.restoreSymbol() ?: return null
         transformer(this, symbol)
     }

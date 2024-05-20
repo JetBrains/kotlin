@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForSource
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtExpandedTypeRenderingMode
-import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSource
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingMode
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.psi.KtFile
@@ -26,7 +26,7 @@ abstract class AbstractSealedInheritorsTest : AbstractAnalysisApiBasedTest() {
      */
     protected fun doTestByKtFile(ktFile: KtFile, testServices: TestServices) {
         analyseForTest(ktFile) {
-            val classSymbol = getSingleTestTargetSymbolOfType<KtNamedClassOrObjectSymbol>(ktFile, testDataPath)
+            val classSymbol = getSingleTestTargetSymbolOfType<KaNamedClassOrObjectSymbol>(ktFile, testDataPath)
 
             val actualText = classSymbol.getSealedClassInheritors().joinToString("\n\n") { inheritor ->
                 // Render sealed inheritor supertypes as fully expanded types to avoid discrepancies between Standalone and IDE mode.
@@ -46,9 +46,9 @@ abstract class AbstractSealedInheritorsTest : AbstractAnalysisApiBasedTest() {
                 //    `A`'s supertype is `T`.
                 //
                 // We want to render `class A : C()` in both cases, so we need to expand the type alias.
-                val declarationRenderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
-                    typeRenderer = KtTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
-                        expandedTypeRenderingMode = KtExpandedTypeRenderingMode.RENDER_EXPANDED_TYPE
+                val declarationRenderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
+                    typeRenderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
+                        expandedTypeRenderingMode = KaExpandedTypeRenderingMode.RENDER_EXPANDED_TYPE
                     }
                 }
 

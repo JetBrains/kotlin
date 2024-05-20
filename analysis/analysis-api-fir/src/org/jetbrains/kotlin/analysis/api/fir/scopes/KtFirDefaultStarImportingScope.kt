@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirDefaultStarImportingScope(
+internal class KaFirDefaultStarImportingScope(
     firScope: FirDefaultStarImportingScope,
-    analysisSession: KtFirAnalysisSession,
-) : KtFirBasedScope<FirDefaultStarImportingScope>(firScope, analysisSession.firSymbolBuilder) {
+    analysisSession: KaFirSession,
+) : KaFirBasedScope<FirDefaultStarImportingScope>(firScope, analysisSession.firSymbolBuilder) {
 
-    private val firstWrappedScope = KtFirStarImportingScope(firScope.first, analysisSession)
-    private val secondWrappedScope = KtFirStarImportingScope(firScope.second, analysisSession)
+    private val firstWrappedScope = KaFirStarImportingScope(firScope.first, analysisSession)
+    private val secondWrappedScope = KaFirStarImportingScope(firScope.second, analysisSession)
 
-    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
         emptySequence()
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
+    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion { emptySequence() }
 
     override fun getPossibleCallableNames(): Set<Name> = buildSet {
         addAll(firstWrappedScope.getPossibleCallableNames())

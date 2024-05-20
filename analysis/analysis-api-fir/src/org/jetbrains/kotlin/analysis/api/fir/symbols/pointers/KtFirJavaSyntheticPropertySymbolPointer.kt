@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSyntheticJavaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSyntheticJavaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
@@ -20,15 +20,15 @@ import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirJavaSyntheticPropertySymbolPointer(
-    ownerPointer: KtSymbolPointer<KtSymbolWithMembers>,
+internal class KaFirJavaSyntheticPropertySymbolPointer(
+    ownerPointer: KaSymbolPointer<KaSymbolWithMembers>,
     private val propertyName: Name,
     private val isSynthetic: Boolean,
-) : KtFirMemberSymbolPointer<KtSyntheticJavaPropertySymbol>(ownerPointer) {
-    override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
+) : KaFirMemberSymbolPointer<KaSyntheticJavaPropertySymbol>(ownerPointer) {
+    override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession,
-    ): KtSyntheticJavaPropertySymbol? {
+    ): KaSyntheticJavaPropertySymbol? {
         val syntheticProperty = candidates.getProperties(propertyName)
             .mapNotNull { it.fir as? FirSyntheticProperty }
             .singleOrNull()
@@ -37,7 +37,7 @@ internal class KtFirJavaSyntheticPropertySymbolPointer(
         return firSymbolBuilder.variableLikeBuilder.buildSyntheticJavaPropertySymbol(syntheticProperty.symbol)
     }
 
-    override fun getSearchScope(analysisSession: KtFirAnalysisSession, owner: FirClassSymbol<*>): FirScope? {
+    override fun getSearchScope(analysisSession: KaFirSession, owner: FirClassSymbol<*>): FirScope? {
         val baseScope = super.getSearchScope(analysisSession, owner) as? FirTypeScope ?: return null
         return if (isSynthetic) {
             FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
@@ -50,8 +50,8 @@ internal class KtFirJavaSyntheticPropertySymbolPointer(
         }
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFirJavaSyntheticPropertySymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFirJavaSyntheticPropertySymbolPointer &&
             other.propertyName == propertyName &&
             other.isSynthetic == isSynthetic &&
             hasTheSameOwner(other)

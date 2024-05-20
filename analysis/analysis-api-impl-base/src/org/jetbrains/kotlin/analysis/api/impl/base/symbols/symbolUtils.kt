@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.symbols
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 
-@KtAnalysisApiInternals
-fun ClassKind.toKtClassKind(isCompanionObject: Boolean): KtClassKind = when (this) {
-    ClassKind.INTERFACE -> KtClassKind.INTERFACE
-    ClassKind.ENUM_CLASS -> KtClassKind.ENUM_CLASS
-    ClassKind.ANNOTATION_CLASS -> KtClassKind.ANNOTATION_CLASS
-    ClassKind.CLASS -> KtClassKind.CLASS
-    ClassKind.OBJECT -> if (isCompanionObject) KtClassKind.COMPANION_OBJECT else KtClassKind.OBJECT
+@KaAnalysisApiInternals
+fun ClassKind.toKtClassKind(isCompanionObject: Boolean): KaClassKind = when (this) {
+    ClassKind.INTERFACE -> KaClassKind.INTERFACE
+    ClassKind.ENUM_CLASS -> KaClassKind.ENUM_CLASS
+    ClassKind.ANNOTATION_CLASS -> KaClassKind.ANNOTATION_CLASS
+    ClassKind.CLASS -> KaClassKind.CLASS
+    ClassKind.OBJECT -> if (isCompanionObject) KaClassKind.COMPANION_OBJECT else KaClassKind.OBJECT
     ClassKind.ENUM_ENTRY -> invalidEnumEntryAsClassKind()
 }
 
-@KtAnalysisApiInternals
+@KaAnalysisApiInternals
 fun invalidEnumEntryAsClassKind(): Nothing {
     error("KtClassKind is not applicable for enum entry, as enum entry is a callable, not a classifier")
 }

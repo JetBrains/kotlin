@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -33,12 +33,12 @@ fun isSubClassOf(subClass: FirClass, superClass: FirClass, useSiteSession: FirSe
 }
 
 /**
- * @see org.jetbrains.kotlin.analysis.api.types.KtType.abbreviatedType
+ * @see org.jetbrains.kotlin.analysis.api.types.KaType.abbreviatedType
  */
-internal fun KtSymbolByFirBuilder.buildAbbreviatedType(coneType: ConeClassLikeType): KtUsualClassType? {
+internal fun KaSymbolByFirBuilder.buildAbbreviatedType(coneType: ConeClassLikeType): KaUsualClassType? {
     return coneType.abbreviatedType?.let { abbreviatedConeType ->
         // If the resulting type is an error type, the abbreviated type couldn't be resolved. As per the contract of
-        // `KtType.abbreviatedType`, we should return `null` in such cases. The user can then fall back to the expanded type.
-        typeBuilder.buildKtType(abbreviatedConeType) as? KtUsualClassType
+        // `KaType.abbreviatedType`, we should return `null` in such cases. The user can then fall back to the expanded type.
+        typeBuilder.buildKtType(abbreviatedConeType) as? KaUsualClassType
     }
 }

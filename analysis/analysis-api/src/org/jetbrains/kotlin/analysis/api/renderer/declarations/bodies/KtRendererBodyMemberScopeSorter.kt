@@ -5,25 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.bodies
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
 
-public interface KtRendererBodyMemberScopeSorter {
+public interface KaRendererBodyMemberScopeSorter {
     public fun sortMembers(
-        analysisSession: KtAnalysisSession,
-        members: List<KtDeclarationSymbol>,
-        owner: KtSymbolWithMembers,
-    ): List<KtDeclarationSymbol>
+        analysisSession: KaSession,
+        members: List<KaDeclarationSymbol>,
+        owner: KaSymbolWithMembers,
+    ): List<KaDeclarationSymbol>
 
-    public object ENUM_ENTRIES_AT_BEGINING : KtRendererBodyMemberScopeSorter {
+    public object ENUM_ENTRIES_AT_BEGINING : KaRendererBodyMemberScopeSorter {
         override fun sortMembers(
-            analysisSession: KtAnalysisSession,
-            members: List<KtDeclarationSymbol>,
-            owner: KtSymbolWithMembers,
-        ): List<KtDeclarationSymbol> {
-            return members.sortedBy { it !is KtEnumEntrySymbol }
+            analysisSession: KaSession,
+            members: List<KaDeclarationSymbol>,
+            owner: KaSymbolWithMembers,
+        ): List<KaDeclarationSymbol> {
+            return members.sortedBy { it !is KaEnumEntrySymbol }
         }
     }
 }
+
+public typealias KtRendererBodyMemberScopeSorter = KaRendererBodyMemberScopeSorter

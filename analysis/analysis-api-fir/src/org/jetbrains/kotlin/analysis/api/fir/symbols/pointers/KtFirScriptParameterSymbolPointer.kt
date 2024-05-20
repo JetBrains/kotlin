@@ -5,24 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtLocalVariableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtScriptSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.analysis.api.symbols.KaLocalVariableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirScriptParameterSymbolPointer(
+internal class KaFirScriptParameterSymbolPointer(
     private val parameterName: Name,
-    private val scriptPointer: KtSymbolPointer<KtScriptSymbol>,
-) : KtSymbolPointer<KtLocalVariableSymbol>() {
-    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
-    override fun restoreSymbol(analysisSession: KtAnalysisSession): KtLocalVariableSymbol? {
-        require(analysisSession is KtFirAnalysisSession)
+    private val scriptPointer: KaSymbolPointer<KaScriptSymbol>,
+) : KaSymbolPointer<KaLocalVariableSymbol>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KaSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KaSession): KaLocalVariableSymbol? {
+        require(analysisSession is KaFirSession)
         val script = with(analysisSession) {
             scriptPointer.restoreSymbol()?.firSymbol?.fir as? FirScript
         } ?: return null
@@ -31,7 +30,7 @@ internal class KtFirScriptParameterSymbolPointer(
         return analysisSession.firSymbolBuilder.variableLikeBuilder.buildLocalVariableSymbol(parameter.symbol)
     }
 
-    override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
-            other is KtFirScriptParameterSymbolPointer &&
+    override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean = this === other ||
+            other is KaFirScriptParameterSymbolPointer &&
             other.scriptPointer.pointsToTheSameSymbolAs(scriptPointer)
 }

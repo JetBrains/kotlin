@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 
 import com.intellij.mock.MockProject
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtension
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionFile
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -34,7 +34,7 @@ abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : Abst
         testServices: TestServices,
     ) {
         val session = LLFirSessionCache.getInstance(mainFile.project).getSession(mainModule.ktModule)
-        val resolveExtension = session.llResolveExtensionTool!!.extensions.single() as KtResolveExtensionWithDisposalTracker
+        val resolveExtension = session.llResolveExtensionTool!!.extensions.single() as KaResolveExtensionWithDisposalTracker
 
         testServices.assertions.assertFalse(resolveExtension.isDisposed) {
             "The resolve extension should not be disposed before the modification event is published."
@@ -51,8 +51,8 @@ abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : Abst
         get() = ResolveExtensionDisposalTestConfigurator
 }
 
-class KtResolveExtensionWithDisposalTracker() : KtResolveExtension() {
-    override fun getKtFiles(): List<KtResolveExtensionFile> = emptyList()
+class KaResolveExtensionWithDisposalTracker() : KaResolveExtension() {
+    override fun getKtFiles(): List<KaResolveExtensionFile> = emptyList()
     override fun getContainedPackages(): Set<FqName> = emptySet()
     override fun getShadowedScope(): GlobalSearchScope = GlobalSearchScope.EMPTY_SCOPE
 
@@ -63,8 +63,8 @@ class KtResolveExtensionWithDisposalTracker() : KtResolveExtension() {
     }
 }
 
-class KtResolveExtensionWithDisposalTrackerProvider() : KtResolveExtensionProvider() {
-    override fun provideExtensionsFor(module: KtModule): List<KtResolveExtension> = listOf(KtResolveExtensionWithDisposalTracker())
+class KaResolveExtensionWithDisposalTrackerProvider() : KaResolveExtensionProvider() {
+    override fun provideExtensionsFor(module: KtModule): List<KaResolveExtension> = listOf(KaResolveExtensionWithDisposalTracker())
 }
 
 object ResolveExtensionDisposalTestConfigurator : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
@@ -80,7 +80,7 @@ object ResolveExtensionDisposalTestServiceRegistrar : AnalysisApiTestServiceRegi
         project: MockProject,
         testServices: TestServices,
     ) {
-        val extensionPoint = project.extensionArea.getExtensionPoint(KtResolveExtensionProvider.EP_NAME)
-        extensionPoint.registerExtension(KtResolveExtensionWithDisposalTrackerProvider(), project)
+        val extensionPoint = project.extensionArea.getExtensionPoint(KaResolveExtensionProvider.EP_NAME)
+        extensionPoint.registerExtension(KaResolveExtensionWithDisposalTrackerProvider(), project)
     }
 }

@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiversOwner
-import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KtContextReceiversRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
+import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KaContextReceiversRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtContextReceiverListRenderer {
+public interface KaContextReceiverListRenderer {
     public fun renderContextReceivers(
-        analysisSession: KtAnalysisSession,
-        owner: KtContextReceiversOwner,
-        contextReceiversRenderer: KtContextReceiversRenderer,
-        typeRenderer: KtTypeRenderer,
+        analysisSession: KaSession,
+        owner: KaContextReceiversOwner,
+        contextReceiversRenderer: KaContextReceiversRenderer,
+        typeRenderer: KaTypeRenderer,
         printer: PrettyPrinter,
     )
 
-    public object AS_SOURCE : KtContextReceiverListRenderer {
+    public object AS_SOURCE : KaContextReceiverListRenderer {
         override fun renderContextReceivers(
-            analysisSession: KtAnalysisSession,
-            owner: KtContextReceiversOwner,
-            contextReceiversRenderer: KtContextReceiversRenderer,
-            typeRenderer: KtTypeRenderer,
+            analysisSession: KaSession,
+            owner: KaContextReceiversOwner,
+            contextReceiversRenderer: KaContextReceiversRenderer,
+            typeRenderer: KaTypeRenderer,
             printer: PrettyPrinter,
         ) {
             val contextReceivers = owner.contextReceivers
@@ -44,3 +44,5 @@ public interface KtContextReceiverListRenderer {
         }
     }
 }
+
+public typealias KtContextReceiverListRenderer = KaContextReceiverListRenderer

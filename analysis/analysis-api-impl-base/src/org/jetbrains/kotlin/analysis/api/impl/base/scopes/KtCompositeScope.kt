@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.scopes
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.scopes.KaScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
-@KtAnalysisApiInternals
-class KtCompositeScope private constructor(
-    private val subScopes: List<KtScope>,
-    override val token: KtLifetimeToken,
-) : KtScope {
+@KaAnalysisApiInternals
+class KaCompositeScope private constructor(
+    private val subScopes: List<KaScope>,
+    override val token: KaLifetimeToken,
+) : KaScope {
 
     init {
         require(subScopes.size > 1) {
@@ -43,45 +43,45 @@ class KtCompositeScope private constructor(
         }
     }
 
-    override fun getAllSymbols(): Sequence<KtDeclarationSymbol> = withValidityAssertion {
+    override fun getAllSymbols(): Sequence<KaDeclarationSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getAllSymbols()) }
         }
     }
 
-    override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
+    override fun getCallableSymbols(nameFilter: KaScopeNameFilter): Sequence<KaCallableSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getCallableSymbols(nameFilter)) }
         }
     }
 
-    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> = withValidityAssertion {
+    override fun getCallableSymbols(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         sequence {
             subScopes.forEach { yieldAll(it.getCallableSymbols(names)) }
         }
     }
 
-    override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
+    override fun getClassifierSymbols(nameFilter: KaScopeNameFilter): Sequence<KaClassifierSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getClassifierSymbols(nameFilter)) }
         }
     }
 
-    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> = withValidityAssertion {
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
         if (names.isEmpty()) return emptySequence()
         sequence {
             subScopes.forEach { yieldAll(it.getClassifierSymbols(names)) }
         }
     }
 
-    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
+    override fun getConstructors(): Sequence<KaConstructorSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getConstructors()) }
         }
     }
 
-    override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
+    override fun getPackageSymbols(nameFilter: KaScopeNameFilter): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getPackageSymbols(nameFilter)) }
         }
@@ -92,11 +92,11 @@ class KtCompositeScope private constructor(
     }
 
     companion object {
-        fun create(subScopes: List<KtScope>, token: KtLifetimeToken): KtScope =
+        fun create(subScopes: List<KaScope>, token: KaLifetimeToken): KaScope =
             when (subScopes.size) {
-                0 -> KtEmptyScope(token)
+                0 -> KaEmptyScope(token)
                 1 -> subScopes.single()
-                else -> KtCompositeScope(subScopes, token)
+                else -> KaCompositeScope(subScopes, token)
             }
     }
 }

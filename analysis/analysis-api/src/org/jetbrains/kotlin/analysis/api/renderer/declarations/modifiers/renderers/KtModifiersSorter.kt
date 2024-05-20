@@ -5,25 +5,27 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.addRemoveModifier.sortModifiers
 
-public interface KtModifiersSorter {
+public interface KaModifiersSorter {
     public fun sort(
-        analysisSession: KtAnalysisSession,
+        analysisSession: KaSession,
         modifiers: List<KtModifierKeywordToken>,
-        owner: KtDeclarationSymbol,
+        owner: KaDeclarationSymbol,
     ): List<KtModifierKeywordToken>
 
-    public object CANONICAL : KtModifiersSorter {
+    public object CANONICAL : KaModifiersSorter {
         override fun sort(
-            analysisSession: KtAnalysisSession,
+            analysisSession: KaSession,
             modifiers: List<KtModifierKeywordToken>,
-            owner: KtDeclarationSymbol,
+            owner: KaDeclarationSymbol,
         ): List<KtModifierKeywordToken> {
             return sortModifiers(modifiers)
         }
     }
 }
+
+public typealias KtModifiersSorter = KaModifiersSorter

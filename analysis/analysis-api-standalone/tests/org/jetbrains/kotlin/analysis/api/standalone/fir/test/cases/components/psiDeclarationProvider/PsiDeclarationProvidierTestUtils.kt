@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.p
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.providers.DecompiledPsiDeclarationProvider.findPsi
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -20,13 +20,13 @@ internal fun findReferencesAtCaret(mainKtFile: KtFile, caretPosition: Int): List
     mainKtFile.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
 
 // Mimic [psiForUast] in FIR UAST
-internal fun KtAnalysisSession.psiForTest(symbol: KtSymbol, project: Project): PsiElement? {
+internal fun KaSession.psiForTest(symbol: KaSymbol, project: Project): PsiElement? {
     return when (symbol.origin) {
-        KtSymbolOrigin.LIBRARY -> {
+        KaSymbolOrigin.LIBRARY -> {
             findPsi(symbol, project) ?: symbol.psi
         }
-        KtSymbolOrigin.SUBSTITUTION_OVERRIDE, KtSymbolOrigin.INTERSECTION_OVERRIDE -> {
-            psiForTest((symbol as KtCallableSymbol).unwrapFakeOverrides, project)
+        KaSymbolOrigin.SUBSTITUTION_OVERRIDE, KaSymbolOrigin.INTERSECTION_OVERRIDE -> {
+            psiForTest((symbol as KaCallableSymbol).unwrapFakeOverrides, project)
         }
         else -> symbol.psi
     }

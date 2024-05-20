@@ -6,21 +6,21 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
-import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
-import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtEmptyScope
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
-import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
-import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaCompositeScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaEmptyScope
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
+import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
+import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithDeclarations
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
@@ -49,49 +49,49 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KtFirScopeProvider(
-    override val analysisSession: KtFirAnalysisSession,
-    private val builder: KtSymbolByFirBuilder,
+internal class KaFirScopeProvider(
+    override val analysisSession: KaFirSession,
+    private val builder: KaSymbolByFirBuilder,
     private val firResolveSession: LLFirResolveSession,
-) : KtScopeProvider() {
+) : KaScopeProvider() {
 
     private fun getScopeSession(): ScopeSession {
         return analysisSession.getScopeSessionFor(analysisSession.useSiteSession)
     }
 
-    private fun KtSymbolWithMembers.getFirForScope(): FirClass = when (this) {
-        is KtFirNamedClassOrObjectSymbol -> firSymbol.fir
-        is KtFirPsiJavaClassSymbol -> firSymbol.fir
-        is KtFirAnonymousObjectSymbol -> firSymbol.fir
+    private fun KaSymbolWithMembers.getFirForScope(): FirClass = when (this) {
+        is KaFirNamedClassOrObjectSymbol -> firSymbol.fir
+        is KaFirPsiJavaClassSymbol -> firSymbol.fir
+        is KaFirAnonymousObjectSymbol -> firSymbol.fir
         else -> error(
             "`${this::class.qualifiedName}` needs to be specially handled by the scope provider or is an unknown" +
-                    " ${KtSymbolWithDeclarations::class.simpleName} implementation."
+                    " ${KaSymbolWithDeclarations::class.simpleName} implementation."
         )
     }
 
-    override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
+    override fun getMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
         val firScope = classSymbol.getFirForScope().unsubstitutedScope(
             analysisSession.useSiteSession,
             getScopeSession(),
             withForcedTypeCalculator = false,
             memberRequiredPhase = FirResolvePhase.STATUS,
         )
-        return KtFirDelegatingNamesAwareScope(firScope, builder)
+        return KaFirDelegatingNamesAwareScope(firScope, builder)
     }
 
-    override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
+    override fun getStaticMemberScope(symbol: KaSymbolWithMembers): KaScope {
         val fir = symbol.getFirForScope()
         val firScope = fir.scopeProvider.getStaticScope(fir, analysisSession.useSiteSession, getScopeSession()) ?: return getEmptyScope()
-        return KtFirDelegatingNamesAwareScope(firScope, builder)
+        return KaFirDelegatingNamesAwareScope(firScope, builder)
     }
 
-    override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope =
+    override fun getDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope =
         getDeclaredMemberScope(classSymbol, DeclaredMemberScopeKind.NON_STATIC)
 
-    override fun getStaticDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope =
+    override fun getStaticDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope =
         getDeclaredMemberScope(classSymbol, DeclaredMemberScopeKind.STATIC)
 
-    override fun getCombinedDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope =
+    override fun getCombinedDeclaredMemberScope(classSymbol: KaSymbolWithMembers): KaScope =
         getDeclaredMemberScope(classSymbol, DeclaredMemberScopeKind.COMBINED)
 
     private enum class DeclaredMemberScopeKind {
@@ -100,7 +100,7 @@ internal class KtFirScopeProvider(
         STATIC,
 
         /**
-         * A scope containing both non-static and static members. A smart combined scope (as opposed to a naive combination of [KtScope]s
+         * A scope containing both non-static and static members. A smart combined scope (as opposed to a naive combination of [KaScope]s
          * with [getCompositeScope]) avoids duplicate inner classes, as they are contained in non-static and static scopes.
          *
          * A proper combined declared member scope kind also makes it easier to cache combined scopes directly (if needed).
@@ -108,18 +108,18 @@ internal class KtFirScopeProvider(
         COMBINED,
     }
 
-    private fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers, kind: DeclaredMemberScopeKind): KtScope {
+    private fun getDeclaredMemberScope(classSymbol: KaSymbolWithMembers, kind: DeclaredMemberScopeKind): KaScope {
         val firDeclaration = classSymbol.firSymbol.fir
         val firScope = when (firDeclaration) {
             is FirJavaClass -> getFirJavaDeclaredMemberScope(firDeclaration, kind) ?: return getEmptyScope()
             else -> getFirKotlinDeclaredMemberScope(classSymbol, kind)
         }
 
-        return KtFirDelegatingNamesAwareScope(firScope, builder)
+        return KaFirDelegatingNamesAwareScope(firScope, builder)
     }
 
     private fun getFirKotlinDeclaredMemberScope(
-        classSymbol: KtSymbolWithMembers,
+        classSymbol: KaSymbolWithMembers,
         kind: DeclaredMemberScopeKind,
     ): FirContainingNamesAwareScope {
         val combinedScope = getCombinedFirKotlinDeclaredMemberScope(classSymbol)
@@ -134,10 +134,10 @@ internal class KtFirScopeProvider(
      * Returns a declared member scope which contains both static and non-static callables, as well as all classifiers. Java classes need to
      * be handled specially, because [declaredMemberScope] doesn't handle Java enhancement properly.
      */
-    private fun getCombinedFirKotlinDeclaredMemberScope(symbolWithMembers: KtSymbolWithMembers): FirContainingNamesAwareScope {
+    private fun getCombinedFirKotlinDeclaredMemberScope(symbolWithMembers: KaSymbolWithMembers): FirContainingNamesAwareScope {
         val useSiteSession = analysisSession.useSiteSession
         return when (symbolWithMembers) {
-            is KtFirScriptSymbol -> FirScriptDeclarationsScope(useSiteSession, symbolWithMembers.firSymbol.fir)
+            is KaFirScriptSymbol -> FirScriptDeclarationsScope(useSiteSession, symbolWithMembers.firSymbol.fir)
             else -> useSiteSession.declaredMemberScope(symbolWithMembers.getFirForScope(), memberRequiredPhase = null)
         }
     }
@@ -186,8 +186,8 @@ internal class KtFirScopeProvider(
         }
     }
 
-    override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
-        val declaredScope = (getDeclaredMemberScope(classSymbol) as? KtFirDelegatingNamesAwareScope)?.firScope ?: return getEmptyScope()
+    override fun getDelegatedMemberScope(classSymbol: KaSymbolWithMembers): KaScope {
+        val declaredScope = (getDeclaredMemberScope(classSymbol) as? KaFirDelegatingNamesAwareScope)?.firScope ?: return getEmptyScope()
 
         val fir = classSymbol.getFirForScope()
         val delegateFields = fir.delegateFields
@@ -205,40 +205,40 @@ internal class KtFirScopeProvider(
             declaredScope,
             delegateFields
         )
-        return KtFirDelegatedMemberScope(firScope, builder)
+        return KaFirDelegatedMemberScope(firScope, builder)
     }
 
-    override fun getFileScope(fileSymbol: KtFileSymbol): KtScope {
-        check(fileSymbol is KtFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${fileSymbol::class} was provided" }
-        return KtFirFileScope(fileSymbol, builder)
+    override fun getFileScope(fileSymbol: KaFileSymbol): KaScope {
+        check(fileSymbol is KaFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${fileSymbol::class} was provided" }
+        return KaFirFileScope(fileSymbol, builder)
     }
 
-    override fun getEmptyScope(): KtScope {
-        return KtEmptyScope(token)
+    override fun getEmptyScope(): KaScope {
+        return KaEmptyScope(token)
     }
 
-    override fun getPackageScope(packageSymbol: KtPackageSymbol): KtScope {
+    override fun getPackageScope(packageSymbol: KaPackageSymbol): KaScope {
         return createPackageScope(packageSymbol.fqName)
     }
 
-    override fun getCompositeScope(subScopes: List<KtScope>): KtScope {
-        return KtCompositeScope.create(subScopes, token)
+    override fun getCompositeScope(subScopes: List<KaScope>): KaScope {
+        return KaCompositeScope.create(subScopes, token)
     }
 
-    override fun getTypeScope(type: KtType): KtTypeScope? {
-        check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
+    override fun getTypeScope(type: KaType): KaTypeScope? {
+        check(type is KaFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
         return getFirTypeScope(type)
             ?.withSyntheticPropertiesScopeOrSelf(type.coneType)
             ?.let { convertToKtTypeScope(it) }
     }
 
-    override fun getSyntheticJavaPropertiesScope(type: KtType): KtTypeScope? {
-        check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
+    override fun getSyntheticJavaPropertiesScope(type: KaType): KaTypeScope? {
+        check(type is KaFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
         val typeScope = getFirTypeScope(type) ?: return null
         return getFirSyntheticPropertiesScope(type.coneType, typeScope)?.let { convertToKtTypeScope(it) }
     }
 
-    override fun getImportingScopeContext(file: KtFile): KtScopeContext {
+    override fun getImportingScopeContext(file: KtFile): KaScopeContext {
         val firFile = file.getOrBuildFirFile(firResolveSession)
         val firFileSession = firFile.moduleData.session
         val firImportingScopes = createImportingScopes(
@@ -249,13 +249,13 @@ internal class KtFirScopeProvider(
         )
 
         val ktScopesWithKinds = createScopesWithKind(firImportingScopes.withIndex())
-        return KtScopeContext(ktScopesWithKinds, implicitReceivers = emptyList(), token)
+        return KaScopeContext(ktScopesWithKinds, implicitReceivers = emptyList(), token)
     }
 
     override fun getScopeContextForPosition(
         originalFile: KtFile,
         positionInFakeFile: KtElement
-    ): KtScopeContext {
+    ): KaScopeContext {
         val fakeFile = positionInFakeFile.containingKtFile
 
         // If the position is in KDoc, we want to pass the owning declaration to the ContextCollector.
@@ -280,7 +280,7 @@ internal class KtFirScopeProvider(
             val receivers = listOfNotNull(towerDataElement.implicitReceiver) + towerDataElement.contextReceiverGroup.orEmpty()
 
             receivers.map { receiver ->
-                KtImplicitReceiver(
+                KaImplicitReceiver(
                     token,
                     builder.typeBuilder.buildKtType(receiver.type),
                     builder.buildSymbol(receiver.boundSymbol.fir),
@@ -297,12 +297,12 @@ internal class KtFirScopeProvider(
         }
         val ktScopesWithKinds = createScopesWithKind(firScopes)
 
-        return KtScopeContext(ktScopesWithKinds, implicitReceivers, token)
+        return KaScopeContext(ktScopesWithKinds, implicitReceivers, token)
     }
 
-    private fun createScopesWithKind(firScopes: Iterable<IndexedValue<FirScope>>): List<KtScopeWithKind> {
+    private fun createScopesWithKind(firScopes: Iterable<IndexedValue<FirScope>>): List<KaScopeWithKind> {
         return firScopes.map { (index, firScope) ->
-            KtScopeWithKind(convertToKtScope(firScope), getScopeKind(firScope, index), token)
+            KaScopeWithKind(convertToKtScope(firScope), getScopeKind(firScope, index), token)
         }
     }
 
@@ -312,52 +312,52 @@ internal class KtFirScopeProvider(
         else -> listOf(firScope)
     }
 
-    private fun convertToKtScope(firScope: FirScope): KtScope {
+    private fun convertToKtScope(firScope: FirScope): KaScope {
         return when (firScope) {
-            is FirAbstractSimpleImportingScope -> KtFirNonStarImportingScope(firScope, builder)
-            is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, analysisSession)
-            is FirDefaultStarImportingScope -> KtFirDefaultStarImportingScope(firScope, analysisSession)
+            is FirAbstractSimpleImportingScope -> KaFirNonStarImportingScope(firScope, builder)
+            is FirAbstractStarImportingScope -> KaFirStarImportingScope(firScope, analysisSession)
+            is FirDefaultStarImportingScope -> KaFirDefaultStarImportingScope(firScope, analysisSession)
             is FirPackageMemberScope -> createPackageScope(firScope.fqName)
-            is FirContainingNamesAwareScope -> KtFirDelegatingNamesAwareScope(firScope, builder)
+            is FirContainingNamesAwareScope -> KaFirDelegatingNamesAwareScope(firScope, builder)
             else -> TODO(firScope::class.toString())
         }
     }
 
-    private fun getScopeKind(firScope: FirScope, indexInTower: Int): KtScopeKind = when (firScope) {
+    private fun getScopeKind(firScope: FirScope, indexInTower: Int): KaScopeKind = when (firScope) {
         is FirNameAwareOnlyCallablesScope -> getScopeKind(firScope.delegate, indexInTower)
 
-        is FirLocalScope -> KtScopeKind.LocalScope(indexInTower)
-        is FirTypeScope -> KtScopeKind.TypeScope(indexInTower)
-        is FirTypeParameterScope -> KtScopeKind.TypeParameterScope(indexInTower)
-        is FirPackageMemberScope -> KtScopeKind.PackageMemberScope(indexInTower)
+        is FirLocalScope -> KaScopeKind.LocalScope(indexInTower)
+        is FirTypeScope -> KaScopeKind.TypeScope(indexInTower)
+        is FirTypeParameterScope -> KaScopeKind.TypeParameterScope(indexInTower)
+        is FirPackageMemberScope -> KaScopeKind.PackageMemberScope(indexInTower)
 
-        is FirNestedClassifierScope -> KtScopeKind.StaticMemberScope(indexInTower)
-        is FirNestedClassifierScopeWithSubstitution -> KtScopeKind.StaticMemberScope(indexInTower)
-        is FirLazyNestedClassifierScope -> KtScopeKind.StaticMemberScope(indexInTower)
-        is FirStaticScope -> KtScopeKind.StaticMemberScope(indexInTower)
+        is FirNestedClassifierScope -> KaScopeKind.StaticMemberScope(indexInTower)
+        is FirNestedClassifierScopeWithSubstitution -> KaScopeKind.StaticMemberScope(indexInTower)
+        is FirLazyNestedClassifierScope -> KaScopeKind.StaticMemberScope(indexInTower)
+        is FirStaticScope -> KaScopeKind.StaticMemberScope(indexInTower)
 
-        is FirExplicitSimpleImportingScope -> KtScopeKind.ExplicitSimpleImportingScope(indexInTower)
-        is FirExplicitStarImportingScope -> KtScopeKind.ExplicitStarImportingScope(indexInTower)
-        is FirDefaultSimpleImportingScope -> KtScopeKind.DefaultSimpleImportingScope(indexInTower)
-        is FirDefaultStarImportingScope -> KtScopeKind.DefaultStarImportingScope(indexInTower)
+        is FirExplicitSimpleImportingScope -> KaScopeKind.ExplicitSimpleImportingScope(indexInTower)
+        is FirExplicitStarImportingScope -> KaScopeKind.ExplicitStarImportingScope(indexInTower)
+        is FirDefaultSimpleImportingScope -> KaScopeKind.DefaultSimpleImportingScope(indexInTower)
+        is FirDefaultStarImportingScope -> KaScopeKind.DefaultStarImportingScope(indexInTower)
 
-        is FirScriptDeclarationsScope -> KtScopeKind.ScriptMemberScope(indexInTower)
+        is FirScriptDeclarationsScope -> KaScopeKind.ScriptMemberScope(indexInTower)
 
         else -> unexpectedElementError("scope", firScope)
     }
 
-    private fun createPackageScope(fqName: FqName): KtFirPackageScope {
-        return KtFirPackageScope(fqName, analysisSession)
+    private fun createPackageScope(fqName: FqName): KaFirPackageScope {
+        return KaFirPackageScope(fqName, analysisSession)
     }
 
-    private fun convertToKtTypeScope(firScope: FirScope): KtTypeScope {
+    private fun convertToKtTypeScope(firScope: FirScope): KaTypeScope {
         return when (firScope) {
-            is FirContainingNamesAwareScope -> KtFirDelegatingTypeScope(firScope, builder)
+            is FirContainingNamesAwareScope -> KaFirDelegatingTypeScope(firScope, builder)
             else -> TODO(firScope::class.toString())
         }
     }
 
-    private fun getFirTypeScope(type: KtFirType): FirTypeScope? = type.coneType.scope(
+    private fun getFirTypeScope(type: KaFirType): FirTypeScope? = type.coneType.scope(
         firResolveSession.useSiteFirSession,
         getScopeSession(),
         CallableCopyTypeCalculator.Forced,

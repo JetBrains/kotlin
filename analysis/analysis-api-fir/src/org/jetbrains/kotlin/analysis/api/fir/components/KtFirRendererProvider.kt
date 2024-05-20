@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KtRendererProviderImpl
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererProviderImpl
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 
-@OptIn(KtAnalysisApiInternals::class)
-internal class KtFirRendererProvider(
-    analysisSession: KtAnalysisSession,
-    token: KtLifetimeToken
-) : KtRendererProviderImpl(analysisSession, token)
+@OptIn(KaAnalysisApiInternals::class)
+internal class KaFirRendererProvider(
+    analysisSession: KaSession,
+    token: KaLifetimeToken
+) : KaRendererProviderImpl(analysisSession, token)

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.calls.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableSymbolResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compareCalls
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
@@ -34,7 +34,7 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveTest() {
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
-    private fun KtAnalysisSession.collectCallCandidates(element: KtElement): List<KtCallCandidateInfo> {
+    private fun KaSession.collectCallCandidates(element: KtElement): List<KaCallCandidateInfo> {
         val candidates = element.collectCallCandidates()
         return candidates.sortedWith { candidate1, candidate2 ->
             compareCalls(candidate1.candidate, candidate2.candidate)

@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.standalone.KaAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.LLFirStandaloneLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.services.LLStandaloneFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.test.services.TestServices
  * Registers services specific to Standalone mode *tests*, in addition to the Standalone production services registered by
  * [FirStandaloneServiceRegistrar][org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar].
  */
-@OptIn(KtAnalysisApiInternals::class)
+@OptIn(KaAnalysisApiInternals::class)
 object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
-            registerService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider::class.java)
+            registerService(KaLifetimeTokenProvider::class.java, KaAlwaysAccessibleLifetimeTokenProvider::class.java)
             registerService(LLFirLibrarySymbolProviderFactory::class.java, LLFirStandaloneLibrarySymbolProviderFactory::class.java)
             registerService(LLFirElementByPsiElementChooser::class.java, LLStandaloneFirElementByPsiElementChooser::class.java)
         }

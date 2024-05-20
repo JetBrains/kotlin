@@ -6,33 +6,33 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirEnumEntryInitializerSymbolPointer
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirEnumEntryInitializerSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntryInitializerSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntryInitializerSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 
-internal class KtFirEnumEntryInitializerSymbol(
+internal class KaFirEnumEntryInitializerSymbol(
     firSymbol: FirAnonymousObjectSymbol,
-    analysisSession: KtFirAnalysisSession,
-) : KtFirAnonymousObjectSymbol(firSymbol, analysisSession), KtEnumEntryInitializerSymbol {
+    analysisSession: KaFirSession,
+) : KaFirAnonymousObjectSymbol(firSymbol, analysisSession), KaEnumEntryInitializerSymbol {
     init {
         check(firSymbol.source?.kind == KtFakeSourceElementKind.EnumInitializer) {
-            "Expected the `firSymbol` of ${KtFirEnumEntryInitializerSymbol::class.simpleName} to have an enum initializer fake source kind."
+            "Expected the `firSymbol` of ${KaFirEnumEntryInitializerSymbol::class.simpleName} to have an enum initializer fake source kind."
         }
     }
 
     /**
-     * [KtFirEnumEntryInitializerSymbol] is the required return type instead of [KtEnumEntryInitializerSymbol] to fulfill return type
-     * subtyping requirements, as [KtEnumEntryInitializerSymbol] is not a subtype of
-     * [org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol]. (It cannot be a subtype in the general Analysis API because enum
+     * [KaFirEnumEntryInitializerSymbol] is the required return type instead of [KaEnumEntryInitializerSymbol] to fulfill return type
+     * subtyping requirements, as [KaEnumEntryInitializerSymbol] is not a subtype of
+     * [org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol]. (It cannot be a subtype in the general Analysis API because enum
      * entry initializers are classes in FE10.)
      */
-    override fun createPointer(): KtSymbolPointer<KtFirEnumEntryInitializerSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFirEnumEntryInitializerSymbol>(this)
-            ?: KtFirEnumEntryInitializerSymbolPointer(analysisSession.createOwnerPointer(this))
+    override fun createPointer(): KaSymbolPointer<KaFirEnumEntryInitializerSymbol> = withValidityAssertion {
+        KaPsiBasedSymbolPointer.createForSymbolFromSource<KaFirEnumEntryInitializerSymbol>(this)
+            ?: KaFirEnumEntryInitializerSymbolPointer(analysisSession.createOwnerPointer(this))
     }
 }

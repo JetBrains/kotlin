@@ -5,35 +5,35 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
-public interface KtSamConstructorSymbolRenderer {
+public interface KaSamConstructorSymbolRenderer {
     public fun renderSymbol(
-        analysisSession: KtAnalysisSession,
-        symbol: KtSamConstructorSymbol,
-        declarationRenderer: KtDeclarationRenderer,
+        analysisSession: KaSession,
+        symbol: KaSamConstructorSymbol,
+        declarationRenderer: KaDeclarationRenderer,
         printer: PrettyPrinter,
     )
 
-    public object NOT_RENDER : KtSamConstructorSymbolRenderer {
+    public object NOT_RENDER : KaSamConstructorSymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtSamConstructorSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaSamConstructorSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {}
         }
     }
 
-    public object AS_FUNCTION : KtSamConstructorSymbolRenderer {
+    public object AS_FUNCTION : KaSamConstructorSymbolRenderer {
         override fun renderSymbol(
-            analysisSession: KtAnalysisSession,
-            symbol: KtSamConstructorSymbol,
-            declarationRenderer: KtDeclarationRenderer,
+            analysisSession: KaSession,
+            symbol: KaSamConstructorSymbol,
+            declarationRenderer: KaDeclarationRenderer,
             printer: PrettyPrinter,
         ) {
             printer {
@@ -43,3 +43,5 @@ public interface KtSamConstructorSymbolRenderer {
         }
     }
 }
+
+public typealias KtSamConstructorSymbolRenderer = KaSamConstructorSymbolRenderer

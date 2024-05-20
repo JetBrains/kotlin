@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValue.KtStringConstantValue
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue.KaStringConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 
@@ -61,12 +61,12 @@ private fun KtAnnotationApplicationWithArgumentsInfo.findArgument(name: String):
 
 private fun KtNamedAnnotationValue.resolveStringConstantValue(): String? {
     return expression.let { it as? KtConstantAnnotationValue }?.constantValue
-        ?.let { it as? KtStringConstantValue }
+        ?.let { it as? KaStringConstantValue }
         ?.value
 }
 
 private fun KtNamedAnnotationValue.resolveBooleanConstantValue(): Boolean? {
     return expression.let { it as? KtConstantAnnotationValue }?.constantValue
-        ?.let { it as? KtConstantValue.KtBooleanConstantValue }
+        ?.let { it as? KaConstantValue.KaBooleanConstantValue }
         ?.value
 }

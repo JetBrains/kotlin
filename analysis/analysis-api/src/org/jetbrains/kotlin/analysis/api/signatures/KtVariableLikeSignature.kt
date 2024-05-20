@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.signatures
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaConstantAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -21,9 +20,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 /**
  * A signature of a variable-like symbol. This includes properties, enum entries local variables, etc.
  */
-public abstract class KtVariableLikeSignature<out S : KtVariableLikeSymbol> : KtCallableSignature<S>() {
+public abstract class KaVariableLikeSignature<out S : KaVariableLikeSymbol> : KaCallableSignature<S>() {
     /**
-     * A name of the variable with respect to the `@ParameterName` annotation. Can be different from the [KtVariableLikeSymbol.name].
+     * A name of the variable with respect to the `@ParameterName` annotation. Can be different from the [KaVariableLikeSymbol.name].
      *
      * Some variables can have their names changed by special annotations like `@ParameterName(name = "newName")`. This is used to preserve
      * the names of the lambda parameters in the situations like this:
@@ -45,7 +44,7 @@ public abstract class KtVariableLikeSignature<out S : KtVariableLikeSymbol> : Kt
      * To overcome this problem, [name] property is introduced: it allows to get the intended name of the parameter,
      * with respect to `@ParameterName` annotation.
      *
-     * @see org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder.unwrapUseSiteSubstitutionOverride
+     * @see org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder.unwrapUseSiteSubstitutionOverride
      */
     public val name: Name
         get() = withValidityAssertion {
@@ -58,19 +57,19 @@ public abstract class KtVariableLikeSignature<out S : KtVariableLikeSymbol> : Kt
             runIf(nameCanBeDeclaredInAnnotation) { getValueFromParameterNameAnnotation() } ?: symbol.name
         }
 
-    abstract override fun substitute(substitutor: KtSubstitutor): KtVariableLikeSignature<S>
+    abstract override fun substitute(substitutor: KaSubstitutor): KaVariableLikeSignature<S>
 
     private fun getValueFromParameterNameAnnotation(): Name? {
         val resultingAnnotation = findParameterNameAnnotation() ?: return null
         val parameterNameArgument = resultingAnnotation.arguments
             .singleOrNull { it.name == StandardClassIds.Annotations.ParameterNames.parameterNameName }
 
-        val constantArgumentValue = parameterNameArgument?.expression as? KtConstantAnnotationValue ?: return null
+        val constantArgumentValue = parameterNameArgument?.expression as? KaConstantAnnotationValue ?: return null
 
         return (constantArgumentValue.constantValue.value as? String)?.let(Name::identifier)
     }
 
-    private fun findParameterNameAnnotation(): KtAnnotationApplicationWithArgumentsInfo? {
+    private fun findParameterNameAnnotation(): KaAnnotationApplicationWithArgumentsInfo? {
         val allParameterNameAnnotations = returnType.annotationsByClassId(StandardNames.FqNames.parameterNameClassId)
         val (explicitAnnotations, implicitAnnotations) = allParameterNameAnnotations.partition { it.psi != null }
 
@@ -81,3 +80,5 @@ public abstract class KtVariableLikeSignature<out S : KtVariableLikeSymbol> : Kt
         }
     }
 }
+
+public typealias KtVariableLikeSignature<S> = KaVariableLikeSignature<S>

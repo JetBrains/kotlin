@@ -7,19 +7,19 @@ package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
-import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
+import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KtTypeErrorType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeErrorType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 
-internal class KtFe10TypeErrorType(
+internal class KaFe10TypeErrorType(
     override val fe10Type: ErrorType,
     override val analysisContext: Fe10AnalysisContext
-) : KtTypeErrorType(), KtFe10Type {
+) : KaTypeErrorType(), KaFe10Type {
     init {
         check(!fe10Type.kind.isUnresolved) {
             "Expected unresolved ErrorType but ${fe10Type.kind} found for $fe10Type"
@@ -39,9 +39,9 @@ internal class KtFe10TypeErrorType(
     override val errorMessage: String
         get() = withValidityAssertion { fe10Type.debugMessage }
 
-    override val nullability: KtTypeNullability
+    override val nullability: KaTypeNullability
         get() = withValidityAssertion { fe10Type.ktNullability }
 
-    override val abbreviatedType: KtUsualClassType?
+    override val abbreviatedType: KaUsualClassType?
         get() = withValidityAssertion { null }
 }

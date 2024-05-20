@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaNonErrorClassType
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -23,7 +23,7 @@ import java.util.Objects
  */
 internal class AnnotationArgument(val name: Name, val value: AnnotationValue)
 
-internal fun KtNamedAnnotationValue.toLightClassAnnotationArgument(): AnnotationArgument {
+internal fun KaNamedAnnotationValue.toLightClassAnnotationArgument(): AnnotationArgument {
     return AnnotationArgument(name, expression.toLightClassAnnotationValue())
 }
 
@@ -44,9 +44,9 @@ internal data class AnnotationApplication(
     val index: Int?,
 )
 
-internal fun KtAnnotationApplication.toLightClassAnnotationApplication(): AnnotationApplication {
+internal fun KaAnnotationApplication.toLightClassAnnotationApplication(): AnnotationApplication {
     val value = when (this) {
-        is KtAnnotationApplicationWithArgumentsInfo -> {
+        is KaAnnotationApplicationWithArgumentsInfo -> {
             toLightClassAnnotationValue()
         }
 
@@ -60,7 +60,7 @@ internal fun KtAnnotationApplication.toLightClassAnnotationApplication(): Annota
         }
     }
 
-    val isDumb = this is KtAnnotationApplicationInfo
+    val isDumb = this is KaAnnotationApplicationInfo
     return AnnotationApplication(value, isDumb, useSiteTarget, isCallWithArguments, index)
 }
 
@@ -90,7 +90,7 @@ internal sealed class AnnotationValue {
      */
     class Annotation(
         val classId: ClassId?,
-        val constructorSymbolPointer: KtSymbolPointer<KtConstructorSymbol>?,
+        val constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
         val arguments: List<AnnotationArgument>,
         override val sourcePsi: KtCallElement?
     ) : AnnotationValue() {
@@ -129,27 +129,27 @@ internal sealed class AnnotationValue {
     /**
      * Represents a primitive or a [String] constant value.
      */
-    class Constant(val constant: KtConstantValue, override val sourcePsi: KtElement?) : AnnotationValue() {
+    class Constant(val constant: KaConstantValue, override val sourcePsi: KtElement?) : AnnotationValue() {
         override fun equals(other: Any?) = this === other || (other is Constant && constant == other.constant)
         override fun hashCode(): Int = constant.hashCode()
         override fun toString() = "Constant(" + constant.renderAsKotlinConstant() + ")"
     }
 }
 
-internal fun KtAnnotationValue.toLightClassAnnotationValue(): AnnotationValue {
+internal fun KaAnnotationValue.toLightClassAnnotationValue(): AnnotationValue {
     return when (this) {
-        is KtUnsupportedAnnotationValue -> AnnotationValue.Unsupported(sourcePsi)
-        is KtArrayAnnotationValue -> AnnotationValue.Array(values.map { it.toLightClassAnnotationValue() }, sourcePsi)
-        is KtAnnotationApplicationValue -> annotationValue.toLightClassAnnotationValue()
-        is KtKClassAnnotationValue -> toLightClassAnnotationValue()
-        is KtEnumEntryAnnotationValue -> AnnotationValue.EnumValue(callableId, sourcePsi)
-        is KtConstantAnnotationValue -> AnnotationValue.Constant(constantValue, sourcePsi)
+        is KaUnsupportedAnnotationValue -> AnnotationValue.Unsupported(sourcePsi)
+        is KaArrayAnnotationValue -> AnnotationValue.Array(values.map { it.toLightClassAnnotationValue() }, sourcePsi)
+        is KaAnnotationApplicationValue -> annotationValue.toLightClassAnnotationValue()
+        is KaKClassAnnotationValue -> toLightClassAnnotationValue()
+        is KaEnumEntryAnnotationValue -> AnnotationValue.EnumValue(callableId, sourcePsi)
+        is KaConstantAnnotationValue -> AnnotationValue.Constant(constantValue, sourcePsi)
     }
 }
 
-internal fun KtKClassAnnotationValue.toLightClassAnnotationValue(): AnnotationValue.KClass {
+internal fun KaKClassAnnotationValue.toLightClassAnnotationValue(): AnnotationValue.KClass {
     when (val type = type) {
-        is KtNonErrorClassType -> {
+        is KaNonErrorClassType -> {
             val classId = type.classId.takeUnless { it.isLocal }
             return AnnotationValue.KClass(classId, isError = false, sourcePsi)
         }
@@ -161,7 +161,7 @@ internal fun KtKClassAnnotationValue.toLightClassAnnotationValue(): AnnotationVa
     }
 }
 
-internal fun KtAnnotationApplicationWithArgumentsInfo.toLightClassAnnotationValue(): AnnotationValue.Annotation {
+internal fun KaAnnotationApplicationWithArgumentsInfo.toLightClassAnnotationValue(): AnnotationValue.Annotation {
     val arguments = arguments.map { AnnotationArgument(it.name, it.expression.toLightClassAnnotationValue()) }
     return AnnotationValue.Annotation(classId, constructorSymbolPointer, arguments, psi)
 }

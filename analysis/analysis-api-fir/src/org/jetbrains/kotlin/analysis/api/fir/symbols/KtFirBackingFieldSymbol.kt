@@ -5,45 +5,45 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirBackingFieldSymbolPointer
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirBackingFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtBackingFieldSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 
-internal class KtFirBackingFieldSymbol(
+internal class KaFirBackingFieldSymbol(
     override val firSymbol: FirBackingFieldSymbol,
-    override val analysisSession: KtFirAnalysisSession,
-) : KtBackingFieldSymbol(), KtFirSymbol<FirBackingFieldSymbol> {
-    override val origin: KtSymbolOrigin get() = withValidityAssertion { super<KtBackingFieldSymbol>.origin }
+    override val analysisSession: KaFirSession,
+) : KaBackingFieldSymbol(), KaFirSymbol<FirBackingFieldSymbol> {
+    override val origin: KaSymbolOrigin get() = withValidityAssertion { super<KaBackingFieldSymbol>.origin }
 
-    override val annotationsList: KtAnnotationsList
+    override val annotationsList: KaAnnotationsList
         get() = withValidityAssertion {
-            KtFirAnnotationListForDeclaration.create(firSymbol, builder)
+            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
-    override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
+    override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
 
-    override val owningProperty: KtKotlinPropertySymbol
+    override val owningProperty: KaKotlinPropertySymbol
         get() = withValidityAssertion {
-            builder.variableLikeBuilder.buildPropertySymbol(firSymbol.propertySymbol) as KtKotlinPropertySymbol
+            builder.variableLikeBuilder.buildPropertySymbol(firSymbol.propertySymbol) as KaKotlinPropertySymbol
         }
 
-    override fun createPointer(): KtSymbolPointer<KtBackingFieldSymbol> = withValidityAssertion {
-        KtFirBackingFieldSymbolPointer(owningProperty.createPointer())
+    override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
+        KaFirBackingFieldSymbolPointer(owningProperty.createPointer())
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as KtFirBackingFieldSymbol
+        other as KaFirBackingFieldSymbol
 
         return this.firSymbol == other.firSymbol
     }

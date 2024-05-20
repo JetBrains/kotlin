@@ -8,54 +8,51 @@ package org.jetbrains.kotlin.analysis.api.session
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.analyzeCopy
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.impl.NoWriteActionInAnalyseCallChecker
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
-import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * Provides [KtAnalysisSession]s by use-site [KtElement]s or [KtModule]s.
+ * Provides [KaSession]s by use-site [KtElement]s or [KtModule]s.
  *
  * This provider should not be used directly.
  * Please use [analyze][org.jetbrains.kotlin.analysis.api.analyze] or [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] instead.
  */
-@OptIn(KtAnalysisApiInternals::class)
-public abstract class KtAnalysisSessionProvider(public val project: Project) : Disposable {
-    @KtAnalysisApiInternals
-    public val tokenFactory: KtLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        KtLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
+@OptIn(KaAnalysisApiInternals::class)
+public abstract class KaAnalysisSessionProvider(public val project: Project) : Disposable {
+    @KaAnalysisApiInternals
+    public val tokenFactory: KaLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KaLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
     }
 
     @Suppress("LeakingThis")
     public val noWriteActionInAnalyseCallChecker: NoWriteActionInAnalyseCallChecker = NoWriteActionInAnalyseCallChecker(this)
 
-    public abstract fun getAnalysisSession(useSiteKtElement: KtElement): KtAnalysisSession
+    public abstract fun getAnalysisSession(useSiteKtElement: KtElement): KaSession
 
-    public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KtAnalysisSession
+    public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KaSession
 
     public inline fun <R> analyse(
         useSiteKtElement: KtElement,
-        action: KtAnalysisSession.() -> R,
+        action: KaSession.() -> R,
     ): R {
         return analyse(getAnalysisSession(useSiteKtElement), action)
     }
 
     public inline fun <R> analyze(
         useSiteKtModule: KtModule,
-        action: KtAnalysisSession.() -> R,
+        action: KaSession.() -> R,
     ): R {
         return analyse(getAnalysisSessionByUseSiteKtModule(useSiteKtModule), action)
     }
 
     public inline fun <R> analyse(
-        analysisSession: KtAnalysisSession,
-        action: KtAnalysisSession.() -> R,
+        analysisSession: KaSession,
+        action: KaSession.() -> R,
     ): R {
         noWriteActionInAnalyseCallChecker.beforeEnteringAnalysisContext()
         tokenFactory.beforeEnteringAnalysisContext(analysisSession.token)
@@ -73,8 +70,10 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
     override fun dispose() {}
 
     public companion object {
-        @KtAnalysisApiInternals
-        public fun getInstance(project: Project): KtAnalysisSessionProvider =
-            project.getService(KtAnalysisSessionProvider::class.java)
+        @KaAnalysisApiInternals
+        public fun getInstance(project: Project): KaAnalysisSessionProvider =
+            project.getService(KaAnalysisSessionProvider::class.java)
     }
 }
+
+public typealias KtAnalysisSessionProvider = KaAnalysisSessionProvider

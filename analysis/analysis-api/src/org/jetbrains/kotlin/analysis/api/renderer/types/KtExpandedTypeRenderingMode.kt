@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.renderer.types
 
 /**
- * [KtExpandedTypeRenderingMode] controls how [KtTypeRenderer] renders expanded types (with an associated abbreviated type) and type aliases
+ * [KaExpandedTypeRenderingMode] controls how [KaTypeRenderer] renders expanded types (with an associated abbreviated type) and type aliases
  * which can still be expanded.
  */
-public enum class KtExpandedTypeRenderingMode {
+public enum class KaExpandedTypeRenderingMode {
     /**
      * Renders only the abbreviated type as-is, e.g. `foo.bar.StringAlias`.
      */
@@ -30,3 +30,5 @@ public enum class KtExpandedTypeRenderingMode {
      */
     RENDER_EXPANDED_TYPE_WITH_ABBREVIATED_TYPE_COMMENT,
 }
+
+public typealias KtExpandedTypeRenderingMode = KaExpandedTypeRenderingMode

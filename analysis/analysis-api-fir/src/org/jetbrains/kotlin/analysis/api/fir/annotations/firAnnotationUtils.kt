@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -47,9 +47,9 @@ internal fun annotationsByClassId(
     firSymbol: FirBasedSymbol<*>,
     classId: ClassId,
     useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    builder: KtSymbolByFirBuilder,
+    builder: KaSymbolByFirBuilder,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): List<KtAnnotationApplicationWithArgumentsInfo> =
+): List<KaAnnotationApplicationWithArgumentsInfo> =
     if (classId == StandardClassIds.Annotations.Target && firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATION_ARGUMENTS) {
         annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
             .mapIndexedToAnnotationApplication(useSiteTargetFilter, builder.rootSession, classId) { index, annotation ->
@@ -71,8 +71,8 @@ private inline fun List<FirAnnotation>.mapIndexedToAnnotationApplication(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     useSiteSession: FirSession,
     classId: ClassId,
-    transformer: (index: Int, annotation: FirAnnotation) -> KtAnnotationApplicationWithArgumentsInfo?,
-): List<KtAnnotationApplicationWithArgumentsInfo> = mapIndexedNotNull { index, annotation ->
+    transformer: (index: Int, annotation: FirAnnotation) -> KaAnnotationApplicationWithArgumentsInfo?,
+): List<KaAnnotationApplicationWithArgumentsInfo> = mapIndexedNotNull { index, annotation ->
     if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.toAnnotationClassId(useSiteSession) != classId) {
         return@mapIndexedNotNull null
     }
@@ -81,12 +81,12 @@ private inline fun List<FirAnnotation>.mapIndexedToAnnotationApplication(
 }
 
 private fun FirAnnotation.asKtAnnotationApplicationForAnnotationWithEnumArgument(
-    builder: KtSymbolByFirBuilder,
+    builder: KaSymbolByFirBuilder,
     index: Int,
     expectedEnumClassId: ClassId,
     annotationParameterName: Name,
     nameMapper: (String) -> String?,
-): KtAnnotationApplicationWithArgumentsInfo {
+): KaAnnotationApplicationWithArgumentsInfo {
     val arguments = findFromRawArguments(
         expectedEnumClass = expectedEnumClassId,
         nameMapper,
@@ -94,11 +94,11 @@ private fun FirAnnotation.asKtAnnotationApplicationForAnnotationWithEnumArgument
         val token = builder.token
 
         listOf(
-            KtNamedAnnotationValue(
+            KaNamedAnnotationValue(
                 name = annotationParameterName,
-                expression = KtArrayAnnotationValue(
+                expression = KaArrayAnnotationValue(
                     values = map {
-                        KtEnumEntryAnnotationValue(
+                        KaEnumEntryAnnotationValue(
                             callableId = CallableId(
                                 classId = expectedEnumClassId,
                                 callableName = Name.identifier(it),
@@ -119,9 +119,9 @@ private fun FirAnnotation.asKtAnnotationApplicationForAnnotationWithEnumArgument
 }
 
 private fun FirAnnotation.asKtAnnotationApplicationForTargetAnnotation(
-    builder: KtSymbolByFirBuilder,
+    builder: KaSymbolByFirBuilder,
     index: Int,
-): KtAnnotationApplicationWithArgumentsInfo = asKtAnnotationApplicationForAnnotationWithEnumArgument(
+): KaAnnotationApplicationWithArgumentsInfo = asKtAnnotationApplicationForAnnotationWithEnumArgument(
     builder = builder,
     index = index,
     expectedEnumClassId = StandardClassIds.AnnotationTarget,
@@ -130,9 +130,9 @@ private fun FirAnnotation.asKtAnnotationApplicationForTargetAnnotation(
 )
 
 private fun FirAnnotation.asKtAnnotationApplicationForJavaTargetAnnotation(
-    builder: KtSymbolByFirBuilder,
+    builder: KaSymbolByFirBuilder,
     index: Int,
-): KtAnnotationApplicationWithArgumentsInfo = asKtAnnotationApplicationForAnnotationWithEnumArgument(
+): KaAnnotationApplicationWithArgumentsInfo = asKtAnnotationApplicationForAnnotationWithEnumArgument(
     builder = builder,
     index = index,
     expectedEnumClassId = JvmStandardClassIds.Annotations.Java.ElementType,
@@ -158,9 +158,9 @@ private fun <T> FirAnnotation.findFromRawArguments(expectedEnumClass: ClassId, t
 
 internal fun annotations(
     firSymbol: FirBasedSymbol<*>,
-    builder: KtSymbolByFirBuilder,
+    builder: KaSymbolByFirBuilder,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): List<KtAnnotationApplicationWithArgumentsInfo> =
+): List<KaAnnotationApplicationWithArgumentsInfo> =
     annotationContainer.resolvedAnnotationsWithArguments(firSymbol).mapIndexed { index, annotation ->
         annotation.toKtAnnotationApplication(builder, index)
     }
@@ -168,9 +168,9 @@ internal fun annotations(
 internal fun annotationInfos(
     firSymbol: FirBasedSymbol<*>,
     useSiteSession: FirSession,
-    token: KtLifetimeToken,
+    token: KaLifetimeToken,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): List<KtAnnotationApplicationInfo> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapIndexed { index, annotation ->
+): List<KaAnnotationApplicationInfo> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapIndexed { index, annotation ->
     annotation.toKtAnnotationInfo(useSiteSession, index, token)
 }
 

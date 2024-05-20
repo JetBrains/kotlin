@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.psi.KtCallElement
  * - For types: `fun foo(x: List<@A Int>){}`
  * - Inside another annotation (`B` is annotation here): `@A(B()) fun foo(){}
  *
- * @see KtAnnotationApplicationInfo
- * @see KtAnnotationApplicationWithArgumentsInfo
+ * @see KaAnnotationApplicationInfo
+ * @see KaAnnotationApplicationWithArgumentsInfo
  */
-public sealed interface KtAnnotationApplication : KtLifetimeOwner {
+public sealed interface KaAnnotationApplication : KaLifetimeOwner {
     /**
      * The [ClassId] of applied annotation. [ClassId] is a fully qualified name on annotation class.
      */
@@ -43,9 +43,9 @@ public sealed interface KtAnnotationApplication : KtLifetimeOwner {
 
     /**
      * This property can be used to optimize some argument processing logic.
-     * For example, if you have [KtAnnotationApplicationInfo] from [KtAnnotated.annotationInfos] and [isCallWithArguments] is **false**,
-     * then you can avoid [KtAnnotated.annotationsByClassId] call,
-     * because effectively you already have all necessary information in [KtAnnotationApplicationInfo]
+     * For example, if you have [KaAnnotationApplicationInfo] from [KaAnnotated.annotationInfos] and [isCallWithArguments] is **false**,
+     * then you can avoid [KaAnnotated.annotationsByClassId] call,
+     * because effectively you already have all necessary information in [KaAnnotationApplicationInfo]
      */
     public val isCallWithArguments: Boolean
 
@@ -54,3 +54,5 @@ public sealed interface KtAnnotationApplication : KtLifetimeOwner {
      */
     public val index: Int?
 }
+
+public typealias KtAnnotationApplication = KaAnnotationApplication

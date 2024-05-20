@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -27,21 +27,21 @@ import org.jetbrains.kotlin.fir.types.custom
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.name.ClassId
 
-internal class KtFirAnnotationListForType private constructor(
+internal class KaFirAnnotationListForType private constructor(
     val coneType: ConeKotlinType,
-    private val builder: KtSymbolByFirBuilder,
-) : KtAnnotationsList() {
-    override val token: KtLifetimeToken get() = builder.token
+    private val builder: KaSymbolByFirBuilder,
+) : KaAnnotationsList() {
+    override val token: KaLifetimeToken get() = builder.token
     private val useSiteSession: FirSession get() = builder.rootSession
 
-    override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
+    override val annotations: List<KaAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
             coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATION_ARGUMENTS).mapIndexed { index, annotation ->
                 annotation.toKtAnnotationApplication(builder, index)
             }
         }
 
-    override val annotationInfos: List<KtAnnotationApplicationInfo>
+    override val annotationInfos: List<KaAnnotationApplicationInfo>
         get() = withValidityAssertion {
             coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).mapIndexed { index, annotation ->
                 annotation.toKtAnnotationInfo(useSiteSession, index, token)
@@ -57,7 +57,7 @@ internal class KtFirAnnotationListForType private constructor(
     override fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
+    ): List<KaAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
         coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATION_ARGUMENTS).mapIndexedNotNull { index, annotation ->
             if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.toAnnotationClassId(useSiteSession) != classId) {
                 return@mapIndexedNotNull null
@@ -73,11 +73,11 @@ internal class KtFirAnnotationListForType private constructor(
         }
 
     companion object {
-        fun create(coneType: ConeKotlinType, builder: KtSymbolByFirBuilder): KtAnnotationsList {
+        fun create(coneType: ConeKotlinType, builder: KaSymbolByFirBuilder): KaAnnotationsList {
             return if (coneType.customAnnotations.isEmpty()) {
-                KtEmptyAnnotationsList(builder.token)
+                KaEmptyAnnotationsList(builder.token)
             } else {
-                KtFirAnnotationListForType(coneType, builder)
+                KaFirAnnotationListForType(coneType, builder)
             }
         }
     }

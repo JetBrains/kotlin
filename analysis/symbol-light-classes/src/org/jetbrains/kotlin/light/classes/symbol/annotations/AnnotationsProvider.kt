@@ -5,22 +5,22 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 /**
  * This class provides annotations to [GranularAnnotationsBox].
  *
  * [EmptyAnnotationsProvider] is just an empty provider.
- * [SymbolAnnotationsProvider] is a provider based on [KtAnnotatedSymbol] API.
+ * [SymbolAnnotationsProvider] is a provider based on [KaAnnotatedSymbol] API.
  * [CompositeAnnotationsProvider] is a composition of some [AnnotationsProvider].
  *
  * @see [GranularAnnotationsBox]
  */
 internal sealed interface AnnotationsProvider {
     /**
-     * @return a list of [KtAnnotationApplicationInfo] applicable for this provider
+     * @return a list of [KaAnnotationApplicationInfo] applicable for this provider
      */
     fun annotationInfos(): List<AnnotationApplication>
     operator fun get(classId: ClassId): Collection<AnnotationApplication>
