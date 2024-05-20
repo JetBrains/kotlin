@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 internal class JvmIrValidationBeforeLoweringPhase(
     context: JvmBackendContext
 ) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
-    override fun IrValidationContext.validate(irModule: IrModuleFragment, mode: IrVerificationMode, phaseName: String) {
+    override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
         performBasicIrValidation(irModule, context.irBuiltIns, phaseName, checkProperties = true)
     }
 }
@@ -40,7 +39,7 @@ internal class JvmIrValidationBeforeLoweringPhase(
 internal class JvmIrValidationAfterLoweringPhase(
     context: JvmBackendContext
 ) : IrValidationAfterLoweringPhase<JvmBackendContext>(context) {
-    override fun IrValidationContext.validate(irModule: IrModuleFragment, mode: IrVerificationMode, phaseName: String) {
+    override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
         performBasicIrValidation(irModule, context.irBuiltIns, phaseName, checkProperties = true)
 
         for (file in irModule.files) {
