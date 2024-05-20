@@ -35,20 +35,28 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 treeName = treeName,
             )
 
-            fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRefWithNullability? = null, forceNullable: Boolean = false) {
+            fun Field.replaceDeclaration(
+                override: Boolean,
+                overriddenType: TypeRefWithNullability? = null,
+                forceNullable: Boolean = false,
+            ) {
                 println()
                 if (name == "source") {
                     println("@", firImplementationDetailType.render())
                 }
-                replaceFunctionDeclaration(this, override, kind, overridenType, forceNullable)
+                replaceFunctionDeclaration(this, override, kind, overriddenType, forceNullable)
                 println()
             }
 
-            allFields.filter { it.withReplace }.forEach {
-                val override = overriddenFieldsHaveSameClass[it, it] && !(it.name == "source" && element in elementsWithReplaceSource)
-                it.replaceDeclaration(override, forceNullable = it.useNullableForReplace)
-                for (overriddenType in it.overriddenTypes) {
-                    it.replaceDeclaration(true, overriddenType)
+            allFields.filter { it.withReplace }.forEach { field ->
+                val clazz = field.typeRef.copy(nullable = false)
+                val overriddenClasses = field.overriddenFields.map { it -> it.typeRef.copy(nullable = false) }.toSet()
+
+                val override = clazz in overriddenClasses && !(field.name == "source" && element in elementsWithReplaceSource)
+                field.replaceDeclaration(override, forceNullable = field.useNullableForReplace)
+
+                for (overriddenClass in overriddenClasses - clazz) {
+                    field.replaceDeclaration(true, overriddenType = overriddenClass)
                 }
             }
 
