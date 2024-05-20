@@ -49,10 +49,6 @@ class IrFunctionImpl @IrImplementationDetail constructor(
 
     override var metadata: MetadataSource? = null
 
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor
-        get() = symbol.descriptor
-
     override lateinit var returnType: IrType
 
     override var dispatchReceiverParameter: IrValueParameter? = null
@@ -68,6 +64,10 @@ class IrFunctionImpl @IrImplementationDetail constructor(
     override var attributeOwnerId: IrAttributeContainer = this
 
     override var originalBeforeInline: IrAttributeContainer? = null
+
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: FunctionDescriptor
+        get() = symbol.descriptor
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
 

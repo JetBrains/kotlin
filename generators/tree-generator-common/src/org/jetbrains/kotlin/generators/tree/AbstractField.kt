@@ -90,7 +90,9 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     open val overriddenFields: MutableSet<Field> = mutableSetOf<Field>()
 
-    open fun updatePropertiesFromOverriddenField(parentField: Field) {}
+    open fun updatePropertiesFromOverriddenFields(parentFields: List<Field>) {
+        overriddenFields += parentFields
+    }
 
     override fun toString(): String {
         return name

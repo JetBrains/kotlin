@@ -585,6 +585,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(overridableDeclaration.withArgs("S" to simpleFunctionSymbol))
         parent(attributeContainer)
 
+        +descriptor("FunctionDescriptor")
         +declaredSymbol(simpleFunctionSymbol)
         +listField("overriddenSymbols", simpleFunctionSymbol, mutability = Var) {
             skipInIrFactory()
