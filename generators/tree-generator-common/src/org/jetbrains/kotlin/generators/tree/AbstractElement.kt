@@ -113,37 +113,45 @@ abstract class AbstractElement<Element, Field, Implementation>(
         appendable.append(typeName)
     }
 
-    override val allFields: List<Field> by lazy {
+    override lateinit var allFields: List<Field>
+
+    internal fun inheritFields() {
         val result = LinkedHashMap<String, Field>()
         fields.toList().asReversed().associateByTo(result) { it.name }
 
-        elementParents.asReversed().forEach { parentRef ->
-            val parent = parentRef.element
-            parent.allFields.asReversed().forEach { originalParentField ->
-                val ownParentField = originalParentField.copy().apply {
-                    substituteType(parentRef.args)
-                    fromParent = true
-                    overriddenFields += originalParentField
-                }
-
-                var existingField = result[ownParentField.name]
-                if (existingField != null) {
-                    if (existingField !in fields) {
-                        existingField = ownParentField
-                        result.remove(existingField.name)
-                        result[existingField.name] = existingField
-                    }
-
-                    existingField.fromParent = true
-                    existingField.overriddenFields += ownParentField
-                    existingField.updatePropertiesFromOverriddenField(ownParentField)
-                } else {
-                    result[ownParentField.name] = ownParentField
+        val allInheritedFieldsByParent = buildMap<String, MutableList<Pair<ElementRef<Element>, Field>>> {
+            elementParents.asReversed().forEach { parentRef ->
+                parentRef.element.allFields.asReversed().forEach { field ->
+                    // The list is removed and then added back in, so that it's moved to the back.
+                    // This is required to keep the established order of generated properties.
+                    val list = remove(field.name) ?: mutableListOf()
+                    list.add(parentRef to field)
+                    put(field.name, list)
                 }
             }
         }
 
-        result.values.toList().asReversed()
+        for ((fieldName, inheritedFieldsByParent) in allInheritedFieldsByParent) {
+            var field = result[fieldName]
+            if (field == null) {
+                val inheritFrom = inheritedFieldsByParent.distinctBy { it.second.typeRef }.singleOrNull() ?: error(
+                    "Field $fieldName has ambiguous type, coming from [${inheritedFieldsByParent.joinToString { it.first.element.typeName }}], " +
+                            "please specify it explicitly for the ${element.name} element"
+                )
+
+                field = inheritFrom.second.copy().apply {
+                    substituteType(inheritFrom.first.args)
+                }
+
+                result[fieldName] = field
+            }
+
+            val inheritedFields = inheritedFieldsByParent.map { it.second }
+            field.fromParent = true
+            field.updatePropertiesFromOverriddenFields(inheritedFields)
+        }
+
+        allFields = result.values.toList().asReversed()
     }
 
     /**

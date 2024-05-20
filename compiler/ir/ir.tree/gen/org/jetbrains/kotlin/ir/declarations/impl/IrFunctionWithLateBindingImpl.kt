@@ -51,10 +51,6 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
 
     override var metadata: MetadataSource? = null
 
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor
-        get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
-
     override lateinit var returnType: IrType
 
     override var dispatchReceiverParameter: IrValueParameter? = null
@@ -70,6 +66,10 @@ class IrFunctionWithLateBindingImpl @IrImplementationDetail constructor(
     override var attributeOwnerId: IrAttributeContainer = this
 
     override var originalBeforeInline: IrAttributeContainer? = null
+
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: FunctionDescriptor
+        get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
 
     override val symbol: IrSimpleFunctionSymbol
         get() = _symbol ?: error("$this has not acquired a symbol yet")

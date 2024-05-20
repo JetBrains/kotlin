@@ -8,4 +8,19 @@ package org.jetbrains.kotlin.generators.tree
 data class Model<Element : AbstractElement<Element, *, *>>(
     val elements: List<Element>,
     val rootElement: Element,
-)
+) {
+    internal fun inheritFields() {
+        val processed = mutableSetOf<Element>()
+        fun recurse(element: Element) {
+            if (!processed.add(element)) return
+            for (parent in element.elementParents) {
+                recurse(parent.element)
+            }
+            element.inheritFields()
+        }
+
+        for (element in elements + rootElement) {
+            recurse(element)
+        }
+    }
+}

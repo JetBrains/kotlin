@@ -158,6 +158,7 @@ class TreeGenerator(private val generationPath: File, private val treeGeneratorR
                 Implementation : AbstractImplementation<Implementation, Element, ImplementationField>,
                 ElementField : AbstractField<ElementField>,
                 ImplementationField : AbstractField<ElementField> {
+            model.inheritFields()
             if (enableBaseTransformerTypeDetection) {
                 detectBaseTransformerTypes(model)
             }
