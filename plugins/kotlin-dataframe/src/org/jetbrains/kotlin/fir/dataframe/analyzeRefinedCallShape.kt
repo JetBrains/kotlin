@@ -20,15 +20,18 @@ import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.dataframe.DATA_ROW_CLASS_ID
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.Interpreter
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
+import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
 
 fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: InterpretationErrorReporter): CallResult? {
     val callReturnType = call.resolvedType
@@ -137,8 +140,22 @@ fun KotlinTypeFacade.groupBy(
             )
         }
 
-        // important to create FrameColumns?
-        val cols = createPluginDataFrameSchema(groupBy.keys, groupBy.moveToTop).columns() + dsl.columns.map { SimpleCol(it.name, TypeApproximation(it.type)) }
+        // important to create FrameColumns, nullable DataRows?
+        val cols = createPluginDataFrameSchema(groupBy.keys, groupBy.moveToTop).columns() + dsl.columns.map {
+            when (it.type.classId) {
+                DATA_ROW_CLASS_ID -> {
+                    when (it.type.nullability) {
+                        ConeNullability.NULLABLE -> SimpleCol(it.name, TypeApproximation(it.type))
+                        ConeNullability.UNKNOWN -> SimpleCol(it.name, TypeApproximation(it.type))
+                        ConeNullability.NOT_NULL -> {
+                            val typeProjection = it.type.typeArguments[0]
+                            SimpleColumnGroup(it.name, pluginDataFrameSchema(typeProjection).columns(), anyRow)
+                        }
+                    }
+                }
+                else -> SimpleCol(it.name, TypeApproximation(it.type))
+            }
+        }
         PluginDataFrameSchema(cols)
     } else {
         null

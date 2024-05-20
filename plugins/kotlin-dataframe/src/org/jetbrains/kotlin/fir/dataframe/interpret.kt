@@ -199,11 +199,7 @@ fun <T> KotlinTypeFacade.interpret(
                 } else {
                     val arg = objectWithSchema.schemaArg
                     val schemaTypeArg = (objectWithSchema.typeRef as ConeClassLikeType).typeArguments[arg]
-                    val schema = if (schemaTypeArg.isStarProjection) {
-                        PluginDataFrameSchema(emptyList())
-                    } else {
-                        pluginDataFrameSchema(schemaTypeArg.type as ConeClassLikeType)
-                    }
+                    val schema = pluginDataFrameSchema(schemaTypeArg)
                     Interpreter.Success(schema)
                 }
             }
@@ -238,6 +234,15 @@ fun <T> KotlinTypeFacade.interpret(
     } else {
         return null
     }
+}
+
+internal fun KotlinTypeFacade.pluginDataFrameSchema(schemaTypeArg: ConeTypeProjection): PluginDataFrameSchema {
+    val schema = if (schemaTypeArg.isStarProjection) {
+        PluginDataFrameSchema(emptyList())
+    } else {
+        pluginDataFrameSchema(schemaTypeArg.type as ConeClassLikeType)
+    }
+    return schema
 }
 
 internal fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrameSchema {
