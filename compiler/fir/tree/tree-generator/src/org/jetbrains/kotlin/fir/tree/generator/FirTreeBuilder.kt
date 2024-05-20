@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.*
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object FirTreeBuilder : AbstractFirTreeBuilder() {
+    override val baseFirElement by element("Element", Other)
     val annotationContainer by element(Other)
     val typeRef by sealedElement(TypeRef, annotationContainer)
     val reference by element(Reference)

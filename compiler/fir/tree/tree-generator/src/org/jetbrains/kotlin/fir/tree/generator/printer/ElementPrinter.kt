@@ -31,7 +31,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 element = element,
                 transformerClass = firTransformerType,
                 implementation = "transformer.transform${element.name}(this, data)",
-                returnType = TypeVariable("E", listOf(AbstractFirTreeBuilder.baseFirElement)),
+                returnType = TypeVariable("E", listOf(FirTreeBuilder.baseFirElement)),
                 treeName = treeName,
             )
 
@@ -95,7 +95,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 printTransformChildrenMethod(
                     element = element,
                     transformerClass = firTransformerType,
-                    returnType = AbstractFirTreeBuilder.baseFirElement,
+                    returnType = FirTreeBuilder.baseFirElement,
                 )
                 println()
             }
