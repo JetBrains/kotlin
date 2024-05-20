@@ -290,6 +290,7 @@ interface IrBuilderWithPluginContext {
 
     fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
         also { irDeclaration ->
+            @OptIn(ObsoleteDescriptorBasedAPI::class)
             compilerContext.symbolTable.withReferenceScope(irDeclaration) {
                 builder(irDeclaration)
             }

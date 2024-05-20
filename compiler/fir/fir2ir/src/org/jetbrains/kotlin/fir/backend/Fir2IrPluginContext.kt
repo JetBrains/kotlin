@@ -60,6 +60,7 @@ class Fir2IrPluginContext(
     override val platform: TargetPlatform
         get() = c.session.moduleData.platform
 
+    @ObsoleteDescriptorBasedAPI
     override val symbolTable: ReferenceSymbolTable
         get() = c.symbolTable
 

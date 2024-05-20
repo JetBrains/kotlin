@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.incrementalDataProvider
@@ -117,6 +118,7 @@ class ClassicFrontend2IrConverter(
             hasErrors,
         )
 
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         return IrBackendInput.JsIrBackendInput(
             moduleFragment,
             pluginContext,
@@ -164,6 +166,7 @@ class ClassicFrontend2IrConverter(
             hasErrors,
         )
 
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         return IrBackendInput.WasmBackendInput(
             moduleFragment,
             pluginContext,

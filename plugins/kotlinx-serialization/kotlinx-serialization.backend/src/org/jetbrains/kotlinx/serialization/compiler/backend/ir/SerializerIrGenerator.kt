@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -112,6 +113,7 @@ open class SerializerIrGenerator(
         lateinit var prop: IrProperty
 
         // how to (auto)create backing field and getter/setter?
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         compilerContext.symbolTable.withReferenceScope(irClass) {
             prop = generatePropertyMissingParts(desc, desc.name, serialDescImplClass.starProjectedType, irClass, desc.visibility)
 

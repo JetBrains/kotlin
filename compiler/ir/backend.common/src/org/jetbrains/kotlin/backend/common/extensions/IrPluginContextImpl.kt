@@ -52,6 +52,7 @@ open class IrPluginContextImpl constructor(
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val moduleDescriptor: ModuleDescriptor = module
 
+    @ObsoleteDescriptorBasedAPI
     override val symbolTable: ReferenceSymbolTable = st
 
     final override val metadataDeclarationRegistrar: IrGeneratedDeclarationsRegistrar
