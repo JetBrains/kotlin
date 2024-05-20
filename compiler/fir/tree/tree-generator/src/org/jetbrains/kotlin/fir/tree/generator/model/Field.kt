@@ -17,9 +17,6 @@ sealed class Field : AbstractField<Field>() {
     open val isMutableOrEmptyList: Boolean
         get() = false
 
-    open var isMutableInInterface: Boolean = false
-    open val fromDelegate: Boolean get() = false
-
     var withBindThis = true
 
     override val origin: Field
@@ -106,9 +103,7 @@ class FieldWithDefault(override val origin: Field) : Field() {
     override val isMutableOrEmptyList: Boolean
         get() = origin.isMutableOrEmptyList
 
-    override var isMutableInInterface: Boolean = origin.isMutableInInterface
     override var customSetter: String? = null
-    override var fromDelegate: Boolean = false
     override val overriddenFields: MutableSet<Field>
         get() = origin.overriddenFields
 
@@ -122,7 +117,6 @@ class FieldWithDefault(override val origin: Field) : Field() {
     override fun internalCopy(): Field {
         return FieldWithDefault(origin).also {
             it.isMutable = isMutable
-            it.fromDelegate = fromDelegate
         }
     }
 
