@@ -17,11 +17,6 @@ class Base64StreamsSample {
             assertPrints(it.readBytes().decodeToString(), "Hello World!")
         }
 
-        // Padding could be omitted
-        ByteArrayInputStream("UGFkOg".toByteArray()).decodingWith(Base64.Default).use {
-            assertPrints(it.readBytes().decodeToString(), "Pad:")
-        }
-
         ByteArrayInputStream("UGFkOg==... and everything else".toByteArray()).use { input ->
             input.decodingWith(Base64.Default).also {
                 // Reads only Base64-encoded part, including padding

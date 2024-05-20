@@ -172,9 +172,6 @@ class Base64Samples {
     fun decodeFromStringSample() {
         assertTrue(Base64.decode("/wD+AP0=").contentEquals(byteArrayOf(-1, 0, -2, 0, -3)))
 
-        // padding character may be omitted
-        assertTrue(Base64.decode("/wD+AP0").contentEquals(byteArrayOf(-1, 0, -2, 0, -3)))
-
         val embeddedB64 = "Data is: \"/wD+AP0=\""
         // find '"' indices and extract base64-encoded data in between
         val decoded = Base64.decode(

@@ -158,13 +158,6 @@ class Base64Test {
         testCoding("fooba", "Zm9vYmE=")
         testCoding("foobar", "Zm9vYmFy")
 
-        // the padded bits are allowed to be non-zero
-        testDecode("Zm9=", "fo".encodeToByteArray())
-
-        // paddings not required
-        testDecode("Zg", "f".encodeToByteArray())
-        testDecode("Zm9vYmE", "fooba".encodeToByteArray())
-
         for ((codec, scheme) in codecs) {
             // dangling single symbol at the end that does not have bits even for a byte
             val lastDandlingSymbol = listOf("Z", "Z=", "Z==", "Z===", "Zm9vZ", "Zm9vZ=", "Zm9vZ==", "Zm9vZ===")
@@ -178,6 +171,13 @@ class Base64Test {
 
             // padding in the middle
             assertFailsWith<IllegalArgumentException>(scheme) { codec.decode("Zg==Zg==") }
+
+            // the padded bits are not allowed to be non-zero
+            assertFailsWith<IllegalArgumentException>(scheme) { codec.decode("Zm9=") }
+
+            // paddings are required
+            assertFailsWith<IllegalArgumentException>(scheme) { codec.decode("Zg") }
+            assertFailsWith<IllegalArgumentException>(scheme) { codec.decode("Zm9vYmE") }
         }
     }
 

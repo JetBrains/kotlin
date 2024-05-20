@@ -315,9 +315,25 @@ class Base64IOStreamTest {
                 assertEquals('f'.code, it.read())
                 assertEquals('o'.code, it.read())
                 assertEquals('o'.code, it.read())
-                assertEquals('b'.code, it.read())
-                assertEquals(-1, it.read())
-                assertEquals(-1, it.read())
+
+                assertFailsWith<IllegalArgumentException> { it.read() }
+            }
+
+            // closed
+            assertFailsWith<IOException> {
+                wrapper.read()
+            }
+        }
+    }
+
+    @Test
+    fun nonZeroPadBits() {
+        for (base64 in listOf(Base64, Base64.Mime)) {
+            val inputStream = "Zm9=".byteInputStream()
+            val wrapper = inputStream.decodingWith(base64)
+
+            wrapper.use {
+                assertFailsWith<IllegalArgumentException> { it.read() }
             }
 
             // closed

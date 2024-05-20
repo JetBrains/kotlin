@@ -393,6 +393,7 @@ public open class Base64 private constructor(
         var byteStart = -bitsPerByte
         var sourceIndex = startIndex
         var destinationIndex = destinationOffset
+        var hasPadding = false
 
         while (sourceIndex < endIndex) {
             if (byteStart == -bitsPerByte && sourceIndex + 3 < endIndex) {
@@ -414,6 +415,7 @@ public open class Base64 private constructor(
             val symbolBits = decodeMap[symbol]
             if (symbolBits < 0) {
                 if (symbolBits == -2) {
+                    hasPadding = true
                     sourceIndex = handlePaddingSymbol(source, sourceIndex, endIndex, byteStart)
                     break
                 } else if (isMimeScheme) {
@@ -442,8 +444,12 @@ public open class Base64 private constructor(
         if (byteStart == -bitsPerByte + bitsPerSymbol) { // dangling single symbol, incorrectly encoded
             throw IllegalArgumentException("The last unit of input does not have enough bits")
         }
-
-//        check(payload == 0) // the padded bits are allowed to be non-zero
+        if (byteStart != -bitsPerByte && !hasPadding) {
+            throw IllegalArgumentException("The input should be padded")
+        }
+        if (payload != 0) { // the pad bits are non-zero
+            throw IllegalArgumentException("The pad bits should be zeros")
+        }
 
         sourceIndex = skipIllegalSymbolsIfMime(source, sourceIndex, endIndex)
         if (sourceIndex < endIndex) {
