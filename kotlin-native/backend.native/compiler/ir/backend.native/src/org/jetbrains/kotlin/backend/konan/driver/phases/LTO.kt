@@ -90,8 +90,8 @@ internal val BackendInlinerPhase = createSimpleNamedCompilerPhase<NativeGenerati
                     irModule,
                     moduleDFG,
                     DevirtualizationAnalysis.AnalysisResult(mutableMapOf(), devirtualizationAnalysisResult.typeHierarchy),
-                    devirtualizedCallSitesUnfoldFactor = 0,
-                    nonDevirtualizedCallSitesUnfoldFactor = 0,
+                    devirtualizedCallSitesUnfoldFactor = -1,
+                    nonDevirtualizedCallSitesUnfoldFactor = -1,
             ).build()
 //            println("After CallGraphBuilder for BackendInlinerPhase: ${getMemoryUsage()}")
             BackendInliner(generationState, moduleDFG, devirtualizationAnalysisResult.devirtualizedCallSites, callGraph, options).run()
