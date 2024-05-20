@@ -178,6 +178,23 @@ class Base64Test {
             // paddings are required
             assertFailsWith<IllegalArgumentException>(scheme) { codec.decode("Zg") }
             assertFailsWith<IllegalArgumentException>(scheme) { codec.decode("Zm9vYmE") }
+
+            // paddings are prohibited
+            val noPaddingCodec = codec.withPadding(onDecode = Base64.DecodePadding.REQUIRE_ABSENT)
+            assertFailsWith<IllegalArgumentException>(scheme) { noPaddingCodec.decode("Zg==") }
+            assertFailsWith<IllegalArgumentException>(scheme) { noPaddingCodec.decode("Zm9vYmE=") }
+
+            // paddings are allowed but not required
+            val allowPaddingCodec = codec.withPaddingOptions(decodeOption = Base64.DecodePadding.ALLOW_BOTH)
+            assertContentEquals("f".encodeToByteArray(), allowPaddingCodec.decode("Zg"), message = scheme)
+            assertContentEquals("fooba".encodeToByteArray(), allowPaddingCodec.decode("Zm9vYmE"), message = scheme)
+            assertContentEquals("f".encodeToByteArray(), allowPaddingCodec.decode("Zg=="), message = scheme)
+            assertContentEquals("fooba".encodeToByteArray(), allowPaddingCodec.decode("Zm9vYmE="), message = scheme)
+
+            // encode with no padding
+            val withoutPaddingBase64 = codec.withPadding(onEncode = Base64.EncodePadding.OMIT)
+            assertEquals("Zg", withoutPaddingBase64.encode("f".encodeToByteArray()))
+            assertEquals("Zm9vYmE", withoutPaddingBase64.encode("fooba".encodeToByteArray()))
         }
     }
 
@@ -272,4 +289,29 @@ class Base64Test {
         val expected = "Zm9vYmFy".repeat(76).chunked(76).joinToString(separator = "\r\n")
         testEncode(Base64.Mime, "foobar".repeat(76).encodeToByteArray(), expected)
     }
+}
+
+private fun f() {
+    val binary = "foobar".encodeToByteArray()
+    val text = "Zm9vYmFy".encodeToByteArray()
+
+    // Encode with padding
+    Base64.encode(binary)
+    Base64.Mime.encode(binary)
+
+    // Encode without padding
+    Base64.withPadding(onEncode = Base64.EncodePadding.WRITE).encode(binary)
+    Base64.UrlSafe.withPadding(onEncode = Base64.EncodePadding.WRITE).encode(binary)
+
+    // Decode with required padding
+    Base64.withPadding(onDecode = Base64.DecodePadding.REQUIRE_PRESENT).decode(text)
+    Base64.Mime.withPadding(onDecode = Base64.DecodePadding.REQUIRE_PRESENT).decode(text)
+
+    // Decode with required no padding
+    Base64.withPadding(onDecode = Base64.DecodePadding.REQUIRE_ABSENT).decode(text)
+    Base64.Mime.withPadding(onDecode = Base64.DecodePadding.REQUIRE_ABSENT).decode(text)
+
+    // Decode with required padding or no padding
+    Base64.withPadding(onDecode = Base64.DecodePadding.ALLOW_BOTH).decode(text)
+    Base64.Mime.withPadding(onDecode = Base64.DecodePadding.ALLOW_BOTH).decode(text)
 }

@@ -19,10 +19,49 @@ package kotlin.io.encoding
 @ExperimentalEncodingApi
 public open class Base64 private constructor(
     internal val isUrlSafe: Boolean,
-    internal val isMimeScheme: Boolean
+    internal val isMimeScheme: Boolean,
+    private val encodePadding: EncodePadding = EncodePadding.WRITE,
+    private val decodePadding: DecodePadding = DecodePadding.REQUIRE_PRESENT
 ) {
     init {
         require(!isUrlSafe || !isMimeScheme)
+    }
+
+    public enum class EncodePadding {
+        WRITE,
+        OMIT
+    }
+
+    public enum class DecodePadding {
+        REQUIRE_PRESENT,
+        REQUIRE_ABSENT,
+        ALLOW_BOTH
+    }
+
+    // TODO: Having default values can implicitly change the option that was not specified.
+    //   Should the default value be null?
+    public fun withPadding(
+        onEncode: EncodePadding = EncodePadding.WRITE,
+        onDecode: DecodePadding = DecodePadding.REQUIRE_PRESENT
+    ): Base64 {
+        return if (onEncode != encodePadding || onDecode != decodePadding) {
+            Base64(isUrlSafe, isMimeScheme, onEncode, onDecode)
+        } else {
+            this
+        }
+    }
+
+    // TODO: Having default values can implicitly change the option that was not specified.
+    //   Should the default value be null?
+    public fun withPaddingOptions(
+        encodeOption: EncodePadding = EncodePadding.WRITE,
+        decodeOption: DecodePadding = DecodePadding.REQUIRE_PRESENT
+    ): Base64 {
+        return if (encodeOption != encodePadding || decodeOption != decodePadding) {
+            Base64(isUrlSafe, isMimeScheme, encodeOption, decodeOption)
+        } else {
+            this
+        }
     }
 
     /**
@@ -301,8 +340,10 @@ public open class Base64 private constructor(
                 val bits = byte1 shl 4
                 destination[destinationIndex++] = encodeMap[bits ushr 6]
                 destination[destinationIndex++] = encodeMap[bits and 0x3F]
-                destination[destinationIndex++] = padSymbol
-                destination[destinationIndex++] = padSymbol
+                if (encodePadding == EncodePadding.WRITE) {
+                    destination[destinationIndex++] = padSymbol
+                    destination[destinationIndex++] = padSymbol
+                }
             }
             2 -> {
                 val byte1 = source[sourceIndex++].toInt() and 0xFF
@@ -311,7 +352,9 @@ public open class Base64 private constructor(
                 destination[destinationIndex++] = encodeMap[bits ushr 12]
                 destination[destinationIndex++] = encodeMap[(bits ushr 6) and 0x3F]
                 destination[destinationIndex++] = encodeMap[bits and 0x3F]
-                destination[destinationIndex++] = padSymbol
+                if (encodePadding == EncodePadding.WRITE) {
+                    destination[destinationIndex++] = padSymbol
+                }
             }
         }
 
@@ -324,7 +367,10 @@ public open class Base64 private constructor(
         // includes padding chars
         val groups = (sourceSize + bytesPerGroup - 1) / bytesPerGroup
         val lineSeparators = if (isMimeScheme) (groups - 1) / mimeGroupsPerLine else 0
-        val size = groups * symbolsPerGroup + lineSeparators * 2
+        var size = groups * symbolsPerGroup + lineSeparators * 2
+        if (encodePadding == EncodePadding.OMIT) {
+            size -= (groups * bytesPerGroup - sourceSize) // 0, 1, or 2
+        }
         if (size < 0) { // Int overflow
             throw IllegalArgumentException("Input is too big")
         }
@@ -394,8 +440,12 @@ public open class Base64 private constructor(
         if (byteStart == -bitsPerByte + bitsPerSymbol) { // dangling single symbol, incorrectly encoded
             throw IllegalArgumentException("The last unit of input does not have enough bits")
         }
-        if (byteStart != -bitsPerByte && !hasPadding) {
-            throw IllegalArgumentException("The input should be padded")
+        if (byteStart != -bitsPerByte) {
+            if (decodePadding == DecodePadding.REQUIRE_PRESENT && !hasPadding ||
+                decodePadding == DecodePadding.REQUIRE_ABSENT && hasPadding
+            ) {
+                throw IllegalArgumentException("The input should be padded")
+            }
         }
         if (payload != 0) { // the pad bits are non-zero
             throw IllegalArgumentException("The pad bits should be zeros")
