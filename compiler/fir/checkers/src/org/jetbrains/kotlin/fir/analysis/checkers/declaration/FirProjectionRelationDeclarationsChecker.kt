@@ -7,28 +7,28 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
-import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeRef
+import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeRefForConflictingProjections
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
 
-object FirProjectionRelationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirProjectionRelationDeclarationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirPropertyAccessor) {
             return
         }
 
         if (declaration is FirCallableDeclaration) {
-            checkTypeRef(declaration.returnTypeRef, context, reporter)
+            checkTypeRefForConflictingProjections(declaration.returnTypeRef, context, reporter)
         }
 
         when (declaration) {
             is FirClass -> {
                 for (it in declaration.superTypeRefs) {
-                    checkTypeRef(it, context, reporter)
+                    checkTypeRefForConflictingProjections(it, context, reporter)
                 }
             }
             is FirTypeAlias ->
-                checkTypeRef(declaration.expandedTypeRef, context, reporter)
+                checkTypeRefForConflictingProjections(declaration.expandedTypeRef, context, reporter)
             else -> {}
         }
     }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-67764
 
 class CustomList<in T>{}

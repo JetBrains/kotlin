@@ -854,7 +854,7 @@ fun isExplicitTypeArgumentSource(source: KtSourceElement?): Boolean =
 
 val FirTypeProjection.isExplicit: Boolean get() = isExplicitTypeArgumentSource(source)
 
-fun checkTypeRef(
+fun checkTypeRefForConflictingProjections(
     typeRef: FirTypeRef,
     context: CheckerContext,
     reporter: DiagnosticReporter
@@ -903,7 +903,7 @@ fun checkTypeRef(
             )
         }
 
-        argTypeRefSource.typeRef?.let { checkTypeRef(it, context, reporter) }
+        argTypeRefSource.typeRef?.let { checkTypeRefForConflictingProjections(it, context, reporter) }
     }
 }
 
