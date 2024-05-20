@@ -43,7 +43,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     var visibility: Visibility = Visibility.PUBLIC
 
-    var fromParent: Boolean = false
+    var isOverride: Boolean = false
 
     /**
      * If `true`, this field is skipped in `build%Element%Copy` functions.
@@ -119,7 +119,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
         copy.isMutable = isMutable
         copy.deprecation = deprecation
         copy.visibility = visibility
-        copy.fromParent = fromParent
+        copy.isOverride = isOverride
         copy.useInBaseTransformerDetection = useInBaseTransformerDetection
         copy.overriddenFields += overriddenFields
         copy.implementationDefaultStrategy = implementationDefaultStrategy
