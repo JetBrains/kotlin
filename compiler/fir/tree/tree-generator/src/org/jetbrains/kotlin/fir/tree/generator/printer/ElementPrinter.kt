@@ -53,7 +53,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 val overriddenClasses = field.overriddenFields.map { it -> it.typeRef.copy(nullable = false) }.toSet()
 
                 val override = clazz in overriddenClasses && !(field.name == "source" && element in elementsWithReplaceSource)
-                field.replaceDeclaration(override, forceNullable = field.useNullableForReplace)
+                field.replaceDeclaration(override, forceNullable = field.receiveNullableTypeInReplace)
 
                 for (overriddenClass in overriddenClasses - clazz) {
                     field.replaceDeclaration(true, overriddenType = overriddenClass)
@@ -66,7 +66,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 transformFunctionDeclaration(
                     field = field,
                     returnType = element.withSelfArgs(),
-                    override = field.fromParent && field.parentHasSeparateTransform,
+                    override = field.overriddenFields.any { it.needsSeparateTransform },
                     implementationKind = kind
                 )
                 println()
