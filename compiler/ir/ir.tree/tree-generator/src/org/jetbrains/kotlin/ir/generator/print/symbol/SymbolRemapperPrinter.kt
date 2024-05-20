@@ -37,12 +37,12 @@ internal abstract class AbstractSymbolRemapperPrinter(
 
     protected open fun shouldPrintMethodForSymbol(symbolClass: Symbol, role: SymbolFieldRole): Boolean = true
 
-    private fun ImportCollectingPrinter.printMethod(symbolClass: Symbol, role: SymbolFieldRole) {
+    private fun ImportCollectingPrinter.printMethod(symbolClass: Symbol, returnType: Symbol, role: SymbolFieldRole) {
         val symbolParameter = FunctionParameter("symbol", symbolClass)
         printFunctionDeclaration(
             symbolRemapperMethodName(symbolClass, role),
             parameters = listOf(symbolParameter),
-            returnType = symbolClass,
+            returnType = returnType,
             override = symbolRemapperSuperTypes.isNotEmpty(),
         )
         printMethodImplementation(symbolParameter, symbolClass, role)
@@ -90,7 +90,19 @@ internal abstract class AbstractSymbolRemapperPrinter(
                     val symbols = fieldsAndSymbols.keys.flatMap { it.elementDescendantsAndSelfDepthFirst() }.distinct()
                     for (symbolType in symbols) {
                         if (!shouldPrintMethodForSymbol(symbolType, role)) continue
-                        val fields = symbolType.elementAncestorsAndSelfDepthFirst().flatMap { fieldsAndSymbols[it].orEmpty() }
+                        val fields = symbolType.elementAncestorsAndSelfDepthFirst().flatMap { fieldsAndSymbols[it].orEmpty() }.toList()
+
+                        // If this symbol type is used in some field as is, use it as the return type of the corresponding method.
+                        // Otherwise, if this symbol type is only used as a subtype, set the return type to its most specific supertype
+                        // used in any of the fields.
+                        val mostSpecificReturnType = fields.fold(null) { acc: Symbol?, field ->
+                            if (acc?.isSubclassOf(field.symbolType) == true) {
+                                acc
+                            } else {
+                                field.symbolType
+                            }
+                        }!!
+
                         println()
                         if (symbolRemapperSuperTypes.isEmpty()) {
                             val kDoc = buildString {
@@ -102,7 +114,7 @@ internal abstract class AbstractSymbolRemapperPrinter(
                             }
                             printKDoc(kDoc)
                         }
-                        printMethod(symbolType, role)
+                        printMethod(symbolType, mostSpecificReturnType, role)
                     }
                 }
                 printAdditionalDeclarations()

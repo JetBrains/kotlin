@@ -65,7 +65,7 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
 
     override fun getReferencedValue(symbol: IrValueSymbol) = symbol.actualizeSymbol()
 
-    override fun getReferencedValueParameter(symbol: IrValueParameterSymbol) = symbol.actualizeSymbol()
+    override fun getReferencedValueParameter(symbol: IrValueParameterSymbol) = symbol.actualizeSymbol<IrValueSymbol>()
 
     override fun getReferencedFunction(symbol: IrFunctionSymbol) = symbol.actualizeSymbol()
 
@@ -75,11 +75,11 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
 
     override fun getReferencedClassifier(symbol: IrClassifierSymbol) = symbol.actualizeSymbol()
 
-    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol) = symbol.actualizeSymbol()
+    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol) = symbol.actualizeSymbol<IrClassifierSymbol>()
 
     override fun getReferencedReturnTarget(symbol: IrReturnTargetSymbol) = symbol.actualizeSymbol()
 
-    override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol) = symbol.actualizeSymbol()
+    override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol) = symbol.actualizeSymbol<IrReturnTargetSymbol>()
 
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol) = symbol.actualizeSymbol()
 

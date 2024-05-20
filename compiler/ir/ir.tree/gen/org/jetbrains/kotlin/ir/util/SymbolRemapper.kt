@@ -73,11 +73,11 @@ interface SymbolRemapper : DeclaredSymbolRemapper, ReferencedSymbolRemapper {
 
         override fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol = symbol
 
-        override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol = symbol
+        override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol = symbol
 
-        override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol = symbol
+        override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnTargetSymbol = symbol
 
-        override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol = symbol
+        override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol = symbol
 
         override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = symbol
     }

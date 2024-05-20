@@ -133,7 +133,7 @@ interface ReferencedSymbolRemapper {
      * - [IrClassReference.symbol]
      * - [IrSimpleType.classifier]
      */
-    fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol
+    fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol
 
     /**
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
@@ -148,7 +148,7 @@ interface ReferencedSymbolRemapper {
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
      * - [IrReturn.returnTargetSymbol]
      */
-    fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol
+    fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnTargetSymbol
 
     /**
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
@@ -165,7 +165,7 @@ interface ReferencedSymbolRemapper {
      * - [IrGetValue.symbol]
      * - [IrSetValue.symbol]
      */
-    fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol
+    fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol
 
     /**
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
