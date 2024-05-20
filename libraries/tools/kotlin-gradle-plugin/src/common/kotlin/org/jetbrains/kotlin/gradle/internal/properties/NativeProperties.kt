@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.internal.properties
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import java.io.File
 
 internal val Project.nativeProperties: NativeProperties
     get() = NativePropertiesLoader(this)
@@ -17,9 +18,32 @@ internal interface NativeProperties {
     val kotlinNativeVersion: Provider<String>
     val jvmArgs: Provider<List<String>>
     val forceDisableRunningInProcess: Provider<Boolean>
-    val konanDataDir: Provider<String?>
+    val konanDataDir: Provider<File?>
     val downloadFromMaven: Provider<Boolean>
     val isToolchainEnabled: Provider<Boolean>
+
+    /**
+     * Value of 'kotlin.native.home' property.
+     *
+     * It may be empty.
+     */
+    val userProvidedNativeHome: Provider<String>
+
+    /**
+     * Actual Kotlin Native home directory calculated based on user configuration, host os and other inputs.
+     *
+     * Provider should always be present.
+     */
+    val actualNativeHomeDirectory: Provider<File>
+
+    companion object {
+        /**
+         * Allows a user to provide a local Kotlin/Native distribution instead of a downloaded one.
+         */
+        internal val NATIVE_HOME = PropertiesBuildService.NullableStringGradleProperty(
+            name = "kotlin.native.home"
+        )
+    }
 }
 
 private class NativePropertiesLoader(project: Project) : NativeProperties {
@@ -48,9 +72,11 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
         it.property(NATIVE_FORCE_DISABLE_IN_PROCESS, project)
     }
 
-    override val konanDataDir: Provider<String?> = propertiesService.flatMap {
-        it.property(KONAN_DATA_DIR, project)
+    private val konanDataDirProperty = propertiesService.flatMap { service ->
+        service.property(KONAN_DATA_DIR, project).map { File(it) }
     }
+
+    override val konanDataDir: Provider<File?> = konanDataDirProperty
 
     override val downloadFromMaven: Provider<Boolean> = propertiesService.flatMap {
         it.property(NATIVE_DOWNLOAD_FROM_MAVEN, project)
@@ -61,6 +87,22 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
             isToolchainEnabled && isDownloadFromMavenEnabled
         }
     }
+
+    override val userProvidedNativeHome: Provider<String> = propertiesService.flatMap { service ->
+        service.propertyWithDeprecatedName(NativeProperties.NATIVE_HOME, NATIVE_HOME_DEPRECATED, project)
+    }
+
+    override val actualNativeHomeDirectory: Provider<File> = konanDataDirProperty
+        .map { NativeCompilerDownloader.getOsSpecificCompilerDirectory(project, it) }
+        .orElse(
+            userProvidedNativeHome
+                .map { File(it) }
+                .orElse(
+                    project.providers.provider {
+                        NativeCompilerDownloader.getDefaultCompilerDirectory(project)
+                    }
+                )
+        )
 
     companion object {
         private const val PROPERTIES_PREFIX = "kotlin.native"
@@ -105,6 +147,10 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
          */
         private val KONAN_DATA_DIR = PropertiesBuildService.NullableStringGradleProperty(
             name = "konan.data.dir"
+        )
+
+        private val NATIVE_HOME_DEPRECATED = PropertiesBuildService.NullableStringGradleProperty(
+            name = "org.jetbrains.kotlin.native.home"
         )
 
         /**

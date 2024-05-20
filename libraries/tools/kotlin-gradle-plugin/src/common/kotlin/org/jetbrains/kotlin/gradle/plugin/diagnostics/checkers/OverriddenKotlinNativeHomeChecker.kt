@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -28,7 +29,8 @@ internal object OverriddenKotlinNativeHomeChecker : KotlinGradleProjectChecker {
 
         collector.report(
             project, KotlinToolingDiagnostics.BrokenKotlinNativeBundleError(
-                kotlinPropertiesProvider.nativeHome, PropertiesProvider.KOTLIN_NATIVE_HOME
+                project.nativeProperties.userProvidedNativeHome.orNull,
+                NativeProperties.NATIVE_HOME.name
             )
         )
     }
@@ -36,7 +38,9 @@ internal object OverriddenKotlinNativeHomeChecker : KotlinGradleProjectChecker {
     private fun KotlinGradleProjectCheckerContext.allKonanMainSubdirectoriesExist() =
         // we need to wrap this check in ValueSource to prevent Gradle from monitoring the stdlib folder as a build configuration input
         project.providers.of(StdlibExistenceCheckerValueSource::class.java) {
-            it.parameters.overriddenKotlinNativeHome.set(kotlinPropertiesProvider.nativeHome?.let { nativeHome -> project.file(nativeHome) })
+            it.parameters.overriddenKotlinNativeHome.fileProvider(
+                project.nativeProperties.userProvidedNativeHome.map { nativeHome -> project.file(nativeHome) }
+            )
         }.usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
 
     internal abstract class StdlibExistenceCheckerValueSource :

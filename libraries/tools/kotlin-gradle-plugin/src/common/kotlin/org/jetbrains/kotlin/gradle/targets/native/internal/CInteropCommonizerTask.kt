@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunne
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
@@ -120,7 +121,7 @@ internal abstract class CInteropCommonizerTask
     @get:Internal
     internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
-    private val konanHome = project.file(project.konanHome)
+    private val konanHome = project.nativeProperties.actualNativeHomeDirectory
     private val commonizerLogLevel = project.commonizerLogLevel
     private val additionalCommonizerSettings = project.additionalCommonizerSettings
 
@@ -209,7 +210,7 @@ internal abstract class CInteropCommonizerTask
             commonizerToolRunner.get(),
             kotlinCompilerArgumentsLogLevel.get(),
         ).commonizeLibraries(
-            konanHome = konanHome,
+            konanHome = konanHome.get(),
             outputTargets = group.targets,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
             dependencyLibraries = getCInteropCommonizerGroupDependencies(group),

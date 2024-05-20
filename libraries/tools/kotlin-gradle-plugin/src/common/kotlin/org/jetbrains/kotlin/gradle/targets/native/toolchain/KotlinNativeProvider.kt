@@ -12,7 +12,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -38,20 +37,20 @@ internal class KotlinNativeProvider(
     private val providerFactory = project.providers
 
     @get:Internal
-    val konanDataDir: Provider<String?> = project.nativeProperties.konanDataDir
+    val konanDataDir: Provider<String?> = project.nativeProperties.konanDataDir.map {
+        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+        it!!.absolutePath
+    }
 
     @get:Internal
     val toolchainEnabled: Provider<Boolean> = project.nativeProperties.isToolchainEnabled
 
     @get:Internal
-    val bundleDirectory: DirectoryProperty = project.objects.directoryProperty().fileProvider(
-        project.provider {
-            project.konanHome
-        }
-    )
+    val bundleDirectory: DirectoryProperty = project.objects.directoryProperty()
+        .fileProvider(project.nativeProperties.actualNativeHomeDirectory)
 
     @get:Internal
-    val overriddenKonanHome: Provider<String> = project.provider { project.kotlinPropertiesProvider.nativeHome }
+    val overriddenKonanHome: Provider<String> = project.nativeProperties.userProvidedNativeHome
 
     @get:Internal
     val reinstallBundle: Property<Boolean> = project.objects.property(project.kotlinPropertiesProvider.nativeReinstall)

@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -36,7 +35,10 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
     private fun setupNativeHomePrivateProperty() = with(project) {
         if (!hasProperty(KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY))
-            extensions.extraProperties.set(KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY, konanHome.absolutePath)
+            extensions.extraProperties.set(
+                KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY,
+                nativeProperties.actualNativeHomeDirectory.get().absolutePath
+            )
     }
 
     protected abstract fun createTargetConfigurator(): AbstractKotlinTargetConfigurator<T>

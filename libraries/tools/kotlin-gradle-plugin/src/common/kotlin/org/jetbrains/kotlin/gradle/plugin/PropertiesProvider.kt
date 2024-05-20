@@ -284,12 +284,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property("kotlin.native.distribution.baseDownloadUrl").orNull ?: NativeCompilerDownloader.BASE_DOWNLOAD_URL
 
     /**
-     * Allows a user to provide a local Kotlin/Native distribution instead of a downloaded one.
-     */
-    val nativeHome: String?
-        get() = propertyWithDeprecatedVariant(KOTLIN_NATIVE_HOME, "org.jetbrains.kotlin.native.home")
-
-    /**
      * Forces reinstalling a K/N distribution.
      *
      * The current distribution directory will be removed along with generated platform libraries and precompiled dependencies.
@@ -696,7 +690,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     }
 
     companion object {
-        internal const val KOTLIN_NATIVE_HOME = "kotlin.native.home"
 
         private const val CACHED_PROVIDER_EXT_NAME = "kotlin.properties.provider"
 

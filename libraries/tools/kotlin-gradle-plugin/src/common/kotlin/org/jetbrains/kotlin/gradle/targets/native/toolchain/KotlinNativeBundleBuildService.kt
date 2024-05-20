@@ -18,7 +18,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
@@ -220,7 +219,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
                 PlatformLibrariesGenerator(
                     project,
                     konanTarget,
-                    project.konanHome,
+                    project.nativeProperties.actualNativeHomeDirectory.get(),
                     project.kotlinPropertiesProvider,
                     project.konanPropertiesBuildService,
                 ).generatePlatformLibsIfNeeded()

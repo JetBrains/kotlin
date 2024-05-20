@@ -10,9 +10,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.commonizer.stdlib
+import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
@@ -33,9 +32,12 @@ internal object MissingNativeStdlibChecker : KotlinGradleProjectChecker {
             checkThatStdlibExists().get()
         ) return
 
-        collector.report(project, KotlinToolingDiagnostics.NativeStdlibIsMissingDiagnostic(
-            PropertiesProvider.KOTLIN_NATIVE_HOME.takeIf { kotlinPropertiesProvider.nativeHome != null }
-        ))
+        collector.report(
+            project,
+            KotlinToolingDiagnostics.NativeStdlibIsMissingDiagnostic(
+                project.nativeProperties.userProvidedNativeHome.map { NativeProperties.NATIVE_HOME.name }.orNull
+            )
+        )
     }
 
     private fun KotlinGradleProjectCheckerContext.checkThatStdlibExists() =
@@ -44,7 +46,7 @@ internal object MissingNativeStdlibChecker : KotlinGradleProjectChecker {
             it.parameters.noStdlibEnabled.set(project.hasProperty("kotlin.native.nostdlib"))
             it.parameters.kotlinNativeToolchainEnabled.set(project.nativeProperties.isToolchainEnabled)
             it.parameters.stdlib.setFrom(project.konanDistribution.stdlib)
-            it.parameters.overriddenKotlinNativeHome.set(project.kotlinPropertiesProvider.nativeHome)
+            it.parameters.overriddenKotlinNativeHome.set(project.nativeProperties.userProvidedNativeHome)
         }.usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
 
     internal abstract class StdlibExistenceCheckerValueSource :

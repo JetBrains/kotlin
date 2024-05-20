@@ -10,7 +10,6 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeLibraryGenerationRunner
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -40,7 +39,7 @@ internal class PlatformLibrariesGenerator(
 
     private val distribution = customerDistribution(
         konanHome.absolutePath,
-        konanDataDir = project.nativeProperties.konanDataDir.orNull
+        konanDataDir = project.nativeProperties.konanDataDir.orNull?.absolutePath
     )
 
     private val platformLibsDirectory =
@@ -124,7 +123,12 @@ internal class PlatformLibrariesGenerator(
             args.addArg("-cache-kind", konanCacheKind.produce!!)
             args.addArg(
                 "-cache-directory",
-                CacheBuilder.getRootCacheDirectory(konanHome, konanTarget, true, konanCacheKind).absolutePath
+                CacheBuilder.getRootCacheDirectory(
+                    nativeProperties.actualNativeHomeDirectory.get(),
+                    konanTarget,
+                    true,
+                    konanCacheKind
+                ).absolutePath
             )
             args.addArg("-cache-arg", "-g")
             val additionalCacheFlags = konanPropertiesService.get().additionalCacheFlags(konanTarget)

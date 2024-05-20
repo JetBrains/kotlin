@@ -13,8 +13,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
@@ -70,7 +70,7 @@ abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildSe
     companion object {
         fun registerIfAbsent(project: Project): Provider<KonanPropertiesBuildService> = project.gradle
             .registerClassLoaderScopedBuildService(KonanPropertiesBuildService::class) {
-                it.parameters.konanHome.set(project.konanHome)
+                it.parameters.konanHome.fileProvider(project.nativeProperties.actualNativeHomeDirectory).disallowChanges()
             }.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesKonanPropertiesBuildService::class.java.name) {
                     project.tasks.withType<UsesKonanPropertiesBuildService>().configureEach { task ->
