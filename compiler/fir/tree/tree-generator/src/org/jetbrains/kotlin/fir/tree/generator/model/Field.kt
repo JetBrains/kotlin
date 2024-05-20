@@ -12,7 +12,6 @@ sealed class Field : AbstractField<Field>() {
     open var withReplace: Boolean = false
 
     open var needsSeparateTransform: Boolean = false
-    var parentHasSeparateTransform: Boolean = true
     open var needTransformInOtherChildren: Boolean = false
 
     open val isMutableOrEmptyList: Boolean
@@ -20,8 +19,6 @@ sealed class Field : AbstractField<Field>() {
 
     open var isMutableInInterface: Boolean = false
     open val fromDelegate: Boolean get() = false
-
-    open var useNullableForReplace: Boolean = false
 
     var withBindThis = true
 
@@ -40,27 +37,24 @@ sealed class Field : AbstractField<Field>() {
 
     abstract override var isMutable: Boolean
 
+    val receiveNullableTypeInReplace: Boolean
+        get() = typeRef.nullable || overriddenFields.any { it.typeRef.nullable }
+
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
         if (copy !is FieldWithDefault) {
             copy.needsSeparateTransform = needsSeparateTransform
             copy.needTransformInOtherChildren = needTransformInOtherChildren
-            copy.useNullableForReplace = useNullableForReplace
             copy.customInitializationCall = customInitializationCall
             copy.skippedInCopy = skippedInCopy
         }
-        copy.parentHasSeparateTransform = parentHasSeparateTransform
     }
 
-    override fun updatePropertiesFromOverriddenField(parentField: Field, haveSameClass: Boolean) {
+    override fun updatePropertiesFromOverriddenField(parentField: Field) {
         isMutable = isMutable || parentField.isMutable
         needsSeparateTransform = needsSeparateTransform || parentField.needsSeparateTransform
         needTransformInOtherChildren = needTransformInOtherChildren || parentField.needTransformInOtherChildren
         withReplace = withReplace || parentField.withReplace
-        parentHasSeparateTransform = parentField.needsSeparateTransform
-        if (parentField.nullable != nullable && haveSameClass) {
-            useNullableForReplace = true
-        }
     }
 }
 
@@ -119,10 +113,6 @@ class FieldWithDefault(override val origin: Field) : Field() {
 
     override val arbitraryImportables: MutableList<Importable>
         get() = origin.arbitraryImportables
-
-    override var useNullableForReplace: Boolean
-        get() = origin.useNullableForReplace
-        set(_) {}
 
     override var skippedInCopy: Boolean
         get() = origin.skippedInCopy
