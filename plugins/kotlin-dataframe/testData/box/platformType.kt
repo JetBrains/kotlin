@@ -34,7 +34,7 @@ interface ActivePlayer {
  */
 
 fun main() {
-    val df = @DisableInterpretation DataFrame.read("")
+    val df = DataFrame.read("")
     val df1 = df.cast<ActivePlayer>()
 
     val format = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm:ss")

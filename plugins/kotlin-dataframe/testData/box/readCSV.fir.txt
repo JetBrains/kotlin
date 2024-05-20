@@ -67,7 +67,7 @@ FILE: readCSV.kt
 
             }
 
-            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/io/readCSV|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv))
+            ^ @R|org/jetbrains/kotlinx/dataframe/annotations/Import|() R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/io/readCSV|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv))
         }
         )
         (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/Scope0.full_name|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/String|>()

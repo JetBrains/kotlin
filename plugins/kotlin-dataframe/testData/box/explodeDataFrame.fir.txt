@@ -153,7 +153,7 @@ FILE: explodeDataFrame.kt
 
             }
 
-            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/io/readJson|(String(testResources/achievements_all.json))
+            ^ @R|org/jetbrains/kotlinx/dataframe/annotations/Import|() R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/io/readJson|(String(testResources/achievements_all.json))
         }
         )
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_77>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_01>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_77>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_01>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_77>| <inline=Inline, kind=EXACTLY_ONCE>  {

@@ -93,7 +93,11 @@ class CandidateInterceptor(
         if (callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("DisableInterpretation")) == true }) {
             return null
         }
-        if (symbol.annotations.none { it.fqName(session)?.shortName()?.equals(Name.identifier("Refine")) == true }) {
+        val noRefineAnnotation =
+            symbol.annotations.none { it.fqName(session)?.shortName()?.equals(Name.identifier("Refine")) == true }
+        val optIn = symbol.annotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("OptInRefine")) == true } &&
+            callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("Import")) == true }
+        if (noRefineAnnotation && !optIn) {
             return null
         }
         val lookupTag = ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID)

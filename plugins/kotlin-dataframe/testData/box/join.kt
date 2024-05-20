@@ -1,5 +1,6 @@
 package org.jetbrains.kotlinx.dataframe
 
+import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.api.asGroupBy
 import org.jetbrains.kotlinx.dataframe.api.convert
 import org.jetbrains.kotlinx.dataframe.api.count
@@ -17,7 +18,7 @@ import org.jetbrains.kotlinx.dataframe.api.sumOf
 import org.jetbrains.kotlinx.dataframe.api.with
 
 fun box(): String {
-    val df = DataFrame.readJson("testResources/achievements_all.json")
+    val df = @Import DataFrame.readJson("testResources/achievements_all.json")
 
     val df2 = df.explode { achievements }
 
