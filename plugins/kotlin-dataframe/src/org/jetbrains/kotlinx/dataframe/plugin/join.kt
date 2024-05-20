@@ -11,19 +11,36 @@ internal class Join0 : AbstractInterpreter<PluginDataFrameSchema>() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val nameGenerator = ColumnNameGenerator()
+        val left = receiver.columns()
+        val right = removeImpl(other.columns(), setOf(selector.right.path.path)).updatedColumns
 
-        fun MutableList<SimpleCol>.addColumns(schema: PluginDataFrameSchema, selector: ColumnWithPathApproximation) {
-            for (column in schema.columns()) {
-                if (column.name == selector.path.path.first()) continue
-                val uniqueName = nameGenerator.addUnique(column.name)
-                add(column.rename(uniqueName))
+        val rightColumnGroups = right.filterIsInstance<SimpleColumnGroup>().associateBy { it.name }
+
+        val mergedGroups = buildMap {
+            left.filterIsInstance<SimpleColumnGroup>().forEach { leftGroup ->
+                val rightGroup = rightColumnGroups[leftGroup.name]
+                if (rightGroup != null) {
+                    val merge = ColumnNameGenerator()
+                    val columns = (leftGroup.columns() + rightGroup.columns()).map { column ->
+                        val uniqueName = merge.addUnique(column.name)
+                        column.rename(uniqueName)
+                    }
+                    put(leftGroup.name, SimpleColumnGroup(leftGroup.name, columns, anyRow))
+                }
             }
         }
 
-        val capacity = (receiver.columns().size + other.columns().size - 2).coerceAtLeast(0)
-        val columns = buildList(capacity) {
-            addColumns(receiver, selector.left)
-            addColumns(other, selector.right)
+        fun MutableList<SimpleCol>.addColumns(columns: List<SimpleCol>) {
+            for (column in columns) {
+                val uniqueName = nameGenerator.addUnique(column.name)
+                val colToAdd = mergedGroups[column.name] ?: column
+                add(colToAdd.rename(uniqueName))
+            }
+        }
+
+        val columns = buildList {
+            addColumns(left)
+            addColumns(right.filterNot { it is SimpleColumnGroup && it.name() in mergedGroups })
         }
         return PluginDataFrameSchema(columns)
     }
