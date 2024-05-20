@@ -352,7 +352,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(type(Packages.declarations, "IrAnnotationContainer"))
 
         +listField("annotations", constructorCall, mutability = Var, isChild = false) {
-            fromParent = true
+            isOverride = true
             skipInIrFactory()
         }
     }

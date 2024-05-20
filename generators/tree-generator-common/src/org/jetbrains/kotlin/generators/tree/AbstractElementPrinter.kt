@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.extendedKDoc
 import org.jetbrains.kotlin.generators.tree.printer.printKDoc
@@ -57,14 +56,14 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
                 withIndent {
                     for (field in filterFields(element)) {
                         if (field.isParameter) continue
-                        if (field.isFinal && field.fromParent) {
+                        if (field.isFinal && field.isOverride) {
                             continue
                         }
                         if (separateFieldsWithBlankLine) println()
                         fieldPrinter.printField(
                             field,
                             inImplementation = false,
-                            override = field.fromParent,
+                            override = field.isOverride,
                             modality = Modality.ABSTRACT.takeIf { !field.isFinal && !kind.isInterface },
                         )
                     }
