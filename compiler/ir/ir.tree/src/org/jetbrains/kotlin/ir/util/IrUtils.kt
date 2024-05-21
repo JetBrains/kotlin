@@ -1614,3 +1614,8 @@ fun IrBlockImpl.inlineStatement(statement: IrStatement) {
 
 fun IrGetValue.copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue =
     IrGetValueImpl(newStartOffset, newEndOffset, type, symbol, origin)
+
+fun IrModuleFragment.addFile(file: IrFile) {
+    files.add(file)
+    file.module = this
+}
