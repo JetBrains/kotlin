@@ -82,7 +82,7 @@ fun test(a: A, b: B, c: C, d: D, e: E, f: F) {
   val k2: Queue<Int> = a.#b /*!! Queue<@FlexibleNullability Int?> */
   val k3: MutableSet<Int> = a.#c /*!! @FlexibleMutability MutableSet<@FlexibleNullability Int?> */
   a.#a = mutableListOf<Int>()
-  a.#b = LinkedList<Int>()
+  a.#b = LinkedList<@FlexibleNullability Int?>()
   a.#c = mutableSetOf<Int>()
   val k4: MutableList<Int> = a.bar() /*!! @FlexibleMutability MutableList<@FlexibleNullability Int?> */
   val k5: Queue<Int> = a.bar2() /*!! Queue<@FlexibleNullability Int?> */
@@ -94,7 +94,7 @@ fun test(a: A, b: B, c: C, d: D, e: E, f: F) {
   val k20: Queue<String?> = b.#b /*!! Queue<String?> */
   val k21: MutableSet<String?> = b.#c /*!! @FlexibleMutability MutableSet<String?> */
   b.#a = mutableListOf<String?>()
-  b.#b = LinkedList<String>()
+  b.#b = LinkedList<@FlexibleNullability String?>()
   b.#c = mutableSetOf<String?>()
   val k22: MutableList<String?> = b.bar() /*!! @FlexibleMutability MutableList<String?> */
   val k23: Queue<String?> = b.bar2() /*!! Queue<String?> */
@@ -106,7 +106,7 @@ fun test(a: A, b: B, c: C, d: D, e: E, f: F) {
   val k26: Queue<Any> = c.#b /*!! Queue<@FlexibleNullability Any?> */
   val k27: MutableSet<Any> = c.#c /*!! @FlexibleMutability MutableSet<@FlexibleNullability Any?> */
   c.#a = mutableListOf<Any>()
-  c.#b = LinkedList<Any>()
+  c.#b = LinkedList<@FlexibleNullability Any?>()
   c.#c = mutableSetOf<Any>()
   val k28: MutableList<Any> = c.bar() /*!! @FlexibleMutability MutableList<@FlexibleNullability Any?> */
   val k29: Queue<Any> = c.bar2() /*!! Queue<@FlexibleNullability Any?> */
@@ -117,5 +117,5 @@ fun test(a: A, b: B, c: C, d: D, e: E, f: F) {
   val k31: MutableList<Int> = d.bar()
   e.foo3(c = mutableSetOf<String?>(elements = [null, ""]))
   val k32: Queue<Any> = f.bar2()
-  f.foo2(b = LinkedList<Any>())
+  f.foo2(b = LinkedList<@FlexibleNullability Any?>())
 }

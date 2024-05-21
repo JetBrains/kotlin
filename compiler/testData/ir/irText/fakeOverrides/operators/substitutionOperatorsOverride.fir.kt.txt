@@ -22,7 +22,7 @@ class B : Java1<Any> {
   }
 
   override operator fun plus(i: Any?): Java1<Any> {
-    return Java1<Any>()
+    return Java1<@FlexibleNullability Any?>()
   }
 
 }
