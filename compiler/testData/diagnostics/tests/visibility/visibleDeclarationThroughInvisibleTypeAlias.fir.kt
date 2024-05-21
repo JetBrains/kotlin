@@ -4,6 +4,6 @@ internal class PlatformAttr
 
 // FILE: Main.kt
 fun main() {
-    <!INVISIBLE_REFERENCE("constructor(): PlatformAttr; public; '/PlatformAttr'")!>Attribute<!>()
+    <!INVISIBLE_REFERENCE("typealias Attribute = PlatformAttr; private; file")!>Attribute<!>()
     PlatformAttr()
 }

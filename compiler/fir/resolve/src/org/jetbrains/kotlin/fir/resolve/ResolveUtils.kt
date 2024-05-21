@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -720,6 +721,13 @@ fun createConeDiagnosticForCandidateWithError(
         CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate)
         CandidateApplicability.K2_VISIBILITY_ERROR -> {
             val session = candidate.callInfo.session
+
+            (symbol as? FirConstructorSymbol)?.typeAliasForConstructor?.let {
+                if (!session.visibilityChecker.isVisible(it.fir, candidate)) {
+                    return ConeVisibilityError(it)
+                }
+            }
+
             val declaration = symbol.fir
             if (declaration is FirMemberDeclaration &&
                 session.visibilityChecker.isVisible(declaration, candidate, skipCheckForContainingClassVisibility = true)
