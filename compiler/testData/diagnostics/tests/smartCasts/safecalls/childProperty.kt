@@ -27,3 +27,15 @@ fun test3(a:A?){
     require(t)
     a<!UNSAFE_CALL!>.<!>b<!UNSAFE_CALL!>.<!>inc()
 }
+
+fun test4(a:A?){
+    require(a!!.b != null)
+    <!DEBUG_INFO_SMARTCAST!>a<!>.b<!UNSAFE_CALL!>.<!>inc()
+}
+
+fun test5(a:A?){
+    require(a!!.e!!.d != null)
+    var k: C = <!TYPE_MISMATCH!><!DEBUG_INFO_SMARTCAST!>a<!>.e<!>
+    var k2: Int = <!TYPE_MISMATCH!><!DEBUG_INFO_SMARTCAST!>a<!>.e<!UNSAFE_CALL!>.<!>d<!>
+    var k3: Int? = <!DEBUG_INFO_SMARTCAST!>a<!>.b
+}
