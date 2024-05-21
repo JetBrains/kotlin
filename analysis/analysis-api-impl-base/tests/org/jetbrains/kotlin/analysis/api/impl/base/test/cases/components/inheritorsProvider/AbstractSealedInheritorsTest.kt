@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
@@ -29,30 +29,7 @@ abstract class AbstractSealedInheritorsTest : AbstractAnalysisApiBasedTest() {
             val classSymbol = getSingleTestTargetSymbolOfType<KaNamedClassOrObjectSymbol>(ktFile, testDataPath)
 
             val actualText = classSymbol.getSealedClassInheritors().joinToString("\n\n") { inheritor ->
-                // Render sealed inheritor supertypes as fully expanded types to avoid discrepancies between Standalone and IDE mode.
-                //
-                // Assume the following code is compiled to a library:
-                //
-                // ```
-                // open class C
-                // typealias T = C
-                // class A : T()
-                // ```
-                //
-                // The supertype of `A` will be different in Standalone and IDE mode:
-                //
-                //  - Standalone: The compiled library contains fully expanded types, so `A`'s supertype is `C`.
-                //  - IDE: Symbols from libraries are deserialized from stubs, where type aliases are currently not fully expanded, so
-                //    `A`'s supertype is `T`.
-                //
-                // We want to render `class A : C()` in both cases, so we need to expand the type alias.
-                val declarationRenderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
-                    typeRenderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
-                        expandedTypeRenderingMode = KaExpandedTypeRenderingMode.RENDER_EXPANDED_TYPE
-                    }
-                }
-
-                "${inheritor.classIdIfNonLocal!!}\n${inheritor.render(declarationRenderer)}"
+                "${inheritor.classIdIfNonLocal!!}\n${inheritor.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}"
             }
 
             testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
