@@ -550,9 +550,9 @@ class ModulesStructure(
 
     init {
         val descriptors = allDependencies.map { getModuleDescriptorImpl(it) }
-
+        val friendDescriptors = friendDependencies.mapTo(mutableSetOf(), ::getModuleDescriptorImpl)
         descriptors.forEach { descriptor ->
-            descriptor.setDependencies(descriptors)
+            descriptor.setDependencies(descriptors, friendDescriptors)
         }
     }
 

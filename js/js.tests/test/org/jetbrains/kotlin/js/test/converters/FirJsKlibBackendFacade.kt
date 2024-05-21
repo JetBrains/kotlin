@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.test.frontend.fir.getAllJsDependenciesPaths
 import org.jetbrains.kotlin.test.frontend.fir.resolveLibraries
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getDependencies
+import org.jetbrains.kotlin.test.services.configuration.getFriendDependencies
 
 class FirJsKlibBackendFacade(
     testServices: TestServices,
@@ -88,7 +88,7 @@ class FirJsKlibBackendFacade(
             packageAccessHandler = null,
             lookupTracker = LookupTracker.DO_NOTHING
         ).apply {
-            setDependencies(inputArtifact.regularDependencyModules + this, module.friendDependencyModules)
+            setDependencies(inputArtifact.regularDependencyModules + this, getFriendDependencies(module, testServices))
         }
 
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
@@ -102,7 +102,7 @@ class FirJsKlibBackendFacade(
 
 
     /**
-     * Note: If it is implemented the same way as [friendDependencyModules] (i.e., get regular
+     * Note: If it is implemented the same way as [getFriendDependencies] (i.e., get regular
      * dependencies through [getDependencies] call), then important dependencies which do
      * not exist in the form of [TestModule] such as stdlib & stdlib-test would not be included here.
      */
@@ -110,7 +110,4 @@ class FirJsKlibBackendFacade(
         get() = irModuleFragment.descriptor.allDependencyModules
             .filterIsInstance<ModuleDescriptorImpl>()
 
-    private val TestModule.friendDependencyModules: Set<ModuleDescriptorImpl>
-        get() = getDependencies(this, testServices, DependencyRelation.FriendDependency)
-            .filterIsInstanceTo<ModuleDescriptorImpl, MutableSet<ModuleDescriptorImpl>>(mutableSetOf())
 }

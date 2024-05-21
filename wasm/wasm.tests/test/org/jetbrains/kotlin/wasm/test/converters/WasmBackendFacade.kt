@@ -26,12 +26,10 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.model.AbstractTestFacade
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.getDependencies
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
@@ -82,7 +80,8 @@ class WasmBackendFacade(
             System.getProperty("kotlin.wasm$suffix.kotlin.test.path")!!
         ) + WasmEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).map { it.key.libraryFile.canonicalPath }
 
-        val friendLibraries = emptyList<String>()
+        val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
+            .map(testServices.libraryProvider::getPathByDescriptor)
         val mainModule = MainModule.Klib(inputArtifact.outputFile.absolutePath)
         val project = testServices.compilerConfigurationProvider.getProject(module)
         val moduleStructure = ModulesStructure(
