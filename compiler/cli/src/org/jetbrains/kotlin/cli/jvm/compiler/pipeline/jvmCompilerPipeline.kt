@@ -259,7 +259,7 @@ fun generateCodeFromIr(
 
     performanceManager?.notifyGenerationFinished()
 
-    return ModuleCompilerOutput(generationState)
+    return ModuleCompilerOutput(generationState, builderFactory)
 }
 
 fun compileModuleToAnalyzedFir(
