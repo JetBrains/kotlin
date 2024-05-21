@@ -37,7 +37,8 @@ public abstract class PropertyReference extends CallableReference implements KPr
     @SinceKotlin(version = "1.1")
     protected KProperty getReflected() {
         if (syntheticJavaProperty) {
-            throw new UnsupportedOperationException("Kotlin reflection is not yet supported for synthetic Java properties");
+            throw new UnsupportedOperationException("Kotlin reflection is not yet supported for synthetic Java properties. " +
+                                                    "Please follow/upvote https://youtrack.jetbrains.com/issue/KT-55980");
         }
         return (KProperty) super.getReflected();
     }
