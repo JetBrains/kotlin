@@ -9,7 +9,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProviderByJavaPsi
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProviderByJavaPsi
 @OptIn(KaAnalysisApiInternals::class)
 internal class KaFe10SymbolProviderByJavaPsi(
     override val analysisSession: KaFe10Session
-) : KaSymbolProviderByJavaPsi(), KaFe10AnalysisSessionComponent {
+) : KaSymbolProviderByJavaPsi(), KaFe10SessionComponent {
     override fun getNamedClassSymbol(psiClass: PsiClass): KaNamedClassOrObjectSymbol? {
         return null /*TODO*/
     }

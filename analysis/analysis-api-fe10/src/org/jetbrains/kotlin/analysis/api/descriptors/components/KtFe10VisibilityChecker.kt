@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KaVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 
 internal class KaFe10VisibilityChecker(
     override val analysisSession: KaFe10Session
-) : KaVisibilityChecker(), KaFe10AnalysisSessionComponent {
+) : KaVisibilityChecker(), KaFe10SessionComponent {
     override val token: KaLifetimeToken
         get() = analysisSession.token
 

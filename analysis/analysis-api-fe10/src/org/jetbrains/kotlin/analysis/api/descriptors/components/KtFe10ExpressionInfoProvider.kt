@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionInfoProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
 internal class KaFe10ExpressionInfoProvider(
     override val analysisSession: KaFe10Session
-) : KaExpressionInfoProvider(), KaFe10AnalysisSessionComponent {
+) : KaExpressionInfoProvider(), KaFe10SessionComponent {
     override val token: KaLifetimeToken
         get() = analysisSession.token
 

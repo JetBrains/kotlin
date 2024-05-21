@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaCompletionCandidateChecker
 import org.jetbrains.kotlin.analysis.api.components.KaExtensionApplicabilityResult
 import org.jetbrains.kotlin.analysis.api.components.KaCompletionExtensionCandidateChecker
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.psi.KtExpression
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 internal class KaFe10CompletionCandidateChecker(
     override val analysisSession: KaFe10Session
-) : KaCompletionCandidateChecker(), KaFe10AnalysisSessionComponent {
+) : KaCompletionCandidateChecker(), KaFe10SessionComponent {
     override val token: KaLifetimeToken
         get() = analysisSession.token
 

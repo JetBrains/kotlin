@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.components.KaReferenceResolveProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KaFe10ReferenceResolveProvider(
     override val analysisSession: KaFe10Session,
-) : KaReferenceResolveProvider(), KaFe10AnalysisSessionComponent {
+) : KaReferenceResolveProvider(), KaFe10SessionComponent {
     override fun resolveToSymbols(reference: KtReference): Collection<KaSymbol> {
         require(reference is KtFe10Reference)
         val bindingContext = analysisContext.analyze(reference.element, Fe10AnalysisFacade.AnalysisMode.PARTIAL)

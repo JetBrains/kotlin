@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaOverrideInfoProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassifierSymbol
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.util.ImplementationStatus
 
 internal class KaFe10OverrideInfoProvider(
     override val analysisSession: KaFe10Session
-) : KaOverrideInfoProvider(), KaFe10AnalysisSessionComponent {
+) : KaOverrideInfoProvider(), KaFe10SessionComponent {
     override val token: KaLifetimeToken
         get() = analysisSession.token
 

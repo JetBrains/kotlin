@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaJvmTypeMapper
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -17,7 +17,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 internal class KaFe10JvmTypeMapper(
     override val analysisSession: KaFe10Session
-) : KaJvmTypeMapper(), KaFe10AnalysisSessionComponent {
+) : KaJvmTypeMapper(), KaFe10SessionComponent {
     override val token: KaLifetimeToken
         get() = analysisSession.token
 

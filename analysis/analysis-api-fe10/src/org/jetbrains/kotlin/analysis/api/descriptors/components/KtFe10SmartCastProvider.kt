@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiverSmartCastK
 import org.jetbrains.kotlin.analysis.api.components.KaSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.components.KaSmartCastProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 
 internal class KaFe10SmartCastProvider(
     override val analysisSession: KaFe10Session
-) : KaSmartCastProvider(), KaFe10AnalysisSessionComponent {
+) : KaSmartCastProvider(), KaFe10SessionComponent {
     override val token: KaLifetimeToken
         get() = analysisSession.token
 

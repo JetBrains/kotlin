@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaTypeInfoProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 internal class KaFe10TypeInfoProvider(
     override val analysisSession: KaFe10Session
-) : KaTypeInfoProvider(), KaFe10AnalysisSessionComponent {
+) : KaTypeInfoProvider(), KaFe10SessionComponent {
     override val token: KaLifetimeToken
         get() = analysisSession.token
 

@@ -15,7 +15,7 @@ import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import org.jetbrains.kotlin.analysis.api.components.KaPsiTypeProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -36,7 +36,7 @@ import java.text.StringCharacterIterator
 
 internal class KaFe10PsiTypeProvider(
     override val analysisSession: KaFe10Session
-) : KaPsiTypeProvider(), KaFe10AnalysisSessionComponent {
+) : KaPsiTypeProvider(), KaFe10SessionComponent {
     override val token: KaLifetimeToken
         get() = analysisSession.token
 

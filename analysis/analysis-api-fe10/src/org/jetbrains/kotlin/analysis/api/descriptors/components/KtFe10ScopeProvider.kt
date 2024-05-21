@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10FileScope
 import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10PackageScope
 import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KaFe10ScopeLexical
@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 internal class KaFe10ScopeProvider(
     override val analysisSession: KaFe10Session
-) : KaScopeProvider(), KaFe10AnalysisSessionComponent {
+) : KaScopeProvider(), KaFe10SessionComponent {
     private companion object {
         val LOG = Logger.getInstance(KaFe10ScopeProvider::class.java)
     }

@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaOriginalPsiProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class KaFe10OriginalPsiProvider(
     override val analysisSession: KaFe10Session
-) : KaOriginalPsiProvider(), KaFe10AnalysisSessionComponent {
+) : KaOriginalPsiProvider(), KaFe10SessionComponent {
     override fun getOriginalDeclaration(declaration: KtDeclaration): KtDeclaration? = null
 
     override fun getOriginalKtFile(file: KtFile): KtFile? = null

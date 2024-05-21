@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10FunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KaFe10VariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescValueParameterSymbol
@@ -66,7 +66,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class KaFe10CallResolver(
     override val analysisSession: KaFe10Session,
-) : KaAbstractCallResolver(), KaFe10AnalysisSessionComponent {
+) : KaAbstractCallResolver(), KaFe10SessionComponent {
     private companion object {
         private val operatorWithAssignmentVariant = setOf(
             OperatorNameConventions.PLUS,

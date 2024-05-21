@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.InlineFunctionAnalyzer
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.collectReachableInlineDelegatedPropertyAccessors
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
@@ -40,7 +40,7 @@ val STUB_UNBOUND_IR_SYMBOLS: CompilerConfigurationKey<Boolean> = CompilerConfigu
 
 internal class KaFe10CompilerFacility(
     override val analysisSession: KaFe10Session
-) : KaCompilerFacility(), KaFe10AnalysisSessionComponent {
+) : KaCompilerFacility(), KaFe10SessionComponent {
     override fun compile(
         file: KtFile,
         configuration: CompilerConfiguration,

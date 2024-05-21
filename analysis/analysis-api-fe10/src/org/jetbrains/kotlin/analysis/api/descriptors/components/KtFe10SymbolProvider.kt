@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10FileSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KaFe10PackageSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKaClassSymbol
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 internal class KaFe10SymbolProvider(
     override val analysisSession: KaFe10Session
-) : KaSymbolProvider(), KaFe10AnalysisSessionComponent {
+) : KaSymbolProvider(), KaFe10SessionComponent {
     override val token: KaLifetimeToken
         get() = analysisSession.token
 

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaMultiplatformInfoProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatib
 
 internal class KaFe10MultiplatformInfoProvider(
     override val analysisSession: KaFe10Session,
-) : KaMultiplatformInfoProvider(), KaFe10AnalysisSessionComponent {
+) : KaMultiplatformInfoProvider(), KaFe10SessionComponent {
     override fun getExpectForActual(actual: KaDeclarationSymbol): List<KaDeclarationSymbol> {
         if (actual.psiSafe<KtDeclaration>()?.hasActualModifier() != true) return emptyList()
         val memberDescriptor = (getSymbolDescriptor(actual) as? MemberDescriptor)?.takeIf { it.isActual } ?: return emptyList()

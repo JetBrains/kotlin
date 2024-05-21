@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
 
 internal class KaFe10SubtypingComponent(
     override val analysisSession: KaFe10Session
-) : KaSubtypingComponent(), KaFe10AnalysisSessionComponent {
+) : KaSubtypingComponent(), KaFe10SessionComponent {
     override val token: KaLifetimeToken
         get() = analysisSession.token
 

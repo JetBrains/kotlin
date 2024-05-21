@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorFactory
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10AnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 
 internal class KaFe10SubstitutorFactory(
     override val analysisSession: KaFe10Session
-) : KaSubstitutorFactory(), KaFe10AnalysisSessionComponent {
+) : KaSubstitutorFactory(), KaFe10SessionComponent {
 
     override fun buildSubstitutor(builder: KaSubstitutorBuilder): KaSubstitutor {
         if (builder.mappings.isEmpty()) return KaSubstitutor.Empty(token)
