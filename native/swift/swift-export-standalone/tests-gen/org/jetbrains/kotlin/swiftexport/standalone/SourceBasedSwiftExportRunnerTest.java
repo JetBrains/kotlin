@@ -60,12 +60,6 @@ public class SourceBasedSwiftExportRunnerTest extends AbstractSourceBasedSwiftRu
   }
 
   @Test
-  @TestMetadata("source_based_only")
-  public void testSource_based_only() {
-    runTest("native/swift/swift-export-standalone/testData/source_based_only/");
-  }
-
-  @Test
   @TestMetadata("type_reference")
   public void testType_reference() {
     runTest("native/swift/swift-export-standalone/testData/type_reference/");

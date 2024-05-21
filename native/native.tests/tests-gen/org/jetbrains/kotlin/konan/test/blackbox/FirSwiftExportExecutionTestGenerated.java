@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @Tag("frontend-fir")
 @FirPipeline()
-public class FirSwiftExportTestGenerated extends AbstractNativeSwiftExportTest {
+public class FirSwiftExportExecutionTestGenerated extends AbstractNativeSwiftExportExecutionTest {
   @Test
   public void testAllFilesPresentInSwiftExport() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/SwiftExport"), Pattern.compile("^([^_](.+))$"), null, false);

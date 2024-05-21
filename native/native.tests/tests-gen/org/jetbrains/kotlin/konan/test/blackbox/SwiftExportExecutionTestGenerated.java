@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/SwiftExport")
 @TestDataPath("$PROJECT_ROOT")
-public class SwiftExportTestGenerated extends AbstractNativeSwiftExportTest {
+public class SwiftExportExecutionTestGenerated extends AbstractNativeSwiftExportExecutionTest {
   @Test
   public void testAllFilesPresentInSwiftExport() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/SwiftExport"), Pattern.compile("^([^_](.+))$"), null, false);

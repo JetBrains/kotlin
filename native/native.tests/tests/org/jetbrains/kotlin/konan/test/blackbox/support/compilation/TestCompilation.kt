@@ -462,7 +462,7 @@ internal class CInteropCompilation(
     }
 }
 
-internal class SwiftCompilation<T: TestCompilationArtifact>(
+internal class SwiftCompilation<T : TestCompilationArtifact>(
     testRunSettings: Settings,
     sources: List<File>,
     expectedArtifact: T,

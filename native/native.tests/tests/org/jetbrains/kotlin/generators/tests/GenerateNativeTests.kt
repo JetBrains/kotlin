@@ -509,27 +509,17 @@ fun main() {
             }
         }
         // Swift Export
-        testGroup(
-            "native/native.tests/tests-gen/",
-            "native/swift/swift-export-standalone/testData"
-        ) {
-            testClass<SwiftTypeCheckBaseTest>(
-                suiteTestClassName = "TypeCheckSwiftExportGoldenData"
-            ) {
-                model("", pattern = "^([^_](.+))\$", recursive = false, excludeDirs = listOf("source_based_only"))
-            }
-        }
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeSwiftExportTest>(
-                suiteTestClassName = "FirSwiftExportTestGenerated",
+            testClass<AbstractNativeSwiftExportExecutionTest>(
+                suiteTestClassName = "FirSwiftExportExecutionTestGenerated",
                 annotations = listOf(
                     *frontendFir()
                 ),
             ) {
                 model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
             }
-            testClass<AbstractNativeSwiftExportTest>(
-                suiteTestClassName = "SwiftExportTestGenerated",
+            testClass<AbstractNativeSwiftExportExecutionTest>(
+                suiteTestClassName = "SwiftExportExecutionTestGenerated",
             ) {
                 model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
             }

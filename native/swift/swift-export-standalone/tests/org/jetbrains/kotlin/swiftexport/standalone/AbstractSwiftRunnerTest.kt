@@ -9,10 +9,14 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSwiftExportTest
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompilerWithoutOutputInterceptor
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Properties
@@ -24,29 +28,34 @@ enum class InputModuleKind {
     Source, Binary
 }
 
-abstract class AbstractSourceBasedSwiftRunnerTest : AbstractSwiftRunnerTestBase(
+abstract class AbstractSourceBasedSwiftRunnerTest : AbstractSwiftRunnerTest(
     renderDocComments = true,
     inputModuleKind = InputModuleKind.Source,
 )
 
-abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftRunnerTestBase(
+abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftRunnerTest(
     renderDocComments = false,
     inputModuleKind = InputModuleKind.Binary,
 )
 
-abstract class AbstractSwiftRunnerTestBase(
+abstract class AbstractSwiftRunnerTest(
     private val renderDocComments: Boolean,
     private val inputModuleKind: InputModuleKind,
-) : AbstractNativeSimpleTest() {
+) : AbstractNativeSwiftExportTest() {
 
     private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
 
-    fun runTest(testPathString: String) {
-        val path = Path(testPathString)
-        val expectedFiles = path / "golden_result/"
-        val moduleRoot = path / "input_root/"
-        assert(expectedFiles.isDirectory() && moduleRoot.isDirectory()) { "setup for $path is incorrect" }
+    override fun runCompiledTest(
+        testPathFull: File,
+        testCase: TestCase,
+        swiftExportOutput: SwiftExportModule,
+        swiftModule: TestCompilationArtifact.Swift.Module,
+    ) {
+        assertSame(0, swiftExportOutput.dependencies.count(), "should produce module without children")
 
+        val files = swiftExportOutput.files
+
+        val expectedFiles = testPathFull.toPath() / "golden_result/"
         val expectedSwift = if (!renderDocComments && (expectedFiles / "result.no_comments.swift").exists()) {
             expectedFiles / "result.no_comments.swift"
         } else {
@@ -55,7 +64,15 @@ abstract class AbstractSwiftRunnerTestBase(
         val expectedCHeader = expectedFiles / "result.h"
         val expectedKotlinBridge = expectedFiles / "result.kt"
 
-        val inputModule = when (inputModuleKind) {
+        KotlinTestUtils.assertEqualsToFile(expectedSwift, files.swiftApi.readText())
+        KotlinTestUtils.assertEqualsToFile(expectedCHeader, files.cHeaderBridges.readText())
+        KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText())
+    }
+
+    override fun constructSwiftInput(testPathFull: File): InputModule {
+        val moduleRoot = testPathFull.toPath() / "input_root/"
+
+        return when (inputModuleKind) {
             InputModuleKind.Source -> {
                 InputModule.Source(
                     path = moduleRoot,
@@ -69,7 +86,9 @@ abstract class AbstractSwiftRunnerTestBase(
                 )
             }
         }
+    }
 
+    override fun constructSwiftExportConfig(testPathFull: File): SwiftExportConfig {
         val unsupportedTypeStrategy = when (inputModuleKind) {
             InputModuleKind.Source -> ErrorTypeStrategy.SpecialType
             InputModuleKind.Binary -> ErrorTypeStrategy.Fail
@@ -86,7 +105,7 @@ abstract class AbstractSwiftRunnerTestBase(
             SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
         )
 
-        val discoveredConfig = (moduleRoot / "config.properties").takeIf { it.exists() }?.let { configPath ->
+        val discoveredConfig = (testPathFull.toPath() / "config.properties").takeIf { it.exists() }?.let { configPath ->
             Properties().apply { load(configPath.toFile().inputStream()) }.let { properties ->
                 properties.propertyNames().asSequence().mapNotNull { it as? String }.associateWith { properties.getProperty(it) }.toMap()
             }
@@ -94,27 +113,18 @@ abstract class AbstractSwiftRunnerTestBase(
 
         val config = defaultConfig + discoveredConfig
 
-        val output = runSwiftExport(
-            input = inputModule,
-            config = SwiftExportConfig(
-                settings = config,
-                logger = createDummyLogger(),
-                distribution = Distribution(KonanHome.konanHomePath),
-                errorTypeStrategy = errorTypeStrategy,
-                unsupportedTypeStrategy = unsupportedTypeStrategy,
-                outputPath = tmpdir.toPath(),
-            )
+        return SwiftExportConfig(
+            settings = config,
+            logger = createDummyLogger(),
+            distribution = Distribution(KonanHome.konanHomePath),
+            errorTypeStrategy = errorTypeStrategy,
+            unsupportedTypeStrategy = unsupportedTypeStrategy,
+            outputPath = tmpdir.toPath(),
         )
-
-        assertSame(1, output.getOrThrow().count(), "should produce single leaf module")
-        assertSame(0, output.getOrThrow().first().dependencies.count(), "should produce module without children")
-
-        val result = output.getOrThrow().first().files
-
-        KotlinTestUtils.assertEqualsToFile(expectedSwift, result.swiftApi.readText())
-        KotlinTestUtils.assertEqualsToFile(expectedCHeader, result.cHeaderBridges.readText())
-        KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, result.kotlinBridges.readText())
     }
+
+    override fun collectKotlinFiles(testPathFull: File): List<File> =
+        (testPathFull.toPath() / "input_root").toFile().walk().filter { it.extension == "kt" }.map { testPathFull.resolve(it) }.toList()
 }
 
 internal fun AbstractNativeSimpleTest.compileToNativeKLib(kLibSourcesRoot: Path): Path {
