@@ -350,7 +350,8 @@ class FirCallCompletionResultsWriterTransformer(
         val originalArgumentList = result.argumentList
         val subCandidate = calleeReference.candidate
         val resultType = result.resolvedType.substituteType(subCandidate)
-        val allArgs = if (calleeReference.isError) originalArgumentList.arguments else subCandidate.argumentMapping?.keys?.toList().orEmpty()
+        val allArgs =
+            if (calleeReference.isError) originalArgumentList.arguments else subCandidate.argumentMapping?.keys?.toList().orEmpty()
         val allArgsMapping = subCandidate.handleVarargsAndReturnAllArgsMapping(allArgs)
         if (calleeReference.isError) {
             result.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, allArgsMapping))
@@ -429,7 +430,7 @@ class FirCallCompletionResultsWriterTransformer(
 
             override fun transformNamedArgumentExpression(
                 namedArgumentExpression: FirNamedArgumentExpression,
-                data: Nothing?
+                data: Nothing?,
             ): FirStatement {
                 val expression = transformElement(namedArgumentExpression.expression, data)
                 val parameter = mapping?.get(namedArgumentExpression)
@@ -457,6 +458,7 @@ class FirCallCompletionResultsWriterTransformer(
             source = this@wrapInSamExpression.source?.fakeElement(KtFakeSourceElementKind.SamConversion)
         }
     }
+
     private val FirBasedSymbol<*>.isArrayConstructorWithLambda: Boolean
         get() {
             val constructor = (this as? FirConstructorSymbol)?.fir ?: return false
@@ -483,7 +485,8 @@ class FirCallCompletionResultsWriterTransformer(
                 }
             }
         }
-        val allArgs = if (calleeReference.isError) annotationCall.argumentList.arguments else subCandidate.argumentMapping?.keys?.toList().orEmpty()
+        val allArgs =
+            if (calleeReference.isError) annotationCall.argumentList.arguments else subCandidate.argumentMapping?.keys?.toList().orEmpty()
         val allArgsMapping = subCandidate.handleVarargsAndReturnAllArgsMapping(allArgs)
         if (calleeReference.isError) {
             annotationCall.replaceArgumentList(buildArgumentListForErrorCall(annotationCall.argumentList, allArgsMapping))
@@ -710,7 +713,8 @@ class FirCallCompletionResultsWriterTransformer(
         val subCandidate = calleeReference.candidate
 
         val originalArgumentList = delegatedConstructorCall.argumentList
-        val allArgs = if (calleeReference.isError) originalArgumentList.arguments else subCandidate.argumentMapping?.keys?.toList().orEmpty()
+        val allArgs =
+            if (calleeReference.isError) originalArgumentList.arguments else subCandidate.argumentMapping?.keys?.toList().orEmpty()
         val allArgsMapping = subCandidate.handleVarargsAndReturnAllArgsMapping(allArgs)
         if (calleeReference.isError) {
             delegatedConstructorCall.replaceArgumentList(buildArgumentListForErrorCall(originalArgumentList, allArgsMapping))
@@ -985,7 +989,8 @@ class FirCallCompletionResultsWriterTransformer(
             val diagnostic = resolvedCalleeReference.diagnostic
             if (diagnostic is ConeConstraintSystemHasContradiction) {
                 val candidate = diagnostic.candidate as Candidate
-                val newSyntheticCallType = session.typeContext.commonSuperTypeOrNull(candidate.argumentMapping!!.keys.map { it.resolvedType })
+                val newSyntheticCallType =
+                    session.typeContext.commonSuperTypeOrNull(candidate.argumentMapping!!.keys.map { it.resolvedType })
                 if (newSyntheticCallType != null && !newSyntheticCallType.hasError()) {
                     syntheticCall.replaceConeTypeOrNull(newSyntheticCallType)
                 }
@@ -1047,7 +1052,10 @@ class FirCallCompletionResultsWriterTransformer(
         arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType())
         val arrayElementType =
             session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.resolvedType })?.let {
-                typeApproximator.approximateToSuperType(it, TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2)
+                typeApproximator.approximateToSuperType(
+                    it,
+                    TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
+                )
                     ?: it
             } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.type
         arrayLiteral.resultType =
