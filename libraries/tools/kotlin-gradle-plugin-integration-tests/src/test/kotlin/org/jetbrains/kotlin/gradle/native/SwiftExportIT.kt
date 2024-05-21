@@ -94,7 +94,7 @@ class SwiftExportIT : KGPBaseTest() {
             }
 
             val swiftFile = projectPath
-                .resolve("shared/build/iosArm64DebugSwiftExport/swiftIntermediates/KotlinAPI.swift")
+                .resolve("shared/build/iosArm64DebugSwiftExport/files/Shared.swift")
                 .readText()
 
             assert(swiftFile.contains("iosBar()")) { "Swift file doesn't contain iosBar() from iosMain source set" }
