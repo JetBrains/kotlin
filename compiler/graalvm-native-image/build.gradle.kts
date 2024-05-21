@@ -3,6 +3,10 @@ plugins {
     kotlin("jvm")
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 graalvmNative {
     toolchainDetection = true
 
