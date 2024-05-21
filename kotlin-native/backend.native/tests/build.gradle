@@ -274,11 +274,6 @@ dynamicTest("interop_kt43502") {
 }
 
 if (PlatformInfo.isAppleTarget(project)) {
-    standaloneTest("interop_objc_kt61441") {
-        source = "interop/objc/kt61441.kt"
-        UtilsKt.dependsOnPlatformLibs(it)
-    }
-
     standaloneTest("objc_arc_contract") {
         def bcFile = project.layout.buildDirectory.file("objc_arc_contract.bc").get().asFile
         doBeforeBuild {

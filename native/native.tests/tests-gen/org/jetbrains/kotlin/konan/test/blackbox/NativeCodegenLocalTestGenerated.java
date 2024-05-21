@@ -1451,6 +1451,12 @@ public class NativeCodegenLocalTestGenerated extends AbstractNativeCodegenBoxTes
     }
 
     @Test
+    @TestMetadata("kt61441.kt")
+    public void testKt61441() {
+      runTest("native/native.tests/testData/codegen/interop/kt61441.kt");
+    }
+
+    @Test
     @TestMetadata("platform_zlib.kt")
     public void testPlatform_zlib() {
       runTest("native/native.tests/testData/codegen/interop/platform_zlib.kt");
