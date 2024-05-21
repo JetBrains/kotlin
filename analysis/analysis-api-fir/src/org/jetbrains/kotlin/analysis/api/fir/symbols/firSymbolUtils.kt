@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.utils.asKtInitializerValue
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKaInitializerValue
 import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -123,5 +123,5 @@ internal fun FirVariableSymbol<*>.getKtConstantInitializer(builder: KaSymbolByFi
         ?.toRegularClassSymbol(builder.rootSession)
         ?.classKind == ClassKind.ANNOTATION_CLASS
 
-    return firInitializer.asKtInitializerValue(builder, parentIsAnnotation)
+    return firInitializer.asKaInitializerValue(builder, parentIsAnnotation)
 }

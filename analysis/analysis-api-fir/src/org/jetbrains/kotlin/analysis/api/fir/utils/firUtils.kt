@@ -78,7 +78,7 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
     return if (canBeImported) callableId.asSingleFqName() else null
 }
 
-internal fun FirExpression.asKtInitializerValue(builder: KaSymbolByFirBuilder, forAnnotationDefaultValue: Boolean): KaInitializerValue {
+internal fun FirExpression.asKaInitializerValue(builder: KaSymbolByFirBuilder, forAnnotationDefaultValue: Boolean): KaInitializerValue {
     val ktExpression = psi as? KtExpression
     val evaluated = FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(this, KaConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
 
