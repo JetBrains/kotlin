@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
-
 abstract class FirAnalysisHandlerExtension {
     companion object : ProjectExtensionDescriptor<FirAnalysisHandlerExtension>(
         "org.jetbrains.kotlin.fir.firAnalyzeCompleteHandlerExtension",
@@ -17,7 +16,7 @@ abstract class FirAnalysisHandlerExtension {
     ) {
         /**
          * Applies [FirAnalysisHandlerExtension] instances to a project
-         * @receiver the project to analyze
+         * @param project the project to analyze
          * @param configuration compiler configuration
          * @return [null] if no applicable extensions were found, [true] if all applicable extensions returned [true] from [doAnalysis],
          * [false] if any applicable extension returned [false]
@@ -27,7 +26,7 @@ abstract class FirAnalysisHandlerExtension {
          */
         fun analyze(project: Project, configuration: CompilerConfiguration): Boolean? {
             val extensions = FirAnalysisHandlerExtension.getInstances(project).filter { it.isApplicable(configuration) }
-            return if (extensions.isEmpty()) null else extensions.all { it.doAnalysis(configuration) }
+            return if (extensions.isEmpty()) null else extensions.all { it.doAnalysis(project, configuration) }
         }
     }
 
@@ -40,10 +39,11 @@ abstract class FirAnalysisHandlerExtension {
 
     /**
      * Performs code analysis
+     * @param project the project to analyze
      * @param configuration compiler configuration
      * @return [true] if analysis completed successfully, [false] otherwise.
      * There can be different causes of failure, an incorrect configuration for example.
      * A failure means that there's no reason to continue building the project.
      */
-    abstract fun doAnalysis(configuration: CompilerConfiguration): Boolean
+    abstract fun doAnalysis(project: Project, configuration: CompilerConfiguration): Boolean
 }
