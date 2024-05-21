@@ -1,0 +1,347 @@
+// Variable Templates For Type Traits -*- C++ -*-
+
+// Copyright (C) 2014-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/type_traits
+ *  This is a TS C++ Library header.
+ *
+ *  This header defines variable templates for the C++14 type traits.
+ *
+ *  Equivalent variable templates are defined in namespace `std` since C++17.
+ *  @see variable_templates
+ *
+ *  @ingroup libfund-ts
+ *  @since C++14
+ */
+
+//
+// N3932 Variable Templates For Type Traits (Revision 1)
+//
+
+#ifndef _GLIBCXX_EXPERIMENTAL_TYPE_TRAITS
+#define _GLIBCXX_EXPERIMENTAL_TYPE_TRAITS 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <type_traits>
+#include <experimental/bits/lfts_config.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace experimental
+{
+inline namespace fundamentals_v1
+{
+/** @defgroup lfts_variable_templates Variable template for type traits
+ * @ingroup libfund-ts
+ * @since Library Fundamentals TS v1. C++14.
+ * @see variable_templates
+ */
+/** @ingroup lfts_variable_templates
+ * @{
+ */
+#define __cpp_lib_experimental_type_trait_variable_templates 201402
+
+// See C++14 20.10.4.1, primary type categories
+template <typename _Tp>
+  constexpr bool is_void_v = is_void<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_null_pointer_v = is_null_pointer<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_integral_v = is_integral<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_floating_point_v = is_floating_point<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_array_v = is_array<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_pointer_v = is_pointer<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_lvalue_reference_v = is_lvalue_reference<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_rvalue_reference_v = is_rvalue_reference<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_member_object_pointer_v =
+    is_member_object_pointer<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_member_function_pointer_v =
+    is_member_function_pointer<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_enum_v = is_enum<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_union_v = is_union<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_class_v = is_class<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_function_v = is_function<_Tp>::value;
+
+// See C++14 20.10.4.2, composite type categories
+template <typename _Tp>
+  constexpr bool is_reference_v = is_reference<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_arithmetic_v = is_arithmetic<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_fundamental_v = is_fundamental<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_object_v = is_object<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_scalar_v = is_scalar<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_compound_v = is_compound<_Tp>::value;
+template <typename _Tp>
+ constexpr bool is_member_pointer_v = is_member_pointer<_Tp>::value;
+
+// See C++14 20.10.4.3, type properties
+template <typename _Tp>
+  constexpr bool is_const_v = is_const<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_volatile_v = is_volatile<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_trivial_v = is_trivial<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_trivially_copyable_v = is_trivially_copyable<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_standard_layout_v = is_standard_layout<_Tp>::value;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+template <typename _Tp>
+  constexpr bool is_pod_v = is_pod<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_literal_type_v = is_literal_type<_Tp>::value;
+#pragma GCC diagnostic pop
+template <typename _Tp>
+  constexpr bool is_empty_v = is_empty<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_polymorphic_v = is_polymorphic<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_abstract_v = is_abstract<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_final_v = is_final<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_signed_v = is_signed<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_unsigned_v = is_unsigned<_Tp>::value;
+template <typename _Tp, typename... _Args>
+  constexpr bool is_constructible_v = is_constructible<_Tp, _Args...>::value;
+template <typename _Tp>
+  constexpr bool is_default_constructible_v =
+    is_default_constructible<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_copy_constructible_v = is_copy_constructible<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_move_constructible_v = is_move_constructible<_Tp>::value;
+template <typename _Tp, typename _Up>
+  constexpr bool is_assignable_v = is_assignable<_Tp, _Up>::value;
+template <typename _Tp>
+  constexpr bool is_copy_assignable_v = is_copy_assignable<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_move_assignable_v = is_move_assignable<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_destructible_v = is_destructible<_Tp>::value;
+template <typename _Tp, typename... _Args>
+  constexpr bool is_trivially_constructible_v =
+    is_trivially_constructible<_Tp, _Args...>::value;
+template <typename _Tp>
+  constexpr bool is_trivially_default_constructible_v =
+    is_trivially_default_constructible<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_trivially_copy_constructible_v =
+    is_trivially_copy_constructible<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_trivially_move_constructible_v =
+    is_trivially_move_constructible<_Tp>::value;
+template <typename _Tp, typename _Up>
+  constexpr bool is_trivially_assignable_v =
+    is_trivially_assignable<_Tp, _Up>::value;
+template <typename _Tp>
+  constexpr bool is_trivially_copy_assignable_v =
+    is_trivially_copy_assignable<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_trivially_move_assignable_v =
+    is_trivially_move_assignable<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_trivially_destructible_v =
+    is_trivially_destructible<_Tp>::value;
+template <typename _Tp, typename... _Args>
+  constexpr bool is_nothrow_constructible_v =
+    is_nothrow_constructible<_Tp, _Args...>::value;
+template <typename _Tp>
+  constexpr bool is_nothrow_default_constructible_v =
+    is_nothrow_default_constructible<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_nothrow_copy_constructible_v =
+    is_nothrow_copy_constructible<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_nothrow_move_constructible_v =
+    is_nothrow_move_constructible<_Tp>::value;
+template <typename _Tp, typename _Up>
+  constexpr bool is_nothrow_assignable_v =
+    is_nothrow_assignable<_Tp, _Up>::value;
+template <typename _Tp>
+  constexpr bool is_nothrow_copy_assignable_v =
+    is_nothrow_copy_assignable<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_nothrow_move_assignable_v =
+    is_nothrow_move_assignable<_Tp>::value;
+template <typename _Tp>
+  constexpr bool is_nothrow_destructible_v =
+    is_nothrow_destructible<_Tp>::value;
+template <typename _Tp>
+  constexpr bool has_virtual_destructor_v =
+    has_virtual_destructor<_Tp>::value;
+
+// See C++14 20.10.5, type property queries
+template <typename _Tp>
+  constexpr size_t alignment_of_v = alignment_of<_Tp>::value;
+template <typename _Tp>
+  constexpr size_t rank_v = rank<_Tp>::value;
+template <typename _Tp, unsigned _Idx = 0>
+  constexpr size_t extent_v = extent<_Tp, _Idx>::value;
+
+// See C++14 20.10.6, type relations
+template <typename _Tp, typename _Up>
+  constexpr bool is_same_v = is_same<_Tp, _Up>::value;
+template <typename _Base, typename _Derived>
+  constexpr bool is_base_of_v = is_base_of<_Base, _Derived>::value;
+template <typename _From, typename _To>
+  constexpr bool is_convertible_v = is_convertible<_From, _To>::value;
+/// @}
+
+  // 3.3.2, Other type transformations
+  // invocation_type (still unimplemented)
+  // raw_invocation_type (still unimplemented)
+  // invocation_type_t (still unimplemented)
+  // raw_invocation_type_t (still unimplemented)
+} // namespace fundamentals_v1
+
+inline namespace fundamentals_v2
+{
+/**
+ * @defgroup lfts_detect Detection idiom
+ * @ingroup libfund-ts
+ * @since Library Fundamentals TS v2. C++14.
+ */
+/** @ingroup lfts_detect
+ * @{
+ */
+#define __cpp_lib_experimental_detect 201505
+
+// [meta.detect]
+
+/// A metafunction that always yields void, used for detecting valid types.
+template<typename...> using void_t = void;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
+/// @internal
+struct __nonesuchbase {};
+struct nonesuch : private __nonesuchbase
+{
+  ~nonesuch() = delete;
+  nonesuch(nonesuch const&) = delete;
+  void operator=(nonesuch const&) = delete;
+};
+#pragma GCC diagnostic pop
+
+template<template<typename...> class _Op, typename... _Args>
+  using is_detected
+    = typename std::__detector<nonesuch, void, _Op, _Args...>::value_t;
+
+template<template<typename...> class _Op, typename... _Args>
+  constexpr bool is_detected_v = is_detected<_Op, _Args...>::value;
+
+template<template<typename...> class _Op, typename... _Args>
+  using detected_t
+    = typename std::__detector<nonesuch, void, _Op, _Args...>::type;
+
+template<typename _Default, template<typename...> class _Op, typename... _Args>
+  using detected_or = std::__detected_or<_Default, _Op, _Args...>;
+
+template<typename _Default, template<typename...> class _Op, typename... _Args>
+  using detected_or_t = typename detected_or<_Default, _Op, _Args...>::type;
+
+template<typename _Expected, template<typename...> class _Op, typename... _Args>
+  using is_detected_exact = is_same<_Expected, detected_t<_Op, _Args...>>;
+
+template<typename _Expected, template<typename...> class _Op, typename... _Args>
+  constexpr bool is_detected_exact_v
+    = is_detected_exact<_Expected, _Op, _Args...>::value;
+
+template<typename _To, template<typename...> class _Op, typename... _Args>
+  using is_detected_convertible
+    = is_convertible<detected_t<_Op, _Args...>, _To>;
+
+template<typename _To, template<typename...> class _Op, typename... _Args>
+  constexpr bool is_detected_convertible_v
+    = is_detected_convertible<_To, _Op, _Args...>::value;
+/// @}
+
+/**
+ * @defgroup lfts_logical Logical operator traits
+ * @ingroup libfund-ts
+ * @since Library Fundamentals TS v2. C++14.
+ */
+/** @ingroup lfts_logical
+ * @{
+ */
+#define __cpp_lib_experimental_logical_traits 201511
+
+template<typename... _Bn>
+  struct conjunction
+  : __and_<_Bn...>
+  { };
+
+template<typename... _Bn>
+  struct disjunction
+  : __or_<_Bn...>
+  { };
+
+template<typename _Pp>
+  struct negation
+  : __not_<_Pp>
+  { };
+
+template<typename... _Bn>
+  constexpr bool conjunction_v
+    = conjunction<_Bn...>::value;
+
+template<typename... _Bn>
+  constexpr bool disjunction_v
+    = disjunction<_Bn...>::value;
+
+template<typename _Pp>
+  constexpr bool negation_v
+    = negation<_Pp>::value;
+/// @}
+} // namespace fundamentals_v2
+} // namespace experimental
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // __cplusplus <= 201103L
+
+#endif // _GLIBCXX_EXPERIMENTAL_TYPE_TRAITS

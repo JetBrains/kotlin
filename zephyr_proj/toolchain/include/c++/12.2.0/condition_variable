@@ -1,0 +1,450 @@
+// <condition_variable> -*- C++ -*-
+
+// Copyright (C) 2008-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/condition_variable
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_CONDITION_VARIABLE
+#define _GLIBCXX_CONDITION_VARIABLE 1
+
+#pragma GCC system_header
+
+#if __cplusplus < 201103L
+# include <bits/c++0x_warning.h>
+#else
+
+#include <bits/chrono.h>
+#include <bits/std_mutex.h>
+#include <bits/unique_lock.h>
+#include <bits/alloc_traits.h>
+#include <bits/shared_ptr.h>
+#include <bits/cxxabi_forced.h>
+
+#if __cplusplus > 201703L
+# include <stop_token>
+#endif
+
+#if defined(_GLIBCXX_HAS_GTHREADS)
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+  /**
+   * @defgroup condition_variables Condition Variables
+   * @ingroup concurrency
+   *
+   * Classes for condition_variable support.
+   * @{
+   */
+
+  /// cv_status
+  enum class cv_status { no_timeout, timeout };
+
+  /// condition_variable
+  class condition_variable
+  {
+    using steady_clock = chrono::steady_clock;
+    using system_clock = chrono::system_clock;
+#ifdef _GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT
+    using __clock_t = steady_clock;
+#else
+    using __clock_t = system_clock;
+#endif
+
+    __condvar _M_cond;
+
+  public:
+    typedef __gthread_cond_t* 		native_handle_type;
+
+    condition_variable() noexcept;
+    ~condition_variable() noexcept;
+
+    condition_variable(const condition_variable&) = delete;
+    condition_variable& operator=(const condition_variable&) = delete;
+
+    void
+    notify_one() noexcept;
+
+    void
+    notify_all() noexcept;
+
+    void
+    wait(unique_lock<mutex>& __lock);
+
+    template<typename _Predicate>
+      void
+      wait(unique_lock<mutex>& __lock, _Predicate __p)
+      {
+	while (!__p())
+	  wait(__lock);
+      }
+
+#ifdef _GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT
+    template<typename _Duration>
+      cv_status
+      wait_until(unique_lock<mutex>& __lock,
+		 const chrono::time_point<steady_clock, _Duration>& __atime)
+      { return __wait_until_impl(__lock, __atime); }
+#endif
+
+    template<typename _Duration>
+      cv_status
+      wait_until(unique_lock<mutex>& __lock,
+		 const chrono::time_point<system_clock, _Duration>& __atime)
+      { return __wait_until_impl(__lock, __atime); }
+
+    template<typename _Clock, typename _Duration>
+      cv_status
+      wait_until(unique_lock<mutex>& __lock,
+		 const chrono::time_point<_Clock, _Duration>& __atime)
+      {
+#if __cplusplus > 201703L
+	static_assert(chrono::is_clock_v<_Clock>);
+#endif
+	using __s_dur = typename __clock_t::duration;
+	const typename _Clock::time_point __c_entry = _Clock::now();
+	const __clock_t::time_point __s_entry = __clock_t::now();
+	const auto __delta = __atime - __c_entry;
+	const auto __s_atime = __s_entry +
+	  chrono::__detail::ceil<__s_dur>(__delta);
+
+	if (__wait_until_impl(__lock, __s_atime) == cv_status::no_timeout)
+	  return cv_status::no_timeout;
+	// We got a timeout when measured against __clock_t but
+	// we need to check against the caller-supplied clock
+	// to tell whether we should return a timeout.
+	if (_Clock::now() < __atime)
+	  return cv_status::no_timeout;
+	return cv_status::timeout;
+      }
+
+    template<typename _Clock, typename _Duration, typename _Predicate>
+      bool
+      wait_until(unique_lock<mutex>& __lock,
+		 const chrono::time_point<_Clock, _Duration>& __atime,
+		 _Predicate __p)
+      {
+	while (!__p())
+	  if (wait_until(__lock, __atime) == cv_status::timeout)
+	    return __p();
+	return true;
+      }
+
+    template<typename _Rep, typename _Period>
+      cv_status
+      wait_for(unique_lock<mutex>& __lock,
+	       const chrono::duration<_Rep, _Period>& __rtime)
+      {
+	using __dur = typename steady_clock::duration;
+	return wait_until(__lock,
+			  steady_clock::now() +
+			  chrono::__detail::ceil<__dur>(__rtime));
+      }
+
+    template<typename _Rep, typename _Period, typename _Predicate>
+      bool
+      wait_for(unique_lock<mutex>& __lock,
+	       const chrono::duration<_Rep, _Period>& __rtime,
+	       _Predicate __p)
+      {
+	using __dur = typename steady_clock::duration;
+	return wait_until(__lock,
+			  steady_clock::now() +
+			  chrono::__detail::ceil<__dur>(__rtime),
+			  std::move(__p));
+      }
+
+    native_handle_type
+    native_handle()
+    { return _M_cond.native_handle(); }
+
+  private:
+#ifdef _GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT
+    template<typename _Dur>
+      cv_status
+      __wait_until_impl(unique_lock<mutex>& __lock,
+			const chrono::time_point<steady_clock, _Dur>& __atime)
+      {
+	auto __s = chrono::time_point_cast<chrono::seconds>(__atime);
+	auto __ns = chrono::duration_cast<chrono::nanoseconds>(__atime - __s);
+
+	__gthread_time_t __ts =
+	  {
+	    static_cast<std::time_t>(__s.time_since_epoch().count()),
+	    static_cast<long>(__ns.count())
+	  };
+
+	_M_cond.wait_until(*__lock.mutex(), CLOCK_MONOTONIC, __ts);
+
+	return (steady_clock::now() < __atime
+		? cv_status::no_timeout : cv_status::timeout);
+      }
+#endif
+
+    template<typename _Dur>
+      cv_status
+      __wait_until_impl(unique_lock<mutex>& __lock,
+			const chrono::time_point<system_clock, _Dur>& __atime)
+      {
+	auto __s = chrono::time_point_cast<chrono::seconds>(__atime);
+	auto __ns = chrono::duration_cast<chrono::nanoseconds>(__atime - __s);
+
+	__gthread_time_t __ts =
+	  {
+	    static_cast<std::time_t>(__s.time_since_epoch().count()),
+	    static_cast<long>(__ns.count())
+	  };
+
+	_M_cond.wait_until(*__lock.mutex(), __ts);
+
+	return (system_clock::now() < __atime
+		? cv_status::no_timeout : cv_status::timeout);
+      }
+  };
+
+  void
+  notify_all_at_thread_exit(condition_variable&, unique_lock<mutex>);
+
+  struct __at_thread_exit_elt
+  {
+    __at_thread_exit_elt* _M_next;
+    void (*_M_cb)(void*);
+  };
+
+  inline namespace _V2 {
+
+  /// condition_variable_any
+  // Like above, but mutex is not required to have try_lock.
+  class condition_variable_any
+  {
+#ifdef _GLIBCXX_USE_PTHREAD_COND_CLOCKWAIT
+    using __clock_t = chrono::steady_clock;
+#else
+    using __clock_t = chrono::system_clock;
+#endif
+    condition_variable			_M_cond;
+    shared_ptr<mutex>			_M_mutex;
+
+    // scoped unlock - unlocks in ctor, re-locks in dtor
+    template<typename _Lock>
+      struct _Unlock
+      {
+	explicit _Unlock(_Lock& __lk) : _M_lock(__lk) { __lk.unlock(); }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+	~_Unlock() noexcept(false)
+	{
+	  if (uncaught_exception())
+	    {
+	      __try
+	      { _M_lock.lock(); }
+	      __catch(const __cxxabiv1::__forced_unwind&)
+	      { __throw_exception_again; }
+	      __catch(...)
+	      { }
+	    }
+	  else
+	    _M_lock.lock();
+	}
+#pragma GCC diagnostic pop
+
+	_Unlock(const _Unlock&) = delete;
+	_Unlock& operator=(const _Unlock&) = delete;
+
+	_Lock& _M_lock;
+      };
+
+  public:
+    condition_variable_any() : _M_mutex(std::make_shared<mutex>()) { }
+    ~condition_variable_any() = default;
+
+    condition_variable_any(const condition_variable_any&) = delete;
+    condition_variable_any& operator=(const condition_variable_any&) = delete;
+
+    void
+    notify_one() noexcept
+    {
+      lock_guard<mutex> __lock(*_M_mutex);
+      _M_cond.notify_one();
+    }
+
+    void
+    notify_all() noexcept
+    {
+      lock_guard<mutex> __lock(*_M_mutex);
+      _M_cond.notify_all();
+    }
+
+    template<typename _Lock>
+      void
+      wait(_Lock& __lock)
+      {
+	shared_ptr<mutex> __mutex = _M_mutex;
+	unique_lock<mutex> __my_lock(*__mutex);
+	_Unlock<_Lock> __unlock(__lock);
+	// *__mutex must be unlocked before re-locking __lock so move
+	// ownership of *__mutex lock to an object with shorter lifetime.
+	unique_lock<mutex> __my_lock2(std::move(__my_lock));
+	_M_cond.wait(__my_lock2);
+      }
+
+
+    template<typename _Lock, typename _Predicate>
+      void
+      wait(_Lock& __lock, _Predicate __p)
+      {
+	while (!__p())
+	  wait(__lock);
+      }
+
+    template<typename _Lock, typename _Clock, typename _Duration>
+      cv_status
+      wait_until(_Lock& __lock,
+		 const chrono::time_point<_Clock, _Duration>& __atime)
+      {
+	shared_ptr<mutex> __mutex = _M_mutex;
+	unique_lock<mutex> __my_lock(*__mutex);
+	_Unlock<_Lock> __unlock(__lock);
+	// *__mutex must be unlocked before re-locking __lock so move
+	// ownership of *__mutex lock to an object with shorter lifetime.
+	unique_lock<mutex> __my_lock2(std::move(__my_lock));
+	return _M_cond.wait_until(__my_lock2, __atime);
+      }
+
+    template<typename _Lock, typename _Clock,
+	     typename _Duration, typename _Predicate>
+      bool
+      wait_until(_Lock& __lock,
+		 const chrono::time_point<_Clock, _Duration>& __atime,
+		 _Predicate __p)
+      {
+	while (!__p())
+	  if (wait_until(__lock, __atime) == cv_status::timeout)
+	    return __p();
+	return true;
+      }
+
+    template<typename _Lock, typename _Rep, typename _Period>
+      cv_status
+      wait_for(_Lock& __lock, const chrono::duration<_Rep, _Period>& __rtime)
+      { return wait_until(__lock, __clock_t::now() + __rtime); }
+
+    template<typename _Lock, typename _Rep,
+	     typename _Period, typename _Predicate>
+      bool
+      wait_for(_Lock& __lock,
+	       const chrono::duration<_Rep, _Period>& __rtime, _Predicate __p)
+      { return wait_until(__lock, __clock_t::now() + __rtime, std::move(__p)); }
+
+#ifdef __cpp_lib_jthread
+    template <class _Lock, class _Predicate>
+    bool wait(_Lock& __lock,
+              stop_token __stoken,
+              _Predicate __p)
+    {
+      if (__stoken.stop_requested())
+        {
+          return __p();
+        }
+ 
+      std::stop_callback __cb(__stoken, [this] { notify_all(); });
+      shared_ptr<mutex> __mutex = _M_mutex;
+      while (!__p())
+        {
+          unique_lock<mutex> __my_lock(*__mutex);
+          if (__stoken.stop_requested())
+            {
+              return false;
+            }
+          // *__mutex must be unlocked before re-locking __lock so move
+          // ownership of *__mutex lock to an object with shorter lifetime.
+          _Unlock<_Lock> __unlock(__lock);
+          unique_lock<mutex> __my_lock2(std::move(__my_lock));
+          _M_cond.wait(__my_lock2);
+        }
+      return true;
+    }
+
+    template <class _Lock, class _Clock, class _Duration, class _Predicate>
+    bool wait_until(_Lock& __lock,
+                    stop_token __stoken,
+                    const chrono::time_point<_Clock, _Duration>& __abs_time,
+                    _Predicate __p)
+    {
+      if (__stoken.stop_requested())
+        {
+          return __p();
+        }
+
+      std::stop_callback __cb(__stoken, [this] { notify_all(); });
+      shared_ptr<mutex> __mutex = _M_mutex;
+      while (!__p())
+        {
+          bool __stop;
+          {
+            unique_lock<mutex> __my_lock(*__mutex);
+            if (__stoken.stop_requested())
+              {
+                return false;
+              }
+            _Unlock<_Lock> __u(__lock);
+            unique_lock<mutex> __my_lock2(std::move(__my_lock));
+            const auto __status = _M_cond.wait_until(__my_lock2, __abs_time);
+            __stop = (__status == std::cv_status::timeout) || __stoken.stop_requested();
+          }
+          if (__stop)
+            {
+              return __p();
+            }
+        }
+      return true;
+    }
+
+    template <class _Lock, class _Rep, class _Period, class _Predicate>
+    bool wait_for(_Lock& __lock,
+                  stop_token __stoken,
+                  const chrono::duration<_Rep, _Period>& __rel_time,
+                  _Predicate __p)
+    {
+      auto __abst = std::chrono::steady_clock::now() + __rel_time;
+      return wait_until(__lock,
+                        std::move(__stoken),
+                        __abst,
+                        std::move(__p));
+    }
+#endif
+  };
+
+  } // end inline namespace
+
+  /// @} group condition_variables
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace
+
+#endif // _GLIBCXX_HAS_GTHREADS
+#endif // C++11
+#endif // _GLIBCXX_CONDITION_VARIABLE

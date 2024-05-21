@@ -1,0 +1,149 @@
+// Components for manipulating sequences of characters -*- C++ -*-
+
+// Copyright (C) 1997-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/string
+ *  This is a Standard C++ Library header.
+ */
+
+//
+// ISO C++ 14882: 21  Strings library
+//
+
+#ifndef _GLIBCXX_STRING
+#define _GLIBCXX_STRING	1
+
+#pragma GCC system_header
+
+#include <bits/c++config.h>
+#include <bits/stringfwd.h>
+#include <bits/char_traits.h>  // NB: In turn includes stl_algobase.h
+#include <bits/allocator.h>
+#include <bits/cpp_type_traits.h>
+#include <bits/localefwd.h>    // For operators >>, <<, and getline.
+#include <bits/ostream_insert.h>
+#include <bits/stl_iterator_base_types.h>
+#include <bits/stl_iterator_base_funcs.h>
+#include <bits/stl_iterator.h>
+#include <bits/stl_function.h> // For less
+#include <ext/numeric_traits.h>
+#include <bits/stl_algobase.h>
+#include <bits/refwrap.h>
+#include <bits/range_access.h>
+#include <bits/basic_string.h>
+#include <bits/basic_string.tcc>
+
+#if __cplusplus >= 201703L && _GLIBCXX_USE_CXX11_ABI
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+  namespace pmr {
+    template<typename _Tp> class polymorphic_allocator;
+    template<typename _CharT, typename _Traits = char_traits<_CharT>>
+      using basic_string = std::basic_string<_CharT, _Traits,
+					     polymorphic_allocator<_CharT>>;
+    using string    = basic_string<char>;
+#ifdef _GLIBCXX_USE_CHAR8_T
+    using u8string  = basic_string<char8_t>;
+#endif
+    using u16string = basic_string<char16_t>;
+    using u32string = basic_string<char32_t>;
+    using wstring   = basic_string<wchar_t>;
+  } // namespace pmr
+
+  template<typename _Str>
+    struct __hash_string_base
+    : public __hash_base<size_t, _Str>
+    {
+      size_t
+      operator()(const _Str& __s) const noexcept
+      { return hash<basic_string_view<typename _Str::value_type>>{}(__s); }
+    };
+
+  template<>
+    struct hash<pmr::string>
+    : public __hash_string_base<pmr::string>
+    { };
+#ifdef _GLIBCXX_USE_CHAR8_T
+  template<>
+    struct hash<pmr::u8string>
+    : public __hash_string_base<pmr::u8string>
+    { };
+#endif
+  template<>
+    struct hash<pmr::u16string>
+    : public __hash_string_base<pmr::u16string>
+    { };
+  template<>
+    struct hash<pmr::u32string>
+    : public __hash_string_base<pmr::u32string>
+    { };
+  template<>
+    struct hash<pmr::wstring>
+    : public __hash_string_base<pmr::wstring>
+    { };
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // C++17
+
+#if __cplusplus > 201703L
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+#define __cpp_lib_erase_if 202002L
+
+  template<typename _CharT, typename _Traits, typename _Alloc,
+	   typename _Predicate>
+    _GLIBCXX20_CONSTEXPR
+    inline typename basic_string<_CharT, _Traits, _Alloc>::size_type
+    erase_if(basic_string<_CharT, _Traits, _Alloc>& __cont, _Predicate __pred)
+    {
+      using namespace __gnu_cxx;
+      const auto __osz = __cont.size();
+      const auto __end = __cont.end();
+      auto __removed = std::__remove_if(__cont.begin(), __end,
+					__ops::__pred_iter(std::ref(__pred)));
+      __cont.erase(__removed, __end);
+      return __osz - __cont.size();
+    }
+
+  template<typename _CharT, typename _Traits, typename _Alloc, typename _Up>
+    _GLIBCXX20_CONSTEXPR
+    inline typename basic_string<_CharT, _Traits, _Alloc>::size_type
+    erase(basic_string<_CharT, _Traits, _Alloc>& __cont, const _Up& __value)
+    {
+      using namespace __gnu_cxx;
+      const auto __osz = __cont.size();
+      const auto __end = __cont.end();
+      auto __removed = std::__remove_if(__cont.begin(), __end,
+					__ops::__iter_equals_val(__value));
+      __cont.erase(__removed, __end);
+      return __osz - __cont.size();
+    }
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // C++20
+
+#endif /* _GLIBCXX_STRING */

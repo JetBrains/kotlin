@@ -1,0 +1,87 @@
+// <forward_list> -*- C++ -*-
+
+// Copyright (C) 2008-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/forward_list
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_FORWARD_LIST
+#define _GLIBCXX_FORWARD_LIST 1
+
+#pragma GCC system_header
+
+#if __cplusplus < 201103L
+# include <bits/c++0x_warning.h>
+#else
+
+#include <bits/forward_list.h>
+#include <bits/range_access.h>
+#include <bits/forward_list.tcc>
+
+#ifdef _GLIBCXX_DEBUG
+# include <debug/forward_list>
+#endif
+
+#if __cplusplus >= 201703L
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+  namespace pmr
+  {
+    template<typename _Tp> class polymorphic_allocator;
+    template<typename _Tp>
+      using forward_list = std::forward_list<_Tp, polymorphic_allocator<_Tp>>;
+  } // namespace pmr
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // C++17
+
+#if __cplusplus > 201703L
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+#define __cpp_lib_erase_if 202002L
+
+  template<typename _Tp, typename _Alloc, typename _Predicate>
+    inline typename forward_list<_Tp, _Alloc>::size_type 
+    erase_if(forward_list<_Tp, _Alloc>& __cont, _Predicate __pred)
+    { return __cont.remove_if(__pred); }
+
+  template<typename _Tp, typename _Alloc, typename _Up>
+    inline typename forward_list<_Tp, _Alloc>::size_type
+    erase(forward_list<_Tp, _Alloc>& __cont, const _Up& __value)
+    {
+      using __elem_type = typename forward_list<_Tp, _Alloc>::value_type;
+      return std::erase_if(__cont, [&](__elem_type& __elem) {
+	  return __elem == __value;
+      });
+    }
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // C++20
+
+#endif // C++11
+
+#endif // _GLIBCXX_FORWARD_LIST

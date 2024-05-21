@@ -1,0 +1,420 @@
+// TR1 complex -*- C++ -*-
+
+// Copyright (C) 2006-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file tr1/complex
+ *  This is a TR1 C++ Library header. 
+ */
+
+#ifndef _GLIBCXX_TR1_COMPLEX
+#define _GLIBCXX_TR1_COMPLEX 1
+
+#pragma GCC system_header
+
+#include <complex>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace tr1
+{
+  /**
+   * @addtogroup complex_numbers
+   * @{
+   */
+
+#if __cplusplus >= 201103L
+  using std::acos;
+  using std::asin;
+  using std::atan;
+  using std::acosh;
+  using std::asinh;
+  using std::atanh;
+#else
+  template<typename _Tp> std::complex<_Tp> acos(const std::complex<_Tp>&);
+  template<typename _Tp> std::complex<_Tp> asin(const std::complex<_Tp>&);
+  template<typename _Tp> std::complex<_Tp> atan(const std::complex<_Tp>&);
+  template<typename _Tp> std::complex<_Tp> acosh(const std::complex<_Tp>&);
+  template<typename _Tp> std::complex<_Tp> asinh(const std::complex<_Tp>&);
+  template<typename _Tp> std::complex<_Tp> atanh(const std::complex<_Tp>&);
+#endif
+
+  // The std::fabs return type in C++11 mode is different (just _Tp).
+  template<typename _Tp> std::complex<_Tp> fabs(const std::complex<_Tp>&);
+
+#if __cplusplus < 201103L
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    __complex_acos(const std::complex<_Tp>& __z)
+    {
+      const std::complex<_Tp> __t = std::tr1::asin(__z);
+      const _Tp __pi_2 = 1.5707963267948966192313216916397514L;
+      return std::complex<_Tp>(__pi_2 - __t.real(), -__t.imag());
+    }
+
+#if _GLIBCXX_USE_C99_COMPLEX_TR1
+  inline __complex__ float
+  __complex_acos(__complex__ float __z)
+  { return __builtin_cacosf(__z); }
+
+  inline __complex__ double
+  __complex_acos(__complex__ double __z)
+  { return __builtin_cacos(__z); }
+
+  inline __complex__ long double
+  __complex_acos(const __complex__ long double& __z)
+  { return __builtin_cacosl(__z); }
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    acos(const std::complex<_Tp>& __z)
+    { return __complex_acos(__z.__rep()); }
+#else
+  /// acos(__z) [8.1.2].
+  //  Effects:  Behaves the same as C99 function cacos, defined
+  //            in subclause 7.3.5.1.
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    acos(const std::complex<_Tp>& __z)
+    { return __complex_acos(__z); }
+#endif
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    __complex_asin(const std::complex<_Tp>& __z)
+    {
+      std::complex<_Tp> __t(-__z.imag(), __z.real());
+      __t = std::tr1::asinh(__t);
+      return std::complex<_Tp>(__t.imag(), -__t.real());
+    }
+
+#if _GLIBCXX_USE_C99_COMPLEX_TR1
+  inline __complex__ float
+  __complex_asin(__complex__ float __z)
+  { return __builtin_casinf(__z); }
+
+  inline __complex__ double
+  __complex_asin(__complex__ double __z)
+  { return __builtin_casin(__z); }
+
+  inline __complex__ long double
+  __complex_asin(const __complex__ long double& __z)
+  { return __builtin_casinl(__z); }
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    asin(const std::complex<_Tp>& __z)
+    { return __complex_asin(__z.__rep()); }
+#else
+  /// asin(__z) [8.1.3].
+  //  Effects:  Behaves the same as C99 function casin, defined
+  //            in subclause 7.3.5.2.
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    asin(const std::complex<_Tp>& __z)
+    { return __complex_asin(__z); }
+#endif
+  
+  template<typename _Tp>
+    std::complex<_Tp>
+    __complex_atan(const std::complex<_Tp>& __z)
+    {
+      const _Tp __r2 = __z.real() * __z.real();
+      const _Tp __x = _Tp(1.0) - __r2 - __z.imag() * __z.imag();
+
+      _Tp __num = __z.imag() + _Tp(1.0);
+      _Tp __den = __z.imag() - _Tp(1.0);
+
+      __num = __r2 + __num * __num;
+      __den = __r2 + __den * __den;
+
+      return std::complex<_Tp>(_Tp(0.5) * atan2(_Tp(2.0) * __z.real(), __x),
+			       _Tp(0.25) * log(__num / __den));
+    }
+
+#if _GLIBCXX_USE_C99_COMPLEX_TR1
+  inline __complex__ float
+  __complex_atan(__complex__ float __z)
+  { return __builtin_catanf(__z); }
+
+  inline __complex__ double
+  __complex_atan(__complex__ double __z)
+  { return __builtin_catan(__z); }
+
+  inline __complex__ long double
+  __complex_atan(const __complex__ long double& __z)
+  { return __builtin_catanl(__z); }
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    atan(const std::complex<_Tp>& __z)
+    { return __complex_atan(__z.__rep()); }
+#else
+  /// atan(__z) [8.1.4].
+  //  Effects:  Behaves the same as C99 function catan, defined
+  //            in subclause 7.3.5.3.
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    atan(const std::complex<_Tp>& __z)
+    { return __complex_atan(__z); }
+#endif
+
+  template<typename _Tp>
+    std::complex<_Tp>
+    __complex_acosh(const std::complex<_Tp>& __z)
+    {
+      // Kahan's formula.
+      return _Tp(2.0) * std::log(std::sqrt(_Tp(0.5) * (__z + _Tp(1.0)))
+				 + std::sqrt(_Tp(0.5) * (__z - _Tp(1.0))));
+    }
+
+#if _GLIBCXX_USE_C99_COMPLEX_TR1
+  inline __complex__ float
+  __complex_acosh(__complex__ float __z)
+  { return __builtin_cacoshf(__z); }
+
+  inline __complex__ double
+  __complex_acosh(__complex__ double __z)
+  { return __builtin_cacosh(__z); }
+
+  inline __complex__ long double
+  __complex_acosh(const __complex__ long double& __z)
+  { return __builtin_cacoshl(__z); }
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    acosh(const std::complex<_Tp>& __z)
+    { return __complex_acosh(__z.__rep()); }
+#else
+  /// acosh(__z) [8.1.5].
+  //  Effects:  Behaves the same as C99 function cacosh, defined
+  //            in subclause 7.3.6.1.
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    acosh(const std::complex<_Tp>& __z)
+    { return __complex_acosh(__z); }
+#endif
+
+  template<typename _Tp>
+    std::complex<_Tp>
+    __complex_asinh(const std::complex<_Tp>& __z)
+    {
+      std::complex<_Tp> __t((__z.real() - __z.imag())
+			    * (__z.real() + __z.imag()) + _Tp(1.0),
+			    _Tp(2.0) * __z.real() * __z.imag());
+      __t = std::sqrt(__t);
+
+      return std::log(__t + __z);
+    }
+
+#if _GLIBCXX_USE_C99_COMPLEX_TR1
+  inline __complex__ float
+  __complex_asinh(__complex__ float __z)
+  { return __builtin_casinhf(__z); }
+
+  inline __complex__ double
+  __complex_asinh(__complex__ double __z)
+  { return __builtin_casinh(__z); }
+
+  inline __complex__ long double
+  __complex_asinh(const __complex__ long double& __z)
+  { return __builtin_casinhl(__z); }
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    asinh(const std::complex<_Tp>& __z)
+    { return __complex_asinh(__z.__rep()); }
+#else
+  /// asinh(__z) [8.1.6].
+  //  Effects:  Behaves the same as C99 function casin, defined
+  //            in subclause 7.3.6.2.
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    asinh(const std::complex<_Tp>& __z)
+    { return __complex_asinh(__z); }
+#endif
+
+  template<typename _Tp>
+    std::complex<_Tp>
+    __complex_atanh(const std::complex<_Tp>& __z)
+    {
+      const _Tp __i2 = __z.imag() * __z.imag();
+      const _Tp __x = _Tp(1.0) - __i2 - __z.real() * __z.real();
+
+      _Tp __num = _Tp(1.0) + __z.real();
+      _Tp __den = _Tp(1.0) - __z.real();
+
+      __num = __i2 + __num * __num;
+      __den = __i2 + __den * __den;
+
+      return std::complex<_Tp>(_Tp(0.25) * (log(__num) - log(__den)),
+			       _Tp(0.5) * atan2(_Tp(2.0) * __z.imag(), __x));
+    }
+
+#if _GLIBCXX_USE_C99_COMPLEX_TR1
+  inline __complex__ float
+  __complex_atanh(__complex__ float __z)
+  { return __builtin_catanhf(__z); }
+
+  inline __complex__ double
+  __complex_atanh(__complex__ double __z)
+  { return __builtin_catanh(__z); }
+
+  inline __complex__ long double
+  __complex_atanh(const __complex__ long double& __z)
+  { return __builtin_catanhl(__z); }
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    atanh(const std::complex<_Tp>& __z)
+    { return __complex_atanh(__z.__rep()); }
+#else
+  /// atanh(__z) [8.1.7].
+  //  Effects:  Behaves the same as C99 function catanh, defined
+  //            in subclause 7.3.6.3.
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    atanh(const std::complex<_Tp>& __z)
+    { return __complex_atanh(__z); }
+#endif
+
+#endif // C++11
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    /// fabs(__z) [8.1.8].
+    //  Effects:  Behaves the same as C99 function cabs, defined
+    //            in subclause 7.3.8.1.
+    fabs(const std::complex<_Tp>& __z)
+    { return std::abs(__z); }
+
+  /// Additional overloads [8.1.9].
+#if __cplusplus < 201103L
+
+  template<typename _Tp>
+    inline typename __gnu_cxx::__promote<_Tp>::__type
+    arg(_Tp __x)
+    {
+      typedef typename __gnu_cxx::__promote<_Tp>::__type __type;
+#if (_GLIBCXX_USE_C99_MATH && !_GLIBCXX_USE_C99_FP_MACROS_DYNAMIC)
+      return std::signbit(__x) ? __type(3.1415926535897932384626433832795029L)
+	                       : __type();
+#else
+      return std::arg(std::complex<__type>(__x));
+#endif
+    }
+
+  template<typename _Tp>
+    inline typename __gnu_cxx::__promote<_Tp>::__type
+    imag(_Tp)
+    { return _Tp(); }
+
+  template<typename _Tp>
+    inline typename __gnu_cxx::__promote<_Tp>::__type
+    norm(_Tp __x)
+    {
+      typedef typename __gnu_cxx::__promote<_Tp>::__type __type;
+      return __type(__x) * __type(__x);
+    }
+
+  template<typename _Tp>
+    inline typename __gnu_cxx::__promote<_Tp>::__type
+    real(_Tp __x)
+    { return __x; }
+
+#endif
+
+  template<typename _Tp, typename _Up>
+    inline std::complex<typename __gnu_cxx::__promote_2<_Tp, _Up>::__type>
+    pow(const std::complex<_Tp>& __x, const _Up& __y)
+    {
+      typedef typename __gnu_cxx::__promote_2<_Tp, _Up>::__type __type;
+      return std::pow(std::complex<__type>(__x), __type(__y));
+    }
+
+  template<typename _Tp, typename _Up>
+    inline std::complex<typename __gnu_cxx::__promote_2<_Tp, _Up>::__type>
+    pow(const _Tp& __x, const std::complex<_Up>& __y)
+    {
+      typedef typename __gnu_cxx::__promote_2<_Tp, _Up>::__type __type;
+      return std::pow(__type(__x), std::complex<__type>(__y));
+    }
+
+  template<typename _Tp, typename _Up>
+    inline std::complex<typename __gnu_cxx::__promote_2<_Tp, _Up>::__type>
+    pow(const std::complex<_Tp>& __x, const std::complex<_Up>& __y)
+    {
+      typedef typename __gnu_cxx::__promote_2<_Tp, _Up>::__type __type;
+      return std::pow(std::complex<__type>(__x),
+		      std::complex<__type>(__y));
+    }
+
+  using std::arg;
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    conj(const std::complex<_Tp>& __z)
+    { return std::conj(__z); }
+
+  template<typename _Tp>
+    inline std::complex<typename __gnu_cxx::__promote<_Tp>::__type>
+    conj(_Tp __x)
+    { return __x; }
+
+  using std::imag;
+  using std::norm;
+  using std::polar;
+
+  template<typename _Tp, typename _Up>
+    inline std::complex<typename __gnu_cxx::__promote_2<_Tp, _Up>::__type>
+    polar(const _Tp& __rho, const _Up& __theta)
+    {
+      typedef typename __gnu_cxx::__promote_2<_Tp, _Up>::__type __type;
+      return std::polar(__type(__rho), __type(__theta));
+    }
+
+  using std::real;
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    pow(const std::complex<_Tp>& __x, const _Tp& __y)
+    { return std::pow(__x, __y); }
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    pow(const _Tp& __x, const std::complex<_Tp>& __y)
+    { return std::pow(__x, __y); }
+
+  template<typename _Tp>
+    inline std::complex<_Tp>
+    pow(const std::complex<_Tp>& __x, const std::complex<_Tp>& __y)
+    { return std::pow(__x, __y); }
+
+/// @} group complex_numbers
+}
+
+_GLIBCXX_END_NAMESPACE_VERSION
+}
+
+#endif // _GLIBCXX_TR1_COMPLEX

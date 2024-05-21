@@ -1,0 +1,208 @@
+// <numbers> -*- C++ -*-
+
+// Copyright (C) 2019-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/numbers
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_NUMBERS
+#define _GLIBCXX_NUMBERS 1
+
+#pragma GCC system_header
+
+#if __cplusplus > 201703L
+
+#include <type_traits>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+/** @defgroup math_constants Mathematical constants
+ *  @ingroup numerics
+ *  @{
+ */
+
+/// Namespace for mathematical constants
+namespace numbers
+{
+#define __cpp_lib_math_constants 201907L
+
+  /// @cond undoc
+  template<typename _Tp>
+    using _Enable_if_floating = enable_if_t<is_floating_point_v<_Tp>, _Tp>;
+  /// @endcond
+
+  /// e
+  template<typename _Tp>
+    inline constexpr _Tp e_v
+      = _Enable_if_floating<_Tp>(2.718281828459045235360287471352662498L);
+
+  /// log_2 e
+  template<typename _Tp>
+    inline constexpr _Tp log2e_v
+      = _Enable_if_floating<_Tp>(1.442695040888963407359924681001892137L);
+
+  /// log_10 e
+  template<typename _Tp>
+    inline constexpr _Tp log10e_v
+      = _Enable_if_floating<_Tp>(0.434294481903251827651128918916605082L);
+
+  /// pi
+  template<typename _Tp>
+    inline constexpr _Tp pi_v
+      = _Enable_if_floating<_Tp>(3.141592653589793238462643383279502884L);
+
+  /// 1/pi
+  template<typename _Tp>
+    inline constexpr _Tp inv_pi_v
+      = _Enable_if_floating<_Tp>(0.318309886183790671537767526745028724L);
+
+  /// 1/sqrt(pi)
+  template<typename _Tp>
+    inline constexpr _Tp inv_sqrtpi_v
+      = _Enable_if_floating<_Tp>(0.564189583547756286948079451560772586L);
+
+  /// log_e 2
+  template<typename _Tp>
+    inline constexpr _Tp ln2_v
+      = _Enable_if_floating<_Tp>(0.693147180559945309417232121458176568L);
+
+  /// log_e 10
+  template<typename _Tp>
+    inline constexpr _Tp ln10_v
+      = _Enable_if_floating<_Tp>(2.302585092994045684017991454684364208L);
+
+  /// sqrt(2)
+  template<typename _Tp>
+    inline constexpr _Tp sqrt2_v
+      = _Enable_if_floating<_Tp>(1.414213562373095048801688724209698079L);
+
+  /// sqrt(3)
+  template<typename _Tp>
+    inline constexpr _Tp sqrt3_v
+      = _Enable_if_floating<_Tp>(1.732050807568877293527446341505872367L);
+
+  /// 1/sqrt(3)
+  template<typename _Tp>
+    inline constexpr _Tp inv_sqrt3_v
+      = _Enable_if_floating<_Tp>(0.577350269189625764509148780501957456L);
+
+  /// The Euler-Mascheroni constant
+  template<typename _Tp>
+    inline constexpr _Tp egamma_v
+      = _Enable_if_floating<_Tp>(0.577215664901532860606512090082402431L);
+
+  /// The golden ratio, (1+sqrt(5))/2
+  template<typename _Tp>
+    inline constexpr _Tp phi_v
+      = _Enable_if_floating<_Tp>(1.618033988749894848204586834365638118L);
+
+  inline constexpr double e = e_v<double>;
+  inline constexpr double log2e = log2e_v<double>;
+  inline constexpr double log10e = log10e_v<double>;
+  inline constexpr double pi = pi_v<double>;
+  inline constexpr double inv_pi = inv_pi_v<double>;
+  inline constexpr double inv_sqrtpi = inv_sqrtpi_v<double>;
+  inline constexpr double ln2 = ln2_v<double>;
+  inline constexpr double ln10 = ln10_v<double>;
+  inline constexpr double sqrt2 = sqrt2_v<double>;
+  inline constexpr double sqrt3 = sqrt3_v<double>;
+  inline constexpr double inv_sqrt3 = inv_sqrt3_v<double>;
+  inline constexpr double egamma = egamma_v<double>;
+  inline constexpr double phi = phi_v<double>;
+
+#if !defined(__STRICT_ANSI__) && defined(_GLIBCXX_USE_FLOAT128)
+  template<>
+    inline constexpr __float128 e_v<__float128>
+      = 2.718281828459045235360287471352662498Q;
+
+  /// log_2 e
+  template<>
+    inline constexpr __float128 log2e_v<__float128>
+      = 1.442695040888963407359924681001892137Q;
+
+  /// log_10 e
+  template<>
+    inline constexpr __float128 log10e_v<__float128>
+      = 0.434294481903251827651128918916605082Q;
+
+  /// pi
+  template<>
+    inline constexpr __float128 pi_v<__float128>
+      = 3.141592653589793238462643383279502884Q;
+
+  /// 1/pi
+  template<>
+    inline constexpr __float128 inv_pi_v<__float128>
+      = 0.318309886183790671537767526745028724Q;
+
+  /// 1/sqrt(pi)
+  template<>
+    inline constexpr __float128 inv_sqrtpi_v<__float128>
+      = 0.564189583547756286948079451560772586Q;
+
+  /// log_e 2
+  template<>
+    inline constexpr __float128 ln2_v<__float128>
+      = 0.693147180559945309417232121458176568Q;
+
+  /// log_e 10
+  template<>
+    inline constexpr __float128 ln10_v<__float128>
+      = 2.302585092994045684017991454684364208Q;
+
+  /// sqrt(2)
+  template<>
+    inline constexpr __float128 sqrt2_v<__float128>
+      = 1.414213562373095048801688724209698079Q;
+
+  /// sqrt(3)
+  template<>
+    inline constexpr __float128 sqrt3_v<__float128>
+      = 1.732050807568877293527446341505872367Q;
+
+  /// 1/sqrt(3)
+  template<>
+    inline constexpr __float128 inv_sqrt3_v<__float128>
+      = 0.577350269189625764509148780501957456Q;
+
+  /// The Euler-Mascheroni constant
+  template<>
+    inline constexpr __float128 egamma_v<__float128>
+      = 0.577215664901532860606512090082402431Q;
+
+  /// The golden ratio, (1+sqrt(5))/2
+  template<>
+    inline constexpr __float128 phi_v<__float128>
+      = 1.618033988749894848204586834365638118Q;
+#endif // USE_FLOAT128
+
+} // namespace numbers
+/// @}
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // C++20
+#endif // _GLIBCXX_NUMBERS

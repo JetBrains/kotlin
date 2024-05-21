@@ -1,0 +1,180 @@
+// -*- C++ -*- forwarding header.
+
+// Copyright (C) 1997-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file cstddef
+ *  This is a Standard C++ Library file.  You should @c \#include this file
+ *  in your programs, rather than any of the @a *.h implementation files.
+ *
+ *  This is the C++ version of the Standard C Library header @c stddef.h,
+ *  and its contents are (mostly) the same as that header, but are all
+ *  contained in the namespace @c std (except for names which are defined
+ *  as macros in C).
+ */
+
+//
+// ISO C++ 14882: 18.1  Types
+//
+
+#ifndef _GLIBCXX_CSTDDEF
+#define _GLIBCXX_CSTDDEF 1
+
+#pragma GCC system_header
+
+#undef __need_wchar_t
+#undef __need_ptrdiff_t
+#undef __need_size_t
+#undef __need_NULL
+#undef __need_wint_t
+#include <bits/c++config.h>
+#include <stddef.h>
+
+extern "C++"
+{
+#if __cplusplus >= 201103L
+namespace std
+{
+  // We handle size_t, ptrdiff_t, and nullptr_t in c++config.h.
+  using ::max_align_t;
+}
+#endif // C++11
+
+#if __cplusplus >= 201703L
+namespace std
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+#define __cpp_lib_byte 201603L
+
+  /// std::byte
+  enum class byte : unsigned char {};
+
+  template<typename _IntegerType> struct __byte_operand { };
+  template<> struct __byte_operand<bool> { using __type = byte; };
+  template<> struct __byte_operand<char> { using __type = byte; };
+  template<> struct __byte_operand<signed char> { using __type = byte; };
+  template<> struct __byte_operand<unsigned char> { using __type = byte; };
+  template<> struct __byte_operand<wchar_t> { using __type = byte; };
+#ifdef _GLIBCXX_USE_CHAR8_T
+  template<> struct __byte_operand<char8_t> { using __type = byte; };
+#endif
+  template<> struct __byte_operand<char16_t> { using __type = byte; };
+  template<> struct __byte_operand<char32_t> { using __type = byte; };
+  template<> struct __byte_operand<short> { using __type = byte; };
+  template<> struct __byte_operand<unsigned short> { using __type = byte; };
+  template<> struct __byte_operand<int> { using __type = byte; };
+  template<> struct __byte_operand<unsigned int> { using __type = byte; };
+  template<> struct __byte_operand<long> { using __type = byte; };
+  template<> struct __byte_operand<unsigned long> { using __type = byte; };
+  template<> struct __byte_operand<long long> { using __type = byte; };
+  template<> struct __byte_operand<unsigned long long> { using __type = byte; };
+#if defined(__GLIBCXX_TYPE_INT_N_0)
+  template<> struct __byte_operand<__GLIBCXX_TYPE_INT_N_0>
+  { using __type = byte; };
+  template<> struct __byte_operand<unsigned __GLIBCXX_TYPE_INT_N_0>
+  { using __type = byte; };
+#endif
+#if defined(__GLIBCXX_TYPE_INT_N_1)
+  template<> struct __byte_operand<__GLIBCXX_TYPE_INT_N_1>
+  { using __type = byte; };
+  template<> struct __byte_operand<unsigned __GLIBCXX_TYPE_INT_N_1>
+  { using __type = byte; };
+#endif
+#if defined(__GLIBCXX_TYPE_INT_N_2)
+  template<> struct __byte_operand<__GLIBCXX_TYPE_INT_N_2>
+  { using __type = byte; };
+  template<> struct __byte_operand<unsigned __GLIBCXX_TYPE_INT_N_2>
+  { using __type = byte; };
+#endif
+  template<typename _IntegerType>
+    struct __byte_operand<const _IntegerType>
+    : __byte_operand<_IntegerType> { };
+  template<typename _IntegerType>
+    struct __byte_operand<volatile _IntegerType>
+    : __byte_operand<_IntegerType> { };
+  template<typename _IntegerType>
+    struct __byte_operand<const volatile _IntegerType>
+    : __byte_operand<_IntegerType> { };
+
+  template<typename _IntegerType>
+    using __byte_op_t = typename __byte_operand<_IntegerType>::__type;
+
+  template<typename _IntegerType>
+    constexpr __byte_op_t<_IntegerType>
+    operator<<(byte __b, _IntegerType __shift) noexcept
+    { return (byte)(unsigned char)((unsigned)__b << __shift); }
+
+  template<typename _IntegerType>
+    constexpr __byte_op_t<_IntegerType>
+    operator>>(byte __b, _IntegerType __shift) noexcept
+    { return (byte)(unsigned char)((unsigned)__b >> __shift); }
+
+  constexpr byte
+  operator|(byte __l, byte __r) noexcept
+  { return (byte)(unsigned char)((unsigned)__l | (unsigned)__r); }
+
+  constexpr byte
+  operator&(byte __l, byte __r) noexcept
+  { return (byte)(unsigned char)((unsigned)__l & (unsigned)__r); }
+
+  constexpr byte
+  operator^(byte __l, byte __r) noexcept
+  { return (byte)(unsigned char)((unsigned)__l ^ (unsigned)__r); }
+
+  constexpr byte
+  operator~(byte __b) noexcept
+  { return (byte)(unsigned char)~(unsigned)__b; }
+
+  template<typename _IntegerType>
+    constexpr __byte_op_t<_IntegerType>&
+    operator<<=(byte& __b, _IntegerType __shift) noexcept
+    { return __b = __b << __shift; }
+
+  template<typename _IntegerType>
+    constexpr __byte_op_t<_IntegerType>&
+    operator>>=(byte& __b, _IntegerType __shift) noexcept
+    { return __b = __b >> __shift; }
+
+  constexpr byte&
+  operator|=(byte& __l, byte __r) noexcept
+  { return __l = __l | __r; }
+
+  constexpr byte&
+  operator&=(byte& __l, byte __r) noexcept
+  { return __l = __l & __r; }
+
+  constexpr byte&
+  operator^=(byte& __l, byte __r) noexcept
+  { return __l = __l ^ __r; }
+
+  template<typename _IntegerType>
+    [[nodiscard]]
+    constexpr _IntegerType
+    to_integer(__byte_op_t<_IntegerType> __b) noexcept
+    { return _IntegerType(__b); }
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // C++17
+} // extern "C++"
+
+#endif // _GLIBCXX_CSTDDEF

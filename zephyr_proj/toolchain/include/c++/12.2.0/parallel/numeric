@@ -1,0 +1,511 @@
+// -*- C++ -*-
+
+// Copyright (C) 2007-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the terms
+// of the GNU General Public License as published by the Free Software
+// Foundation; either version 3, or (at your option) any later
+// version.
+
+// This library is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/**
+ * @file parallel/numeric
+*
+ * @brief Parallel STL function calls corresponding to stl_numeric.h.
+ * The functions defined here mainly do case switches and
+ * call the actual parallelized versions in other files.
+ * Inlining policy: Functions that basically only contain one function call,
+ * are declared inline.
+ *  This file is a GNU parallel extension to the Standard C++ Library.
+ */
+
+// Written by Johannes Singler and Felix Putze.
+
+#ifndef _GLIBCXX_PARALLEL_NUMERIC_H
+#define _GLIBCXX_PARALLEL_NUMERIC_H 1
+
+#include <numeric>
+#include <bits/stl_function.h>
+#include <parallel/numericfwd.h>
+#include <parallel/iterator.h>
+#include <parallel/for_each.h>
+#include <parallel/for_each_selectors.h>
+#include <parallel/partial_sum.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+namespace __parallel
+{
+  // Sequential fallback.
+  template<typename _IIter, typename _Tp>
+    inline _Tp
+    accumulate(_IIter __begin, _IIter __end, _Tp __init, 
+               __gnu_parallel::sequential_tag)
+    { return _GLIBCXX_STD_A::accumulate(__begin, __end, __init); }
+
+  template<typename _IIter, typename _Tp, typename _BinaryOperation>
+    inline _Tp
+    accumulate(_IIter __begin, _IIter __end, _Tp __init,
+               _BinaryOperation __binary_op, __gnu_parallel::sequential_tag)
+    { return _GLIBCXX_STD_A::accumulate(__begin, __end, __init, __binary_op); }
+
+  // Sequential fallback for input iterator case.
+  template<typename _IIter, typename _Tp, typename _IteratorTag>
+    inline _Tp
+    __accumulate_switch(_IIter __begin, _IIter __end,
+                      _Tp __init, _IteratorTag) 
+    { return accumulate(__begin, __end, __init,
+			__gnu_parallel::sequential_tag()); }
+
+  template<typename _IIter, typename _Tp, typename _BinaryOperation,
+           typename _IteratorTag>
+    inline _Tp
+    __accumulate_switch(_IIter __begin, _IIter __end, _Tp __init, 
+                      _BinaryOperation __binary_op, _IteratorTag)
+    { return accumulate(__begin, __end, __init, __binary_op, 
+                        __gnu_parallel::sequential_tag()); }
+
+  // Parallel algorithm for random access iterators.
+  template<typename __RAIter, typename _Tp, typename _BinaryOperation>
+    _Tp
+    __accumulate_switch(__RAIter __begin, __RAIter __end, 
+                      _Tp __init, _BinaryOperation __binary_op, 
+                      random_access_iterator_tag, 
+                      __gnu_parallel::_Parallelism __parallelism_tag)
+    {
+      if (_GLIBCXX_PARALLEL_CONDITION(
+            static_cast<__gnu_parallel::_SequenceIndex>(__end - __begin)
+            >= __gnu_parallel::_Settings::get().accumulate_minimal_n
+            && __gnu_parallel::__is_parallel(__parallelism_tag)))
+        {
+          _Tp __res = __init;
+          __gnu_parallel::__accumulate_selector<__RAIter>
+            __my_selector;
+          __gnu_parallel::
+            __for_each_template_random_access_ed(__begin, __end,
+						 __gnu_parallel::_Nothing(),
+						 __my_selector,
+						 __gnu_parallel::
+						 __accumulate_binop_reduct
+					       <_BinaryOperation>(__binary_op),
+						 __res, __res, -1);
+          return __res;
+        }
+      else
+        return accumulate(__begin, __end, __init, __binary_op, 
+                          __gnu_parallel::sequential_tag());
+    }
+
+  // Public interface.
+  template<typename _IIter, typename _Tp>
+    inline _Tp
+    accumulate(_IIter __begin, _IIter __end, _Tp __init, 
+               __gnu_parallel::_Parallelism __parallelism_tag)
+    {
+      typedef std::iterator_traits<_IIter> _IteratorTraits;
+      typedef typename _IteratorTraits::value_type _ValueType;
+      typedef typename _IteratorTraits::iterator_category _IteratorCategory;
+
+      return __accumulate_switch(__begin, __end, __init,
+				 __gnu_parallel::_Plus<_Tp, _ValueType>(),
+				 _IteratorCategory(), __parallelism_tag);
+    }
+
+  template<typename _IIter, typename _Tp>
+    inline _Tp
+    accumulate(_IIter __begin, _IIter __end, _Tp __init)
+    {
+      typedef std::iterator_traits<_IIter> _IteratorTraits;
+      typedef typename _IteratorTraits::value_type _ValueType;
+      typedef typename _IteratorTraits::iterator_category _IteratorCategory;
+
+      return __accumulate_switch(__begin, __end, __init,
+				 __gnu_parallel::_Plus<_Tp, _ValueType>(),
+				 _IteratorCategory());
+    }
+
+  template<typename _IIter, typename _Tp, typename _BinaryOperation>
+    inline _Tp
+    accumulate(_IIter __begin, _IIter __end, _Tp __init, 
+               _BinaryOperation __binary_op, 
+               __gnu_parallel::_Parallelism __parallelism_tag)
+    {
+      typedef iterator_traits<_IIter> _IteratorTraits;
+      typedef typename _IteratorTraits::iterator_category _IteratorCategory;
+      return __accumulate_switch(__begin, __end, __init, __binary_op, 
+				 _IteratorCategory(), __parallelism_tag);
+    }
+
+  template<typename _IIter, typename _Tp, typename _BinaryOperation>
+    inline _Tp
+    accumulate(_IIter __begin, _IIter __end, _Tp __init, 
+               _BinaryOperation __binary_op) 
+    {
+      typedef iterator_traits<_IIter> _IteratorTraits;
+      typedef typename _IteratorTraits::iterator_category _IteratorCategory;
+      return __accumulate_switch(__begin, __end, __init, __binary_op, 
+				 _IteratorCategory());
+    }
+
+
+  // Sequential fallback.
+  template<typename _IIter1, typename _IIter2, typename _Tp>
+    inline _Tp
+    inner_product(_IIter1 __first1, _IIter1 __last1, 
+                  _IIter2 __first2, _Tp __init,
+                  __gnu_parallel::sequential_tag)
+    { return _GLIBCXX_STD_A::inner_product(
+                               __first1, __last1, __first2, __init); }
+
+  template<typename _IIter1, typename _IIter2, typename _Tp,
+           typename _BinaryFunction1, typename _BinaryFunction2>
+    inline _Tp
+    inner_product(_IIter1 __first1, _IIter1 __last1,
+                  _IIter2 __first2, _Tp __init, _BinaryFunction1 __binary_op1, 
+                  _BinaryFunction2 __binary_op2,
+                  __gnu_parallel::sequential_tag)
+    { return _GLIBCXX_STD_A::inner_product(__first1, __last1, __first2, __init,
+                                           __binary_op1, __binary_op2); }
+
+  // Parallel algorithm for random access iterators.
+  template<typename _RAIter1, typename _RAIter2,
+           typename _Tp, typename _BinaryFunction1, typename _BinaryFunction2>
+    _Tp
+    __inner_product_switch(_RAIter1 __first1,
+			   _RAIter1 __last1,
+			   _RAIter2 __first2, _Tp __init,
+			   _BinaryFunction1 __binary_op1,
+			   _BinaryFunction2 __binary_op2,
+			   random_access_iterator_tag,
+			   random_access_iterator_tag,
+			   __gnu_parallel::_Parallelism __parallelism_tag)
+    {
+      if (_GLIBCXX_PARALLEL_CONDITION((__last1 - __first1)
+                                      >= __gnu_parallel::_Settings::get().
+                                      accumulate_minimal_n
+                                      && __gnu_parallel::
+                                      __is_parallel(__parallelism_tag)))
+        {
+          _Tp __res = __init;
+          __gnu_parallel::
+            __inner_product_selector<_RAIter1,
+            _RAIter2, _Tp> __my_selector(__first1, __first2);
+          __gnu_parallel::
+            __for_each_template_random_access_ed(
+                __first1, __last1, __binary_op2, __my_selector, __binary_op1,
+                __res, __res, -1);
+          return __res;
+        }
+      else
+        return inner_product(__first1, __last1, __first2, __init, 
+                             __gnu_parallel::sequential_tag());
+    }
+
+  // No parallelism for input iterators.
+  template<typename _IIter1, typename _IIter2, typename _Tp,
+           typename _BinaryFunction1, typename _BinaryFunction2,
+           typename _IteratorTag1, typename _IteratorTag2>
+    inline _Tp
+    __inner_product_switch(_IIter1 __first1, _IIter1 __last1, 
+			   _IIter2 __first2, _Tp __init, 
+			   _BinaryFunction1 __binary_op1,
+			   _BinaryFunction2 __binary_op2, 
+			   _IteratorTag1, _IteratorTag2)
+    { return inner_product(__first1, __last1, __first2, __init, __binary_op1,
+			   __binary_op2, __gnu_parallel::sequential_tag()); }
+
+  template<typename _IIter1, typename _IIter2, typename _Tp,
+           typename _BinaryFunction1, typename _BinaryFunction2>
+    inline _Tp
+    inner_product(_IIter1 __first1, _IIter1 __last1, 
+                  _IIter2 __first2, _Tp __init, _BinaryFunction1 __binary_op1, 
+                  _BinaryFunction2 __binary_op2, 
+                  __gnu_parallel::_Parallelism __parallelism_tag)
+    {
+      typedef iterator_traits<_IIter1> _TraitsType1;
+      typedef typename _TraitsType1::iterator_category _IteratorCategory1;
+
+      typedef iterator_traits<_IIter2> _TraitsType2;
+      typedef typename _TraitsType2::iterator_category _IteratorCategory2;
+
+      return __inner_product_switch(__first1, __last1, __first2, __init,
+				    __binary_op1, __binary_op2,
+				    _IteratorCategory1(), _IteratorCategory2(),
+				    __parallelism_tag);
+    }
+
+  template<typename _IIter1, typename _IIter2, typename _Tp,
+           typename _BinaryFunction1, typename _BinaryFunction2>
+    inline _Tp
+    inner_product(_IIter1 __first1, _IIter1 __last1, 
+                  _IIter2 __first2, _Tp __init, _BinaryFunction1 __binary_op1, 
+                  _BinaryFunction2 __binary_op2)
+    {
+      typedef iterator_traits<_IIter1> _TraitsType1;
+      typedef typename _TraitsType1::iterator_category _IteratorCategory1;
+
+      typedef iterator_traits<_IIter2> _TraitsType2;
+      typedef typename _TraitsType2::iterator_category _IteratorCategory2;
+
+      return __inner_product_switch(__first1, __last1, __first2, __init,
+				    __binary_op1, __binary_op2,
+				    _IteratorCategory1(),
+				    _IteratorCategory2());
+    }
+
+  template<typename _IIter1, typename _IIter2, typename _Tp>
+    inline _Tp
+    inner_product(_IIter1 __first1, _IIter1 __last1, 
+                  _IIter2 __first2, _Tp __init, 
+                  __gnu_parallel::_Parallelism __parallelism_tag)
+    {
+      typedef iterator_traits<_IIter1> _TraitsType1;
+      typedef typename _TraitsType1::value_type _ValueType1;
+      typedef iterator_traits<_IIter2> _TraitsType2;
+      typedef typename _TraitsType2::value_type _ValueType2;
+
+      typedef typename
+        __gnu_parallel::_Multiplies<_ValueType1, _ValueType2>::result_type
+        _MultipliesResultType;
+      return __gnu_parallel::inner_product(__first1, __last1, __first2, __init,
+                           __gnu_parallel::_Plus<_Tp, _MultipliesResultType>(),
+                           __gnu_parallel::
+                           _Multiplies<_ValueType1, _ValueType2>(),
+                           __parallelism_tag);
+    }
+
+  template<typename _IIter1, typename _IIter2, typename _Tp>
+    inline _Tp
+    inner_product(_IIter1 __first1, _IIter1 __last1, 
+                  _IIter2 __first2, _Tp __init)
+    {
+      typedef iterator_traits<_IIter1> _TraitsType1;
+      typedef typename _TraitsType1::value_type _ValueType1;
+      typedef iterator_traits<_IIter2> _TraitsType2;
+      typedef typename _TraitsType2::value_type _ValueType2;
+
+      typedef typename
+        __gnu_parallel::_Multiplies<_ValueType1, _ValueType2>::result_type
+        _MultipliesResultType;
+      return __gnu_parallel::inner_product(__first1, __last1, __first2, __init,
+                           __gnu_parallel::_Plus<_Tp, _MultipliesResultType>(),
+                           __gnu_parallel::
+                           _Multiplies<_ValueType1, _ValueType2>());
+    }
+
+  // Sequential fallback.
+  template<typename _IIter, typename _OutputIterator>
+    inline _OutputIterator
+    partial_sum(_IIter __begin, _IIter __end, _OutputIterator __result,
+                __gnu_parallel::sequential_tag)
+    { return _GLIBCXX_STD_A::partial_sum(__begin, __end, __result); }
+
+  // Sequential fallback.
+  template<typename _IIter, typename _OutputIterator,
+	   typename _BinaryOperation>
+    inline _OutputIterator
+    partial_sum(_IIter __begin, _IIter __end, _OutputIterator __result,
+                _BinaryOperation __bin_op, __gnu_parallel::sequential_tag)
+    { return _GLIBCXX_STD_A::partial_sum(__begin, __end, __result, __bin_op); }
+
+  // Sequential fallback for input iterator case.
+  template<typename _IIter, typename _OutputIterator,
+           typename _BinaryOperation, typename _IteratorTag1,
+           typename _IteratorTag2>
+    inline _OutputIterator
+    __partial_sum_switch(_IIter __begin, _IIter __end,
+			 _OutputIterator __result, _BinaryOperation __bin_op,
+			 _IteratorTag1, _IteratorTag2)
+    { return _GLIBCXX_STD_A::partial_sum(__begin, __end, __result, __bin_op); }
+
+  // Parallel algorithm for random access iterators.
+  template<typename _IIter, typename _OutputIterator,
+           typename _BinaryOperation>
+    _OutputIterator
+    __partial_sum_switch(_IIter __begin, _IIter __end,
+			 _OutputIterator __result, _BinaryOperation __bin_op,
+			 random_access_iterator_tag,
+			 random_access_iterator_tag)
+    {
+      if (_GLIBCXX_PARALLEL_CONDITION(
+            static_cast<__gnu_parallel::_SequenceIndex>(__end - __begin)
+            >= __gnu_parallel::_Settings::get().partial_sum_minimal_n))
+        return __gnu_parallel::__parallel_partial_sum(__begin, __end,
+						      __result, __bin_op);
+      else
+        return partial_sum(__begin, __end, __result, __bin_op,
+                           __gnu_parallel::sequential_tag());
+    }
+
+  // Public interface.
+  template<typename _IIter, typename _OutputIterator>
+    inline _OutputIterator
+    partial_sum(_IIter __begin, _IIter __end, _OutputIterator __result)
+    {
+      typedef typename iterator_traits<_IIter>::value_type _ValueType;
+      return __gnu_parallel::partial_sum(__begin, __end,
+                                         __result, std::plus<_ValueType>());
+    }
+
+  // Public interface
+  template<typename _IIter, typename _OutputIterator,
+           typename _BinaryOperation>
+    inline _OutputIterator
+    partial_sum(_IIter __begin, _IIter __end, _OutputIterator __result,
+                _BinaryOperation __binary_op)
+    {
+      typedef iterator_traits<_IIter> _ITraitsType;
+      typedef typename _ITraitsType::iterator_category _IIteratorCategory;
+
+      typedef iterator_traits<_OutputIterator> _OTraitsType;
+      typedef typename _OTraitsType::iterator_category _OIterCategory;
+
+      return __partial_sum_switch(__begin, __end, __result, __binary_op,
+				  _IIteratorCategory(), _OIterCategory());
+    }
+
+  // Sequential fallback.
+  template<typename _IIter, typename _OutputIterator>
+    inline _OutputIterator
+    adjacent_difference(_IIter __begin, _IIter __end, _OutputIterator __result,
+                        __gnu_parallel::sequential_tag)
+    { return _GLIBCXX_STD_A::adjacent_difference(__begin, __end, __result); }
+
+  // Sequential fallback.
+  template<typename _IIter, typename _OutputIterator,
+           typename _BinaryOperation>
+    inline _OutputIterator
+    adjacent_difference(_IIter __begin, _IIter __end,
+                        _OutputIterator __result, _BinaryOperation __bin_op,
+                        __gnu_parallel::sequential_tag)
+    { return _GLIBCXX_STD_A::adjacent_difference(__begin, __end,
+						 __result, __bin_op); }
+
+  // Sequential fallback for input iterator case.
+  template<typename _IIter, typename _OutputIterator,
+           typename _BinaryOperation, typename _IteratorTag1,
+           typename _IteratorTag2>
+    inline _OutputIterator
+    __adjacent_difference_switch(_IIter __begin, _IIter __end,
+				 _OutputIterator __result,
+				 _BinaryOperation __bin_op, _IteratorTag1,
+				 _IteratorTag2)
+    { return adjacent_difference(__begin, __end, __result, __bin_op,
+                                 __gnu_parallel::sequential_tag()); }
+
+  // Parallel algorithm for random access iterators.
+  template<typename _IIter, typename _OutputIterator,
+           typename _BinaryOperation>
+    _OutputIterator
+    __adjacent_difference_switch(_IIter __begin, _IIter __end,
+				 _OutputIterator __result,
+				 _BinaryOperation __bin_op,
+				 random_access_iterator_tag,
+				 random_access_iterator_tag,
+				 __gnu_parallel::_Parallelism
+				 __parallelism_tag)
+    {
+      if (_GLIBCXX_PARALLEL_CONDITION(
+            static_cast<__gnu_parallel::_SequenceIndex>(__end - __begin)
+            >= __gnu_parallel::_Settings::get().adjacent_difference_minimal_n
+            && __gnu_parallel::__is_parallel(__parallelism_tag)))
+        {
+          bool __dummy = true;
+          typedef __gnu_parallel::_IteratorPair<_IIter, _OutputIterator,
+            random_access_iterator_tag> _ItTrip;
+          *__result = *__begin;
+          _ItTrip __begin_pair(__begin + 1, __result + 1),
+            __end_pair(__end, __result + (__end - __begin));
+          __gnu_parallel::__adjacent_difference_selector<_ItTrip>
+                                                            __functionality;
+          __gnu_parallel::
+            __for_each_template_random_access_ed(
+                __begin_pair, __end_pair, __bin_op, __functionality,
+                __gnu_parallel::_DummyReduct(), __dummy, __dummy, -1);
+          return __functionality._M_finish_iterator;
+        }
+      else
+        return adjacent_difference(__begin, __end, __result, __bin_op, 
+                                   __gnu_parallel::sequential_tag());
+    }
+
+  // Public interface.
+  template<typename _IIter, typename _OutputIterator>
+    inline _OutputIterator
+    adjacent_difference(_IIter __begin, _IIter __end,
+                        _OutputIterator __result,
+                        __gnu_parallel::_Parallelism __parallelism_tag)
+    {
+      typedef iterator_traits<_IIter> _TraitsType;
+      typedef typename _TraitsType::value_type _ValueType;
+      return adjacent_difference(__begin, __end, __result,
+				 std::minus<_ValueType>(),
+				 __parallelism_tag);
+    }
+
+  template<typename _IIter, typename _OutputIterator>
+    inline _OutputIterator
+    adjacent_difference(_IIter __begin, _IIter __end,
+                        _OutputIterator __result)
+    {
+      typedef iterator_traits<_IIter> _TraitsType;
+      typedef typename _TraitsType::value_type _ValueType;
+      return adjacent_difference(__begin, __end, __result,
+				 std::minus<_ValueType>());
+    }
+
+  template<typename _IIter, typename _OutputIterator,
+           typename _BinaryOperation>
+    inline _OutputIterator
+    adjacent_difference(_IIter __begin, _IIter __end,
+                        _OutputIterator __result, _BinaryOperation __binary_op,
+                        __gnu_parallel::_Parallelism __parallelism_tag)
+    {
+      typedef iterator_traits<_IIter> _ITraitsType;
+      typedef typename _ITraitsType::iterator_category _IIteratorCategory;
+
+      typedef iterator_traits<_OutputIterator> _OTraitsType;
+      typedef typename _OTraitsType::iterator_category _OIterCategory;
+
+      return __adjacent_difference_switch(__begin, __end, __result,
+					  __binary_op,
+					  _IIteratorCategory(),
+					  _OIterCategory(),
+					  __parallelism_tag);
+    }
+
+  template<typename _IIter, typename _OutputIterator,
+	   typename _BinaryOperation>
+    inline _OutputIterator
+    adjacent_difference(_IIter __begin, _IIter __end,
+			_OutputIterator __result, _BinaryOperation __binary_op)
+    {
+      typedef iterator_traits<_IIter> _ITraitsType;
+      typedef typename _ITraitsType::iterator_category _IIteratorCategory;
+
+      typedef iterator_traits<_OutputIterator> _OTraitsType;
+      typedef typename _OTraitsType::iterator_category _OIterCategory;
+
+      return __adjacent_difference_switch(__begin, __end, __result,
+					  __binary_op,
+					  _IIteratorCategory(),
+					  _OIterCategory());
+    }
+} // end namespace
+} // end namespace
+
+#endif /* _GLIBCXX_NUMERIC_H */

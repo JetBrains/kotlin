@@ -1,0 +1,307 @@
+// Standard exception classes  -*- C++ -*-
+
+// Copyright (C) 2001-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/stdexcept
+ *  This is a Standard C++ Library header.
+ */
+
+//
+// ISO C++ 19.1  Exception classes
+//
+
+#ifndef _GLIBCXX_STDEXCEPT
+#define _GLIBCXX_STDEXCEPT 1
+
+#pragma GCC system_header
+
+#include <exception>
+#include <string>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+#if _GLIBCXX_USE_DUAL_ABI
+#if _GLIBCXX_USE_CXX11_ABI
+  // Emulates an old COW string when the new std::string is in use.
+  struct __cow_string
+  {
+    union {
+      const char* _M_p;
+      char _M_bytes[sizeof(const char*)];
+    };
+
+    __cow_string();
+    __cow_string(const std::string&);
+    __cow_string(const char*, size_t);
+    __cow_string(const __cow_string&) _GLIBCXX_NOTHROW;
+    __cow_string& operator=(const __cow_string&) _GLIBCXX_NOTHROW;
+    ~__cow_string();
+#if __cplusplus >= 201103L
+    __cow_string(__cow_string&&) noexcept;
+    __cow_string& operator=(__cow_string&&) noexcept;
+#endif
+  };
+
+  typedef basic_string<char> __sso_string;
+#else // _GLIBCXX_USE_CXX11_ABI
+  typedef basic_string<char> __cow_string;
+
+  // Emulates a new SSO string when the old std::string is in use.
+  struct __sso_string
+  {
+    struct __str
+    {
+      const char* _M_p;
+      size_t _M_string_length;
+      char _M_local_buf[16];
+    };
+
+    union {
+      __str _M_s;
+      char _M_bytes[sizeof(__str)];
+    };
+
+    __sso_string() _GLIBCXX_NOTHROW;
+    __sso_string(const std::string&);
+    __sso_string(const char*, size_t);
+    __sso_string(const __sso_string&);
+    __sso_string& operator=(const __sso_string&);
+    ~__sso_string();
+#if __cplusplus >= 201103L
+    __sso_string(__sso_string&&) noexcept;
+    __sso_string& operator=(__sso_string&&) noexcept;
+#endif
+  };
+#endif // _GLIBCXX_USE_CXX11_ABI
+#else  // _GLIBCXX_USE_DUAL_ABI
+  typedef basic_string<char> __sso_string;
+  typedef basic_string<char> __cow_string;
+#endif
+
+  /**
+   * @addtogroup exceptions
+   * @{
+   */
+
+  /** Logic errors represent problems in the internal logic of a program;
+   *  in theory, these are preventable, and even detectable before the
+   *  program runs (e.g., violations of class invariants).
+   *  @brief One of two subclasses of exception.
+   */
+  class logic_error : public exception
+  {
+    __cow_string _M_msg;
+
+  public:
+    /** Takes a character string describing the error.  */
+    explicit
+    logic_error(const string& __arg) _GLIBCXX_TXN_SAFE;
+
+#if __cplusplus >= 201103L
+    explicit
+    logic_error(const char*) _GLIBCXX_TXN_SAFE;
+
+    logic_error(logic_error&&) noexcept;
+    logic_error& operator=(logic_error&&) noexcept;
+#endif
+
+#if _GLIBCXX_USE_CXX11_ABI || _GLIBCXX_DEFINE_STDEXCEPT_COPY_OPS
+    logic_error(const logic_error&) _GLIBCXX_NOTHROW;
+    logic_error& operator=(const logic_error&) _GLIBCXX_NOTHROW;
+#elif __cplusplus >= 201103L
+    logic_error(const logic_error&) = default;
+    logic_error& operator=(const logic_error&) = default;
+#endif
+
+    virtual ~logic_error() _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW;
+
+    /** Returns a C-style character string describing the general cause of
+     *  the current error (the same string passed to the ctor).  */
+    virtual const char*
+    what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW;
+
+# ifdef _GLIBCXX_TM_TS_INTERNAL
+    friend void*
+    ::_txnal_logic_error_get_msg(void* e);
+# endif
+  };
+
+  /** Thrown by the library, or by you, to report domain errors (domain in
+   *  the mathematical sense).  */
+  class domain_error : public logic_error
+  {
+  public:
+    explicit domain_error(const string& __arg) _GLIBCXX_TXN_SAFE;
+#if __cplusplus >= 201103L
+    explicit domain_error(const char*) _GLIBCXX_TXN_SAFE;
+    domain_error(const domain_error&) = default;
+    domain_error& operator=(const domain_error&) = default;
+    domain_error(domain_error&&) = default;
+    domain_error& operator=(domain_error&&) = default;
+#endif
+    virtual ~domain_error() _GLIBCXX_NOTHROW;
+  };
+
+  /** Thrown to report invalid arguments to functions.  */
+  class invalid_argument : public logic_error
+  {
+  public:
+    explicit invalid_argument(const string& __arg) _GLIBCXX_TXN_SAFE;
+#if __cplusplus >= 201103L
+    explicit invalid_argument(const char*) _GLIBCXX_TXN_SAFE;
+    invalid_argument(const invalid_argument&) = default;
+    invalid_argument& operator=(const invalid_argument&) = default;
+    invalid_argument(invalid_argument&&) = default;
+    invalid_argument& operator=(invalid_argument&&) = default;
+#endif
+    virtual ~invalid_argument() _GLIBCXX_NOTHROW;
+  };
+
+  /** Thrown when an object is constructed that would exceed its maximum
+   *  permitted size (e.g., a basic_string instance).  */
+  class length_error : public logic_error
+  {
+  public:
+    explicit length_error(const string& __arg) _GLIBCXX_TXN_SAFE;
+#if __cplusplus >= 201103L
+    explicit length_error(const char*) _GLIBCXX_TXN_SAFE;
+    length_error(const length_error&) = default;
+    length_error& operator=(const length_error&) = default;
+    length_error(length_error&&) = default;
+    length_error& operator=(length_error&&) = default;
+#endif
+    virtual ~length_error() _GLIBCXX_NOTHROW;
+  };
+
+  /** This represents an argument whose value is not within the expected
+   *  range (e.g., boundary checks in basic_string).  */
+  class out_of_range : public logic_error
+  {
+  public:
+    explicit out_of_range(const string& __arg) _GLIBCXX_TXN_SAFE;
+#if __cplusplus >= 201103L
+    explicit out_of_range(const char*) _GLIBCXX_TXN_SAFE;
+    out_of_range(const out_of_range&) = default;
+    out_of_range& operator=(const out_of_range&) = default;
+    out_of_range(out_of_range&&) = default;
+    out_of_range& operator=(out_of_range&&) = default;
+#endif
+    virtual ~out_of_range() _GLIBCXX_NOTHROW;
+  };
+
+  /** Runtime errors represent problems outside the scope of a program;
+   *  they cannot be easily predicted and can generally only be caught as
+   *  the program executes.
+   *  @brief One of two subclasses of exception.
+   */
+  class runtime_error : public exception
+  {
+    __cow_string _M_msg;
+
+  public:
+    /** Takes a character string describing the error.  */
+    explicit
+    runtime_error(const string& __arg) _GLIBCXX_TXN_SAFE;
+
+#if __cplusplus >= 201103L
+    explicit
+    runtime_error(const char*) _GLIBCXX_TXN_SAFE;
+
+    runtime_error(runtime_error&&) noexcept;
+    runtime_error& operator=(runtime_error&&) noexcept;
+#endif
+
+#if _GLIBCXX_USE_CXX11_ABI || _GLIBCXX_DEFINE_STDEXCEPT_COPY_OPS
+    runtime_error(const runtime_error&) _GLIBCXX_NOTHROW;
+    runtime_error& operator=(const runtime_error&) _GLIBCXX_NOTHROW;
+#elif __cplusplus >= 201103L
+    runtime_error(const runtime_error&) = default;
+    runtime_error& operator=(const runtime_error&) = default;
+#endif
+
+    virtual ~runtime_error() _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW;
+
+    /** Returns a C-style character string describing the general cause of
+     *  the current error (the same string passed to the ctor).  */
+    virtual const char*
+    what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW;
+
+# ifdef _GLIBCXX_TM_TS_INTERNAL
+    friend void*
+    ::_txnal_runtime_error_get_msg(void* e);
+# endif
+  };
+
+  /** Thrown to indicate range errors in internal computations.  */
+  class range_error : public runtime_error
+  {
+  public:
+    explicit range_error(const string& __arg) _GLIBCXX_TXN_SAFE;
+#if __cplusplus >= 201103L
+    explicit range_error(const char*) _GLIBCXX_TXN_SAFE;
+    range_error(const range_error&) = default;
+    range_error& operator=(const range_error&) = default;
+    range_error(range_error&&) = default;
+    range_error& operator=(range_error&&) = default;
+#endif
+    virtual ~range_error() _GLIBCXX_NOTHROW;
+  };
+
+  /** Thrown to indicate arithmetic overflow.  */
+  class overflow_error : public runtime_error
+  {
+  public:
+    explicit overflow_error(const string& __arg) _GLIBCXX_TXN_SAFE;
+#if __cplusplus >= 201103L
+    explicit overflow_error(const char*) _GLIBCXX_TXN_SAFE;
+    overflow_error(const overflow_error&) = default;
+    overflow_error& operator=(const overflow_error&) = default;
+    overflow_error(overflow_error&&) = default;
+    overflow_error& operator=(overflow_error&&) = default;
+#endif
+    virtual ~overflow_error() _GLIBCXX_NOTHROW;
+  };
+
+  /** Thrown to indicate arithmetic underflow.  */
+  class underflow_error : public runtime_error
+  {
+  public:
+    explicit underflow_error(const string& __arg) _GLIBCXX_TXN_SAFE;
+#if __cplusplus >= 201103L
+    explicit underflow_error(const char*) _GLIBCXX_TXN_SAFE;
+    underflow_error(const underflow_error&) = default;
+    underflow_error& operator=(const underflow_error&) = default;
+    underflow_error(underflow_error&&) = default;
+    underflow_error& operator=(underflow_error&&) = default;
+#endif
+    virtual ~underflow_error() _GLIBCXX_NOTHROW;
+  };
+
+  /// @} group exceptions
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace
+
+#endif /* _GLIBCXX_STDEXCEPT */

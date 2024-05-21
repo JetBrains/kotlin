@@ -1,0 +1,2496 @@
+// <experimental/internet> -*- C++ -*-
+
+// Copyright (C) 2015-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/internet
+ *  This is a TS C++ Library header.
+ *  @ingroup networking-ts
+ */
+
+#ifndef _GLIBCXX_EXPERIMENTAL_INTERNET
+#define _GLIBCXX_EXPERIMENTAL_INTERNET
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <experimental/netfwd>
+#include <experimental/io_context>
+#include <experimental/bits/net.h>
+#include <array>
+#include <forward_list>
+#include <sstream>
+#include <cstdint>
+#include <experimental/string_view>
+#ifdef _GLIBCXX_HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#ifdef _GLIBCXX_HAVE_SYS_SOCKET_H
+# include <sys/socket.h>	// AF_INET, AF_INET6, SOCK_DGRAM, SOCK_STREAM
+#endif
+#ifdef _GLIBCXX_HAVE_ARPA_INET_H
+# include <arpa/inet.h>		// inet_ntop
+#endif
+#ifdef _GLIBCXX_HAVE_NETINET_IN_H
+# include <netinet/in.h>	// IPPROTO_IP, IPPROTO_IPV6, in_addr, in6_addr
+#endif
+#ifdef _GLIBCXX_HAVE_NETINET_TCP_H
+# include <netinet/tcp.h>	// TCP_NODELAY
+#endif
+#ifdef _GLIBCXX_HAVE_NETDB_H
+# include <netdb.h>		// getaddrinfo etc.
+#endif
+
+#if defined _WIN32 && __has_include(<ws2tcpip.h>)
+# include <ws2tcpip.h>
+#endif
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+namespace experimental
+{
+namespace net
+{
+inline namespace v1
+{
+namespace ip
+{
+  /** @addtogroup networking-ts
+   *  @{
+   */
+
+  /** Error codes for resolver errors.
+   * @{
+   */
+
+  enum class resolver_errc : int {
+#ifdef _GLIBCXX_HAVE_NETDB_H
+    host_not_found = EAI_NONAME,
+    host_not_found_try_again = EAI_AGAIN,
+    service_not_found = EAI_SERVICE
+    // N.B. POSIX defines additional errors that have no enumerator here:
+    // EAI_BADFLAGS, EAI_FAIL, EAI_FAMILY, EAI_MEMORY, EAI_SOCKTYPE, EAI_SYSTEM
+    // Some C libraries define additional errors:
+    // EAI_BADHINTS, EAI_OVERFLOW, EAI_PROTOCOL
+    // Some C libraries define additional (obsolete?) errors:
+    // EAI_ADDRFAMILY, EAI_NODATA
+#endif
+  };
+
+  /// Error category for resolver errors.
+  inline const error_category& resolver_category() noexcept // TODO non-inline
+  {
+    struct __cat : error_category
+    {
+      const char* name() const noexcept { return "resolver"; }
+      std::string message(int __e) const {
+#ifdef _GLIBCXX_HAVE_NETDB_H
+	  return ::gai_strerror(__e);
+#else
+	  return "name resolution requires <netdb.h>";
+#endif
+      }
+      virtual void __message(int) { } // TODO dual ABI XXX
+    };
+    static __cat __c;
+    return __c;
+  }
+
+  inline error_code make_error_code(resolver_errc __e) noexcept
+  { return error_code(static_cast<int>(__e), resolver_category()); }
+
+  inline error_condition make_error_condition(resolver_errc __e) noexcept
+  { return error_condition(static_cast<int>(__e), resolver_category()); }
+
+  /// @cond undocumented
+  inline error_code
+  __make_resolver_error_code(int __ai_err,
+			     [[__maybe_unused__]] int __sys_err) noexcept
+  {
+#ifdef EAI_SYSTEM
+    if (__builtin_expect(__ai_err == EAI_SYSTEM, 0))
+      return error_code(__sys_err, std::generic_category());
+#endif
+    return error_code(__ai_err, resolver_category());
+  }
+  /// @endcond
+
+  /// @}
+
+  using port_type = uint_least16_t;	///< Type used for port numbers.
+  using scope_id_type = uint_least32_t;	///< Type used for IPv6 scope IDs.
+
+  /// Convenience alias for constraining allocators for strings.
+  template<typename _Alloc>
+    using __string_with
+      = enable_if_t<std::is_same<typename _Alloc::value_type, char>::value,
+		    std::basic_string<char, std::char_traits<char>, _Alloc>>;
+
+  constexpr errc
+  __unsupported_err() noexcept
+  {
+#if defined EAFNOSUPPORT
+    return std::errc::address_family_not_supported;
+#else
+    return std::errc::operation_not_supported;
+#endif
+  }
+
+  /** Tag indicating conversion between IPv4 and IPv4-mapped IPv6 addresses.
+   * @{
+   */
+
+  struct v4_mapped_t {};
+  constexpr v4_mapped_t v4_mapped;
+
+  /// @}
+
+  /// An IPv4 address.
+  class address_v4
+  {
+  public:
+    // types:
+    using uint_type = uint_least32_t;
+
+    struct bytes_type : array<unsigned char, 4>
+    {
+      template<typename... _Tp>
+	explicit constexpr
+	bytes_type(_Tp... __tp)
+	: array<unsigned char, 4>{{static_cast<unsigned char>(__tp)...}}
+	{
+#if UCHAR_MAX > 0xFF
+	  for (auto __b : *this)
+	    if (__b > 0xFF)
+	      __throw_out_of_range("invalid address_v4::bytes_type value");
+#endif
+	}
+    };
+
+    // constructors:
+    constexpr address_v4() noexcept : _M_addr(0) { }
+
+    constexpr address_v4(const address_v4& a) noexcept = default;
+
+    constexpr
+    address_v4(const bytes_type& __b)
+    : _M_addr((__b[0] << 24) | (__b[1] << 16) | (__b[2] << 8) | __b[3])
+    { }
+
+    explicit constexpr
+    address_v4(uint_type __val) : _M_addr(_S_hton_32(__val))
+    {
+#if UINT_LEAST32_MAX > 0xFFFFFFFF
+      if (__val > 0xFFFFFFFF)
+	__throw_out_of_range("invalid address_v4::uint_type value");
+#endif
+    }
+
+    // assignment:
+    address_v4& operator=(const address_v4& a) noexcept = default;
+
+    // members:
+    constexpr bool is_unspecified() const noexcept { return to_uint() == 0; }
+
+    constexpr bool
+    is_loopback() const noexcept
+    { return (to_uint() & 0xFF000000) == 0x7F000000; }
+
+    constexpr bool
+    is_multicast() const noexcept
+    { return (to_uint() & 0xF0000000) == 0xE0000000; }
+
+    constexpr bytes_type
+    to_bytes() const noexcept
+    {
+      return bytes_type{
+	  (_M_addr >> 24) & 0xFF,
+	  (_M_addr >> 16) & 0xFF,
+	  (_M_addr >> 8) & 0xFF,
+	  _M_addr & 0xFF
+      };
+    }
+
+    constexpr uint_type
+    to_uint() const noexcept { return _S_ntoh_32(_M_addr); }
+
+    template<typename _Allocator = allocator<char>>
+      __string_with<_Allocator>
+      to_string(const _Allocator& __a = _Allocator()) const
+      {
+#ifdef _GLIBCXX_HAVE_ARPA_INET_H
+	__string_with<_Allocator> __str(__a);
+	__str.resize(INET_ADDRSTRLEN);
+	if (inet_ntop(AF_INET, &_M_addr, &__str.front(), __str.size()))
+	  __str.erase(__str.find('\0'));
+	else
+	  __str.resize(0);
+	return __str;
+#else
+	std::__throw_system_error((int)__unsupported_err());
+#endif
+      }
+
+    // static members:
+    static constexpr address_v4 any() noexcept { return address_v4{}; }
+
+    static constexpr
+    address_v4 loopback() noexcept { return address_v4{0x7F000001}; }
+
+    static constexpr
+    address_v4 broadcast() noexcept { return address_v4{0xFFFFFFFF}; }
+
+  private:
+    template<typename _InternetProtocol>
+      friend class basic_endpoint;
+
+    friend address_v4 make_address_v4(const char*, error_code&) noexcept;
+
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+    static constexpr uint16_t _S_hton_16(uint16_t __h) { return __h; }
+    static constexpr uint16_t _S_ntoh_16(uint16_t __n) { return __n; }
+    static constexpr uint32_t _S_hton_32(uint32_t __h) { return __h; }
+    static constexpr uint32_t _S_ntoh_32(uint32_t __n) { return __n; }
+#else
+    static constexpr uint16_t
+    _S_hton_16(uint16_t __h) { return __builtin_bswap16(__h); }
+
+    static constexpr uint16_t
+    _S_ntoh_16(uint16_t __n) { return __builtin_bswap16(__n); }
+
+    static constexpr uint32_t
+    _S_hton_32(uint32_t __h) { return __builtin_bswap32(__h); }
+
+    static constexpr uint32_t
+    _S_ntoh_32(uint32_t __n) { return __builtin_bswap32(__n); }
+#endif
+
+#ifdef _GLIBCXX_HAVE_ARPA_INET_H
+    in_addr_t _M_addr; // network byte order
+#else
+    uint32_t _M_addr;
+#endif
+  };
+
+  /// An IPv6 address.
+  class address_v6
+  {
+  public:
+    // types:
+    struct bytes_type : array<unsigned char, 16>
+    {
+      template<typename... _Tp>
+	explicit constexpr
+	bytes_type(_Tp... __t)
+	: array<unsigned char, 16>{{static_cast<unsigned char>(__t)...}}
+	{ }
+    };
+
+    // constructors:
+    constexpr address_v6() noexcept : _M_bytes(), _M_scope_id() { }
+
+    constexpr address_v6(const address_v6& __a) noexcept = default;
+
+    constexpr
+    address_v6(const bytes_type& __bytes, scope_id_type __scope = 0)
+    : _M_bytes(__bytes), _M_scope_id(__scope)
+    { }
+
+    // assignment:
+    address_v6& operator=(const address_v6& __a) noexcept = default;
+
+    // members:
+    void scope_id(scope_id_type __id) noexcept { _M_scope_id = __id; }
+
+    constexpr scope_id_type scope_id() const noexcept { return _M_scope_id; }
+
+    constexpr bool
+    is_unspecified() const noexcept
+    {
+      for (int __i = 0; __i < 16; ++__i)
+	if (_M_bytes[__i] != 0x00)
+	  return false;
+      return _M_scope_id == 0;
+    }
+
+    constexpr bool
+    is_loopback() const noexcept
+    {
+      for (int __i = 0; __i < 15; ++__i)
+	if (_M_bytes[__i] != 0x00)
+	  return false;
+      return _M_bytes[15] == 0x01 && _M_scope_id == 0;
+    }
+
+    constexpr bool
+    is_multicast() const noexcept { return _M_bytes[0] == 0xFF; }
+
+    constexpr bool
+    is_link_local() const noexcept
+    { return _M_bytes[0] == 0xFE && (_M_bytes[1] & 0xC0) == 0x80; }
+
+    constexpr bool
+    is_site_local() const noexcept
+    { return _M_bytes[0] == 0xFE && (_M_bytes[1] & 0xC0) == 0xC0; }
+
+    constexpr bool
+    is_v4_mapped() const noexcept
+    {
+      const bytes_type& __b = _M_bytes;
+      return __b[0] == 0 && __b[1] == 0 && __b[ 2] == 0    && __b[ 3] == 0
+	  && __b[4] == 0 && __b[5] == 0 && __b[ 6] == 0    && __b[ 7] == 0
+	  && __b[8] == 0 && __b[9] == 0 && __b[10] == 0xFF && __b[11] == 0xFF;
+    }
+
+    constexpr bool
+    is_multicast_node_local() const noexcept
+    { return is_multicast() && (_M_bytes[1] & 0x0F) == 0x01; }
+
+    constexpr bool
+    is_multicast_link_local() const noexcept
+    { return is_multicast() && (_M_bytes[1] & 0x0F) == 0x02; }
+
+    constexpr bool
+    is_multicast_site_local() const noexcept
+    { return is_multicast() && (_M_bytes[1] & 0x0F) == 0x05; }
+
+    constexpr bool
+    is_multicast_org_local() const noexcept
+    { return is_multicast() && (_M_bytes[1] & 0x0F) == 0x08; }
+
+    constexpr bool
+    is_multicast_global() const noexcept
+    { return is_multicast() && (_M_bytes[1] & 0x0F) == 0x0b; }
+
+    constexpr bytes_type to_bytes() const noexcept { return _M_bytes; }
+
+    template<typename _Allocator = allocator<char>>
+      __string_with<_Allocator>
+      to_string(const _Allocator& __a = _Allocator()) const
+      {
+#ifdef _GLIBCXX_HAVE_ARPA_INET_H
+	__string_with<_Allocator> __str(__a);
+	__str.resize(INET6_ADDRSTRLEN + (_M_scope_id ? 11 : 0));
+	char* const __p = &__str.front();
+	if (inet_ntop(AF_INET6, &_M_bytes, __p, __str.size()))
+	  {
+	    auto __end = __str.find('\0');
+	    if (unsigned long __scope = _M_scope_id)
+	      {
+		__end +=
+#if _GLIBCXX_USE_C99_STDIO
+		  __builtin_snprintf(__p + __end, __str.size() - __end,
+				     "%%%lu", __scope);
+#else
+		  __builtin_sprintf(__p + __end, "%%%lu", __scope);
+#endif
+	      }
+	    __str.erase(__end);
+	  }
+	else
+	  __str.resize(0);
+	return __str;
+#else
+	std::__throw_system_error((int)__unsupported_err());
+#endif
+      }
+
+    // static members:
+
+    static constexpr address_v6
+    any() noexcept
+    {
+      return {};
+    }
+
+    static constexpr address_v6
+    loopback() noexcept
+    {
+      return {bytes_type{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}};
+    }
+
+  private:
+    template<typename _InternetProtocol>
+      friend class basic_endpoint;
+
+    friend constexpr bool
+    operator==(const address_v6&, const address_v6&) noexcept;
+
+    friend constexpr bool
+    operator< (const address_v6&, const address_v6&) noexcept;
+
+    bytes_type _M_bytes;
+    scope_id_type _M_scope_id;
+  };
+
+  /// Exception type thrown on misuse of IPv4 addresses as IPv6 or vice versa.
+  class bad_address_cast : public bad_cast
+  {
+  public:
+    bad_address_cast() { }
+
+    const char* what() const noexcept { return "bad address cast"; }
+  };
+
+  /// An IPv4 or IPv6 address.
+  class address
+  {
+  public:
+    // constructors:
+    constexpr address() noexcept : _M_v4(), _M_is_v4(true) { }
+
+#if __cpp_constexpr_dynamic_alloc
+    constexpr
+#endif
+    address(const address& __a) noexcept : _M_uninit(), _M_is_v4(__a._M_is_v4)
+    {
+      if (_M_is_v4)
+	std::_Construct(std::addressof(_M_v4), __a.to_v4());
+      else
+	std::_Construct(std::addressof(_M_v6), __a.to_v6());
+    }
+
+    constexpr
+    address(const address_v4& __a) noexcept : _M_v4(__a), _M_is_v4(true) { }
+
+    constexpr
+    address(const address_v6& __a) noexcept : _M_v6(__a), _M_is_v4(false) { }
+
+    // assignment:
+    address&
+    operator=(const address& __a) noexcept
+    {
+      if (__a._M_is_v4)
+	*this = __a.to_v4();
+      else
+	*this = __a.to_v6();
+      return *this;
+    }
+
+    address&
+    operator=(const address_v4& __a) noexcept
+    {
+      std::_Construct(std::addressof(_M_v4), __a);
+      _M_is_v4 = true;
+      return *this;
+    }
+
+    address&
+    operator=(const address_v6& __a) noexcept
+    {
+      std::_Construct(std::addressof(_M_v6), __a);
+      _M_is_v4 = false;
+      return *this;
+    }
+
+    // members:
+
+    constexpr bool is_v4() const noexcept { return _M_is_v4; }
+    constexpr bool is_v6() const noexcept { return !_M_is_v4; }
+
+    constexpr address_v4
+    to_v4() const
+    {
+      if (!is_v4())
+	_GLIBCXX_THROW_OR_ABORT(bad_address_cast());
+      return _M_v4;
+    }
+
+    constexpr address_v6
+    to_v6() const
+    {
+      if (!is_v6())
+	_GLIBCXX_THROW_OR_ABORT(bad_address_cast());
+      return _M_v6;
+    }
+
+    constexpr bool
+    is_unspecified() const noexcept
+    { return _M_is_v4 ? _M_v4.is_unspecified() : _M_v6.is_unspecified(); }
+
+    constexpr bool
+    is_loopback() const noexcept
+    { return _M_is_v4 ? _M_v4.is_loopback() : _M_v6.is_loopback(); }
+
+    constexpr bool
+    is_multicast() const noexcept
+    { return _M_is_v4 ? _M_v4.is_multicast() : _M_v6.is_multicast(); }
+
+    template<typename _Allocator = allocator<char>>
+      __string_with<_Allocator>
+      to_string(const _Allocator& __a = _Allocator()) const
+      {
+	if (_M_is_v4)
+	  return to_v4().to_string(__a);
+	return to_v6().to_string(__a);
+      }
+
+  private:
+    template<typename _InternetProtocol>
+      friend class basic_endpoint;
+
+    friend constexpr bool
+    operator==(const address&, const address&) noexcept;
+
+    friend constexpr bool
+    operator<(const address&, const address&) noexcept;
+
+    union {
+      address_v4 _M_v4;
+      address_v6 _M_v6;
+      bool	 _M_uninit;
+    };
+    bool _M_is_v4;
+  };
+
+  /** ip::address_v4 comparisons
+   * @{
+   */
+
+  constexpr bool
+  operator==(const address_v4& __a, const address_v4& __b) noexcept
+  { return __a.to_uint() == __b.to_uint(); }
+
+  constexpr bool
+  operator!=(const address_v4& __a, const address_v4& __b) noexcept
+  { return !(__a == __b); }
+
+  constexpr bool
+  operator< (const address_v4& __a, const address_v4& __b) noexcept
+  { return __a.to_uint() < __b.to_uint(); }
+
+  constexpr bool
+  operator> (const address_v4& __a, const address_v4& __b) noexcept
+  { return __b < __a; }
+
+  constexpr bool
+  operator<=(const address_v4& __a, const address_v4& __b) noexcept
+  { return !(__b < __a); }
+
+  constexpr bool
+  operator>=(const address_v4& __a, const address_v4& __b) noexcept
+  { return !(__a < __b); }
+
+  /// @}
+
+  /** ip::address_v6 comparisons
+   * @{
+   */
+
+  constexpr bool
+  operator==(const address_v6& __a, const address_v6& __b) noexcept
+  {
+    const auto& __aa = __a._M_bytes;
+    const auto& __bb = __b._M_bytes;
+    int __i = 0;
+    for (; __i < 16 && __aa[__i] == __bb[__i]; ++__i)
+      ;
+    return __i == 16 ? __a.scope_id() == __b.scope_id() : false;
+  }
+
+  constexpr bool
+  operator!=(const address_v6& __a, const address_v6& __b) noexcept
+  { return !(__a == __b); }
+
+  constexpr bool
+  operator< (const address_v6& __a, const address_v6& __b) noexcept
+  {
+    const auto& __aa = __a._M_bytes;
+    const auto& __bb = __b._M_bytes;
+    int __i = 0;
+    for (; __i < 16 && __aa[__i] == __bb[__i]; ++__i)
+      ;
+    return __i == 16 ? __a.scope_id() < __b.scope_id() : __aa[__i] < __bb[__i];
+  }
+
+  constexpr bool
+  operator> (const address_v6& __a, const address_v6& __b) noexcept
+  { return __b < __a; }
+
+  constexpr bool
+  operator<=(const address_v6& __a, const address_v6& __b) noexcept
+  { return !(__b < __a); }
+
+  constexpr bool
+  operator>=(const address_v6& __a, const address_v6& __b) noexcept
+  { return !(__a < __b); }
+
+  /// @}
+
+  /** ip::address comparisons
+   * @{
+   */
+
+  constexpr bool
+  operator==(const address& __a, const address& __b) noexcept
+  {
+    if (__a.is_v4())
+      return __b.is_v4() ? __a._M_v4 == __b._M_v4 : false;
+    return __b.is_v4() ? false : __a._M_v6 == __b._M_v6;
+  }
+
+  constexpr bool
+  operator!=(const address& __a, const address& __b) noexcept
+  { return !(__a == __b); }
+
+  constexpr bool
+  operator< (const address& __a, const address& __b) noexcept
+  {
+    if (__a.is_v4())
+      return __b.is_v4() ? __a._M_v4 < __b._M_v4 : true;
+    return __b.is_v4() ? false : __a._M_v6 < __b._M_v6;
+  }
+
+  constexpr bool
+  operator> (const address& __a, const address& __b) noexcept
+  { return __b < __a; }
+
+  constexpr bool
+  operator<=(const address& __a, const address& __b) noexcept
+  { return !(__b < __a); }
+
+  constexpr bool
+  operator>=(const address& __a, const address& __b) noexcept
+  { return !(__a < __b); }
+
+  /// @}
+
+  /** ip::address_v4 creation
+   * @{
+   */
+
+  constexpr address_v4
+  make_address_v4(const address_v4::bytes_type& __b)
+  { return address_v4{__b}; }
+
+  constexpr address_v4
+  make_address_v4(address_v4::uint_type __val)
+  { return address_v4{__val}; }
+
+  constexpr address_v4
+  make_address_v4(v4_mapped_t, const address_v6& __a)
+  {
+    if (!__a.is_v4_mapped())
+      _GLIBCXX_THROW_OR_ABORT(bad_address_cast());
+
+    const auto __v6b = __a.to_bytes();
+    return address_v4::bytes_type(__v6b[12], __v6b[13], __v6b[14], __v6b[15]);
+  }
+
+  inline address_v4
+  make_address_v4(const char* __str, error_code& __ec) noexcept
+  {
+#ifdef _GLIBCXX_HAVE_ARPA_INET_H
+    address_v4 __a;
+    const int __res = ::inet_pton(AF_INET, __str, &__a._M_addr);
+    if (__res == 1)
+      {
+	__ec.clear();
+	return __a;
+      }
+    if (__res == 0)
+      __ec = std::make_error_code(std::errc::invalid_argument);
+    else
+      __ec.assign(errno, generic_category());
+#else
+    __ec = std::make_error_code(__unsupported_err());
+#endif
+    return {};
+  }
+
+  inline address_v4
+  make_address_v4(const char* __str)
+  { return make_address_v4(__str, __throw_on_error{"make_address_v4"}); }
+
+  inline address_v4
+  make_address_v4(const string& __str, error_code& __ec) noexcept
+  { return make_address_v4(__str.c_str(), __ec); }
+
+  inline address_v4
+  make_address_v4(const string& __str)
+  { return make_address_v4(__str.c_str()); }
+
+  inline address_v4
+  make_address_v4(string_view __str, error_code& __ec) noexcept
+  {
+    char __buf[16]; // INET_ADDRSTRLEN isn't defined on Windows
+    auto __len = __str.copy(__buf, sizeof(__buf));
+    if (__len == sizeof(__buf))
+      {
+	__ec = std::make_error_code(std::errc::invalid_argument);
+	return {};
+      }
+    __ec.clear();
+    __buf[__len] = '\0';
+    return make_address_v4(__buf, __ec);
+  }
+
+  inline address_v4
+  make_address_v4(string_view __str)
+  { return make_address_v4(__str, __throw_on_error{"make_address_v4"}); }
+
+  /// @}
+
+  /** ip::address_v6 creation
+   * @{
+   */
+
+  constexpr address_v6
+  make_address_v6(const address_v6::bytes_type& __b, scope_id_type __scope = 0)
+  { return address_v6{__b, __scope}; }
+
+  constexpr address_v6
+  make_address_v6(v4_mapped_t, const address_v4& __a) noexcept
+  {
+    const address_v4::bytes_type __v4b = __a.to_bytes();
+    address_v6::bytes_type __v6b(0, 0, 0, 0, 0, 0, 0, 0,
+				 0, 0, 0xFF, 0xFF,
+				 __v4b[0], __v4b[1], __v4b[2], __v4b[3]);
+    return address_v6(__v6b);
+  }
+
+  inline address_v6
+  __make_address_v6(const char* __addr, const char* __scope, error_code& __ec)
+  {
+#ifdef _GLIBCXX_HAVE_ARPA_INET_H
+    address_v6::bytes_type __b;
+    const int __res = ::inet_pton(AF_INET6, __addr, __b.data());
+    if (__res == 1)
+      {
+	__ec.clear();
+	if (!__scope)
+	  {
+	    return { __b };
+	  }
+
+	char* __eptr;
+	unsigned long __val = std::strtoul(__scope, &__eptr, 10);
+	if (__eptr != __scope && !*__eptr
+	    && __val <= numeric_limits<scope_id_type>::max())
+	  {
+	    return { __b, static_cast<scope_id_type>(__val) };
+	  }
+	__ec = std::make_error_code(std::errc::invalid_argument);
+      }
+    else if (__res == 0)
+      __ec = std::make_error_code(std::errc::invalid_argument);
+    else
+      __ec.assign(errno, generic_category());
+#else
+    __ec = std::make_error_code(__unsupported_err());
+#endif
+    return {};
+  }
+
+  inline address_v6
+  make_address_v6(const char* __str, error_code& __ec) noexcept
+  {
+    auto __p = __builtin_strchr(__str, '%');
+    if (__p == nullptr)
+      return __make_address_v6(__str, nullptr, __ec);
+    char __buf[64];
+    char* __out = __buf;
+    bool __skip_leading_zero = true;
+    while (__str < __p && __out < std::end(__buf))
+      {
+	if (!__skip_leading_zero || *__str != '0')
+	  {
+	    if (*__str == ':' || *__str == '.')
+	      __skip_leading_zero = true;
+	    else
+	      __skip_leading_zero = false;
+	    *__out = *__str;
+	  }
+	__str++;
+      }
+    if (__out == std::end(__buf))
+      {
+	__ec = std::make_error_code(std::errc::invalid_argument);
+	return {};
+      }
+    else
+      {
+	*__out = '\0';
+	return __make_address_v6(__buf, __p + 1, __ec);
+      }
+  }
+
+  inline address_v6
+  make_address_v6(const char* __str)
+  { return make_address_v6(__str, __throw_on_error{"make_address_v6"}); }
+
+  inline address_v6
+  make_address_v6(const string& __str, error_code& __ec) noexcept
+  {
+    auto __pos = __str.find('%');
+    if (__pos == string::npos)
+      return __make_address_v6(__str.c_str(), nullptr, __ec);
+    char __buf[64];
+    char* __out = __buf;
+    bool __skip_leading_zero = true;
+    size_t __n = 0;
+    while (__n < __pos && __out < std::end(__buf))
+      {
+	if (!__skip_leading_zero || __str[__n] != '0')
+	  {
+	    if (__str[__n] == ':' || __str[__n] == '.')
+	      __skip_leading_zero = true;
+	    else
+	      __skip_leading_zero = false;
+	    *__out = __str[__n];
+	  }
+	__n++;
+      }
+    if (__out == std::end(__buf))
+      {
+	__ec = std::make_error_code(std::errc::invalid_argument);
+	return {};
+      }
+    else
+      {
+	*__out = '\0';
+	return __make_address_v6(__buf, __str.c_str() + __pos + 1, __ec);
+      }
+  }
+
+  inline address_v6
+  make_address_v6(const string& __str)
+  { return make_address_v6(__str, __throw_on_error{"make_address_v6"}); }
+
+  inline address_v6
+  make_address_v6(string_view __str, error_code& __ec) noexcept
+  {
+    char __buf[64];
+    char* __out = __buf;
+    char* __scope = nullptr;
+    bool __skip_leading_zero = true;
+    size_t __n = 0;
+    while (__n < __str.length() && __out < std::end(__buf))
+      {
+	if (__str[__n] == '%')
+	  {
+	    if (__scope)
+	      __out = std::end(__buf);
+	    else
+	      {
+		*__out = '\0';
+		__scope = ++__out;
+		__skip_leading_zero = true;
+	      }
+	  }
+	else if (!__skip_leading_zero || __str[__n] != '0')
+	  {
+	    if (__str[__n] == ':' || __str[__n] == '.')
+	      __skip_leading_zero = true;
+	    else
+	      __skip_leading_zero = false;
+	    *__out = __str[__n];
+	    __out++;
+	  }
+	__n++;
+      }
+    if (__out == std::end(__buf))
+      {
+	__ec = std::make_error_code(std::errc::invalid_argument);
+	return {};
+      }
+    else
+      {
+	*__out = '\0';
+	return __make_address_v6(__buf, __scope, __ec);
+      }
+  }
+
+  inline address_v6
+  make_address_v6(string_view __str)
+  { return make_address_v6(__str, __throw_on_error{"make_address_v6"}); }
+
+  /// @}
+
+  /** ip::address creation
+   * @{
+   */
+
+  inline address
+  make_address(const char* __str, error_code& __ec) noexcept
+  {
+    address __a;
+    address_v6 __v6a = make_address_v6(__str, __ec);
+    if (!__ec)
+      __a = __v6a;
+    else
+    {
+      address_v4 __v4a = make_address_v4(__str, __ec);
+      if (!__ec)
+	__a = __v4a;
+    }
+    return __a;
+  }
+
+  inline address
+  make_address(const char* __str)
+  { return make_address(__str, __throw_on_error{"make_address"}); }
+
+  inline address
+  make_address(const string& __str, error_code& __ec) noexcept; // TODO
+
+  inline address
+  make_address(const string& __str)
+  { return make_address(__str, __throw_on_error{"make_address"}); }
+
+  inline address
+  make_address(string_view __str, error_code& __ec) noexcept
+  {
+    if (__str.rfind('\0') != string_view::npos)
+      return make_address(__str.data(), __ec);
+    return make_address(__str.to_string(), __ec); // TODO don't allocate
+  }
+
+  inline address
+  make_address(string_view __str)
+  { return make_address(__str, __throw_on_error{"make_address"}); }
+
+  /// @}
+
+  /// ip::address I/O
+  template<typename _CharT, typename _Traits>
+    inline basic_ostream<_CharT, _Traits>&
+    operator<<(basic_ostream<_CharT, _Traits>& __os, const address& __a)
+    { return __os << __a.to_string(); }
+
+  /// ip::address_v4 I/O
+  template<typename _CharT, typename _Traits>
+    inline basic_ostream<_CharT, _Traits>&
+    operator<<(basic_ostream<_CharT, _Traits>& __os, const address_v4& __a)
+    { return __os << __a.to_string(); }
+
+  /// ip::address_v6 I/O
+  template<typename _CharT, typename _Traits>
+    inline basic_ostream<_CharT, _Traits>&
+    operator<<(basic_ostream<_CharT, _Traits>& __os, const address_v6& __a)
+    { return __os << __a.to_string(); }
+
+  template<typename> class basic_address_iterator; // not defined
+
+  template<> class basic_address_iterator<address_v4>
+  {
+  public:
+    // types:
+    using value_type = address_v4;
+    using difference_type = ptrdiff_t;
+    using pointer = const address_v4*;
+    using reference = const address_v4&;
+    using iterator_category = input_iterator_tag;
+
+    // constructors:
+    basic_address_iterator(const address_v4& __a) noexcept
+    : _M_address(__a) { }
+
+    // members:
+    reference operator*() const noexcept { return _M_address; }
+    pointer operator->() const noexcept { return &_M_address; }
+
+    basic_address_iterator&
+    operator++() noexcept
+    {
+      _M_address = value_type(_M_address.to_uint() + 1);
+      return *this;
+    }
+
+    basic_address_iterator operator++(int) noexcept
+    {
+      auto __tmp = *this;
+      ++*this;
+      return __tmp;
+    }
+
+    basic_address_iterator& operator--() noexcept
+    {
+      _M_address = value_type(_M_address.to_uint() - 1);
+      return *this;
+    }
+
+    basic_address_iterator
+    operator--(int) noexcept
+    {
+      auto __tmp = *this;
+      --*this;
+      return __tmp;
+    }
+
+    bool
+    operator==(const basic_address_iterator& __rhs) const noexcept
+    { return _M_address == __rhs._M_address; }
+
+    bool
+    operator!=(const basic_address_iterator& __rhs) const noexcept
+    { return _M_address != __rhs._M_address; }
+
+  private:
+    address_v4 _M_address;
+  };
+
+  using address_v4_iterator = basic_address_iterator<address_v4>;
+
+  template<> class basic_address_iterator<address_v6>
+  {
+  public:
+    // types:
+    using value_type = address_v6;
+    using difference_type = ptrdiff_t;
+    using pointer = const address_v6*;
+    using reference = const address_v6&;
+    using iterator_category = input_iterator_tag;
+
+    // constructors:
+    basic_address_iterator(const address_v6& __a) noexcept
+    : _M_address(__a) { }
+
+    // members:
+    reference operator*() const noexcept { return _M_address; }
+    pointer operator->() const noexcept { return &_M_address; }
+
+    basic_address_iterator&
+    operator++() noexcept; // TODO
+
+    basic_address_iterator
+    operator++(int) noexcept
+    {
+      auto __tmp = *this;
+      ++*this;
+      return __tmp;
+    }
+
+    basic_address_iterator&
+    operator--() noexcept; // TODO
+
+    basic_address_iterator
+    operator--(int) noexcept
+    {
+      auto __tmp = *this;
+      --*this;
+      return __tmp;
+    }
+
+    bool
+    operator==(const basic_address_iterator& __rhs) const noexcept
+    { return _M_address == __rhs._M_address; }
+
+    bool
+    operator!=(const basic_address_iterator& __rhs) const noexcept
+    { return _M_address != __rhs._M_address; }
+
+  private:
+    address_v6 _M_address;
+  };
+
+  using address_v6_iterator = basic_address_iterator<address_v6>;
+
+  template<typename> class basic_address_range; // not defined
+
+  /** An IPv6 address range.
+   * @{
+   */
+
+  template<> class basic_address_range<address_v4>
+  {
+  public:
+    // types:
+
+    using iterator = basic_address_iterator<address_v4>;
+
+    // constructors:
+
+    basic_address_range() noexcept : _M_begin({}), _M_end({}) { }
+
+    basic_address_range(const address_v4& __first,
+                        const address_v4& __last) noexcept
+    : _M_begin(__first), _M_end(__last) { }
+
+    // members:
+
+    iterator begin() const noexcept { return _M_begin; }
+    iterator end() const noexcept { return _M_end; }
+    _GLIBCXX_NODISCARD bool empty() const noexcept { return _M_begin == _M_end; }
+
+    size_t
+    size() const noexcept { return _M_end->to_uint() - _M_begin->to_uint(); }
+
+    iterator
+    find(const address_v4& __addr) const noexcept
+    {
+      if (*_M_begin <= __addr && __addr < *_M_end)
+	return iterator{__addr};
+      return end();
+    }
+
+  private:
+    iterator _M_begin;
+    iterator _M_end;
+  };
+
+  using address_v4_range = basic_address_range<address_v4>;
+
+  /// @}
+
+  /** An IPv6 address range.
+   * @{
+   */
+
+  template<> class basic_address_range<address_v6>
+  {
+  public:
+    // types:
+
+    using iterator = basic_address_iterator<address_v6>;
+
+    // constructors:
+
+    basic_address_range() noexcept : _M_begin({}), _M_end({}) { }
+    basic_address_range(const address_v6& __first,
+                        const address_v6& __last) noexcept
+    : _M_begin(__first), _M_end(__last) { }
+
+    // members:
+
+    iterator begin() const noexcept { return _M_begin; }
+    iterator end() const noexcept { return _M_end; }
+    _GLIBCXX_NODISCARD bool empty() const noexcept { return _M_begin == _M_end; }
+
+    iterator
+    find(const address_v6& __addr) const noexcept
+    {
+      if (*_M_begin <= __addr && __addr < *_M_end)
+	return iterator{__addr};
+      return end();
+    }
+
+  private:
+    iterator _M_begin;
+    iterator _M_end;
+  };
+
+  using address_v6_range = basic_address_range<address_v6>;
+
+  /// @}
+
+  bool
+  operator==(const network_v4& __a, const network_v4& __b) noexcept;
+
+  bool
+  operator==(const network_v6& __a, const network_v6& __b) noexcept;
+
+
+  /// An IPv4 network address.
+  class network_v4
+  {
+  public:
+    // constructors:
+    constexpr network_v4() noexcept : _M_addr(), _M_prefix_len(0) { }
+
+    constexpr
+    network_v4(const address_v4& __addr, int __prefix_len)
+    : _M_addr(__addr), _M_prefix_len(__prefix_len)
+    {
+      if (_M_prefix_len < 0 || _M_prefix_len > 32)
+	__throw_out_of_range("network_v4: invalid prefix length");
+    }
+
+    constexpr
+    network_v4(const address_v4& __addr, const address_v4& __mask)
+    : _M_addr(__addr), _M_prefix_len(__builtin_popcount(__mask.to_uint()))
+    {
+      if (_M_prefix_len != 0)
+	{
+	  address_v4::uint_type __mask_uint = __mask.to_uint();
+	  if (__builtin_ctz(__mask_uint) != (32 - _M_prefix_len))
+	    __throw_invalid_argument("network_v4: invalid mask");
+	  if ((__mask_uint & 0x80000000) == 0)
+	    __throw_invalid_argument("network_v4: invalid mask");
+	}
+    }
+
+    // members:
+
+    constexpr address_v4 address() const noexcept { return _M_addr; }
+    constexpr int prefix_length() const noexcept { return _M_prefix_len; }
+
+    constexpr address_v4
+    netmask() const noexcept
+    {
+      address_v4::uint_type __val = address_v4::broadcast().to_uint();
+      __val >>= (32 - _M_prefix_len);
+      __val <<= (32 - _M_prefix_len);
+      return address_v4{__val};
+    }
+
+    constexpr address_v4
+    network() const noexcept
+    { return address_v4{_M_addr.to_uint() & netmask().to_uint()}; }
+
+    constexpr address_v4
+    broadcast() const noexcept
+    { return address_v4{_M_addr.to_uint() | ~netmask().to_uint()}; }
+
+    address_v4_range
+    hosts() const noexcept
+    {
+      if (is_host())
+	return { address(), *++address_v4_iterator(address()) };
+      return { network(), broadcast() };
+    }
+
+    constexpr network_v4
+    canonical() const noexcept
+    { return network_v4(network(), prefix_length()); }
+
+    constexpr bool is_host() const noexcept { return _M_prefix_len == 32; }
+
+    constexpr bool
+    is_subnet_of(const network_v4& __other) const noexcept
+    {
+      if (__other.prefix_length() < prefix_length())
+	{
+	  network_v4 __net(address(), __other.prefix_length());
+	  return __net.canonical() == __other.canonical();
+	}
+      return false;
+    }
+
+    template<typename _Allocator = allocator<char>>
+      __string_with<_Allocator>
+      to_string(const _Allocator& __a = _Allocator()) const
+      {
+	return address().to_string(__a) + '/'
+	  + std::to_string(prefix_length());
+      }
+
+  private:
+    address_v4 _M_addr;
+    int _M_prefix_len;
+  };
+
+  /// An IPv6 network address.
+  class network_v6
+  {
+  public:
+    // constructors:
+    constexpr network_v6() noexcept : _M_addr(), _M_prefix_len(0) { }
+
+    constexpr
+    network_v6(const address_v6& __addr, int __prefix_len)
+    : _M_addr(__addr), _M_prefix_len(__prefix_len)
+    {
+      if (_M_prefix_len < 0 || _M_prefix_len > 128)
+	__throw_out_of_range("network_v6: invalid prefix length");
+    }
+
+    // members:
+    constexpr address_v6 address() const noexcept { return _M_addr; }
+    constexpr int prefix_length() const noexcept { return _M_prefix_len; }
+
+    constexpr address_v6 network() const noexcept; // TODO
+
+    address_v6_range
+    hosts() const noexcept
+    {
+      if (is_host())
+	return { address(), *++address_v6_iterator(address()) };
+      return {}; // { network(), XXX broadcast() XXX }; // TODO
+    }
+
+    constexpr network_v6
+    canonical() const noexcept
+    { return network_v6{network(), prefix_length()}; }
+
+    constexpr bool is_host() const noexcept { return _M_prefix_len == 128; }
+
+    constexpr bool
+    is_subnet_of(const network_v6& __other) const noexcept
+    {
+      if (__other.prefix_length() < prefix_length())
+	{
+	  network_v6 __net(address(), __other.prefix_length());
+	  return __net.canonical() == __other.canonical();
+	}
+      return false;
+    }
+
+    template<typename _Allocator = allocator<char>>
+      __string_with<_Allocator>
+      to_string(const _Allocator& __a = _Allocator()) const
+      {
+	return address().to_string(__a) + '/'
+	  + std::to_string(prefix_length());
+      }
+
+  private:
+    address_v6 _M_addr;
+    int _M_prefix_len;
+  };
+
+
+  /** ip::network_v4 comparisons
+   * @{
+   */
+
+  inline bool
+  operator==(const network_v4& __a, const network_v4& __b) noexcept
+  {
+    return __a.address() == __b.address()
+      && __a.prefix_length() == __b.prefix_length();
+  }
+
+  inline bool
+  operator!=(const network_v4& __a, const network_v4& __b) noexcept
+  { return !(__a == __b); }
+
+  /// @}
+
+  /** ip::network_v6 comparisons
+   * @{
+   */
+
+  inline bool
+  operator==(const network_v6& __a, const network_v6& __b) noexcept
+  {
+    return __a.address() == __b.address()
+      && __a.prefix_length() == __b.prefix_length();
+  }
+
+  inline bool
+  operator!=(const network_v6& __a, const network_v6& __b) noexcept
+  { return !(__a == __b); }
+
+  /// @}
+
+  /** ip::network_v4 creation
+   * @{
+   */
+
+  inline network_v4
+  make_network_v4(const address_v4& __a, int __prefix_len)
+  { return network_v4{__a, __prefix_len}; }
+
+  inline network_v4
+  make_network_v4(const address_v4& __a, const address_v4& __mask)
+  { return network_v4{ __a, __mask }; }
+
+  network_v4 make_network_v4(const char*, error_code&) noexcept; // TODO
+
+  inline network_v4
+  make_network_v4(const char* __str)
+  { return make_network_v4(__str, __throw_on_error{"make_network_v4"}); }
+
+  network_v4 make_network_v4(const string&, error_code&) noexcept; // TODO
+
+  inline network_v4
+  make_network_v4(const string& __str)
+  { return make_network_v4(__str, __throw_on_error{"make_network_v4"}); }
+
+  network_v4 make_network_v4(string_view, error_code&) noexcept; // TODO
+
+  inline network_v4
+  make_network_v4(string_view __str)
+  { return make_network_v4(__str, __throw_on_error{"make_network_v4"}); }
+
+  /// @}
+
+  /** ip::network_v6 creation
+   * @{
+   */
+
+  inline network_v6
+  make_network_v6(const address_v6& __a, int __prefix_len)
+  { return network_v6{__a, __prefix_len}; }
+
+  network_v6 make_network_v6(const char*, error_code&) noexcept; // TODO
+
+  inline network_v6
+  make_network_v6(const char* __str)
+  { return make_network_v6(__str, __throw_on_error{"make_network_v6"}); }
+
+  network_v6 make_network_v6(const string&, error_code&) noexcept; // TODO
+
+  inline network_v6
+  make_network_v6(const string& __str)
+  { return make_network_v6(__str, __throw_on_error{"make_network_v6"}); }
+
+  network_v6 make_network_v6(string_view, error_code&) noexcept; // TODO
+
+  inline network_v6
+  make_network_v6(string_view __str)
+  { return make_network_v6(__str, __throw_on_error{"make_network_v6"}); }
+
+  /// @}
+
+  /// ip::network_v4 I/O
+  template<typename _CharT, typename _Traits>
+    inline basic_ostream<_CharT, _Traits>&
+    operator<<(basic_ostream<_CharT, _Traits>& __os, const network_v4& __net)
+    { return __os << __net.to_string(); }
+
+  /// ip::network_v6 I/O
+  template<typename _CharT, typename _Traits>
+    inline basic_ostream<_CharT, _Traits>&
+    operator<<(basic_ostream<_CharT, _Traits>& __os, const network_v6& __net)
+    { return __os << __net.to_string(); }
+
+  /// An IP endpoint.
+  template<typename _InternetProtocol>
+    class basic_endpoint
+    {
+    public:
+      // types:
+      using protocol_type = _InternetProtocol;
+
+      // constructors:
+
+      constexpr
+      basic_endpoint() noexcept : _M_data()
+      { _M_data._M_v4.sin_family = protocol_type::v4().family(); }
+
+      constexpr
+      basic_endpoint(const protocol_type& __proto,
+		     port_type __port_num) noexcept
+      : _M_data()
+      {
+	__glibcxx_assert(__proto == protocol_type::v4()
+			  || __proto == protocol_type::v6());
+
+	_M_data._M_v4.sin_family = __proto.family();
+	_M_data._M_v4.sin_port = address_v4::_S_hton_16(__port_num);
+      }
+
+      constexpr
+      basic_endpoint(const ip::address& __addr,
+		     port_type __port_num) noexcept
+      : _M_data()
+      {
+	if (__addr.is_v4())
+	  {
+	    _M_data._M_v4.sin_family = protocol_type::v4().family();
+	    _M_data._M_v4.sin_port = address_v4::_S_hton_16(__port_num);
+	    _M_data._M_v4.sin_addr.s_addr = __addr._M_v4._M_addr;
+	  }
+	else
+	  {
+	    _M_data._M_v6 = {};
+	    _M_data._M_v6.sin6_family = protocol_type::v6().family();
+	    _M_data._M_v6.sin6_port = address_v4::_S_hton_16(__port_num);
+	    __builtin_memcpy(_M_data._M_v6.sin6_addr.s6_addr,
+			     __addr._M_v6._M_bytes.data(), 16);
+	    _M_data._M_v6.sin6_scope_id = __addr._M_v6._M_scope_id;
+	  }
+      }
+
+      // members:
+      constexpr protocol_type protocol() const noexcept
+      {
+	return _M_is_v6() ? protocol_type::v6() : protocol_type::v4();
+      }
+
+      constexpr ip::address
+      address() const noexcept
+      {
+	ip::address __addr;
+	if (_M_is_v6())
+	  {
+	    __builtin_memcpy(&__addr._M_v6._M_bytes,
+			     _M_data._M_v6.sin6_addr.s6_addr, 16);
+	    __addr._M_is_v4 = false;
+	  }
+	else
+	  {
+	    __builtin_memcpy(&__addr._M_v4._M_addr,
+			     &_M_data._M_v4.sin_addr.s_addr, 4);
+	  }
+	return __addr;
+      }
+
+      void
+      address(const ip::address& __addr) noexcept
+      {
+	if (__addr.is_v6())
+	  {
+	    _M_data._M_v6 = {};
+	    _M_data._M_v6.sin6_family = protocol_type::v6().family();
+	    __builtin_memcpy(_M_data._M_v6.sin6_addr.s6_addr,
+			     __addr._M_v6._M_bytes.data(), 16);
+	    _M_data._M_v6.sin6_scope_id = __addr._M_v6._M_scope_id;
+	  }
+	else
+	  {
+	    _M_data._M_v4.sin_family = protocol_type::v4().family();
+	    _M_data._M_v4.sin_addr.s_addr = __addr._M_v4._M_addr;
+	  }
+      }
+
+      constexpr port_type
+      port() const noexcept
+      { return address_v4::_S_ntoh_16(_M_data._M_v4.sin_port); }
+
+      void
+      port(port_type __port_num) noexcept
+      { _M_data._M_v4.sin_port = address_v4::_S_hton_16(__port_num); }
+
+      void* data() noexcept { return &_M_data; }
+
+      const void* data() const noexcept { return &_M_data; }
+
+      constexpr size_t size() const noexcept
+      { return _M_is_v6() ? sizeof(sockaddr_in6) : sizeof(sockaddr_in); }
+
+      void
+      resize(size_t __s)
+      {
+	if (__s != size())
+	  __throw_length_error("net::ip::basic_endpoint::resize");
+      }
+
+      constexpr size_t capacity() const noexcept { return sizeof(_M_data); }
+
+    private:
+      union
+      {
+	sockaddr_in	_M_v4;
+	sockaddr_in6	_M_v6;
+      } _M_data;
+
+      constexpr bool _M_is_v6() const noexcept
+      { return _M_data._M_v4.sin_family == AF_INET6; }
+    };
+
+  /** basic_endpoint comparisons
+   * @{
+   */
+
+  template<typename _InternetProtocol>
+    inline bool
+    operator==(const basic_endpoint<_InternetProtocol>& __a,
+	       const basic_endpoint<_InternetProtocol>& __b)
+    { return __a.address() == __b.address() && __a.port() == __b.port(); }
+
+  template<typename _InternetProtocol>
+    inline bool
+    operator!=(const basic_endpoint<_InternetProtocol>& __a,
+	       const basic_endpoint<_InternetProtocol>& __b)
+    { return !(__a == __b); }
+
+  template<typename _InternetProtocol>
+    inline bool
+    operator< (const basic_endpoint<_InternetProtocol>& __a,
+	       const basic_endpoint<_InternetProtocol>& __b)
+    {
+      return __a.address() < __b.address()
+	|| (!(__b.address() < __a.address()) && __a.port() < __b.port());
+    }
+
+  template<typename _InternetProtocol>
+    inline bool
+    operator> (const basic_endpoint<_InternetProtocol>& __a,
+	       const basic_endpoint<_InternetProtocol>& __b)
+    { return __b < __a; }
+
+  template<typename _InternetProtocol>
+    inline bool
+    operator<=(const basic_endpoint<_InternetProtocol>& __a,
+	       const basic_endpoint<_InternetProtocol>& __b)
+    { return !(__b < __a); }
+
+  template<typename _InternetProtocol>
+    inline bool
+    operator>=(const basic_endpoint<_InternetProtocol>& __a,
+	       const basic_endpoint<_InternetProtocol>& __b)
+    { return !(__a < __b); }
+
+  /// @}
+
+  /// basic_endpoint I/O
+  template<typename _CharT, typename _Traits, typename _InternetProtocol>
+    inline basic_ostream<_CharT, _Traits>&
+    operator<<(basic_ostream<_CharT, _Traits>& __os,
+	       const basic_endpoint<_InternetProtocol>& __ep)
+    {
+      basic_ostringstream<_CharT, _Traits> __ss;
+      if (__ep.protocol()
+	  == basic_endpoint<_InternetProtocol>::protocol_type::v6())
+	__ss << '[' << __ep.address() << ']';
+      else
+	__ss << __ep.address();
+      __ss << ':' << __ep.port();
+      __os << __ss.str();
+      return __os;
+    }
+
+  /** Type representing a single result of name/address resolution.
+   * @{
+   */
+
+  template<typename _InternetProtocol>
+    class basic_resolver_entry
+    {
+    public:
+      // types:
+      using protocol_type = _InternetProtocol;
+      using endpoint_type = typename _InternetProtocol::endpoint;
+
+      // constructors:
+      basic_resolver_entry() { }
+
+      basic_resolver_entry(const endpoint_type& __ep,
+			   string_view __h, string_view __s)
+      : _M_ep(__ep), _M_host(__h), _M_svc(__s) { }
+
+      // members:
+      endpoint_type endpoint() const { return _M_ep; }
+      operator endpoint_type() const { return _M_ep; }
+
+      template<typename _Allocator = allocator<char>>
+	__string_with<_Allocator>
+	host_name(const _Allocator& __a = _Allocator()) const
+	{ return { _M_host, __a }; }
+
+      template<typename _Allocator = allocator<char>>
+	__string_with<_Allocator>
+	service_name(const _Allocator& __a = _Allocator()) const
+	{ return { _M_svc, __a }; }
+
+    private:
+      basic_endpoint<_InternetProtocol> _M_ep;
+      string _M_host;
+      string _M_svc;
+    };
+
+  template<typename _InternetProtocol>
+    inline bool
+    operator==(const basic_resolver_entry<_InternetProtocol>& __a,
+	       const basic_resolver_entry<_InternetProtocol>& __b)
+    {
+      return __a.endpoint() == __b.endpoint()
+	&& __a.host_name() == __b.host_name()
+	&& __a.service_name() == __b.service_name();
+    }
+
+  template<typename _InternetProtocol>
+    inline bool
+    operator!=(const basic_resolver_entry<_InternetProtocol>& __a,
+	       const basic_resolver_entry<_InternetProtocol>& __b)
+    { return !(__a == __b); }
+
+  /// @}
+
+  /** Base class defining flags for name/address resolution.
+   * @{
+   */
+
+  class resolver_base
+  {
+  public:
+    enum flags : int { };
+    static constexpr flags passive		= (flags)AI_PASSIVE;
+    static constexpr flags canonical_name	= (flags)AI_CANONNAME;
+    static constexpr flags numeric_host		= (flags)AI_NUMERICHOST;
+#ifdef AI_NUMERICSERV
+    static constexpr flags numeric_service	= (flags)AI_NUMERICSERV;
+#endif
+#ifdef AI_V4MAPPED
+    static constexpr flags v4_mapped		= (flags)AI_V4MAPPED;
+#endif
+#ifdef AI_ALL
+    static constexpr flags all_matching		= (flags)AI_ALL;
+#endif
+#ifdef AI_ADDRCONFIG
+    static constexpr flags address_configured	= (flags)AI_ADDRCONFIG;
+#endif
+
+    friend constexpr flags
+    operator&(flags __f1, flags __f2) noexcept
+    { return flags( int(__f1) & int(__f2) ); }
+
+    friend constexpr flags
+    operator|(flags __f1, flags __f2) noexcept
+    { return flags( int(__f1) | int(__f2) ); }
+
+    friend constexpr flags
+    operator^(flags __f1, flags __f2) noexcept
+    { return flags( int(__f1) ^ int(__f2) ); }
+
+    friend constexpr flags
+    operator~(flags __f) noexcept
+    { return flags( ~int(__f) ); }
+
+    friend constexpr flags&
+    operator&=(flags& __f1, flags __f2) noexcept
+    { return __f1 = (__f1 & __f2); }
+
+    friend constexpr flags&
+    operator|=(flags& __f1, flags __f2) noexcept
+    { return __f1 = (__f1 | __f2); }
+
+    friend constexpr flags&
+    operator^=(flags& __f1, flags __f2) noexcept
+    { return __f1 = (__f1 ^ __f2); }
+
+  protected:
+    resolver_base() = default;
+    ~resolver_base() = default;
+  };
+
+  // TODO define resolver_base::flags static constants in .so for C++14 mode
+
+  /// @}
+
+  /** Container for results of name/address resolution.
+   * @{
+   */
+
+  template<typename _InternetProtocol>
+    class basic_resolver_results
+    {
+    public:
+      // types:
+      using protocol_type = _InternetProtocol;
+      using endpoint_type = typename protocol_type::endpoint;
+      using value_type = basic_resolver_entry<protocol_type>;
+      using const_reference = const value_type&;
+      using reference = value_type&;
+      using const_iterator = typename forward_list<value_type>::const_iterator;
+      using iterator = const_iterator;
+      using difference_type = ptrdiff_t;
+      using size_type = size_t;
+
+      // construct / copy / destroy:
+
+      basic_resolver_results() = default;
+
+      basic_resolver_results(const basic_resolver_results&) = default;
+
+      basic_resolver_results(basic_resolver_results&&) noexcept = default;
+
+      basic_resolver_results&
+      operator=(const basic_resolver_results&) = default;
+
+      basic_resolver_results&
+      operator=(basic_resolver_results&&) = default;
+
+      ~basic_resolver_results() = default;
+
+      // size:
+      size_type size() const noexcept { return _M_size; }
+      size_type max_size() const noexcept { return _M_results.max_size(); }
+
+      _GLIBCXX_NODISCARD bool
+      empty() const noexcept { return _M_results.empty(); }
+
+      // element access:
+      const_iterator begin() const { return _M_results.begin(); }
+      const_iterator end() const { return _M_results.end(); }
+      const_iterator cbegin() const { return _M_results.begin(); }
+      const_iterator cend() const { return _M_results.end(); }
+
+      // swap:
+      void
+      swap(basic_resolver_results& __that) noexcept
+      { _M_results.swap(__that._M_results); }
+
+    private:
+      friend class basic_resolver<protocol_type>;
+
+      basic_resolver_results(string_view, string_view, resolver_base::flags,
+			     error_code&, protocol_type* = nullptr);
+
+      basic_resolver_results(const endpoint_type&, error_code&);
+
+      forward_list<value_type> _M_results;
+      size_t _M_size = 0;
+    };
+
+  template<typename _InternetProtocol>
+    inline bool
+    operator==(const basic_resolver_results<_InternetProtocol>& __a,
+	       const basic_resolver_results<_InternetProtocol>& __b)
+    {
+      return __a.size() == __b.size()
+	&& std::equal(__a.begin(), __a.end(), __b.begin());
+    }
+
+  template<typename _InternetProtocol>
+    inline bool
+    operator!=(const basic_resolver_results<_InternetProtocol>& __a,
+	       const basic_resolver_results<_InternetProtocol>& __b)
+    { return !(__a == __b); }
+
+  /// @}
+
+  /// Perform name/address resolution.
+  template<typename _InternetProtocol>
+    class basic_resolver : public resolver_base
+    {
+    public:
+      // types:
+
+      using executor_type = io_context::executor_type;
+      using protocol_type = _InternetProtocol;
+      using endpoint_type = typename _InternetProtocol::endpoint;
+      using results_type = basic_resolver_results<_InternetProtocol>;
+
+      // construct / copy / destroy:
+
+      explicit basic_resolver(io_context& __ctx) : _M_ctx(&__ctx) { }
+
+      basic_resolver(const basic_resolver&) = delete;
+
+      basic_resolver(basic_resolver&& __rhs) noexcept
+      : _M_ctx(__rhs._M_ctx)
+      { } // TODO move state/tasks etc.
+
+      ~basic_resolver() { cancel(); }
+
+      basic_resolver& operator=(const basic_resolver&) = delete;
+
+      basic_resolver& operator=(basic_resolver&& __rhs)
+      {
+	cancel();
+	_M_ctx = __rhs._M_ctx;
+	// TODO move state/tasks etc.
+	return *this;
+      }
+
+      // basic_resolver operations:
+
+      executor_type get_executor() noexcept { return _M_ctx->get_executor(); }
+
+      void cancel() { } // TODO
+
+      results_type
+      resolve(string_view __host_name, string_view __service_name)
+      {
+	return resolve(__host_name, __service_name, resolver_base::flags(),
+		       __throw_on_error{"basic_resolver::resolve"});
+      }
+
+      results_type
+      resolve(string_view __host_name, string_view __service_name,
+	      error_code& __ec)
+      {
+	return resolve(__host_name, __service_name, resolver_base::flags(),
+		       __ec);
+      }
+
+      results_type
+      resolve(string_view __host_name, string_view __service_name, flags __f)
+      {
+	return resolve(__host_name, __service_name, __f,
+		       __throw_on_error{"basic_resolver::resolve"});
+      }
+
+      results_type
+      resolve(string_view __host_name, string_view __service_name, flags __f,
+	      error_code& __ec)
+      { return {__host_name, __service_name, __f, __ec}; }
+
+      template<typename _CompletionToken>
+	__deduced_t<_CompletionToken, void(error_code, results_type)>
+	async_resolve(string_view __host_name, string_view __service_name,
+		      _CompletionToken&& __token)
+	{
+	  return async_resolve(__host_name, __service_name,
+			       resolver_base::flags(),
+			       forward<_CompletionToken>(__token));
+	}
+
+      template<typename _CompletionToken>
+	__deduced_t<_CompletionToken, void(error_code, results_type)>
+	async_resolve(string_view __host_name, string_view __service_name,
+		      flags __f, _CompletionToken&& __token); // TODO
+
+      results_type
+      resolve(const protocol_type& __protocol,
+	      string_view __host_name, string_view __service_name)
+      {
+	return resolve(__protocol, __host_name, __service_name,
+		       resolver_base::flags(),
+		       __throw_on_error{"basic_resolver::resolve"});
+      }
+
+      results_type
+      resolve(const protocol_type& __protocol,
+	      string_view __host_name, string_view __service_name,
+	      error_code& __ec)
+      {
+	return resolve(__protocol, __host_name, __service_name,
+		       resolver_base::flags(), __ec);
+      }
+
+      results_type
+      resolve(const protocol_type& __protocol,
+	      string_view __host_name, string_view __service_name, flags __f)
+      {
+	return resolve(__protocol, __host_name, __service_name, __f,
+		       __throw_on_error{"basic_resolver::resolve"});
+      }
+
+      results_type
+      resolve(const protocol_type& __protocol,
+	      string_view __host_name, string_view __service_name,
+	      flags __f, error_code& __ec)
+      { return {__host_name, __service_name, __f, __ec, &__protocol}; }
+
+      template<typename _CompletionToken>
+	__deduced_t<_CompletionToken, void(error_code, results_type)>
+	async_resolve(const protocol_type& __protocol,
+		      string_view __host_name, string_view __service_name,
+		      _CompletionToken&& __token)
+	{
+	  return async_resolve(__protocol, __host_name, __service_name,
+			       resolver_base::flags(),
+			       forward<_CompletionToken>(__token));
+	}
+
+      template<typename _CompletionToken>
+	__deduced_t<_CompletionToken, void(error_code, results_type)>
+	async_resolve(const protocol_type& __protocol,
+		      string_view __host_name, string_view __service_name,
+		      flags __f, _CompletionToken&& __token); // TODO
+
+      results_type
+      resolve(const endpoint_type& __ep)
+      { return resolve(__ep, __throw_on_error{"basic_resolver::resolve"}); }
+
+      results_type
+      resolve(const endpoint_type& __ep, error_code& __ec)
+      { return { __ep, __ec }; }
+
+      template<typename _CompletionToken> // TODO
+	__deduced_t<_CompletionToken, void(error_code, results_type)>
+	async_resolve(const endpoint_type& __ep, _CompletionToken&& __token);
+
+    private:
+      io_context* _M_ctx;
+    };
+
+  /// Private constructor to synchronously resolve host and service names.
+  template<typename _InternetProtocol>
+    basic_resolver_results<_InternetProtocol>::
+    basic_resolver_results(string_view __host_name, string_view __service_name,
+			   resolver_base::flags __f, error_code& __ec,
+			   protocol_type* __protocol)
+    {
+#ifdef _GLIBCXX_HAVE_NETDB_H
+      string __host;
+      const char* __h = __host_name.data()
+	? (__host = __host_name.to_string()).c_str()
+	: nullptr;
+      string __svc;
+      const char* __s = __service_name.data()
+	? (__svc = __service_name.to_string()).c_str()
+	: nullptr;
+
+      ::addrinfo __hints{ };
+      __hints.ai_flags = static_cast<int>(__f);
+      if (__protocol)
+	{
+	  __hints.ai_family = __protocol->family();
+	  __hints.ai_socktype = __protocol->type();
+	  __hints.ai_protocol = __protocol->protocol();
+	}
+      else
+	{
+	  auto __p = endpoint_type{}.protocol();
+	  __hints.ai_family = AF_UNSPEC;
+	  __hints.ai_socktype = __p.type();
+	  __hints.ai_protocol = __p.protocol();
+	}
+
+      struct __scoped_addrinfo
+      {
+	~__scoped_addrinfo() { if (_M_p) ::freeaddrinfo(_M_p); }
+	::addrinfo* _M_p = nullptr;
+      } __sai;
+
+      if (int __err = ::getaddrinfo(__h, __s, &__hints, &__sai._M_p))
+	{
+	  __ec = ip::__make_resolver_error_code(__err, errno);
+	  return;
+	}
+      __ec.clear();
+
+      endpoint_type __ep;
+      auto __tail = _M_results.before_begin();
+      for (auto __ai = __sai._M_p; __ai != nullptr; __ai = __ai->ai_next)
+	{
+	  if (__ai->ai_family == AF_INET || __ai->ai_family == AF_INET6)
+	    {
+	      if (__ai->ai_addrlen <= __ep.capacity())
+		__builtin_memcpy(__ep.data(), __ai->ai_addr, __ai->ai_addrlen);
+	      __ep.resize(__ai->ai_addrlen);
+	      __tail = _M_results.emplace_after(__tail, __ep, __host, __svc);
+	      _M_size++;
+	    }
+	}
+#else
+      __ec = std::make_error_code(errc::operation_not_supported);
+#endif
+    }
+
+  /// Private constructor to synchronously resolve an endpoint.
+  template<typename _InternetProtocol>
+    basic_resolver_results<_InternetProtocol>::
+    basic_resolver_results(const endpoint_type& __ep, error_code& __ec)
+    {
+#ifdef _GLIBCXX_HAVE_NETDB_H
+      char __host_name[1025];	// glibc NI_MAXHOST
+      char __service_name[32];  // glibc NI_MAXSERV
+      int __flags = 0;
+      if (__ep.protocol().type() == SOCK_DGRAM)
+	__flags |= NI_DGRAM;
+      auto __sa = static_cast<const sockaddr*>(__ep.data());
+      int __err = ::getnameinfo(__sa, __ep.size(),
+				__host_name, sizeof(__host_name),
+				__service_name, sizeof(__service_name),
+				__flags);
+      if (__err)
+	{
+	  __flags |= NI_NUMERICSERV;
+	  __err = ::getnameinfo(__sa, __ep.size(),
+				__host_name, sizeof(__host_name),
+				__service_name, sizeof(__service_name),
+				__flags);
+	}
+      if (__err)
+	__ec = ip::__make_resolver_error_code(__err, errno);
+      else
+	{
+	  __ec.clear();
+	  _M_results.emplace_front(__ep, __host_name, __service_name);
+	  _M_size = 1;
+	}
+#else
+      __ec = std::make_error_code(errc::operation_not_supported);
+#endif
+    }
+
+  /** The name of the local host.
+   * @{
+   */
+
+  template<typename _Allocator>
+    __string_with<_Allocator>
+    host_name(const _Allocator& __a, error_code& __ec)
+    {
+#ifdef HOST_NAME_MAX
+      constexpr size_t __maxlen = HOST_NAME_MAX;
+#else
+      constexpr size_t __maxlen = 256;
+#endif
+      char __buf[__maxlen + 1];
+      if (::gethostname(__buf, __maxlen) == -1)
+	__ec.assign(errno, generic_category());
+      __buf[__maxlen] = '\0';
+      return { __buf, __a };
+    }
+
+  template<typename _Allocator>
+    inline __string_with<_Allocator>
+    host_name(const _Allocator& __a)
+    { return host_name(__a, __throw_on_error{"host_name"}); }
+
+  inline string
+  host_name(error_code& __ec)
+  { return host_name(std::allocator<char>{}, __ec); }
+
+  inline string
+  host_name()
+  { return host_name(std::allocator<char>{}, __throw_on_error{"host_name"}); }
+
+  /// @}
+
+#ifdef IPPROTO_TCP
+  /// The TCP byte-stream protocol.
+  class tcp
+  {
+  public:
+    // types:
+    using endpoint = basic_endpoint<tcp>;	 ///< A TCP endpoint.
+    using resolver = basic_resolver<tcp>;	 ///< A TCP resolver.
+    using socket = basic_stream_socket<tcp>;	 ///< A TCP socket.
+    using acceptor = basic_socket_acceptor<tcp>; ///< A TCP acceptor.
+    using iostream = basic_socket_iostream<tcp>; /// A TCP iostream.
+
+#ifdef TCP_NODELAY
+    /// Disable coalescing of small segments (i.e. the Nagle algorithm).
+    struct no_delay : __sockopt_crtp<no_delay, bool>
+    {
+      using __sockopt_crtp::__sockopt_crtp;
+      using __sockopt_crtp::operator=;
+
+      static const int _S_level = IPPROTO_TCP;
+      static const int _S_name = TCP_NODELAY;
+    };
+#endif
+
+    // static members:
+
+    /// A protocol object representing IPv4 TCP.
+    static constexpr tcp v4() noexcept { return tcp(AF_INET); }
+    /// A protocol object representing IPv6 TCP.
+    static constexpr tcp v6() noexcept { return tcp(AF_INET6); }
+
+    tcp() = delete;
+
+    constexpr int family() const noexcept { return _M_family; }
+    constexpr int type() const noexcept { return SOCK_STREAM; }
+    constexpr int protocol() const noexcept { return IPPROTO_TCP; }
+
+  private:
+    constexpr explicit tcp(int __family) : _M_family(__family) { }
+
+    int _M_family;
+  };
+
+  /** tcp comparisons
+   * @{
+   */
+
+  constexpr bool
+  operator==(const tcp& __a, const tcp& __b) noexcept
+  { return __a.family() == __b.family(); }
+
+  constexpr bool
+  operator!=(const tcp& __a, const tcp& __b) noexcept
+  { return !(__a == __b); }
+
+  /// @}
+#endif // IPPROTO_TCP
+
+#ifdef IPPROTO_UDP
+  /// The UDP datagram protocol.
+  class udp
+  {
+  public:
+    // types:
+    using endpoint = basic_endpoint<udp>;
+    using resolver = basic_resolver<udp>;
+    using socket = basic_datagram_socket<udp>;
+
+    // static members:
+    static constexpr udp v4() noexcept { return udp(AF_INET); }
+    static constexpr udp v6() noexcept { return udp(AF_INET6); }
+
+    udp() = delete;
+
+    constexpr int family() const noexcept { return _M_family; }
+    constexpr int type() const noexcept { return SOCK_DGRAM; }
+    constexpr int protocol() const noexcept { return IPPROTO_UDP; }
+
+  private:
+    constexpr explicit udp(int __family) : _M_family(__family) { }
+
+    int _M_family;
+  };
+
+  /** udp comparisons
+   * @{
+   */
+
+  constexpr bool
+  operator==(const udp& __a, const udp& __b) noexcept
+  { return __a.family() == __b.family(); }
+
+  constexpr bool
+  operator!=(const udp& __a, const udp& __b) noexcept
+  { return !(__a == __b); }
+
+  /// @}
+#endif // IPPROTO_UDP
+
+#if defined IPPROTO_IP && defined IPPROTO_IPV6
+
+  /// Restrict a socket created for an IPv6 protocol to IPv6 only.
+  class v6_only : public __sockopt_crtp<v6_only, bool>
+  {
+  public:
+    using __sockopt_crtp::__sockopt_crtp;
+    using __sockopt_crtp::operator=;
+
+  private:
+    friend __sockopt_crtp<v6_only, bool>;
+    static const int _S_level = IPPROTO_IPV6;
+    static const int _S_name = IPV6_V6ONLY;
+  };
+
+  namespace unicast
+  {
+    /// Set the default number of hops (TTL) for outbound datagrams.
+    class hops : public __sockopt_crtp<hops>
+    {
+    public:
+      using __sockopt_crtp::__sockopt_crtp;
+      using __sockopt_crtp::operator=;
+
+      template<typename _Protocol>
+	int
+	level(const _Protocol& __p) const noexcept
+	{ return __p.family() == AF_INET6 ? IPPROTO_IPV6 : IPPROTO_IP; }
+
+      template<typename _Protocol>
+	int
+	name(const _Protocol& __p) const noexcept
+	{ return __p.family() == AF_INET6 ? IPV6_UNICAST_HOPS : IP_TTL; }
+    };
+  } // namespace unicast
+
+  namespace multicast
+  {
+    class __mcastopt
+    {
+    public:
+      explicit
+      __mcastopt(const address& __grp) noexcept
+      : __mcastopt(__grp.is_v4() ? __mcastopt(__grp.to_v4()) : __mcastopt(__grp.to_v6()))
+      { }
+
+      explicit
+      __mcastopt(const address_v4& __grp,
+		 const address_v4& __iface = address_v4::any()) noexcept
+      {
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+	_M_v4.imr_multiaddr.s_addr = __grp.to_uint();
+	_M_v4.imr_interface.s_addr = __iface.to_uint();
+#else
+	_M_v4.imr_multiaddr.s_addr = __builtin_bswap32(__grp.to_uint());
+	_M_v4.imr_interface.s_addr = __builtin_bswap32(__iface.to_uint());
+#endif
+      }
+
+      explicit
+      __mcastopt(const address_v6& __grp, unsigned int __iface = 0) noexcept
+      {
+	const auto __addr = __grp.to_bytes();
+	__builtin_memcpy(_M_v6.ipv6mr_multiaddr.s6_addr, __addr.data(), 16);
+	_M_v6.ipv6mr_interface = __iface;
+      }
+
+      template<typename _Protocol>
+	int
+	level(const _Protocol& __p) const noexcept
+	{ return __p.family() == AF_INET6 ? IPPROTO_IPV6 : IPPROTO_IP; }
+
+      template<typename _Protocol>
+	const void*
+	data(const _Protocol& __p) const noexcept
+	{ return __p.family() == AF_INET6 ? &_M_v6 : &_M_v4; }
+
+      template<typename _Protocol>
+	size_t
+	size(const _Protocol& __p) const noexcept
+	{ return __p.family() == AF_INET6 ? sizeof(_M_v6) : sizeof(_M_v4); }
+
+    private:
+      ipv6_mreq _M_v6 = {};
+      ip_mreq _M_v4 = {};
+    };
+
+    /// Request that a socket joins a multicast group.
+    class join_group : private __mcastopt
+    {
+    public:
+      using __mcastopt::__mcastopt;
+      using __mcastopt::level;
+      using __mcastopt::data;
+      using __mcastopt::size;
+
+      template<typename _Protocol>
+	int
+	name(const _Protocol& __p) const noexcept
+	{
+	  if (__p.family() == AF_INET6)
+	    return IPV6_JOIN_GROUP;
+	  return IP_ADD_MEMBERSHIP;
+	}
+    };
+
+    /// Request that a socket leaves a multicast group.
+    class leave_group : private __mcastopt
+    {
+    public:
+      using __mcastopt::__mcastopt;
+      using __mcastopt::level;
+      using __mcastopt::data;
+      using __mcastopt::size;
+
+      template<typename _Protocol>
+	int
+	name(const _Protocol& __p) const noexcept
+	{
+	  if (__p.family() == AF_INET6)
+	    return IPV6_LEAVE_GROUP;
+	  return IP_DROP_MEMBERSHIP;
+	}
+    };
+
+    /// Specify the network interface for outgoing multicast datagrams.
+    class outbound_interface
+    {
+    public:
+      explicit
+      outbound_interface(const address_v4& __v4) noexcept
+      {
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+	_M_v4.s_addr = __v4.to_uint();
+#else
+	_M_v4.s_addr = __builtin_bswap32(__v4.to_uint());
+#endif
+      }
+
+      explicit
+      outbound_interface(unsigned int __v6) noexcept
+      : _M_v4(), _M_v6(__v6)
+      { }
+
+      template<typename _Protocol>
+	int
+	level(const _Protocol& __p) const noexcept
+	{ return __p.family() == AF_INET6 ? IPPROTO_IPV6 : IPPROTO_IP; }
+
+      template<typename _Protocol>
+	int
+	name(const _Protocol& __p) const noexcept
+	{
+	  return __p.family() == AF_INET6
+	    ? IPV6_MULTICAST_IF : IP_MULTICAST_IF;
+	}
+
+      template<typename _Protocol>
+	const void*
+	data(const _Protocol& __p) const noexcept
+	{ return __p.family() == AF_INET6 ? &_M_v6 : &_M_v4; }
+
+      template<typename _Protocol>
+	size_t
+	size(const _Protocol& __p) const noexcept
+	{ return __p.family() == AF_INET6 ? sizeof(_M_v6) : sizeof(_M_v4); }
+
+    private:
+      in_addr _M_v4;
+      unsigned _M_v6 = 0;
+    };
+
+    /// Set the default number of hops (TTL) for outbound datagrams.
+    class hops : public __sockopt_crtp<hops>
+    {
+    public:
+      using __sockopt_crtp::__sockopt_crtp;
+      using __sockopt_crtp::operator=;
+
+      template<typename _Protocol>
+	int
+	level(const _Protocol& __p) const noexcept
+	{ return __p.family() == AF_INET6 ? IPPROTO_IPV6 : IPPROTO_IP; }
+
+      template<typename _Protocol>
+	int
+	name(const _Protocol& __p) const noexcept
+	{
+	  return __p.family() == AF_INET6
+	    ? IPV6_MULTICAST_HOPS : IP_MULTICAST_TTL;
+	}
+    };
+
+    /// Set whether datagrams are delivered back to the local application.
+    class enable_loopback : public __sockopt_crtp<enable_loopback, bool>
+    {
+    public:
+      using __sockopt_crtp::__sockopt_crtp;
+      using __sockopt_crtp::operator=;
+
+      template<typename _Protocol>
+	int
+	level(const _Protocol& __p) const noexcept
+	{ return __p.family() == AF_INET6 ? IPPROTO_IPV6 : IPPROTO_IP; }
+
+      template<typename _Protocol>
+	int
+	name(const _Protocol& __p) const noexcept
+	{
+	  return __p.family() == AF_INET6
+	    ? IPV6_MULTICAST_LOOP : IP_MULTICAST_LOOP;
+	}
+    };
+
+  } // namespace multicast
+
+#endif // IPPROTO_IP && IPPROTO_IPV6
+
+  /// @}
+
+} // namespace ip
+} // namespace v1
+} // namespace net
+} // namespace experimental
+
+  template<>
+    struct is_error_condition_enum<experimental::net::v1::ip::resolver_errc>
+    : public true_type {};
+
+  // hash support
+  template<typename _Tp> struct hash;
+  template<>
+    struct hash<experimental::net::v1::ip::address>
+    : __hash_base<size_t, experimental::net::v1::ip::address>
+    {
+      size_t
+      operator()(const experimental::net::v1::ip::address& __a) const
+      {
+	if (__a.is_v4())
+	  return _Hash_impl::hash(__a.to_v4());
+	else
+	  return _Hash_impl::hash(__a.to_v6());
+      }
+    };
+
+  template<>
+    struct hash<experimental::net::v1::ip::address_v4>
+    : __hash_base<size_t, experimental::net::v1::ip::address_v4>
+    {
+      size_t
+      operator()(const experimental::net::v1::ip::address_v4& __a) const
+      { return _Hash_impl::hash(__a.to_bytes()); }
+    };
+
+  template<> struct hash<experimental::net::v1::ip::address_v6>
+    : __hash_base<size_t, experimental::net::v1::ip::address_v6>
+    {
+      size_t
+      operator()(const experimental::net::v1::ip::address_v6& __a) const
+      { return _Hash_impl::hash(__a.to_bytes()); }
+    };
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // C++14
+
+#endif // _GLIBCXX_EXPERIMENTAL_INTERNET

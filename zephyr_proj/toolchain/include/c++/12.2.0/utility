@@ -1,0 +1,225 @@
+// <utility> -*- C++ -*-
+
+// Copyright (C) 2001-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/*
+ *
+ * Copyright (c) 1994
+ * Hewlett-Packard Company
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Hewlett-Packard Company makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ *
+ *
+ * Copyright (c) 1996,1997
+ * Silicon Graphics Computer Systems, Inc.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Silicon Graphics makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+/** @file include/utility
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_UTILITY
+#define _GLIBCXX_UTILITY 1
+
+#pragma GCC system_header
+
+/**
+ * @defgroup utilities Utilities
+ *
+ * Basic function and class templates used with the rest of the library.
+ * Includes pair, swap, forward/move helpers, declval, integer_sequence.
+ */
+
+#include <bits/c++config.h>
+#include <bits/stl_relops.h>
+#include <bits/stl_pair.h>
+
+#if __cplusplus >= 201103L
+
+#include <initializer_list>
+#include <type_traits>
+#include <bits/move.h>
+#include <bits/utility.h>
+
+#if __cplusplus >= 202002L
+#include <ext/numeric_traits.h> // __is_standard_integer, __int_traits
+#endif
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+#if __cplusplus >= 201402L
+#define __cpp_lib_exchange_function 201304L
+
+  /// Assign @p __new_val to @p __obj and return its previous value.
+  template <typename _Tp, typename _Up = _Tp>
+    _GLIBCXX20_CONSTEXPR
+    inline _Tp
+    exchange(_Tp& __obj, _Up&& __new_val)
+    noexcept(__and_<is_nothrow_move_constructible<_Tp>,
+		    is_nothrow_assignable<_Tp&, _Up>>::value)
+    { return std::__exchange(__obj, std::forward<_Up>(__new_val)); }
+
+#if __cplusplus >= 201703L
+
+#define  __cpp_lib_as_const 201510L
+  template<typename _Tp>
+    [[nodiscard]]
+    constexpr add_const_t<_Tp>&
+    as_const(_Tp& __t) noexcept
+    { return __t; }
+
+  template<typename _Tp>
+    void as_const(const _Tp&&) = delete;
+
+#if __cplusplus > 201703L
+#define __cpp_lib_integer_comparison_functions 202002L
+
+  template<typename _Tp, typename _Up>
+    constexpr bool
+    cmp_equal(_Tp __t, _Up __u) noexcept
+    {
+      static_assert(__is_standard_integer<_Tp>::value);
+      static_assert(__is_standard_integer<_Up>::value);
+
+      if constexpr (is_signed_v<_Tp> == is_signed_v<_Up>)
+	return __t == __u;
+      else if constexpr (is_signed_v<_Tp>)
+	return __t >= 0 && make_unsigned_t<_Tp>(__t) == __u;
+      else
+	return __u >= 0 && __t == make_unsigned_t<_Up>(__u);
+    }
+
+  template<typename _Tp, typename _Up>
+    constexpr bool
+    cmp_not_equal(_Tp __t, _Up __u) noexcept
+    { return !std::cmp_equal(__t, __u); }
+
+  template<typename _Tp, typename _Up>
+    constexpr bool
+    cmp_less(_Tp __t, _Up __u) noexcept
+    {
+      static_assert(__is_standard_integer<_Tp>::value);
+      static_assert(__is_standard_integer<_Up>::value);
+
+      if constexpr (is_signed_v<_Tp> == is_signed_v<_Up>)
+	return __t < __u;
+      else if constexpr (is_signed_v<_Tp>)
+	return __t < 0 || make_unsigned_t<_Tp>(__t) < __u;
+      else
+	return __u >= 0 && __t < make_unsigned_t<_Up>(__u);
+    }
+
+  template<typename _Tp, typename _Up>
+    constexpr bool
+    cmp_greater(_Tp __t, _Up __u) noexcept
+    { return std::cmp_less(__u, __t); }
+
+  template<typename _Tp, typename _Up>
+    constexpr bool
+    cmp_less_equal(_Tp __t, _Up __u) noexcept
+    { return !std::cmp_less(__u, __t); }
+
+  template<typename _Tp, typename _Up>
+    constexpr bool
+    cmp_greater_equal(_Tp __t, _Up __u) noexcept
+    { return !std::cmp_less(__t, __u); }
+
+  template<typename _Up, typename _Tp>
+    constexpr bool
+    in_range(_Tp __t) noexcept
+    {
+      static_assert(__is_standard_integer<_Up>::value);
+      static_assert(__is_standard_integer<_Tp>::value);
+      using __gnu_cxx::__int_traits;
+
+      if constexpr (is_signed_v<_Tp> == is_signed_v<_Up>)
+	return __int_traits<_Up>::__min <= __t
+	  && __t <= __int_traits<_Up>::__max;
+      else if constexpr (is_signed_v<_Tp>)
+	return __t >= 0
+	  && make_unsigned_t<_Tp>(__t) <= __int_traits<_Up>::__max;
+      else
+	return __t <= make_unsigned_t<_Up>(__int_traits<_Up>::__max);
+    }
+
+#if __cplusplus > 202002L
+#define __cpp_lib_to_underlying 202102L
+  /// Convert an object of enumeration type to its underlying type.
+  template<typename _Tp>
+    [[nodiscard]]
+    constexpr underlying_type_t<_Tp>
+    to_underlying(_Tp __value) noexcept
+    { return static_cast<underlying_type_t<_Tp>>(__value); }
+
+#define __cpp_lib_unreachable 202202L
+  /// Informs the compiler that program control flow never reaches this point.
+  /**
+   * Evaluating a call to this function results in undefined behaviour.
+   * This can be used as an assertion informing the compiler that certain
+   * conditions are impossible, for when the compiler is unable to determine
+   * that by itself.
+   *
+   * For example, it can be used to prevent warnings about reaching the
+   * end of a non-void function without returning.
+   *
+   * @since C++23
+   */
+  [[noreturn,__gnu__::__always_inline__]]
+  inline void
+  unreachable()
+  {
+#ifdef _GLIBCXX_DEBUG
+    std::__glibcxx_assert_fail(nullptr, 0, "std::unreachable()", nullptr);
+#elif defined _GLIBCXX_ASSERTIONS
+    __builtin_trap();
+#else
+    __builtin_unreachable();
+#endif
+  }
+#endif // C++23
+#endif // C++20
+#endif // C++17
+#endif // C++14
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace
+
+#endif
+
+#endif /* _GLIBCXX_UTILITY */

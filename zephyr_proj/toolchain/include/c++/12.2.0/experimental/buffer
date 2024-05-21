@@ -1,0 +1,892 @@
+// <experimental/buffer> -*- C++ -*-
+
+// Copyright (C) 2015-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/buffer
+ *  This is a TS C++ Library header.
+ *  @ingroup networking-ts
+ */
+
+#ifndef _GLIBCXX_EXPERIMENTAL_BUFFER
+#define _GLIBCXX_EXPERIMENTAL_BUFFER 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <array>
+#include <string>
+#include <system_error>
+#include <vector>
+#include <cstring>
+#include <experimental/string_view>
+#include <experimental/bits/net.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+namespace experimental
+{
+namespace net
+{
+inline namespace v1
+{
+
+  /** @addtogroup networking-ts
+   *  @{
+   */
+
+  enum class stream_errc {    // TODO decide values
+    eof = 1,
+    not_found = 2
+  };
+
+  const error_category& stream_category() noexcept // TODO not inline
+  {
+    struct __cat : error_category
+    {
+      const char* name() const noexcept { return "stream"; }
+
+      std::string message(int __e) const
+      {
+	if (__e == (int)stream_errc::eof)
+	  return "EOF";
+	else if (__e == (int)stream_errc::not_found)
+	  return "not found";
+	return "stream";
+      }
+
+      virtual void __message(int) { } // TODO dual ABI XXX
+    };
+    static __cat __c;
+    return __c;
+  }
+
+  inline error_code
+  make_error_code(stream_errc __e) noexcept
+  { return error_code(static_cast<int>(__e), stream_category()); }
+
+  inline error_condition
+  make_error_condition(stream_errc __e) noexcept
+  { return error_condition(static_cast<int>(__e), stream_category()); }
+
+  class mutable_buffer
+  {
+  public:
+    // constructors:
+    mutable_buffer() noexcept : _M_data(), _M_size() { }
+
+    mutable_buffer(void* __p, size_t __n) noexcept
+    : _M_data(__p), _M_size(__n) { }
+
+    // members:
+    void* data() const noexcept { return _M_data; }
+    size_t size() const noexcept { return _M_size; }
+
+  private:
+    void*	_M_data;
+    size_t	_M_size;
+  };
+
+  class const_buffer
+  {
+  public:
+    // constructors:
+    const_buffer() noexcept : _M_data(), _M_size() { }
+
+    const_buffer(const void* __p, size_t __n) noexcept
+    : _M_data(__p), _M_size(__n) { }
+
+    const_buffer(const mutable_buffer& __b) noexcept
+    : _M_data(__b.data()), _M_size(__b.size()) { }
+
+    // members:
+    const void* data() const noexcept { return _M_data; }
+    size_t size() const noexcept { return _M_size; }
+
+  private:
+    const void*	_M_data;
+    size_t	_M_size;
+  };
+
+
+  /** @brief buffer sequence access
+   *
+   * Uniform access to types that meet the BufferSequence requirements.
+   * @{
+   */
+
+  inline const mutable_buffer*
+  buffer_sequence_begin(const mutable_buffer& __b)
+  { return std::addressof(__b); }
+
+  inline const const_buffer*
+  buffer_sequence_begin(const const_buffer& __b)
+  { return std::addressof(__b); }
+
+  inline const mutable_buffer*
+  buffer_sequence_end(const mutable_buffer& __b)
+  { return std::addressof(__b) + 1; }
+
+  inline const const_buffer*
+  buffer_sequence_end(const const_buffer& __b)
+  { return std::addressof(__b) + 1; }
+
+  template<typename _Cont>
+    auto
+    buffer_sequence_begin(_Cont& __c) -> decltype(__c.begin())
+    { return __c.begin(); }
+
+  template<typename _Cont>
+    auto
+    buffer_sequence_begin(const _Cont& __c) -> decltype(__c.begin())
+    { return __c.begin(); }
+
+  template<typename _Cont>
+    auto
+    buffer_sequence_end(_Cont& __c) -> decltype(__c.end())
+    { return __c.end(); }
+
+  template<typename _Cont>
+    auto
+    buffer_sequence_end(const _Cont& __c) -> decltype(__c.end())
+    { return __c.end(); }
+
+  /// @}
+
+
+  /** @brief buffer type traits
+   *
+   * @{
+   */
+
+  template<typename _Tp, typename _Buffer,
+	   typename _Begin
+	    = decltype(net::buffer_sequence_begin(std::declval<_Tp&>())),
+	   typename _End
+	    = decltype(net::buffer_sequence_end(std::declval<_Tp&>()))>
+    using __buffer_sequence = enable_if_t<__and_<
+      __is_value_constructible<_Tp>, is_same<_Begin, _End>,
+      is_convertible<typename iterator_traits<_Begin>::value_type, _Buffer>
+      >::value>;
+
+  template<typename _Tp, typename _Buffer, typename = void>
+    struct __is_buffer_sequence : false_type
+    { };
+
+  template<typename _Tp, typename _Buffer>
+    struct __is_buffer_sequence<_Tp, _Buffer, __buffer_sequence<_Tp, _Buffer>>
+    : true_type
+    { };
+
+  template<typename _Tp>
+    struct is_mutable_buffer_sequence
+    : __is_buffer_sequence<_Tp, mutable_buffer>::type
+    { };
+
+  template<typename _Tp>
+    struct is_const_buffer_sequence
+    : __is_buffer_sequence<_Tp, const_buffer>::type
+    { };
+
+  template<typename _Tp>
+    constexpr bool is_mutable_buffer_sequence_v
+      = is_mutable_buffer_sequence<_Tp>::value;
+
+  template<typename _Tp>
+    constexpr bool is_const_buffer_sequence_v
+      = is_const_buffer_sequence<_Tp>::value;
+
+  template<typename _Tp, typename = void>
+    struct __is_dynamic_buffer_impl : false_type
+    { };
+
+  // Check DynamicBuffer requirements.
+  template<typename _Tp, typename _Up = remove_const_t<_Tp>>
+    auto
+    __dynamic_buffer_reqs(_Up* __x = 0, const _Up* __x1 = 0, size_t __n = 0)
+    -> enable_if_t<__and_<
+      is_move_constructible<_Up>,
+      is_const_buffer_sequence<typename _Tp::const_buffers_type>,
+      is_mutable_buffer_sequence<typename _Tp::mutable_buffers_type>,
+      is_same<decltype(__x1->size()), size_t>,
+      is_same<decltype(__x1->max_size()), size_t>,
+      is_same<decltype(__x1->capacity()), size_t>,
+      is_same<decltype(__x1->data()), typename _Tp::const_buffers_type>,
+      is_same<decltype(__x->prepare(__n)), typename _Tp::mutable_buffers_type>,
+      is_void<decltype(__x->commit(__n), __x->consume(__n), void())>
+    >::value>;
+
+  template<typename _Tp>
+    struct __is_dynamic_buffer_impl<_Tp,
+				    decltype(__dynamic_buffer_reqs<_Tp>())>
+    : true_type
+    { };
+
+  template<typename _Tp>
+    struct is_dynamic_buffer : __is_dynamic_buffer_impl<_Tp>::type
+    { };
+
+  template<typename _Tp>
+    constexpr bool is_dynamic_buffer_v = is_dynamic_buffer<_Tp>::value;
+
+  /// @}
+
+  /// buffer size
+  template<typename _ConstBufferSequence>
+    size_t
+    buffer_size(const _ConstBufferSequence& __buffers) noexcept
+    {
+      size_t __total_size = 0;
+      auto __i = net::buffer_sequence_begin(__buffers);
+      const auto __end = net::buffer_sequence_end(__buffers);
+      for (; __i != __end; ++__i)
+	__total_size += const_buffer(*__i).size();
+      return __total_size;
+    }
+
+  template<typename _ConstBufferSequence>
+    bool
+    __buffer_empty(const _ConstBufferSequence& __buffers) noexcept
+    {
+      auto __i = net::buffer_sequence_begin(__buffers);
+      const auto __end = net::buffer_sequence_end(__buffers);
+      for (; __i != __end; ++__i)
+	if (const_buffer(*__i).size() != 0)
+	  return false;
+      return true;
+    }
+
+  // buffer copy:
+
+  template<typename _MutableBufferSequence, typename _ConstBufferSequence>
+    size_t
+    buffer_copy(const _MutableBufferSequence& __dest,
+		const _ConstBufferSequence& __source,
+		size_t __max_size) noexcept
+    {
+      size_t __total_size = 0;
+      auto __to_i = net::buffer_sequence_begin(__dest);
+      const auto __to_end = net::buffer_sequence_end(__dest);
+      auto __from_i = net::buffer_sequence_begin(__source);
+      const auto __from_end = net::buffer_sequence_end(__source);
+      mutable_buffer __to;
+      const_buffer __from;
+      while (((__from_i != __from_end && __to_i != __to_end)
+	    || (__from.size() && __to.size()))
+	  && __total_size < __max_size)
+	{
+	  if (__from.size() == 0)
+	    __from = const_buffer{*__from_i++};
+	  if (__to.size() == 0)
+	    __to = mutable_buffer{*__to_i++};
+
+	  size_t __n = std::min(__from.size(), __to.size());
+	  __n = std::min(__n, __max_size - __total_size);
+	  std::memcpy(__to.data(), __from.data(), __n);
+	  __from = { (const char*)__from.data() + __n, __from.size() - __n };
+	  __to = { (char*)__to.data() + __n, __to.size() - __n };
+	  __total_size += __n;
+	}
+      return __total_size;
+    }
+
+  template<typename _MutableBufferSequence, typename _ConstBufferSequence>
+    inline size_t
+    buffer_copy(const _MutableBufferSequence& __dest,
+		const _ConstBufferSequence& __source) noexcept
+    { return net::buffer_copy(__dest, __source, size_t(-1)); }
+
+
+  // buffer arithmetic:
+
+  inline mutable_buffer
+  operator+(const mutable_buffer& __b, size_t __n) noexcept
+  {
+    if (__n > __b.size())
+      __n = __b.size();
+    return { static_cast<char*>(__b.data()) + __n, __b.size() - __n };
+  }
+
+  inline mutable_buffer
+  operator+(size_t __n, const mutable_buffer& __b) noexcept
+  { return __b + __n; }
+
+  inline const_buffer
+  operator+(const const_buffer& __b, size_t __n) noexcept
+  {
+    if (__n > __b.size())
+      __n = __b.size();
+    return { static_cast<const char*>(__b.data()) + __n, __b.size() - __n };
+  }
+
+  inline const_buffer
+  operator+(size_t __n, const const_buffer& __b) noexcept
+  { return __b + __n; }
+
+  // buffer creation:
+
+  inline mutable_buffer
+  buffer(void* __p, size_t __n) noexcept
+  { return { __p, __n }; }
+
+  inline const_buffer
+  buffer(const void* __p, size_t __n) noexcept
+  { return { __p, __n }; }
+
+  inline mutable_buffer
+  buffer(const mutable_buffer& __b) noexcept
+  { return __b; }
+
+  inline mutable_buffer
+  buffer(const mutable_buffer& __b, size_t __n) noexcept
+  { return { __b.data(), std::min(__b.size(), __n) }; }
+
+  inline const_buffer
+  buffer(const const_buffer& __b) noexcept
+  { return __b; }
+
+  inline const_buffer
+  buffer(const const_buffer& __b, size_t __n) noexcept
+  { return { __b.data(), std::min(__b.size(), __n) }; }
+
+  template<typename _Tp>
+    inline mutable_buffer
+    __to_mbuf(_Tp* __data, size_t __n)
+    { return { __n ? __data : nullptr, __n * sizeof(_Tp) }; }
+
+  template<typename _Tp>
+    inline const_buffer
+    __to_cbuf(const _Tp* __data, size_t __n)
+    { return { __n ? __data : nullptr, __n * sizeof(_Tp) }; }
+
+  template<typename _Tp, size_t _Nm>
+    inline mutable_buffer
+    buffer(_Tp (&__data)[_Nm]) noexcept
+    { return net::__to_mbuf(__data, _Nm); }
+
+  template<typename _Tp, size_t _Nm>
+    inline const_buffer
+    buffer(const _Tp (&__data)[_Nm]) noexcept
+    { return net::__to_cbuf(__data, _Nm); }
+
+  template<typename _Tp, size_t _Nm>
+    inline mutable_buffer
+    buffer(array<_Tp, _Nm>& __data) noexcept
+    { return net::__to_mbuf(__data.data(), _Nm); }
+
+  template<typename _Tp, size_t _Nm>
+    inline const_buffer
+    buffer(array<const _Tp, _Nm>& __data) noexcept
+    { return net::__to_cbuf(__data.data(), __data.size()); }
+
+  template<typename _Tp, size_t _Nm>
+    inline const_buffer
+    buffer(const array<_Tp, _Nm>& __data) noexcept
+    { return net::__to_cbuf(__data.data(), __data.size()); }
+
+  template<typename _Tp, typename _Allocator>
+    inline mutable_buffer
+    buffer(vector<_Tp, _Allocator>& __data) noexcept
+    { return net::__to_mbuf(__data.data(), __data.size()); }
+
+  template<typename _Tp, typename _Allocator>
+    inline const_buffer
+    buffer(const vector<_Tp, _Allocator>& __data) noexcept
+    { return net::__to_cbuf(__data.data(), __data.size()); }
+
+  template<typename _CharT, typename _Traits, typename _Allocator>
+    inline mutable_buffer
+    buffer(basic_string<_CharT, _Traits, _Allocator>& __data) noexcept
+    { return net::__to_mbuf(&__data.front(), __data.size()); }
+
+  template<typename _CharT, typename _Traits, typename _Allocator>
+    inline const_buffer
+    buffer(const basic_string<_CharT, _Traits, _Allocator>& __data) noexcept
+    { return net::__to_cbuf(&__data.front(), __data.size()); }
+
+  template<typename _CharT, typename _Traits>
+    inline const_buffer
+    buffer(basic_string_view<_CharT, _Traits> __data) noexcept
+    { return net::__to_cbuf(__data.data(), __data.size()); }
+
+  template<typename _Tp, size_t _Nm>
+    inline mutable_buffer
+    buffer(_Tp (&__data)[_Nm], size_t __n) noexcept
+    { return buffer(net::buffer(__data), __n * sizeof(_Tp)); }
+
+  template<typename _Tp, size_t _Nm>
+    inline const_buffer
+    buffer(const _Tp (&__data)[_Nm], size_t __n) noexcept
+    { return buffer(net::buffer(__data), __n * sizeof(_Tp)); }
+
+  template<typename _Tp, size_t _Nm>
+    inline mutable_buffer
+    buffer(array<_Tp, _Nm>& __data, size_t __n) noexcept
+    { return buffer(net::buffer(__data), __n * sizeof(_Tp)); }
+
+  template<typename _Tp, size_t _Nm>
+    inline const_buffer
+    buffer(array<const _Tp, _Nm>& __data, size_t __n) noexcept
+    { return buffer(net::buffer(__data), __n * sizeof(_Tp)); }
+
+  template<typename _Tp, size_t _Nm>
+    inline const_buffer
+    buffer(const array<_Tp, _Nm>& __data, size_t __n) noexcept
+    { return buffer(net::buffer(__data), __n * sizeof(_Tp)); }
+
+  template<typename _Tp, typename _Allocator>
+    inline mutable_buffer
+    buffer(vector<_Tp, _Allocator>& __data, size_t __n) noexcept
+    { return buffer(net::buffer(__data), __n * sizeof(_Tp)); }
+
+  template<typename _Tp, typename _Allocator>
+    inline const_buffer
+    buffer(const vector<_Tp, _Allocator>& __data, size_t __n) noexcept
+    { return buffer(net::buffer(__data), __n * sizeof(_Tp)); }
+
+  template<typename _CharT, typename _Traits, typename _Allocator>
+    inline mutable_buffer
+    buffer(basic_string<_CharT, _Traits, _Allocator>& __data,
+	   size_t __n) noexcept
+    { return buffer(net::buffer(__data), __n * sizeof(_CharT)); }
+
+  template<typename _CharT, typename _Traits, typename _Allocator>
+    inline const_buffer
+    buffer(const basic_string<_CharT, _Traits, _Allocator>& __data,
+	   size_t __n) noexcept
+    { return buffer(net::buffer(__data), __n * sizeof(_CharT)); }
+
+  template<typename _CharT, typename _Traits>
+    inline const_buffer
+    buffer(basic_string_view<_CharT, _Traits> __data, size_t __n) noexcept
+    { return buffer(net::buffer(__data), __n * sizeof(_CharT)); }
+
+
+  template<typename _Sequence>
+    class __dynamic_buffer_base
+    {
+    public:
+      // types:
+      using const_buffers_type = const_buffer;
+      using mutable_buffers_type = mutable_buffer;
+
+      // constructors:
+      explicit
+      __dynamic_buffer_base(_Sequence& __seq) noexcept
+      : _M_seq(__seq), _M_size(__seq.size()), _M_max_size(__seq.max_size())
+      { }
+
+      __dynamic_buffer_base(_Sequence& __seq, size_t __maximum_size) noexcept
+      : _M_seq(__seq), _M_size(__seq.size()), _M_max_size(__maximum_size)
+      { __glibcxx_assert(__seq.size() <= __maximum_size); }
+
+      __dynamic_buffer_base(__dynamic_buffer_base&&) = default;
+
+      // members:
+      size_t size() const noexcept { return _M_size; }
+      size_t max_size() const noexcept { return _M_max_size; }
+      size_t capacity() const noexcept { return _M_seq.capacity(); }
+
+      const_buffers_type
+      data() const noexcept
+      { return net::buffer(_M_seq, _M_size); }
+
+      mutable_buffers_type
+      prepare(size_t __n)
+      {
+	if ((_M_size + __n) > _M_max_size)
+	  __throw_length_error("dynamic_vector_buffer::prepare");
+
+	_M_seq.resize(_M_size + __n);
+	return buffer(net::buffer(_M_seq) + _M_size, __n);
+      }
+
+      void
+      commit(size_t __n)
+      {
+	_M_size += std::min(__n, _M_seq.size() - _M_size);
+	_M_seq.resize(_M_size);
+      }
+
+      void
+      consume(size_t __n)
+      {
+	size_t __m = std::min(__n, _M_size);
+	_M_seq.erase(_M_seq.begin(), _M_seq.begin() + __m);
+	_M_size -= __m;
+      }
+
+    private:
+      _Sequence&	_M_seq;
+      size_t		_M_size;
+      const size_t	_M_max_size;
+    };
+
+  template<typename _Tp, typename _Allocator>
+    class dynamic_vector_buffer
+    : public __dynamic_buffer_base<vector<_Tp, _Allocator>>
+    {
+    public:
+      using __dynamic_buffer_base<vector<_Tp, _Allocator>>::__dynamic_buffer_base;
+    };
+
+  template<typename _CharT, typename _Traits, typename _Allocator>
+    class dynamic_string_buffer
+    : public __dynamic_buffer_base<basic_string<_CharT, _Traits, _Allocator>>
+    {
+    public:
+      using __dynamic_buffer_base<basic_string<_CharT, _Traits, _Allocator>>::
+	__dynamic_buffer_base;
+    };
+
+  // dynamic buffer creation:
+
+  template<typename _Tp, typename _Allocator>
+    inline dynamic_vector_buffer<_Tp, _Allocator>
+    dynamic_buffer(vector<_Tp, _Allocator>& __vec) noexcept
+    { return dynamic_vector_buffer<_Tp, _Allocator>{__vec}; }
+
+  template<typename _Tp, typename _Allocator>
+    inline dynamic_vector_buffer<_Tp, _Allocator>
+    dynamic_buffer(vector<_Tp, _Allocator>& __vec, size_t __n) noexcept
+    { return {__vec, __n}; }
+
+  template<typename _CharT, typename _Traits, typename _Allocator>
+    inline dynamic_string_buffer<_CharT, _Traits, _Allocator>
+    dynamic_buffer(basic_string<_CharT, _Traits, _Allocator>& __str) noexcept
+    { return dynamic_string_buffer<_CharT, _Traits, _Allocator>{__str}; }
+
+  template<typename _CharT, typename _Traits, typename _Allocator>
+    inline dynamic_string_buffer<_CharT, _Traits, _Allocator>
+    dynamic_buffer(basic_string<_CharT, _Traits, _Allocator>& __str,
+		   size_t __n) noexcept
+    { return {__str, __n}; }
+
+  class transfer_all
+  {
+  public:
+    size_t operator()(const error_code& __ec, size_t) const
+    { return !__ec ? 1500 : 0; }
+  };
+
+  class transfer_at_least
+  {
+  public:
+    explicit transfer_at_least(size_t __m) : _M_minimum(__m) { }
+
+    size_t operator()(const error_code& __ec, size_t __n) const
+    { return !__ec  && __n < _M_minimum ? _M_minimum - __n : 0; }
+
+  private:
+    size_t _M_minimum;
+  };
+
+  class transfer_exactly
+  {
+  public:
+    explicit transfer_exactly(size_t __e) : _M_exact(__e) { }
+
+    size_t operator()(const error_code& __ec, size_t __n) const
+    {
+      size_t _Nm = -1;
+      return !__ec  && __n < _M_exact ? std::min(_M_exact - __n, _Nm) : 0;
+    }
+
+  private:
+    size_t _M_exact;
+  };
+
+  /** @brief synchronous read operations
+   * @{
+   */
+
+  template<typename _SyncReadStream, typename _MutableBufferSequence,
+	   typename _CompletionCondition>
+    enable_if_t<is_mutable_buffer_sequence<_MutableBufferSequence>::value,
+		size_t>
+    read(_SyncReadStream& __stream, const _MutableBufferSequence& __buffers,
+	 _CompletionCondition __completion_condition, error_code& __ec)
+    {
+      __ec.clear();
+      auto __i = net::buffer_sequence_begin(__buffers);
+      auto __end = net::buffer_sequence_end(__buffers);
+      mutable_buffer __to;
+      size_t __total = 0;
+      size_t __n;
+      while ((__n = __completion_condition(__ec, __total))
+	  && (__i != __end || __to.size()))
+	{
+	  if (__to.size() == 0)
+	    __to = mutable_buffer(*__i++);
+	  __n = __stream.read_some(buffer(__to, __n), __ec);
+	  __to = __to + __n;
+	  __total += __n;
+	}
+      return __total;
+    }
+
+  template<typename _SyncReadStream, typename _MutableBufferSequence>
+    inline
+    enable_if_t<is_mutable_buffer_sequence<_MutableBufferSequence>::value,
+		size_t>
+    read(_SyncReadStream& __stream, const _MutableBufferSequence& __buffers)
+    {
+      error_code __ec;
+      return net::read(__stream, __buffers, transfer_all{}, __ec);
+    }
+
+  template<typename _SyncReadStream, typename _MutableBufferSequence>
+    inline
+    enable_if_t<is_mutable_buffer_sequence<_MutableBufferSequence>::value,
+		size_t>
+    read(_SyncReadStream& __stream, const _MutableBufferSequence& __buffers,
+	 error_code& __ec)
+    { return net::read(__stream, __buffers, transfer_all{}, __ec); }
+
+  template<typename _SyncReadStream, typename _MutableBufferSequence,
+	   typename _CompletionCondition>
+    inline
+    enable_if_t<is_mutable_buffer_sequence<_MutableBufferSequence>::value,
+		size_t>
+    read(_SyncReadStream& __stream, const _MutableBufferSequence& __buffers,
+	 _CompletionCondition __completion_condition)
+    {
+      error_code __ec;
+      return net::read(__stream, __buffers, __completion_condition, __ec);
+    }
+
+
+  template<typename _SyncReadStream, typename _DynamicBuffer,
+	   typename _CompletionCondition>
+    enable_if_t<is_dynamic_buffer<decay_t<_DynamicBuffer>>::value, size_t>
+    read(_SyncReadStream& __stream, _DynamicBuffer&& __b,
+	 _CompletionCondition __completion_condition, error_code& __ec)
+    {
+      const size_t __limit = 64;
+      __ec.clear();
+      size_t __cap = std::max(__b.capacity() - __b.size(), __limit);
+      size_t __total = 0;
+      size_t __n;
+      while ((__n = __completion_condition(__ec, __total))
+	  && __b.size() != __b.max_size())
+	{
+	  __n =  std::min(__n, __b.max_size() - __b.size());
+	  size_t __cap = std::max(__b.capacity() - __b.size(), __limit);
+	  mutable_buffer __to = __b.prepare(std::min(__cap, __n));
+	  __n = __stream.read_some(__to, __ec);
+	  __to = __to + __n;
+	  __total += __n;
+	  __b.commit(__n);
+	}
+      return __total;
+    }
+
+  template<typename _SyncReadStream, typename _DynamicBuffer>
+    inline enable_if_t<is_dynamic_buffer<_DynamicBuffer>::value, size_t>
+    read(_SyncReadStream& __stream, _DynamicBuffer&& __b)
+    {
+      error_code __ec;
+      return net::read(__stream, __b, transfer_all{}, __ec);
+    }
+
+  template<typename _SyncReadStream, typename _DynamicBuffer>
+    inline enable_if_t<is_dynamic_buffer<_DynamicBuffer>::value, size_t>
+    read(_SyncReadStream& __stream, _DynamicBuffer&& __b, error_code& __ec)
+    {
+      return net::read(__stream, __b, transfer_all{}, __ec);
+    }
+
+  template<typename _SyncReadStream, typename _DynamicBuffer,
+	   typename _CompletionCondition>
+    inline enable_if_t<is_dynamic_buffer<_DynamicBuffer>::value, size_t>
+    read(_SyncReadStream& __stream, _DynamicBuffer&& __b,
+	 _CompletionCondition __completion_condition)
+    {
+      error_code __ec;
+      return net::read(__stream, __b, __completion_condition, __ec);
+    }
+
+  /// @}
+
+  /** @brief asynchronous read operations
+   * @{
+   */
+
+  template<typename _AsyncReadStream, typename _MutableBufferSequence,
+	   typename _CompletionCondition, typename _CompletionToken>
+    __deduced_t<_CompletionToken, void(error_code, size_t)>
+    async_read(_AsyncReadStream& __stream,
+	       const _MutableBufferSequence& __buffers,
+	       _CompletionCondition __completion_condition,
+	       _CompletionToken&& __token)
+    {
+      error_code __ec;
+    }
+
+  template<typename _AsyncReadStream, typename _MutableBufferSequence,
+	   typename _CompletionToken>
+    inline __deduced_t<_CompletionToken, void(error_code, size_t)>
+    async_read(_AsyncReadStream& __stream,
+	       const _MutableBufferSequence& __buffers,
+	       _CompletionToken&& __token)
+    {
+      return net::async_read(__stream, __buffers, transfer_all{},
+			     std::forward<_CompletionToken>(__token));
+    }
+
+  template<typename _AsyncReadStream, typename _DynamicBuffer,
+	   typename _CompletionCondition, typename _CompletionToken>
+    __deduced_t<_CompletionToken, void(error_code, size_t)>
+    async_read(_AsyncReadStream& __stream, _DynamicBuffer&& __b,
+	       _CompletionCondition __completion_condition,
+	       _CompletionToken&& __token)
+    {
+      error_code __ec;
+    }
+
+  template<typename _AsyncReadStream, typename _DynamicBuffer,
+	   typename _CompletionToken>
+    inline __deduced_t<_CompletionToken, void(error_code, size_t)>
+    async_read(_AsyncReadStream& __stream, _DynamicBuffer&& __b,
+	       _CompletionToken&& __token)
+    {
+      return net::async_read(__stream, __b, transfer_all{},
+			     std::forward<_CompletionToken>(__token));
+    }
+
+  /// @}
+
+#if 0
+  /** @brief synchronous write operations:
+   * @{
+   */
+
+  template<typename _SyncWriteStream, typename _ConstBufferSequence>
+    size_t write(_SyncWriteStream& __stream,
+                 const _ConstBufferSequence& __buffers);
+  template<typename _SyncWriteStream, typename _ConstBufferSequence>
+    size_t write(_SyncWriteStream& __stream,
+                 const _ConstBufferSequence& __buffers, error_code& __ec);
+  template<typename _SyncWriteStream, typename _ConstBufferSequence,
+    typename _CompletionCondition>
+      size_t write(_SyncWriteStream& __stream,
+                   const _ConstBufferSequence& __buffers,
+                   _CompletionCondition __completion_condition);
+  template<typename _SyncWriteStream, typename _ConstBufferSequence,
+    typename _CompletionCondition>
+      size_t write(_SyncWriteStream& __stream,
+                   const _ConstBufferSequence& __buffers,
+                   _CompletionCondition __completion_condition,
+                   error_code& __ec);
+
+  template<typename _SyncWriteStream, typename _DynamicBuffer>
+    size_t write(_SyncWriteStream& __stream, _DynamicBuffer&& __b);
+  template<typename _SyncWriteStream, typename _DynamicBuffer>
+    size_t write(_SyncWriteStream& __stream, _DynamicBuffer&& __b, error_code& __ec);
+  template<typename _SyncWriteStream, typename _DynamicBuffer, typename _CompletionCondition>
+    size_t write(_SyncWriteStream& __stream, _DynamicBuffer&& __b,
+                 _CompletionCondition __completion_condition);
+  template<typename _SyncWriteStream, typename _DynamicBuffer, typename _CompletionCondition>
+    size_t write(_SyncWriteStream& __stream, _DynamicBuffer&& __b,
+                 _CompletionCondition __completion_condition, error_code& __ec);
+
+  /// @}
+
+  /** @brief asynchronous write operations
+   * @{
+   */
+
+  template<typename _AsyncWriteStream, typename _ConstBufferSequence,
+    typename _CompletionToken>
+      DEDUCED async_write(_AsyncWriteStream& __stream,
+                       const _ConstBufferSequence& __buffers,
+                       _CompletionToken&& __token);
+  template<typename _AsyncWriteStream, typename _ConstBufferSequence,
+    typename _CompletionCondition, typename _CompletionToken>
+      DEDUCED async_write(_AsyncWriteStream& __stream,
+                       const _ConstBufferSequence& __buffers,
+                       _CompletionCondition __completion_condition,
+                       _CompletionToken&& __token);
+
+  template<typename _AsyncWriteStream, typename _DynamicBuffer, typename _CompletionToken>
+    DEDUCED async_write(_AsyncWriteStream& __stream,
+                     _DynamicBuffer&& __b, _CompletionToken&& __token);
+  template<typename _AsyncWriteStream, typename _DynamicBuffer,
+    typename _CompletionCondition, typename _CompletionToken>
+      DEDUCED async_write(_AsyncWriteStream& __stream,
+                       _DynamicBuffer&& __b,
+                       _CompletionCondition __completion_condition,
+                       _CompletionToken&& __token);
+
+  /// @}
+
+  /** @brief synchronous delimited read operations
+   * @{
+   */
+
+  template<typename _SyncReadStream, typename _DynamicBuffer>
+    size_t read_until(_SyncReadStream& __s, _DynamicBuffer&& __b, char __delim);
+  template<typename _SyncReadStream, typename _DynamicBuffer>
+    size_t read_until(_SyncReadStream& __s, _DynamicBuffer&& __b,
+                      char __delim, error_code& __ec);
+  template<typename _SyncReadStream, typename _DynamicBuffer>
+    size_t read_until(_SyncReadStream& __s, _DynamicBuffer&& __b, string_view __delim);
+  template<typename _SyncReadStream, typename _DynamicBuffer>
+    size_t read_until(_SyncReadStream& __s, _DynamicBuffer&& __b,
+                      string_view __delim, error_code& __ec);
+
+  /// @}
+
+  /** @brief asynchronous delimited read operations
+   * @{
+   */
+
+  template<typename _AsyncReadStream, typename _DynamicBuffer, typename _CompletionToken>
+    DEDUCED async_read_until(_AsyncReadStream& __s,
+                          _DynamicBuffer&& __b, char __delim,
+                          _CompletionToken&& __token);
+  template<typename _AsyncReadStream, typename _DynamicBuffer, typename _CompletionToken>
+    DEDUCED async_read_until(_AsyncReadStream& __s,
+                          _DynamicBuffer&& __b, string_view __delim,
+                          _CompletionToken&& __token);
+
+  /// @}
+
+#endif
+  /// @}
+
+} // namespace v1
+} // namespace net
+} // namespace experimental
+
+  template<>
+    struct is_error_code_enum<experimental::net::v1::stream_errc>
+    : public true_type {};
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // C++14
+
+#endif // _GLIBCXX_EXPERIMENTAL_BUFFER

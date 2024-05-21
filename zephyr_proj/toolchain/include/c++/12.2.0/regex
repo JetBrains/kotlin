@@ -1,0 +1,96 @@
+// <regex> -*- C++ -*-
+
+// Copyright (C) 2007-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/regex
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_REGEX
+#define _GLIBCXX_REGEX 1
+
+#pragma GCC system_header
+
+#if __cplusplus < 201103L
+# include <bits/c++0x_warning.h>
+#else
+
+#include <bitset>
+#include <locale>
+#include <sstream>
+#include <stack>
+#include <stdexcept>
+#include <string>
+
+#include <ext/aligned_buffer.h>
+#include <ext/numeric_traits.h>
+#include <bits/shared_ptr.h>
+#include <bits/std_function.h>
+#include <bits/stl_algobase.h> // std::copy, std::fill_n
+#include <bits/stl_algo.h>     // std::sort, std::unique
+#include <bits/stl_iterator_base_types.h> // std::iterator_traits
+#include <bits/stl_pair.h>
+#include <bits/stl_tree.h>
+#include <bits/stl_map.h>
+#include <bits/stl_vector.h>
+#include <bits/stl_bvector.h>
+#include <bits/vector.tcc>
+#ifdef _GLIBCXX_DEBUG
+# include <debug/vector>
+#endif
+#include <bits/regex_constants.h>
+#include <bits/regex_error.h>
+#include <bits/regex_automaton.h>
+#include <bits/regex_scanner.h>
+#include <bits/regex_compiler.h>
+#include <bits/regex.h>
+#include <bits/regex_executor.h>
+
+#if __cplusplus >= 201703L && _GLIBCXX_USE_CXX11_ABI
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+  namespace pmr
+  {
+    template<typename _Tp> class polymorphic_allocator;
+    template<typename _BidirectionalIterator>
+      using match_results
+	= std::match_results<_BidirectionalIterator, polymorphic_allocator<
+				sub_match<_BidirectionalIterator>>>;
+    using cmatch = match_results<const char*>;
+    // Use __normal_iterator directly, because pmr::string::const_iterator
+    // would require pmr::polymorphic_allocator to be complete.
+    using smatch
+      = match_results<__gnu_cxx::__normal_iterator<const char*, string>>;
+#ifdef _GLIBCXX_USE_WCHAR_T
+    using wcmatch = match_results<const wchar_t*>;
+    using wsmatch
+      = match_results<__gnu_cxx::__normal_iterator<const wchar_t*, wstring>>;
+#endif
+  } // namespace pmr
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // C++17
+#endif // C++11
+
+#endif // _GLIBCXX_REGEX

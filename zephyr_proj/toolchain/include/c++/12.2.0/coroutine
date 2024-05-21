@@ -1,0 +1,369 @@
+// <coroutine> -*- C++ -*-
+
+// Copyright (C) 2019-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/coroutine
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_COROUTINE
+#define _GLIBCXX_COROUTINE 1
+
+#pragma GCC system_header
+
+// It is very likely that earlier versions would work, but they are untested.
+#if __cplusplus >= 201402L
+
+#include <type_traits>
+#if __cplusplus > 201703L
+# include <compare>
+#endif
+
+#if !defined __cpp_lib_three_way_comparison && _GLIBCXX_HOSTED
+# include <bits/stl_function.h> // for std::less
+#endif
+
+/**
+ * @defgroup coroutines Coroutines
+ *
+ * Components for supporting coroutine implementations.
+ *
+ * @since C++20 (and since C++14 as a libstdc++ extension)
+ */
+
+namespace std _GLIBCXX_VISIBILITY (default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+#if __cpp_impl_coroutine
+
+#define __cpp_lib_coroutine 201902L
+
+  inline namespace __n4861 {
+
+  // C++20 17.12.2 coroutine traits
+  /// [coroutine.traits]
+  /// [coroutine.traits.primary]
+  /// If _Result::promise_type is valid and denotes a type then the traits
+  /// have a single publicly accessible member, otherwise they are empty.
+  template <typename _Result, typename... _ArgTypes>
+    struct coroutine_traits;
+
+  template <typename _Result, typename = void>
+   struct __coroutine_traits_impl {};
+
+  template <typename _Result>
+#if __cpp_concepts
+    requires requires { typename _Result::promise_type; }
+    struct __coroutine_traits_impl<_Result, void>
+#else
+    struct __coroutine_traits_impl<_Result,
+				   __void_t<typename _Result::promise_type>>
+#endif
+    {
+      using promise_type = typename _Result::promise_type;
+    };
+
+  template <typename _Result, typename... _ArgTypes>
+    struct coroutine_traits : __coroutine_traits_impl<_Result> {};
+
+  // C++20 17.12.3 Class template coroutine_handle
+  /// [coroutine.handle]
+  template <typename _Promise = void>
+    struct coroutine_handle;
+
+  template <> struct
+    coroutine_handle<void>
+    {
+    public:
+      // [coroutine.handle.con], construct/reset
+      constexpr coroutine_handle() noexcept : _M_fr_ptr(0) {}
+
+      constexpr coroutine_handle(std::nullptr_t __h) noexcept
+	: _M_fr_ptr(__h)
+      {}
+
+      coroutine_handle& operator=(std::nullptr_t) noexcept
+      {
+	_M_fr_ptr = nullptr;
+	return *this;
+      }
+
+    public:
+      // [coroutine.handle.export.import], export/import
+      constexpr void* address() const noexcept { return _M_fr_ptr; }
+
+      constexpr static coroutine_handle from_address(void* __a) noexcept
+      {
+	coroutine_handle __self;
+	__self._M_fr_ptr = __a;
+	return __self;
+      }
+
+    public:
+      // [coroutine.handle.observers], observers
+      constexpr explicit operator bool() const noexcept
+      {
+	return bool(_M_fr_ptr);
+      }
+
+      bool done() const noexcept { return __builtin_coro_done(_M_fr_ptr); }
+
+      // [coroutine.handle.resumption], resumption
+      void operator()() const { resume(); }
+
+      void resume() const { __builtin_coro_resume(_M_fr_ptr); }
+
+      void destroy() const { __builtin_coro_destroy(_M_fr_ptr); }
+
+    protected:
+      void* _M_fr_ptr;
+  };
+
+  // [coroutine.handle.compare], comparison operators
+
+  constexpr bool
+  operator==(coroutine_handle<> __a, coroutine_handle<> __b) noexcept
+  {
+    return __a.address() == __b.address();
+  }
+
+#ifdef __cpp_lib_three_way_comparison
+  constexpr strong_ordering
+  operator<=>(coroutine_handle<> __a, coroutine_handle<> __b) noexcept
+  {
+    return std::compare_three_way()(__a.address(), __b.address());
+  }
+#else
+  // These are to enable operation with std=c++14,17.
+  constexpr bool
+  operator!=(coroutine_handle<> __a, coroutine_handle<> __b) noexcept
+  {
+    return !(__a == __b);
+  }
+
+  constexpr bool
+  operator<(coroutine_handle<> __a, coroutine_handle<> __b) noexcept
+  {
+#if _GLIBCXX_HOSTED
+    return less<void*>()(__a.address(), __b.address());
+#else
+    return (__UINTPTR_TYPE__)__a.address() < (__UINTPTR_TYPE__)__b.address();
+#endif
+  }
+
+  constexpr bool
+  operator>(coroutine_handle<> __a, coroutine_handle<> __b) noexcept
+  {
+    return __b < __a;
+  }
+
+  constexpr bool
+  operator<=(coroutine_handle<> __a, coroutine_handle<> __b) noexcept
+  {
+    return !(__a > __b);
+  }
+
+  constexpr bool
+  operator>=(coroutine_handle<> __a, coroutine_handle<> __b) noexcept
+  {
+    return !(__a < __b);
+  }
+#endif
+
+  template <typename _Promise>
+    struct coroutine_handle
+    {
+      // [coroutine.handle.con], construct/reset
+
+      constexpr coroutine_handle() noexcept { }
+
+      constexpr coroutine_handle(nullptr_t) noexcept { }
+
+      static coroutine_handle
+      from_promise(_Promise& __p)
+      {
+	coroutine_handle __self;
+	__self._M_fr_ptr
+	  = __builtin_coro_promise((char*) &__p, __alignof(_Promise), true);
+	return __self;
+      }
+
+      coroutine_handle& operator=(nullptr_t) noexcept
+      {
+	_M_fr_ptr = nullptr;
+	return *this;
+      }
+
+      // [coroutine.handle.export.import], export/import
+
+      constexpr void* address() const noexcept { return _M_fr_ptr; }
+
+      constexpr static coroutine_handle from_address(void* __a) noexcept
+      {
+	coroutine_handle __self;
+	__self._M_fr_ptr = __a;
+	return __self;
+      }
+
+      // [coroutine.handle.conv], conversion
+      constexpr operator coroutine_handle<>() const noexcept
+      { return coroutine_handle<>::from_address(address()); }
+
+      // [coroutine.handle.observers], observers
+      constexpr explicit operator bool() const noexcept
+      {
+	return bool(_M_fr_ptr);
+      }
+
+      bool done() const noexcept { return __builtin_coro_done(_M_fr_ptr); }
+
+      // [coroutine.handle.resumption], resumption
+      void operator()() const { resume(); }
+
+      void resume() const { __builtin_coro_resume(_M_fr_ptr); }
+
+      void destroy() const { __builtin_coro_destroy(_M_fr_ptr); }
+
+      // [coroutine.handle.promise], promise access
+      _Promise& promise() const
+      {
+	void* __t
+	  = __builtin_coro_promise (_M_fr_ptr, __alignof(_Promise), false);
+	return *static_cast<_Promise*>(__t);
+      }
+
+    private:
+      void* _M_fr_ptr = nullptr;
+    };
+
+  /// [coroutine.noop]
+  struct noop_coroutine_promise
+  {
+  };
+
+  // 17.12.4.1 Class noop_coroutine_promise
+  /// [coroutine.promise.noop]
+  template <>
+    struct coroutine_handle<noop_coroutine_promise>
+    {
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 3460. Unimplementable noop_coroutine_handle guarantees
+      // [coroutine.handle.noop.conv], conversion
+      constexpr operator coroutine_handle<>() const noexcept
+      { return coroutine_handle<>::from_address(address()); }
+
+      // [coroutine.handle.noop.observers], observers
+      constexpr explicit operator bool() const noexcept { return true; }
+
+      constexpr bool done() const noexcept { return false; }
+
+      // [coroutine.handle.noop.resumption], resumption
+      void operator()() const noexcept {}
+
+      void resume() const noexcept {}
+
+      void destroy() const noexcept {}
+
+      // [coroutine.handle.noop.promise], promise access
+      noop_coroutine_promise& promise() const noexcept
+      { return _S_fr.__p; }
+
+      // [coroutine.handle.noop.address], address
+      constexpr void* address() const noexcept { return _M_fr_ptr; }
+
+    private:
+      friend coroutine_handle noop_coroutine() noexcept;
+
+      struct __frame
+      {
+	static void __dummy_resume_destroy() { }
+
+	void (*__r)() = __dummy_resume_destroy;
+	void (*__d)() = __dummy_resume_destroy;
+	struct noop_coroutine_promise __p;
+      };
+
+      static __frame _S_fr;
+
+      explicit coroutine_handle() noexcept = default;
+
+      void* _M_fr_ptr = &_S_fr;
+    };
+
+  using noop_coroutine_handle = coroutine_handle<noop_coroutine_promise>;
+
+  inline noop_coroutine_handle::__frame
+  noop_coroutine_handle::_S_fr{};
+
+  inline noop_coroutine_handle noop_coroutine() noexcept
+  {
+    return noop_coroutine_handle();
+  }
+
+  // 17.12.5 Trivial awaitables
+  /// [coroutine.trivial.awaitables]
+  struct suspend_always
+  {
+    constexpr bool await_ready() const noexcept { return false; }
+
+    constexpr void await_suspend(coroutine_handle<>) const noexcept {}
+
+    constexpr void await_resume() const noexcept {}
+  };
+
+  struct suspend_never
+  {
+    constexpr bool await_ready() const noexcept { return true; }
+
+    constexpr void await_suspend(coroutine_handle<>) const noexcept {}
+
+    constexpr void await_resume() const noexcept {}
+  };
+
+  } // namespace __n4861
+
+#if _GLIBCXX_HOSTED
+  template<typename _Tp> struct hash;
+
+  template<typename _Promise>
+    struct hash<coroutine_handle<_Promise>>
+    {
+      size_t
+      operator()(const coroutine_handle<_Promise>& __h) noexcept
+      {
+	return reinterpret_cast<size_t>(__h.address());
+      }
+    };
+#endif
+
+#else
+#error "the coroutine header requires -fcoroutines"
+#endif
+
+  _GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // C++14 (we are allowing use from at least this)
+
+#endif // _GLIBCXX_COROUTINE

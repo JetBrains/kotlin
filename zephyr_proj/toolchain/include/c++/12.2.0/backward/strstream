@@ -1,0 +1,239 @@
+// Backward-compat support -*- C++ -*-
+
+// Copyright (C) 2001-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/*
+ * Copyright (c) 1998
+ * Silicon Graphics Computer Systems, Inc.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Silicon Graphics makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+// WARNING: The classes defined in this header are DEPRECATED.  This
+// header is defined in section D.7.1 of the C++ standard, and it
+// MAY BE REMOVED in a future standard revision.  One should use the
+// header <sstream> instead.
+
+/** @file strstream
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _BACKWARD_STRSTREAM
+#define _BACKWARD_STRSTREAM
+
+#include <backward/backward_warning.h>
+#include <iosfwd>
+#include <ios>
+#include <istream>
+#include <ostream>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+  // Class strstreambuf, a streambuf class that manages an array of char.
+  // Note that this class is not a template.
+  class strstreambuf : public basic_streambuf<char, char_traits<char> >
+  {
+  public:
+    // Types.
+    typedef char_traits<char>              _Traits;
+    typedef basic_streambuf<char, _Traits> _Base;
+
+  public:
+    // Constructor, destructor
+#if __cplusplus >= 201103L
+    strstreambuf() : strstreambuf(0) { }
+    explicit strstreambuf(streamsize __initial_capacity);
+#else
+    explicit strstreambuf(streamsize __initial_capacity = 0);
+#endif
+    strstreambuf(void* (*__alloc)(size_t), void (*__free)(void*));
+
+    strstreambuf(char* __get, streamsize __n, char* __put = 0) throw ();
+    strstreambuf(signed char* __get, streamsize __n, signed char* __put = 0) throw ();
+    strstreambuf(unsigned char* __get, streamsize __n, unsigned char* __put=0) throw ();
+
+    strstreambuf(const char* __get, streamsize __n) throw ();
+    strstreambuf(const signed char* __get, streamsize __n) throw ();
+    strstreambuf(const unsigned char* __get, streamsize __n) throw ();
+
+    virtual ~strstreambuf();
+
+#if __cplusplus >= 201103L
+    strstreambuf(strstreambuf&& __rhs) noexcept
+    : _Base(__rhs), _M_alloc_fun(__rhs._M_alloc_fun),
+      _M_free_fun(__rhs._M_free_fun), _M_dynamic(__rhs._M_dynamic),
+      _M_frozen(__rhs._M_frozen), _M_constant(__rhs._M_constant)
+    {
+      __rhs.setg(nullptr, nullptr, nullptr);
+      __rhs.setp(nullptr, nullptr);
+    }
+
+    strstreambuf&
+    operator=(strstreambuf&& __rhs) noexcept
+    {
+      if (_M_dynamic && !_M_frozen)
+	_M_free(eback());
+      _Base::operator=(static_cast<const _Base&>(__rhs));
+      _M_alloc_fun = __rhs._M_alloc_fun;
+      _M_free_fun = __rhs._M_free_fun;
+      _M_dynamic = __rhs._M_dynamic;
+      _M_frozen = __rhs._M_frozen;
+      _M_constant = __rhs._M_constant;
+      __rhs.setg(nullptr, nullptr, nullptr);
+      __rhs.setp(nullptr, nullptr);
+      return *this;
+    }
+#endif
+
+  public:
+    void freeze(bool = true) throw ();
+    char* str() throw ();
+    _GLIBCXX_PURE int pcount() const throw ();
+
+  protected:
+    virtual int_type overflow(int_type __c  = _Traits::eof());
+    virtual int_type pbackfail(int_type __c = _Traits::eof());
+    virtual int_type underflow();
+    virtual _Base* setbuf(char* __buf, streamsize __n);
+    virtual pos_type seekoff(off_type __off, ios_base::seekdir __dir,
+			     ios_base::openmode __mode
+			     = ios_base::in | ios_base::out);
+    virtual pos_type seekpos(pos_type __pos, ios_base::openmode __mode
+			     = ios_base::in | ios_base::out);
+
+  private:
+#if __cplusplus < 201103L
+    strstreambuf&
+    operator=(const strstreambuf&);
+
+    strstreambuf(const strstreambuf&);
+#endif
+
+    // Dynamic allocation, possibly using _M_alloc_fun and _M_free_fun.
+    char* _M_alloc(size_t);
+    void  _M_free(char*);
+
+    // Helper function used in constructors.
+    void _M_setup(char* __get, char* __put, streamsize __n) throw ();
+
+    // Data members.
+    void* (*_M_alloc_fun)(size_t);
+    void  (*_M_free_fun)(void*);
+
+    bool _M_dynamic  : 1;
+    bool _M_frozen   : 1;
+    bool _M_constant : 1;
+  };
+
+  // Class istrstream, an istream that manages a strstreambuf.
+  class istrstream : public basic_istream<char>
+  {
+  public:
+    explicit istrstream(char*);
+    explicit istrstream(const char*);
+    istrstream(char* , streamsize);
+    istrstream(const char*, streamsize);
+    virtual ~istrstream();
+
+#if __cplusplus >= 201103L
+    istrstream(istrstream&& __rhs)
+    : istream(std::move(__rhs)), _M_buf(std::move(__rhs._M_buf))
+    { set_rdbuf(&_M_buf); }
+
+    istrstream& operator=(istrstream&&) = default;
+#endif
+
+    _GLIBCXX_CONST strstreambuf* rdbuf() const throw ();
+    char* str() throw ();
+
+  private:
+    strstreambuf _M_buf;
+  };
+
+  // Class ostrstream
+  class ostrstream : public basic_ostream<char>
+  {
+  public:
+    ostrstream();
+    ostrstream(char*, int, ios_base::openmode = ios_base::out);
+    virtual ~ostrstream();
+
+#if __cplusplus >= 201103L
+    ostrstream(ostrstream&& __rhs)
+    : ostream(std::move(__rhs)), _M_buf(std::move(__rhs._M_buf))
+    { set_rdbuf(&_M_buf); }
+
+    ostrstream& operator=(ostrstream&&) = default;
+#endif
+
+    _GLIBCXX_CONST strstreambuf* rdbuf() const throw ();
+    void freeze(bool = true) throw();
+    char* str() throw ();
+    _GLIBCXX_PURE int pcount() const throw ();
+
+  private:
+    strstreambuf _M_buf;
+  };
+
+  // Class strstream
+  class strstream : public basic_iostream<char>
+  {
+  public:
+    typedef char                        char_type;
+    typedef char_traits<char>::int_type int_type;
+    typedef char_traits<char>::pos_type pos_type;
+    typedef char_traits<char>::off_type off_type;
+
+    strstream();
+    strstream(char*, int, ios_base::openmode = ios_base::in | ios_base::out);
+    virtual ~strstream();
+
+#if __cplusplus >= 201103L
+    strstream(strstream&& __rhs)
+    : iostream(std::move(__rhs)), _M_buf(std::move(__rhs._M_buf))
+    { set_rdbuf(&_M_buf); }
+
+    strstream& operator=(strstream&&) = default;
+#endif
+
+    _GLIBCXX_CONST strstreambuf* rdbuf() const throw ();
+    void freeze(bool = true) throw ();
+    _GLIBCXX_PURE int pcount() const throw ();
+    char* str() throw ();
+
+  private:
+    strstreambuf _M_buf;
+  };
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace
+
+#endif

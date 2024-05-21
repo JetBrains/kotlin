@@ -1,0 +1,344 @@
+// -*- C++ -*- Libstdc++ version details header.
+
+// Copyright (C) 2018-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file version
+ *  This is a Standard C++ Library file.  You should @c \#include this file
+ *  in your programs, rather than any of the @a *.h implementation files.
+ */
+
+#ifndef _GLIBCXX_VERSION_INCLUDED
+#define _GLIBCXX_VERSION_INCLUDED
+
+#pragma GCC system_header
+
+#include <bits/c++config.h>
+
+// c++03
+#if _GLIBCXX_HOSTED
+# define __cpp_lib_incomplete_container_elements 201505L
+#endif
+
+#if !defined(__STRICT_ANSI__)
+// gnu++03
+# define __cpp_lib_uncaught_exceptions 201411L
+#endif
+
+#if __cplusplus >= 201103L
+// c++11
+#define __cpp_lib_is_null_pointer 201309L
+#define __cpp_lib_result_of_sfinae 201210L
+
+#if _GLIBCXX_HOSTED
+# define __cpp_lib_allocator_traits_is_always_equal 201411L
+#if __cplusplus <= 201703L // N.B. updated value in C++20
+# define __cpp_lib_shared_ptr_arrays 201611L
+#endif
+#endif
+
+#if !defined(__STRICT_ANSI__)
+// gnu++11
+# define __cpp_lib_is_swappable 201603L
+# define __cpp_lib_void_t 201411L
+# if _GLIBCXX_HOSTED
+#  define __cpp_lib_enable_shared_from_this 201603L
+# endif
+#endif
+
+// For C++11 and later we support ISO/IEC 29124 Mathematical Special Functions
+#define __STDCPP_MATH_SPEC_FUNCS__ 201003L
+
+#if __cplusplus >= 201402L
+// c++14
+#if __cpp_impl_coroutine
+# define __cpp_lib_coroutine 201902L
+#endif
+#define __cpp_lib_integral_constant_callable 201304L
+#define __cpp_lib_is_final 201402L
+#define __cpp_lib_transformation_trait_aliases 201304L
+
+#if _GLIBCXX_HOSTED
+# define __cpp_lib_chrono_udls 201304L
+# define __cpp_lib_complex_udls 201309L
+# define __cpp_lib_exchange_function 201304L
+# define __cpp_lib_generic_associative_lookup 201304L
+# define __cpp_lib_integer_sequence 201304L
+# define __cpp_lib_make_reverse_iterator 201402L
+# define __cpp_lib_make_unique 201304L
+# ifndef _GLIBCXX_DEBUG // PR libstdc++/70303
+#  define __cpp_lib_null_iterators 201304L
+# endif
+# define __cpp_lib_quoted_string_io 201304L
+# define __cpp_lib_robust_nonmodifying_seq_ops 201304L
+# ifdef _GLIBCXX_HAS_GTHREADS
+#  define __cpp_lib_shared_timed_mutex 201402L
+# endif
+# define __cpp_lib_string_udls 201304L
+# define __cpp_lib_transparent_operators 201510L
+# define __cpp_lib_tuple_element_t 201402L
+# define __cpp_lib_tuples_by_type 201304L
+#endif
+
+#if __cplusplus >= 201703L
+// c++17
+#define __cpp_lib_addressof_constexpr 201603L
+#define __cpp_lib_atomic_is_always_lock_free 201603L
+#define __cpp_lib_bool_constant 201505L
+#define __cpp_lib_byte 201603L
+#ifdef _GLIBCXX_HAVE_BUILTIN_HAS_UNIQ_OBJ_REP
+# define __cpp_lib_has_unique_object_representations 201606L
+#endif
+#ifdef __GCC_DESTRUCTIVE_SIZE
+# define __cpp_lib_hardware_interference_size 201703L
+#endif
+#ifdef _GLIBCXX_HAVE_BUILTIN_IS_AGGREGATE
+# define __cpp_lib_is_aggregate 201703L
+#endif
+#define __cpp_lib_is_invocable 201703L
+#define __cpp_lib_is_swappable 201603L
+#ifdef _GLIBCXX_HAVE_BUILTIN_LAUNDER
+# define __cpp_lib_launder 201606L
+#endif
+#define __cpp_lib_logical_traits 201510L
+#define __cpp_lib_type_trait_variable_templates 201510L
+#define __cpp_lib_uncaught_exceptions 201411L
+#define __cpp_lib_void_t 201411L
+
+#if _GLIBCXX_HOSTED
+#define __cpp_lib_any 201606L
+#define __cpp_lib_apply 201603L
+#if __cplusplus == 201703L // N.B. updated value in C++20
+# define __cpp_lib_array_constexpr 201803L
+#endif
+#define __cpp_lib_as_const 201510L
+#define __cpp_lib_boyer_moore_searcher 201603L
+#define __cpp_lib_chrono 201611L
+#define __cpp_lib_clamp 201603L
+#if __cplusplus == 201703L // N.B. updated value in C++20
+# if _GLIBCXX_HAVE_IS_CONSTANT_EVALUATED
+#  define __cpp_lib_constexpr_char_traits 201611L
+#  define __cpp_lib_constexpr_string 201611L
+# endif
+#endif
+#define __cpp_lib_enable_shared_from_this 201603L
+#define __cpp_lib_execution 201902L // FIXME: should be 201603L
+#define __cpp_lib_filesystem 201703L
+#define __cpp_lib_gcd 201606L
+#define __cpp_lib_gcd_lcm 201606L
+#define __cpp_lib_hypot 201603L
+#define __cpp_lib_invoke 201411L
+#define __cpp_lib_lcm 201606L
+#define __cpp_lib_make_from_tuple 201606L
+#define __cpp_lib_map_try_emplace 201411L
+#define __cpp_lib_math_special_functions 201603L
+#ifdef _GLIBCXX_HAS_GTHREADS
+# define __cpp_lib_memory_resource 201603L
+#else
+# define __cpp_lib_memory_resource 1
+#endif
+#define __cpp_lib_node_extract 201606L
+#define __cpp_lib_nonmember_container_access 201411L
+#define __cpp_lib_not_fn 201603L
+#if __cplusplus == 201703L // N.B. updated value in C++20
+# define __cpp_lib_optional 201606L
+#endif
+#define __cpp_lib_parallel_algorithm 201603L
+#define __cpp_lib_raw_memory_algorithms 201606L
+#define __cpp_lib_sample 201603L
+#ifdef _GLIBCXX_HAS_GTHREADS
+# define __cpp_lib_scoped_lock 201703L
+# define __cpp_lib_shared_mutex 201505L
+#endif
+#define __cpp_lib_shared_ptr_weak_type 201606L
+#define __cpp_lib_string_view 201803L
+#if _GLIBCXX_FLOAT_IS_IEEE_BINARY32 && _GLIBCXX_DOUBLE_IS_IEEE_BINARY64 \
+    && __SIZE_WIDTH__ >= 32
+# define __cpp_lib_to_chars 201611L
+#endif
+#define __cpp_lib_unordered_map_try_emplace 201411L
+#if !(__cpp_concepts >= 202002L && __cpp_constexpr >= 201811L)
+// N.B. updated value in C++20
+# define __cpp_lib_variant 202102L
+#endif
+#endif
+
+#if __cplusplus >= 202002L
+// c++20
+#define __cpp_lib_atomic_flag_test 201907L
+#define __cpp_lib_atomic_float 201711L
+#define __cpp_lib_atomic_ref 201806L
+#define __cpp_lib_atomic_value_initialization 201911L
+#if __has_builtin(__builtin_bit_cast)
+# define __cpp_lib_bit_cast 201806L
+#endif
+#define __cpp_lib_bitops 201907L
+#define __cpp_lib_bounded_array_traits 201902L
+// __cpp_lib_char8_t is defined in <bits/c++config.h>
+#if __cpp_concepts >= 201907L
+# define __cpp_lib_concepts 202002L
+#endif
+#if __cpp_impl_destroying_delete
+# define __cpp_lib_destroying_delete 201806L
+#endif
+#define __cpp_lib_endian 201907L
+#define __cpp_lib_int_pow2 202002L
+#ifdef _GLIBCXX_HAVE_IS_CONSTANT_EVALUATED
+# define __cpp_lib_is_constant_evaluated 201811L
+#endif
+#if __has_builtin(__is_layout_compatible) \
+  && __has_builtin(__builtin_is_corresponding_member)
+# define __cpp_lib_is_layout_compatible 201907L
+#endif
+#define __cpp_lib_is_nothrow_convertible 201806L
+#if __has_builtin(__is_pointer_interconvertible_base_of) \
+ && __has_builtin(__builtin_is_pointer_interconvertible_with_class)
+# define __cpp_lib_is_pointer_interconvertible 201907L
+#endif
+#define __cpp_lib_remove_cvref 201711L
+#if __has_builtin(__builtin_source_location)
+# define __cpp_lib_source_location 201907L
+#endif
+#if __cpp_impl_three_way_comparison >= 201907L && __cpp_lib_concepts
+# define __cpp_lib_three_way_comparison 201907L
+#endif
+#define __cpp_lib_type_identity 201806L
+#define __cpp_lib_unwrap_ref 201811L
+
+#if _GLIBCXX_HOSTED
+#define __cpp_lib_array_constexpr 201811L
+#define __cpp_lib_assume_aligned 201811L
+#define __cpp_lib_atomic_shared_ptr 201711L
+#if defined _GLIBCXX_HAS_GTHREADS || defined _GLIBCXX_HAVE_LINUX_FUTEX
+# define __cpp_lib_atomic_wait 201907L
+# if __cpp_aligned_new
+#  define __cpp_lib_barrier 201907L
+# endif
+#endif
+#define __cpp_lib_bind_front 201907L
+// FIXME: #define __cpp_lib_execution 201902L
+#define __cpp_lib_integer_comparison_functions 202002L
+#define __cpp_lib_constexpr_algorithms 201806L
+#ifdef __cpp_lib_is_constant_evaluated
+# define __cpp_lib_constexpr_char_traits 201811L
+#endif
+#define __cpp_lib_constexpr_complex 201711L
+#define __cpp_lib_constexpr_dynamic_alloc 201907L
+#define __cpp_lib_constexpr_functional 201907L
+#define __cpp_lib_constexpr_iterator 201811L
+#define __cpp_lib_constexpr_memory 201811L
+#define __cpp_lib_constexpr_numeric 201911L
+#ifdef __cpp_lib_is_constant_evaluated
+# if _GLIBCXX_USE_CXX11_ABI
+#  define __cpp_lib_constexpr_string 201907L
+# else
+#  define __cpp_lib_constexpr_string 201811L
+# endif
+#endif
+#define __cpp_lib_constexpr_string_view 201811L
+#define __cpp_lib_constexpr_tuple 201811L
+#define __cpp_lib_constexpr_utility 201811L
+#define __cpp_lib_constexpr_vector 201907L
+#define __cpp_lib_erase_if 202002L
+#define __cpp_lib_generic_unordered_lookup 201811L
+#define __cpp_lib_interpolate 201902L
+#ifdef _GLIBCXX_HAS_GTHREADS
+# define __cpp_lib_jthread 201911L
+#endif
+#if __cpp_lib_atomic_wait
+# define __cpp_lib_latch 201907L
+#endif
+#define __cpp_lib_list_remove_return_type 201806L
+#if __cpp_lib_concepts
+# define __cpp_lib_make_obj_using_allocator 201811L
+#endif
+#define __cpp_lib_math_constants 201907L
+#define __cpp_lib_optional 202106L
+#define __cpp_lib_polymorphic_allocator 201902L
+#if __cpp_lib_concepts
+# define __cpp_lib_ranges 202110L
+#endif
+#if __cpp_lib_atomic_wait || _GLIBCXX_HAVE_POSIX_SEMAPHORE
+# define __cpp_lib_semaphore 201907L
+#endif
+#define __cpp_lib_shared_ptr_arrays 201707L
+#define __cpp_lib_shift 201806L
+#define __cpp_lib_smart_ptr_for_overwrite 202002L
+#if __cpp_lib_concepts
+# define __cpp_lib_span 202002L
+#endif
+#define __cpp_lib_ssize 201902L
+#define __cpp_lib_starts_ends_with 201711L
+# if _GLIBCXX_USE_CXX11_ABI
+// Only supported with cxx11-abi
+#  define __cpp_lib_syncbuf 201803L
+# endif
+#define __cpp_lib_to_address 201711L
+#define __cpp_lib_to_array 201907L
+#if __cpp_concepts >= 202002L && __cpp_constexpr >= 201811L
+# define __cpp_lib_variant 202106L
+#endif
+#endif
+
+#if __cplusplus > 202002L
+// c++2b
+#define __cpp_lib_byteswap 202110L
+#define __cpp_lib_constexpr_typeinfo 202106L
+#define __cpp_lib_is_scoped_enum 202011L
+
+#if _GLIBCXX_HOSTED
+#define __cpp_lib_adaptor_iterator_pair_constructor 202106L
+#if __cpp_constexpr_dynamic_alloc
+# undef __cpp_lib_constexpr_memory
+# define __cpp_lib_constexpr_memory 202202L
+#endif
+#if __cpp_concepts >= 202002L
+# define __cpp_lib_expected 202202L
+#endif
+#define __cpp_lib_invoke_r 202106L
+#define __cpp_lib_ios_noreplace 202207L
+#if __cpp_lib_concepts
+# undef __cpp_lib_optional
+# define __cpp_lib_optional 202110L
+#endif
+#define __cpp_lib_move_only_function 202110L
+#if __cpp_lib_span
+# define __cpp_lib_spanstream 202106L
+#endif
+#if _GLIBCXX_HAVE_STACKTRACE
+# define __cpp_lib_stacktrace 202011L
+#endif
+#define __cpp_lib_stdatomic_h 202011L
+#define __cpp_lib_string_contains 202011L
+#if _GLIBCXX_USE_CXX11_ABI // Only supported with cxx11-abi
+# define __cpp_lib_string_resize_and_overwrite 202110L
+#endif
+#define __cpp_lib_to_underlying 202102L
+#define __cpp_lib_unreachable 202202L
+#endif
+#endif // C++2b
+#endif // C++20
+#endif // C++17
+#endif // C++14
+#endif // C++11
+
+#endif // _GLIBCXX_VERSION_INCLUDED

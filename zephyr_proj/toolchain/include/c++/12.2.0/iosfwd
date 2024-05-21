@@ -1,0 +1,256 @@
+// <iosfwd> Forward declarations -*- C++ -*-
+
+// Copyright (C) 1997-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/iosfwd
+ *  This is a Standard C++ Library header.
+ */
+
+//
+// ISO C++ 14882: 27.2  Forward declarations
+//
+
+#ifndef _GLIBCXX_IOSFWD
+#define _GLIBCXX_IOSFWD 1
+
+#pragma GCC system_header
+
+#include <bits/c++config.h>
+#include <bits/stringfwd.h> 	// For string forward declarations.
+#include <bits/postypes.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+  /**
+   *  @defgroup io I/O
+   *
+   *  Nearly all of the I/O classes are parameterized on the type of
+   *  characters they read and write.  (The major exception is ios_base at
+   *  the top of the hierarchy.)  This is a change from pre-Standard
+   *  streams, which were not templates.
+   *
+   *  For ease of use and compatibility, all of the basic_* I/O-related
+   *  classes are given typedef names for both of the builtin character
+   *  widths (wide and narrow).  The typedefs are the same as the
+   *  pre-Standard names, for example:
+   *
+   *  @code
+   *     typedef basic_ifstream<char>  ifstream;
+   *  @endcode
+   *
+   *  Because properly forward-declaring these classes can be difficult, you
+   *  should not do it yourself.  Instead, include the &lt;iosfwd&gt;
+   *  header, which contains only declarations of all the I/O classes as
+   *  well as the typedefs.  Trying to forward-declare the typedefs
+   *  themselves (e.g., <code>class ostream;</code>) is not valid ISO C++.
+   *
+   *  For more specific declarations, see
+   *  https://gcc.gnu.org/onlinedocs/libstdc++/manual/io.html#std.io.objects
+   *
+   *  @{
+  */
+  class ios_base;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT> >
+    class basic_ios;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT> >
+    class basic_streambuf;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT> >
+    class basic_istream;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT> >
+    class basic_ostream;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT> >
+    class basic_iostream;
+
+
+_GLIBCXX_BEGIN_NAMESPACE_CXX11
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT>,
+	    typename _Alloc = allocator<_CharT> >
+    class basic_stringbuf;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT>,
+	   typename _Alloc = allocator<_CharT> >
+    class basic_istringstream;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT>,
+	   typename _Alloc = allocator<_CharT> >
+    class basic_ostringstream;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT>,
+	   typename _Alloc = allocator<_CharT> >
+    class basic_stringstream;
+
+_GLIBCXX_END_NAMESPACE_CXX11
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT> >
+    class basic_filebuf;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT> >
+    class basic_ifstream;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT> >
+    class basic_ofstream;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT> >
+    class basic_fstream;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT> >
+    class istreambuf_iterator;
+
+  template<typename _CharT, typename _Traits = char_traits<_CharT> >
+    class ostreambuf_iterator;
+
+
+  /// Base class for @c char streams.
+  typedef basic_ios<char> 		ios;
+
+  /// Base class for @c char buffers.
+  typedef basic_streambuf<char> 	streambuf;
+
+  /// Base class for @c char input streams.
+  typedef basic_istream<char> 		istream;
+
+  /// Base class for @c char output streams.
+  typedef basic_ostream<char> 		ostream;
+
+  /// Base class for @c char mixed input and output streams.
+  typedef basic_iostream<char> 		iostream;
+
+  /// Class for @c char memory buffers.
+  typedef basic_stringbuf<char> 	stringbuf;
+
+  /// Class for @c char input memory streams.
+  typedef basic_istringstream<char> 	istringstream;
+
+  /// Class for @c char output memory streams.
+  typedef basic_ostringstream<char> 	ostringstream;
+
+  /// Class for @c char mixed input and output memory streams.
+  typedef basic_stringstream<char> 	stringstream;
+
+  /// Class for @c char file buffers.
+  typedef basic_filebuf<char> 		filebuf;
+
+  /// Class for @c char input file streams.
+  typedef basic_ifstream<char> 		ifstream;
+
+  /// Class for @c char output file streams.
+  typedef basic_ofstream<char> 		ofstream;
+
+  /// Class for @c char mixed input and output file streams.
+  typedef basic_fstream<char> 		fstream;
+
+#ifdef _GLIBCXX_USE_WCHAR_T
+  /// Base class for @c wchar_t streams.
+  typedef basic_ios<wchar_t> 		wios;
+
+  /// Base class for @c wchar_t buffers.
+  typedef basic_streambuf<wchar_t> 	wstreambuf;
+
+  /// Base class for @c wchar_t input streams.
+  typedef basic_istream<wchar_t> 	wistream;
+
+  /// Base class for @c wchar_t output streams.
+  typedef basic_ostream<wchar_t> 	wostream;
+
+  /// Base class for @c wchar_t mixed input and output streams.
+  typedef basic_iostream<wchar_t> 	wiostream;
+
+  /// Class for @c wchar_t memory buffers.
+  typedef basic_stringbuf<wchar_t> 	wstringbuf;
+
+  /// Class for @c wchar_t input memory streams.
+  typedef basic_istringstream<wchar_t> 	wistringstream;
+
+  /// Class for @c wchar_t output memory streams.
+  typedef basic_ostringstream<wchar_t> 	wostringstream;
+
+  /// Class for @c wchar_t mixed input and output memory streams.
+  typedef basic_stringstream<wchar_t> 	wstringstream;
+
+  /// Class for @c wchar_t file buffers.
+  typedef basic_filebuf<wchar_t> 	wfilebuf;
+
+  /// Class for @c wchar_t input file streams.
+  typedef basic_ifstream<wchar_t> 	wifstream;
+
+  /// Class for @c wchar_t output file streams.
+  typedef basic_ofstream<wchar_t> 	wofstream;
+
+  /// Class for @c wchar_t mixed input and output file streams.
+  typedef basic_fstream<wchar_t> 	wfstream;
+#endif
+
+#if __cplusplus >= 202002L && _GLIBCXX_USE_CXX11_ABI
+  template<typename _CharT, typename _Traits = char_traits<_CharT>,
+           typename _Allocator = allocator<_CharT>>
+    class basic_syncbuf;
+  template<typename _CharT, typename _Traits = char_traits<_CharT>,
+           typename _Allocator = allocator<_CharT>>
+    class basic_osyncstream;
+
+  using syncbuf = basic_syncbuf<char>;
+  using osyncstream = basic_osyncstream<char>;
+
+#ifdef _GLIBCXX_USE_WCHAR_T
+  using wsyncbuf = basic_syncbuf<wchar_t>;
+  using wosyncstream = basic_osyncstream<wchar_t>;
+#endif
+#endif // C++20 && CXX11_ABI
+
+#if __cplusplus > 202002L
+  template<typename _CharT, typename _Traits = char_traits<_CharT>>
+    class basic_spanbuf;
+  template<typename _CharT, typename _Traits = char_traits<_CharT>>
+    class basic_ispanstream;
+  template<typename _CharT, typename _Traits = char_traits<_CharT>>
+    class basic_ospanstream;
+  template<typename _CharT, typename _Traits = char_traits<_CharT>>
+    class basic_spanstream;
+
+  using spanbuf     = basic_spanbuf<char>;
+  using ispanstream = basic_ispanstream<char>;
+  using ospanstream = basic_ospanstream<char>;
+  using spanstream  = basic_spanstream<char>;
+
+#ifdef _GLIBCXX_USE_WCHAR_T
+  using wspanbuf     = basic_spanbuf<wchar_t>;
+  using wispanstream = basic_ispanstream<wchar_t>;
+  using wospanstream = basic_ospanstream<wchar_t>;
+  using wspanstream  = basic_spanstream<wchar_t>;
+#endif
+#endif // C++23
+
+  /** @}  */
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace
+
+#endif /* _GLIBCXX_IOSFWD */

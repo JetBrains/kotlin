@@ -1,0 +1,92 @@
+// <source_location> -*- C++ -*-
+
+// Copyright (C) 2020-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/source_location
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_SRCLOC
+#define _GLIBCXX_SRCLOC 1
+
+#if __cplusplus > 201703L && __has_builtin(__builtin_source_location)
+#include <bits/c++config.h>
+
+namespace std
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+#define __cpp_lib_source_location 201907L
+
+  /// A class that describes a location in source code.
+  struct source_location
+  {
+  private:
+    using uint_least32_t = __UINT_LEAST32_TYPE__;
+    struct __impl
+    {
+      const char* _M_file_name;
+      const char* _M_function_name;
+      unsigned _M_line;
+      unsigned _M_column;
+    };
+    using __builtin_ret_type = decltype(__builtin_source_location());
+
+  public:
+
+    // [support.srcloc.cons], creation
+    static consteval source_location
+    current(__builtin_ret_type __p = __builtin_source_location()) noexcept
+    {
+      source_location __ret;
+      __ret._M_impl = static_cast <const __impl*>(__p);
+      return __ret;
+    }
+
+    constexpr source_location() noexcept { }
+
+    // [support.srcloc.obs], observers
+    constexpr uint_least32_t
+    line() const noexcept
+    { return _M_impl ? _M_impl->_M_line : 0u; }
+
+    constexpr uint_least32_t
+    column() const noexcept
+    { return _M_impl ? _M_impl->_M_column : 0u; }
+
+    constexpr const char*
+    file_name() const noexcept
+    { return _M_impl ? _M_impl->_M_file_name : ""; }
+
+    constexpr const char*
+    function_name() const noexcept
+    { return _M_impl ? _M_impl->_M_function_name : ""; }
+
+  private:
+    const __impl* _M_impl = nullptr;
+  };
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // C++20 && __builtin_source_location
+#endif // _GLIBCXX_SRCLOC

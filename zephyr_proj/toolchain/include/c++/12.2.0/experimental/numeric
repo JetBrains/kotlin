@@ -1,0 +1,103 @@
+// <experimental/numeric> -*- C++ -*-
+
+// Copyright (C) 2015-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/numeric
+ *  This is a TS C++ Library header.
+ *  @ingroup libfund-ts
+ */
+
+//
+// N4336 Working Draft, C++ Extensions for Library Fundamentals, Version 2
+//
+
+#ifndef _GLIBCXX_EXPERIMENTAL_NUMERIC
+#define _GLIBCXX_EXPERIMENTAL_NUMERIC 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <numeric>
+#include <experimental/type_traits>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace experimental
+{
+inline namespace fundamentals_v2
+{
+#define __cpp_lib_experimental_gcd_lcm 201411
+
+  /// Greatest common divisor
+  template<typename _Mn, typename _Nn>
+    constexpr common_type_t<_Mn, _Nn>
+    gcd(_Mn __m, _Nn __n) noexcept
+    {
+      static_assert(is_integral_v<_Mn> && is_integral_v<_Nn>,
+		    "std::experimental::gcd arguments must be integers");
+      static_assert(_Mn(2) == 2 && _Nn(2) == 2,
+		    "std::experimental::gcd arguments must not be bool");
+      namespace __detail = std::__detail;
+      using _Ct = common_type_t<_Mn, _Nn>;
+      const _Ct __m2 = __detail::__abs_r<_Ct>(__m);
+      const _Ct __n2 = __detail::__abs_r<_Ct>(__n);
+      return __detail::__gcd<make_unsigned_t<_Ct>>(__m2, __n2);
+    }
+
+  /// Least common multiple
+  template<typename _Mn, typename _Nn>
+    constexpr common_type_t<_Mn, _Nn>
+    lcm(_Mn __m, _Nn __n)
+    {
+      static_assert(is_integral_v<_Mn> && is_integral_v<_Nn>,
+	  "std::experimental::lcm arguments must be integers");
+      static_assert(_Mn(2) == 2 && _Nn(2) == 2,
+	  "std::experimental::lcm arguments must not be bool");
+      namespace __detail = std::__detail;
+      using _Ct = common_type_t<_Mn, _Nn>;
+      const _Ct __m2 = __detail::__abs_r<_Ct>(__m);
+      const _Ct __n2 = __detail::__abs_r<_Ct>(__n);
+      if (__m2 == 0 || __n2 == 0)
+	return 0;
+      _Ct __r = __m2 / __detail::__gcd<make_unsigned_t<_Ct>>(__m2, __n2);
+
+      if _GLIBCXX17_CONSTEXPR (is_signed_v<_Ct>)
+	if (__is_constant_evaluated())
+	  return __r * __n2; // constant evaluation can detect overflow here.
+
+      bool __overflow = __builtin_mul_overflow(__r, __n2, &__r);
+      __glibcxx_assert(!__overflow);
+      return __r;
+    }
+} // namespace fundamentals_v2
+} // namespace experimental
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // __cplusplus <= 201103L
+
+#endif // _GLIBCXX_EXPERIMENTAL_NUMERIC

@@ -1,0 +1,116 @@
+// <experimental/array> -*- C++ -*-
+
+// Copyright (C) 2015-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/array
+ *  This is a TS C++ Library header.
+ *  @ingroup libfund-ts
+ */
+
+#ifndef _GLIBCXX_EXPERIMENTAL_ARRAY
+#define _GLIBCXX_EXPERIMENTAL_ARRAY 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <array>
+#include <experimental/type_traits>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace experimental
+{
+inline namespace fundamentals_v2
+{
+#define __cpp_lib_experimental_make_array 201505
+  /**
+   * @defgroup make_array Array creation functions
+   * @ingroup libfund-ts
+   *
+   * Array creation functions as described in N4529,
+   * Working Draft, C++ Extensions for Library Fundamentals, Version 2
+   *
+   * @{
+   */
+
+template<typename _Dest, typename... _Types>
+  struct __make_array_elem
+  {
+    using type = _Dest;
+  };
+
+template<typename... _Types>
+  struct __make_array_elem<void, _Types...>
+  : common_type<_Types...>
+  {
+    template <typename>
+      struct __is_reference_wrapper : false_type
+      {};
+
+    template <typename _Up>
+      struct __is_reference_wrapper<reference_wrapper<_Up>> : true_type
+      {};
+
+    static_assert(!__or_<__is_reference_wrapper<decay_t<_Types>>...>::value,
+                  "make_array must be used with an explicit target type when"
+                  "any of the arguments is a reference_wrapper");
+  };
+
+/// Create a std::array from a variable-length list of arguments.
+template <typename _Dest = void, typename... _Types>
+  constexpr
+  array<typename __make_array_elem<_Dest, _Types...>::type, sizeof...(_Types)>
+  make_array(_Types&&... __t)
+  {
+    return {{ std::forward<_Types>(__t)... }};
+  }
+
+template <typename _Tp, size_t _Nm, size_t... _Idx>
+  constexpr array<remove_cv_t<_Tp>, _Nm>
+  __to_array(_Tp (&__a)[_Nm], index_sequence<_Idx...>)
+  {
+    return {{__a[_Idx]...}};
+  }
+
+/// Create a std::array from an array.
+template <typename _Tp, size_t _Nm>
+  constexpr array<remove_cv_t<_Tp>, _Nm>
+  to_array(_Tp (&__a)[_Nm])
+  noexcept(is_nothrow_constructible<remove_cv_t<_Tp>, _Tp&>::value)
+  {
+    return experimental::__to_array(__a, make_index_sequence<_Nm>{});
+  }
+
+  /// @} group make_array
+} // namespace fundamentals_v2
+} // namespace experimental
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // C++14
+
+#endif // _GLIBCXX_EXPERIMENTAL_ARRAY

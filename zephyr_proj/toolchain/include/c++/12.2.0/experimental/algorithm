@@ -1,0 +1,108 @@
+// <experimental/algorithm> -*- C++ -*-
+
+// Copyright (C) 2014-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/algorithm
+ *  This is a TS C++ Library header.
+ *  @ingroup libfund-ts
+ */
+
+#ifndef _GLIBCXX_EXPERIMENTAL_ALGORITHM
+#define _GLIBCXX_EXPERIMENTAL_ALGORITHM 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <algorithm>
+#include <experimental/bits/lfts_config.h>
+#include <experimental/random>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace experimental
+{
+inline namespace fundamentals_v2
+{
+  template<typename _ForwardIterator, typename _Searcher>
+    inline _ForwardIterator
+    search(_ForwardIterator __first, _ForwardIterator __last,
+	   const _Searcher& __searcher)
+    { return __searcher(__first, __last); }
+
+#define __cpp_lib_experimental_sample 201402
+
+  /// Take a random sample from a population.
+  template<typename _PopulationIterator, typename _SampleIterator,
+           typename _Distance, typename _UniformRandomNumberGenerator>
+    _SampleIterator
+    sample(_PopulationIterator __first, _PopulationIterator __last,
+	   _SampleIterator __out, _Distance __n,
+	   _UniformRandomNumberGenerator&& __g)
+    {
+      using __pop_cat = typename
+	std::iterator_traits<_PopulationIterator>::iterator_category;
+      using __samp_cat = typename
+	std::iterator_traits<_SampleIterator>::iterator_category;
+
+      static_assert(
+	  __or_<is_convertible<__pop_cat, forward_iterator_tag>,
+		is_convertible<__samp_cat, random_access_iterator_tag>>::value,
+	  "output range must use a RandomAccessIterator when input range"
+	  " does not meet the ForwardIterator requirements");
+
+      static_assert(is_integral<_Distance>::value,
+		    "sample size must be an integer type");
+
+      typename iterator_traits<_PopulationIterator>::difference_type __d = __n;
+      return _GLIBCXX_STD_A::
+	__sample(__first, __last, __pop_cat{}, __out, __samp_cat{}, __d,
+		 std::forward<_UniformRandomNumberGenerator>(__g));
+    }
+
+  template<typename _PopulationIterator, typename _SampleIterator,
+           typename _Distance>
+    inline _SampleIterator
+    sample(_PopulationIterator __first, _PopulationIterator __last,
+	   _SampleIterator __out, _Distance __n)
+    {
+      return experimental::sample(__first, __last, __out, __n,
+				  _S_randint_engine());
+    }
+
+  template<typename _RandomAccessIterator>
+    inline void
+    shuffle(_RandomAccessIterator __first, _RandomAccessIterator __last)
+    { return std::shuffle(__first, __last, _S_randint_engine()); }
+
+} // namespace fundamentals_v2
+} // namespace experimental
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // C++14
+
+#endif // _GLIBCXX_EXPERIMENTAL_ALGORITHM

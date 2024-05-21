@@ -1,0 +1,317 @@
+// <syncstream> -*- C++ -*-
+
+// Copyright (C) 2020-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/syncstream
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_SYNCSTREAM
+#define _GLIBCXX_SYNCSTREAM 1
+
+#if __cplusplus > 201703L
+
+#include <bits/c++config.h>
+#if _GLIBCXX_USE_CXX11_ABI
+
+#define __cpp_lib_syncbuf 201803L
+
+#pragma GCC system_header
+
+#include <sstream>
+
+#include <bits/alloc_traits.h>
+#include <bits/allocator.h>
+#include <bits/functexcept.h>
+#include <bits/functional_hash.h>
+#include <bits/std_mutex.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+  template<typename _CharT, typename _Traits, typename _Alloc>
+    class basic_syncbuf : public __syncbuf_base<_CharT, _Traits>
+    {
+    public:
+      using char_type = _CharT;
+      using int_type = typename _Traits::int_type;
+      using pos_type = typename _Traits::pos_type;
+      using off_type = typename _Traits::off_type;
+      using traits_type = _Traits;
+      using allocator_type = _Alloc;
+      using streambuf_type = basic_streambuf<_CharT, _Traits>;
+
+      basic_syncbuf()
+      : basic_syncbuf(nullptr, allocator_type{})
+      { }
+
+      explicit
+      basic_syncbuf(streambuf_type* __obuf)
+      : basic_syncbuf(__obuf, allocator_type{})
+      { }
+
+      basic_syncbuf(streambuf_type* __obuf, const allocator_type& __alloc)
+      : __syncbuf_base<_CharT, _Traits>(__obuf)
+      , _M_impl(__alloc)
+      , _M_mtx(__obuf)
+      { }
+
+      basic_syncbuf(basic_syncbuf&& __other)
+      : __syncbuf_base<_CharT, _Traits>(__other._M_wrapped)
+      , _M_impl(std::move(__other._M_impl))
+      , _M_mtx(std::move(__other._M_mtx))
+      {
+	this->_M_emit_on_sync = __other._M_emit_on_sync;
+	this->_M_needs_sync = __other._M_needs_sync;
+	__other._M_wrapped = nullptr;
+      }
+
+      ~basic_syncbuf()
+      {
+	__try
+	  {
+	    emit();
+	  }
+	__catch (...)
+	  { }
+      }
+
+      basic_syncbuf&
+      operator=(basic_syncbuf&& __other)
+      {
+	emit();
+
+	_M_impl = std::move(__other._M_impl);
+	this->_M_emit_on_sync = __other._M_emit_on_sync;
+	this->_M_needs_sync = __other._M_needs_sync;
+	this->_M_wrapped = __other._M_wrapped;
+	__other._M_wrapped = nullptr;
+	_M_mtx = std::move(__other._M_mtx);
+
+	return *this;
+      }
+
+      void
+      swap(basic_syncbuf& __other)
+      {
+	using _ATr = allocator_traits<_Alloc>;
+	if constexpr (!_ATr::propagate_on_container_swap::value)
+	  __glibcxx_assert(get_allocator() == __other.get_allocator());
+
+	std::swap(_M_impl, __other._M_impl);
+	std::swap(this->_M_emit_on_sync, __other._M_emit_on_sync);
+	std::swap(this->_M_needs_sync, __other._M_needs_sync);
+	std::swap(this->_M_wrapped, __other._M_wrapped);
+	std::swap(_M_mtx, __other._M_mtx);
+      }
+
+      bool
+      emit()
+      {
+	if (!this->_M_wrapped)
+	  return false;
+
+	auto __s = std::move(_M_impl).str();
+
+	const lock_guard<__mutex> __l(_M_mtx);
+	if (auto __size = __s.size())
+	  {
+	    auto __n = this->_M_wrapped->sputn(__s.data(), __size);
+	    if (__n != __size)
+	      {
+		__s.erase(0, __n);
+		_M_impl.str(std::move(__s));
+		return false;
+	      }
+	  }
+
+	if (this->_M_needs_sync)
+	  {
+	    this->_M_needs_sync = false;
+	    if (this->_M_wrapped->pubsync() != 0)
+	      return false;
+	  }
+	return true;
+      }
+
+      streambuf_type*
+      get_wrapped() const noexcept
+      { return this->_M_wrapped; }
+
+      allocator_type
+      get_allocator() const noexcept
+      { return _M_impl.get_allocator(); }
+
+      void
+      set_emit_on_sync(bool __b) noexcept
+      { this->_M_emit_on_sync = __b; }
+
+    protected:
+      int
+      sync() override
+      {
+	this->_M_needs_sync = true;
+	if (this->_M_emit_on_sync && !emit())
+	  return -1;
+	return 0;
+      }
+
+      int_type
+      overflow(int_type __c) override
+      {
+	int_type __eof = traits_type::eof();
+	if (__builtin_expect(!traits_type::eq_int_type(__c, __eof), true))
+	  return _M_impl.sputc(__c);
+	return __eof;
+      }
+
+      streamsize
+      xsputn(const char_type* __s, streamsize __n) override
+      { return _M_impl.sputn(__s, __n); }
+
+    private:
+      basic_stringbuf<char_type, traits_type, allocator_type> _M_impl;
+
+      struct __mutex
+      {
+#if _GLIBCXX_HAS_GTHREADS
+	mutex* _M_mtx;
+
+	__mutex(void* __t)
+	  : _M_mtx(__t ? &_S_get_mutex(__t) : nullptr)
+	{ }
+
+	void
+	swap(__mutex& __other) noexcept
+	{ std::swap(_M_mtx, __other._M_mtx); }
+
+	void
+	lock()
+	{
+	  _M_mtx->lock();
+	}
+
+	void
+	unlock()
+	{
+	  _M_mtx->unlock();
+	}
+
+	// FIXME: This should be put in the .so
+	static mutex&
+	_S_get_mutex(void* __t)
+	{
+	  const unsigned char __mask = 0xf;
+	  static mutex __m[__mask + 1];
+
+	  auto __key = _Hash_impl::hash(__t) & __mask;
+	  return __m[__key];
+	}
+#else
+	__mutex(void*) { }
+	void swap(__mutex&&) noexcept { }
+	void lock() { }
+	void unlock() { }
+#endif
+	__mutex(__mutex&&) = default;
+	__mutex& operator=(__mutex&&) = default;
+      };
+      __mutex _M_mtx;
+    };
+
+  template <typename _CharT, typename _Traits, typename _Alloc>
+    class basic_osyncstream : public basic_ostream<_CharT, _Traits>
+    {
+      using __ostream_type = basic_ostream<_CharT, _Traits>;
+
+    public:
+      // Types:
+      using char_type = _CharT;
+      using traits_type = _Traits;
+      using allocator_type = _Alloc;
+      using int_type = typename traits_type::int_type;
+      using pos_type = typename traits_type::pos_type;
+      using off_type = typename traits_type::off_type;
+      using syncbuf_type = basic_syncbuf<_CharT, _Traits, _Alloc>;
+      using streambuf_type = typename syncbuf_type::streambuf_type;
+
+    private:
+      syncbuf_type _M_syncbuf;
+
+    public:
+      basic_osyncstream(streambuf_type* __buf, const allocator_type& __a)
+	: _M_syncbuf(__buf, __a)
+      { this->init(std::__addressof(_M_syncbuf)); }
+
+      explicit basic_osyncstream(streambuf_type* __buf)
+	: _M_syncbuf(__buf)
+      { this->init(std::__addressof(_M_syncbuf)); }
+
+      basic_osyncstream(basic_ostream<char_type, traits_type>& __os,
+		        const allocator_type& __a)
+	: basic_osyncstream(__os.rdbuf(), __a)
+      { this->init(std::__addressof(_M_syncbuf)); }
+
+      explicit basic_osyncstream(basic_ostream<char_type, traits_type>& __os)
+	: basic_osyncstream(__os.rdbuf())
+      { this->init(std::__addressof(_M_syncbuf)); }
+
+      basic_osyncstream(basic_osyncstream&& __rhs) noexcept
+	: __ostream_type(std::move(__rhs)),
+	_M_syncbuf(std::move(__rhs._M_syncbuf))
+      { __ostream_type::set_rdbuf(std::__addressof(_M_syncbuf)); }
+
+      ~basic_osyncstream() = default;
+
+      basic_osyncstream& operator=(basic_osyncstream&&) noexcept = default;
+
+      syncbuf_type* rdbuf() const noexcept
+      { return const_cast<syncbuf_type*>(&_M_syncbuf); }
+
+      streambuf_type* get_wrapped() const noexcept
+      { return _M_syncbuf.get_wrapped(); }
+
+      void emit()
+      {
+	if (!_M_syncbuf.emit())
+	  this->setstate(ios_base::failbit);
+      }
+    };
+
+  template <class _CharT, class _Traits, class _Allocator>
+    inline void
+    swap(basic_syncbuf<_CharT, _Traits, _Allocator>& __x,
+	 basic_syncbuf<_CharT, _Traits, _Allocator>& __y) noexcept
+    { __x.swap(__y); }
+
+  using syncbuf = basic_syncbuf<char>;
+  using wsyncbuf = basic_syncbuf<wchar_t>;
+
+  using osyncstream = basic_osyncstream<char>;
+  using wosyncstream = basic_osyncstream<wchar_t>;
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // _GLIBCXX_USE_CXX11_ABI
+#endif // C++2a
+#endif	/* _GLIBCXX_SYNCSTREAM */

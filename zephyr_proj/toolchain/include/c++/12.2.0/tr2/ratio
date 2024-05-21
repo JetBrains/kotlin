@@ -1,0 +1,59 @@
+// TR2 <ratio> -*- C++ -*-
+
+// Copyright (C) 2010-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file tr2/ratio
+ *  This is a TR2 C++ Library header.
+ */
+
+#include <ratio>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace tr2
+{
+  template<intmax_t _Pn, size_t _Bit,
+	     bool = _Bit < static_cast<size_t>
+			  (std::numeric_limits<intmax_t>::digits)>
+    struct __safe_lshift
+    { static const intmax_t __value = 0; };
+
+    template<intmax_t _Pn, size_t _Bit>
+      struct __safe_lshift<_Pn, _Bit, true>
+      { static const intmax_t __value = _Pn << _Bit; };
+
+  /// Add binary prefixes (IEC 60027-2 A.2 and ISO/IEC 80000).
+  typedef ratio<__safe_lshift<1, 10>::__value, 1> kibi;
+  typedef ratio<__safe_lshift<1, 20>::__value, 1> mebi;
+  typedef ratio<__safe_lshift<1, 30>::__value, 1> gibi;
+  typedef ratio<__safe_lshift<1, 40>::__value, 1> tebi;
+  typedef ratio<__safe_lshift<1, 50>::__value, 1> pebi;
+  typedef ratio<__safe_lshift<1, 60>::__value, 1> exbi;
+  //typedef ratio<__safe_lshift<1, 70>::__value, 1> zebi;
+  //typedef ratio<__safe_lshift<1, 80>::__value, 1> yobi;
+}
+
+_GLIBCXX_END_NAMESPACE_VERSION
+}

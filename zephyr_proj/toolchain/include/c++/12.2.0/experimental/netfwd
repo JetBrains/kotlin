@@ -1,0 +1,132 @@
+// <experimental/netfwd> -*- C++ -*-
+
+// Copyright (C) 2015-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/netfwd
+ *  This is a TS C++ Library header.
+ *  @ingroup networking-ts
+ */
+
+#ifndef _GLIBCXX_EXPERIMENTAL_NETFWD
+#define _GLIBCXX_EXPERIMENTAL_NETFWD 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+// #define __cpp_lib_experimental_net 201803
+// #define __cpp_lib_experimental_net_extensible 201803
+
+#include <bits/chrono.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+namespace experimental
+{
+namespace net
+{
+inline namespace v1
+{
+
+  /** @defgroup networking-ts Networking TS
+   *  @ingroup experimental
+   *
+   * ISO/IEC TS 19216:2018	C++ Extensions for Networking
+   * @{
+   */
+
+  class execution_context;
+  template<typename _Tp, typename _Executor>
+    class executor_binder;
+  template<typename _Executor>
+    class executor_work_guard;
+  class system_executor;
+  class executor;
+  template<typename _Executor>
+    class strand;
+
+  class io_service;
+
+  template<typename _Clock> struct wait_traits;
+  template<typename _Clock, typename _WaitTraits = wait_traits<_Clock>>
+    class basic_waitable_timer;
+  typedef basic_waitable_timer<chrono::system_clock> system_timer;
+  typedef basic_waitable_timer<chrono::steady_clock> steady_timer;
+  typedef basic_waitable_timer<chrono::high_resolution_clock>
+    high_resolution_timer;
+
+  template<typename _Protocol>
+    class basic_socket;
+  template<typename _Protocol>
+    class basic_datagram_socket;
+  template<typename _Protocol>
+    class basic_stream_socket;
+  template<typename _Protocol>
+    class basic_socket_acceptor;
+  template<typename _Protocol, typename _Clock = chrono::steady_clock,
+	   typename _WaitTraits = wait_traits<_Clock>>
+    class basic_socket_streambuf;
+  template<typename _Protocol, typename _Clock = chrono::steady_clock,
+	   typename _WaitTraits = wait_traits<_Clock>>
+    class basic_socket_iostream;
+
+  /// @}
+
+namespace ip
+{
+  /**
+   * @addtogroup networking-ts
+   * @{
+   */
+    class address;
+    class address_v4;
+    class address_v6;
+    class address_iterator_v4;
+    class address_iterator_v6;
+    class address_range_v4;
+    class address_range_v6;
+    class network_v4;
+    class network_v6;
+    template<typename _InternetProtocol>
+      class basic_endpoint;
+    template<typename _InternetProtocol>
+      class basic_resolver_entry;
+    template<typename _InternetProtocol>
+      class basic_resolver_results;
+    template<typename _InternetProtocol>
+      class basic_resolver;
+    class tcp;
+    class udp;
+  /// @}
+
+} // namespace ip
+} // namespace v1
+} // namespace net
+} // namespace experimental
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // C++14
+
+#endif // _GLIBCXX_EXPERIMENTAL_NETFWD

@@ -1,0 +1,57 @@
+// <execution> -*- C++ -*-
+
+// Copyright (C) 2018-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+#ifndef _GLIBCXX_EXECUTION
+#define _GLIBCXX_EXECUTION 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201703L
+# include <bits/c++config.h>
+# include <pstl/glue_execution_defs.h>
+
+# define _PSTL_EXECUTION_POLICIES_DEFINED 1
+
+// Algorithm implementation
+# if _PSTL_ALGORITHM_FORWARD_DECLARED
+#  include <pstl/glue_algorithm_impl.h>
+# endif
+
+// Numeric implementation
+# if _PSTL_NUMERIC_FORWARD_DECLARED
+#  include <pstl/glue_numeric_impl.h>
+# endif
+
+// Memory implementation
+# if _PSTL_NUMERIC_FORWARD_DECLARED
+#  include <pstl/glue_memory_impl.h>
+# endif
+
+// Feature test macro for parallel algorithms
+# define __cpp_lib_parallel_algorithm 201603L
+# define __cpp_lib_execution 201902L
+
+#endif // C++17
+
+#endif /* _GLIBCXX_EXECUTION */

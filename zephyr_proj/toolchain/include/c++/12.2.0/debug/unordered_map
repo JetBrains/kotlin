@@ -1,0 +1,1590 @@
+// Debugging unordered_map/unordered_multimap implementation -*- C++ -*-
+
+// Copyright (C) 2003-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file debug/unordered_map
+ *  This file is a GNU debug extension to the Standard C++ Library.
+ */
+
+#ifndef _GLIBCXX_DEBUG_UNORDERED_MAP
+#define _GLIBCXX_DEBUG_UNORDERED_MAP 1
+
+#pragma GCC system_header
+
+#if __cplusplus < 201103L
+# include <bits/c++0x_warning.h>
+#else
+# include <bits/c++config.h>
+namespace std _GLIBCXX_VISIBILITY(default) { namespace __debug {
+  template<typename _Key, typename _Tp, typename _Hash, typename _Pred,
+	   typename _Allocator>
+    class unordered_map;
+  template<typename _Key, typename _Tp, typename _Hash, typename _Pred,
+	   typename _Allocator>
+    class unordered_multimap;
+} } // namespace std::__debug
+
+# include <unordered_map>
+
+#include <debug/safe_unordered_container.h>
+#include <debug/safe_container.h>
+#include <debug/safe_iterator.h>
+#include <debug/safe_local_iterator.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+namespace __debug
+{
+  /// Class std::unordered_map with safety/checking/debug instrumentation.
+  template<typename _Key, typename _Tp,
+	   typename _Hash = std::hash<_Key>,
+	   typename _Pred = std::equal_to<_Key>,
+	   typename _Alloc = std::allocator<std::pair<const _Key, _Tp> > >
+    class unordered_map
+    : public __gnu_debug::_Safe_container<
+	unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>, _Alloc,
+	__gnu_debug::_Safe_unordered_container>,
+      public _GLIBCXX_STD_C::unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>
+    {
+      typedef _GLIBCXX_STD_C::unordered_map<_Key, _Tp, _Hash,
+					    _Pred, _Alloc>		_Base;
+      typedef __gnu_debug::_Safe_container<unordered_map,
+		   _Alloc, __gnu_debug::_Safe_unordered_container>	_Safe;
+      typedef typename _Base::const_iterator	_Base_const_iterator;
+      typedef typename _Base::iterator		_Base_iterator;
+      typedef typename _Base::const_local_iterator
+						_Base_const_local_iterator;
+      typedef typename _Base::local_iterator	_Base_local_iterator;
+
+      template<typename _ItT, typename _SeqT, typename _CatT>
+	friend class ::__gnu_debug::_Safe_iterator;
+      template<typename _ItT, typename _SeqT>
+	friend class ::__gnu_debug::_Safe_local_iterator;
+
+      // Reference wrapper for base class. See PR libstdc++/90102.
+      struct _Base_ref
+      {
+	_Base_ref(const _Base& __r) : _M_ref(__r) { }
+
+	const _Base& _M_ref;
+      };
+
+    public:
+      typedef typename _Base::size_type			size_type;
+      typedef typename _Base::hasher			hasher;
+      typedef typename _Base::key_equal			key_equal;
+      typedef typename _Base::allocator_type		allocator_type;
+
+      typedef typename _Base::key_type			key_type;
+      typedef typename _Base::value_type		value_type;
+      typedef typename _Base::mapped_type		mapped_type;
+
+      typedef typename _Base::pointer			pointer;
+      typedef typename _Base::const_pointer		const_pointer;
+      typedef typename _Base::reference			reference;
+      typedef typename _Base::const_reference		const_reference;
+      typedef __gnu_debug::_Safe_iterator<
+	_Base_iterator, unordered_map>			iterator;
+      typedef __gnu_debug::_Safe_iterator<
+	_Base_const_iterator, unordered_map>		const_iterator;
+      typedef __gnu_debug::_Safe_local_iterator<
+	_Base_local_iterator, unordered_map>		local_iterator;
+      typedef __gnu_debug::_Safe_local_iterator<
+	_Base_const_local_iterator, unordered_map>	const_local_iterator;
+      typedef typename _Base::difference_type		difference_type;
+
+      unordered_map() = default;
+
+      explicit
+      unordered_map(size_type __n,
+		    const hasher& __hf = hasher(),
+		    const key_equal& __eql = key_equal(),
+		    const allocator_type& __a = allocator_type())
+      : _Base(__n, __hf, __eql, __a) { }
+
+      template<typename _InputIterator>
+	unordered_map(_InputIterator __first, _InputIterator __last,
+		      size_type __n = 0,
+		      const hasher& __hf = hasher(),
+		      const key_equal& __eql = key_equal(),
+		      const allocator_type& __a = allocator_type())
+	: _Base(__gnu_debug::__base(
+		  __glibcxx_check_valid_constructor_range(__first, __last)),
+		__gnu_debug::__base(__last), __n,
+		__hf, __eql, __a) { }
+
+      unordered_map(const unordered_map&) = default;
+
+      unordered_map(_Base_ref __x)
+      : _Base(__x._M_ref) { }
+
+      unordered_map(unordered_map&&) = default;
+
+      explicit
+      unordered_map(const allocator_type& __a)
+      : _Base(__a) { }
+
+      unordered_map(const unordered_map& __umap,
+		    const allocator_type& __a)
+      : _Base(__umap, __a) { }
+
+      unordered_map(unordered_map&& __umap,
+		    const allocator_type& __a)
+      noexcept( noexcept(_Base(std::move(__umap), __a)) )
+      : _Safe(std::move(__umap), __a),
+	_Base(std::move(__umap), __a) { }
+
+      unordered_map(initializer_list<value_type> __l,
+		    size_type __n = 0,
+		    const hasher& __hf = hasher(),
+		    const key_equal& __eql = key_equal(),
+		    const allocator_type& __a = allocator_type())
+      : _Base(__l, __n, __hf, __eql, __a) { }
+
+      unordered_map(size_type __n, const allocator_type& __a)
+      : unordered_map(__n, hasher(), key_equal(), __a)
+      { }
+
+      unordered_map(size_type __n,
+		    const hasher& __hf,
+		    const allocator_type& __a)
+      : unordered_map(__n, __hf, key_equal(), __a)
+      { }
+
+      template<typename _InputIterator>
+	unordered_map(_InputIterator __first, _InputIterator __last,
+		      size_type __n,
+		      const allocator_type& __a)
+	: unordered_map(__first, __last, __n, hasher(), key_equal(), __a)
+	{ }
+
+      template<typename _InputIterator>
+	unordered_map(_InputIterator __first, _InputIterator __last,
+		      size_type __n,
+		      const hasher& __hf,
+		      const allocator_type& __a)
+	: unordered_map(__first, __last, __n, __hf, key_equal(), __a)
+	{ }
+
+      unordered_map(initializer_list<value_type> __l,
+		    size_type __n,
+		    const allocator_type& __a)
+      : unordered_map(__l, __n, hasher(), key_equal(), __a)
+      { }
+
+      unordered_map(initializer_list<value_type> __l,
+		    size_type __n,
+		    const hasher& __hf,
+		    const allocator_type& __a)
+      : unordered_map(__l, __n, __hf, key_equal(), __a)
+      { }
+
+      ~unordered_map() = default;
+
+      unordered_map&
+      operator=(const unordered_map&) = default;
+
+      unordered_map&
+      operator=(unordered_map&&) = default;
+
+      unordered_map&
+      operator=(initializer_list<value_type> __l)
+      {
+	_Base::operator=(__l);
+	this->_M_invalidate_all();
+	return *this;
+      }
+
+      using _Base::get_allocator;
+      using _Base::empty;
+      using _Base::size;
+      using _Base::max_size;
+
+      void
+      swap(unordered_map& __x)
+	noexcept( noexcept(declval<_Base&>().swap(__x)) )
+      {
+	_Safe::_M_swap(__x);
+	_Base::swap(__x);
+      }
+
+      void
+      clear() noexcept
+      {
+	_Base::clear();
+	this->_M_invalidate_all();
+      }
+
+      iterator
+      begin() noexcept
+      { return { _Base::begin(), this }; }
+
+      const_iterator
+      begin() const noexcept
+      { return { _Base::begin(), this }; }
+
+      iterator
+      end() noexcept
+      { return { _Base::end(), this }; }
+
+      const_iterator
+      end() const noexcept
+      { return { _Base::end(), this }; }
+
+      const_iterator
+      cbegin() const noexcept
+      { return { _Base::cbegin(), this }; }
+
+      const_iterator
+      cend() const noexcept
+      { return { _Base::cend(), this }; }
+
+      // local versions
+      local_iterator
+      begin(size_type __b)
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::begin(__b), this };
+      }
+
+      local_iterator
+      end(size_type __b)
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::end(__b), this };
+      }
+
+      const_local_iterator
+      begin(size_type __b) const
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::begin(__b), this };
+      }
+
+      const_local_iterator
+      end(size_type __b) const
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::end(__b), this };
+      }
+
+      const_local_iterator
+      cbegin(size_type __b) const
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::cbegin(__b), this };
+      }
+
+      const_local_iterator
+      cend(size_type __b) const
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::cend(__b), this };
+      }
+
+      using _Base::bucket_count;
+      using _Base::max_bucket_count;
+      using _Base::bucket;
+
+      size_type
+      bucket_size(size_type __b) const
+      {
+	__glibcxx_check_bucket_index(__b);
+	return _Base::bucket_size(__b);
+      }
+
+      using _Base::load_factor;
+
+      float
+      max_load_factor() const noexcept
+      { return _Base::max_load_factor(); }
+
+      void
+      max_load_factor(float __f)
+      {
+	__glibcxx_check_max_load_factor(__f);
+	_Base::max_load_factor(__f);
+      }
+
+      template<typename... _Args>
+	std::pair<iterator, bool>
+	emplace(_Args&&... __args)
+	{
+	  size_type __bucket_count = this->bucket_count();
+	  auto __res = _Base::emplace(std::forward<_Args>(__args)...);
+	  _M_check_rehashed(__bucket_count);
+	  return { { __res.first, this }, __res.second };
+	}
+
+      template<typename... _Args>
+	iterator
+	emplace_hint(const_iterator __hint, _Args&&... __args)
+	{
+	  __glibcxx_check_insert(__hint);
+	  size_type __bucket_count = this->bucket_count();
+	  auto __it = _Base::emplace_hint(__hint.base(),
+					  std::forward<_Args>(__args)...);
+	  _M_check_rehashed(__bucket_count);
+	  return { __it, this };
+	}
+
+      std::pair<iterator, bool>
+      insert(const value_type& __obj)
+      {
+	size_type __bucket_count = this->bucket_count();
+	auto __res = _Base::insert(__obj);
+	_M_check_rehashed(__bucket_count);
+	return { { __res.first, this }, __res.second };
+      }
+
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 2354. Unnecessary copying when inserting into maps with braced-init
+      std::pair<iterator, bool>
+      insert(value_type&& __x)
+      {
+	size_type __bucket_count = this->bucket_count();
+	auto __res = _Base::insert(std::move(__x));
+	_M_check_rehashed(__bucket_count);
+	return { { __res.first, this }, __res.second };
+      }
+
+      template<typename _Pair, typename = typename
+	       std::enable_if<std::is_constructible<value_type,
+						    _Pair&&>::value>::type>
+	std::pair<iterator, bool>
+	insert(_Pair&& __obj)
+	{
+	  size_type __bucket_count = this->bucket_count();
+	  auto __res = _Base::insert(std::forward<_Pair>(__obj));
+	  _M_check_rehashed(__bucket_count);
+	  return { { __res.first, this }, __res.second };
+	}
+
+      iterator
+      insert(const_iterator __hint, const value_type& __obj)
+      {
+	__glibcxx_check_insert(__hint);
+	size_type __bucket_count = this->bucket_count();
+	auto __it = _Base::insert(__hint.base(), __obj);
+	_M_check_rehashed(__bucket_count);
+	return { __it, this };
+      }
+
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 2354. Unnecessary copying when inserting into maps with braced-init
+      iterator
+      insert(const_iterator __hint, value_type&& __x)
+      {
+	__glibcxx_check_insert(__hint);
+	size_type __bucket_count = this->bucket_count();
+	auto __it = _Base::insert(__hint.base(), std::move(__x));
+	_M_check_rehashed(__bucket_count);
+	return { __it, this };
+      }
+
+      template<typename _Pair, typename = typename
+	       std::enable_if<std::is_constructible<value_type,
+						    _Pair&&>::value>::type>
+	iterator
+	insert(const_iterator __hint, _Pair&& __obj)
+	{
+	  __glibcxx_check_insert(__hint);
+	  size_type __bucket_count = this->bucket_count();
+	  auto __it = _Base::insert(__hint.base(), std::forward<_Pair>(__obj));
+	  _M_check_rehashed(__bucket_count);
+	  return { __it, this };
+	}
+
+      void
+      insert(std::initializer_list<value_type> __l)
+      {
+	size_type __bucket_count = this->bucket_count();
+	_Base::insert(__l);
+	_M_check_rehashed(__bucket_count);
+      }
+
+      template<typename _InputIterator>
+	void
+	insert(_InputIterator __first, _InputIterator __last)
+	{
+	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+	  __glibcxx_check_valid_range2(__first, __last, __dist);
+	  size_type __bucket_count = this->bucket_count();
+
+	  if (__dist.second >= __gnu_debug::__dp_sign)
+	    _Base::insert(__gnu_debug::__unsafe(__first),
+			  __gnu_debug::__unsafe(__last));
+	  else
+	    _Base::insert(__first, __last);
+
+	  _M_check_rehashed(__bucket_count);
+	}
+
+#if __cplusplus > 201402L
+      template <typename... _Args>
+	pair<iterator, bool>
+	try_emplace(const key_type& __k, _Args&&... __args)
+	{
+	  auto __res = _Base::try_emplace(__k,
+					  std::forward<_Args>(__args)...);
+	  return { { __res.first, this }, __res.second };
+	}
+
+      template <typename... _Args>
+	pair<iterator, bool>
+	try_emplace(key_type&& __k, _Args&&... __args)
+	{
+	  auto __res = _Base::try_emplace(std::move(__k),
+					  std::forward<_Args>(__args)...);
+	  return { { __res.first, this }, __res.second };
+	}
+
+      template <typename... _Args>
+	iterator
+	try_emplace(const_iterator __hint, const key_type& __k,
+		    _Args&&... __args)
+	{
+	  __glibcxx_check_insert(__hint);
+	  return { _Base::try_emplace(__hint.base(), __k,
+				      std::forward<_Args>(__args)...),
+		   this };
+	}
+
+      template <typename... _Args>
+	iterator
+	try_emplace(const_iterator __hint, key_type&& __k, _Args&&... __args)
+	{
+	  __glibcxx_check_insert(__hint);
+	  return { _Base::try_emplace(__hint.base(), std::move(__k),
+				      std::forward<_Args>(__args)...),
+		   this };
+	}
+
+      template <typename _Obj>
+	pair<iterator, bool>
+	insert_or_assign(const key_type& __k, _Obj&& __obj)
+	{
+	  auto __res = _Base::insert_or_assign(__k,
+					       std::forward<_Obj>(__obj));
+	  return { { __res.first, this }, __res.second };
+	}
+
+      template <typename _Obj>
+	pair<iterator, bool>
+	insert_or_assign(key_type&& __k, _Obj&& __obj)
+	{
+	  auto __res = _Base::insert_or_assign(std::move(__k),
+					       std::forward<_Obj>(__obj));
+	  return { { __res.first, this }, __res.second };
+	}
+
+      template <typename _Obj>
+	iterator
+	insert_or_assign(const_iterator __hint, const key_type& __k,
+			 _Obj&& __obj)
+	{
+	  __glibcxx_check_insert(__hint);
+	  return { _Base::insert_or_assign(__hint.base(), __k,
+					   std::forward<_Obj>(__obj)),
+		   this };
+	}
+
+      template <typename _Obj>
+	iterator
+	insert_or_assign(const_iterator __hint, key_type&& __k, _Obj&& __obj)
+	{
+	  __glibcxx_check_insert(__hint);
+	  return { _Base::insert_or_assign(__hint.base(), std::move(__k),
+					   std::forward<_Obj>(__obj)),
+		   this };
+	}
+#endif // C++17
+
+#if __cplusplus > 201402L
+      using node_type = typename _Base::node_type;
+      using insert_return_type = _Node_insert_return<iterator, node_type>;
+
+      node_type
+      extract(const_iterator __position)
+      {
+	__glibcxx_check_erase(__position);
+	return _M_extract(__position.base());
+      }
+
+      node_type
+      extract(const key_type& __key)
+      {
+	const auto __position = _Base::find(__key);
+	if (__position != _Base::end())
+	  return _M_extract(__position);
+	return {};
+      }
+
+      insert_return_type
+      insert(node_type&& __nh)
+      {
+	auto __ret = _Base::insert(std::move(__nh));
+	return
+	  { { __ret.position, this }, __ret.inserted, std::move(__ret.node) };
+      }
+
+      iterator
+      insert(const_iterator __hint, node_type&& __nh)
+      {
+	__glibcxx_check_insert(__hint);
+	return { _Base::insert(__hint.base(), std::move(__nh)), this };
+      }
+
+      template<typename _H2, typename _P2>
+	void
+	merge(unordered_map<_Key, _Tp, _H2, _P2, _Alloc>& __source)
+	{
+	  auto __guard
+	    = _Safe::_S_uc_guard(std::__detail::_Select1st{}, __source);
+	  _Base::merge(__source);
+	}
+
+      template<typename _H2, typename _P2>
+	void
+	merge(unordered_map<_Key, _Tp, _H2, _P2, _Alloc>&& __source)
+	{ merge(__source); }
+
+      template<typename _H2, typename _P2>
+	void
+	merge(unordered_multimap<_Key, _Tp, _H2, _P2, _Alloc>& __source)
+	{
+	  auto __guard
+	    = _Safe::_S_umc_guard(std::__detail::_Select1st{}, __source);
+	  _Base::merge(__source);
+	}
+
+      template<typename _H2, typename _P2>
+	void
+	merge(unordered_multimap<_Key, _Tp, _H2, _P2, _Alloc>&& __source)
+	{ merge(__source); }
+#endif // C++17
+
+      using _Base::hash_function;
+      using _Base::key_eq;
+
+      iterator
+      find(const key_type& __key)
+      { return { _Base::find(__key), this }; }
+
+#if __cplusplus > 201703L
+      template<typename _Kt,
+	       typename = std::__has_is_transparent_t<_Hash, _Kt>,
+	       typename = std::__has_is_transparent_t<_Pred, _Kt>>
+	iterator
+	find(const _Kt& __k)
+	{ return { _Base::find(__k), this }; }
+#endif
+
+      const_iterator
+      find(const key_type& __key) const
+      { return { _Base::find(__key), this }; }
+
+#if __cplusplus > 201703L
+      template<typename _Kt,
+	       typename = std::__has_is_transparent_t<_Hash, _Kt>,
+	       typename = std::__has_is_transparent_t<_Pred, _Kt>>
+	const_iterator
+	find(const _Kt& __k) const
+	{ return { _Base::find(__k), this }; }
+#endif
+
+      using _Base::count;
+#if __cplusplus > 201703L
+      using _Base::contains;
+#endif
+
+      std::pair<iterator, iterator>
+      equal_range(const key_type& __key)
+      {
+	auto __res = _Base::equal_range(__key);
+	return { { __res.first, this }, { __res.second, this } };
+      }
+
+#if __cplusplus > 201703L
+      template<typename _Kt,
+	       typename = std::__has_is_transparent_t<_Hash, _Kt>,
+	       typename = std::__has_is_transparent_t<_Pred, _Kt>>
+	std::pair<iterator, iterator>
+	equal_range(const _Kt& __k)
+	{
+	  auto __res = _Base::equal_range(__k);
+	  return { { __res.first, this }, { __res.second, this } };
+	}
+#endif
+
+      std::pair<const_iterator, const_iterator>
+      equal_range(const key_type& __key) const
+      {
+	auto __res = _Base::equal_range(__key);
+	return { { __res.first, this }, { __res.second, this } };
+      }
+
+#if __cplusplus > 201703L
+      template<typename _Kt,
+	       typename = std::__has_is_transparent_t<_Hash, _Kt>,
+	       typename = std::__has_is_transparent_t<_Pred, _Kt>>
+	std::pair<const_iterator, const_iterator>
+	equal_range(const _Kt& __k) const
+	{
+	  auto __res = _Base::equal_range(__k);
+	  return { { __res.first, this }, { __res.second, this } };
+	}
+#endif
+
+      using _Base::operator[];
+      using _Base::at;
+
+      size_type
+      erase(const key_type& __key)
+      {
+	size_type __ret(0);
+	auto __victim = _Base::find(__key);
+	if (__victim != _Base::end())
+	  {
+	    _M_erase(__victim);
+	    __ret = 1;
+	  }
+	return __ret;
+      }
+
+      iterator
+      erase(const_iterator __it)
+      {
+	__glibcxx_check_erase(__it);
+	return { _M_erase(__it.base()), this };
+      }
+
+      _Base_iterator
+      erase(_Base_const_iterator __it)
+      {
+	__glibcxx_check_erase2(__it);
+	return _M_erase(__it);
+      }
+
+      iterator
+      erase(iterator __it)
+      {
+	__glibcxx_check_erase(__it);
+	return { _M_erase(__it.base()), this };
+      }
+
+      iterator
+      erase(const_iterator __first, const_iterator __last)
+      {
+	__glibcxx_check_erase_range(__first, __last);
+	for (auto __tmp = __first.base(); __tmp != __last.base(); ++__tmp)
+	  {
+	    _GLIBCXX_DEBUG_VERIFY(__tmp != _Base::cend(),
+				  _M_message(__gnu_debug::__msg_valid_range)
+				  ._M_iterator(__first, "first")
+				  ._M_iterator(__last, "last"));
+	    _M_invalidate(__tmp);
+	  }
+
+	size_type __bucket_count = this->bucket_count();
+	auto __next = _Base::erase(__first.base(), __last.base());
+	_M_check_rehashed(__bucket_count);
+	return { __next, this };
+      }
+
+      using _Base::rehash;
+      using _Base::reserve;
+
+      _Base&
+      _M_base() noexcept	{ return *this; }
+
+      const _Base&
+      _M_base() const noexcept	{ return *this; }
+
+    private:
+      void
+      _M_check_rehashed(size_type __prev_count)
+      {
+	if (__prev_count != this->bucket_count())
+	  this->_M_invalidate_all();
+      }
+
+      void
+      _M_invalidate(_Base_const_iterator __victim)
+      {
+	this->_M_invalidate_if(
+	  [__victim](_Base_const_iterator __it) { return __it == __victim; });
+	this->_M_invalidate_local_if(
+	  [__victim](_Base_const_local_iterator __it)
+	  { return __it == __victim; });
+      }
+
+      _Base_iterator
+      _M_erase(_Base_const_iterator __victim)
+      {
+	_M_invalidate(__victim);
+	size_type __bucket_count = this->bucket_count();
+	_Base_iterator __next = _Base::erase(__victim);
+	_M_check_rehashed(__bucket_count);
+	return __next;
+      }
+
+#if __cplusplus > 201402L
+      node_type
+      _M_extract(_Base_const_iterator __victim)
+      {
+	_M_invalidate(__victim);
+	return _Base::extract(__victim);
+      }
+#endif
+    };
+
+#if __cpp_deduction_guides >= 201606
+
+  template<typename _InputIterator,
+	   typename _Hash = hash<__iter_key_t<_InputIterator>>,
+	   typename _Pred = equal_to<__iter_key_t<_InputIterator>>,
+	   typename _Allocator = allocator<__iter_to_alloc_t<_InputIterator>>,
+	   typename = _RequireInputIter<_InputIterator>,
+	   typename = _RequireNotAllocatorOrIntegral<_Hash>,
+	   typename = _RequireNotAllocator<_Pred>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_map(_InputIterator, _InputIterator,
+		  typename unordered_map<int, int>::size_type = {},
+		  _Hash = _Hash(), _Pred = _Pred(), _Allocator = _Allocator())
+    -> unordered_map<__iter_key_t<_InputIterator>,
+		     __iter_val_t<_InputIterator>,
+		     _Hash, _Pred, _Allocator>;
+
+  template<typename _Key, typename _Tp, typename _Hash = hash<_Key>,
+	   typename _Pred = equal_to<_Key>,
+	   typename _Allocator = allocator<pair<const _Key, _Tp>>,
+	   typename = _RequireNotAllocatorOrIntegral<_Hash>,
+	   typename = _RequireNotAllocator<_Pred>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_map(initializer_list<pair<_Key, _Tp>>,
+		  typename unordered_map<int, int>::size_type = {},
+		  _Hash = _Hash(), _Pred = _Pred(), _Allocator = _Allocator())
+    -> unordered_map<_Key, _Tp, _Hash, _Pred, _Allocator>;
+
+  template<typename _InputIterator, typename _Allocator,
+	   typename = _RequireInputIter<_InputIterator>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_map(_InputIterator, _InputIterator,
+		  typename unordered_map<int, int>::size_type, _Allocator)
+    -> unordered_map<__iter_key_t<_InputIterator>,
+		     __iter_val_t<_InputIterator>,
+		     hash<__iter_key_t<_InputIterator>>,
+		     equal_to<__iter_key_t<_InputIterator>>,
+		     _Allocator>;
+
+  template<typename _InputIterator, typename _Allocator,
+	   typename = _RequireInputIter<_InputIterator>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_map(_InputIterator, _InputIterator, _Allocator)
+    -> unordered_map<__iter_key_t<_InputIterator>,
+		     __iter_val_t<_InputIterator>,
+		     hash<__iter_key_t<_InputIterator>>,
+		     equal_to<__iter_key_t<_InputIterator>>,
+		     _Allocator>;
+
+  template<typename _InputIterator, typename _Hash, typename _Allocator,
+	   typename = _RequireInputIter<_InputIterator>,
+	   typename = _RequireNotAllocatorOrIntegral<_Hash>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_map(_InputIterator, _InputIterator,
+		  typename unordered_map<int, int>::size_type,
+		  _Hash, _Allocator)
+    -> unordered_map<__iter_key_t<_InputIterator>,
+		     __iter_val_t<_InputIterator>, _Hash,
+		     equal_to<__iter_key_t<_InputIterator>>, _Allocator>;
+
+  template<typename _Key, typename _Tp, typename _Allocator,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_map(initializer_list<pair<_Key, _Tp>>,
+		  typename unordered_map<int, int>::size_type,
+		  _Allocator)
+    -> unordered_map<_Key, _Tp, hash<_Key>, equal_to<_Key>, _Allocator>;
+
+  template<typename _Key, typename _Tp, typename _Allocator,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_map(initializer_list<pair<_Key, _Tp>>, _Allocator)
+    -> unordered_map<_Key, _Tp, hash<_Key>, equal_to<_Key>, _Allocator>;
+
+  template<typename _Key, typename _Tp, typename _Hash, typename _Allocator,
+	   typename = _RequireNotAllocatorOrIntegral<_Hash>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_map(initializer_list<pair<_Key, _Tp>>,
+		  typename unordered_map<int, int>::size_type,
+		  _Hash, _Allocator)
+    -> unordered_map<_Key, _Tp, _Hash, equal_to<_Key>, _Allocator>;
+
+#endif
+
+  template<typename _Key, typename _Tp, typename _Hash,
+	   typename _Pred, typename _Alloc>
+    inline void
+    swap(unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
+	 unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>& __y)
+    noexcept(noexcept(__x.swap(__y)))
+    { __x.swap(__y); }
+
+  template<typename _Key, typename _Tp, typename _Hash,
+	   typename _Pred, typename _Alloc>
+    inline bool
+    operator==(const unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
+	       const unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>& __y)
+    { return __x._M_base() == __y._M_base(); }
+
+#if __cpp_impl_three_way_comparison < 201907L
+  template<typename _Key, typename _Tp, typename _Hash,
+	   typename _Pred, typename _Alloc>
+    inline bool
+    operator!=(const unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
+	       const unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>& __y)
+    { return !(__x == __y); }
+#endif
+
+  /// Class std::unordered_multimap with safety/checking/debug instrumentation.
+  template<typename _Key, typename _Tp,
+	   typename _Hash = std::hash<_Key>,
+	   typename _Pred = std::equal_to<_Key>,
+	   typename _Alloc = std::allocator<std::pair<const _Key, _Tp> > >
+    class unordered_multimap
+      : public __gnu_debug::_Safe_container<
+	unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>, _Alloc,
+	__gnu_debug::_Safe_unordered_container>,
+	public _GLIBCXX_STD_C::unordered_multimap<
+	_Key, _Tp, _Hash, _Pred, _Alloc>
+    {
+      typedef _GLIBCXX_STD_C::unordered_multimap<_Key, _Tp, _Hash,
+						 _Pred, _Alloc>		_Base;
+      typedef __gnu_debug::_Safe_container<unordered_multimap,
+	_Alloc, __gnu_debug::_Safe_unordered_container>			_Safe;
+      typedef typename _Base::const_iterator	   _Base_const_iterator;
+      typedef typename _Base::iterator		   _Base_iterator;
+      typedef typename _Base::const_local_iterator _Base_const_local_iterator;
+      typedef typename _Base::local_iterator	   _Base_local_iterator;
+
+      template<typename _ItT, typename _SeqT, typename _CatT>
+	friend class ::__gnu_debug::_Safe_iterator;
+      template<typename _ItT, typename _SeqT>
+	friend class ::__gnu_debug::_Safe_local_iterator;
+
+      // Reference wrapper for base class. See PR libstdc++/90102.
+      struct _Base_ref
+      {
+	_Base_ref(const _Base& __r) : _M_ref(__r) { }
+
+	const _Base& _M_ref;
+      };
+
+    public:
+      typedef typename _Base::size_type			size_type;
+      typedef typename _Base::hasher			hasher;
+      typedef typename _Base::key_equal			key_equal;
+      typedef typename _Base::allocator_type		allocator_type;
+
+      typedef typename _Base::key_type			key_type;
+      typedef typename _Base::value_type		value_type;
+      typedef typename _Base::mapped_type		mapped_type;
+
+      typedef typename _Base::pointer			pointer;
+      typedef typename _Base::const_pointer		const_pointer;
+      typedef typename _Base::reference			reference;
+      typedef typename _Base::const_reference		const_reference;
+      typedef __gnu_debug::_Safe_iterator<
+	_Base_iterator, unordered_multimap>		iterator;
+      typedef __gnu_debug::_Safe_iterator<
+	_Base_const_iterator, unordered_multimap>	const_iterator;
+      typedef __gnu_debug::_Safe_local_iterator<
+	_Base_local_iterator, unordered_multimap>	local_iterator;
+      typedef __gnu_debug::_Safe_local_iterator<
+	_Base_const_local_iterator, unordered_multimap>	const_local_iterator;
+      typedef typename _Base::difference_type		difference_type;
+
+      unordered_multimap() = default;
+
+      explicit
+      unordered_multimap(size_type __n,
+			 const hasher& __hf = hasher(),
+			 const key_equal& __eql = key_equal(),
+			 const allocator_type& __a = allocator_type())
+      : _Base(__n, __hf, __eql, __a) { }
+
+      template<typename _InputIterator>
+	unordered_multimap(_InputIterator __first, _InputIterator __last,
+			   size_type __n = 0,
+			   const hasher& __hf = hasher(),
+			   const key_equal& __eql = key_equal(),
+			   const allocator_type& __a = allocator_type())
+	: _Base(__gnu_debug::__base(
+		  __glibcxx_check_valid_constructor_range(__first, __last)),
+		__gnu_debug::__base(__last), __n,
+		__hf, __eql, __a) { }
+
+      unordered_multimap(const unordered_multimap&) = default;
+
+      unordered_multimap(_Base_ref __x)
+      : _Base(__x._M_ref) { }
+
+      unordered_multimap(unordered_multimap&&) = default;
+
+      explicit
+      unordered_multimap(const allocator_type& __a)
+      : _Base(__a) { }
+
+      unordered_multimap(const unordered_multimap& __umap,
+			 const allocator_type& __a)
+      : _Base(__umap, __a) { }
+
+      unordered_multimap(unordered_multimap&& __umap,
+			 const allocator_type& __a)
+      noexcept( noexcept(_Base(std::move(__umap), __a)) )
+      : _Safe(std::move(__umap), __a),
+	_Base(std::move(__umap), __a) { }
+
+      unordered_multimap(initializer_list<value_type> __l,
+			 size_type __n = 0,
+			 const hasher& __hf = hasher(),
+			 const key_equal& __eql = key_equal(),
+			 const allocator_type& __a = allocator_type())
+      : _Base(__l, __n, __hf, __eql, __a) { }
+
+      unordered_multimap(size_type __n, const allocator_type& __a)
+      : unordered_multimap(__n, hasher(), key_equal(), __a)
+      { }
+
+      unordered_multimap(size_type __n, const hasher& __hf,
+			 const allocator_type& __a)
+      : unordered_multimap(__n, __hf, key_equal(), __a)
+      { }
+
+      template<typename _InputIterator>
+	unordered_multimap(_InputIterator __first, _InputIterator __last,
+			   size_type __n,
+			   const allocator_type& __a)
+	: unordered_multimap(__first, __last, __n, hasher(), key_equal(), __a)
+	{ }
+
+      template<typename _InputIterator>
+	unordered_multimap(_InputIterator __first, _InputIterator __last,
+			   size_type __n, const hasher& __hf,
+			   const allocator_type& __a)
+	: unordered_multimap(__first, __last, __n, __hf, key_equal(), __a)
+	{ }
+
+      unordered_multimap(initializer_list<value_type> __l,
+			 size_type __n,
+			 const allocator_type& __a)
+      : unordered_multimap(__l, __n, hasher(), key_equal(), __a)
+      { }
+
+      unordered_multimap(initializer_list<value_type> __l,
+			 size_type __n, const hasher& __hf,
+			 const allocator_type& __a)
+      : unordered_multimap(__l, __n, __hf, key_equal(), __a)
+      { }
+
+      ~unordered_multimap() = default;
+
+      unordered_multimap&
+      operator=(const unordered_multimap&) = default;
+
+      unordered_multimap&
+      operator=(unordered_multimap&&) = default;
+
+      unordered_multimap&
+      operator=(initializer_list<value_type> __l)
+      {
+	_Base::operator=(__l);
+	this->_M_invalidate_all();
+	return *this;
+      }
+
+      using _Base::get_allocator;
+      using _Base::empty;
+      using _Base::size;
+      using _Base::max_size;
+
+      void
+      swap(unordered_multimap& __x)
+	noexcept( noexcept(declval<_Base&>().swap(__x)) )
+      {
+	_Safe::_M_swap(__x);
+	_Base::swap(__x);
+      }
+
+      void
+      clear() noexcept
+      {
+	_Base::clear();
+	this->_M_invalidate_all();
+      }
+
+      iterator
+      begin() noexcept
+      { return { _Base::begin(), this }; }
+
+      const_iterator
+      begin() const noexcept
+      { return { _Base::begin(), this }; }
+
+      iterator
+      end() noexcept
+      { return { _Base::end(), this }; }
+
+      const_iterator
+      end() const noexcept
+      { return { _Base::end(), this }; }
+
+      const_iterator
+      cbegin() const noexcept
+      { return { _Base::cbegin(), this }; }
+
+      const_iterator
+      cend() const noexcept
+      { return { _Base::cend(), this }; }
+
+      // local versions
+      local_iterator
+      begin(size_type __b)
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::begin(__b), this };
+      }
+
+      local_iterator
+      end(size_type __b)
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::end(__b), this };
+      }
+
+      const_local_iterator
+      begin(size_type __b) const
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::begin(__b), this };
+      }
+
+      const_local_iterator
+      end(size_type __b) const
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::end(__b), this };
+      }
+
+      const_local_iterator
+      cbegin(size_type __b) const
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::cbegin(__b), this };
+      }
+
+      const_local_iterator
+      cend(size_type __b) const
+      {
+	__glibcxx_check_bucket_index(__b);
+	return { _Base::cend(__b), this };
+      }
+
+      using _Base::bucket_count;
+      using _Base::max_bucket_count;
+      using _Base::bucket;
+
+      size_type
+      bucket_size(size_type __b) const
+      {
+	__glibcxx_check_bucket_index(__b);
+	return _Base::bucket_size(__b);
+      }
+
+      float
+      max_load_factor() const noexcept
+      { return _Base::max_load_factor(); }
+
+      void
+      max_load_factor(float __f)
+      {
+	__glibcxx_check_max_load_factor(__f);
+	_Base::max_load_factor(__f);
+      }
+
+      template<typename... _Args>
+	iterator
+	emplace(_Args&&... __args)
+	{
+	  size_type __bucket_count = this->bucket_count();
+	  auto __it = _Base::emplace(std::forward<_Args>(__args)...);
+	  _M_check_rehashed(__bucket_count);
+	  return { __it, this };
+	}
+
+      template<typename... _Args>
+	iterator
+	emplace_hint(const_iterator __hint, _Args&&... __args)
+	{
+	  __glibcxx_check_insert(__hint);
+	  size_type __bucket_count = this->bucket_count();
+	  auto __it = _Base::emplace_hint(__hint.base(),
+					  std::forward<_Args>(__args)...);
+	  _M_check_rehashed(__bucket_count);
+	  return { __it, this };
+	}
+
+      iterator
+      insert(const value_type& __obj)
+      {
+	size_type __bucket_count = this->bucket_count();
+	auto __it = _Base::insert(__obj);
+	_M_check_rehashed(__bucket_count);
+	return { __it, this };
+      }
+
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 2354. Unnecessary copying when inserting into maps with braced-init
+      iterator
+      insert(value_type&& __x)
+      {
+	size_type __bucket_count = this->bucket_count();
+	auto __it = _Base::insert(std::move(__x));
+	_M_check_rehashed(__bucket_count);
+	return { __it, this };
+      }
+
+      iterator
+      insert(const_iterator __hint, const value_type& __obj)
+      {
+	__glibcxx_check_insert(__hint);
+	size_type __bucket_count = this->bucket_count();
+	auto __it = _Base::insert(__hint.base(), __obj);
+	_M_check_rehashed(__bucket_count);
+	return { __it, this };
+      }
+
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // 2354. Unnecessary copying when inserting into maps with braced-init
+      iterator
+      insert(const_iterator __hint, value_type&& __x)
+      {
+	__glibcxx_check_insert(__hint);
+	size_type __bucket_count = this->bucket_count();
+	auto __it = _Base::insert(__hint.base(), std::move(__x));
+	_M_check_rehashed(__bucket_count);
+	return { __it, this };
+      }
+
+      template<typename _Pair, typename = typename
+	       std::enable_if<std::is_constructible<value_type,
+						    _Pair&&>::value>::type>
+	iterator
+	insert(_Pair&& __obj)
+	{
+	  size_type __bucket_count = this->bucket_count();
+	  auto __it = _Base::insert(std::forward<_Pair>(__obj));
+	  _M_check_rehashed(__bucket_count);
+	  return { __it, this };
+	}
+
+      template<typename _Pair, typename = typename
+	       std::enable_if<std::is_constructible<value_type,
+						    _Pair&&>::value>::type>
+	iterator
+	insert(const_iterator __hint, _Pair&& __obj)
+	{
+	  __glibcxx_check_insert(__hint);
+	  size_type __bucket_count = this->bucket_count();
+	  auto __it = _Base::insert(__hint.base(), std::forward<_Pair>(__obj));
+	  _M_check_rehashed(__bucket_count);
+	  return { __it, this };
+	}
+
+      void
+      insert(std::initializer_list<value_type> __l)
+      { _Base::insert(__l); }
+
+      template<typename _InputIterator>
+	void
+	insert(_InputIterator __first, _InputIterator __last)
+	{
+	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+	  __glibcxx_check_valid_range2(__first, __last, __dist);
+	  size_type __bucket_count = this->bucket_count();
+
+	  if (__dist.second >= __gnu_debug::__dp_sign)
+	    _Base::insert(__gnu_debug::__unsafe(__first),
+			  __gnu_debug::__unsafe(__last));
+	  else
+	    _Base::insert(__first, __last);
+
+	  _M_check_rehashed(__bucket_count);
+	}
+
+#if __cplusplus > 201402L
+      using node_type = typename _Base::node_type;
+
+      node_type
+      extract(const_iterator __position)
+      {
+	__glibcxx_check_erase(__position);
+	return _M_extract(__position.base());
+      }
+
+      node_type
+      extract(const key_type& __key)
+      {
+	const auto __position = _Base::find(__key);
+	if (__position != _Base::end())
+	  return _M_extract(__position);
+	return {};
+      }
+
+      iterator
+      insert(node_type&& __nh)
+      { return { _Base::insert(std::move(__nh)), this }; }
+
+      iterator
+      insert(const_iterator __hint, node_type&& __nh)
+      {
+	__glibcxx_check_insert(__hint);
+	return { _Base::insert(__hint.base(), std::move(__nh)), this };
+      }
+
+      template<typename _H2, typename _P2>
+	void
+	merge(unordered_multimap<_Key, _Tp, _H2, _P2, _Alloc>& __source)
+	{
+	  auto __guard
+	    = _Safe::_S_umc_guard(std::__detail::_Select1st{}, __source);
+	  _Base::merge(__source);
+	}
+
+      template<typename _H2, typename _P2>
+	void
+	merge(unordered_multimap<_Key, _Tp, _H2, _P2, _Alloc>&& __source)
+	{ merge(__source); }
+
+      template<typename _H2, typename _P2>
+	void
+	merge(unordered_map<_Key, _Tp, _H2, _P2, _Alloc>& __source)
+	{
+	  auto __guard
+	    = _Safe::_S_uc_guard(std::__detail::_Select1st{}, __source);
+	  _Base::merge(__source);
+	}
+
+      template<typename _H2, typename _P2>
+	void
+	merge(unordered_map<_Key, _Tp, _H2, _P2, _Alloc>&& __source)
+	{ merge(__source); }
+#endif // C++17
+
+      using _Base::hash_function;
+      using _Base::key_eq;
+
+      iterator
+      find(const key_type& __key)
+      { return { _Base::find(__key), this }; }
+
+#if __cplusplus > 201703L
+      template<typename _Kt,
+	       typename = std::__has_is_transparent_t<_Hash, _Kt>,
+	       typename = std::__has_is_transparent_t<_Pred, _Kt>>
+	iterator
+	find(const _Kt& __k)
+	{ return { _Base::find(__k), this }; }
+#endif
+
+      const_iterator
+      find(const key_type& __key) const
+      { return { _Base::find(__key), this }; }
+
+#if __cplusplus > 201703L
+      template<typename _Kt,
+	       typename = std::__has_is_transparent_t<_Hash, _Kt>,
+	       typename = std::__has_is_transparent_t<_Pred, _Kt>>
+	const_iterator
+	find(const _Kt& __k) const
+	{ return { _Base::find(__k), this }; }
+#endif
+
+      using _Base::count;
+#if __cplusplus > 201703L
+      using _Base::contains;
+#endif
+
+      std::pair<iterator, iterator>
+      equal_range(const key_type& __key)
+      {
+	auto __res = _Base::equal_range(__key);
+	return { { __res.first, this }, { __res.second, this } };
+      }
+
+#if __cplusplus > 201703L
+      template<typename _Kt,
+	       typename = std::__has_is_transparent_t<_Hash, _Kt>,
+	       typename = std::__has_is_transparent_t<_Pred, _Kt>>
+	std::pair<iterator, iterator>
+	equal_range(const _Kt& __k)
+	{
+	  auto __res = _Base::equal_range(__k);
+	  return { { __res.first, this }, { __res.second, this } };
+	}
+#endif
+
+      std::pair<const_iterator, const_iterator>
+      equal_range(const key_type& __key) const
+      {
+	auto __res = _Base::equal_range(__key);
+	return { { __res.first, this }, { __res.second, this } };
+      }
+
+#if __cplusplus > 201703L
+      template<typename _Kt,
+	       typename = std::__has_is_transparent_t<_Hash, _Kt>,
+	       typename = std::__has_is_transparent_t<_Pred, _Kt>>
+	std::pair<const_iterator, const_iterator>
+	equal_range(const _Kt& __k) const
+	{
+	  auto __res = _Base::equal_range(__k);
+	  return { { __res.first, this }, { __res.second, this } };
+	}
+#endif
+
+      size_type
+      erase(const key_type& __key)
+      {
+	size_type __ret(0);
+	size_type __bucket_count = this->bucket_count();
+	auto __pair = _Base::equal_range(__key);
+	for (auto __victim = __pair.first; __victim != __pair.second;)
+	  {
+	    _M_invalidate(__victim);
+	    __victim = _Base::erase(__victim);
+	    ++__ret;
+	  }
+
+	_M_check_rehashed(__bucket_count);
+	return __ret;
+      }
+
+      iterator
+      erase(const_iterator __it)
+      {
+	__glibcxx_check_erase(__it);
+	return { _M_erase(__it.base()), this };
+      }
+
+      _Base_iterator
+      erase(_Base_const_iterator __it)
+      {
+	__glibcxx_check_erase2(__it);
+	return _M_erase(__it);
+      }
+
+      iterator
+      erase(iterator __it)
+      {
+	__glibcxx_check_erase(__it);
+	return { _M_erase(__it.base()), this };
+      }
+
+      iterator
+      erase(const_iterator __first, const_iterator __last)
+      {
+	__glibcxx_check_erase_range(__first, __last);
+	for (auto __tmp = __first.base(); __tmp != __last.base(); ++__tmp)
+	  {
+	    _GLIBCXX_DEBUG_VERIFY(__tmp != _Base::cend(),
+				  _M_message(__gnu_debug::__msg_valid_range)
+				  ._M_iterator(__first, "first")
+				  ._M_iterator(__last, "last"));
+	    _M_invalidate(__tmp);
+	  }
+
+	size_type __bucket_count = this->bucket_count();
+	auto __next = _Base::erase(__first.base(), __last.base());
+	_M_check_rehashed(__bucket_count);
+	return { __next, this };
+      }
+
+      using _Base::rehash;
+      using _Base::reserve;
+
+      _Base&
+      _M_base() noexcept { return *this; }
+
+      const _Base&
+      _M_base() const noexcept { return *this; }
+
+    private:
+      void
+      _M_check_rehashed(size_type __prev_count)
+      {
+	if (__prev_count != this->bucket_count())
+	  this->_M_invalidate_all();
+      }
+
+      void
+      _M_invalidate(_Base_const_iterator __victim)
+      {
+	this->_M_invalidate_if(
+	  [__victim](_Base_const_iterator __it) { return __it == __victim; });
+	this->_M_invalidate_local_if(
+	  [__victim](_Base_const_local_iterator __it)
+	  { return __it == __victim; });
+      }
+
+      _Base_iterator
+      _M_erase(_Base_const_iterator __victim)
+      {
+	_M_invalidate(__victim);
+	size_type __bucket_count = this->bucket_count();
+	_Base_iterator __next = _Base::erase(__victim);
+	_M_check_rehashed(__bucket_count);
+	return __next;
+      }
+
+#if __cplusplus > 201402L
+      node_type
+      _M_extract(_Base_const_iterator __victim)
+      {
+	_M_invalidate(__victim);
+	return _Base::extract(__victim);
+      }
+#endif
+    };
+
+#if __cpp_deduction_guides >= 201606
+
+  template<typename _InputIterator,
+	   typename _Hash = hash<__iter_key_t<_InputIterator>>,
+	   typename _Pred = equal_to<__iter_key_t<_InputIterator>>,
+	   typename _Allocator = allocator<__iter_to_alloc_t<_InputIterator>>,
+	   typename = _RequireInputIter<_InputIterator>,
+	   typename = _RequireNotAllocatorOrIntegral<_Hash>,
+	   typename = _RequireNotAllocator<_Pred>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_multimap(_InputIterator, _InputIterator,
+		       unordered_multimap<int, int>::size_type = {},
+		       _Hash = _Hash(), _Pred = _Pred(),
+		       _Allocator = _Allocator())
+    -> unordered_multimap<__iter_key_t<_InputIterator>,
+			  __iter_val_t<_InputIterator>, _Hash, _Pred,
+			  _Allocator>;
+
+  template<typename _Key, typename _Tp, typename _Hash = hash<_Key>,
+	   typename _Pred = equal_to<_Key>,
+	   typename _Allocator = allocator<pair<const _Key, _Tp>>,
+	   typename = _RequireNotAllocatorOrIntegral<_Hash>,
+	   typename = _RequireNotAllocator<_Pred>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_multimap(initializer_list<pair<_Key, _Tp>>,
+		       unordered_multimap<int, int>::size_type = {},
+		       _Hash = _Hash(), _Pred = _Pred(),
+		       _Allocator = _Allocator())
+    -> unordered_multimap<_Key, _Tp, _Hash, _Pred, _Allocator>;
+
+  template<typename _InputIterator, typename _Allocator,
+	   typename = _RequireInputIter<_InputIterator>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_multimap(_InputIterator, _InputIterator,
+		       unordered_multimap<int, int>::size_type, _Allocator)
+    -> unordered_multimap<__iter_key_t<_InputIterator>,
+			  __iter_val_t<_InputIterator>,
+			  hash<__iter_key_t<_InputIterator>>,
+			  equal_to<__iter_key_t<_InputIterator>>, _Allocator>;
+
+  template<typename _InputIterator, typename _Allocator,
+	   typename = _RequireInputIter<_InputIterator>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_multimap(_InputIterator, _InputIterator, _Allocator)
+    -> unordered_multimap<__iter_key_t<_InputIterator>,
+			  __iter_val_t<_InputIterator>,
+			  hash<__iter_key_t<_InputIterator>>,
+			  equal_to<__iter_key_t<_InputIterator>>, _Allocator>;
+
+  template<typename _InputIterator, typename _Hash, typename _Allocator,
+	   typename = _RequireInputIter<_InputIterator>,
+	   typename = _RequireNotAllocatorOrIntegral<_Hash>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_multimap(_InputIterator, _InputIterator,
+		       unordered_multimap<int, int>::size_type, _Hash,
+		       _Allocator)
+    -> unordered_multimap<__iter_key_t<_InputIterator>,
+			  __iter_val_t<_InputIterator>, _Hash,
+			  equal_to<__iter_key_t<_InputIterator>>, _Allocator>;
+
+  template<typename _Key, typename _Tp, typename _Allocator,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_multimap(initializer_list<pair<_Key, _Tp>>,
+		       unordered_multimap<int, int>::size_type,
+		       _Allocator)
+    -> unordered_multimap<_Key, _Tp, hash<_Key>, equal_to<_Key>, _Allocator>;
+
+  template<typename _Key, typename _Tp, typename _Allocator,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_multimap(initializer_list<pair<_Key, _Tp>>, _Allocator)
+    -> unordered_multimap<_Key, _Tp, hash<_Key>, equal_to<_Key>, _Allocator>;
+
+  template<typename _Key, typename _Tp, typename _Hash, typename _Allocator,
+	   typename = _RequireNotAllocatorOrIntegral<_Hash>,
+	   typename = _RequireAllocator<_Allocator>>
+    unordered_multimap(initializer_list<pair<_Key, _Tp>>,
+		       unordered_multimap<int, int>::size_type,
+		       _Hash, _Allocator)
+    -> unordered_multimap<_Key, _Tp, _Hash, equal_to<_Key>, _Allocator>;
+
+#endif
+
+  template<typename _Key, typename _Tp, typename _Hash,
+	   typename _Pred, typename _Alloc>
+    inline void
+    swap(unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
+	 unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>& __y)
+    noexcept(noexcept(__x.swap(__y)))
+    { __x.swap(__y); }
+
+  template<typename _Key, typename _Tp, typename _Hash,
+	   typename _Pred, typename _Alloc>
+    inline bool
+    operator==(const unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
+	       const unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>& __y)
+    { return __x._M_base() == __y._M_base(); }
+
+#if __cpp_impl_three_way_comparison < 201907L
+  template<typename _Key, typename _Tp, typename _Hash,
+	   typename _Pred, typename _Alloc>
+    inline bool
+    operator!=(const unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
+	       const unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>& __y)
+    { return !(__x == __y); }
+#endif
+
+} // namespace __debug
+} // namespace std
+
+#endif // C++11
+
+#endif

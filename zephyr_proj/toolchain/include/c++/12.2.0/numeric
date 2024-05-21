@@ -1,0 +1,747 @@
+// <numeric> -*- C++ -*-
+
+// Copyright (C) 2001-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/*
+ *
+ * Copyright (c) 1994
+ * Hewlett-Packard Company
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Hewlett-Packard Company makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ *
+ *
+ * Copyright (c) 1996,1997
+ * Silicon Graphics Computer Systems, Inc.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Silicon Graphics makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+/** @file include/numeric
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_NUMERIC
+#define _GLIBCXX_NUMERIC 1
+
+#pragma GCC system_header
+
+#include <bits/c++config.h>
+#include <bits/stl_iterator_base_types.h>
+#include <bits/stl_numeric.h>
+
+#ifdef _GLIBCXX_PARALLEL
+# include <parallel/numeric>
+#endif
+
+#if __cplusplus >= 201402L
+# include <type_traits>
+# include <bit>
+# include <ext/numeric_traits.h>
+#endif
+
+#if __cplusplus >= 201703L
+# include <bits/stl_function.h>
+#endif
+
+#if __cplusplus > 201703L
+# include <limits>
+#endif
+
+/**
+ * @defgroup numerics Numerics
+ *
+ * Components for performing numeric operations. Includes support for
+ * complex number types, random number generation, numeric (n-at-a-time)
+ * arrays, generalized numeric algorithms, and mathematical special functions.
+ */
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+#if __cplusplus >= 201402L
+namespace __detail
+{
+  // Like std::abs, but supports unsigned types and returns the specified type,
+  // so |std::numeric_limits<_Tp>::min()| is OK if representable in _Res.
+  template<typename _Res, typename _Tp>
+    constexpr _Res
+    __abs_r(_Tp __val)
+    {
+      static_assert(sizeof(_Res) >= sizeof(_Tp),
+	  "result type must be at least as wide as the input type");
+
+      if (__val >= 0)
+	return __val;
+#ifdef _GLIBCXX_ASSERTIONS
+      if (!__is_constant_evaluated()) // overflow already detected in constexpr
+	__glibcxx_assert(__val != __gnu_cxx::__int_traits<_Res>::__min);
+#endif
+      return -static_cast<_Res>(__val);
+    }
+
+  template<typename> void __abs_r(bool) = delete;
+
+  // GCD implementation, using Stein's algorithm
+  template<typename _Tp>
+    constexpr _Tp
+    __gcd(_Tp __m, _Tp __n)
+    {
+      static_assert(is_unsigned<_Tp>::value, "type must be unsigned");
+
+      if (__m == 0)
+	return __n;
+      if (__n == 0)
+	return __m;
+
+      const int __i = std::__countr_zero(__m);
+      __m >>= __i;
+      const int __j = std::__countr_zero(__n);
+      __n >>= __j;
+      const int __k = __i < __j ? __i : __j; // min(i, j)
+
+      while (true)
+	{
+	  if (__m > __n)
+	    {
+	      _Tp __tmp = __m;
+	      __m = __n;
+	      __n = __tmp;
+	    }
+
+	  __n -= __m;
+
+	  if (__n == 0)
+	    return __m << __k;
+
+	  __n >>= std::__countr_zero(__n);
+	}
+    }
+} // namespace __detail
+
+#if __cplusplus >= 201703L
+
+#define __cpp_lib_gcd_lcm 201606L
+// These were used in drafts of SD-6:
+#define __cpp_lib_gcd 201606L
+#define __cpp_lib_lcm 201606L
+
+  /// Greatest common divisor
+  template<typename _Mn, typename _Nn>
+    constexpr common_type_t<_Mn, _Nn>
+    gcd(_Mn __m, _Nn __n) noexcept
+    {
+      static_assert(is_integral_v<_Mn> && is_integral_v<_Nn>,
+		    "std::gcd arguments must be integers");
+      static_assert(_Mn(2) == 2 && _Nn(2) == 2,
+		    "std::gcd arguments must not be bool");
+      using _Ct = common_type_t<_Mn, _Nn>;
+      const _Ct __m2 = __detail::__abs_r<_Ct>(__m);
+      const _Ct __n2 = __detail::__abs_r<_Ct>(__n);
+      return __detail::__gcd<make_unsigned_t<_Ct>>(__m2, __n2);
+    }
+
+  /// Least common multiple
+  template<typename _Mn, typename _Nn>
+    constexpr common_type_t<_Mn, _Nn>
+    lcm(_Mn __m, _Nn __n) noexcept
+    {
+      static_assert(is_integral_v<_Mn> && is_integral_v<_Nn>,
+		    "std::lcm arguments must be integers");
+      static_assert(_Mn(2) == 2 && _Nn(2) == 2,
+		    "std::lcm arguments must not be bool");
+      using _Ct = common_type_t<_Mn, _Nn>;
+      const _Ct __m2 = __detail::__abs_r<_Ct>(__m);
+      const _Ct __n2 = __detail::__abs_r<_Ct>(__n);
+      if (__m2 == 0 || __n2 == 0)
+	return 0;
+      _Ct __r = __m2 / __detail::__gcd<make_unsigned_t<_Ct>>(__m2, __n2);
+
+      if constexpr (is_signed_v<_Ct>)
+	if (__is_constant_evaluated())
+	  return __r * __n2; // constant evaluation can detect overflow here.
+
+      bool __overflow = __builtin_mul_overflow(__r, __n2, &__r);
+      __glibcxx_assert(!__overflow);
+      return __r;
+    }
+
+#endif // C++17
+#endif // C++14
+
+#if __cplusplus > 201703L
+
+  // midpoint
+# define __cpp_lib_interpolate 201902L
+
+  template<typename _Tp>
+    constexpr
+    enable_if_t<__and_v<is_arithmetic<_Tp>, is_same<remove_cv_t<_Tp>, _Tp>,
+			__not_<is_same<_Tp, bool>>>,
+		_Tp>
+    midpoint(_Tp __a, _Tp __b) noexcept
+    {
+      if constexpr (is_integral_v<_Tp>)
+	{
+	  using _Up = make_unsigned_t<_Tp>;
+
+	  int __k = 1;
+	  _Up __m = __a;
+	  _Up __M = __b;
+	  if (__a > __b)
+	    {
+	      __k = -1;
+	      __m = __b;
+	      __M = __a;
+	    }
+	  return __a + __k * _Tp(_Up(__M - __m) / 2);
+	}
+      else // is_floating
+	{
+	  constexpr _Tp __lo = numeric_limits<_Tp>::min() * 2;
+	  constexpr _Tp __hi = numeric_limits<_Tp>::max() / 2;
+	  const _Tp __abs_a = __a < 0 ? -__a : __a;
+	  const _Tp __abs_b = __b < 0 ? -__b : __b;
+	  if (__abs_a <= __hi && __abs_b <= __hi) [[likely]]
+	    return (__a + __b) / 2; // always correctly rounded
+	  if (__abs_a < __lo) // not safe to halve __a
+	    return __a + __b/2;
+	  if (__abs_b < __lo) // not safe to halve __b
+	    return __a/2 + __b;
+	  return __a/2 + __b/2;	    // otherwise correctly rounded
+	}
+    }
+
+  template<typename _Tp>
+    constexpr enable_if_t<is_object_v<_Tp>, _Tp*>
+    midpoint(_Tp* __a, _Tp* __b) noexcept
+    {
+      static_assert( sizeof(_Tp) != 0, "type must be complete" );
+      return __a  + (__b - __a) / 2;
+    }
+#endif // C++20
+
+#if __cplusplus >= 201703L
+
+#if __cplusplus > 201703L
+#define __cpp_lib_constexpr_numeric 201911L
+#endif
+
+  /// @addtogroup numeric_ops
+  /// @{
+
+  /**
+   *  @brief  Calculate reduction of values in a range.
+   *
+   *  @param  __first  Start of range.
+   *  @param  __last  End of range.
+   *  @param  __init  Starting value to add other values to.
+   *  @param  __binary_op A binary function object.
+   *  @return  The final sum.
+   *
+   *  Reduce the values in the range `[first,last)` using a binary operation.
+   *  The initial value is `init`.  The values are not necessarily processed
+   *  in order.
+   *
+   *  This algorithm is similar to `std::accumulate` but is not required to
+   *  perform the operations in order from first to last. For operations
+   *  that are commutative and associative the result will be the same as
+   *  for `std::accumulate`, but for other operations (such as floating point
+   *  arithmetic) the result can be different.
+   */
+  template<typename _InputIterator, typename _Tp, typename _BinaryOperation>
+    _GLIBCXX20_CONSTEXPR
+    _Tp
+    reduce(_InputIterator __first, _InputIterator __last, _Tp __init,
+	   _BinaryOperation __binary_op)
+    {
+      using __ref = typename iterator_traits<_InputIterator>::reference;
+      static_assert(is_invocable_r_v<_Tp, _BinaryOperation&, _Tp&, __ref>);
+      static_assert(is_invocable_r_v<_Tp, _BinaryOperation&, __ref, _Tp&>);
+      static_assert(is_invocable_r_v<_Tp, _BinaryOperation&, _Tp&, _Tp&>);
+      static_assert(is_invocable_r_v<_Tp, _BinaryOperation&, __ref, __ref>);
+      if constexpr (__is_random_access_iter<_InputIterator>::value)
+	{
+	  while ((__last - __first) >= 4)
+	    {
+	      _Tp __v1 = __binary_op(__first[0], __first[1]);
+	      _Tp __v2 = __binary_op(__first[2], __first[3]);
+	      _Tp __v3 = __binary_op(__v1, __v2);
+	      __init = __binary_op(__init, __v3);
+	      __first += 4;
+	    }
+	}
+      for (; __first != __last; ++__first)
+	__init = __binary_op(__init, *__first);
+      return __init;
+    }
+
+ /**
+   *  @brief  Calculate reduction of values in a range.
+   *
+   *  @param  __first  Start of range.
+   *  @param  __last  End of range.
+   *  @param  __init  Starting value to add other values to.
+   *  @return  The final sum.
+   *
+   *  Reduce the values in the range `[first,last)` using addition.
+   *  Equivalent to calling `std::reduce(first, last, init, std::plus<>())`.
+   */
+  template<typename _InputIterator, typename _Tp>
+    _GLIBCXX20_CONSTEXPR
+    inline _Tp
+    reduce(_InputIterator __first, _InputIterator __last, _Tp __init)
+    { return std::reduce(__first, __last, std::move(__init), plus<>()); }
+
+  /**
+   *  @brief  Calculate reduction of values in a range.
+   *
+   *  @param  __first  Start of range.
+   *  @param  __last  End of range.
+   *  @return  The final sum.
+   *
+   *  Reduce the values in the range `[first,last)` using addition, with
+   *  an initial value of `T{}`, where `T` is the iterator's value type.
+   *  Equivalent to calling `std::reduce(first, last, T{}, std::plus<>())`.
+   */
+  template<typename _InputIterator>
+    _GLIBCXX20_CONSTEXPR
+    inline typename iterator_traits<_InputIterator>::value_type
+    reduce(_InputIterator __first, _InputIterator __last)
+    {
+      using value_type = typename iterator_traits<_InputIterator>::value_type;
+      return std::reduce(__first, __last, value_type{}, plus<>());
+    }
+
+  /**
+   *  @brief  Combine elements from two ranges and reduce
+   *
+   *  @param  __first1  Start of first range.
+   *  @param  __last1  End of first range.
+   *  @param  __first2  Start of second range.
+   *  @param  __init  Starting value to add other values to.
+   *  @param  __binary_op1 The function used to perform reduction.
+   *  @param  __binary_op2 The function used to combine values from the ranges.
+   *  @return  The final sum.
+   *
+   *  Call `binary_op2(first1[n],first2[n])` for each `n` in `[0,last1-first1)`
+   *  and then use `binary_op1` to reduce the values returned by `binary_op2`
+   *  to a single value of type `T`.
+   *
+   *  The range beginning at `first2` must contain at least `last1-first1`
+   *  elements.
+   */
+  template<typename _InputIterator1, typename _InputIterator2, typename _Tp,
+	   typename _BinaryOperation1, typename _BinaryOperation2>
+    _GLIBCXX20_CONSTEXPR
+    _Tp
+    transform_reduce(_InputIterator1 __first1, _InputIterator1 __last1,
+		     _InputIterator2 __first2, _Tp __init,
+		     _BinaryOperation1 __binary_op1,
+		     _BinaryOperation2 __binary_op2)
+    {
+      if constexpr (__and_v<__is_random_access_iter<_InputIterator1>,
+			    __is_random_access_iter<_InputIterator2>>)
+	{
+	  while ((__last1 - __first1) >= 4)
+	    {
+	      _Tp __v1 = __binary_op1(__binary_op2(__first1[0], __first2[0]),
+				      __binary_op2(__first1[1], __first2[1]));
+	      _Tp __v2 = __binary_op1(__binary_op2(__first1[2], __first2[2]),
+				      __binary_op2(__first1[3], __first2[3]));
+	      _Tp __v3 = __binary_op1(__v1, __v2);
+	      __init = __binary_op1(__init, __v3);
+	      __first1 += 4;
+	      __first2 += 4;
+	    }
+	}
+      for (; __first1 != __last1; ++__first1, (void) ++__first2)
+	__init = __binary_op1(__init, __binary_op2(*__first1, *__first2));
+      return __init;
+    }
+
+  /**
+   *  @brief  Combine elements from two ranges and reduce
+   *
+   *  @param  __first1  Start of first range.
+   *  @param  __last1  End of first range.
+   *  @param  __first2  Start of second range.
+   *  @param  __init  Starting value to add other values to.
+   *  @return  The final sum.
+   *
+   *  Call `first1[n]*first2[n]` for each `n` in `[0,last1-first1)` and then
+   *  use addition to sum those products to a single value of type `T`.
+   *
+   *  The range beginning at `first2` must contain at least `last1-first1`
+   *  elements.
+   */
+  template<typename _InputIterator1, typename _InputIterator2, typename _Tp>
+    _GLIBCXX20_CONSTEXPR
+    inline _Tp
+    transform_reduce(_InputIterator1 __first1, _InputIterator1 __last1,
+		     _InputIterator2 __first2, _Tp __init)
+    {
+      return std::transform_reduce(__first1, __last1, __first2,
+				   std::move(__init),
+				   plus<>(), multiplies<>());
+    }
+
+  /**
+   *  @brief  Transform the elements of a range and reduce
+   *
+   *  @param  __first  Start of range.
+   *  @param  __last  End of range.
+   *  @param  __init  Starting value to add other values to.
+   *  @param  __binary_op The function used to perform reduction.
+   *  @param  __unary_op The function used to transform values from the range.
+   *  @return  The final sum.
+   *
+   *  Call `unary_op(first[n])` for each `n` in `[0,last-first)` and then
+   *  use `binary_op` to reduce the values returned by `unary_op`
+   *  to a single value of type `T`.
+   */
+  template<typename _InputIterator, typename _Tp,
+	   typename _BinaryOperation, typename _UnaryOperation>
+    _GLIBCXX20_CONSTEXPR
+    _Tp
+    transform_reduce(_InputIterator __first, _InputIterator __last, _Tp __init,
+		     _BinaryOperation __binary_op, _UnaryOperation __unary_op)
+    {
+      if constexpr (__is_random_access_iter<_InputIterator>::value)
+	{
+	  while ((__last - __first) >= 4)
+	    {
+	      _Tp __v1 = __binary_op(__unary_op(__first[0]),
+				     __unary_op(__first[1]));
+	      _Tp __v2 = __binary_op(__unary_op(__first[2]),
+				     __unary_op(__first[3]));
+	      _Tp __v3 = __binary_op(__v1, __v2);
+	      __init = __binary_op(__init, __v3);
+	      __first += 4;
+	    }
+	}
+      for (; __first != __last; ++__first)
+	__init = __binary_op(__init, __unary_op(*__first));
+      return __init;
+    }
+
+  /** @brief Output the cumulative sum of one range to a second range
+   *
+   *  @param __first  Start of input range.
+   *  @param __last   End of input range.
+   *  @param __result Start of output range.
+   *  @param __init   Initial value.
+   *  @param __binary_op Function to perform summation.
+   *  @return The end of the output range.
+   *
+   *  Write the cumulative sum (aka prefix sum, aka scan) of the input range
+   *  to the output range. Each element of the output range contains the
+   *  running total of all earlier elements (and the initial value),
+   *  using `binary_op` for summation.
+   *
+   *  This function generates an "exclusive" scan, meaning the Nth element
+   *  of the output range is the sum of the first N-1 input elements,
+   *  so the Nth input element is not included.
+   */
+  template<typename _InputIterator, typename _OutputIterator, typename _Tp,
+	   typename _BinaryOperation>
+    _GLIBCXX20_CONSTEXPR
+    _OutputIterator
+    exclusive_scan(_InputIterator __first, _InputIterator __last,
+		   _OutputIterator __result, _Tp __init,
+		   _BinaryOperation __binary_op)
+    {
+      while (__first != __last)
+	{
+	  auto __v = __init;
+	  __init = __binary_op(__init, *__first);
+	  ++__first;
+	  *__result++ = std::move(__v);
+	}
+      return __result;
+    }
+
+  /** @brief Output the cumulative sum of one range to a second range
+   *
+   *  @param __first  Start of input range.
+   *  @param __last   End of input range.
+   *  @param __result Start of output range.
+   *  @param __init   Initial value.
+   *  @return The end of the output range.
+   *
+   *  Write the cumulative sum (aka prefix sum, aka scan) of the input range
+   *  to the output range. Each element of the output range contains the
+   *  running total of all earlier elements (and the initial value),
+   *  using `std::plus<>` for summation.
+   *
+   *  This function generates an "exclusive" scan, meaning the Nth element
+   *  of the output range is the sum of the first N-1 input elements,
+   *  so the Nth input element is not included.
+   */
+  template<typename _InputIterator, typename _OutputIterator, typename _Tp>
+    _GLIBCXX20_CONSTEXPR
+    inline _OutputIterator
+    exclusive_scan(_InputIterator __first, _InputIterator __last,
+		   _OutputIterator __result, _Tp __init)
+    {
+      return std::exclusive_scan(__first, __last, __result, std::move(__init),
+				 plus<>());
+    }
+
+  /** @brief Output the cumulative sum of one range to a second range
+   *
+   *  @param __first  Start of input range.
+   *  @param __last   End of input range.
+   *  @param __result Start of output range.
+   *  @param __binary_op Function to perform summation.
+   *  @param __init   Initial value.
+   *  @return The end of the output range.
+   *
+   *  Write the cumulative sum (aka prefix sum, aka scan) of the input range
+   *  to the output range. Each element of the output range contains the
+   *  running total of all earlier elements (and the initial value),
+   *  using `binary_op` for summation.
+   *
+   *  This function generates an "inclusive" scan, meaning the Nth element
+   *  of the output range is the sum of the first N input elements,
+   *  so the Nth input element is included.
+   */
+  template<typename _InputIterator, typename _OutputIterator,
+	   typename _BinaryOperation, typename _Tp>
+    _GLIBCXX20_CONSTEXPR
+    _OutputIterator
+    inclusive_scan(_InputIterator __first, _InputIterator __last,
+		   _OutputIterator __result, _BinaryOperation __binary_op,
+		   _Tp __init)
+    {
+      for (; __first != __last; ++__first)
+	*__result++ = __init = __binary_op(__init, *__first);
+      return __result;
+    }
+
+  /** @brief Output the cumulative sum of one range to a second range
+   *
+   *  @param __first  Start of input range.
+   *  @param __last   End of input range.
+   *  @param __result Start of output range.
+   *  @param __binary_op Function to perform summation.
+   *  @return The end of the output range.
+   *
+   *  Write the cumulative sum (aka prefix sum, aka scan) of the input range
+   *  to the output range. Each element of the output range contains the
+   *  running total of all earlier elements, using `binary_op` for summation.
+   *
+   *  This function generates an "inclusive" scan, meaning the Nth element
+   *  of the output range is the sum of the first N input elements,
+   *  so the Nth input element is included.
+   */
+  template<typename _InputIterator, typename _OutputIterator,
+	   typename _BinaryOperation>
+    _GLIBCXX20_CONSTEXPR
+    _OutputIterator
+    inclusive_scan(_InputIterator __first, _InputIterator __last,
+		   _OutputIterator __result, _BinaryOperation __binary_op)
+    {
+      if (__first != __last)
+	{
+	  auto __init = *__first;
+	  *__result++ = __init;
+	  ++__first;
+	  if (__first != __last)
+	    __result = std::inclusive_scan(__first, __last, __result,
+					   __binary_op, std::move(__init));
+	}
+      return __result;
+    }
+
+  /** @brief Output the cumulative sum of one range to a second range
+   *
+   *  @param __first  Start of input range.
+   *  @param __last   End of input range.
+   *  @param __result Start of output range.
+   *  @return The end of the output range.
+   *
+   *  Write the cumulative sum (aka prefix sum, aka scan) of the input range
+   *  to the output range. Each element of the output range contains the
+   *  running total of all earlier elements, using `std::plus<>` for summation.
+   *
+   *  This function generates an "inclusive" scan, meaning the Nth element
+   *  of the output range is the sum of the first N input elements,
+   *  so the Nth input element is included.
+   */
+  template<typename _InputIterator, typename _OutputIterator>
+    _GLIBCXX20_CONSTEXPR
+    inline _OutputIterator
+    inclusive_scan(_InputIterator __first, _InputIterator __last,
+		   _OutputIterator __result)
+    { return std::inclusive_scan(__first, __last, __result, plus<>()); }
+
+  /** @brief Output the cumulative sum of one range to a second range
+   *
+   *  @param __first  Start of input range.
+   *  @param __last   End of input range.
+   *  @param __result Start of output range.
+   *  @param __init   Initial value.
+   *  @param __binary_op Function to perform summation.
+   *  @param __unary_op Function to transform elements of the input range.
+   *  @return The end of the output range.
+   *
+   *  Write the cumulative sum (aka prefix sum, aka scan) of the input range
+   *  to the output range. Each element of the output range contains the
+   *  running total of all earlier elements (and the initial value),
+   *  using `__unary_op` to transform the input elements
+   *  and using `__binary_op` for summation.
+   *
+   *  This function generates an "exclusive" scan, meaning the Nth element
+   *  of the output range is the sum of the first N-1 input elements,
+   *  so the Nth input element is not included.
+   */
+  template<typename _InputIterator, typename _OutputIterator, typename _Tp,
+	   typename _BinaryOperation, typename _UnaryOperation>
+    _GLIBCXX20_CONSTEXPR
+    _OutputIterator
+    transform_exclusive_scan(_InputIterator __first, _InputIterator __last,
+			     _OutputIterator __result, _Tp __init,
+			     _BinaryOperation __binary_op,
+			     _UnaryOperation __unary_op)
+    {
+      while (__first != __last)
+	{
+	  auto __v = __init;
+	  __init = __binary_op(__init, __unary_op(*__first));
+	  ++__first;
+	  *__result++ = std::move(__v);
+	}
+      return __result;
+    }
+
+  /** @brief Output the cumulative sum of one range to a second range
+   *
+   *  @param __first  Start of input range.
+   *  @param __last   End of input range.
+   *  @param __result Start of output range.
+   *  @param __binary_op Function to perform summation.
+   *  @param __unary_op Function to transform elements of the input range.
+   *  @param __init   Initial value.
+   *  @return The end of the output range.
+   *
+   *  Write the cumulative sum (aka prefix sum, aka scan) of the input range
+   *  to the output range. Each element of the output range contains the
+   *  running total of all earlier elements (and the initial value),
+   *  using `__unary_op` to transform the input elements
+   *  and using `__binary_op` for summation.
+   *
+   *  This function generates an "inclusive" scan, meaning the Nth element
+   *  of the output range is the sum of the first N input elements,
+   *  so the Nth input element is included.
+   */
+  template<typename _InputIterator, typename _OutputIterator,
+	   typename _BinaryOperation, typename _UnaryOperation, typename _Tp>
+    _GLIBCXX20_CONSTEXPR
+    _OutputIterator
+    transform_inclusive_scan(_InputIterator __first, _InputIterator __last,
+			     _OutputIterator __result,
+			     _BinaryOperation __binary_op,
+			     _UnaryOperation __unary_op,
+			     _Tp __init)
+    {
+      for (; __first != __last; ++__first)
+	*__result++ = __init = __binary_op(__init, __unary_op(*__first));
+      return __result;
+    }
+
+  /** @brief Output the cumulative sum of one range to a second range
+   *
+   *  @param __first  Start of input range.
+   *  @param __last   End of input range.
+   *  @param __result Start of output range.
+   *  @param __binary_op Function to perform summation.
+   *  @param __unary_op Function to transform elements of the input range.
+   *  @return The end of the output range.
+   *
+   *  Write the cumulative sum (aka prefix sum, aka scan) of the input range
+   *  to the output range. Each element of the output range contains the
+   *  running total of all earlier elements,
+   *  using `__unary_op` to transform the input elements
+   *  and using `__binary_op` for summation.
+   *
+   *  This function generates an "inclusive" scan, meaning the Nth element
+   *  of the output range is the sum of the first N input elements,
+   *  so the Nth input element is included.
+   */
+  template<typename _InputIterator, typename _OutputIterator,
+	  typename _BinaryOperation, typename _UnaryOperation>
+    _GLIBCXX20_CONSTEXPR
+    _OutputIterator
+    transform_inclusive_scan(_InputIterator __first, _InputIterator __last,
+			     _OutputIterator __result,
+			     _BinaryOperation __binary_op,
+			     _UnaryOperation __unary_op)
+    {
+      if (__first != __last)
+	{
+	  auto __init = __unary_op(*__first);
+	  *__result++ = __init;
+	  ++__first;
+	  if (__first != __last)
+	    __result = std::transform_inclusive_scan(__first, __last, __result,
+						     __binary_op, __unary_op,
+						     std::move(__init));
+	}
+      return __result;
+    }
+
+  /// @} group numeric_ops
+#endif // C++17
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#if __cplusplus >= 201703L
+// Parallel STL algorithms
+# if _PSTL_EXECUTION_POLICIES_DEFINED
+// If <execution> has already been included, pull in implementations
+#  include <pstl/glue_numeric_impl.h>
+# else
+// Otherwise just pull in forward declarations
+#  include <pstl/glue_numeric_defs.h>
+#  define _PSTL_NUMERIC_FORWARD_DECLARED 1
+# endif
+
+// Feature test macro for parallel algorithms
+# define __cpp_lib_parallel_algorithm 201603L
+#endif // C++17
+
+#endif /* _GLIBCXX_NUMERIC */

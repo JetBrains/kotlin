@@ -1,0 +1,494 @@
+// <decimal> -*- C++ -*-
+
+// Copyright (C) 2009-2022 Free Software Foundation, Inc.
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file decimal/decimal
+ *  This is a Standard C++ Library header.
+ */
+
+// ISO/IEC TR 24733 
+// Written by Janis Johnson <janis187@us.ibm.com>
+
+#ifndef _GLIBCXX_DECIMAL
+#define _GLIBCXX_DECIMAL 1
+
+#pragma GCC system_header
+
+#include <bits/c++config.h>
+
+#ifndef _GLIBCXX_USE_DECIMAL_FLOAT
+#error This file requires compiler and library support for ISO/IEC TR 24733 \
+that is currently not available.
+#endif
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+  /**
+    * @defgroup decimal Decimal Floating-Point Arithmetic
+    * @ingroup numerics
+    *
+    * Classes and functions for decimal floating-point arithmetic.
+    * @{
+    */
+
+  /** @namespace std::decimal
+    * @brief ISO/IEC TR 24733 Decimal floating-point arithmetic.
+    */
+namespace decimal
+{
+  class decimal32;
+  class decimal64;
+  class decimal128;
+
+  // 3.2.5  Initialization from coefficient and exponent.
+  static decimal32 make_decimal32(long long __coeff, int __exp);
+  static decimal32 make_decimal32(unsigned long long __coeff, int __exp);
+  static decimal64 make_decimal64(long long __coeff, int __exp);
+  static decimal64 make_decimal64(unsigned long long __coeff, int __exp);
+  static decimal128 make_decimal128(long long __coeff, int __exp);
+  static decimal128 make_decimal128(unsigned long long __coeff, int __exp);
+
+  /// Non-conforming extension: Conversion to integral type.
+  long long decimal32_to_long_long(decimal32 __d);
+  long long decimal64_to_long_long(decimal64 __d);
+  long long decimal128_to_long_long(decimal128 __d);
+  long long decimal_to_long_long(decimal32 __d);
+  long long decimal_to_long_long(decimal64 __d);
+  long long decimal_to_long_long(decimal128 __d);
+
+  // 3.2.6  Conversion to generic floating-point type.
+  float decimal32_to_float(decimal32 __d);
+  float decimal64_to_float(decimal64 __d);
+  float decimal128_to_float(decimal128 __d);
+  float decimal_to_float(decimal32 __d);
+  float decimal_to_float(decimal64 __d);
+  float decimal_to_float(decimal128 __d);
+
+  double decimal32_to_double(decimal32 __d);
+  double decimal64_to_double(decimal64 __d);
+  double decimal128_to_double(decimal128 __d);
+  double decimal_to_double(decimal32 __d);
+  double decimal_to_double(decimal64 __d);
+  double decimal_to_double(decimal128 __d);
+
+  long double decimal32_to_long_double(decimal32 __d);
+  long double decimal64_to_long_double(decimal64 __d);
+  long double decimal128_to_long_double(decimal128 __d);
+  long double decimal_to_long_double(decimal32 __d);
+  long double decimal_to_long_double(decimal64 __d);
+  long double decimal_to_long_double(decimal128 __d);
+
+  // 3.2.7  Unary arithmetic operators.
+  decimal32  operator+(decimal32 __rhs);
+  decimal64  operator+(decimal64 __rhs);
+  decimal128 operator+(decimal128 __rhs);
+  decimal32  operator-(decimal32 __rhs);
+  decimal64  operator-(decimal64 __rhs);
+  decimal128 operator-(decimal128 __rhs);
+
+  // 3.2.8  Binary arithmetic operators.
+#define _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(_Op, _T1, _T2, _T3)	\
+  _T1 operator _Op(_T2 __lhs, _T3 __rhs);
+#define _DECLARE_DECIMAL_BINARY_OP_WITH_INT(_Op, _Tp)		\
+  _Tp operator _Op(_Tp __lhs, int __rhs);			\
+  _Tp operator _Op(_Tp __lhs, unsigned int __rhs);		\
+  _Tp operator _Op(_Tp __lhs, long __rhs);			\
+  _Tp operator _Op(_Tp __lhs, unsigned long __rhs);		\
+  _Tp operator _Op(_Tp __lhs, long long __rhs);			\
+  _Tp operator _Op(_Tp __lhs, unsigned long long __rhs);	\
+  _Tp operator _Op(int __lhs, _Tp __rhs);			\
+  _Tp operator _Op(unsigned int __lhs, _Tp __rhs);		\
+  _Tp operator _Op(long __lhs, _Tp __rhs);			\
+  _Tp operator _Op(unsigned long __lhs, _Tp __rhs);		\
+  _Tp operator _Op(long long __lhs, _Tp __rhs);			\
+  _Tp operator _Op(unsigned long long __lhs, _Tp __rhs);
+
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(+, decimal32, decimal32, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(+, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(+, decimal64, decimal32, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(+, decimal64, decimal64, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(+, decimal64, decimal64, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(+, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(+, decimal128, decimal32, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(+, decimal128, decimal64, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(+, decimal128, decimal128, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(+, decimal128, decimal128, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(+, decimal128, decimal128, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(+, decimal128)
+
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(-, decimal32, decimal32, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(-, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(-, decimal64, decimal32, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(-, decimal64, decimal64, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(-, decimal64, decimal64, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(-, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(-, decimal128, decimal32, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(-, decimal128, decimal64, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(-, decimal128, decimal128, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(-, decimal128, decimal128, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(-, decimal128, decimal128, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(-, decimal128)
+
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(*, decimal32, decimal32, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(*, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(*, decimal64, decimal32, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(*, decimal64, decimal64, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(*, decimal64, decimal64, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(*, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(*, decimal128, decimal32, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(*, decimal128, decimal64, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(*, decimal128, decimal128, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(*, decimal128, decimal128, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(*, decimal128, decimal128, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(*, decimal128)
+
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(/, decimal32, decimal32, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(/, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(/, decimal64, decimal32, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(/, decimal64, decimal64, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(/, decimal64, decimal64, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(/, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(/, decimal128, decimal32, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(/, decimal128, decimal64, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(/, decimal128, decimal128, decimal32)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(/, decimal128, decimal128, decimal64)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_DEC(/, decimal128, decimal128, decimal128)
+  _DECLARE_DECIMAL_BINARY_OP_WITH_INT(/, decimal128)
+
+#undef _DECLARE_DECIMAL_BINARY_OP_WITH_DEC
+#undef _DECLARE_DECIMAL_BINARY_OP_WITH_INT
+
+  // 3.2.9  Comparison operators.
+#define _DECLARE_DECIMAL_COMPARISON(_Op, _Tp)				\
+  bool operator _Op(_Tp __lhs, decimal32 __rhs);			\
+  bool operator _Op(_Tp __lhs, decimal64 __rhs);			\
+  bool operator _Op(_Tp __lhs, decimal128 __rhs);			\
+  bool operator _Op(_Tp __lhs, int __rhs);				\
+  bool operator _Op(_Tp __lhs, unsigned int __rhs);			\
+  bool operator _Op(_Tp __lhs, long __rhs);				\
+  bool operator _Op(_Tp __lhs, unsigned long __rhs);			\
+  bool operator _Op(_Tp __lhs, long long __rhs);			\
+  bool operator _Op(_Tp __lhs, unsigned long long __rhs);		\
+  bool operator _Op(int __lhs, _Tp __rhs);				\
+  bool operator _Op(unsigned int __lhs, _Tp __rhs);			\
+  bool operator _Op(long __lhs, _Tp __rhs);				\
+  bool operator _Op(unsigned long __lhs, _Tp __rhs);			\
+  bool operator _Op(long long __lhs, _Tp __rhs);			\
+  bool operator _Op(unsigned long long __lhs, _Tp __rhs);
+
+  _DECLARE_DECIMAL_COMPARISON(==, decimal32)
+  _DECLARE_DECIMAL_COMPARISON(==, decimal64)
+  _DECLARE_DECIMAL_COMPARISON(==, decimal128)
+
+  _DECLARE_DECIMAL_COMPARISON(!=, decimal32)
+  _DECLARE_DECIMAL_COMPARISON(!=, decimal64)
+  _DECLARE_DECIMAL_COMPARISON(!=, decimal128)
+
+  _DECLARE_DECIMAL_COMPARISON(<, decimal32)
+  _DECLARE_DECIMAL_COMPARISON(<, decimal64)
+  _DECLARE_DECIMAL_COMPARISON(<, decimal128)
+
+  _DECLARE_DECIMAL_COMPARISON(>=, decimal32)
+  _DECLARE_DECIMAL_COMPARISON(>=, decimal64)
+  _DECLARE_DECIMAL_COMPARISON(>=, decimal128)
+
+  _DECLARE_DECIMAL_COMPARISON(>, decimal32)
+  _DECLARE_DECIMAL_COMPARISON(>, decimal64)
+  _DECLARE_DECIMAL_COMPARISON(>, decimal128)
+
+  _DECLARE_DECIMAL_COMPARISON(>=, decimal32)
+  _DECLARE_DECIMAL_COMPARISON(>=, decimal64)
+  _DECLARE_DECIMAL_COMPARISON(>=, decimal128)
+
+#undef _DECLARE_DECIMAL_COMPARISON
+
+  /// 3.2.2  Class decimal32.
+  class decimal32
+  {
+  public:
+    typedef float __decfloat32 __attribute__((mode(SD)));
+
+    // 3.2.2.2  Construct/copy/destroy.
+    decimal32()					: __val(0.e-101DF) {}
+
+    // 3.2.2.3  Conversion from floating-point type.
+    explicit decimal32(decimal64 __d64);
+    explicit decimal32(decimal128 __d128);
+    explicit decimal32(float __r)		: __val(__r) {}
+    explicit decimal32(double __r)		: __val(__r) {}
+    explicit decimal32(long double __r)		: __val(__r) {}
+
+    // 3.2.2.4  Conversion from integral type.
+    decimal32(int __z)				: __val(__z) {}
+    decimal32(unsigned int __z)			: __val(__z) {}
+    decimal32(long __z)				: __val(__z) {}
+    decimal32(unsigned long __z)		: __val(__z) {}
+    decimal32(long long __z)			: __val(__z) {}
+    decimal32(unsigned long long __z)		: __val(__z) {}
+
+    /// Conforming extension: Conversion from scalar decimal type.
+    decimal32(__decfloat32 __z)			: __val(__z) {}
+
+#if __cplusplus >= 201103L
+    // 3.2.2.5  Conversion to integral type.
+    // Note: explicit per n3407.
+    explicit operator long long() const { return (long long)__val; }
+#endif
+
+    // 3.2.2.6  Increment and decrement operators.
+    decimal32& operator++()
+    {
+      __val += 1;
+      return *this;
+    }
+
+    decimal32 operator++(int)
+    {
+      decimal32 __tmp = *this;
+      __val += 1;
+      return __tmp;
+    }
+
+    decimal32& operator--()
+    {
+      __val -= 1;
+      return *this;
+    }
+
+    decimal32   operator--(int)
+    {
+      decimal32 __tmp = *this;
+      __val -= 1;
+      return __tmp;
+    }
+
+    // 3.2.2.7  Compound assignment.
+#define _DECLARE_DECIMAL32_COMPOUND_ASSIGNMENT(_Op)	\
+    decimal32& operator _Op(decimal32 __rhs);		\
+    decimal32& operator _Op(decimal64 __rhs);		\
+    decimal32& operator _Op(decimal128 __rhs);		\
+    decimal32& operator _Op(int __rhs);			\
+    decimal32& operator _Op(unsigned int __rhs);	\
+    decimal32& operator _Op(long __rhs);		\
+    decimal32& operator _Op(unsigned long __rhs);	\
+    decimal32& operator _Op(long long __rhs);		\
+    decimal32& operator _Op(unsigned long long __rhs);
+
+    _DECLARE_DECIMAL32_COMPOUND_ASSIGNMENT(+=)
+    _DECLARE_DECIMAL32_COMPOUND_ASSIGNMENT(-=)
+    _DECLARE_DECIMAL32_COMPOUND_ASSIGNMENT(*=)
+    _DECLARE_DECIMAL32_COMPOUND_ASSIGNMENT(/=)
+#undef _DECLARE_DECIMAL32_COMPOUND_ASSIGNMENT
+
+  private:
+    __decfloat32 __val;
+
+  public:
+    __decfloat32 __getval(void) { return __val; }
+    void __setval(__decfloat32 __x) { __val = __x; }
+  };
+
+  /// 3.2.3  Class decimal64.
+  class decimal64
+  {
+  public:
+    typedef float __decfloat64 __attribute__((mode(DD)));
+
+    // 3.2.3.2  Construct/copy/destroy.
+    decimal64()					: __val(0.e-398dd) {}
+
+    // 3.2.3.3  Conversion from floating-point type.
+	     decimal64(decimal32 d32);
+    explicit decimal64(decimal128 d128);
+    explicit decimal64(float __r)		: __val(__r) {}
+    explicit decimal64(double __r)		: __val(__r) {}
+    explicit decimal64(long double __r)		: __val(__r) {}
+
+    // 3.2.3.4  Conversion from integral type.
+    decimal64(int __z)				: __val(__z) {}
+    decimal64(unsigned int __z)			: __val(__z) {}
+    decimal64(long __z)				: __val(__z) {}
+    decimal64(unsigned long __z)		: __val(__z) {}
+    decimal64(long long __z)			: __val(__z) {}
+    decimal64(unsigned long long __z)		: __val(__z) {}
+
+    /// Conforming extension: Conversion from scalar decimal type.
+    decimal64(__decfloat64 __z)			: __val(__z) {}
+
+#if __cplusplus >= 201103L
+    // 3.2.3.5  Conversion to integral type.
+    // Note: explicit per n3407.
+    explicit operator long long() const { return (long long)__val; }
+#endif
+
+    // 3.2.3.6  Increment and decrement operators.
+    decimal64& operator++()
+    {
+      __val += 1;
+      return *this;
+    }
+
+    decimal64 operator++(int)
+    {
+      decimal64 __tmp = *this;
+      __val += 1;
+      return __tmp;
+    }
+
+    decimal64& operator--()
+    {
+      __val -= 1;
+      return *this;
+    }
+
+    decimal64 operator--(int)
+    {
+      decimal64 __tmp = *this;
+      __val -= 1;
+      return __tmp;
+    }
+
+    // 3.2.3.7  Compound assignment.
+#define _DECLARE_DECIMAL64_COMPOUND_ASSIGNMENT(_Op)	\
+    decimal64& operator _Op(decimal32 __rhs);		\
+    decimal64& operator _Op(decimal64 __rhs);		\
+    decimal64& operator _Op(decimal128 __rhs);		\
+    decimal64& operator _Op(int __rhs);			\
+    decimal64& operator _Op(unsigned int __rhs);	\
+    decimal64& operator _Op(long __rhs);		\
+    decimal64& operator _Op(unsigned long __rhs);	\
+    decimal64& operator _Op(long long __rhs);		\
+    decimal64& operator _Op(unsigned long long __rhs);
+
+    _DECLARE_DECIMAL64_COMPOUND_ASSIGNMENT(+=)
+    _DECLARE_DECIMAL64_COMPOUND_ASSIGNMENT(-=)
+    _DECLARE_DECIMAL64_COMPOUND_ASSIGNMENT(*=)
+    _DECLARE_DECIMAL64_COMPOUND_ASSIGNMENT(/=)
+#undef _DECLARE_DECIMAL64_COMPOUND_ASSIGNMENT
+
+  private:
+    __decfloat64 __val;
+
+  public:
+    __decfloat64 __getval(void) { return __val; }
+    void __setval(__decfloat64 __x) { __val = __x; }
+  };
+
+  /// 3.2.4  Class decimal128.
+  class decimal128
+  {
+  public:
+    typedef float __decfloat128 __attribute__((mode(TD)));
+
+    // 3.2.4.2  Construct/copy/destroy.
+    decimal128()				: __val(0.e-6176DL) {}
+
+    // 3.2.4.3  Conversion from floating-point type.
+	     decimal128(decimal32 d32);
+	     decimal128(decimal64 d64);
+    explicit decimal128(float __r)		: __val(__r) {}
+    explicit decimal128(double __r)		: __val(__r) {}
+    explicit decimal128(long double __r)	: __val(__r) {}
+
+
+    // 3.2.4.4  Conversion from integral type.
+    decimal128(int __z)				: __val(__z) {}
+    decimal128(unsigned int __z)		: __val(__z) {}
+    decimal128(long __z)			: __val(__z) {}
+    decimal128(unsigned long __z)		: __val(__z) {}
+    decimal128(long long __z)			: __val(__z) {}
+    decimal128(unsigned long long __z)		: __val(__z) {}
+
+    /// Conforming extension: Conversion from scalar decimal type.
+    decimal128(__decfloat128 __z)		: __val(__z) {}
+
+#if __cplusplus >= 201103L
+    // 3.2.4.5  Conversion to integral type.
+    // Note: explicit per n3407.
+    explicit operator long long() const { return (long long)__val; }
+#endif
+
+    // 3.2.4.6  Increment and decrement operators.
+    decimal128& operator++()
+    {
+      __val += 1;
+      return *this;
+    }
+
+    decimal128 operator++(int)
+    {
+      decimal128 __tmp = *this;
+      __val += 1;
+      return __tmp;
+    }
+
+    decimal128& operator--()
+    {
+      __val -= 1;
+      return *this;
+    }
+
+    decimal128   operator--(int)
+    {
+      decimal128 __tmp = *this;
+      __val -= 1;
+      return __tmp;
+    }
+
+    // 3.2.4.7  Compound assignment.
+#define _DECLARE_DECIMAL128_COMPOUND_ASSIGNMENT(_Op)	\
+    decimal128& operator _Op(decimal32 __rhs);		\
+    decimal128& operator _Op(decimal64 __rhs);		\
+    decimal128& operator _Op(decimal128 __rhs);		\
+    decimal128& operator _Op(int __rhs);		\
+    decimal128& operator _Op(unsigned int __rhs);	\
+    decimal128& operator _Op(long __rhs);		\
+    decimal128& operator _Op(unsigned long __rhs);	\
+    decimal128& operator _Op(long long __rhs);		\
+    decimal128& operator _Op(unsigned long long __rhs);
+
+    _DECLARE_DECIMAL128_COMPOUND_ASSIGNMENT(+=)
+    _DECLARE_DECIMAL128_COMPOUND_ASSIGNMENT(-=)
+    _DECLARE_DECIMAL128_COMPOUND_ASSIGNMENT(*=)
+    _DECLARE_DECIMAL128_COMPOUND_ASSIGNMENT(/=)
+#undef _DECLARE_DECIMAL128_COMPOUND_ASSIGNMENT
+
+  private:
+    __decfloat128 __val;
+
+  public:
+    __decfloat128 __getval(void) { return __val; }
+    void __setval(__decfloat128 __x) { __val = __x; }
+  };
+
+#define _GLIBCXX_USE_DECIMAL_ 1
+} // namespace decimal
+  /// @} group decimal
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#include <decimal/decimal.h>
+
+#endif /* _GLIBCXX_DECIMAL */

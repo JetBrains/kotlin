@@ -1,0 +1,546 @@
+// <experimental/propagate_const> -*- C++ -*-
+
+// Copyright (C) 2015-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/propagate_const
+ *  This is a TS C++ Library header.
+ *  @ingroup libfund-ts
+ */
+
+#ifndef _GLIBCXX_EXPERIMENTAL_PROPAGATE_CONST
+#define _GLIBCXX_EXPERIMENTAL_PROPAGATE_CONST 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <type_traits>
+#include <bits/functional_hash.h>
+#include <bits/move.h>
+#include <bits/stl_function.h>
+#include <experimental/bits/lfts_config.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace experimental
+{
+inline namespace fundamentals_v2
+{
+  /**
+   * @defgroup propagate_const Const-propagating wrapper
+   * @ingroup libfund-ts
+   *
+   * A const-propagating wrapper that propagates const to pointer-like members,
+   * as described in n4388 "A Proposal to Add a Const-Propagating Wrapper
+   * to the Standard Library".
+   *
+   * @{
+   */
+
+  /// Const-propagating wrapper.
+  template <typename _Tp>
+    class propagate_const
+    {
+    public:
+      typedef remove_reference_t<decltype(*std::declval<_Tp&>())> element_type;
+
+    private:
+      template <typename _Up>
+	struct __is_propagate_const : false_type
+	{ };
+
+      template <typename _Up>
+	struct __is_propagate_const<propagate_const<_Up>> : true_type
+	{ };
+
+      template <typename _Up>
+	friend constexpr const _Up&
+	get_underlying(const propagate_const<_Up>& __pt) noexcept;
+      template <typename _Up>
+	friend constexpr _Up&
+	get_underlying(propagate_const<_Up>& __pt) noexcept;
+
+      template <typename _Up>
+	static constexpr element_type*
+	__to_raw_pointer(_Up* __u)
+	{ return __u; }
+
+      template <typename _Up>
+	static constexpr element_type*
+	__to_raw_pointer(_Up& __u)
+	{ return __u.get(); }
+
+      template <typename _Up>
+	static constexpr const element_type*
+	__to_raw_pointer(const _Up* __u)
+	{ return __u; }
+
+      template <typename _Up>
+	static constexpr const element_type*
+	__to_raw_pointer(const _Up& __u)
+	{ return __u.get(); }
+
+    public:
+      static_assert(__and_<is_object<typename remove_pointer<_Tp>::type>,
+			   __not_<is_array<_Tp>>,
+			   __or_<is_class<_Tp>, is_pointer<_Tp>>>::value,
+		    "propagate_const requires a class or a pointer to an"
+		    " object type");
+
+      // [propagate_const.ctor], constructors
+      constexpr propagate_const() = default;
+      propagate_const(const propagate_const& __p) = delete;
+      constexpr propagate_const(propagate_const&& __p) = default;
+
+      template <typename _Up, typename
+		enable_if<__and_<is_constructible<_Tp, _Up&&>,
+				 is_convertible<_Up&&, _Tp>>::value, bool
+			  >::type=true>
+      constexpr propagate_const(propagate_const<_Up>&& __pu)
+	: _M_t(std::move(get_underlying(__pu)))
+      {}
+
+      template <typename _Up, typename
+		enable_if<__and_<is_constructible<_Tp, _Up&&>,
+				 __not_<is_convertible<_Up&&, _Tp>>>::value,
+			  bool>::type=false>
+      constexpr explicit propagate_const(propagate_const<_Up>&& __pu)
+	: _M_t(std::move(get_underlying(__pu)))
+      {}
+
+      template <typename _Up, typename
+		enable_if<__and_<is_constructible<_Tp, _Up&&>,
+				 is_convertible<_Up&&, _Tp>,
+				 __not_<__is_propagate_const<
+					  typename decay<_Up>::type>>
+				 >::value, bool>::type=true>
+      constexpr propagate_const(_Up&& __u)
+	: _M_t(std::forward<_Up>(__u))
+      {}
+
+      template <typename _Up, typename
+		enable_if<__and_<is_constructible<_Tp, _Up&&>,
+				 __not_<is_convertible<_Up&&, _Tp>>,
+				 __not_<__is_propagate_const<
+					  typename decay<_Up>::type>>
+				 >::value, bool>::type=false>
+      constexpr explicit propagate_const(_Up&& __u)
+	: _M_t(std::forward<_Up>(__u))
+      {}
+
+      // [propagate_const.assignment], assignment
+      propagate_const& operator=(const propagate_const& __p) = delete;
+      constexpr propagate_const& operator=(propagate_const&& __p) = default;
+
+      template <typename _Up, typename =
+		typename enable_if<is_convertible<_Up&&, _Tp>::value>::type>
+      constexpr propagate_const& operator=(propagate_const<_Up>&& __pu)
+      {
+	_M_t = std::move(get_underlying(__pu));
+	return *this;
+      }
+
+      template <typename _Up, typename =
+		typename enable_if<__and_<is_convertible<_Up&&, _Tp>,
+					  __not_<__is_propagate_const<
+						   typename decay<_Up>::type>>
+					  >::value>::type>
+      constexpr propagate_const& operator=(_Up&& __u)
+      {
+	_M_t = std::forward<_Up>(__u);
+	return *this;
+      }
+
+      // [propagate_const.const_observers], const observers
+      explicit constexpr operator bool() const
+      {
+	return bool(_M_t);
+      }
+
+      constexpr const element_type* operator->() const
+      {
+	return get();
+      }
+
+      template <typename _Up = _Tp,
+		typename enable_if<__or_<is_pointer<_Up>,
+					 is_convertible<_Up,
+							const element_type*>
+					 >::value, bool>::type = true>
+      constexpr operator const element_type*() const
+      {
+	return get();
+      }
+
+      constexpr const element_type& operator*() const
+      {
+	return *get();
+      }
+
+      constexpr const element_type* get() const
+      {
+	return __to_raw_pointer(_M_t);
+      }
+
+      // [propagate_const.non_const_observers], non-const observers
+      constexpr element_type* operator->()
+      {
+	return get();
+      }
+
+      template <typename _Up = _Tp,
+		typename enable_if<__or_<is_pointer<_Up>,
+					 is_convertible<_Up,
+						        const element_type*>
+					 >::value, bool>::type = true>
+      constexpr operator element_type*()
+      {
+	return get();
+      }
+
+      constexpr element_type& operator*()
+      {
+	return *get();
+      }
+
+      constexpr element_type* get()
+      {
+	return __to_raw_pointer(_M_t);
+      }
+
+      // [propagate_const.modifiers], modifiers
+      constexpr void
+      swap(propagate_const& __pt) noexcept(__is_nothrow_swappable<_Tp>::value)
+      {
+	using std::swap;
+	swap(_M_t, get_underlying(__pt));
+      }
+
+    private:
+      _Tp _M_t;
+    };
+
+  // [propagate_const.relational], relational operators
+  template <typename _Tp>
+    constexpr bool
+    operator==(const propagate_const<_Tp>& __pt, nullptr_t)
+    {
+      return get_underlying(__pt) == nullptr;
+    }
+
+  template <typename _Tp>
+    constexpr bool
+    operator==(nullptr_t, const propagate_const<_Tp>& __pu)
+    {
+      return nullptr == get_underlying(__pu);
+    }
+
+  template <typename _Tp>
+    constexpr bool
+    operator!=(const propagate_const<_Tp>& __pt, nullptr_t)
+    {
+      return get_underlying(__pt) != nullptr;
+    }
+
+  template <typename _Tp>
+    constexpr bool operator!=(nullptr_t, const propagate_const<_Tp>& __pu)
+    {
+      return nullptr != get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator==(const propagate_const<_Tp>& __pt,
+	       const propagate_const<_Up>& __pu)
+    {
+      return get_underlying(__pt) == get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator!=(const propagate_const<_Tp>& __pt,
+	       const propagate_const<_Up>& __pu)
+    {
+      return get_underlying(__pt) != get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator<(const propagate_const<_Tp>& __pt,
+	      const propagate_const<_Up>& __pu)
+    {
+      return get_underlying(__pt) < get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator>(const propagate_const<_Tp>& __pt,
+	      const propagate_const<_Up>& __pu)
+    {
+      return get_underlying(__pt) > get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator<=(const propagate_const<_Tp>& __pt,
+	       const propagate_const<_Up>& __pu)
+    {
+      return get_underlying(__pt) <= get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator>=(const propagate_const<_Tp>& __pt,
+	       const propagate_const<_Up>& __pu)
+    {
+      return get_underlying(__pt) >= get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator==(const propagate_const<_Tp>& __pt, const _Up& __u)
+    {
+      return get_underlying(__pt) == __u;
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator!=(const propagate_const<_Tp>& __pt, const _Up& __u)
+    {
+      return get_underlying(__pt) != __u;
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator<(const propagate_const<_Tp>& __pt, const _Up& __u)
+    {
+      return get_underlying(__pt) < __u;
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator>(const propagate_const<_Tp>& __pt, const _Up& __u)
+    {
+      return get_underlying(__pt) > __u;
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator<=(const propagate_const<_Tp>& __pt, const _Up& __u)
+    {
+      return get_underlying(__pt) <= __u;
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator>=(const propagate_const<_Tp>& __pt, const _Up& __u)
+    {
+      return get_underlying(__pt) >= __u;
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator==(const _Tp& __t, const propagate_const<_Up>& __pu)
+    {
+      return __t == get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator!=(const _Tp& __t, const propagate_const<_Up>& __pu)
+    {
+      return __t != get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator<(const _Tp& __t, const propagate_const<_Up>& __pu)
+    {
+      return __t < get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator>(const _Tp& __t, const propagate_const<_Up>& __pu)
+    {
+      return __t > get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator<=(const _Tp& __t, const propagate_const<_Up>& __pu)
+    {
+      return __t <= get_underlying(__pu);
+    }
+
+  template <typename _Tp, typename _Up>
+    constexpr bool
+    operator>=(const _Tp& __t, const propagate_const<_Up>& __pu)
+    {
+      return __t >= get_underlying(__pu);
+    }
+
+  // [propagate_const.algorithms], specialized algorithms
+  // _GLIBCXX_RESOLVE_LIB_DEFECTS
+  // 3413. propagate_const's swap [...] needs to be constrained and use a trait
+  template <typename _Tp>
+    constexpr enable_if_t<__is_swappable<_Tp>::value, void>
+    swap(propagate_const<_Tp>& __pt, propagate_const<_Tp>& __pt2)
+      noexcept(__is_nothrow_swappable<_Tp>::value)
+    {
+      __pt.swap(__pt2);
+    }
+
+  // [propagate_const.underlying], underlying pointer access
+  template <typename _Tp>
+    constexpr const _Tp&
+    get_underlying(const propagate_const<_Tp>& __pt) noexcept
+    {
+      return __pt._M_t;
+    }
+
+  template <typename _Tp>
+    constexpr _Tp&
+    get_underlying(propagate_const<_Tp>& __pt) noexcept
+    {
+      return __pt._M_t;
+    }
+
+  /// @} group propagate_const
+} // namespace fundamentals_v2
+} // namespace experimental
+
+// [propagate_const.hash], hash support
+ template <typename _Tp>
+   struct hash<experimental::propagate_const<_Tp>>
+   {
+     using result_type = size_t;
+     using argument_type = experimental::propagate_const<_Tp>;
+
+     size_t
+     operator()(const experimental::propagate_const<_Tp>& __t) const
+     noexcept(noexcept(hash<_Tp>{}(get_underlying(__t))))
+     {
+       return hash<_Tp>{}(get_underlying(__t));
+     }
+   };
+
+ // [propagate_const.comparison_function_objects], comparison function objects
+ template <typename _Tp>
+   struct equal_to<experimental::propagate_const<_Tp>>
+   {
+     constexpr bool
+     operator()(const experimental::propagate_const<_Tp>& __x,
+	        const experimental::propagate_const<_Tp>& __y) const
+     {
+       return equal_to<_Tp>{}(get_underlying(__x), get_underlying(__y));
+     }
+
+     typedef experimental::propagate_const<_Tp> first_argument_type;
+     typedef experimental::propagate_const<_Tp> second_argument_type;
+     typedef bool result_type;
+   };
+
+ template <typename _Tp>
+   struct not_equal_to<experimental::propagate_const<_Tp>>
+   {
+     constexpr bool
+     operator()(const experimental::propagate_const<_Tp>& __x,
+		const experimental::propagate_const<_Tp>& __y) const
+     {
+       return not_equal_to<_Tp>{}(get_underlying(__x), get_underlying(__y));
+     }
+
+     typedef experimental::propagate_const<_Tp> first_argument_type;
+     typedef experimental::propagate_const<_Tp> second_argument_type;
+     typedef bool result_type;
+   };
+
+ template <typename _Tp>
+   struct less<experimental::propagate_const<_Tp>>
+   {
+     constexpr bool
+     operator()(const experimental::propagate_const<_Tp>& __x,
+		const experimental::propagate_const<_Tp>& __y) const
+     {
+       return less<_Tp>{}(get_underlying(__x), get_underlying(__y));
+     }
+
+     typedef experimental::propagate_const<_Tp> first_argument_type;
+     typedef experimental::propagate_const<_Tp> second_argument_type;
+     typedef bool result_type;
+   };
+
+ template <typename _Tp>
+   struct greater<experimental::propagate_const<_Tp>>
+   {
+     constexpr bool
+     operator()(const experimental::propagate_const<_Tp>& __x,
+		const experimental::propagate_const<_Tp>& __y) const
+     {
+       return greater<_Tp>{}(get_underlying(__x), get_underlying(__y));
+     }
+
+     typedef experimental::propagate_const<_Tp> first_argument_type;
+     typedef experimental::propagate_const<_Tp> second_argument_type;
+     typedef bool result_type;
+   };
+
+ template <typename _Tp>
+   struct less_equal<experimental::propagate_const<_Tp>>
+   {
+     constexpr bool
+     operator()(const experimental::propagate_const<_Tp>& __x,
+	        const experimental::propagate_const<_Tp>& __y) const
+     {
+       return less_equal<_Tp>{}(get_underlying(__x), get_underlying(__y));
+     }
+
+     typedef experimental::propagate_const<_Tp> first_argument_type;
+     typedef experimental::propagate_const<_Tp> second_argument_type;
+     typedef bool result_type;
+   };
+
+ template <typename _Tp>
+   struct greater_equal<experimental::propagate_const<_Tp>>
+   {
+     constexpr bool
+     operator()(const experimental::propagate_const<_Tp>& __x,
+		const experimental::propagate_const<_Tp>& __y) const
+     {
+       return greater_equal<_Tp>{}(get_underlying(__x), get_underlying(__y));
+     }
+
+     typedef experimental::propagate_const<_Tp> first_argument_type;
+     typedef experimental::propagate_const<_Tp> second_argument_type;
+     typedef bool result_type;
+   };
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // C++14
+
+#endif // _GLIBCXX_EXPERIMENTAL_PROPAGATE_CONST

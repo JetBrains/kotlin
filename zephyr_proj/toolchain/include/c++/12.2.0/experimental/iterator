@@ -1,0 +1,115 @@
+// <experimental/iterator> -*- C++ -*-
+
+// Copyright (C) 2015-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/iterator
+ *  This is a TS C++ Library header.
+ *  @ingroup libfund-ts
+ */
+
+//
+// N4336 Working Draft, C++ Extensions for Library Fundamentals, Version 2
+//
+
+#ifndef _GLIBCXX_EXPERIMENTAL_ITERATOR
+#define _GLIBCXX_EXPERIMENTAL_ITERATOR 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <iterator>
+#include <iosfwd>
+#include <experimental/type_traits>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace experimental
+{
+inline namespace fundamentals_v2
+{
+#define __cpp_lib_experimental_ostream_joiner 201411
+
+  /// Output iterator that inserts a delimiter between elements.
+  template<typename _DelimT, typename _CharT = char,
+	   typename _Traits = char_traits<_CharT>>
+  class ostream_joiner
+  {
+  public:
+    typedef _CharT				char_type;
+    typedef _Traits				traits_type;
+    typedef basic_ostream<_CharT, _Traits>	ostream_type;
+    typedef output_iterator_tag			iterator_category;
+    typedef void				value_type;
+    typedef void				difference_type;
+    typedef void				pointer;
+    typedef void				reference;
+
+    ostream_joiner(ostream_type& __os, const _DelimT& __delimiter)
+    noexcept(is_nothrow_copy_constructible_v<_DelimT>)
+    : _M_out(std::__addressof(__os)), _M_delim(__delimiter)
+    { }
+
+    ostream_joiner(ostream_type& __os, _DelimT&& __delimiter)
+    noexcept(is_nothrow_move_constructible_v<_DelimT>)
+    : _M_out(std::__addressof(__os)), _M_delim(std::move(__delimiter))
+    { }
+
+    template<typename _Tp>
+      ostream_joiner&
+      operator=(const _Tp& __value)
+      {
+	if (!_M_first)
+	  *_M_out << _M_delim;
+	_M_first = false;
+	*_M_out << __value;
+	return *this;
+      }
+
+    ostream_joiner& operator*() noexcept { return *this; }
+    ostream_joiner& operator++() noexcept { return *this; }
+    ostream_joiner& operator++(int) noexcept { return *this; }
+
+  private:
+    ostream_type* _M_out;
+    _DelimT _M_delim;
+    bool _M_first = true;
+  };
+
+  /// Object generator for ostream_joiner.
+  template<typename _CharT, typename _Traits, typename _DelimT>
+    inline ostream_joiner<decay_t<_DelimT>, _CharT, _Traits>
+    make_ostream_joiner(basic_ostream<_CharT, _Traits>& __os,
+			_DelimT&& __delimiter)
+    { return { __os, std::forward<_DelimT>(__delimiter) }; }
+} // namespace fundamentals_v2
+} // namespace experimental
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // __cplusplus <= 201103L
+
+#endif // _GLIBCXX_EXPERIMENTAL_ITERATOR

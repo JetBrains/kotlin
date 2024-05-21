@@ -1,0 +1,84 @@
+// <experimental/set> -*- C++ -*-
+
+// Copyright (C) 2015-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/set
+ *  This is a TS C++ Library header.
+ *  @ingroup libfund-ts
+ */
+
+#ifndef _GLIBCXX_EXPERIMENTAL_SET
+#define _GLIBCXX_EXPERIMENTAL_SET 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <set>
+#include <bits/erase_if.h>
+#include <experimental/memory_resource>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace experimental
+{
+inline namespace fundamentals_v2
+{
+  template<typename _Key, typename _Compare, typename _Alloc,
+	   typename _Predicate>
+    inline void
+    erase_if(set<_Key, _Compare, _Alloc>& __cont, _Predicate __pred)
+    {
+      const _GLIBCXX_STD_C::set<_Key, _Compare, _Alloc>& __ucont = __cont;
+      std::__detail::__erase_nodes_if(__cont, __ucont, __pred);
+    }
+
+  template<typename _Key, typename _Compare, typename _Alloc,
+	   typename _Predicate>
+    inline void
+    erase_if(multiset<_Key, _Compare, _Alloc>& __cont, _Predicate __pred)
+    {
+      const _GLIBCXX_STD_C::multiset<_Key, _Compare, _Alloc>& __ucont = __cont;
+      std::__detail::__erase_nodes_if(__cont, __ucont, __pred);
+    }
+
+  namespace pmr {
+    template<typename _Key, typename _Compare = less<_Key>>
+      using set = std::set<_Key, _Compare, polymorphic_allocator<_Key>>;
+
+    template<typename _Key, typename _Compare = less<_Key>>
+      using multiset = std::multiset<_Key, _Compare,
+				     polymorphic_allocator<_Key>>;
+  } // namespace pmr
+
+} // namespace fundamentals_v2
+} // namespace experimental
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // C++14
+
+#endif // _GLIBCXX_EXPERIMENTAL_SET

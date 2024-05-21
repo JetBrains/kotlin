@@ -1,0 +1,129 @@
+// C++11 <typeindex> -*- C++ -*-
+
+// Copyright (C) 2010-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/typeindex
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_TYPEINDEX
+#define _GLIBCXX_TYPEINDEX 1
+
+#pragma GCC system_header
+
+#if __cplusplus < 201103L
+# include <bits/c++0x_warning.h>
+#else
+
+#include <typeinfo>
+#if __cplusplus > 201703L
+# include <compare>
+#endif
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+  /**
+   * @brief Class type_index
+   * @ingroup utilities
+   *
+   *  The class type_index provides a simple wrapper for type_info
+   *  which can be used as an index type in associative containers
+   *  (23.6) and in unordered associative containers (23.7).
+   */
+  struct type_index
+  {
+    type_index(const type_info& __rhs) noexcept
+    : _M_target(&__rhs) { }
+
+    bool
+    operator==(const type_index& __rhs) const noexcept
+    { return *_M_target == *__rhs._M_target; }
+
+#if ! __cpp_lib_three_way_comparison
+    bool
+    operator!=(const type_index& __rhs) const noexcept
+    { return *_M_target != *__rhs._M_target; }
+#endif
+
+    bool
+    operator<(const type_index& __rhs) const noexcept
+    { return _M_target->before(*__rhs._M_target); }
+
+    bool
+    operator<=(const type_index& __rhs) const noexcept
+    { return !__rhs._M_target->before(*_M_target); }
+
+    bool
+    operator>(const type_index& __rhs) const noexcept
+    { return __rhs._M_target->before(*_M_target); }
+
+    bool
+    operator>=(const type_index& __rhs) const noexcept
+    { return !_M_target->before(*__rhs._M_target); }
+
+#if __cpp_lib_three_way_comparison
+    strong_ordering
+    operator<=>(const type_index& __rhs) const noexcept
+    {
+      if (*_M_target == *__rhs._M_target)
+	return strong_ordering::equal;
+      if (_M_target->before(*__rhs._M_target))
+	return strong_ordering::less;
+      return strong_ordering::greater;
+    }
+#endif
+
+    size_t
+    hash_code() const noexcept
+    { return _M_target->hash_code(); }
+
+    const char*
+    name() const noexcept
+    { return _M_target->name(); }
+
+  private:
+    const type_info* _M_target;
+  };
+
+  template<typename _Tp> struct hash;
+
+  /// std::hash specialization for type_index.
+  template<>
+    struct hash<type_index>
+    {
+      typedef size_t        result_type;
+      typedef type_index  argument_type;
+
+      size_t
+      operator()(const type_index& __ti) const noexcept
+      { return __ti.hash_code(); }
+    };
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif  // C++11
+
+#endif  // _GLIBCXX_TYPEINDEX

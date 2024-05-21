@@ -1,0 +1,694 @@
+// Primitive numeric conversions (to_chars and from_chars) -*- C++ -*-
+
+// Copyright (C) 2017-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/charconv
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_CHARCONV
+#define _GLIBCXX_CHARCONV 1
+
+#pragma GCC system_header
+
+// As an extension we support <charconv> in C++14, but this header should not
+// be included by any other library headers in C++14 mode. This ensures that
+// the names defined in this header are not added to namespace std unless a
+// user explicitly includes <charconv> in C++14 code.
+#if __cplusplus >= 201402L
+
+#include <type_traits>
+#include <bit>			// for __bit_width
+#include <bits/charconv.h>	// for __to_chars_len, __to_chars_10_impl
+#include <bits/error_constants.h> // for std::errc
+#include <ext/numeric_traits.h>
+
+#if _GLIBCXX_FLOAT_IS_IEEE_BINARY32 && _GLIBCXX_DOUBLE_IS_IEEE_BINARY64 \
+    && __SIZE_WIDTH__ >= 32
+# define __cpp_lib_to_chars 201611L
+#endif
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+  /// Result type of std::to_chars
+  struct to_chars_result
+  {
+    char* ptr;
+    errc ec;
+
+#if __cplusplus > 201703L && __cpp_impl_three_way_comparison >= 201907L
+    friend bool
+    operator==(const to_chars_result&, const to_chars_result&) = default;
+#endif
+  };
+
+  /// Result type of std::from_chars
+  struct from_chars_result
+  {
+    const char* ptr;
+    errc ec;
+
+#if __cplusplus > 201703L && __cpp_impl_three_way_comparison >= 201907L
+    friend bool
+    operator==(const from_chars_result&, const from_chars_result&) = default;
+#endif
+  };
+
+namespace __detail
+{
+  template<typename _Tp>
+    using __integer_to_chars_result_type
+      = enable_if_t<__or_<__is_signed_integer<_Tp>,
+			  __is_unsigned_integer<_Tp>,
+			  is_same<char, remove_cv_t<_Tp>>>::value,
+		    to_chars_result>;
+
+  // Pick an unsigned type of suitable size. This is used to reduce the
+  // number of specializations of __to_chars_len, __to_chars etc. that
+  // get instantiated. For example, to_chars<char> and to_chars<short>
+  // and to_chars<unsigned> will all use the same code, and so will
+  // to_chars<long> when sizeof(int) == sizeof(long).
+  template<typename _Tp>
+    struct __to_chars_unsigned_type : __make_unsigned_selector_base
+    {
+      using _UInts = _List<unsigned int, unsigned long, unsigned long long
+#if __SIZEOF_INT128__ > __SIZEOF_LONG_LONG__
+	, unsigned __int128
+#endif
+	>;
+      using type = typename __select<sizeof(_Tp), _UInts>::__type;
+    };
+
+  template<typename _Tp>
+    using __unsigned_least_t = typename __to_chars_unsigned_type<_Tp>::type;
+
+  // Generic implementation for arbitrary bases.
+  // Defined in <bits/charconv.h>.
+  template<typename _Tp>
+    constexpr unsigned
+    __to_chars_len(_Tp __value, int __base /* = 10 */) noexcept;
+
+  template<typename _Tp>
+    constexpr unsigned
+    __to_chars_len_2(_Tp __value) noexcept
+    { return std::__bit_width(__value); }
+
+  // Generic implementation for arbitrary bases.
+  template<typename _Tp>
+    to_chars_result
+    __to_chars(char* __first, char* __last, _Tp __val, int __base) noexcept
+    {
+      static_assert(is_integral<_Tp>::value, "implementation bug");
+      static_assert(is_unsigned<_Tp>::value, "implementation bug");
+
+      to_chars_result __res;
+
+      const unsigned __len = __to_chars_len(__val, __base);
+
+      if (__builtin_expect((__last - __first) < __len, 0))
+	{
+	  __res.ptr = __last;
+	  __res.ec = errc::value_too_large;
+	  return __res;
+	}
+
+      unsigned __pos = __len - 1;
+
+      static constexpr char __digits[] = {
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+	'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+	'u', 'v', 'w', 'x', 'y', 'z'
+      };
+
+      while (__val >= (unsigned)__base)
+	{
+	  auto const __quo = __val / __base;
+	  auto const __rem = __val % __base;
+	  __first[__pos--] = __digits[__rem];
+	  __val = __quo;
+	}
+      *__first = __digits[__val];
+
+      __res.ptr = __first + __len;
+      __res.ec = {};
+      return __res;
+    }
+
+  template<typename _Tp>
+    __integer_to_chars_result_type<_Tp>
+    __to_chars_16(char* __first, char* __last, _Tp __val) noexcept
+    {
+      static_assert(is_integral<_Tp>::value, "implementation bug");
+      static_assert(is_unsigned<_Tp>::value, "implementation bug");
+
+      to_chars_result __res;
+
+      const unsigned __len = (__to_chars_len_2(__val) + 3) / 4;
+
+      if (__builtin_expect((__last - __first) < __len, 0))
+	{
+	  __res.ptr = __last;
+	  __res.ec = errc::value_too_large;
+	  return __res;
+	}
+
+      static constexpr char __digits[] = {
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+	'a', 'b', 'c', 'd', 'e', 'f'
+      };
+      unsigned __pos = __len - 1;
+      while (__val >= 0x100)
+	{
+	  auto __num = __val & 0xF;
+	  __val >>= 4;
+	  __first[__pos] = __digits[__num];
+	  __num = __val & 0xF;
+	  __val >>= 4;
+	  __first[__pos - 1] = __digits[__num];
+	  __pos -= 2;
+	}
+      if (__val >= 0x10)
+	{
+	  const auto __num = __val & 0xF;
+	  __val >>= 4;
+	  __first[1] = __digits[__num];
+	  __first[0] = __digits[__val];
+	}
+      else
+	__first[0] = __digits[__val];
+      __res.ptr = __first + __len;
+      __res.ec = {};
+      return __res;
+    }
+
+  template<typename _Tp>
+    inline __integer_to_chars_result_type<_Tp>
+    __to_chars_10(char* __first, char* __last, _Tp __val) noexcept
+    {
+      static_assert(is_integral<_Tp>::value, "implementation bug");
+      static_assert(is_unsigned<_Tp>::value, "implementation bug");
+
+      to_chars_result __res;
+
+      const unsigned __len = __to_chars_len(__val, 10);
+
+      if (__builtin_expect((__last - __first) < __len, 0))
+	{
+	  __res.ptr = __last;
+	  __res.ec = errc::value_too_large;
+	  return __res;
+	}
+
+      __detail::__to_chars_10_impl(__first, __len, __val);
+      __res.ptr = __first + __len;
+      __res.ec = {};
+      return __res;
+    }
+
+  template<typename _Tp>
+    __integer_to_chars_result_type<_Tp>
+    __to_chars_8(char* __first, char* __last, _Tp __val) noexcept
+    {
+      static_assert(is_integral<_Tp>::value, "implementation bug");
+      static_assert(is_unsigned<_Tp>::value, "implementation bug");
+
+      to_chars_result __res;
+      unsigned __len;
+
+      if _GLIBCXX17_CONSTEXPR (__gnu_cxx::__int_traits<_Tp>::__digits <= 16)
+	{
+	  __len = __val > 077777u ? 6u
+	    : __val > 07777u ? 5u
+	    : __val > 0777u ? 4u
+	    : __val > 077u ? 3u
+	    : __val > 07u ? 2u
+	    : 1u;
+	}
+      else
+	__len = (__to_chars_len_2(__val) + 2) / 3;
+
+      if (__builtin_expect((__last - __first) < __len, 0))
+	{
+	  __res.ptr = __last;
+	  __res.ec = errc::value_too_large;
+	  return __res;
+	}
+
+      unsigned __pos = __len - 1;
+      while (__val >= 0100)
+	{
+	  auto __num = __val & 7;
+	  __val >>= 3;
+	  __first[__pos] = '0' + __num;
+	  __num = __val & 7;
+	  __val >>= 3;
+	  __first[__pos - 1] = '0' + __num;
+	  __pos -= 2;
+	}
+      if (__val >= 010)
+	{
+	  auto const __num = __val & 7;
+	  __val >>= 3;
+	  __first[1] = '0' + __num;
+	  __first[0] = '0' + __val;
+	}
+      else
+	__first[0] = '0' + __val;
+      __res.ptr = __first + __len;
+      __res.ec = {};
+      return __res;
+    }
+
+  template<typename _Tp>
+    __integer_to_chars_result_type<_Tp>
+    __to_chars_2(char* __first, char* __last, _Tp __val) noexcept
+    {
+      static_assert(is_integral<_Tp>::value, "implementation bug");
+      static_assert(is_unsigned<_Tp>::value, "implementation bug");
+
+      to_chars_result __res;
+
+      const unsigned __len = __to_chars_len_2(__val);
+
+      if (__builtin_expect((__last - __first) < __len, 0))
+	{
+	  __res.ptr = __last;
+	  __res.ec = errc::value_too_large;
+	  return __res;
+	}
+
+      unsigned __pos = __len - 1;
+
+      while (__pos)
+	{
+	  __first[__pos--] = '0' + (__val & 1);
+	  __val >>= 1;
+	}
+      // First digit is always '1' because __to_chars_len_2 skips
+      // leading zero bits and std::to_chars handles zero values
+      // directly.
+      __first[0] = '1';
+
+      __res.ptr = __first + __len;
+      __res.ec = {};
+      return __res;
+    }
+
+} // namespace __detail
+
+  template<typename _Tp>
+    __detail::__integer_to_chars_result_type<_Tp>
+    __to_chars_i(char* __first, char* __last, _Tp __value, int __base = 10)
+    {
+      __glibcxx_assert(2 <= __base && __base <= 36);
+
+      using _Up = __detail::__unsigned_least_t<_Tp>;
+      _Up __unsigned_val = __value;
+
+      if (__first == __last) [[__unlikely__]]
+	return { __last, errc::value_too_large };
+
+      if (__value == 0)
+	{
+	  *__first = '0';
+	  return { __first + 1, errc{} };
+	}
+      else if _GLIBCXX17_CONSTEXPR (std::is_signed<_Tp>::value)
+	if (__value < 0)
+	  {
+	    *__first++ = '-';
+	    __unsigned_val = _Up(~__value) + _Up(1);
+	  }
+
+      switch (__base)
+      {
+      case 16:
+	return __detail::__to_chars_16(__first, __last, __unsigned_val);
+      case 10:
+	return __detail::__to_chars_10(__first, __last, __unsigned_val);
+      case 8:
+	return __detail::__to_chars_8(__first, __last, __unsigned_val);
+      case 2:
+	return __detail::__to_chars_2(__first, __last, __unsigned_val);
+      default:
+	return __detail::__to_chars(__first, __last, __unsigned_val, __base);
+      }
+    }
+
+#define _GLIBCXX_TO_CHARS(T) \
+  inline to_chars_result \
+  to_chars(char* __first, char* __last, T __value, int __base = 10) \
+  { return std::__to_chars_i<T>(__first, __last, __value, __base); }
+_GLIBCXX_TO_CHARS(char)
+_GLIBCXX_TO_CHARS(signed char)
+_GLIBCXX_TO_CHARS(unsigned char)
+_GLIBCXX_TO_CHARS(signed short)
+_GLIBCXX_TO_CHARS(unsigned short)
+_GLIBCXX_TO_CHARS(signed int)
+_GLIBCXX_TO_CHARS(unsigned int)
+_GLIBCXX_TO_CHARS(signed long)
+_GLIBCXX_TO_CHARS(unsigned long)
+_GLIBCXX_TO_CHARS(signed long long)
+_GLIBCXX_TO_CHARS(unsigned long long)
+#if defined(__GLIBCXX_TYPE_INT_N_0)
+_GLIBCXX_TO_CHARS(signed __GLIBCXX_TYPE_INT_N_0)
+_GLIBCXX_TO_CHARS(unsigned __GLIBCXX_TYPE_INT_N_0)
+#endif
+#if defined(__GLIBCXX_TYPE_INT_N_1)
+_GLIBCXX_TO_CHARS(signed __GLIBCXX_TYPE_INT_N_1)
+_GLIBCXX_TO_CHARS(unsigned __GLIBCXX_TYPE_INT_N_1)
+#endif
+#if defined(__GLIBCXX_TYPE_INT_N_2)
+_GLIBCXX_TO_CHARS(signed __GLIBCXX_TYPE_INT_N_2)
+_GLIBCXX_TO_CHARS(unsigned __GLIBCXX_TYPE_INT_N_2)
+#endif
+#if defined(__GLIBCXX_TYPE_INT_N_3)
+_GLIBCXX_TO_CHARS(signed __GLIBCXX_TYPE_INT_N_3)
+_GLIBCXX_TO_CHARS(unsigned __GLIBCXX_TYPE_INT_N_3)
+#endif
+#undef _GLIBCXX_TO_CHARS
+
+  // _GLIBCXX_RESOLVE_LIB_DEFECTS
+  // 3266. to_chars(bool) should be deleted
+  to_chars_result to_chars(char*, char*, bool, int = 10) = delete;
+
+namespace __detail
+{
+  template<typename _Tp>
+    bool
+    __raise_and_add(_Tp& __val, int __base, unsigned char __c)
+    {
+      if (__builtin_mul_overflow(__val, __base, &__val)
+	  || __builtin_add_overflow(__val, __c, &__val))
+	return false;
+      return true;
+    }
+
+  // Construct and return a lookup table that maps 0-9, A-Z and a-z to their
+  // corresponding base-36 value and maps all other characters to 127.
+  constexpr auto
+  __from_chars_alnum_to_val_table()
+  {
+    constexpr unsigned char __lower_letters[27] = "abcdefghijklmnopqrstuvwxyz";
+    constexpr unsigned char __upper_letters[27] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    struct { unsigned char __data[1u << __CHAR_BIT__] = {}; } __table;
+    for (auto& __entry : __table.__data)
+      __entry = 127;
+    for (int __i = 0; __i < 10; ++__i)
+      __table.__data['0' + __i] = __i;
+    for (int __i = 0; __i < 26; ++__i)
+      {
+	__table.__data[__lower_letters[__i]] = 10 + __i;
+	__table.__data[__upper_letters[__i]] = 10 + __i;
+      }
+    return __table;
+  }
+
+  // If _DecOnly is true: if the character is a decimal digit, then
+  // return its corresponding base-10 value, otherwise return a value >= 127.
+  // If _DecOnly is false: if the character is an alphanumeric digit, then
+  // return its corresponding base-36 value, otherwise return a value >= 127.
+  template<bool _DecOnly = false>
+    unsigned char
+    __from_chars_alnum_to_val(unsigned char __c)
+    {
+      if _GLIBCXX17_CONSTEXPR (_DecOnly)
+	return static_cast<unsigned char>(__c - '0');
+      else
+	{
+	  // This initializer is deliberately made dependent in order to work
+	  // around modules bug PR105322.
+	  static constexpr auto __table = (_DecOnly, __from_chars_alnum_to_val_table());
+	  return __table.__data[__c];
+	}
+    }
+
+  /// std::from_chars implementation for integers in a power-of-two base.
+  /// If _DecOnly is true, then we may assume __base is at most 8.
+  template<bool _DecOnly, typename _Tp>
+    bool
+    __from_chars_pow2_base(const char*& __first, const char* __last, _Tp& __val,
+			   int __base)
+    {
+      static_assert(is_integral<_Tp>::value, "implementation bug");
+      static_assert(is_unsigned<_Tp>::value, "implementation bug");
+
+      // __glibcxx_assert((__base & (__base - 1)) == 0);
+      // __glibcxx_assert(_DecOnly ? __base <= 8 : __base <= 32);
+      const int __log2_base = __countr_zero(__base);
+
+      const ptrdiff_t __len = __last - __first;
+      ptrdiff_t __i = 0;
+      while (__i < __len && __first[__i] == '0')
+	++__i;
+      const ptrdiff_t __leading_zeroes = __i;
+      if (__i >= __len) [[__unlikely__]]
+	{
+	  __first += __i;
+	  return true;
+	}
+
+      // Remember the leading significant digit value if necessary.
+      unsigned char __leading_c = 0;
+      if (__base != 2)
+	{
+	  __leading_c = __from_chars_alnum_to_val<_DecOnly>(__first[__i]);
+	  // __glibcxx_assert(__leading_c != 0);
+	  if (__leading_c >= __base) [[__unlikely__]]
+	    {
+	      __first += __i;
+	      return true;
+	    }
+	  __val = __leading_c;
+	  ++__i;
+	}
+
+      for (; __i < __len; ++__i)
+	{
+	  const unsigned char __c = __from_chars_alnum_to_val<_DecOnly>(__first[__i]);
+	  if (__c >= __base)
+	    break;
+	  __val = (__val << __log2_base) | __c;
+	}
+      __first += __i;
+      auto __significant_bits = (__i - __leading_zeroes) * __log2_base;
+      if (__base != 2)
+	// Compensate for a leading significant digit that didn't use all
+	// of its available bits.
+	__significant_bits -= __log2_base - __bit_width(__leading_c);
+      // __glibcxx_assert(__significant_bits >= 0);
+      return __significant_bits <= __gnu_cxx::__int_traits<_Tp>::__digits;
+    }
+
+  /// std::from_chars implementation for integers in any base.
+  /// If _DecOnly is true, then we may assume __base is at most 10.
+  template<bool _DecOnly, typename _Tp>
+    bool
+    __from_chars_alnum(const char*& __first, const char* __last, _Tp& __val,
+		       int __base)
+    {
+      // __glibcxx_assert(!_DecOnly || __base <= 10);
+
+      const int __bits_per_digit = __bit_width(__base);
+      int __unused_bits_lower_bound = __gnu_cxx::__int_traits<_Tp>::__digits;
+      for (; __first != __last; ++__first)
+	{
+	  const unsigned char __c = __from_chars_alnum_to_val<_DecOnly>(*__first);
+	  if (__c >= __base)
+	    return true;
+
+	  __unused_bits_lower_bound -= __bits_per_digit;
+	  if (__unused_bits_lower_bound >= 0) [[__likely__]]
+	    // We're definitely not going to overflow.
+	    __val = __val * __base + __c;
+	  else if (!__raise_and_add(__val, __base, __c)) [[__unlikely__]]
+	    {
+	      while (++__first != __last
+		     && __from_chars_alnum_to_val<_DecOnly>(*__first) < __base)
+		;
+	      return false;
+	    }
+	}
+      return true;
+    }
+
+  template<typename _Tp>
+    using __integer_from_chars_result_type
+      = enable_if_t<__or_<__is_signed_integer<_Tp>,
+			  __is_unsigned_integer<_Tp>,
+			  is_same<char, remove_cv_t<_Tp>>>::value,
+		    from_chars_result>;
+
+} // namespace __detail
+
+  /// std::from_chars for integral types.
+  template<typename _Tp>
+    __detail::__integer_from_chars_result_type<_Tp>
+    from_chars(const char* __first, const char* __last, _Tp& __value,
+	       int __base = 10)
+    {
+      __glibcxx_assert(2 <= __base && __base <= 36);
+
+      from_chars_result __res{__first, {}};
+
+      int __sign = 1;
+      if _GLIBCXX17_CONSTEXPR (std::is_signed<_Tp>::value)
+	if (__first != __last && *__first == '-')
+	  {
+	    __sign = -1;
+	    ++__first;
+	  }
+
+      using _Up = __detail::__unsigned_least_t<_Tp>;
+      _Up __val = 0;
+
+      const auto __start = __first;
+      bool __valid;
+      if ((__base & (__base - 1)) == 0)
+	{
+	  if (__base <= 8)
+	    __valid = __detail::__from_chars_pow2_base<true>(__first, __last, __val, __base);
+	  else
+	    __valid = __detail::__from_chars_pow2_base<false>(__first, __last, __val, __base);
+	}
+      else if (__base <= 10)
+	__valid = __detail::__from_chars_alnum<true>(__first, __last, __val, __base);
+      else
+	__valid = __detail::__from_chars_alnum<false>(__first, __last, __val, __base);
+
+      if (__builtin_expect(__first == __start, 0))
+	__res.ec = errc::invalid_argument;
+      else
+	{
+	  __res.ptr = __first;
+	  if (!__valid)
+	    __res.ec = errc::result_out_of_range;
+	  else
+	    {
+	      if _GLIBCXX17_CONSTEXPR (std::is_signed<_Tp>::value)
+		{
+		  _Tp __tmp;
+		  if (__builtin_mul_overflow(__val, __sign, &__tmp))
+		    __res.ec = errc::result_out_of_range;
+		  else
+		    __value = __tmp;
+		}
+	      else
+		{
+		  if _GLIBCXX17_CONSTEXPR (__gnu_cxx::__int_traits<_Up>::__max
+		      > __gnu_cxx::__int_traits<_Tp>::__max)
+		    {
+		      if (__val > __gnu_cxx::__int_traits<_Tp>::__max)
+			__res.ec = errc::result_out_of_range;
+		      else
+			__value = __val;
+		    }
+		  else
+		    __value = __val;
+		}
+	    }
+	}
+      return __res;
+    }
+
+  /// floating-point format for primitive numerical conversion
+  enum class chars_format
+  {
+    scientific = 1, fixed = 2, hex = 4, general = fixed | scientific
+  };
+
+  constexpr chars_format
+  operator|(chars_format __lhs, chars_format __rhs) noexcept
+  { return (chars_format)((unsigned)__lhs | (unsigned)__rhs); }
+
+  constexpr chars_format
+  operator&(chars_format __lhs, chars_format __rhs) noexcept
+  { return (chars_format)((unsigned)__lhs & (unsigned)__rhs); }
+
+  constexpr chars_format
+  operator^(chars_format __lhs, chars_format __rhs) noexcept
+  { return (chars_format)((unsigned)__lhs ^ (unsigned)__rhs); }
+
+  constexpr chars_format
+  operator~(chars_format __fmt) noexcept
+  { return (chars_format)~(unsigned)__fmt; }
+
+  constexpr chars_format&
+  operator|=(chars_format& __lhs, chars_format __rhs) noexcept
+  { return __lhs = __lhs | __rhs; }
+
+  constexpr chars_format&
+  operator&=(chars_format& __lhs, chars_format __rhs) noexcept
+  { return __lhs = __lhs & __rhs; }
+
+  constexpr chars_format&
+  operator^=(chars_format& __lhs, chars_format __rhs) noexcept
+  { return __lhs = __lhs ^ __rhs; }
+
+#if defined __cpp_lib_to_chars || _GLIBCXX_HAVE_USELOCALE
+  from_chars_result
+  from_chars(const char* __first, const char* __last, float& __value,
+	     chars_format __fmt = chars_format::general) noexcept;
+
+  from_chars_result
+  from_chars(const char* __first, const char* __last, double& __value,
+	     chars_format __fmt = chars_format::general) noexcept;
+
+  from_chars_result
+  from_chars(const char* __first, const char* __last, long double& __value,
+	     chars_format __fmt = chars_format::general) noexcept;
+#endif
+
+#if defined __cpp_lib_to_chars
+  // Floating-point std::to_chars
+
+  // Overloads for float.
+  to_chars_result to_chars(char* __first, char* __last, float __value) noexcept;
+  to_chars_result to_chars(char* __first, char* __last, float __value,
+			   chars_format __fmt) noexcept;
+  to_chars_result to_chars(char* __first, char* __last, float __value,
+			   chars_format __fmt, int __precision) noexcept;
+
+  // Overloads for double.
+  to_chars_result to_chars(char* __first, char* __last, double __value) noexcept;
+  to_chars_result to_chars(char* __first, char* __last, double __value,
+			   chars_format __fmt) noexcept;
+  to_chars_result to_chars(char* __first, char* __last, double __value,
+			   chars_format __fmt, int __precision) noexcept;
+
+  // Overloads for long double.
+  to_chars_result to_chars(char* __first, char* __last, long double __value)
+    noexcept;
+  to_chars_result to_chars(char* __first, char* __last, long double __value,
+			   chars_format __fmt) noexcept;
+  to_chars_result to_chars(char* __first, char* __last, long double __value,
+			   chars_format __fmt, int __precision) noexcept;
+#endif
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // C++14
+#endif // _GLIBCXX_CHARCONV

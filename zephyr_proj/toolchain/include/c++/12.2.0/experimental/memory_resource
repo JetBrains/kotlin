@@ -1,0 +1,569 @@
+// <experimental/memory_resource> -*- C++ -*-
+
+// Copyright (C) 2015-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/memory_resource
+ *  This is a TS C++ Library header.
+ *  @ingroup libfund-ts
+ */
+
+#ifndef _GLIBCXX_EXPERIMENTAL_MEMORY_RESOURCE
+#define _GLIBCXX_EXPERIMENTAL_MEMORY_RESOURCE 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <memory>			// align, uses_allocator, __uses_alloc
+#include <experimental/utility>		// pair, experimental::erased_type
+#include <tuple>			// tuple, forward_as_tuple
+#include <atomic>			// atomic
+#include <new>				// placement new
+#include <cstddef>			// max_align_t
+#include <bits/new_allocator.h>
+#include <debug/assertions.h>
+
+/// @cond
+namespace __gnu_cxx _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+  template<typename _Tp> class malloc_allocator;
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace __gnu_cxx
+/// @endcond
+
+namespace std {
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace experimental {
+inline namespace fundamentals_v2 {
+namespace pmr {
+#define __cpp_lib_experimental_memory_resources 201402L
+
+  // Standard memory resources
+
+  // 8.5 Class memory_resource
+  class memory_resource;
+
+  // 8.6 Class template polymorphic_allocator
+  template<typename _Tp>
+    class polymorphic_allocator;
+
+  template<typename _Alloc, typename _Resource = memory_resource>
+    class __resource_adaptor_imp;
+
+  // 8.7 Alias template resource_adaptor
+  template<typename _Alloc>
+    using resource_adaptor = __resource_adaptor_imp<
+      typename allocator_traits<_Alloc>::template rebind_alloc<char>>;
+
+  // 8.8 Global memory resources
+  memory_resource* new_delete_resource() noexcept;
+  memory_resource* null_memory_resource() noexcept;
+  memory_resource* get_default_resource() noexcept;
+  memory_resource* set_default_resource(memory_resource* __r) noexcept;
+
+  // TODO 8.9 Pool resource classes
+
+  class memory_resource
+  {
+    static constexpr size_t _S_max_align = alignof(max_align_t);
+
+  public:
+    memory_resource() = default;
+    memory_resource(const memory_resource&) = default;
+    virtual ~memory_resource() = default;
+
+    memory_resource& operator=(const memory_resource&) = default;
+
+    _GLIBCXX_NODISCARD void*
+    allocate(size_t __bytes, size_t __alignment = _S_max_align)
+    { return do_allocate(__bytes, __alignment); }
+
+    void
+    deallocate(void* __p, size_t __bytes, size_t __alignment = _S_max_align)
+    { return do_deallocate(__p, __bytes, __alignment); }
+
+    bool
+    is_equal(const memory_resource& __other) const noexcept
+    { return do_is_equal(__other); }
+
+  protected:
+    virtual void*
+    do_allocate(size_t __bytes, size_t __alignment) = 0;
+
+    virtual void
+    do_deallocate(void* __p, size_t __bytes, size_t __alignment) = 0;
+
+    virtual bool
+    do_is_equal(const memory_resource& __other) const noexcept = 0;
+  };
+
+  inline bool
+  operator==(const memory_resource& __a, const memory_resource& __b) noexcept
+  { return &__a == &__b || __a.is_equal(__b); }
+
+  inline bool
+  operator!=(const memory_resource& __a, const memory_resource& __b) noexcept
+  { return !(__a == __b); }
+
+
+  template<typename _Tp>
+    class polymorphic_allocator
+    {
+    public:
+      using value_type = _Tp;
+
+      polymorphic_allocator() noexcept
+      : _M_resource(get_default_resource())
+      { }
+
+      polymorphic_allocator(memory_resource* __r)
+      : _M_resource(__r)
+      { _GLIBCXX_DEBUG_ASSERT(__r); }
+
+      polymorphic_allocator(const polymorphic_allocator& __other) = default;
+
+      template <typename _Up>
+	polymorphic_allocator(const polymorphic_allocator<_Up>&
+			      __other) noexcept
+	: _M_resource(__other.resource())
+	{ }
+
+      polymorphic_allocator&
+	operator=(const polymorphic_allocator& __rhs) = default;
+
+      _GLIBCXX_NODISCARD _Tp* allocate(size_t __n)
+      { return static_cast<_Tp*>(_M_resource->allocate(__n * sizeof(_Tp),
+						       alignof(_Tp))); }
+
+      void
+      deallocate(_Tp* __p, size_t __n)
+      { _M_resource->deallocate(__p, __n * sizeof(_Tp), alignof(_Tp)); }
+
+      template <typename _Tp1, typename... _Args> //used here
+	void
+	construct(_Tp1* __p, _Args&&... __args)
+	{
+	  std::__uses_allocator_construct(this->resource(), __p,
+					  std::forward<_Args>(__args)...);
+	}
+
+      // Specializations for pair using piecewise construction
+      template <typename _Tp1, typename _Tp2,
+	       typename... _Args1, typename... _Args2>
+	void
+	construct(pair<_Tp1, _Tp2>* __p, piecewise_construct_t,
+		  tuple<_Args1...> __x, tuple<_Args2...> __y)
+	{
+	  memory_resource* const __resource = this->resource();
+	  auto __x_use_tag =
+	    std::__use_alloc<_Tp1, memory_resource*, _Args1...>(__resource);
+	  auto __y_use_tag =
+	    std::__use_alloc<_Tp2, memory_resource*, _Args2...>(__resource);
+
+	  ::new(__p) std::pair<_Tp1, _Tp2>(piecewise_construct,
+					   _M_construct_p(__x_use_tag, __x),
+					   _M_construct_p(__y_use_tag, __y));
+	}
+
+      template <typename _Tp1, typename _Tp2>
+	void
+	construct(pair<_Tp1,_Tp2>* __p)
+	{ this->construct(__p, piecewise_construct, tuple<>(), tuple<>()); }
+
+      template <typename _Tp1, typename _Tp2, typename _Up, typename _Vp>
+	void
+	construct(pair<_Tp1,_Tp2>* __p, _Up&& __x, _Vp&& __y)
+	{
+	  this->construct(__p, piecewise_construct,
+	      std::forward_as_tuple(std::forward<_Up>(__x)),
+	      std::forward_as_tuple(std::forward<_Vp>(__y)));
+	}
+
+      template <typename _Tp1, typename _Tp2, typename _Up, typename _Vp>
+	void
+	construct(pair<_Tp1,_Tp2>* __p, const std::pair<_Up, _Vp>& __pr)
+	{
+	  this->construct(__p, piecewise_construct,
+	      std::forward_as_tuple(__pr.first),
+	      std::forward_as_tuple(__pr.second));
+	}
+
+      template <typename _Tp1, typename _Tp2, typename _Up, typename _Vp>
+	void
+	construct(pair<_Tp1,_Tp2>* __p, pair<_Up, _Vp>&& __pr)
+	{
+	  this->construct(__p, piecewise_construct,
+	      std::forward_as_tuple(std::forward<_Up>(__pr.first)),
+	      std::forward_as_tuple(std::forward<_Vp>(__pr.second)));
+	}
+
+      template <typename _Up>
+	void
+	destroy(_Up* __p)
+	{ __p->~_Up(); }
+
+      // Return a default-constructed allocator (no allocator propagation)
+      polymorphic_allocator
+      select_on_container_copy_construction() const
+      { return polymorphic_allocator(); }
+
+      memory_resource* resource() const { return _M_resource; }
+
+    private:
+      using __uses_alloc1_ = __uses_alloc1<memory_resource*>;
+      using __uses_alloc2_ = __uses_alloc2<memory_resource*>;
+
+      template<typename _Tuple>
+	_Tuple&&
+	_M_construct_p(__uses_alloc0, _Tuple& __t)
+	{ return std::move(__t); }
+
+      template<typename... _Args>
+	decltype(auto)
+	_M_construct_p(__uses_alloc1_ __ua, tuple<_Args...>& __t)
+	{ return tuple_cat(make_tuple(allocator_arg, *(__ua._M_a)),
+			   std::move(__t)); }
+
+      template<typename... _Args>
+	decltype(auto)
+	_M_construct_p(__uses_alloc2_ __ua, tuple<_Args...>& __t)
+	{ return tuple_cat(std::move(__t), make_tuple(*(__ua._M_a))); }
+
+      memory_resource* _M_resource;
+    };
+
+  template <class _Tp1, class _Tp2>
+    bool
+    operator==(const polymorphic_allocator<_Tp1>& __a,
+	       const polymorphic_allocator<_Tp2>& __b) noexcept
+    { return *__a.resource() == *__b.resource(); }
+
+  template <class _Tp1, class _Tp2>
+    bool
+    operator!=(const polymorphic_allocator<_Tp1>& __a,
+	       const polymorphic_allocator<_Tp2>& __b) noexcept
+    { return !(__a == __b); }
+
+
+  /// @cond undocumented
+  class __resource_adaptor_common
+  {
+    template<typename, typename> friend class __resource_adaptor_imp;
+
+    struct _AlignMgr
+    {
+      _AlignMgr(size_t __nbytes, size_t __align)
+      : _M_nbytes(__nbytes), _M_align(__align)
+      { }
+
+      // Total size that needs to be allocated.
+      size_t
+      _M_alloc_size() const { return _M_buf_size() + _M_token_size(); }
+
+      void*
+      _M_adjust(void* __ptr) const
+      {
+	const auto __orig_ptr = static_cast<char*>(__ptr);
+	size_t __space = _M_buf_size();
+	// Align the pointer within the buffer:
+	std::align(_M_align, _M_nbytes, __ptr, __space);
+	const auto __aligned_ptr = static_cast<char*>(__ptr);
+	const auto __token_size = _M_token_size();
+	// Store token immediately after the aligned block:
+	char* const __end = __aligned_ptr + _M_nbytes;
+	if (__token_size == 1)
+	  _S_write<unsigned char>(__end, __aligned_ptr - __orig_ptr);
+	else if (__token_size == sizeof(short))
+	  _S_write<unsigned short>(__end, __aligned_ptr - __orig_ptr);
+	else if (__token_size == sizeof(int) && sizeof(int) < sizeof(char*))
+	  _S_write<unsigned int>(__end, __aligned_ptr - __orig_ptr);
+	else // (__token_size == sizeof(char*))
+	  // Just store the original pointer:
+	  _S_write<char*>(__end, __orig_ptr);
+	return __aligned_ptr;
+      }
+
+      char*
+      _M_unadjust(char* __ptr) const
+      {
+	const char* const __end = __ptr + _M_nbytes;
+	char* __orig_ptr;
+	const auto __token_size = _M_token_size();
+	// Read the token and restore the original pointer:
+	if (__token_size == 1)
+	  __orig_ptr = __ptr - _S_read<unsigned char>(__end);
+	else if (__token_size == sizeof(short))
+	  __orig_ptr = __ptr - _S_read<unsigned short>(__end);
+	else if (__token_size == sizeof(int)
+	    && sizeof(int) < sizeof(char*))
+	  __orig_ptr = __ptr - _S_read<unsigned int>(__end);
+	else // (__token_size == sizeof(char*))
+	  __orig_ptr = _S_read<char*>(__end);
+	// The adjustment is always less than the requested alignment,
+	// so if that isn't true now then either the wrong size was passed
+	// to deallocate or the token was overwritten by a buffer overflow:
+	__glibcxx_assert(static_cast<size_t>(__ptr - __orig_ptr) < _M_align);
+	return __orig_ptr;
+      }
+
+    private:
+      size_t _M_nbytes;
+      size_t _M_align;
+
+      // Number of bytes needed to fit block of given size and alignment.
+      size_t
+      _M_buf_size() const { return _M_nbytes + _M_align - 1; }
+
+      // Number of additional bytes needed to write the token.
+      int
+      _M_token_size() const
+      {
+	if (_M_align <= (1ul << __CHAR_BIT__))
+	  return 1;
+	if (_M_align <= (1ul << (sizeof(short) * __CHAR_BIT__)))
+	  return sizeof(short);
+	if (_M_align <= (1ull << (sizeof(int) * __CHAR_BIT__)))
+	  return sizeof(int);
+	return sizeof(char*);
+      }
+
+      template<typename _Tp>
+	static void
+	_S_write(void* __to, _Tp __val)
+	{ __builtin_memcpy(__to, &__val, sizeof(_Tp)); }
+
+      template<typename _Tp>
+	static _Tp
+	_S_read(const void* __from)
+	{
+	  _Tp __val;
+	  __builtin_memcpy(&__val, __from, sizeof(_Tp));
+	  return __val;
+	}
+    };
+  };
+  /// @endcond
+
+  // 8.7.1 __resource_adaptor_imp
+  template<typename _Alloc, typename _Resource>
+    class __resource_adaptor_imp
+    : public _Resource, private __resource_adaptor_common
+    {
+      using memory_resource = _Resource;
+
+      static_assert(is_same<char,
+	  typename allocator_traits<_Alloc>::value_type>::value,
+	  "Allocator's value_type is char");
+      static_assert(is_same<char*,
+	  typename allocator_traits<_Alloc>::pointer>::value,
+	  "Allocator's pointer type is value_type*");
+      static_assert(is_same<const char*,
+	  typename allocator_traits<_Alloc>::const_pointer>::value,
+	  "Allocator's const_pointer type is value_type const*");
+      static_assert(is_same<void*,
+	  typename allocator_traits<_Alloc>::void_pointer>::value,
+	  "Allocator's void_pointer type is void*");
+      static_assert(is_same<const void*,
+	  typename allocator_traits<_Alloc>::const_void_pointer>::value,
+	  "Allocator's const_void_pointer type is void const*");
+
+    public:
+      using allocator_type = _Alloc;
+
+      __resource_adaptor_imp() = default;
+      __resource_adaptor_imp(const __resource_adaptor_imp&) = default;
+      __resource_adaptor_imp(__resource_adaptor_imp&&) = default;
+
+      explicit __resource_adaptor_imp(const _Alloc& __a2)
+      : _M_alloc(__a2)
+      { }
+
+      explicit __resource_adaptor_imp(_Alloc&& __a2)
+      : _M_alloc(std::move(__a2))
+      { }
+
+      __resource_adaptor_imp&
+      operator=(const __resource_adaptor_imp&) = default;
+
+      allocator_type get_allocator() const noexcept { return _M_alloc; }
+
+    protected:
+      virtual void*
+      do_allocate(size_t __bytes, size_t __alignment) override
+      {
+	// Cannot use max_align_t on 32-bit Solaris x86, see PR libstdc++/77691
+#if ! ((defined __sun__ || defined __VXWORKS__) && defined __i386__)
+	if (__alignment == alignof(max_align_t))
+	  return _M_allocate<alignof(max_align_t)>(__bytes);
+#endif
+	switch (__alignment)
+	  {
+	  case 1:
+	    return _M_alloc.allocate(__bytes);
+	  case 2:
+	    return _M_allocate<2>(__bytes);
+	  case 4:
+	    return _M_allocate<4>(__bytes);
+	  case 8:
+	    return _M_allocate<8>(__bytes);
+	  }
+	const _AlignMgr __mgr(__bytes, __alignment);
+	// Assume _M_alloc returns 1-byte aligned memory, so allocate enough
+	// space to fit a block of the right size and alignment, plus some
+	// extra bytes to store a token for retrieving the original pointer.
+	return __mgr._M_adjust(_M_alloc.allocate(__mgr._M_alloc_size()));
+      }
+
+      virtual void
+      do_deallocate(void* __ptr, size_t __bytes, size_t __alignment) noexcept
+      override
+      {
+#if ! ((defined __sun__ || defined __VXWORKS__) && defined __i386__)
+	if (__alignment == alignof(max_align_t))
+	  return (void) _M_deallocate<alignof(max_align_t)>(__ptr, __bytes);
+#endif
+	switch (__alignment)
+	  {
+	  case 1:
+	    return (void) _M_alloc.deallocate((char*)__ptr, __bytes);
+	  case 2:
+	    return (void) _M_deallocate<2>(__ptr, __bytes);
+	  case 4:
+	    return (void) _M_deallocate<4>(__ptr, __bytes);
+	  case 8:
+	    return (void) _M_deallocate<8>(__ptr, __bytes);
+	  }
+	const _AlignMgr __mgr(__bytes, __alignment);
+	// Use the stored token to retrieve the original pointer.
+	_M_alloc.deallocate(__mgr._M_unadjust((char*)__ptr),
+	    __mgr._M_alloc_size());
+      }
+
+      virtual bool
+      do_is_equal(const memory_resource& __other) const noexcept override
+      {
+	if (auto __p = dynamic_cast<const __resource_adaptor_imp*>(&__other))
+	  return _M_alloc == __p->_M_alloc;
+	return false;
+      }
+
+    private:
+      template<size_t _Num>
+	struct _Aligned_type { alignas(_Num) char __c[_Num]; };
+
+      // Rebind the allocator to the specified type and use it to allocate.
+      template<size_t _Num, typename _Tp = _Aligned_type<_Num>>
+	void*
+	_M_allocate(size_t __bytes)
+	{
+	  typename allocator_traits<_Alloc>::template
+	    rebind_alloc<_Tp> __a2(_M_alloc);
+	  const size_t __n = (__bytes + _Num - 1) / _Num;
+	  return __a2.allocate(__n);
+	}
+
+      // Rebind the allocator to the specified type and use it to deallocate.
+      template<size_t _Num, typename _Tp = _Aligned_type<_Num>>
+	void
+	_M_deallocate(void* __ptr, size_t __bytes) noexcept
+	{
+	  typename allocator_traits<_Alloc>::template
+	    rebind_alloc<_Tp> __a2(_M_alloc);
+	  const size_t __n = (__bytes + _Num - 1) / _Num;
+	  __a2.deallocate((_Tp*)__ptr, __n);
+	}
+
+      _Alloc _M_alloc{};
+    };
+
+  // Global memory resources
+
+  inline memory_resource*
+  new_delete_resource() noexcept
+  {
+    using type = resource_adaptor<std::__new_allocator<char>>;
+    alignas(type) static unsigned char __buf[sizeof(type)];
+    static type* __r = new(__buf) type;
+    return __r;
+  }
+
+  inline memory_resource*
+  null_memory_resource() noexcept
+  {
+    class type final : public memory_resource
+    {
+      void*
+      do_allocate(size_t, size_t) override
+      { std::__throw_bad_alloc(); }
+
+      void
+      do_deallocate(void*, size_t, size_t) noexcept override
+      { }
+
+      bool
+      do_is_equal(const memory_resource& __other) const noexcept override
+      { return this == &__other; }
+    };
+
+    alignas(type) static unsigned char __buf[sizeof(type)];
+    static type* __r = new(__buf) type;
+    return __r;
+  }
+
+  // The default memory resource
+
+  /// @cond undocumented
+  inline std::atomic<memory_resource*>&
+  __get_default_resource()
+  {
+    using type = atomic<memory_resource*>;
+    alignas(type) static unsigned char __buf[sizeof(type)];
+    static type* __r = new(__buf) type(new_delete_resource());
+    return *__r;
+  }
+  /// @endcond
+
+  /// Get the current default resource.
+  inline memory_resource*
+  get_default_resource() noexcept
+  { return __get_default_resource().load(); }
+
+  /// Change the default resource and return the previous one.
+  inline memory_resource*
+  set_default_resource(memory_resource* __r) noexcept
+  {
+    if (__r == nullptr)
+      __r = new_delete_resource();
+    return __get_default_resource().exchange(__r);
+  }
+
+} // namespace pmr
+} // namespace fundamentals_v2
+} // namespace experimental
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // C++14
+#endif // _GLIBCXX_EXPERIMENTAL_MEMORY_RESOURCE

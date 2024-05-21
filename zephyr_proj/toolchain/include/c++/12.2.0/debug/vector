@@ -1,0 +1,859 @@
+// Debugging vector implementation -*- C++ -*-
+
+// Copyright (C) 2003-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file debug/vector
+ *  This file is a GNU debug extension to the Standard C++ Library.
+ */
+
+#ifndef _GLIBCXX_DEBUG_VECTOR
+#define _GLIBCXX_DEBUG_VECTOR 1
+
+#pragma GCC system_header
+
+#include <bits/c++config.h>
+namespace std _GLIBCXX_VISIBILITY(default) { namespace __debug {
+  template<typename _Tp, typename _Allocator> class vector;
+} } // namespace std::__debug
+
+#include <vector>
+#include <debug/safe_sequence.h>
+#include <debug/safe_container.h>
+#include <debug/safe_iterator.h>
+
+namespace __gnu_debug
+{
+  /** @brief Base class for Debug Mode vector.
+   *
+   * Adds information about the guaranteed capacity, which is useful for
+   * detecting code which relies on non-portable implementation details of
+   * the libstdc++ reallocation policy.
+   */
+  template<typename _SafeSequence,
+	   typename _BaseSequence>
+    class _Safe_vector
+    {
+      typedef typename _BaseSequence::size_type size_type;
+
+      const _SafeSequence&
+      _M_seq() const { return *static_cast<const _SafeSequence*>(this); }
+
+    protected:
+      _Safe_vector() _GLIBCXX_NOEXCEPT
+	: _M_guaranteed_capacity(0)
+      { _M_update_guaranteed_capacity(); }
+
+      _Safe_vector(const _Safe_vector&) _GLIBCXX_NOEXCEPT
+	: _M_guaranteed_capacity(0)
+      { _M_update_guaranteed_capacity(); }
+
+      _Safe_vector(size_type __n) _GLIBCXX_NOEXCEPT
+	: _M_guaranteed_capacity(__n)
+      { }
+
+      _Safe_vector&
+      operator=(const _Safe_vector&) _GLIBCXX_NOEXCEPT
+      {
+	_M_update_guaranteed_capacity();
+	return *this;
+      }
+
+#if __cplusplus >= 201103L
+      _Safe_vector(_Safe_vector&& __x) noexcept
+	: _Safe_vector()
+      { __x._M_guaranteed_capacity = 0; }
+
+      _Safe_vector&
+      operator=(_Safe_vector&& __x) noexcept
+      {
+	_M_update_guaranteed_capacity();
+	__x._M_guaranteed_capacity = 0;
+	return *this;
+      }
+#endif
+
+      size_type _M_guaranteed_capacity;
+
+      bool
+      _M_requires_reallocation(size_type __elements) const _GLIBCXX_NOEXCEPT
+      { return __elements > _M_seq().capacity(); }
+
+      void
+      _M_update_guaranteed_capacity() _GLIBCXX_NOEXCEPT
+      {
+	if (_M_seq().size() > _M_guaranteed_capacity)
+	  _M_guaranteed_capacity = _M_seq().size();
+      }
+    };
+}
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+namespace __debug
+{
+  /// Class std::vector with safety/checking/debug instrumentation.
+  template<typename _Tp,
+	   typename _Allocator = std::allocator<_Tp> >
+    class vector
+    : public __gnu_debug::_Safe_container<
+	vector<_Tp, _Allocator>, _Allocator, __gnu_debug::_Safe_sequence>,
+      public _GLIBCXX_STD_C::vector<_Tp, _Allocator>,
+      public __gnu_debug::_Safe_vector<
+	vector<_Tp, _Allocator>,
+	_GLIBCXX_STD_C::vector<_Tp, _Allocator> >
+    {
+      typedef _GLIBCXX_STD_C::vector<_Tp, _Allocator>		_Base;
+      typedef __gnu_debug::_Safe_container<
+	vector, _Allocator, __gnu_debug::_Safe_sequence>	_Safe;
+      typedef __gnu_debug::_Safe_vector<vector, _Base>		_Safe_vector;
+
+      typedef typename _Base::iterator		_Base_iterator;
+      typedef typename _Base::const_iterator	_Base_const_iterator;
+      typedef __gnu_debug::_Equal_to<_Base_const_iterator> _Equal;
+
+      template<typename _ItT, typename _SeqT, typename _CatT>
+	friend class ::__gnu_debug::_Safe_iterator;
+
+      // Reference wrapper for base class. Disambiguates vector(const _Base&)
+      // from copy constructor by requiring a user-defined conversion.
+      // See PR libstdc++/90102.
+      struct _Base_ref
+      {
+	_Base_ref(const _Base& __r) : _M_ref(__r) { }
+
+	const _Base& _M_ref;
+      };
+
+    public:
+      typedef typename _Base::reference			reference;
+      typedef typename _Base::const_reference		const_reference;
+
+      typedef __gnu_debug::_Safe_iterator<
+	_Base_iterator, vector>				iterator;
+      typedef __gnu_debug::_Safe_iterator<
+	_Base_const_iterator, vector>			const_iterator;
+
+      typedef typename _Base::size_type			size_type;
+      typedef typename _Base::difference_type		difference_type;
+
+      typedef _Tp					value_type;
+      typedef _Allocator				allocator_type;
+      typedef typename _Base::pointer			pointer;
+      typedef typename _Base::const_pointer		const_pointer;
+      typedef std::reverse_iterator<iterator>		reverse_iterator;
+      typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
+
+      // 23.2.4.1 construct/copy/destroy:
+
+#if __cplusplus < 201103L
+      vector() _GLIBCXX_NOEXCEPT
+      : _Base() { }
+#else
+      vector() = default;
+#endif
+
+      explicit
+      vector(const _Allocator& __a) _GLIBCXX_NOEXCEPT
+      : _Base(__a) { }
+
+#if __cplusplus >= 201103L
+      explicit
+      vector(size_type __n, const _Allocator& __a = _Allocator())
+      : _Base(__n, __a), _Safe_vector(__n) { }
+
+      vector(size_type __n, const __type_identity_t<_Tp>& __value,
+	     const _Allocator& __a = _Allocator())
+      : _Base(__n, __value, __a) { }
+#else
+      explicit
+      vector(size_type __n, const _Tp& __value = _Tp(),
+	     const _Allocator& __a = _Allocator())
+      : _Base(__n, __value, __a) { }
+#endif
+
+#if __cplusplus >= 201103L
+      template<class _InputIterator,
+	       typename = std::_RequireInputIter<_InputIterator>>
+#else
+      template<class _InputIterator>
+#endif
+	vector(_InputIterator __first, _InputIterator __last,
+	       const _Allocator& __a = _Allocator())
+	: _Base(__gnu_debug::__base(
+		  __glibcxx_check_valid_constructor_range(__first, __last)),
+		__gnu_debug::__base(__last), __a) { }
+
+#if __cplusplus < 201103L
+      vector(const vector& __x)
+      : _Base(__x) { }
+
+      ~vector() _GLIBCXX_NOEXCEPT { }
+#else
+      vector(const vector&) = default;
+      vector(vector&&) = default;
+
+      vector(const vector& __x, const __type_identity_t<allocator_type>& __a)
+      : _Base(__x, __a) { }
+
+      vector(vector&& __x, const __type_identity_t<allocator_type>& __a)
+      noexcept(
+	std::is_nothrow_constructible<_Base,
+	  _Base, const allocator_type&>::value )
+      : _Safe(std::move(__x), __a),
+	_Base(std::move(__x), __a),
+	_Safe_vector(std::move(__x)) { }
+
+      vector(initializer_list<value_type> __l,
+	     const allocator_type& __a = allocator_type())
+      : _Base(__l, __a) { }
+
+      ~vector() = default;
+#endif
+
+      /// Construction from a normal-mode vector
+      vector(_Base_ref __x)
+      : _Base(__x._M_ref) { }
+
+#if __cplusplus >= 201103L
+      vector&
+      operator=(const vector&) = default;
+
+      vector&
+      operator=(vector&&) = default;
+
+      vector&
+      operator=(initializer_list<value_type> __l)
+      {
+	_Base::operator=(__l);
+	this->_M_invalidate_all();
+	this->_M_update_guaranteed_capacity();
+	return *this;
+      }
+#endif
+
+#if __cplusplus >= 201103L
+      template<typename _InputIterator,
+	       typename = std::_RequireInputIter<_InputIterator>>
+#else
+      template<typename _InputIterator>
+#endif
+	void
+	assign(_InputIterator __first, _InputIterator __last)
+	{
+	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+	  __glibcxx_check_valid_range2(__first, __last, __dist);
+
+	  if (__dist.second >= __gnu_debug::__dp_sign)
+	    _Base::assign(__gnu_debug::__unsafe(__first),
+			  __gnu_debug::__unsafe(__last));
+	  else
+	    _Base::assign(__first, __last);
+
+	  this->_M_invalidate_all();
+	  this->_M_update_guaranteed_capacity();
+	}
+
+      void
+      assign(size_type __n, const _Tp& __u)
+      {
+	_Base::assign(__n, __u);
+	this->_M_invalidate_all();
+	this->_M_update_guaranteed_capacity();
+      }
+
+#if __cplusplus >= 201103L
+      void
+      assign(initializer_list<value_type> __l)
+      {
+	_Base::assign(__l);
+	this->_M_invalidate_all();
+	this->_M_update_guaranteed_capacity();
+      }
+#endif
+
+      using _Base::get_allocator;
+
+      // iterators:
+      _GLIBCXX_NODISCARD
+      iterator
+      begin() _GLIBCXX_NOEXCEPT
+      { return iterator(_Base::begin(), this); }
+
+      _GLIBCXX_NODISCARD
+      const_iterator
+      begin() const _GLIBCXX_NOEXCEPT
+      { return const_iterator(_Base::begin(), this); }
+
+      _GLIBCXX_NODISCARD
+      iterator
+      end() _GLIBCXX_NOEXCEPT
+      { return iterator(_Base::end(), this); }
+
+      _GLIBCXX_NODISCARD
+      const_iterator
+      end() const _GLIBCXX_NOEXCEPT
+      { return const_iterator(_Base::end(), this); }
+
+      _GLIBCXX_NODISCARD
+      reverse_iterator
+      rbegin() _GLIBCXX_NOEXCEPT
+      { return reverse_iterator(end()); }
+
+      _GLIBCXX_NODISCARD
+      const_reverse_iterator
+      rbegin() const _GLIBCXX_NOEXCEPT
+      { return const_reverse_iterator(end()); }
+
+      _GLIBCXX_NODISCARD
+      reverse_iterator
+      rend() _GLIBCXX_NOEXCEPT
+      { return reverse_iterator(begin()); }
+
+      _GLIBCXX_NODISCARD
+      const_reverse_iterator
+      rend() const _GLIBCXX_NOEXCEPT
+      { return const_reverse_iterator(begin()); }
+
+#if __cplusplus >= 201103L
+      [[__nodiscard__]]
+      const_iterator
+      cbegin() const noexcept
+      { return const_iterator(_Base::begin(), this); }
+
+      [[__nodiscard__]]
+      const_iterator
+      cend() const noexcept
+      { return const_iterator(_Base::end(), this); }
+
+      [[__nodiscard__]]
+      const_reverse_iterator
+      crbegin() const noexcept
+      { return const_reverse_iterator(end()); }
+
+      [[__nodiscard__]]
+      const_reverse_iterator
+      crend() const noexcept
+      { return const_reverse_iterator(begin()); }
+#endif
+
+      // 23.2.4.2 capacity:
+      using _Base::size;
+      using _Base::max_size;
+
+#if __cplusplus >= 201103L
+      void
+      resize(size_type __sz)
+      {
+	bool __realloc = this->_M_requires_reallocation(__sz);
+	if (__sz < this->size())
+	  this->_M_invalidate_after_nth(__sz);
+	_Base::resize(__sz);
+	if (__realloc)
+	  this->_M_invalidate_all();
+	this->_M_update_guaranteed_capacity();
+      }
+
+      void
+      resize(size_type __sz, const _Tp& __c)
+      {
+	bool __realloc = this->_M_requires_reallocation(__sz);
+	if (__sz < this->size())
+	  this->_M_invalidate_after_nth(__sz);
+	_Base::resize(__sz, __c);
+	if (__realloc)
+	  this->_M_invalidate_all();
+	this->_M_update_guaranteed_capacity();
+      }
+#else
+      void
+      resize(size_type __sz, _Tp __c = _Tp())
+      {
+	bool __realloc = this->_M_requires_reallocation(__sz);
+	if (__sz < this->size())
+	  this->_M_invalidate_after_nth(__sz);
+	_Base::resize(__sz, __c);
+	if (__realloc)
+	  this->_M_invalidate_all();
+	this->_M_update_guaranteed_capacity();
+      }
+#endif
+
+#if __cplusplus >= 201103L
+      void
+      shrink_to_fit()
+      {
+	if (_Base::_M_shrink_to_fit())
+	  {
+	    this->_M_guaranteed_capacity = _Base::capacity();
+	    this->_M_invalidate_all();
+	  }
+      }
+#endif
+
+      _GLIBCXX_NODISCARD
+      size_type
+      capacity() const _GLIBCXX_NOEXCEPT
+      {
+#ifdef _GLIBCXX_DEBUG_PEDANTIC
+	return this->_M_guaranteed_capacity;
+#else
+	return _Base::capacity();
+#endif
+      }
+
+      using _Base::empty;
+
+      void
+      reserve(size_type __n)
+      {
+	bool __realloc = this->_M_requires_reallocation(__n);
+	_Base::reserve(__n);
+	if (__n > this->_M_guaranteed_capacity)
+	  this->_M_guaranteed_capacity = __n;
+	if (__realloc)
+	  this->_M_invalidate_all();
+      }
+
+      // element access:
+      _GLIBCXX_NODISCARD
+      reference
+      operator[](size_type __n) _GLIBCXX_NOEXCEPT
+      {
+	__glibcxx_check_subscript(__n);
+	return _Base::operator[](__n);
+      }
+
+      _GLIBCXX_NODISCARD
+      const_reference
+      operator[](size_type __n) const _GLIBCXX_NOEXCEPT
+      {
+	__glibcxx_check_subscript(__n);
+	return _Base::operator[](__n);
+      }
+
+      using _Base::at;
+
+      _GLIBCXX_NODISCARD
+      reference
+      front() _GLIBCXX_NOEXCEPT
+      {
+	__glibcxx_check_nonempty();
+	return _Base::front();
+      }
+
+      _GLIBCXX_NODISCARD
+      const_reference
+      front() const _GLIBCXX_NOEXCEPT
+      {
+	__glibcxx_check_nonempty();
+	return _Base::front();
+      }
+
+      _GLIBCXX_NODISCARD
+      reference
+      back() _GLIBCXX_NOEXCEPT
+      {
+	__glibcxx_check_nonempty();
+	return _Base::back();
+      }
+
+      _GLIBCXX_NODISCARD
+      const_reference
+      back() const _GLIBCXX_NOEXCEPT
+      {
+	__glibcxx_check_nonempty();
+	return _Base::back();
+      }
+
+      // _GLIBCXX_RESOLVE_LIB_DEFECTS
+      // DR 464. Suggestion for new member functions in standard containers.
+      using _Base::data;
+
+      // 23.2.4.3 modifiers:
+      void
+      push_back(const _Tp& __x)
+      {
+	bool __realloc = this->_M_requires_reallocation(this->size() + 1);
+	_Base::push_back(__x);
+	if (__realloc)
+	  this->_M_invalidate_all();
+	this->_M_update_guaranteed_capacity();
+      }
+
+#if __cplusplus >= 201103L
+      template<typename _Up = _Tp>
+	typename __gnu_cxx::__enable_if<!std::__are_same<_Up, bool>::__value,
+					void>::__type
+	push_back(_Tp&& __x)
+	{ emplace_back(std::move(__x)); }
+
+      template<typename... _Args>
+#if __cplusplus > 201402L
+	reference
+#else
+	void
+#endif
+	emplace_back(_Args&&... __args)
+	{
+	  bool __realloc = this->_M_requires_reallocation(this->size() + 1);
+	  _Base::emplace_back(std::forward<_Args>(__args)...);
+	  if (__realloc)
+	    this->_M_invalidate_all();
+	  this->_M_update_guaranteed_capacity();
+#if __cplusplus > 201402L
+	  return back();
+#endif
+	}
+#endif
+
+      void
+      pop_back() _GLIBCXX_NOEXCEPT
+      {
+	__glibcxx_check_nonempty();
+	this->_M_invalidate_if(_Equal(--_Base::end()));
+	_Base::pop_back();
+      }
+
+#if __cplusplus >= 201103L
+      template<typename... _Args>
+	iterator
+	emplace(const_iterator __position, _Args&&... __args)
+	{
+	  __glibcxx_check_insert(__position);
+	  bool __realloc = this->_M_requires_reallocation(this->size() + 1);
+	  difference_type __offset = __position.base() - _Base::cbegin();
+	  _Base_iterator __res = _Base::emplace(__position.base(),
+						std::forward<_Args>(__args)...);
+	  if (__realloc)
+	    this->_M_invalidate_all();
+	  else
+	    this->_M_invalidate_after_nth(__offset);
+	  this->_M_update_guaranteed_capacity();
+	  return { __res, this };
+	}
+#endif
+
+      iterator
+#if __cplusplus >= 201103L
+      insert(const_iterator __position, const _Tp& __x)
+#else
+      insert(iterator __position, const _Tp& __x)
+#endif
+      {
+	__glibcxx_check_insert(__position);
+	bool __realloc = this->_M_requires_reallocation(this->size() + 1);
+	difference_type __offset = __position.base() - _Base::begin();
+	_Base_iterator __res = _Base::insert(__position.base(), __x);
+	if (__realloc)
+	  this->_M_invalidate_all();
+	else
+	  this->_M_invalidate_after_nth(__offset);
+	this->_M_update_guaranteed_capacity();
+	return iterator(__res, this);
+      }
+
+#if __cplusplus >= 201103L
+      template<typename _Up = _Tp>
+	typename __gnu_cxx::__enable_if<!std::__are_same<_Up, bool>::__value,
+					iterator>::__type
+	insert(const_iterator __position, _Tp&& __x)
+	{ return emplace(__position, std::move(__x)); }
+
+      iterator
+      insert(const_iterator __position, initializer_list<value_type> __l)
+      { return this->insert(__position, __l.begin(), __l.end()); }
+#endif
+
+#if __cplusplus >= 201103L
+      iterator
+      insert(const_iterator __position, size_type __n, const _Tp& __x)
+      {
+	__glibcxx_check_insert(__position);
+	bool __realloc = this->_M_requires_reallocation(this->size() + __n);
+	difference_type __offset = __position.base() - _Base::cbegin();
+	_Base_iterator __res = _Base::insert(__position.base(), __n, __x);
+	if (__realloc)
+	  this->_M_invalidate_all();
+	else
+	  this->_M_invalidate_after_nth(__offset);
+	this->_M_update_guaranteed_capacity();
+	return { __res, this };
+      }
+#else
+      void
+      insert(iterator __position, size_type __n, const _Tp& __x)
+      {
+	__glibcxx_check_insert(__position);
+	bool __realloc = this->_M_requires_reallocation(this->size() + __n);
+	difference_type __offset = __position.base() - _Base::begin();
+	_Base::insert(__position.base(), __n, __x);
+	if (__realloc)
+	  this->_M_invalidate_all();
+	else
+	  this->_M_invalidate_after_nth(__offset);
+	this->_M_update_guaranteed_capacity();
+      }
+#endif
+
+#if __cplusplus >= 201103L
+      template<class _InputIterator,
+	       typename = std::_RequireInputIter<_InputIterator>>
+	iterator
+	insert(const_iterator __position,
+	       _InputIterator __first, _InputIterator __last)
+	{
+	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+	  __glibcxx_check_insert_range(__position, __first, __last, __dist);
+
+	  /* Hard to guess if invalidation will occur, because __last
+	     - __first can't be calculated in all cases, so we just
+	     punt here by checking if it did occur. */
+	  _Base_iterator __old_begin = _M_base().begin();
+	  difference_type __offset = __position.base() - _Base::cbegin();
+	  _Base_iterator __res;
+	  if (__dist.second >= __gnu_debug::__dp_sign)
+	    __res = _Base::insert(__position.base(),
+				  __gnu_debug::__unsafe(__first),
+				  __gnu_debug::__unsafe(__last));
+	  else
+	    __res = _Base::insert(__position.base(), __first, __last);
+
+	  if (_M_base().begin() != __old_begin)
+	    this->_M_invalidate_all();
+	  else
+	    this->_M_invalidate_after_nth(__offset);
+	  this->_M_update_guaranteed_capacity();
+	  return { __res, this };
+	}
+#else
+      template<class _InputIterator>
+	void
+	insert(iterator __position,
+	       _InputIterator __first, _InputIterator __last)
+	{
+	  typename __gnu_debug::_Distance_traits<_InputIterator>::__type __dist;
+	  __glibcxx_check_insert_range(__position, __first, __last, __dist);
+
+	  /* Hard to guess if invalidation will occur, because __last
+	     - __first can't be calculated in all cases, so we just
+	     punt here by checking if it did occur. */
+	  _Base_iterator __old_begin = _M_base().begin();
+	  difference_type __offset = __position.base() - _Base::begin();
+	  if (__dist.second >= __gnu_debug::__dp_sign)
+	    _Base::insert(__position.base(), __gnu_debug::__unsafe(__first),
+					     __gnu_debug::__unsafe(__last));
+	  else
+	    _Base::insert(__position.base(), __first, __last);
+
+	  if (_M_base().begin() != __old_begin)
+	    this->_M_invalidate_all();
+	  else
+	    this->_M_invalidate_after_nth(__offset);
+	  this->_M_update_guaranteed_capacity();
+	}
+#endif
+
+      iterator
+#if __cplusplus >= 201103L
+      erase(const_iterator __position)
+#else
+      erase(iterator __position)
+#endif
+      {
+	__glibcxx_check_erase(__position);
+	difference_type __offset = __position.base() - _Base::begin();
+	_Base_iterator __res = _Base::erase(__position.base());
+	this->_M_invalidate_after_nth(__offset);
+	return iterator(__res, this);
+      }
+
+      iterator
+#if __cplusplus >= 201103L
+      erase(const_iterator __first, const_iterator __last)
+#else
+      erase(iterator __first, iterator __last)
+#endif
+      {
+	// _GLIBCXX_RESOLVE_LIB_DEFECTS
+	// 151. can't currently clear() empty container
+	__glibcxx_check_erase_range(__first, __last);
+
+	if (__first.base() != __last.base())
+	  {
+	    difference_type __offset = __first.base() - _Base::begin();
+	    _Base_iterator __res = _Base::erase(__first.base(),
+						__last.base());
+	    this->_M_invalidate_after_nth(__offset);
+	    return iterator(__res, this);
+	  }
+	else
+#if __cplusplus >= 201103L
+	  return { _Base::begin() + (__first.base() - _Base::cbegin()), this };
+#else
+	  return __first;
+#endif
+      }
+
+      void
+      swap(vector& __x)
+      _GLIBCXX_NOEXCEPT_IF( noexcept(declval<_Base&>().swap(__x)) )
+      {
+	_Safe::_M_swap(__x);
+	_Base::swap(__x);
+	std::swap(this->_M_guaranteed_capacity, __x._M_guaranteed_capacity);
+      }
+
+      void
+      clear() _GLIBCXX_NOEXCEPT
+      {
+	_Base::clear();
+	this->_M_invalidate_all();
+      }
+
+      _Base&
+      _M_base() _GLIBCXX_NOEXCEPT { return *this; }
+
+      const _Base&
+      _M_base() const _GLIBCXX_NOEXCEPT { return *this; }
+
+    private:
+      void
+      _M_invalidate_after_nth(difference_type __n) _GLIBCXX_NOEXCEPT
+      {
+	typedef __gnu_debug::_After_nth_from<_Base_const_iterator> _After_nth;
+	this->_M_invalidate_if(_After_nth(__n, _Base::begin()));
+      }
+    };
+
+  template<typename _Tp, typename _Alloc>
+    inline bool
+    operator==(const vector<_Tp, _Alloc>& __lhs,
+	       const vector<_Tp, _Alloc>& __rhs)
+    { return __lhs._M_base() == __rhs._M_base(); }
+
+#if __cpp_lib_three_way_comparison
+  template<typename _Tp, typename _Alloc>
+    constexpr __detail::__synth3way_t<_Tp>
+    operator<=>(const vector<_Tp, _Alloc>& __x, const vector<_Tp, _Alloc>& __y)
+    { return __x._M_base() <=> __y._M_base(); }
+#else
+  template<typename _Tp, typename _Alloc>
+    inline bool
+    operator!=(const vector<_Tp, _Alloc>& __lhs,
+	       const vector<_Tp, _Alloc>& __rhs)
+    { return __lhs._M_base() != __rhs._M_base(); }
+
+  template<typename _Tp, typename _Alloc>
+    inline bool
+    operator<(const vector<_Tp, _Alloc>& __lhs,
+	      const vector<_Tp, _Alloc>& __rhs)
+    { return __lhs._M_base() < __rhs._M_base(); }
+
+  template<typename _Tp, typename _Alloc>
+    inline bool
+    operator<=(const vector<_Tp, _Alloc>& __lhs,
+	       const vector<_Tp, _Alloc>& __rhs)
+    { return __lhs._M_base() <= __rhs._M_base(); }
+
+  template<typename _Tp, typename _Alloc>
+    inline bool
+    operator>=(const vector<_Tp, _Alloc>& __lhs,
+	       const vector<_Tp, _Alloc>& __rhs)
+    { return __lhs._M_base() >= __rhs._M_base(); }
+
+  template<typename _Tp, typename _Alloc>
+    inline bool
+    operator>(const vector<_Tp, _Alloc>& __lhs,
+	      const vector<_Tp, _Alloc>& __rhs)
+    { return __lhs._M_base() > __rhs._M_base(); }
+#endif // three-way comparison
+
+  template<typename _Tp, typename _Alloc>
+    inline void
+    swap(vector<_Tp, _Alloc>& __lhs, vector<_Tp, _Alloc>& __rhs)
+    _GLIBCXX_NOEXCEPT_IF(noexcept(__lhs.swap(__rhs)))
+    { __lhs.swap(__rhs); }
+
+#if __cpp_deduction_guides >= 201606
+  template<typename _InputIterator, typename _ValT
+	     = typename iterator_traits<_InputIterator>::value_type,
+	   typename _Allocator = allocator<_ValT>,
+	   typename = _RequireInputIter<_InputIterator>,
+	   typename = _RequireAllocator<_Allocator>>
+    vector(_InputIterator, _InputIterator, _Allocator = _Allocator())
+      -> vector<_ValT, _Allocator>;
+
+  template<typename _Tp, typename _Allocator = allocator<_Tp>,
+	   typename = _RequireAllocator<_Allocator>>
+    vector(size_t, _Tp, _Allocator = _Allocator())
+      -> vector<_Tp, _Allocator>;
+#endif
+
+} // namespace __debug
+
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+#if __cplusplus >= 201103L
+  // DR 1182.
+  /// std::hash specialization for vector<bool>.
+  template<typename _Alloc>
+    struct hash<__debug::vector<bool, _Alloc>>
+    : public __hash_base<size_t, __debug::vector<bool, _Alloc>>
+    {
+      size_t
+      operator()(const __debug::vector<bool, _Alloc>& __b) const noexcept
+      { return std::hash<_GLIBCXX_STD_C::vector<bool, _Alloc>>()(__b); }
+    };
+#endif
+
+#if __cplusplus >= 201703L
+  namespace __detail::__variant
+  {
+    template<typename> struct _Never_valueless_alt; // see <variant>
+
+    // Provide the strong exception-safety guarantee when emplacing a
+    // vector into a variant, but only if move assignment cannot throw.
+    template<typename _Tp, typename _Alloc>
+      struct _Never_valueless_alt<__debug::vector<_Tp, _Alloc>>
+      : std::is_nothrow_move_assignable<__debug::vector<_Tp, _Alloc>>
+      { };
+  }  // namespace __detail::__variant
+#endif // C++17
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+namespace __gnu_debug
+{
+  template<typename _Tp, typename _Alloc>
+    struct _Is_contiguous_sequence<std::__debug::vector<_Tp, _Alloc> >
+    : std::__true_type
+    { };
+
+  template<typename _Alloc>
+    struct _Is_contiguous_sequence<std::__debug::vector<bool, _Alloc> >
+    : std::__false_type
+    { };
+}
+
+#endif

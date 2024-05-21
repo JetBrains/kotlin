@@ -1,0 +1,151 @@
+// <memory> -*- C++ -*-
+
+// Copyright (C) 2001-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/*
+ * Copyright (c) 1997-1999
+ * Silicon Graphics Computer Systems, Inc.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Silicon Graphics makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ *
+ */
+
+/** @file include/memory
+ *  This is a Standard C++ Library header.
+ *  @ingroup memory
+ */
+
+#ifndef _GLIBCXX_MEMORY
+#define _GLIBCXX_MEMORY 1
+
+#pragma GCC system_header
+
+/**
+ * @defgroup memory Memory
+ * @ingroup utilities
+ *
+ * Components for memory allocation, deallocation, and management.
+ */
+
+/**
+ * @defgroup pointer_abstractions Pointer Abstractions
+ * @ingroup memory
+ *
+ * Smart pointers, etc.
+ */
+
+#include <bits/stl_algobase.h>
+#include <bits/allocator.h>
+#include <bits/stl_construct.h>
+#include <bits/stl_uninitialized.h>
+#include <bits/stl_tempbuf.h>
+#include <bits/stl_raw_storage_iter.h>
+
+#if __cplusplus >= 201103L
+#  include <type_traits>
+#  include <bits/align.h>
+#  include <bits/uses_allocator.h>
+#  include <bits/alloc_traits.h>
+#  include <debug/debug.h>
+#  include <bits/unique_ptr.h>
+#  include <bits/shared_ptr.h>
+#  include <bits/shared_ptr_atomic.h>
+#endif
+
+#if __cplusplus < 201103L || _GLIBCXX_USE_DEPRECATED
+#  include <backward/auto_ptr.h>
+#endif
+
+#if __cplusplus > 201703L
+#  include <bits/ranges_uninitialized.h>
+#  include <bits/uses_allocator_args.h>
+#endif
+
+#if __cplusplus >= 201103L && __cplusplus <= 202002L
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+/** @defgroup ptr_safety Pointer Safety and Garbage Collection
+ *  @ingroup memory
+ *
+ * Utilities to assist with garbage collection in an implementation
+ * that supports <em>strict pointer safety</em>.
+ * This implementation only supports <em>relaxed pointer safety</em>
+ * and so these functions have no effect.
+ *
+ * C++11 20.6.4 [util.dynamic.safety], Pointer safety
+ *
+ * @{
+ */
+
+/// Constants representing the different types of pointer safety.
+enum class pointer_safety { relaxed, preferred, strict };
+
+/// Inform a garbage collector that an object is still in use.
+inline void
+declare_reachable(void*) { }
+
+/// Unregister an object previously registered with declare_reachable.
+template <typename _Tp>
+  inline _Tp*
+  undeclare_reachable(_Tp* __p) { return __p; }
+
+/// Inform a garbage collector that a region of memory need not be traced.
+inline void
+declare_no_pointers(char*, size_t) { }
+
+/// Unregister a range previously registered with declare_no_pointers.
+inline void
+undeclare_no_pointers(char*, size_t) { }
+
+/// The type of pointer safety supported by the implementation.
+inline pointer_safety
+get_pointer_safety() noexcept { return pointer_safety::relaxed; }
+/// @}
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace
+#endif // C++11 to C++20
+
+#if __cplusplus >= 201703L
+// Parallel STL algorithms
+# if _PSTL_EXECUTION_POLICIES_DEFINED
+// If <execution> has already been included, pull in implementations
+#  include <pstl/glue_memory_impl.h>
+# else
+// Otherwise just pull in forward declarations
+#  include <pstl/glue_memory_defs.h>
+# endif
+
+// Feature test macro for parallel algorithms
+# define __cpp_lib_parallel_algorithm 201603L
+#endif // C++17
+
+#endif /* _GLIBCXX_MEMORY */

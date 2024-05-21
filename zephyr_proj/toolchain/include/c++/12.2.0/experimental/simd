@@ -1,0 +1,90 @@
+// Components for element-wise operations on data-parallel objects -*- C++ -*-
+
+// Copyright (C) 2020-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/simd
+ *  This is a TS C++ Library header.
+ */
+
+//
+// N4773 §9 data-parallel types library
+//
+
+#ifndef _GLIBCXX_EXPERIMENTAL_SIMD
+#define _GLIBCXX_EXPERIMENTAL_SIMD
+
+#if __cplusplus >= 201703L
+
+/** @defgroup par-ts Parallelism TS
+ *  @ingroup experimental
+ *
+ * Components defined by the _C++ Extensions for Parallelism_
+ * Technical Specification.
+ *
+ * - ISO/IEC TS 19570:2015 C++ Extensions for Parallelism
+ * - ISO/IEC TS 19570:2018 C++ Extensions for Parallelism, Version 2
+ */
+
+/** @defgroup ts_simd Data parallel extensions
+ *  @ingroup par-ts
+ *
+ *  Data-parallel types library.
+ *  @since C++17
+ */
+/// @ingroup ts_simd
+#define __cpp_lib_experimental_parallel_simd 201803
+
+#pragma GCC diagnostic push
+// Many [[gnu::vector_size(N)]] types might lead to a -Wpsabi warning which is
+// irrelevant as those functions never appear on ABI borders
+#ifndef __clang__
+#pragma GCC diagnostic ignored "-Wpsabi"
+#endif
+
+// If __OPTIMIZE__ is not defined some intrinsics are defined as macros, making
+// use of C casts internally. This requires us to disable the warning as it
+// would otherwise yield many false positives.
+#ifndef __OPTIMIZE__
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
+
+#include "bits/simd_detail.h"
+#include "bits/simd.h"
+#include "bits/simd_fixed_size.h"
+#include "bits/simd_scalar.h"
+#include "bits/simd_builtin.h"
+#include "bits/simd_converter.h"
+#if _GLIBCXX_SIMD_X86INTRIN
+#include "bits/simd_x86.h"
+#elif _GLIBCXX_SIMD_HAVE_NEON
+#include "bits/simd_neon.h"
+#elif __ALTIVEC__
+#include "bits/simd_ppc.h"
+#endif
+#include "bits/simd_math.h"
+
+#pragma GCC diagnostic pop
+
+#endif // C++17
+#endif // _GLIBCXX_EXPERIMENTAL_SIMD
+// vim: ft=cpp

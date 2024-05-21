@@ -1,0 +1,1220 @@
+// TR2 <dynamic_bitset> -*- C++ -*-
+
+// Copyright (C) 2009-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file tr2/dynamic_bitset
+ *  This is a TR2 C++ Library header.
+ */
+
+#ifndef _GLIBCXX_TR2_DYNAMIC_BITSET
+#define _GLIBCXX_TR2_DYNAMIC_BITSET 1
+
+#pragma GCC system_header
+
+#include <limits>
+#include <vector>
+#include <string>
+#include <istream>
+#include <bits/functexcept.h>
+#include <bits/stl_algo.h>	// For fill
+#include <bits/cxxabi_forced.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace tr2
+{
+  /**
+   *  @defgroup dynamic_bitset Dynamic Bitset.
+   *  @ingroup extensions
+   *
+   *  @{
+   */
+
+  /**
+   *  Base class, general case.
+   *
+   *  See documentation for dynamic_bitset.
+   */
+  template<typename _WordT = unsigned long long,
+	   typename _Alloc = std::allocator<_WordT>>
+    struct __dynamic_bitset_base
+    {
+      static_assert(std::is_unsigned<_WordT>::value, "template argument "
+		    "_WordT not an unsigned integral type");
+
+      typedef _WordT block_type;
+      typedef _Alloc allocator_type;
+      typedef size_t size_type;
+
+      static const size_type _S_bits_per_block = __CHAR_BIT__ * sizeof(block_type);
+      static const size_type npos = static_cast<size_type>(-1);
+
+      /// 0 is the least significant word.
+      std::vector<block_type, allocator_type> _M_w;
+
+      explicit
+      __dynamic_bitset_base(const allocator_type& __alloc)
+      : _M_w(__alloc)
+      { }
+
+      __dynamic_bitset_base() = default;
+      __dynamic_bitset_base(const __dynamic_bitset_base&) = default;
+      __dynamic_bitset_base(__dynamic_bitset_base&& __b) = default;
+      __dynamic_bitset_base& operator=(const __dynamic_bitset_base&) = default;
+      __dynamic_bitset_base& operator=(__dynamic_bitset_base&&) = default;
+      ~__dynamic_bitset_base() = default;
+
+      explicit
+      __dynamic_bitset_base(size_type __nbits, unsigned long long __val = 0ULL,
+			   const allocator_type& __alloc = allocator_type())
+      : _M_w(__nbits / _S_bits_per_block + (__nbits % _S_bits_per_block > 0),
+	     block_type(0), __alloc)
+      {
+	if (__nbits < std::numeric_limits<decltype(__val)>::digits)
+	  __val &= ~(-1ULL << __nbits);
+	if (__val == 0)
+	  return;
+
+	if _GLIBCXX17_CONSTEXPR (sizeof(__val) == sizeof(block_type))
+	  _M_w[0] = __val;
+	else
+	  {
+	    const size_t __n
+	      = std::min(_M_w.size(), sizeof(__val) / sizeof(block_type));
+	    for (size_t __i = 0; __val && __i < __n; ++__i)
+	      {
+		_M_w[__i] = static_cast<block_type>(__val);
+		__val >>= _S_bits_per_block;
+	      }
+	  }
+      }
+
+      void
+      _M_swap(__dynamic_bitset_base& __b) noexcept
+      { this->_M_w.swap(__b._M_w); }
+
+      void
+      _M_clear() noexcept
+      { this->_M_w.clear(); }
+
+      void
+      _M_resize(size_t __nbits, bool __value)
+      {
+	size_t __sz = __nbits / _S_bits_per_block;
+	if (__nbits % _S_bits_per_block > 0)
+	  ++__sz;
+	if (__sz != this->_M_w.size())
+	  {
+	    block_type __val = 0;
+	    if (__value)
+	      __val = std::numeric_limits<block_type>::max();
+	    this->_M_w.resize(__sz, __val);
+	  }
+      }
+
+      allocator_type
+      _M_get_allocator() const noexcept
+      { return this->_M_w.get_allocator(); }
+
+      static size_type
+      _S_whichword(size_type __pos) noexcept
+      { return __pos / _S_bits_per_block; }
+
+      static size_type
+      _S_whichbyte(size_type __pos) noexcept
+      { return (__pos % _S_bits_per_block) / __CHAR_BIT__; }
+
+      static size_type
+      _S_whichbit(size_type __pos) noexcept
+      { return __pos % _S_bits_per_block; }
+
+      static block_type
+      _S_maskbit(size_type __pos) noexcept
+      { return (static_cast<block_type>(1)) << _S_whichbit(__pos); }
+
+      block_type&
+      _M_getword(size_type __pos) noexcept
+      { return this->_M_w[_S_whichword(__pos)]; }
+
+      block_type
+      _M_getword(size_type __pos) const noexcept
+      { return this->_M_w[_S_whichword(__pos)]; }
+
+      block_type&
+      _M_hiword() noexcept
+      { return this->_M_w[_M_w.size() - 1]; }
+
+      block_type
+      _M_hiword() const noexcept
+      { return this->_M_w[_M_w.size() - 1]; }
+
+      void
+      _M_do_and(const __dynamic_bitset_base& __x) noexcept
+      {
+	if (__x._M_w.size() == this->_M_w.size())
+	  for (size_t __i = 0; __i < this->_M_w.size(); ++__i)
+	    this->_M_w[__i] &= __x._M_w[__i];
+	else
+	  return;
+      }
+
+      void
+      _M_do_or(const __dynamic_bitset_base& __x) noexcept
+      {
+	if (__x._M_w.size() == this->_M_w.size())
+	  for (size_t __i = 0; __i < this->_M_w.size(); ++__i)
+	    this->_M_w[__i] |= __x._M_w[__i];
+	else
+	  return;
+      }
+
+      void
+      _M_do_xor(const __dynamic_bitset_base& __x) noexcept
+      {
+	if (__x._M_w.size() == this->_M_w.size())
+	  for (size_t __i = 0; __i < this->_M_w.size(); ++__i)
+	    this->_M_w[__i] ^= __x._M_w[__i];
+	else
+	  return;
+      }
+
+      void
+      _M_do_dif(const __dynamic_bitset_base& __x) noexcept
+      {
+	if (__x._M_w.size() == this->_M_w.size())
+	  for (size_t __i = 0; __i < this->_M_w.size(); ++__i)
+	    this->_M_w[__i] &= ~__x._M_w[__i];
+	else
+	  return;
+      }
+
+      void
+      _M_do_left_shift(size_t __shift);
+
+      void
+      _M_do_right_shift(size_t __shift);
+
+      void
+      _M_do_flip() noexcept
+      {
+	for (size_t __i = 0; __i < this->_M_w.size(); ++__i)
+	  this->_M_w[__i] = ~this->_M_w[__i];
+      }
+
+      void
+      _M_do_set() noexcept
+      {
+	for (size_t __i = 0; __i < this->_M_w.size(); ++__i)
+	  this->_M_w[__i] = static_cast<block_type>(-1);
+      }
+
+      void
+      _M_do_reset() noexcept
+      {
+	std::fill(_M_w.begin(), _M_w.end(), static_cast<block_type>(0));
+      }
+
+      bool
+      _M_is_equal(const __dynamic_bitset_base& __x) const noexcept
+      {
+	if (__x._M_w.size() == this->_M_w.size())
+	  {
+	    for (size_t __i = 0; __i < this->_M_w.size(); ++__i)
+	      if (this->_M_w[__i] != __x._M_w[__i])
+		return false;
+	    return true;
+	  }
+	else
+	  return false;
+      }
+
+      bool
+      _M_is_less(const __dynamic_bitset_base& __x) const noexcept
+      {
+	if (__x._M_w.size() == this->_M_w.size())
+	  {
+	    for (size_t __i = this->_M_w.size(); __i > 0; --__i)
+	      {
+		if (this->_M_w[__i-1] < __x._M_w[__i-1])
+		  return true;
+		else if (this->_M_w[__i-1] > __x._M_w[__i-1])
+		  return false;
+	      }
+	    return false;
+	  }
+	else
+	  return false;
+      }
+
+      size_t
+      _M_are_all_aux() const noexcept
+      {
+	for (size_t __i = 0; __i < this->_M_w.size() - 1; ++__i)
+	  if (_M_w[__i] != static_cast<block_type>(-1))
+	    return 0;
+	return ((this->_M_w.size() - 1) * _S_bits_per_block
+		+ __builtin_popcountll(this->_M_hiword()));
+      }
+
+      bool
+      _M_is_any() const noexcept
+      {
+	for (size_t __i = 0; __i < this->_M_w.size(); ++__i)
+	  if (this->_M_w[__i] != static_cast<block_type>(0))
+	    return true;
+	return false;
+      }
+
+      bool
+      _M_is_subset_of(const __dynamic_bitset_base& __b) noexcept
+      {
+	if (__b._M_w.size() == this->_M_w.size())
+	  {
+	    for (size_t __i = 0; __i < this->_M_w.size(); ++__i)
+	      if (this->_M_w[__i] != (this->_M_w[__i] | __b._M_w[__i]))
+		return false;
+	    return true;
+	  }
+	else
+	  return false;
+      }
+
+      bool
+      _M_is_proper_subset_of(const __dynamic_bitset_base& __b) const noexcept
+      {
+	if (this->is_subset_of(__b))
+	  {
+	    if (*this == __b)
+	      return false;
+	    else
+	      return true;
+	  }
+	else
+	  return false;
+      }
+
+      size_t
+      _M_do_count() const noexcept
+      {
+	size_t __result = 0;
+	for (size_t __i = 0; __i < this->_M_w.size(); ++__i)
+	  __result += __builtin_popcountll(this->_M_w[__i]);
+	return __result;
+      }
+
+      size_type
+      _M_size() const noexcept
+      { return this->_M_w.size(); }
+
+      unsigned long
+      _M_do_to_ulong() const;
+
+      unsigned long long
+      _M_do_to_ullong() const;
+
+      // find first "on" bit
+      size_type
+      _M_do_find_first(size_t __not_found) const;
+
+      // find the next "on" bit that follows "prev"
+      size_type
+      _M_do_find_next(size_t __prev, size_t __not_found) const;
+
+      // do append of block
+      void
+      _M_do_append_block(block_type __block, size_type __pos)
+      {
+	size_t __offset = __pos % _S_bits_per_block;
+	if (__offset == 0)
+	  this->_M_w.push_back(__block);
+	else
+	  {
+	    this->_M_hiword() |= (__block << __offset);
+	    this->_M_w.push_back(__block >> (_S_bits_per_block - __offset));
+	  }
+      }
+    };
+
+  /**
+   *  @brief  The %dynamic_bitset class represents a sequence of bits.
+   *
+   *  See N2050,
+   *  Proposal to Add a Dynamically Sizeable Bitset to the Standard Library.
+   *  http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2050.pdf
+   *
+   *  In the general unoptimized case, storage is allocated in
+   *  word-sized blocks.  Let B be the number of bits in a word, then
+   *  (Nb+(B-1))/B words will be used for storage.  B - Nb%B bits are
+   *  unused.  (They are the high-order bits in the highest word.)  It
+   *  is a class invariant that those unused bits are always zero.
+   *
+   *  If you think of %dynamic_bitset as "a simple array of bits," be
+   *  aware that your mental picture is reversed: a %dynamic_bitset
+   *  behaves the same way as bits in integers do, with the bit at
+   *  index 0 in the "least significant / right-hand" position, and
+   *  the bit at index Nb-1 in the "most significant / left-hand"
+   *  position.  Thus, unlike other containers, a %dynamic_bitset's
+   *  index "counts from right to left," to put it very loosely.
+   *
+   *  This behavior is preserved when translating to and from strings.
+   *  For example, the first line of the following program probably
+   *  prints "b('a') is 0001100001" on a modern ASCII system.
+   *
+   *  @code
+   *     #include <dynamic_bitset>
+   *     #include <iostream>
+   *     #include <sstream>
+   *
+   *     using namespace std;
+   *
+   *     int main()
+   *     {
+   *         long         a = 'a';
+   *         dynamic_bitset<> b(a);
+   *
+   *         cout << "b('a') is " << b << endl;
+   *
+   *         ostringstream s;
+   *         s << b;
+   *         string  str = s.str();
+   *         cout << "index 3 in the string is " << str[3] << " but\n"
+   *              << "index 3 in the bitset is " << b[3] << endl;
+   *     }
+   *  @endcode
+   *
+   *  Most of the actual code isn't contained in %dynamic_bitset<>
+   *  itself, but in the base class __dynamic_bitset_base.  The base
+   *  class works with whole words, not with individual bits.  This
+   *  allows us to specialize __dynamic_bitset_base for the important
+   *  special case where the %dynamic_bitset is only a single word.
+   *
+   *  Extra confusion can result due to the fact that the storage for
+   *  __dynamic_bitset_base @e is a vector, and is indexed as such.  This is
+   *  carefully encapsulated.
+   */
+  template<typename _WordT = unsigned long long,
+	   typename _Alloc = std::allocator<_WordT>>
+    class dynamic_bitset
+    : private __dynamic_bitset_base<_WordT, _Alloc>
+    {
+      static_assert(std::is_unsigned<_WordT>::value, "template argument "
+		    "_WordT not an unsigned integral type");
+
+    public:
+
+      typedef __dynamic_bitset_base<_WordT, _Alloc> _Base;
+      typedef _WordT block_type;
+      typedef _Alloc allocator_type;
+      typedef size_t size_type;
+
+      static const size_type bits_per_block = __CHAR_BIT__ * sizeof(block_type);
+      // Use this: constexpr size_type std::numeric_limits<size_type>::max().
+      static const size_type npos = static_cast<size_type>(-1);
+
+    private:
+
+      //  Clear the unused bits in the uppermost word.
+      void
+      _M_do_sanitize()
+      {
+	size_type __shift = this->_M_Nb % bits_per_block;
+	if (__shift > 0)
+	  this->_M_hiword() &= block_type(~(block_type(-1) << __shift));
+      }
+
+      //  Set the unused bits in the uppermost word.
+      void
+      _M_do_fill()
+      {
+	size_type __shift = this->_M_Nb % bits_per_block;
+	if (__shift > 0)
+	  this->_M_hiword() |= block_type(block_type(-1) << __shift);
+      }
+
+      /**
+       *  These versions of single-bit set, reset, flip, and test
+       *  do no range checking.
+       */
+      dynamic_bitset&
+      _M_unchecked_set(size_type __pos) noexcept
+      {
+	this->_M_getword(__pos) |= _Base::_S_maskbit(__pos);
+	return *this;
+      }
+
+      dynamic_bitset&
+      _M_unchecked_set(size_type __pos, int __val) noexcept
+      {
+	if (__val)
+	  this->_M_getword(__pos) |= _Base::_S_maskbit(__pos);
+	else
+	  this->_M_getword(__pos) &= ~_Base::_S_maskbit(__pos);
+	return *this;
+      }
+
+      dynamic_bitset&
+      _M_unchecked_reset(size_type __pos) noexcept
+      {
+	this->_M_getword(__pos) &= ~_Base::_S_maskbit(__pos);
+	return *this;
+      }
+
+      dynamic_bitset&
+      _M_unchecked_flip(size_type __pos) noexcept
+      {
+	this->_M_getword(__pos) ^= _Base::_S_maskbit(__pos);
+	return *this;
+      }
+
+      bool
+      _M_unchecked_test(size_type __pos) const noexcept
+      { return ((this->_M_getword(__pos) & _Base::_S_maskbit(__pos))
+		!= static_cast<_WordT>(0)); }
+
+      size_type _M_Nb = 0;
+
+    public:
+      /**
+       *  This encapsulates the concept of a single bit.  An instance
+       *  of this class is a proxy for an actual bit; this way the
+       *  individual bit operations are done as faster word-size
+       *  bitwise instructions.
+       *
+       *  Most users will never need to use this class directly;
+       *  conversions to and from bool are automatic and should be
+       *  transparent.  Overloaded operators help to preserve the
+       *  illusion.
+       *
+       *  (On a typical system, this "bit %reference" is 64 times the
+       *  size of an actual bit.  Ha.)
+       */
+      class reference
+      {
+	friend class dynamic_bitset;
+
+	block_type *_M_wp;
+	size_type _M_bpos;
+
+      public:
+	reference(dynamic_bitset& __b, size_type __pos) noexcept
+	{
+	  this->_M_wp = &__b._M_getword(__pos);
+	  this->_M_bpos = _Base::_S_whichbit(__pos);
+	}
+
+	// For b[i] = __x;
+	reference&
+	operator=(bool __x) noexcept
+	{
+	  if (__x)
+	    *this->_M_wp |= _Base::_S_maskbit(this->_M_bpos);
+	  else
+	    *this->_M_wp &= ~_Base::_S_maskbit(this->_M_bpos);
+	  return *this;
+	}
+
+	// For b[i] = b[__j];
+	reference&
+	operator=(const reference& __j) noexcept
+	{
+	  if ((*(__j._M_wp) & _Base::_S_maskbit(__j._M_bpos)))
+	    *this->_M_wp |= _Base::_S_maskbit(this->_M_bpos);
+	  else
+	    *this->_M_wp &= ~_Base::_S_maskbit(this->_M_bpos);
+	  return *this;
+	}
+
+	// Flips the bit
+	bool
+	operator~() const noexcept
+	{ return (*(_M_wp) & _Base::_S_maskbit(this->_M_bpos)) == 0; }
+
+	// For __x = b[i];
+	operator bool() const noexcept
+	{ return (*(this->_M_wp) & _Base::_S_maskbit(this->_M_bpos)) != 0; }
+
+	// For b[i].flip();
+	reference&
+	flip() noexcept
+	{
+	  *this->_M_wp ^= _Base::_S_maskbit(this->_M_bpos);
+	  return *this;
+	}
+      };
+
+      friend class reference;
+
+      typedef bool const_reference;
+
+      // 23.3.5.1 constructors:
+
+      /// All bits set to zero.
+      dynamic_bitset() = default;
+
+      /// All bits set to zero.
+      explicit
+      dynamic_bitset(const allocator_type& __alloc)
+      : _Base(__alloc)
+      { }
+
+      /// Initial bits bitwise-copied from a single word (others set to zero).
+      explicit
+      dynamic_bitset(size_type __nbits, unsigned long long __val = 0ULL,
+		     const allocator_type& __alloc = allocator_type())
+      : _Base(__nbits, __val, __alloc),
+	_M_Nb(__nbits)
+      { }
+
+      dynamic_bitset(initializer_list<block_type> __il,
+		     const allocator_type& __alloc = allocator_type())
+      : _Base(__alloc)
+      { this->append(__il); }
+
+      /**
+       *  @brief  Use a subset of a string.
+       *  @param  __str  A string of '0' and '1' characters.
+       *  @param  __pos  Index of the first character in @p __str to use.
+       *  @param  __n    The number of characters to copy.
+       *  @param  __zero The character to use for unset bits.
+       *  @param  __one  The character to use for set bits.
+       *  @param  __alloc An allocator.
+       *  @throw  std::out_of_range  If @p __pos is bigger the size of @p __str.
+       *  @throw  std::invalid_argument  If a character appears in the string
+       *                                 which is neither '0' nor '1'.
+       */
+      template<typename _CharT, typename _Traits, typename _Alloc1>
+	explicit
+	dynamic_bitset(const std::basic_string<_CharT, _Traits, _Alloc1>& __str,
+		       typename basic_string<_CharT,_Traits,_Alloc1>::size_type
+		       __pos = 0,
+		       typename basic_string<_CharT,_Traits,_Alloc1>::size_type
+		       __n = std::basic_string<_CharT, _Traits, _Alloc1>::npos,
+		       _CharT __zero = _CharT('0'), _CharT __one = _CharT('1'),
+		       const allocator_type& __alloc = allocator_type())
+	: _Base(__alloc)
+	{
+	  if (__pos > __str.size())
+	    __throw_out_of_range(__N("dynamic_bitset::bitset initial position "
+				     "not valid"));
+
+	  // Watch for npos.
+	  this->_M_Nb = (__n > __str.size() ? __str.size() - __pos : __n);
+	  this->resize(this->_M_Nb);
+	  this->_M_copy_from_string(__str, __pos, __n);
+	}
+
+      /**
+       *  @brief  Construct from a string.
+       *  @param  __str  A string of '0' and '1' characters.
+       *  @param  __alloc An allocator.
+       *  @throw  std::invalid_argument  If a character appears in the string
+       *                                 which is neither '0' nor '1'.
+       */
+      explicit
+      dynamic_bitset(const char* __str,
+		     const allocator_type& __alloc = allocator_type())
+      : _Base(__builtin_strlen(__str), 0ULL, __alloc),
+	_M_Nb(__builtin_strlen(__str))
+      {
+	this->_M_copy_from_ptr(__str, _M_Nb, 0, _M_Nb);
+      }
+
+      /// Copy constructor.
+      dynamic_bitset(const dynamic_bitset&) = default;
+
+      /// Move constructor.
+      dynamic_bitset(dynamic_bitset&& __b) noexcept
+      : _Base(std::move(__b)), _M_Nb(__b._M_Nb)
+      { __b.clear(); }
+
+      /// Swap with another bitset.
+      void
+      swap(dynamic_bitset& __b) noexcept
+      {
+	this->_M_swap(__b);
+	std::swap(this->_M_Nb, __b._M_Nb);
+      }
+
+      /// Copy assignment operator.
+      dynamic_bitset& operator=(const dynamic_bitset&) = default;
+
+      /// Move assignment operator.
+      dynamic_bitset&
+      operator=(dynamic_bitset&& __b)
+      noexcept(std::is_nothrow_move_assignable<_Base>::value)
+      {
+	static_cast<_Base&>(*this) = static_cast<_Base&&>(__b);
+	_M_Nb = __b._M_Nb;
+	if _GLIBCXX17_CONSTEXPR (std::is_nothrow_move_assignable<_Base>::value)
+	  __b._M_Nb = 0;
+	else if (get_allocator() == __b.get_allocator())
+	  __b._M_Nb = 0;
+	return *this;
+      }
+
+      /**
+       *  @brief  Return the allocator for the bitset.
+       */
+      allocator_type
+      get_allocator() const noexcept
+      { return this->_M_get_allocator(); }
+
+      /**
+       *  @brief  Resize the bitset.
+       */
+      void
+      resize(size_type __nbits, bool __value = false)
+      {
+	if (__value)
+	  this->_M_do_fill();
+	this->_M_resize(__nbits, __value);
+	this->_M_Nb = __nbits;
+	this->_M_do_sanitize();
+      }
+
+      /**
+       *  @brief  Clear the bitset.
+       */
+      void
+      clear()
+      {
+	this->_M_clear();
+	this->_M_Nb = 0;
+      }
+
+      /**
+       *  @brief  Push a bit onto the high end of the bitset.
+       */
+      void
+      push_back(bool __bit)
+      {
+	if (this->size() % bits_per_block == 0)
+	  this->_M_do_append_block(block_type(__bit), this->_M_Nb);
+	else
+	  this->_M_unchecked_set(this->_M_Nb, __bit);
+	++this->_M_Nb;
+      }
+
+      // XXX why is there no pop_back() member in the proposal?
+
+      /**
+       *  @brief  Append a block.
+       */
+      void
+      append(block_type __block)
+      {
+	this->_M_do_append_block(__block, this->_M_Nb);
+	this->_M_Nb += bits_per_block;
+      }
+
+      /**
+       *  @brief
+       */
+      void
+      append(initializer_list<block_type> __il)
+      { this->append(__il.begin(), __il.end()); }
+
+      /**
+       *  @brief  Append an iterator range of blocks.
+       */
+      template <typename _BlockInputIterator>
+	void
+	append(_BlockInputIterator __first, _BlockInputIterator __last)
+	{
+	  for (; __first != __last; ++__first)
+	    this->append(*__first);
+	}
+
+      // 23.3.5.2 dynamic_bitset operations:
+      ///@{
+      /**
+       *  @brief  Operations on dynamic_bitsets.
+       *  @param  __rhs  A same-sized dynamic_bitset.
+       *
+       *  These should be self-explanatory.
+       */
+      dynamic_bitset&
+      operator&=(const dynamic_bitset& __rhs)
+      {
+	this->_M_do_and(__rhs);
+	return *this;
+      }
+
+      dynamic_bitset&
+      operator&=(dynamic_bitset&& __rhs)
+      {
+	this->_M_do_and(std::move(__rhs));
+	return *this;
+      }
+
+      dynamic_bitset&
+      operator|=(const dynamic_bitset& __rhs)
+      {
+	this->_M_do_or(__rhs);
+	return *this;
+      }
+
+      dynamic_bitset&
+      operator^=(const dynamic_bitset& __rhs)
+      {
+	this->_M_do_xor(__rhs);
+	return *this;
+      }
+
+      dynamic_bitset&
+      operator-=(const dynamic_bitset& __rhs)
+      {
+	this->_M_do_dif(__rhs);
+	return *this;
+      }
+      ///@}
+
+      ///@{
+      /**
+       *  @brief  Operations on dynamic_bitsets.
+       *  @param  __pos The number of places to shift.
+       *
+       *  These should be self-explanatory.
+       */
+      dynamic_bitset&
+      operator<<=(size_type __pos)
+      {
+	if (__builtin_expect(__pos < this->_M_Nb, 1))
+	  {
+	    this->_M_do_left_shift(__pos);
+	    this->_M_do_sanitize();
+	  }
+	else
+	  this->_M_do_reset();
+	return *this;
+      }
+
+      dynamic_bitset&
+      operator>>=(size_type __pos)
+      {
+	if (__builtin_expect(__pos < this->_M_Nb, 1))
+	  {
+	    this->_M_do_right_shift(__pos);
+	    this->_M_do_sanitize();
+	  }
+	else
+	  this->_M_do_reset();
+	return *this;
+      }
+      ///@}
+
+      // Set, reset, and flip.
+      /**
+       *  @brief Sets every bit to true.
+       */
+      dynamic_bitset&
+      set()
+      {
+	this->_M_do_set();
+	this->_M_do_sanitize();
+	return *this;
+      }
+
+      /**
+       *  @brief Sets a given bit to a particular value.
+       *  @param  __pos  The index of the bit.
+       *  @param  __val  Either true or false, defaults to true.
+       *  @throw  std::out_of_range  If @a __pos is bigger the size of the %set.
+       */
+      dynamic_bitset&
+      set(size_type __pos, bool __val = true)
+      {
+	if (__pos >= _M_Nb)
+	  __throw_out_of_range(__N("dynamic_bitset::set"));
+	return this->_M_unchecked_set(__pos, __val);
+      }
+
+      /**
+       *  @brief Sets every bit to false.
+       */
+      dynamic_bitset&
+      reset()
+      {
+	this->_M_do_reset();
+	return *this;
+      }
+
+      /**
+       *  @brief Sets a given bit to false.
+       *  @param  __pos  The index of the bit.
+       *  @throw  std::out_of_range  If @a __pos is bigger the size of the %set.
+       *
+       *  Same as writing @c set(__pos, false).
+       */
+      dynamic_bitset&
+      reset(size_type __pos)
+      {
+	if (__pos >= _M_Nb)
+	  __throw_out_of_range(__N("dynamic_bitset::reset"));
+	return this->_M_unchecked_reset(__pos);
+      }
+
+      /**
+       *  @brief Toggles every bit to its opposite value.
+       */
+      dynamic_bitset&
+      flip()
+      {
+	this->_M_do_flip();
+	this->_M_do_sanitize();
+	return *this;
+      }
+
+      /**
+       *  @brief Toggles a given bit to its opposite value.
+       *  @param  __pos  The index of the bit.
+       *  @throw  std::out_of_range  If @a __pos is bigger the size of the %set.
+       */
+      dynamic_bitset&
+      flip(size_type __pos)
+      {
+	if (__pos >= _M_Nb)
+	  __throw_out_of_range(__N("dynamic_bitset::flip"));
+	return this->_M_unchecked_flip(__pos);
+      }
+
+      /// See the no-argument flip().
+      dynamic_bitset
+      operator~() const
+      { return dynamic_bitset<_WordT, _Alloc>(*this).flip(); }
+
+      ///@{
+      /**
+       *  @brief  Array-indexing support.
+       *  @param  __pos  Index into the %dynamic_bitset.
+       *  @return A bool for a 'const %dynamic_bitset'.  For non-const
+       *           bitsets, an instance of the reference proxy class.
+       *  @note These operators do no range checking and throw no
+       *         exceptions, as required by DR 11 to the standard.
+       */
+      reference
+      operator[](size_type __pos)
+      { return reference(*this,__pos); }
+
+      const_reference
+      operator[](size_type __pos) const
+      { return _M_unchecked_test(__pos); }
+      ///@}
+
+      /**
+       *  @brief Returns a numerical interpretation of the %dynamic_bitset.
+       *  @return  The integral equivalent of the bits.
+       *  @throw  std::overflow_error  If there are too many bits to be
+       *                               represented in an @c unsigned @c long.
+       */
+      unsigned long
+      to_ulong() const
+      { return this->_M_do_to_ulong(); }
+
+      /**
+       *  @brief Returns a numerical interpretation of the %dynamic_bitset.
+       *  @return  The integral equivalent of the bits.
+       *  @throw  std::overflow_error  If there are too many bits to be
+       *                               represented in an @c unsigned @c long.
+       */
+      unsigned long long
+      to_ullong() const
+      { return this->_M_do_to_ullong(); }
+
+      /**
+       *  @brief Returns a character interpretation of the %dynamic_bitset.
+       *  @return  The string equivalent of the bits.
+       *
+       *  Note the ordering of the bits:  decreasing character positions
+       *  correspond to increasing bit positions (see the main class notes for
+       *  an example).
+       */
+      template<typename _CharT = char,
+	       typename _Traits = std::char_traits<_CharT>,
+	       typename _Alloc1 = std::allocator<_CharT>>
+	std::basic_string<_CharT, _Traits, _Alloc1>
+	to_string(_CharT __zero = _CharT('0'), _CharT __one = _CharT('1')) const
+	{
+	  std::basic_string<_CharT, _Traits, _Alloc1> __result;
+	  _M_copy_to_string(__result, __zero, __one);
+	  return __result;
+	}
+
+      // Helper functions for string operations.
+      template<typename _Traits = std::char_traits<char>,
+	       typename _CharT = typename _Traits::char_type>
+	void
+	_M_copy_from_ptr(const _CharT*, size_t, size_t, size_t,
+			 _CharT __zero = _CharT('0'),
+			 _CharT __one = _CharT('1'));
+
+      template<typename _CharT, typename _Traits, typename _Alloc1>
+	void
+	_M_copy_from_string(const basic_string<_CharT, _Traits, _Alloc1>& __str,
+			    size_t __pos, size_t __n,
+			    _CharT __zero = _CharT('0'),
+			    _CharT __one = _CharT('1'))
+	{
+	  _M_copy_from_ptr<_Traits>(__str.data(), __str.size(), __pos, __n,
+				    __zero, __one);
+	}
+
+      template<typename _CharT, typename _Traits, typename _Alloc1>
+	void
+	_M_copy_to_string(std::basic_string<_CharT, _Traits, _Alloc1>& __str,
+			  _CharT __zero = _CharT('0'),
+			  _CharT __one = _CharT('1')) const;
+
+      /// Returns the number of bits which are set.
+      size_type
+      count() const noexcept
+      { return this->_M_do_count(); }
+
+      /// Returns the total number of bits.
+      size_type
+      size() const noexcept
+      { return this->_M_Nb; }
+
+      /// Returns the total number of blocks.
+      size_type
+      num_blocks() const noexcept
+      { return this->_M_size(); }
+
+      /// Returns true if the dynamic_bitset is empty.
+      _GLIBCXX_NODISCARD bool
+      empty() const noexcept
+      { return (this->_M_Nb == 0); }
+
+      /// Returns the maximum size of a dynamic_bitset object having the same
+      /// type as *this.
+      /// The real answer is max() * bits_per_block but is likely to overflow.
+      constexpr size_type
+      max_size() noexcept
+      { return std::numeric_limits<block_type>::max(); }
+
+      /**
+       *  @brief Tests the value of a bit.
+       *  @param  __pos  The index of a bit.
+       *  @return  The value at @a __pos.
+       *  @throw  std::out_of_range  If @a __pos is bigger the size of the %set.
+       */
+      bool
+      test(size_type __pos) const
+      {
+	if (__pos >= _M_Nb)
+	  __throw_out_of_range(__N("dynamic_bitset::test"));
+	return _M_unchecked_test(__pos);
+      }
+
+      /**
+       *  @brief Tests whether all the bits are on.
+       *  @return  True if all the bits are set.
+       */
+      bool
+      all() const
+      { return this->_M_are_all_aux() == _M_Nb; }
+
+      /**
+       *  @brief Tests whether any of the bits are on.
+       *  @return  True if at least one bit is set.
+       */
+      bool
+      any() const
+      { return this->_M_is_any(); }
+
+      /**
+       *  @brief Tests whether any of the bits are on.
+       *  @return  True if none of the bits are set.
+       */
+      bool
+      none() const
+      { return !this->_M_is_any(); }
+
+      ///@{
+      /// Self-explanatory.
+      dynamic_bitset
+      operator<<(size_type __pos) const
+      { return dynamic_bitset(*this) <<= __pos; }
+
+      dynamic_bitset
+      operator>>(size_type __pos) const
+      { return dynamic_bitset(*this) >>= __pos; }
+      ///@}
+
+      /**
+       *  @brief  Finds the index of the first "on" bit.
+       *  @return  The index of the first bit set, or size() if not found.
+       *  @sa  find_next
+       */
+      size_type
+      find_first() const
+      { return this->_M_do_find_first(this->_M_Nb); }
+
+      /**
+       *  @brief  Finds the index of the next "on" bit after prev.
+       *  @return  The index of the next bit set, or size() if not found.
+       *  @param  __prev  Where to start searching.
+       *  @sa  find_first
+       */
+      size_type
+      find_next(size_t __prev) const
+      { return this->_M_do_find_next(__prev, this->_M_Nb); }
+
+      bool
+      is_subset_of(const dynamic_bitset& __b) const
+      { return this->_M_is_subset_of(__b); }
+
+      bool
+      is_proper_subset_of(const dynamic_bitset& __b) const
+      { return this->_M_is_proper_subset_of(__b); }
+
+      friend bool
+      operator==(const dynamic_bitset& __lhs,
+		 const dynamic_bitset& __rhs) noexcept
+      { return __lhs._M_Nb == __rhs._M_Nb && __lhs._M_is_equal(__rhs); }
+
+      friend bool
+      operator<(const dynamic_bitset& __lhs,
+		const dynamic_bitset& __rhs) noexcept
+      { return __lhs._M_is_less(__rhs) || __lhs._M_Nb < __rhs._M_Nb; }
+    };
+
+  template<typename _WordT, typename _Alloc>
+    template<typename _CharT, typename _Traits, typename _Alloc1>
+      inline void
+      dynamic_bitset<_WordT, _Alloc>::
+      _M_copy_to_string(std::basic_string<_CharT, _Traits, _Alloc1>& __str,
+			_CharT __zero, _CharT __one) const
+      {
+	__str.assign(_M_Nb, __zero);
+	for (size_t __i = _M_Nb; __i > 0; --__i)
+	  if (_M_unchecked_test(__i - 1))
+	    _Traits::assign(__str[_M_Nb - __i], __one);
+      }
+
+
+  ///@{
+  /// These comparisons for equality/inequality are, well, @e bitwise.
+
+  template<typename _WordT, typename _Alloc>
+    inline bool
+    operator!=(const dynamic_bitset<_WordT, _Alloc>& __lhs,
+	       const dynamic_bitset<_WordT, _Alloc>& __rhs)
+    { return !(__lhs == __rhs); }
+
+  template<typename _WordT, typename _Alloc>
+    inline bool
+    operator<=(const dynamic_bitset<_WordT, _Alloc>& __lhs,
+	       const dynamic_bitset<_WordT, _Alloc>& __rhs)
+    { return !(__lhs > __rhs); }
+
+  template<typename _WordT, typename _Alloc>
+    inline bool
+    operator>(const dynamic_bitset<_WordT, _Alloc>& __lhs,
+	      const dynamic_bitset<_WordT, _Alloc>& __rhs)
+    { return __rhs < __lhs; }
+
+  template<typename _WordT, typename _Alloc>
+    inline bool
+    operator>=(const dynamic_bitset<_WordT, _Alloc>& __lhs,
+	       const dynamic_bitset<_WordT, _Alloc>& __rhs)
+    { return !(__lhs < __rhs); }
+  ///@}
+
+  // 23.3.5.3 bitset operations:
+  ///@{
+  /**
+   *  @brief  Global bitwise operations on bitsets.
+   *  @param  __x  A bitset.
+   *  @param  __y  A bitset of the same size as @a __x.
+   *  @return  A new bitset.
+   *
+   *  These should be self-explanatory.
+   */
+  template<typename _WordT, typename _Alloc>
+    inline dynamic_bitset<_WordT, _Alloc>
+    operator&(const dynamic_bitset<_WordT, _Alloc>& __x,
+	      const dynamic_bitset<_WordT, _Alloc>& __y)
+    {
+      dynamic_bitset<_WordT, _Alloc> __result(__x);
+      __result &= __y;
+      return __result;
+    }
+
+  template<typename _WordT, typename _Alloc>
+    inline dynamic_bitset<_WordT, _Alloc>
+    operator|(const dynamic_bitset<_WordT, _Alloc>& __x,
+	      const dynamic_bitset<_WordT, _Alloc>& __y)
+    {
+      dynamic_bitset<_WordT, _Alloc> __result(__x);
+      __result |= __y;
+      return __result;
+    }
+
+  template <typename _WordT, typename _Alloc>
+    inline dynamic_bitset<_WordT, _Alloc>
+    operator^(const dynamic_bitset<_WordT, _Alloc>& __x,
+	      const dynamic_bitset<_WordT, _Alloc>& __y)
+    {
+      dynamic_bitset<_WordT, _Alloc> __result(__x);
+      __result ^= __y;
+      return __result;
+    }
+
+  template <typename _WordT, typename _Alloc>
+    inline dynamic_bitset<_WordT, _Alloc>
+    operator-(const dynamic_bitset<_WordT, _Alloc>& __x,
+	      const dynamic_bitset<_WordT, _Alloc>& __y)
+    {
+      dynamic_bitset<_WordT, _Alloc> __result(__x);
+      __result -= __y;
+      return __result;
+    }
+  ///@}
+
+  /// Stream output operator for dynamic_bitset.
+  template <typename _CharT, typename _Traits,
+	    typename _WordT, typename _Alloc>
+    inline std::basic_ostream<_CharT, _Traits>&
+    operator<<(std::basic_ostream<_CharT, _Traits>& __os,
+	       const dynamic_bitset<_WordT, _Alloc>& __x)
+    {
+      std::basic_string<_CharT, _Traits> __tmp;
+
+      const ctype<_CharT>& __ct = use_facet<ctype<_CharT>>(__os.getloc());
+      __x._M_copy_to_string(__tmp, __ct.widen('0'), __ct.widen('1'));
+      return __os << __tmp;
+    }
+  /**
+   *  @}
+   */
+} // tr2
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // std
+
+#include <tr2/dynamic_bitset.tcc>
+
+#endif /* _GLIBCXX_TR2_DYNAMIC_BITSET */

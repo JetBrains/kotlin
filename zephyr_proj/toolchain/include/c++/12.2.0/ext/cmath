@@ -1,0 +1,152 @@
+// Math extensions -*- C++ -*-
+
+// Copyright (C) 2013-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file ext/cmath
+ *  This file is a GNU extension to the Standard C++ Library.
+ */
+
+#ifndef _EXT_CMATH
+#define _EXT_CMATH 1
+
+#pragma GCC system_header
+
+#if __cplusplus < 201103L
+# include <bits/c++0x_warning.h>
+#else
+
+#include <cmath>
+#include <type_traits>
+
+namespace __gnu_cxx _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+  // A class for math constants.
+  template<typename _RealType>
+    struct __math_constants
+    {
+      static_assert(std::is_floating_point<_RealType>::value,
+		    "template argument not a floating point type");
+
+      // Constant @f$ \pi @f$.
+      static constexpr _RealType __pi = 3.1415926535897932384626433832795029L;
+      // Constant @f$ \pi / 2 @f$.
+      static constexpr _RealType __pi_half = 1.5707963267948966192313216916397514L;
+      // Constant @f$ \pi / 3 @f$.
+      static constexpr _RealType __pi_third = 1.0471975511965977461542144610931676L;
+      // Constant @f$ \pi / 4 @f$.
+      static constexpr _RealType __pi_quarter = 0.7853981633974483096156608458198757L;
+      // Constant @f$ \sqrt(\pi / 2) @f$.
+      static constexpr _RealType __root_pi_div_2 = 1.2533141373155002512078826424055226L;
+      // Constant @f$ 1 / \pi @f$.
+      static constexpr _RealType __one_div_pi = 0.3183098861837906715377675267450287L;
+      // Constant @f$ 2 / \pi @f$.
+      static constexpr _RealType __two_div_pi = 0.6366197723675813430755350534900574L;
+      // Constant @f$ 2 / \sqrt(\pi) @f$.
+      static constexpr _RealType __two_div_root_pi = 1.1283791670955125738961589031215452L;
+
+      // Constant Euler's number @f$ e @f$.
+      static constexpr _RealType __e = 2.7182818284590452353602874713526625L;
+      // Constant @f$ 1 / e @f$.
+      static constexpr _RealType __one_div_e = 0.36787944117144232159552377016146087L;
+      // Constant @f$ \log_2(e) @f$.
+      static constexpr _RealType __log2_e = 1.4426950408889634073599246810018921L;
+      // Constant @f$ \log_10(e) @f$.
+      static constexpr _RealType __log10_e = 0.4342944819032518276511289189166051L;
+      // Constant @f$ \ln(2) @f$.
+      static constexpr _RealType __ln_2 = 0.6931471805599453094172321214581766L;
+      // Constant @f$ \ln(3) @f$.
+      static constexpr _RealType __ln_3 = 1.0986122886681096913952452369225257L;
+      // Constant @f$ \ln(10) @f$.
+      static constexpr _RealType __ln_10 = 2.3025850929940456840179914546843642L;
+
+      // Constant Euler-Mascheroni @f$ \gamma_E @f$.
+      static constexpr _RealType __gamma_e = 0.5772156649015328606065120900824024L;
+      // Constant Golden Ratio @f$ \phi @f$.
+      static constexpr _RealType __phi = 1.6180339887498948482045868343656381L;
+
+      // Constant @f$ \sqrt(2) @f$.
+      static constexpr _RealType __root_2 = 1.4142135623730950488016887242096981L;
+      // Constant @f$ \sqrt(3) @f$.
+      static constexpr _RealType __root_3 = 1.7320508075688772935274463415058724L;
+      // Constant @f$ \sqrt(5) @f$.
+      static constexpr _RealType __root_5 = 2.2360679774997896964091736687312762L;
+      // Constant @f$ \sqrt(7) @f$.
+      static constexpr _RealType __root_7 = 2.6457513110645905905016157536392604L;
+      // Constant @f$ 1 / \sqrt(2) @f$.
+      static constexpr _RealType __one_div_root_2 = 0.7071067811865475244008443621048490L;
+    };
+
+  // And the template definitions for the constants.
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__pi;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__pi_half;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__pi_third;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__pi_quarter;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__root_pi_div_2;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__one_div_pi;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__two_div_pi;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__two_div_root_pi;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__e;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__one_div_e;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__log2_e;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__log10_e;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__ln_2;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__ln_3;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__ln_10;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__gamma_e;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__phi;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__root_2;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__root_3;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__root_5;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__root_7;
+  template<typename _RealType>
+    constexpr _RealType __math_constants<_RealType>::__one_div_root_2;
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace __gnu_cxx
+
+#endif // C++11
+
+#endif // _EXT_CMATH

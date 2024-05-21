@@ -1,0 +1,651 @@
+// <stop_token> -*- C++ -*-
+
+// Copyright (C) 2019-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/stop_token
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_STOP_TOKEN
+#define _GLIBCXX_STOP_TOKEN
+
+#if __cplusplus > 201703L
+
+#include <atomic>
+#include <bits/std_thread.h>
+
+#include <semaphore>
+
+#define __cpp_lib_jthread 201911L
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+  /// Tag type indicating a stop_source should have no shared-stop-state.
+  struct nostopstate_t { explicit nostopstate_t() = default; };
+  inline constexpr nostopstate_t nostopstate{};
+
+  class stop_source;
+
+  /// Allow testing whether a stop request has been made on a `stop_source`.
+  class stop_token
+  {
+  public:
+    stop_token() noexcept = default;
+
+    stop_token(const stop_token&) noexcept = default;
+    stop_token(stop_token&&) noexcept = default;
+
+    ~stop_token() = default;
+
+    stop_token&
+    operator=(const stop_token&) noexcept = default;
+
+    stop_token&
+    operator=(stop_token&&) noexcept = default;
+
+    [[nodiscard]]
+    bool
+    stop_possible() const noexcept
+    {
+      return static_cast<bool>(_M_state) && _M_state->_M_stop_possible();
+    }
+
+    [[nodiscard]]
+    bool
+    stop_requested() const noexcept
+    {
+      return static_cast<bool>(_M_state) && _M_state->_M_stop_requested();
+    }
+
+    void
+    swap(stop_token& __rhs) noexcept
+    { _M_state.swap(__rhs._M_state); }
+
+    [[nodiscard]]
+    friend bool
+    operator==(const stop_token& __a, const stop_token& __b)
+    { return __a._M_state == __b._M_state; }
+
+    friend void
+    swap(stop_token& __lhs, stop_token& __rhs) noexcept
+    { __lhs.swap(__rhs); }
+
+  private:
+    friend class stop_source;
+    template<typename _Callback>
+      friend class stop_callback;
+
+    static void
+    _S_yield() noexcept
+    {
+#if defined __i386__ || defined __x86_64__
+      __builtin_ia32_pause();
+#endif
+      this_thread::yield();
+    }
+
+#ifndef __cpp_lib_semaphore
+    struct binary_semaphore
+    {
+      explicit binary_semaphore(int __d) : _M_counter(__d > 0) { }
+
+      void release() { _M_counter.fetch_add(1, memory_order::release); }
+
+      void acquire()
+      {
+	int __old = 1;
+	while (!_M_counter.compare_exchange_weak(__old, 0,
+						 memory_order::acquire,
+						 memory_order::relaxed))
+	  {
+	    __old = 1;
+	    _S_yield();
+	  }
+      }
+
+      atomic<int> _M_counter;
+    };
+#endif
+
+    struct _Stop_cb
+    {
+      using __cb_type = void(_Stop_cb*) noexcept;
+      __cb_type* _M_callback;
+      _Stop_cb* _M_prev = nullptr;
+      _Stop_cb* _M_next = nullptr;
+      bool* _M_destroyed = nullptr;
+      binary_semaphore _M_done{0};
+
+      [[__gnu__::__nonnull__]]
+      explicit
+      _Stop_cb(__cb_type* __cb)
+      : _M_callback(__cb)
+      { }
+
+      void _M_run() noexcept { _M_callback(this); }
+    };
+
+    struct _Stop_state_t
+    {
+      using value_type = uint32_t;
+      static constexpr value_type _S_stop_requested_bit = 1;
+      static constexpr value_type _S_locked_bit = 2;
+      static constexpr value_type _S_ssrc_counter_inc = 4;
+
+      std::atomic<value_type> _M_owners{1};
+      std::atomic<value_type> _M_value{_S_ssrc_counter_inc};
+      _Stop_cb* _M_head = nullptr;
+      std::thread::id _M_requester;
+
+      _Stop_state_t() = default;
+
+      bool
+      _M_stop_possible() noexcept
+      {
+	// true if a stop request has already been made or there are still
+	// stop_source objects that would allow one to be made.
+	return _M_value.load(memory_order::acquire) & ~_S_locked_bit;
+      }
+
+      bool
+      _M_stop_requested() noexcept
+      {
+	return _M_value.load(memory_order::acquire) & _S_stop_requested_bit;
+      }
+
+      void
+      _M_add_owner() noexcept
+      {
+	_M_owners.fetch_add(1, memory_order::relaxed);
+      }
+
+      void
+      _M_release_ownership() noexcept
+      {
+	if (_M_owners.fetch_sub(1, memory_order::acq_rel) == 1)
+	  delete this;
+      }
+
+      void
+      _M_add_ssrc() noexcept
+      {
+	_M_value.fetch_add(_S_ssrc_counter_inc, memory_order::relaxed);
+      }
+
+      void
+      _M_sub_ssrc() noexcept
+      {
+	_M_value.fetch_sub(_S_ssrc_counter_inc, memory_order::release);
+      }
+
+      // Obtain lock.
+      void
+      _M_lock() noexcept
+      {
+	// Can use relaxed loads to get the current value.
+	// The successful call to _M_try_lock is an acquire operation.
+	auto __old = _M_value.load(memory_order::relaxed);
+	while (!_M_try_lock(__old, memory_order::relaxed))
+	  { }
+      }
+
+      // Precondition: calling thread holds the lock.
+      void
+      _M_unlock() noexcept
+      {
+	_M_value.fetch_sub(_S_locked_bit, memory_order::release);
+      }
+
+      bool
+      _M_request_stop() noexcept
+      {
+	// obtain lock and set stop_requested bit
+	auto __old = _M_value.load(memory_order::acquire);
+	do
+	  {
+	    if (__old & _S_stop_requested_bit) // stop request already made
+	      return false;
+	  }
+	while (!_M_try_lock_and_stop(__old));
+
+	_M_requester = this_thread::get_id();
+
+	while (_M_head)
+	  {
+	    bool __last_cb;
+	    _Stop_cb* __cb = _M_head;
+	    _M_head = _M_head->_M_next;
+	    if (_M_head)
+	      {
+		_M_head->_M_prev = nullptr;
+		__last_cb = false;
+	      }
+	    else
+	      __last_cb = true;
+
+	    // Allow other callbacks to be unregistered while __cb runs.
+	    _M_unlock();
+
+	    bool __destroyed = false;
+	    __cb->_M_destroyed = &__destroyed;
+
+	    // run callback
+	    __cb->_M_run();
+
+	    if (!__destroyed)
+	      {
+		__cb->_M_destroyed = nullptr;
+
+		// synchronize with destructor of stop_callback that owns *__cb
+		if (!__gnu_cxx::__is_single_threaded())
+		  __cb->_M_done.release();
+	      }
+
+	    // Avoid relocking if we already know there are no more callbacks.
+	    if (__last_cb)
+	      return true;
+
+	    _M_lock();
+	  }
+
+	_M_unlock();
+	return true;
+      }
+
+      [[__gnu__::__nonnull__]]
+      bool
+      _M_register_callback(_Stop_cb* __cb) noexcept
+      {
+	auto __old = _M_value.load(memory_order::acquire);
+	do
+	  {
+	    if (__old & _S_stop_requested_bit) // stop request already made
+	      {
+		__cb->_M_run(); // run synchronously
+		return false;
+	      }
+
+	    if (__old < _S_ssrc_counter_inc) // no stop_source owns *this
+	      // No need to register callback if no stop request can be made.
+	      // Returning false also means the stop_callback does not share
+	      // ownership of this state, but that's not observable.
+	      return false;
+	  }
+	while (!_M_try_lock(__old));
+
+        __cb->_M_next = _M_head;
+        if (_M_head)
+          {
+            _M_head->_M_prev = __cb;
+          }
+        _M_head = __cb;
+	_M_unlock();
+        return true;
+      }
+
+      // Called by ~stop_callback just before destroying *__cb.
+      [[__gnu__::__nonnull__]]
+      void
+      _M_remove_callback(_Stop_cb* __cb)
+      {
+	_M_lock();
+
+        if (__cb == _M_head)
+          {
+            _M_head = _M_head->_M_next;
+            if (_M_head)
+	      _M_head->_M_prev = nullptr;
+	    _M_unlock();
+	    return;
+          }
+	else if (__cb->_M_prev)
+          {
+            __cb->_M_prev->_M_next = __cb->_M_next;
+            if (__cb->_M_next)
+	      __cb->_M_next->_M_prev = __cb->_M_prev;
+	    _M_unlock();
+	    return;
+          }
+
+	_M_unlock();
+
+	// Callback is not in the list, so must have been removed by a call to
+	// _M_request_stop.
+
+	// Despite appearances there is no data race on _M_requester. The only
+	// write to it happens before the callback is removed from the list,
+	// and removing it from the list happens before this read.
+	if (!(_M_requester == this_thread::get_id()))
+	  {
+	    // Synchronize with completion of callback.
+	    __cb->_M_done.acquire();
+	    // Safe for ~stop_callback to destroy *__cb now.
+	    return;
+	  }
+
+	if (__cb->_M_destroyed)
+	  *__cb->_M_destroyed = true;
+      }
+
+      // Try to obtain the lock.
+      // Returns true if the lock is acquired (with memory order acquire).
+      // Otherwise, sets __curval = _M_value.load(__failure) and returns false.
+      // Might fail spuriously, so must be called in a loop.
+      bool
+      _M_try_lock(value_type& __curval,
+		  memory_order __failure = memory_order::acquire) noexcept
+      {
+	return _M_do_try_lock(__curval, 0, memory_order::acquire, __failure);
+      }
+
+      // Try to obtain the lock to make a stop request.
+      // Returns true if the lock is acquired and the _S_stop_requested_bit is
+      // set (with memory order acq_rel so that other threads see the request).
+      // Otherwise, sets __curval = _M_value.load(memory_order::acquire) and
+      // returns false.
+      // Might fail spuriously, so must be called in a loop.
+      bool
+      _M_try_lock_and_stop(value_type& __curval) noexcept
+      {
+	return _M_do_try_lock(__curval, _S_stop_requested_bit,
+			      memory_order::acq_rel, memory_order::acquire);
+      }
+
+      bool
+      _M_do_try_lock(value_type& __curval, value_type __newbits,
+		     memory_order __success, memory_order __failure) noexcept
+      {
+	if (__curval & _S_locked_bit)
+	  {
+	    _S_yield();
+	    __curval = _M_value.load(__failure);
+	    return false;
+	  }
+	__newbits |= _S_locked_bit;
+	return _M_value.compare_exchange_weak(__curval, __curval | __newbits,
+					      __success, __failure);
+      }
+    };
+
+    struct _Stop_state_ref
+    {
+      _Stop_state_ref() = default;
+
+      explicit
+      _Stop_state_ref(const stop_source&)
+      : _M_ptr(new _Stop_state_t())
+      { }
+
+      _Stop_state_ref(const _Stop_state_ref& __other) noexcept
+      : _M_ptr(__other._M_ptr)
+      {
+	if (_M_ptr)
+	  _M_ptr->_M_add_owner();
+      }
+
+      _Stop_state_ref(_Stop_state_ref&& __other) noexcept
+      : _M_ptr(__other._M_ptr)
+      {
+	__other._M_ptr = nullptr;
+      }
+
+      _Stop_state_ref&
+      operator=(const _Stop_state_ref& __other) noexcept
+      {
+	if (auto __ptr = __other._M_ptr; __ptr != _M_ptr)
+	  {
+	    if (__ptr)
+	      __ptr->_M_add_owner();
+	    if (_M_ptr)
+	      _M_ptr->_M_release_ownership();
+	    _M_ptr = __ptr;
+	  }
+	return *this;
+      }
+
+      _Stop_state_ref&
+      operator=(_Stop_state_ref&& __other) noexcept
+      {
+	_Stop_state_ref(std::move(__other)).swap(*this);
+	return *this;
+      }
+
+      ~_Stop_state_ref()
+      {
+	if (_M_ptr)
+	  _M_ptr->_M_release_ownership();
+      }
+
+      void
+      swap(_Stop_state_ref& __other) noexcept
+      { std::swap(_M_ptr, __other._M_ptr); }
+
+      explicit operator bool() const noexcept { return _M_ptr != nullptr; }
+
+      _Stop_state_t* operator->() const noexcept { return _M_ptr; }
+
+#if __cpp_impl_three_way_comparison >= 201907L
+      friend bool
+      operator==(const _Stop_state_ref&, const _Stop_state_ref&) = default;
+#else
+      friend bool
+      operator==(const _Stop_state_ref& __lhs, const _Stop_state_ref& __rhs)
+      noexcept
+      { return __lhs._M_ptr == __rhs._M_ptr; }
+
+      friend bool
+      operator!=(const _Stop_state_ref& __lhs, const _Stop_state_ref& __rhs)
+      noexcept
+      { return __lhs._M_ptr != __rhs._M_ptr; }
+#endif
+
+    private:
+      _Stop_state_t* _M_ptr = nullptr;
+    };
+
+    _Stop_state_ref _M_state;
+
+    explicit
+    stop_token(const _Stop_state_ref& __state) noexcept
+    : _M_state{__state}
+    { }
+  };
+
+  /// A type that allows a stop request to be made.
+  class stop_source
+  {
+  public:
+    stop_source() : _M_state(*this)
+    { }
+
+    explicit stop_source(std::nostopstate_t) noexcept
+    { }
+
+    stop_source(const stop_source& __other) noexcept
+    : _M_state(__other._M_state)
+    {
+      if (_M_state)
+	_M_state->_M_add_ssrc();
+    }
+
+    stop_source(stop_source&&) noexcept = default;
+
+    stop_source&
+    operator=(const stop_source& __other) noexcept
+    {
+      if (_M_state != __other._M_state)
+	{
+	  stop_source __sink(std::move(*this));
+	  _M_state = __other._M_state;
+	  if (_M_state)
+	    _M_state->_M_add_ssrc();
+	}
+      return *this;
+    }
+
+    stop_source&
+    operator=(stop_source&&) noexcept = default;
+
+    ~stop_source()
+    {
+      if (_M_state)
+	_M_state->_M_sub_ssrc();
+    }
+
+    [[nodiscard]]
+    bool
+    stop_possible() const noexcept
+    {
+      return static_cast<bool>(_M_state);
+    }
+
+    [[nodiscard]]
+    bool
+    stop_requested() const noexcept
+    {
+      return static_cast<bool>(_M_state) && _M_state->_M_stop_requested();
+    }
+
+    bool
+    request_stop() const noexcept
+    {
+      if (stop_possible())
+        return _M_state->_M_request_stop();
+      return false;
+    }
+
+    [[nodiscard]]
+    stop_token
+    get_token() const noexcept
+    {
+      return stop_token{_M_state};
+    }
+
+    void
+    swap(stop_source& __other) noexcept
+    {
+      _M_state.swap(__other._M_state);
+    }
+
+    [[nodiscard]]
+    friend bool
+    operator==(const stop_source& __a, const stop_source& __b) noexcept
+    {
+      return __a._M_state == __b._M_state;
+    }
+
+    friend void
+    swap(stop_source& __lhs, stop_source& __rhs) noexcept
+    {
+      __lhs.swap(__rhs);
+    }
+
+  private:
+    stop_token::_Stop_state_ref _M_state;
+  };
+
+  /// A wrapper for callbacks to be run when a stop request is made.
+  template<typename _Callback>
+    class [[nodiscard]] stop_callback
+    {
+      static_assert(is_nothrow_destructible_v<_Callback>);
+      static_assert(is_invocable_v<_Callback>);
+
+    public:
+      using callback_type = _Callback;
+
+      template<typename _Cb,
+               enable_if_t<is_constructible_v<_Callback, _Cb>, int> = 0>
+        explicit
+	stop_callback(const stop_token& __token, _Cb&& __cb)
+        noexcept(is_nothrow_constructible_v<_Callback, _Cb>)
+	: _M_cb(std::forward<_Cb>(__cb))
+        {
+	  if (auto __state = __token._M_state)
+	    {
+	      if (__state->_M_register_callback(&_M_cb))
+		_M_state.swap(__state);
+	    }
+        }
+
+      template<typename _Cb,
+               enable_if_t<is_constructible_v<_Callback, _Cb>, int> = 0>
+        explicit
+	stop_callback(stop_token&& __token, _Cb&& __cb)
+        noexcept(is_nothrow_constructible_v<_Callback, _Cb>)
+	: _M_cb(std::forward<_Cb>(__cb))
+	{
+	  if (auto& __state = __token._M_state)
+	    {
+	      if (__state->_M_register_callback(&_M_cb))
+		_M_state.swap(__state);
+	    }
+	}
+
+      ~stop_callback()
+      {
+	if (_M_state)
+	  {
+	    _M_state->_M_remove_callback(&_M_cb);
+	  }
+      }
+
+      stop_callback(const stop_callback&) = delete;
+      stop_callback& operator=(const stop_callback&) = delete;
+      stop_callback(stop_callback&&) = delete;
+      stop_callback& operator=(stop_callback&&) = delete;
+
+    private:
+      struct _Cb_impl : stop_token::_Stop_cb
+      {
+	template<typename _Cb>
+	  explicit
+	  _Cb_impl(_Cb&& __cb)
+	  : _Stop_cb(&_S_execute),
+	    _M_cb(std::forward<_Cb>(__cb))
+	  { }
+
+	_Callback _M_cb;
+
+	[[__gnu__::__nonnull__]]
+	static void
+	_S_execute(_Stop_cb* __that) noexcept
+	{
+	  _Callback& __cb = static_cast<_Cb_impl*>(__that)->_M_cb;
+	  std::forward<_Callback>(__cb)();
+	}
+      };
+
+      _Cb_impl _M_cb;
+      stop_token::_Stop_state_ref _M_state;
+    };
+
+  template<typename _Callback>
+    stop_callback(stop_token, _Callback) -> stop_callback<_Callback>;
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace
+#endif // __cplusplus > 201703L
+#endif // _GLIBCXX_STOP_TOKEN

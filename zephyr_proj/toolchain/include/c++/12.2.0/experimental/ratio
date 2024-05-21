@@ -1,0 +1,73 @@
+// Variable Templates For ratio -*- C++ -*-
+
+// Copyright (C) 2014-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/ratio
+ *  This is a TS C++ Library header.
+ *  @ingroup libfund-ts
+ */
+
+//
+// N3932 Variable Templates For Type Traits (Revision 1)
+//
+
+#ifndef _GLIBCXX_EXPERIMENTAL_RATIO
+#define _GLIBCXX_EXPERIMENTAL_RATIO 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <ratio>
+#include <experimental/bits/lfts_config.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace experimental
+{
+inline namespace fundamentals_v1
+{
+// See C++14 20.11.5, ratio comparison
+template <typename _R1, typename _R2>
+  constexpr bool ratio_equal_v = ratio_equal<_R1, _R2>::value;
+template <typename _R1, typename _R2>
+  constexpr bool ratio_not_equal_v = ratio_not_equal<_R1, _R2>::value;
+template <typename _R1, typename _R2>
+  constexpr bool ratio_less_v = ratio_less<_R1, _R2>::value;
+template <typename _R1, typename _R2>
+  constexpr bool ratio_less_equal_v = ratio_less_equal<_R1, _R2>::value;
+template <typename _R1, typename _R2>
+  constexpr bool ratio_greater_v = ratio_greater<_R1, _R2>::value;
+template <typename _R1, typename _R2>
+  constexpr bool ratio_greater_equal_v = ratio_greater_equal<_R1, _R2>::value;
+} // namespace fundamentals_v1
+} // namespace experimental
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // __cplusplus <= 201103L
+
+#endif // _GLIBCXX_EXPERIMENTAL_RATIO

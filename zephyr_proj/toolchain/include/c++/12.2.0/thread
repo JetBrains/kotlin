@@ -1,0 +1,265 @@
+// <thread> -*- C++ -*-
+
+// Copyright (C) 2008-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file include/thread
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_THREAD
+#define _GLIBCXX_THREAD 1
+
+#pragma GCC system_header
+
+#if __cplusplus < 201103L
+# include <bits/c++0x_warning.h>
+#else
+
+#if __cplusplus > 201703L
+# include <compare>	// std::strong_ordering
+# include <stop_token>	// std::stop_source, std::stop_token, std::nostopstate
+#endif
+
+#include <bits/std_thread.h> // std::thread, get_id, yield
+#include <bits/this_thread_sleep.h> // std::this_thread::sleep_for, sleep_until
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+  /**
+   * @defgroup threads Threads
+   * @ingroup concurrency
+   *
+   * Classes for thread support.
+   * @{
+   */
+
+  // std::thread is defined in <bits/std_thread.h>
+
+#if __cpp_lib_three_way_comparison
+  inline strong_ordering
+  operator<=>(thread::id __x, thread::id __y) noexcept
+  { return __x._M_thread <=> __y._M_thread; }
+#else
+  inline bool
+  operator!=(thread::id __x, thread::id __y) noexcept
+  { return !(__x == __y); }
+
+  inline bool
+  operator<(thread::id __x, thread::id __y) noexcept
+  {
+    // Pthreads doesn't define any way to do this, so we just have to
+    // assume native_handle_type is LessThanComparable.
+    return __x._M_thread < __y._M_thread;
+  }
+
+  inline bool
+  operator<=(thread::id __x, thread::id __y) noexcept
+  { return !(__y < __x); }
+
+  inline bool
+  operator>(thread::id __x, thread::id __y) noexcept
+  { return __y < __x; }
+
+  inline bool
+  operator>=(thread::id __x, thread::id __y) noexcept
+  { return !(__x < __y); }
+#endif // __cpp_lib_three_way_comparison
+
+  template<class _CharT, class _Traits>
+    inline basic_ostream<_CharT, _Traits>&
+    operator<<(basic_ostream<_CharT, _Traits>& __out, thread::id __id)
+    {
+      if (__id == thread::id())
+	return __out << "thread::id of a non-executing thread";
+      else
+	return __out << __id._M_thread;
+    }
+
+#ifdef __cpp_lib_jthread
+
+#ifndef __STRICT_ANSI__
+    template<typename _Callable, typename... _Args>
+      constexpr bool __pmf_expects_stop_token = false;
+
+    template<typename _Callable, typename _Obj, typename... _Args>
+      constexpr bool __pmf_expects_stop_token<_Callable, _Obj, _Args...>
+	= __and_<is_member_function_pointer<remove_reference_t<_Callable>>,
+		 is_invocable<_Callable, _Obj, stop_token, _Args...>>::value;
+#endif
+
+  /// A thread that can be requested to stop and automatically joined.
+  class jthread
+  {
+  public:
+    using id = thread::id;
+    using native_handle_type = thread::native_handle_type;
+
+    jthread() noexcept
+    : _M_stop_source{nostopstate}
+    { }
+
+    template<typename _Callable, typename... _Args,
+	     typename = enable_if_t<!is_same_v<remove_cvref_t<_Callable>,
+					       jthread>>>
+      explicit
+      jthread(_Callable&& __f, _Args&&... __args)
+      : _M_thread{_S_create(_M_stop_source, std::forward<_Callable>(__f),
+			    std::forward<_Args>(__args)...)}
+      { }
+
+    jthread(const jthread&) = delete;
+    jthread(jthread&&) noexcept = default;
+
+    ~jthread()
+    {
+      if (joinable())
+        {
+          request_stop();
+          join();
+        }
+    }
+
+    jthread&
+    operator=(const jthread&) = delete;
+
+    jthread&
+    operator=(jthread&& __other) noexcept
+    {
+      std::jthread(std::move(__other)).swap(*this);
+      return *this;
+    }
+
+    void
+    swap(jthread& __other) noexcept
+    {
+      std::swap(_M_stop_source, __other._M_stop_source);
+      std::swap(_M_thread, __other._M_thread);
+    }
+
+    [[nodiscard]] bool
+    joinable() const noexcept
+    {
+      return _M_thread.joinable();
+    }
+
+    void
+    join()
+    {
+      _M_thread.join();
+    }
+
+    void
+    detach()
+    {
+      _M_thread.detach();
+    }
+
+    [[nodiscard]] id
+    get_id() const noexcept
+    {
+      return _M_thread.get_id();
+    }
+
+    [[nodiscard]] native_handle_type
+    native_handle()
+    {
+      return _M_thread.native_handle();
+    }
+
+    [[nodiscard]] static unsigned
+    hardware_concurrency() noexcept
+    {
+      return thread::hardware_concurrency();
+    }
+
+    [[nodiscard]] stop_source
+    get_stop_source() noexcept
+    {
+      return _M_stop_source;
+    }
+
+    [[nodiscard]] stop_token
+    get_stop_token() const noexcept
+    {
+      return _M_stop_source.get_token();
+    }
+
+    bool request_stop() noexcept
+    {
+      return _M_stop_source.request_stop();
+    }
+
+    friend void swap(jthread& __lhs, jthread& __rhs) noexcept
+    {
+      __lhs.swap(__rhs);
+    }
+
+  private:
+    template<typename _Callable, typename... _Args>
+      static thread
+      _S_create(stop_source& __ssrc, _Callable&& __f, _Args&&... __args)
+      {
+#ifndef __STRICT_ANSI__
+	if constexpr (__pmf_expects_stop_token<_Callable, _Args...>)
+	  return _S_create_pmf(__ssrc, __f, std::forward<_Args>(__args)...);
+	else
+#endif
+	if constexpr(is_invocable_v<decay_t<_Callable>, stop_token,
+				    decay_t<_Args>...>)
+	  return thread{std::forward<_Callable>(__f), __ssrc.get_token(),
+			std::forward<_Args>(__args)...};
+	else
+	  {
+	    static_assert(is_invocable_v<decay_t<_Callable>,
+					 decay_t<_Args>...>,
+			  "std::jthread arguments must be invocable after"
+			  " conversion to rvalues");
+	    return thread{std::forward<_Callable>(__f),
+			  std::forward<_Args>(__args)...};
+	  }
+      }
+
+#ifndef __STRICT_ANSI__
+    template<typename _Callable, typename _Obj, typename... _Args>
+      static thread
+      _S_create_pmf(stop_source& __ssrc, _Callable __f, _Obj&& __obj,
+		    _Args&&... __args)
+      {
+	return thread{__f, std::forward<_Obj>(__obj), __ssrc.get_token(),
+		      std::forward<_Args>(__args)...};
+      }
+#endif
+
+    stop_source _M_stop_source;
+    thread _M_thread;
+  };
+#endif // __cpp_lib_jthread
+
+  /// @} group threads
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace
+#endif // C++11
+#endif // _GLIBCXX_THREAD

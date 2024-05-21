@@ -1,0 +1,208 @@
+// <experimental/timer> -*- C++ -*-
+
+// Copyright (C) 2015-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/timer
+ *  This is a TS C++ Library header.
+ *  @ingroup networking-ts
+ */
+
+#ifndef _GLIBCXX_EXPERIMENTAL_TIMER
+#define _GLIBCXX_EXPERIMENTAL_TIMER 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <bits/chrono.h>
+#include <system_error>
+#include <thread>
+#include <experimental/netfwd>
+#include <experimental/io_context>
+#include <experimental/bits/net.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+namespace experimental
+{
+namespace net
+{
+inline namespace v1
+{
+
+  /** @addtogroup networking-ts
+   *  @{
+   */
+
+  template<typename _Clock>
+    struct wait_traits
+    {
+      static typename _Clock::duration
+      to_wait_duration(const typename _Clock::duration& __d)
+      { return __d; }
+
+      static typename _Clock::duration
+      to_wait_duration(const typename _Clock::time_point& __t)
+      {
+	auto __now = _Clock::now();
+	auto __diff = __t - __now;
+	if (__diff > _Clock::duration::max())
+	  return _Clock::duration::max();
+	if (__diff < _Clock::duration::min())
+	  return _Clock::duration::min();
+	return __diff;
+      }
+    };
+
+  template<typename _Clock, typename _WaitTraits>
+    class basic_waitable_timer
+    {
+    public:
+      // types:
+
+      using executor_type = io_context::executor_type;
+      using clock_type = _Clock;
+      using duration = typename clock_type::duration;
+      using time_point = typename clock_type::time_point;
+      using traits_type = _WaitTraits;
+
+      // construct / copy / destroy:
+
+      explicit
+      basic_waitable_timer(io_context& __ctx)
+      : _M_ex(__ctx.get_executor()), _M_expiry()
+      { }
+
+      basic_waitable_timer(io_context& __ctx, const time_point& __t)
+      : _M_ex(__ctx.get_executor()), _M_expiry(__t)
+      { }
+
+      basic_waitable_timer(io_context& __ctx, const duration& __d)
+      : _M_ex(__ctx.get_executor()), _M_expiry(_Clock::now() + __d)
+      { }
+
+      basic_waitable_timer(const basic_waitable_timer&) = delete;
+
+      basic_waitable_timer(basic_waitable_timer&& __rhs)
+      : _M_ex(std::move(__rhs._M_ex)), _M_expiry(__rhs._M_expiry)
+      {
+	_M_key.swap(__rhs._M_key);
+	__rhs._M_expiry = time_point{};
+      }
+
+      ~basic_waitable_timer() { cancel(); }
+
+      basic_waitable_timer& operator=(const basic_waitable_timer&) = delete;
+
+      basic_waitable_timer&
+      operator=(basic_waitable_timer&& __rhs)
+      {
+	if (this == std::addressof(__rhs))
+	  return *this;
+	cancel();
+	_M_ex = std::move(__rhs._M_ex);
+	_M_expiry = __rhs._M_expiry;
+	__rhs._M_expiry = time_point{};
+	_M_key.swap(__rhs._M_key);
+	return *this;
+      }
+
+      // basic_waitable_timer operations:
+
+      executor_type get_executor() noexcept { return _M_ex; }
+
+      size_t cancel() { return _M_ex.context().cancel(*this); }
+      size_t cancel_one() { return _M_ex.context().cancel_one(*this); }
+
+      time_point expiry() const { return _M_expiry; }
+
+      size_t expires_at(const time_point& __t)
+      {
+	size_t __cancelled = cancel();
+	_M_expiry = __t;
+	return __cancelled;
+      }
+
+      size_t expires_after(const duration& __d)
+      { return expires_at(_Clock::now() + __d); }
+
+      void wait();
+      void wait(error_code& __ec);
+
+      template<typename _CompletionToken>
+	__deduced_t<_CompletionToken, void(error_code)>
+	async_wait(_CompletionToken&& __token)
+	{
+	  async_completion<_CompletionToken, void(error_code)> __init(__token);
+	  _M_ex.context().async_wait(*this,
+				     std::move(__init.completion_handler));
+	  return __init.result.get();
+	}
+
+    private:
+      executor_type _M_ex;
+      time_point _M_expiry;
+
+      struct _Key { };  // TODO move _M_expiry into here?
+      unique_ptr<_Key> _M_key{new _Key};
+
+      friend class io_context;
+    };
+
+  using system_timer = basic_waitable_timer<chrono::system_clock>;
+  using steady_timer = basic_waitable_timer<chrono::steady_clock>;
+  using high_resolution_timer
+    = basic_waitable_timer<chrono::high_resolution_clock>;
+
+  template<typename _Clock, typename _WaitTraits>
+    void
+    basic_waitable_timer<_Clock, _WaitTraits>::wait()
+    {
+      _M_ex.dispatch([this] {
+	  while (clock_type::now() < _M_expiry)
+	    this_thread::sleep_for(traits_type::to_wait_duration(_M_expiry));
+      }, allocator<void>{});
+    }
+
+  template<typename _Clock, typename _WaitTraits>
+    void
+    basic_waitable_timer<_Clock, _WaitTraits>::wait(error_code&)
+    {
+      _M_ex.dispatch([this] {
+	  while (clock_type::now() < _M_expiry)
+	    this_thread::sleep_for(traits_type::to_wait_duration(_M_expiry));
+      }, allocator<void>{});
+    }
+
+  /// @}
+
+} // namespace v1
+} // namespace net
+} // namespace experimental
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // C++14
+
+#endif // _GLIBCXX_EXPERIMENTAL_TIMER

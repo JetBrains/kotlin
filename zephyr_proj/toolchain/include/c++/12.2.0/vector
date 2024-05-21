@@ -1,0 +1,149 @@
+// <vector> -*- C++ -*-
+
+// Copyright (C) 2001-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/*
+ *
+ * Copyright (c) 1994
+ * Hewlett-Packard Company
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Hewlett-Packard Company makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ *
+ *
+ * Copyright (c) 1996
+ * Silicon Graphics Computer Systems, Inc.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Silicon Graphics makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
+
+/** @file include/vector
+ *  This is a Standard C++ Library header.
+ */
+
+#ifndef _GLIBCXX_VECTOR
+#define _GLIBCXX_VECTOR 1
+
+#pragma GCC system_header
+
+#include <bits/stl_algobase.h>
+#include <bits/allocator.h>
+#include <bits/stl_construct.h>
+#include <bits/stl_uninitialized.h>
+#include <bits/stl_vector.h>
+#include <bits/stl_bvector.h>
+#include <bits/refwrap.h>
+#include <bits/range_access.h>
+
+#ifndef _GLIBCXX_EXPORT_TEMPLATE
+# include <bits/vector.tcc>
+#endif
+
+#ifdef _GLIBCXX_DEBUG
+# include <debug/vector>
+#endif
+
+#if __cplusplus >= 201703L
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+  namespace pmr {
+    template<typename _Tp> class polymorphic_allocator;
+    template<typename _Tp>
+      using vector = std::vector<_Tp, polymorphic_allocator<_Tp>>;
+  } // namespace pmr
+# ifdef _GLIBCXX_DEBUG
+  namespace _GLIBCXX_STD_C::pmr {
+    template<typename _Tp>
+      using vector
+	= _GLIBCXX_STD_C::vector<_Tp, std::pmr::polymorphic_allocator<_Tp>>;
+  } // namespace _GLIBCXX_STD_C::pmr
+# endif
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // C++17
+
+#if __cplusplus > 201703L
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+#define __cpp_lib_erase_if 202002L
+
+  template<typename _Tp, typename _Alloc, typename _Predicate>
+    _GLIBCXX20_CONSTEXPR
+    inline typename vector<_Tp, _Alloc>::size_type
+    erase_if(vector<_Tp, _Alloc>& __cont, _Predicate __pred)
+    {
+      using namespace __gnu_cxx;
+      _GLIBCXX_STD_C::vector<_Tp, _Alloc>& __ucont = __cont;
+      const auto __osz = __cont.size();
+      const auto __end = __ucont.end();
+      auto __removed = std::__remove_if(__ucont.begin(), __end,
+					__ops::__pred_iter(std::ref(__pred)));
+      if (__removed != __end)
+	{
+	  __cont.erase(__niter_wrap(__cont.begin(), __removed),
+		       __cont.end());
+	  return __osz - __cont.size();
+	}
+
+      return 0;
+    }
+
+  template<typename _Tp, typename _Alloc, typename _Up>
+    _GLIBCXX20_CONSTEXPR
+    inline typename vector<_Tp, _Alloc>::size_type
+    erase(vector<_Tp, _Alloc>& __cont, const _Up& __value)
+    {
+      using namespace __gnu_cxx;
+      _GLIBCXX_STD_C::vector<_Tp, _Alloc>& __ucont = __cont;
+      const auto __osz = __cont.size();
+      const auto __end = __ucont.end();
+      auto __removed = std::__remove_if(__ucont.begin(), __end,
+					__ops::__iter_equals_val(__value));
+      if (__removed != __end)
+	{
+	  __cont.erase(__niter_wrap(__cont.begin(), __removed),
+		       __cont.end());
+	  return __osz - __cont.size();
+	}
+
+      return 0;
+    }
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+#endif // C++20
+
+#endif /* _GLIBCXX_VECTOR */

@@ -1,0 +1,320 @@
+// TR2 <bool_set> -*- C++ -*-
+
+// Copyright (C) 2009-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file tr2/bool_set
+ *  This is a TR2 C++ Library header.
+ */
+
+#ifndef _GLIBCXX_TR2_BOOL_SET
+#define _GLIBCXX_TR2_BOOL_SET 1
+
+#pragma GCC system_header
+
+#include <typeinfo>
+#include <iostream>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace tr2
+{
+  /**
+   *  bool_set
+   *
+   *  See N2136, Bool_set: multi-valued logic
+   *  by Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion.
+   *
+   *  The implicit conversion to bool is slippery!  I may use the new
+   *  explicit conversion.  This has been specialized in the language
+   *  so that in contexts requiring a bool the conversion happens
+   *  implicitly.  Thus most objections should be eliminated.
+   */
+  class bool_set
+  {
+  public:
+
+    ///  Default constructor.
+    constexpr bool_set() : _M_b(_S_false) { }
+
+    ///  Constructor from bool.
+    constexpr bool_set(bool __t) : _M_b(_Bool_set_val(__t)) { }
+
+    // I'm not sure about this.
+    bool contains(bool_set __b) const
+    { return this->is_singleton() && this->equals(__b); }
+
+    ///  Return true if states are equal.
+    bool equals(bool_set __b) const
+    { return __b._M_b == _M_b; }
+
+    ///  Return true if this is empty.
+    bool is_emptyset() const
+    { return _M_b == _S_empty; }
+
+    ///  Return true if this is indeterminate.
+    bool is_indeterminate() const
+    { return _M_b == _S_indet; }
+
+    ///  Return true if this is false or true (normal boolean).
+    bool is_singleton() const
+    { return _M_b == _S_false || _M_b == _S_true_; }
+
+    ///  Conversion to bool.
+    //explicit
+    operator bool() const
+    {
+      if (! is_singleton())
+	throw std::bad_cast();
+      return _M_b;
+    }
+
+    ///
+    static bool_set indeterminate()
+    {
+      bool_set __b;
+      __b._M_b = _S_indet;
+      return __b;
+    }
+
+    ///
+    static bool_set emptyset()
+    {
+      bool_set __b;
+      __b._M_b = _S_empty;
+      return __b;
+    }
+
+    friend bool_set
+    operator!(bool_set __b)
+    { return __b._M_not(); }
+
+    friend bool_set
+    operator^(bool_set __s, bool_set __t)
+    { return __s._M_xor(__t); }
+
+    friend bool_set
+    operator|(bool_set __s, bool_set __t)
+    { return __s._M_or(__t); }
+
+    friend bool_set
+    operator&(bool_set __s, bool_set __t)
+    { return __s._M_and(__t); }
+
+    friend bool_set
+    operator==(bool_set __s, bool_set __t)
+    { return __s._M_eq(__t); }
+
+
+    //  These overloads replace the facet additions in the paper!
+
+    template<typename CharT, typename Traits>
+      friend std::basic_ostream<CharT, Traits>&
+      operator<<(std::basic_ostream<CharT, Traits>& __out, bool_set __b)
+      {
+	int __a = __b._M_b;
+	__out << __a;
+      }
+
+    template<typename CharT, typename Traits>
+      friend std::basic_istream<CharT, Traits>&
+      operator>>(std::basic_istream<CharT, Traits>& __in, bool_set& __b)
+      {
+	long __c;
+	__in >> __c;
+	if (__c >= _S_false && __c < _S_empty)
+	  __b._M_b = static_cast<_Bool_set_val>(__c);
+      }
+
+  private:
+
+    ///
+    enum _Bool_set_val: unsigned char
+    {
+      _S_false = 0,
+      _S_true_ = 1,
+      _S_indet = 2,
+      _S_empty = 3
+    };
+
+    ///  Bool set state.
+    _Bool_set_val _M_b;
+
+    ///
+    bool_set(_Bool_set_val __c) : _M_b(__c) { }
+
+    ///
+    bool_set _M_not() const
+    { return _S_not[this->_M_b]; }
+
+    ///
+    bool_set _M_xor(bool_set __b) const
+    { return _S_xor[this->_M_b][__b._M_b]; }
+
+    ///
+    bool_set _M_or(bool_set __b) const
+    { return _S_or[this->_M_b][__b._M_b]; }
+
+    ///
+    bool_set _M_and(bool_set __b) const
+    { return _S_and[this->_M_b][__b._M_b]; }
+
+    ///
+    bool_set _M_eq(bool_set __b) const
+    { return _S_eq[this->_M_b][__b._M_b]; }
+
+    ///
+    static _Bool_set_val _S_not[4];
+
+    ///
+    static _Bool_set_val _S_xor[4][4];
+
+    ///
+    static _Bool_set_val _S_or[4][4];
+
+    ///
+    static _Bool_set_val _S_and[4][4];
+
+    ///
+    static _Bool_set_val _S_eq[4][4];
+  };
+
+  //  20.2.3.2 bool_set values
+
+  inline bool
+  contains(bool_set __s, bool_set __t)
+  { return __s.contains(__t); }
+
+  inline bool
+  equals(bool_set __s, bool_set __t)
+  { return __s.equals(__t); }
+
+  inline bool
+  is_emptyset(bool_set __b)
+  { return __b.is_emptyset(); }
+
+  inline bool
+  is_indeterminate(bool_set __b)
+  { return __b.is_indeterminate(); }
+
+  inline bool
+  is_singleton(bool_set __b)
+  { return __b.is_singleton(); }
+
+  inline bool
+  certainly(bool_set __b)
+  { return ! __b.contains(false); }
+
+  inline bool
+  possibly(bool_set __b)
+  { return __b.contains(true); }
+
+
+  //  20.2.3.3 bool_set set operations
+
+  inline bool_set
+  set_union(bool __s, bool_set __t)
+  { return bool_set(__s) | __t; }
+
+  inline bool_set
+  set_union(bool_set __s, bool __t)
+  { return __s | bool_set(__t); }
+
+  inline bool_set
+  set_union(bool_set __s, bool_set __t)
+  { return __s | __t; }
+
+  inline bool_set
+  set_intersection(bool __s, bool_set __t)
+  { return bool_set(__s) & __t; }
+
+  inline bool_set
+  set_intersection(bool_set __s, bool __t)
+  { return __s & bool_set(__t); }
+
+  inline bool_set
+  set_intersection(bool_set __s, bool_set __t)
+  { return __s & __t; }
+
+  inline bool_set
+  set_complement(bool_set __b)
+  { return ! __b; }
+
+
+  //  20.2.3.4 bool_set logical operators
+
+  inline bool_set
+  operator^(bool __s, bool_set __t)
+  { return bool_set(__s) ^ __t; }
+
+  inline bool_set
+  operator^(bool_set __s, bool __t)
+  { return __s ^ bool_set(__t); }
+
+  inline bool_set
+  operator|(bool __s, bool_set __t)
+  { return bool_set(__s) | __t; }
+
+  inline bool_set
+  operator|(bool_set __s, bool __t)
+  { return __s | bool_set(__t); }
+
+  inline bool_set
+  operator&(bool __s, bool_set __t)
+  { return bool_set(__s) & __t; }
+
+  inline bool_set
+  operator&(bool_set __s, bool __t)
+  { return __s & bool_set(__t); }
+
+
+  //  20.2.3.5 bool_set relational operators
+
+  inline bool_set
+  operator==(bool __s, bool_set __t)
+  { return bool_set(__s) == __t; }
+
+  inline bool_set
+  operator==(bool_set __s, bool __t)
+  { return __s == bool_set(__t); }
+
+  inline bool_set
+  operator!=(bool __s, bool_set __t)
+  { return ! (__s == __t); }
+
+  inline bool_set
+  operator!=(bool_set __s, bool __t)
+  { return ! (__s == __t); }
+
+  inline bool_set
+  operator!=(bool_set __s, bool_set __t)
+  { return ! (__s == __t); }
+}
+
+_GLIBCXX_END_NAMESPACE_VERSION
+}
+
+#include <tr2/bool_set.tcc>
+
+#endif // _GLIBCXX_TR2_BOOL_SET

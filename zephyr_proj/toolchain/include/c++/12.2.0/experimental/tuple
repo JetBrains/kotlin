@@ -1,0 +1,81 @@
+// <experimental/tuple> -*- C++ -*-
+
+// Copyright (C) 2014-2022 Free Software Foundation, Inc.
+//
+// This file is part of the GNU ISO C++ Library.  This library is free
+// software; you can redistribute it and/or modify it under the
+// terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 3, or (at your option)
+// any later version.
+
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// Under Section 7 of GPL version 3, you are granted additional
+// permissions described in the GCC Runtime Library Exception, version
+// 3.1, as published by the Free Software Foundation.
+
+// You should have received a copy of the GNU General Public License and
+// a copy of the GCC Runtime Library Exception along with this program;
+// see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+// <http://www.gnu.org/licenses/>.
+
+/** @file experimental/tuple
+ *  This is a TS C++ Library header.
+ *  @ingroup libfund-ts
+ */
+
+#ifndef _GLIBCXX_EXPERIMENTAL_TUPLE
+#define _GLIBCXX_EXPERIMENTAL_TUPLE 1
+
+#pragma GCC system_header
+
+#if __cplusplus >= 201402L
+
+#include <tuple>
+#include <bits/invoke.h>
+#include <experimental/bits/lfts_config.h>
+
+namespace std _GLIBCXX_VISIBILITY(default)
+{
+_GLIBCXX_BEGIN_NAMESPACE_VERSION
+
+namespace experimental
+{
+inline namespace fundamentals_v1
+{
+  // See C++14 20.4.2.5, tuple helper classes
+  template <typename _Tp>
+    constexpr size_t tuple_size_v = tuple_size<_Tp>::value;
+
+#define __cpp_lib_experimental_tuple 201402
+
+  template <typename _Fn, typename _Tuple, std::size_t... _Idx>
+    constexpr decltype(auto)
+    __apply_impl(_Fn&& __f, _Tuple&& __t, std::index_sequence<_Idx...>)
+    {
+      return std::__invoke(std::forward<_Fn>(__f),
+			   std::get<_Idx>(std::forward<_Tuple>(__t))...);
+    }
+
+  template <typename _Fn, typename _Tuple>
+    constexpr decltype(auto)
+    apply(_Fn&& __f, _Tuple&& __t)
+    {
+      using _Indices =
+	std::make_index_sequence<tuple_size_v<std::decay_t<_Tuple>>>;
+      return experimental::__apply_impl(std::forward<_Fn>(__f),
+					std::forward<_Tuple>(__t),
+					_Indices{});
+    }
+} // namespace fundamentals_v1
+} // namespace experimental
+
+_GLIBCXX_END_NAMESPACE_VERSION
+} // namespace std
+
+#endif // C++14
+
+#endif // _GLIBCXX_EXPERIMENTAL_TUPLE
