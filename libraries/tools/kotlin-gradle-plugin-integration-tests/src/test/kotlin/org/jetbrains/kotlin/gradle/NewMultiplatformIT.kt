@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.testbase.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
-import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
+import org.jetbrains.kotlin.gradle.util.isWindows
+import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assert
@@ -195,16 +197,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
             }
         }
     }
-
-    @Test
-    fun testMavenPublishAppliedBeforeMultiplatformPlugin() =
-        with(transformNativeTestProject("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
-            gradleBuildScript().modify { "apply plugin: 'maven-publish'\n$it" }
-
-            build {
-                assertSuccessful()
-            }
-        }
 
     @Test
     @Ignore // KT-60745
