@@ -20,7 +20,7 @@ library {
 
       private constructor()
 
-      public final val companionObjectVal: kotlin/String /* = "foo" */
+      public final val companionObjectVal: kotlin/String /* = ... */
         public final get
     }
 
