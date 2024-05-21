@@ -76,6 +76,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("extractDataSchemaWithTypeParameter.kt")
+  public void testExtractDataSchemaWithTypeParameter() {
+    runTest("testData/box/extractDataSchemaWithTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("extractPluginSchemaWithUnfold.kt")
   public void testExtractPluginSchemaWithUnfold() {
     runTest("testData/box/extractPluginSchemaWithUnfold.kt");
