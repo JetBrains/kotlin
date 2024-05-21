@@ -86,6 +86,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     }
 
     /**
+     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
      * This function provides a type for a newly created EQUALS constraint on a fresh type variable,
      * for a situation when we have an explicit type argument and type parameter is a Java type parameter without known nullability.
      *
