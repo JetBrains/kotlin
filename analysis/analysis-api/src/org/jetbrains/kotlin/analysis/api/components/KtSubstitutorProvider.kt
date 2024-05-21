@@ -18,7 +18,7 @@ public abstract class KaSubstitutorProvider : KaSessionComponent() {
 
 public typealias KtSubstitutorProvider = KaSubstitutorProvider
 
-public interface KaSubstitutorProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaSubstitutorProviderMixIn : KaSessionMixIn {
     /**
      * Creates a [KaSubstitutor] based on the inheritance relationship between [subClass] and [superClass].
      *

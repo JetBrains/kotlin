@@ -24,7 +24,7 @@ public abstract class KaExpressionTypeProvider : KaSessionComponent() {
 
 public typealias KtExpressionTypeProvider = KaExpressionTypeProvider
 
-public interface KaExpressionTypeProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaExpressionTypeProviderMixIn : KaSessionMixIn {
     /**
      * Get type of given expression.
      *

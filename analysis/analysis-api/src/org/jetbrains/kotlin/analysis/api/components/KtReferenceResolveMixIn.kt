@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 
-public interface KaReferenceResolveMixIn : KaAnalysisSessionMixIn {
+public interface KaReferenceResolveMixIn : KaSessionMixIn {
     public fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
         return analysisSession.referenceResolveProvider.resolveToSymbols(this)
     }

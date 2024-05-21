@@ -15,7 +15,7 @@ public abstract class KaSubtypingComponent : KaSessionComponent() {
 
 public typealias KtSubtypingComponent = KaSubtypingComponent
 
-public interface KaSubtypingComponentMixIn : KaAnalysisSessionMixIn {
+public interface KaSubtypingComponentMixIn : KaSessionMixIn {
     public fun KaType.isEqualTo(other: KaType): Boolean =
         withValidityAssertion { analysisSession.subtypingComponent.isEqualTo(this, other, KaSubtypingErrorTypePolicy.STRICT) }
 

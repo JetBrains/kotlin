@@ -24,7 +24,7 @@ public abstract class KaSymbolContainingDeclarationProvider : KaSessionComponent
 
 public typealias KtSymbolContainingDeclarationProvider = KaSymbolContainingDeclarationProvider
 
-public interface KaSymbolContainingDeclarationProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaSymbolContainingDeclarationProviderMixIn : KaSessionMixIn {
     /**
      * Returns containing declaration for symbol:
      *   for top-level declarations returns null

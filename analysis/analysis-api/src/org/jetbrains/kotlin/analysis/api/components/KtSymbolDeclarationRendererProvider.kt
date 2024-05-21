@@ -25,7 +25,7 @@ public typealias KtSymbolDeclarationRendererProvider = KaSymbolDeclarationRender
 /**
  * Provides services for rendering Symbols and Types into the Kotlin strings
  */
-public interface KaSymbolDeclarationRendererMixIn : KaAnalysisSessionMixIn {
+public interface KaSymbolDeclarationRendererMixIn : KaSessionMixIn {
     /**
      * Render symbol into the representable Kotlin string
      */

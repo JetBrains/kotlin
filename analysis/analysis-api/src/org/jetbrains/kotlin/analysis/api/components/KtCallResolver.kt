@@ -20,7 +20,7 @@ public abstract class KaCallResolver : KaSessionComponent() {
 public typealias KtCallResolver = KaCallResolver
 
 @OptIn(KaAnalysisApiInternals::class)
-public interface KaCallResolverMixIn : KaAnalysisSessionMixIn {
+public interface KaCallResolverMixIn : KaSessionMixIn {
 
     public fun KtElement.resolveCall(): KaCallInfo? =
         withValidityAssertion { analysisSession.callResolver.resolveCall(this) }

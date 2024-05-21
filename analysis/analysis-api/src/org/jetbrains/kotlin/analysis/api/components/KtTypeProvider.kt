@@ -50,7 +50,7 @@ public abstract class KaTypeProvider : KaSessionComponent() {
 
 public typealias KtTypeProvider = KaTypeProvider
 
-public interface KaTypeProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaTypeProviderMixIn : KaSessionMixIn {
     public val builtinTypes: KaBuiltinTypes
         get() = withValidityAssertion { analysisSession.typeProvider.builtinTypes }
 

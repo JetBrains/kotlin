@@ -17,7 +17,7 @@ public abstract class KaDiagnosticProvider : KaSessionComponent() {
 
 public typealias KtDiagnosticProvider = KaDiagnosticProvider
 
-public interface KaDiagnosticProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaDiagnosticProviderMixIn : KaSessionMixIn {
     public fun KtElement.getDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> =
         withValidityAssertion { analysisSession.diagnosticProvider.getDiagnosticsForElement(this, filter) }
 

@@ -62,7 +62,7 @@ public abstract class KaScopeProvider : KaSessionComponent() {
 
 public typealias KtScopeProvider = KaScopeProvider
 
-public interface KaScopeProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaScopeProviderMixIn : KaSessionMixIn {
     /**
      * Returns a [KaScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
      * (classes and objects) of the given [KaSymbolWithMembers]. The scope includes members inherited from the symbol's supertypes, in

@@ -23,7 +23,7 @@ public abstract class KaOverrideInfoProvider : KaSessionComponent() {
 
 public typealias KtOverrideInfoProvider = KaOverrideInfoProvider
 
-public interface KaMemberSymbolProviderMixin : KaAnalysisSessionMixIn {
+public interface KaMemberSymbolProviderMixin : KaSessionMixIn {
 
     /** Checks if the given symbol (possibly a symbol inherited from a super class) is visible in the given class. */
     public fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassOrObjectSymbol): Boolean =

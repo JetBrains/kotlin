@@ -21,7 +21,7 @@ public abstract class KaDataFlowInfoProvider : KaSessionComponent() {
 public typealias KtDataFlowInfoProvider = KaDataFlowInfoProvider
 
 @KaAnalysisNonPublicApi
-public interface KaDataFlowInfoProviderMixin : KaAnalysisSessionMixIn {
+public interface KaDataFlowInfoProviderMixin : KaSessionMixIn {
     public fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot = withValidityAssertion {
         return analysisSession.dataFlowInfoProvider.getExitPointSnapshot(statements)
     }

@@ -30,7 +30,7 @@ public abstract class KaPsiTypeProvider : KaSessionComponent() {
 
 public typealias KtPsiTypeProvider = KaPsiTypeProvider
 
-public interface KaPsiTypeProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaPsiTypeProviderMixIn : KaSessionMixIn {
     /**
      * Converts the given [KaType] to [PsiType] under [useSitePosition] context.
      *

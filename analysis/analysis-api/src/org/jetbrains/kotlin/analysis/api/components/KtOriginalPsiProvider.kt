@@ -19,7 +19,7 @@ public abstract class KaOriginalPsiProvider : KaSessionComponent() {
 
 public typealias KtOriginalPsiProvider = KaOriginalPsiProvider
 
-public interface KaOriginalPsiProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaOriginalPsiProviderMixIn : KaSessionMixIn {
     /**
      * If [KtDeclaration] is a non-local declaration in a fake file analyzed in dependent session, returns the original declaration
      * for [this]. Otherwise, returns `null`.

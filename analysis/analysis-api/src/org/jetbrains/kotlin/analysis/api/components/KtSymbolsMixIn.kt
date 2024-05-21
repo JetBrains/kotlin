@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-public interface KaSymbolsMixIn : KaAnalysisSessionMixIn {
+public interface KaSymbolsMixIn : KaSessionMixIn {
     @Suppress("DEPRECATION")
     public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? = withValidityAssertion { restoreSymbol(analysisSession) }
 }

@@ -20,7 +20,7 @@ public abstract class KaKlibSourceFileNameProvider : KaSessionComponent() {
 public typealias KtKlibSourceFileNameProvider = KaKlibSourceFileNameProvider
 
 @KaAnalysisNonPublicApi
-public interface KaKlibSourceFileProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaKlibSourceFileProviderMixIn : KaSessionMixIn {
     /**
      * If [KtDeclaration] is a deserialized, klib based symbol, then information about the original
      * [SourceFile] might be retained.

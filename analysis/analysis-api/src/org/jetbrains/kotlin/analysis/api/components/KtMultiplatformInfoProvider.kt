@@ -14,7 +14,7 @@ public abstract class KaMultiplatformInfoProvider : KaSessionComponent() {
 
 public typealias KtMultiplatformInfoProvider = KaMultiplatformInfoProvider
 
-public interface KaMultiplatformInfoProviderMixin : KaAnalysisSessionMixIn {
+public interface KaMultiplatformInfoProviderMixin : KaSessionMixIn {
 
     /**
      * Gives expect symbol for the actual one if it is available.

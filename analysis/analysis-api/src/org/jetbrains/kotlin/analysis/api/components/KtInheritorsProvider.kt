@@ -16,7 +16,7 @@ public abstract class KaInheritorsProvider : KaSessionComponent() {
 
 public typealias KtInheritorsProvider = KaInheritorsProvider
 
-public interface KaInheritorsProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaInheritorsProviderMixIn : KaSessionMixIn {
     public fun KaNamedClassOrObjectSymbol.getSealedClassInheritors(): List<KaNamedClassOrObjectSymbol> =
         withValidityAssertion { analysisSession.inheritorsProvider.getInheritorsOfSealedClass(this) }
 

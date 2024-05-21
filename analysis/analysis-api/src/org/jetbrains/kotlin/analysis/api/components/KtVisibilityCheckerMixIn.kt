@@ -24,7 +24,7 @@ public abstract class KaVisibilityChecker : KaSessionComponent() {
 
 public typealias KtVisibilityChecker = KaVisibilityChecker
 
-public interface KaVisibilityCheckerMixIn : KaAnalysisSessionMixIn {
+public interface KaVisibilityCheckerMixIn : KaSessionMixIn {
     public fun isVisible(
         candidateSymbol: KaSymbolWithVisibility,
         useSiteFile: KaFileSymbol,

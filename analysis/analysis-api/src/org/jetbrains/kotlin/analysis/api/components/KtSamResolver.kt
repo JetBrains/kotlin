@@ -15,7 +15,7 @@ public abstract class KaSamResolver : KaSessionComponent() {
 
 public typealias KtSamResolver = KaSamResolver
 
-public interface KaSamResolverMixIn : KaAnalysisSessionMixIn {
+public interface KaSamResolverMixIn : KaSessionMixIn {
     /**
      * Returns [KaSamConstructorSymbol] if the given [KaClassLikeSymbol] is a functional interface type, a.k.a. SAM.
      */

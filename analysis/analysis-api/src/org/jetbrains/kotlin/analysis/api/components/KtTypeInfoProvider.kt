@@ -28,7 +28,7 @@ public abstract class KaTypeInfoProvider : KaSessionComponent() {
 
 public typealias KtTypeInfoProvider = KaTypeInfoProvider
 
-public interface KaTypeInfoProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaTypeInfoProviderMixIn : KaSessionMixIn {
     /**
      * Returns true if this type is denotable. A denotable type is a type that can be written in Kotlin by end users. See
      * https://kotlinlang.org/spec/type-system.html#type-kinds for more details.

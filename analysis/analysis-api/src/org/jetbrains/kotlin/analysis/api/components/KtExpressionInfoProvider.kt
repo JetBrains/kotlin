@@ -20,7 +20,7 @@ public abstract class KaExpressionInfoProvider : KaSessionComponent() {
 
 public typealias KtExpressionInfoProvider = KaExpressionInfoProvider
 
-public interface KaExpressionInfoProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaExpressionInfoProviderMixIn : KaSessionMixIn {
     public fun KtReturnExpression.getReturnTargetSymbol(): KaCallableSymbol? =
         withValidityAssertion { analysisSession.expressionInfoProvider.getReturnExpressionTargetSymbol(this) }
 

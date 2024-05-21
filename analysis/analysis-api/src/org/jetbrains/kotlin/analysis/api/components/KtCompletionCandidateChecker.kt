@@ -70,7 +70,7 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
 
 public typealias KtExtensionApplicabilityResult = KaExtensionApplicabilityResult
 
-public interface KaCompletionCandidateCheckerMixIn : KaAnalysisSessionMixIn {
+public interface KaCompletionCandidateCheckerMixIn : KaSessionMixIn {
     /**
      * Returns an extension applicability checker for the given context [nameExpression].
      * The function is meant to only be used for providing auto-completion for Kotlin in IntelliJ IDEA.

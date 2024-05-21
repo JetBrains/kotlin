@@ -22,7 +22,7 @@ public abstract class KaSymbolDeclarationOverridesProvider : KaSessionComponent(
 
 public typealias KtSymbolDeclarationOverridesProvider = KaSymbolDeclarationOverridesProvider
 
-public interface KaSymbolDeclarationOverridesProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaSymbolDeclarationOverridesProviderMixIn : KaSessionMixIn {
     /**
      * Return a list of **all** explicitly declared symbols that are overridden by symbol
      *

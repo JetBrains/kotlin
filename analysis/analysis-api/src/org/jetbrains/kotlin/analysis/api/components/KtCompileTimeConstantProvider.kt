@@ -41,7 +41,7 @@ public abstract class KaCompileTimeConstantProvider : KaSessionComponent() {
 
 public typealias KtCompileTimeConstantProvider = KaCompileTimeConstantProvider
 
-public interface KaCompileTimeConstantProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaCompileTimeConstantProviderMixIn : KaSessionMixIn {
     /**
      * Tries to evaluate the provided expression using the specified mode.
      * Returns a [KaConstantValue] if the expression evaluates to a compile-time constant, otherwise returns null..

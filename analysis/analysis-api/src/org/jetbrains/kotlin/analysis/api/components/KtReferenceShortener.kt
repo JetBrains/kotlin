@@ -126,7 +126,7 @@ public abstract class KaReferenceShortener : KaSessionComponent() {
 
 public typealias KtReferenceShortener = KaReferenceShortener
 
-public interface KaReferenceShortenerMixIn : KaAnalysisSessionMixIn {
+public interface KaReferenceShortenerMixIn : KaSessionMixIn {
 
     /**
      * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not

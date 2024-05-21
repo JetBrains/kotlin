@@ -17,7 +17,7 @@ public abstract class KaJvmTypeMapper : KaSessionComponent() {
 
 public typealias KtJvmTypeMapper = KaJvmTypeMapper
 
-public interface KaJvmTypeMapperMixIn : KaAnalysisSessionMixIn {
+public interface KaJvmTypeMapperMixIn : KaSessionMixIn {
     /**
      * Create ASM JVM type by corresponding KaType
      *

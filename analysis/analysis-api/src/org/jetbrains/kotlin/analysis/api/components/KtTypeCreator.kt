@@ -28,7 +28,7 @@ public abstract class KaTypeCreator : KaSessionComponent() {
 
 public typealias KtTypeCreator = KaTypeCreator
 
-public interface KaTypeCreatorMixIn : KaAnalysisSessionMixIn
+public interface KaTypeCreatorMixIn : KaSessionMixIn
 
 public typealias KtTypeCreatorMixIn = KaTypeCreatorMixIn
 

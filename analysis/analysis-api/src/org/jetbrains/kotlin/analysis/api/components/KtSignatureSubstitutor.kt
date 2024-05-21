@@ -35,7 +35,7 @@ public abstract class KaSignatureSubstitutor : KaSessionComponent() {
 
 public typealias KtSignatureSubstitutor = KaSignatureSubstitutor
 
-public interface KaSignatureSubstitutorMixIn : KaAnalysisSessionMixIn {
+public interface KaSignatureSubstitutorMixIn : KaSessionMixIn {
     /**
      * Applies a [substitutor] to the given symbol and return a signature with substituted types.
      *

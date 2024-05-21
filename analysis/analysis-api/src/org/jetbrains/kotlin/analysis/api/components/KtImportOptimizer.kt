@@ -20,7 +20,7 @@ public abstract class KaImportOptimizer : KaLifetimeOwner {
 
 public typealias KtImportOptimizer = KaImportOptimizer
 
-public interface KaImportOptimizerMixIn : KaAnalysisSessionMixIn {
+public interface KaImportOptimizerMixIn : KaSessionMixIn {
 
     /**
      * Takes [file] and inspects its imports and their usages,

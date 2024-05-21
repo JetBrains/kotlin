@@ -15,7 +15,7 @@ public abstract class KaScopeSubstitution : KaSessionComponent() {
 
 public typealias KtScopeSubstitution = KaScopeSubstitution
 
-public interface KaScopeSubstitutionMixIn : KaAnalysisSessionMixIn {
+public interface KaScopeSubstitutionMixIn : KaSessionMixIn {
     public fun KaTypeScope.getDeclarationScope(): KaScope =
         withValidityAssertion { analysisSession.scopeSubstitution.getDeclarationScope(this) }
 }

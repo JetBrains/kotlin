@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.components.KaAnalysisSessionMixIn
+import org.jetbrains.kotlin.analysis.api.components.KaSessionMixIn
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -70,7 +70,7 @@ public abstract class KaSymbolProvider : KaSessionComponent() {
 
 public typealias KtSymbolProvider = KaSymbolProvider
 
-public interface KaSymbolProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaSymbolProviderMixIn : KaSessionMixIn {
     public fun KtDeclaration.getSymbol(): KaDeclarationSymbol =
         withValidityAssertion { analysisSession.symbolProvider.getSymbol(this) }
 

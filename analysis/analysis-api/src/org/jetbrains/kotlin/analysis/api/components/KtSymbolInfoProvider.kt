@@ -28,7 +28,7 @@ public abstract class KaSymbolInfoProvider : KaSessionComponent() {
 
 public typealias KtSymbolInfoProvider = KaSymbolInfoProvider
 
-public interface KaSymbolInfoProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaSymbolInfoProviderMixIn : KaSessionMixIn {
     /**
      * Gets the deprecation status of the given symbol. Returns null if the symbol is not deprecated.
      */

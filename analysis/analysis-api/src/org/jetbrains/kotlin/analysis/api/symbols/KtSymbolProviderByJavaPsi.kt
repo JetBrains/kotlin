@@ -9,7 +9,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
-import org.jetbrains.kotlin.analysis.api.components.KaAnalysisSessionMixIn
+import org.jetbrains.kotlin.analysis.api.components.KaSessionMixIn
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 
 @KaAnalysisApiInternals
@@ -23,7 +23,7 @@ public abstract class KaSymbolProviderByJavaPsi : KaSessionComponent() {
 public typealias KtSymbolProviderByJavaPsi = KaSymbolProviderByJavaPsi
 
 @KaAnalysisApiInternals
-public interface KaSymbolProviderByJavaPsiMixIn : KaAnalysisSessionMixIn {
+public interface KaSymbolProviderByJavaPsiMixIn : KaSessionMixIn {
     public fun PsiClass.getNamedClassSymbol(): KaNamedClassOrObjectSymbol? =
         withValidityAssertion { analysisSession.symbolProviderByJavaPsi.getNamedClassSymbol(this) }
 

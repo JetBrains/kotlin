@@ -101,7 +101,7 @@ public abstract class KaCompilerFacility : KaSessionComponent() {
 
 public typealias KtCompilerFacility = KaCompilerFacility
 
-public interface KaCompilerFacilityMixIn : KaAnalysisSessionMixIn {
+public interface KaCompilerFacilityMixIn : KaSessionMixIn {
     /**
      * Compile the given [file] in-memory (without dumping the compiled binaries to a disk).
      *

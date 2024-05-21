@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 
-public interface KaAnalysisSessionMixIn : KaLifetimeOwner {
+public interface KaSessionMixIn : KaLifetimeOwner {
     public val analysisSession: KaSession
 }
 
-public typealias KtAnalysisSessionMixIn = KaAnalysisSessionMixIn
+public typealias KtAnalysisSessionMixIn = KaSessionMixIn

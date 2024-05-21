@@ -19,7 +19,7 @@ public abstract class KaSmartCastProvider : KaSessionComponent() {
 
 public typealias KtSmartCastProvider = KaSmartCastProvider
 
-public interface KaSmartCastProviderMixIn : KaAnalysisSessionMixIn {
+public interface KaSmartCastProviderMixIn : KaSessionMixIn {
     /**
      * Gets the smart-cast information of the given expression or null if the expression is not smart casted.
      */
