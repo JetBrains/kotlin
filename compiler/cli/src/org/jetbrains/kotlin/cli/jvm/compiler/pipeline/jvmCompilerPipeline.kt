@@ -37,7 +37,9 @@ import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.CodegenFactory
+import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -87,7 +89,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
     performanceManager?.notifyCompilerInitialized(0, 0, targetDescription)
 
     val project = projectEnvironment.project
-    FirAnalysisHandlerExtension.analyze(project, compilerConfiguration)?.let { return it }
+    FirAnalysisHandlerExtension.analyze(project, module, compilerConfiguration)?.let { return it }
 
     val moduleConfiguration = compilerConfiguration.copy().applyModuleProperties(module, buildFile).apply {
         put(JVMConfigurationKeys.FRIEND_PATHS, module.getFriendPaths())
@@ -207,7 +209,8 @@ fun FirResult.convertToIrAndActualizeForJvm(
 
 fun generateCodeFromIr(
     input: ModuleCompilerIrBackendInput,
-    environment: ModuleCompilerEnvironment
+    environment: ModuleCompilerEnvironment,
+    skipBodies: Boolean = false // TODO: make non-default
 ): ModuleCompilerOutput {
     // IR
     val codegenFactory = JvmIrCodegenFactory(
@@ -218,8 +221,12 @@ fun generateCodeFromIr(
 
     val dummyBindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
 
+    val builderFactory =
+        if (skipBodies) OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
+        else ClassBuilderFactories.BINARIES
+
     val generationState = GenerationState.Builder(
-        project, ClassBuilderFactories.BINARIES,
+        project, builderFactory,
         input.irModuleFragment.descriptor, dummyBindingContext, input.configuration
     ).targetId(
         input.targetId
@@ -262,7 +269,7 @@ fun generateCodeFromIr(
 
     performanceManager?.notifyGenerationFinished()
 
-    return ModuleCompilerOutput(generationState)
+    return ModuleCompilerOutput(generationState, builderFactory)
 }
 
 fun compileModuleToAnalyzedFir(

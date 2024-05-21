@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.extensions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
 
@@ -25,9 +26,9 @@ abstract class FirAnalysisHandlerExtension {
          * @see FirAnalysisHandlerExtension.isApplicable
          * @see FirAnalysisHandlerExtension.doAnalysis
          */
-        fun analyze(project: Project, configuration: CompilerConfiguration): Boolean? {
+        fun analyze(project: Project, module: Module, configuration: CompilerConfiguration): Boolean? {
             val extensions = FirAnalysisHandlerExtension.getInstances(project).filter { it.isApplicable(configuration) }
-            return if (extensions.isEmpty()) null else extensions.all { it.doAnalysis(configuration) }
+            return if (extensions.isEmpty()) null else extensions.all { it.doAnalysis(project, module, configuration) }
         }
     }
 
@@ -45,5 +46,5 @@ abstract class FirAnalysisHandlerExtension {
      * There can be different causes of failure, an incorrect configuration for example.
      * A failure means that there's no reason to continue building the project.
      */
-    abstract fun doAnalysis(configuration: CompilerConfiguration): Boolean
+    abstract fun doAnalysis(project: Project, module: Module, configuration: CompilerConfiguration): Boolean
 }
