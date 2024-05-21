@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 
-public abstract class KaAnalysisSessionComponent {
+public abstract class KaSessionComponent {
     protected abstract val analysisSession: KaSession
     protected open val token: KaLifetimeToken get() = analysisSession.token
 }
 
-public typealias KtAnalysisSessionComponent = KaAnalysisSessionComponent
+public typealias KtAnalysisSessionComponent = KaSessionComponent

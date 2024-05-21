@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.psi.KtExpression
 
-public abstract class KaVisibilityChecker : KaAnalysisSessionComponent() {
+public abstract class KaVisibilityChecker : KaSessionComponent() {
     public abstract fun isVisible(
         candidateSymbol: KaSymbolWithVisibility,
         useSiteFile: KaFileSymbol,

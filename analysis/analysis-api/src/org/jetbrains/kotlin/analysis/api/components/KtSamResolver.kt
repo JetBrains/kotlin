@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 
-public abstract class KaSamResolver : KaAnalysisSessionComponent() {
+public abstract class KaSamResolver : KaSessionComponent() {
     public abstract fun getSamConstructor(ktClassLikeSymbol: KaClassLikeSymbol): KaSamConstructorSymbol?
 }
 

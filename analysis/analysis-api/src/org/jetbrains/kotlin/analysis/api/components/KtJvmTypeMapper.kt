@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.org.objectweb.asm.Type
 
-public abstract class KaJvmTypeMapper : KaAnalysisSessionComponent() {
+public abstract class KaJvmTypeMapper : KaSessionComponent() {
     public abstract fun mapTypeToJvmType(type: KaType, mode: TypeMappingMode): Type
     public abstract fun isPrimitiveBacked(type: KaType): Boolean
 }

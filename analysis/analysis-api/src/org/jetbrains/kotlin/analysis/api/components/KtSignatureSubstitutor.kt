@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
-public abstract class KaSignatureSubstitutor : KaAnalysisSessionComponent() {
+public abstract class KaSignatureSubstitutor : KaSessionComponent() {
     public open fun <S : KaCallableSymbol> substitute(symbol: S, substitutor: KaSubstitutor): KaCallableSignature<S> = when (symbol) {
         is KaFunctionLikeSymbol -> substitute(symbol, substitutor)
         is KaVariableLikeSymbol -> substitute(symbol, substitutor)

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
 @KaAnalysisNonPublicApi
-public abstract class KaDataFlowInfoProvider : KaAnalysisSessionComponent() {
+public abstract class KaDataFlowInfoProvider : KaSessionComponent() {
     public abstract fun getExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot
 }
 

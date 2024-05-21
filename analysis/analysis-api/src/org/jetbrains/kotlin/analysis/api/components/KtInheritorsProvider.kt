@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 
-public abstract class KaInheritorsProvider : KaAnalysisSessionComponent() {
+public abstract class KaInheritorsProvider : KaSessionComponent() {
     public abstract fun getInheritorsOfSealedClass(classSymbol: KaNamedClassOrObjectSymbol): List<KaNamedClassOrObjectSymbol>
     public abstract fun getEnumEntries(classSymbol: KaNamedClassOrObjectSymbol): List<KaEnumEntrySymbol>
 }

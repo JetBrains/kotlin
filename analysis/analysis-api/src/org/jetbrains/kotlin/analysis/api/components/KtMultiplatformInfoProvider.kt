@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 
-public abstract class KaMultiplatformInfoProvider : KaAnalysisSessionComponent() {
+public abstract class KaMultiplatformInfoProvider : KaSessionComponent() {
     public abstract fun getExpectForActual(actual: KaDeclarationSymbol): List<KaDeclarationSymbol>
 }
 

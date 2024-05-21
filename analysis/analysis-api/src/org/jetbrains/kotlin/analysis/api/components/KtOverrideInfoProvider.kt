@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 
-public abstract class KaOverrideInfoProvider : KaAnalysisSessionComponent() {
+public abstract class KaOverrideInfoProvider : KaSessionComponent() {
     public abstract fun isVisible(memberSymbol: KaCallableSymbol, classSymbol: KaClassOrObjectSymbol): Boolean
     public abstract fun getImplementationStatus(
         memberSymbol: KaCallableSymbol,

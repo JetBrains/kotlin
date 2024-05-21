@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.psi.KtElement
 
-public abstract class KaResolveExtensionInfoProvider : KaAnalysisSessionComponent() {
+public abstract class KaResolveExtensionInfoProvider : KaSessionComponent() {
     public abstract fun getResolveExtensionScopeWithTopLevelDeclarations(): KaScope
     public abstract fun isResolveExtensionFile(file: VirtualFile): Boolean
     public abstract fun getResolveExtensionNavigationElements(originalPsi: KtElement): Collection<PsiElement>

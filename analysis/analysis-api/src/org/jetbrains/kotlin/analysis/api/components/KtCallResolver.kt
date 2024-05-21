@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.calls.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtElement
 
-public abstract class KaCallResolver : KaAnalysisSessionComponent() {
+public abstract class KaCallResolver : KaSessionComponent() {
     public abstract fun resolveCall(psi: KtElement): KaCallInfo?
 
     public abstract fun collectCallCandidates(psi: KtElement): List<KaCallCandidateInfo>

@@ -10,7 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 
-public abstract class KaAnalysisScopeProvider : KaAnalysisSessionComponent() {
+public abstract class KaAnalysisScopeProvider : KaSessionComponent() {
     public abstract fun getAnalysisScope(): GlobalSearchScope
 
     public abstract fun canBeAnalysed(psi: PsiElement): Boolean

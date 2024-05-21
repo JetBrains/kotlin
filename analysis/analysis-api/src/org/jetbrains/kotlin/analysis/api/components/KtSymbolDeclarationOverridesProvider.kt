@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
-public abstract class KaSymbolDeclarationOverridesProvider : KaAnalysisSessionComponent() {
+public abstract class KaSymbolDeclarationOverridesProvider : KaSessionComponent() {
     public abstract fun <T : KaSymbol> getAllOverriddenSymbols(callableSymbol: T): List<KaCallableSymbol>
     public abstract fun <T : KaSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): List<KaCallableSymbol>
 

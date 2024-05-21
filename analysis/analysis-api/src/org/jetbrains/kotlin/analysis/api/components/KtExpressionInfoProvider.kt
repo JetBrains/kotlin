@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
-public abstract class KaExpressionInfoProvider : KaAnalysisSessionComponent() {
+public abstract class KaExpressionInfoProvider : KaSessionComponent() {
     public abstract fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KaCallableSymbol?
     public abstract fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase>
     public abstract fun isUsedAsExpression(expression: KtExpression): Boolean

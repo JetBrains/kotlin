@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 @KaAnalysisNonPublicApi
-public abstract class KaMetadataCalculator : KaAnalysisSessionComponent() {
+public abstract class KaMetadataCalculator : KaSessionComponent() {
     public abstract fun calculateMetadata(ktClass: KtClassOrObject, mapping: Multimap<KtElement, PsiElement>): Metadata
 
     public abstract fun calculateMetadata(ktFile: KtFile, mapping: Multimap<KtElement, PsiElement>): Metadata

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 
-public abstract class KaSubstitutorProvider : KaAnalysisSessionComponent() {
+public abstract class KaSubstitutorProvider : KaSessionComponent() {
     public abstract fun createSubstitutor(
         subClass: KaClassOrObjectSymbol,
         superClass: KaClassOrObjectSymbol,

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 
-public abstract class KaExpressionTypeProvider : KaAnalysisSessionComponent() {
+public abstract class KaExpressionTypeProvider : KaSessionComponent() {
     public abstract fun getKtExpressionType(expression: KtExpression): KaType?
     public abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KaType
     public abstract fun getFunctionalTypeForKtFunction(declaration: KtFunction): KaType

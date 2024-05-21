@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
-public abstract class KaSymbolInfoProvider : KaAnalysisSessionComponent() {
+public abstract class KaSymbolInfoProvider : KaSessionComponent() {
     public abstract fun getDeprecation(symbol: KaSymbol): DeprecationInfo?
     public abstract fun getDeprecation(symbol: KaSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo?
     public abstract fun getGetterDeprecation(symbol: KaPropertySymbol): DeprecationInfo?

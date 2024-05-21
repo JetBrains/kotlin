@@ -80,7 +80,7 @@ public sealed class KaCompilerTarget {
 
 public typealias KtCompilerTarget = KaCompilerTarget
 
-public abstract class KaCompilerFacility : KaAnalysisSessionComponent() {
+public abstract class KaCompilerFacility : KaSessionComponent() {
     public companion object {
         /** Simple class name for the code fragment facade class. */
         public val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> =

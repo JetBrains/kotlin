@@ -114,7 +114,7 @@ public enum class ShortenStrategy {
     }
 }
 
-public abstract class KaReferenceShortener : KaAnalysisSessionComponent() {
+public abstract class KaReferenceShortener : KaSessionComponent() {
     public abstract fun collectShortenings(
         file: KtFile,
         selection: TextRange,

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
-public abstract class KaOriginalPsiProvider : KaAnalysisSessionComponent() {
+public abstract class KaOriginalPsiProvider : KaSessionComponent() {
     public abstract fun getOriginalDeclaration(declaration: KtDeclaration): KtDeclaration?
     public abstract fun getOriginalKtFile(file: KtFile): KtFile?
 

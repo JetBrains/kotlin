@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-public abstract class KaDiagnosticProvider : KaAnalysisSessionComponent() {
+public abstract class KaDiagnosticProvider : KaSessionComponent() {
     public abstract fun getDiagnosticsForElement(element: KtElement, filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
     public abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
 }

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.Objects
 
-public abstract class KaScopeProvider : KaAnalysisSessionComponent() {
+public abstract class KaScopeProvider : KaSessionComponent() {
     public abstract fun getMemberScope(classSymbol: KaSymbolWithMembers): KaScope
 
     public abstract fun getStaticMemberScope(symbol: KaSymbolWithMembers): KaScope

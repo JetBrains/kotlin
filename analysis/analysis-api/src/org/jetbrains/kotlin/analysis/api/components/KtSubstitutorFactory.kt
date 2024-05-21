@@ -17,7 +17,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-public abstract class KaSubstitutorFactory : KaAnalysisSessionComponent() {
+public abstract class KaSubstitutorFactory : KaSessionComponent() {
     public abstract fun buildSubstitutor(builder: KaSubstitutorBuilder): KaSubstitutor
 }
 

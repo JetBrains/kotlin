@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.types.Variance
 
-public abstract class KaSymbolDeclarationRendererProvider : KaAnalysisSessionComponent() {
+public abstract class KaSymbolDeclarationRendererProvider : KaSessionComponent() {
     public abstract fun renderDeclaration(symbol: KaDeclarationSymbol, renderer: KaDeclarationRenderer): String
 
     public abstract fun renderType(type: KaType, renderer: KaTypeRenderer, position: Variance): String

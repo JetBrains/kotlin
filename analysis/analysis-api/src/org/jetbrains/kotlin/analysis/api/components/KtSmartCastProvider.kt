@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 import java.util.Objects
 
-public abstract class KaSmartCastProvider : KaAnalysisSessionComponent() {
+public abstract class KaSmartCastProvider : KaSessionComponent() {
     public abstract fun getSmartCastedInfo(expression: KtExpression): KaSmartCastInfo?
     public abstract fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<KaImplicitReceiverSmartCast>
 }

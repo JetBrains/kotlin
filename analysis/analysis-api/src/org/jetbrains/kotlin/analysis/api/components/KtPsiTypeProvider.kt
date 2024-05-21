@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 
-public abstract class KaPsiTypeProvider : KaAnalysisSessionComponent() {
+public abstract class KaPsiTypeProvider : KaSessionComponent() {
     public abstract fun asPsiType(
         type: KaType,
         useSitePosition: PsiElement,

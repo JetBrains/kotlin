@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-public abstract class KaCompletionCandidateChecker : KaAnalysisSessionComponent() {
+public abstract class KaCompletionCandidateChecker : KaSessionComponent() {
     public abstract fun createExtensionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,

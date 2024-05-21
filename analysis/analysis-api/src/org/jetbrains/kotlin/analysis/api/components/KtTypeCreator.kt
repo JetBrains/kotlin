@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
-public abstract class KaTypeCreator : KaAnalysisSessionComponent() {
+public abstract class KaTypeCreator : KaSessionComponent() {
     public abstract fun buildClassType(builder: KaClassTypeBuilder): KaClassType
 
     public abstract fun buildTypeParameterType(builder: KaTypeParameterTypeBuilder): KaTypeParameterType

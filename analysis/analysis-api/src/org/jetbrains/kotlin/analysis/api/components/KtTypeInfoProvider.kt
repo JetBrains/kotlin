@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
 
-public abstract class KaTypeInfoProvider : KaAnalysisSessionComponent() {
+public abstract class KaTypeInfoProvider : KaSessionComponent() {
     public abstract fun isFunctionalInterfaceType(type: KaType): Boolean
     public abstract fun getFunctionClassKind(type: KaType): FunctionTypeKind?
     public abstract fun canBeNull(type: KaType): Boolean

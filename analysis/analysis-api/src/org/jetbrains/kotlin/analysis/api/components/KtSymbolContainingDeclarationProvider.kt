@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
-public abstract class KaSymbolContainingDeclarationProvider : KaAnalysisSessionComponent() {
+public abstract class KaSymbolContainingDeclarationProvider : KaSessionComponent() {
     public abstract fun getContainingDeclaration(symbol: KaSymbol): KaDeclarationSymbol?
 
     public abstract fun getContainingFileSymbol(symbol: KaSymbol): KaFileSymbol?

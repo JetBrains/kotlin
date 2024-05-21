@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 @KaAnalysisNonPublicApi
-public abstract class KaKlibSourceFileNameProvider : KaAnalysisSessionComponent() {
+public abstract class KaKlibSourceFileNameProvider : KaSessionComponent() {
     public abstract fun getKlibSourceFileName(declaration: KaDeclarationSymbol): String?
 }
 

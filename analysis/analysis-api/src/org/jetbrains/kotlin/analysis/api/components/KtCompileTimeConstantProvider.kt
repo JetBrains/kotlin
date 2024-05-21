@@ -30,7 +30,7 @@ public enum class KaConstantEvaluationMode {
 
 public typealias KtConstantEvaluationMode = KaConstantEvaluationMode
 
-public abstract class KaCompileTimeConstantProvider : KaAnalysisSessionComponent() {
+public abstract class KaCompileTimeConstantProvider : KaSessionComponent() {
     public abstract fun evaluate(
         expression: KtExpression,
         mode: KaConstantEvaluationMode,

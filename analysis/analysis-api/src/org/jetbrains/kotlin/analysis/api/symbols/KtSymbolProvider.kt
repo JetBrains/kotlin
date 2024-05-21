@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaAnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.components.KaAnalysisSessionMixIn
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-public abstract class KaSymbolProvider : KaAnalysisSessionComponent() {
+public abstract class KaSymbolProvider : KaSessionComponent() {
     public open fun getSymbol(psi: KtDeclaration): KaDeclarationSymbol = when (psi) {
         is KtParameter -> getParameterSymbol(psi)
         is KtNamedFunction -> getFunctionLikeSymbol(psi)

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 
-public abstract class KaScopeSubstitution : KaAnalysisSessionComponent() {
+public abstract class KaScopeSubstitution : KaSessionComponent() {
     public abstract fun getDeclarationScope(scope: KaTypeScope): KaScope
 }
 

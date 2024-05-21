@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 
-public abstract class KaTypeProvider : KaAnalysisSessionComponent() {
+public abstract class KaTypeProvider : KaSessionComponent() {
     public abstract val builtinTypes: KaBuiltinTypes
 
     public abstract fun approximateToSuperPublicDenotableType(type: KaType, approximateLocalTypes: Boolean): KaType?
