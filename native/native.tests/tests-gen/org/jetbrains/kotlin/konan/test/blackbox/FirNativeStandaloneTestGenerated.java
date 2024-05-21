@@ -455,5 +455,11 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
     public void testUnhandledExceptionInWorkerExecuteQuiet() {
       runTest("native/native.tests/testData/standalone/termination/unhandledExceptionInWorkerExecuteQuiet.kt");
     }
+
+    @Test
+    @TestMetadata("unhandledObjCAllocationException.kt")
+    public void testUnhandledObjCAllocationException() {
+      runTest("native/native.tests/testData/standalone/termination/unhandledObjCAllocationException.kt");
+    }
   }
 }

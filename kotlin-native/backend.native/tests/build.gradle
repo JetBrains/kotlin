@@ -266,13 +266,6 @@ createInterop("kt43502") {
     }
 }
 
-standaloneTest("interop_objc_allocException") {
-    disabled = !PlatformInfo.isAppleTarget(project)
-    expectedExitStatus = 0
-    source = "interop/objc/allocException.kt"
-    UtilsKt.dependsOnPlatformLibs(it)
-}
-
 dynamicTest("interop_kt43502") {
     interop = "kt43502"
     source = "interop/kt43502/main.kt"
