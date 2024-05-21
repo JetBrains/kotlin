@@ -145,7 +145,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #define _GLIBCXX_GTHREAD_USE_WEAK 1
 #endif
 #endif
-#include <bits/gthr-default.h>
+#include <bits/gthr-posix.h>
 
 #ifndef _GLIBCXX_HIDE_EXPORTS
 #pragma GCC visibility pop

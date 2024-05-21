@@ -115,13 +115,16 @@
 # define _GLIBCXX14_DEPRECATED_SUGGEST(ALT)
 #endif
 
-#if defined(__DEPRECATED) && (__cplusplus >= 201703L)
-# define _GLIBCXX17_DEPRECATED [[__deprecated__]]
-# define _GLIBCXX17_DEPRECATED_SUGGEST(ALT) _GLIBCXX_DEPRECATED_SUGGEST(ALT)
-#else
-# define _GLIBCXX17_DEPRECATED
-# define _GLIBCXX17_DEPRECATED_SUGGEST(ALT)
-#endif
+//#if defined(__DEPRECATED) && (__cplusplus >= 201703L)
+//# define _GLIBCXX17_DEPRECATED [[__deprecated__]]
+//# define _GLIBCXX17_DEPRECATED_SUGGEST(ALT) _GLIBCXX_DEPRECATED_SUGGEST(ALT)
+//#else
+//# define _GLIBCXX17_DEPRECATED
+//# define _GLIBCXX17_DEPRECATED_SUGGEST(ALT)
+//#endif
+
+#define _GLIBCXX17_DEPRECATED
+#define _GLIBCXX17_DEPRECATED_SUGGEST(ALT)
 
 #if defined(__DEPRECATED) && (__cplusplus >= 202002L)
 # define _GLIBCXX20_DEPRECATED(MSG) [[deprecated(MSG)]]
@@ -1688,7 +1691,7 @@ namespace std
 #define _GLIBCXX_FULLY_DYNAMIC_STRING 0
 
 /* Define if gthreads library is available. */
-/* #undef _GLIBCXX_HAS_GTHREADS */
+#define _GLIBCXX_HAS_GTHREADS 1
 
 /* Define to 1 if a full hosted library is built, or 0 if freestanding. */
 #define _GLIBCXX_HOSTED 1

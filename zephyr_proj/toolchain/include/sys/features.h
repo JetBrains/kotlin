@@ -531,6 +531,12 @@ extern "C" {
 
 #endif /* __CYGWIN__ */
 
+
+/* ZEPHYR */
+#define _POSIX_THREADS				1
+#define _POSIX_TIMEOUTS				1
+#define _UNIX98_THREAD_MUTEX_ATTRIBUTES 1
+
 #ifdef __cplusplus
 }
 #endif
