@@ -204,8 +204,6 @@ class IrBuiltInsOverFir(
         IntrinsicConstAnnotation(classSymbol, annotationCall)
     }
 
-    internal val intrinsicConstSymbol: IrClassSymbol
-        get() = intrinsicConst.classSymbol
     private val intrinsicConstAnnotation: IrConstructorCall
         get() = intrinsicConst.annotationCall
 
