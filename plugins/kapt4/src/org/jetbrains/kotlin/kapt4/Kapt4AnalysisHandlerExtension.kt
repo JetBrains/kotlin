@@ -5,46 +5,63 @@
 
 package org.jetbrains.kotlin.kapt4
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
+import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.GroupedKtSources
+import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil.formatOutputMessage
+import org.jetbrains.kotlin.cli.common.output.writeAll
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt3.EfficientProcessorLoader
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
+import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.*
-import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
+import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
+import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt3.base.util.info
 import org.jetbrains.kotlin.kapt3.measureTimeMillis
+import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
+import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
+import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.utils.metadataVersion
+import org.jetbrains.kotlin.modules.*
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.io.File
 
 private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
+    lateinit var logger: MessageCollectorBackedKaptLogger
+    lateinit var options: KaptOptions
+
     override fun isApplicable(configuration: CompilerConfiguration): Boolean {
         return configuration[KAPT_OPTIONS] != null && configuration.getBoolean(USE_FIR)
     }
 
-    @OptIn(KtAnalysisApiInternals::class)
-    override fun doAnalysis(configuration: CompilerConfiguration): Boolean {
+    override fun doAnalysis(project: Project, module: Module, configuration: CompilerConfiguration): Boolean {
         val optionsBuilder = configuration[KAPT_OPTIONS]!!
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val logger = MessageCollectorBackedKaptLogger(
+        logger = MessageCollectorBackedKaptLogger(
             KaptFlag.VERBOSE in optionsBuilder.flags,
             KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
             messageCollector
@@ -53,6 +70,20 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         if (optionsBuilder.mode == AptMode.WITH_COMPILATION) {
             logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
             return false
+        }
+
+        optionsBuilder.apply {
+            projectBaseDir = projectBaseDir ?: project.basePath?.let(::File)
+            val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
+            compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
+            javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
+            classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
+        }
+
+        if (!optionsBuilder.checkOptions(logger, configuration)) return false
+        options = optionsBuilder.build()
+        if (options[KaptFlag.VERBOSE]) {
+            logger.info(options.logString())
         }
 
         val oldLanguageVersionSettings = configuration.languageVersionSettings
@@ -67,83 +98,210 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             }
         }
 
-        val projectDisposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project")
-        try {
-            val standaloneAnalysisAPISession =
-                buildStandaloneAnalysisAPISession(
-                    projectDisposable = projectDisposable,
-                    classLoader = Kapt4AnalysisHandlerExtension::class.java.classLoader) {
-                    @Suppress("DEPRECATION") // TODO: KT-61319 Kapt: remove usages of deprecated buildKtModuleProviderByCompilerConfiguration
-                    buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
-
-                    registerProjectService(KtCompilerPluginsProvider::class.java, object : KtCompilerPluginsProvider() {
-                        private val extensionStorage = CompilerPluginRegistrar.ExtensionStorage().apply {
-                            for (registrar in updatedConfiguration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {
-                                with(registrar) { registerExtensions(updatedConfiguration) }
-                            }
-                        }
-
-                        override fun <T : Any> getRegisteredExtensions(
-                            module: KtSourceModule,
-                            extensionType: ProjectExtensionDescriptor<T>,
-                        ): List<T> {
-                            @Suppress("UNCHECKED_CAST")
-                            return (extensionStorage.registeredExtensions[extensionType] as? List<T>) ?: emptyList()
-                        }
-
-                        override fun isPluginOfTypeRegistered(module: KtSourceModule, pluginType: CompilerPluginType): Boolean = false
-                    })
-                }
-
-            val (module, files) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
-
-            optionsBuilder.apply {
-                projectBaseDir = projectBaseDir ?: module.project.basePath?.let(::File)
-                val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
-                compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
-                javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
-                classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
-            }
-
-            if (!optionsBuilder.checkOptions(logger, configuration)) return false
-            val options = optionsBuilder.build()
-            if (options[KaptFlag.VERBOSE]) {
-                logger.info(options.logString())
-            }
-
-            return try {
-                if (options.mode.generateStubs) {
-                    generateAndSaveStubs(
-                        module,
-                        files,
-                        options,
-                        logger,
-                        configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES),
-                        configuration.metadataVersion()
-                    )
-
-                }
-                if (options.mode.runAnnotationProcessing) {
-                    KaptContext(
-                        options,
-                        false,
-                        logger
-                    ).use { context ->
-                        try {
-                            runProcessors(context, options)
-                        } catch (e: KaptBaseError) {
-                            return false
-                        }
-                    }
-                }
-                true
-            } catch (e: Exception) {
-                logger.exception(e)
-                false
-            }
-        } finally {
-            Disposer.dispose(projectDisposable)
+        val groupedSources: GroupedKtSources = collectSources(updatedConfiguration, project, messageCollector)
+        if (messageCollector.hasErrors()) {
+            return false
         }
+
+        logger.info { "Kotlin files to compile: ${groupedSources.commonSources.map { it.name } + groupedSources.platformSources.map { it.name }}" }
+
+        val compilerInput = ModuleCompilerInput(
+            TargetId(module),
+            groupedSources,
+            CommonPlatforms.defaultCommonPlatform,
+            JvmPlatforms.unspecifiedJvmPlatform,
+            updatedConfiguration
+        )
+
+        val projectDisposable = Disposer.newDisposable("K2KaptSession.project")
+        val projectEnvironment =
+            createProjectEnvironment(configuration, projectDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
+        if (messageCollector.hasErrors()) {
+            return false
+        }
+
+        val diagnosticsReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
+
+        val (analysisTime, analysisResults) = measureTimeMillis {
+            compileModuleToAnalyzedFir(
+                compilerInput,
+                projectEnvironment,
+                emptyList(),
+                null,
+                diagnosticsReporter,
+            )
+        }
+
+        logger.info { "Initial analysis took $analysisTime ms" }
+
+        val (classFilesCompilationTime, codegenOutput) = measureTimeMillis {
+            val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
+            val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
+
+            generateCodeFromIr(irInput, compilerEnvironment, skipBodies = true)
+        }
+
+        val builderFactory = codegenOutput.builderFactory
+        val compiledClasses = (builderFactory as OriginCollectingClassBuilderFactory).compiledClasses
+        val origins = builderFactory.origins
+
+        logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
+        logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
+
+        KaptContextForStubGeneration(options, false, logger, compiledClasses, origins, codegenOutput.generationState).use { context ->
+            generateKotlinSourceStubs(context)
+        }
+
+        return true
+
+//        val projectDisposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project")
+//        try {
+//            val standaloneAnalysisAPISession =
+//                buildStandaloneAnalysisAPISession(
+//                    projectDisposable = projectDisposable,
+//                    classLoader = Kapt4AnalysisHandlerExtension::class.java.classLoader) {
+//                    @Suppress("DEPRECATION") // TODO: KT-61319 Kapt: remove usages of deprecated buildKtModuleProviderByCompilerConfiguration
+//                    buildKtModuleProviderByCompilerConfiguration(updatedConfiguration)
+//
+//                    registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+//                    registerProjectService(KtCompilerPluginsProvider::class.java, object : KtCompilerPluginsProvider() {
+//                        private val extensionStorage = CompilerPluginRegistrar.ExtensionStorage().apply {
+//                            for (registrar in updatedConfiguration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {
+//                                with(registrar) { registerExtensions(updatedConfiguration) }
+//                            }
+//                        }
+//
+//                        override fun <T : Any> getRegisteredExtensions(
+//                            module: KtSourceModule,
+//                            extensionType: ProjectExtensionDescriptor<T>,
+//                        ): List<T> {
+//                            @Suppress("UNCHECKED_CAST")
+//                            return (extensionStorage.registeredExtensions[extensionType] as? List<T>) ?: emptyList()
+//                        }
+//
+//                        override fun isPluginOfTypeRegistered(module: KtSourceModule, pluginType: CompilerPluginType): Boolean = false
+//                    })
+//                }
+//
+//            val (module, files) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
+//
+//            optionsBuilder.apply {
+//                projectBaseDir = projectBaseDir ?: module.project.basePath?.let(::File)
+//                val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
+//                compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
+//                javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
+//                classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
+//            }
+//
+//            if (!optionsBuilder.checkOptions(logger, configuration)) return false
+//            val options = optionsBuilder.build()
+//            if (options[KaptFlag.VERBOSE]) {
+//                logger.info(options.logString())
+//            }
+//
+//            return try {
+//                if (options.mode.generateStubs) {
+//                    generateAndSaveStubs(
+//                        module,
+//                        files,
+//                        options,
+//                        logger,
+//                        configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES),
+//                        configuration.metadataVersion()
+//                    )
+//
+//                }
+//                if (options.mode.runAnnotationProcessing) {
+//                    KaptContext(
+//                        options,
+//                        false,
+//                        logger
+//                    ).use { context ->
+//                        try {
+//                            runProcessors(context, options)
+//                        } catch (e: KaptBaseError) {
+//                            return false
+//                        }
+//                    }
+//                }
+//                true
+//            } catch (e: Exception) {
+//                logger.exception(e)
+//                false
+//            }
+//        } finally {
+//            Disposer.dispose(projectDisposable)
+//        }
+    }
+
+    private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {
+        val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass = true)
+
+        val (stubGenerationTime, kaptStubs) = measureTimeMillis {
+            converter.convert()
+        }
+
+        logger.info { "Java stub generation took $stubGenerationTime ms" }
+        logger.info { "Stubs for Kotlin classes: " + kaptStubs.joinToString { it.file.sourcefile.name } }
+
+        saveStubs(kaptContext, kaptStubs, logger.messageCollector)
+        saveIncrementalData(kaptContext, logger.messageCollector)
+    }
+
+    private fun saveStubs(
+        kaptContext: KaptContextForStubGeneration,
+        stubs: List<KaptStub>,
+        messageCollector: MessageCollector,
+    ) {
+        val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
+        val outputFiles = if (reportOutputFiles) kaptContext.generationState.factory.asList().associateBy {
+            it.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")
+        } else null
+
+        for (kaptStub in stubs) {
+            val stub = kaptStub.file
+            val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
+
+            val packageName = stub.getPackageNameJava9Aware()?.toString() ?: ""
+            val packageDir =
+                if (packageName.isEmpty()) options.stubsOutputDir else File(options.stubsOutputDir, packageName.replace('.', '/'))
+            packageDir.mkdirs()
+
+            val sourceFile = File(packageDir, "$className.java")
+            val classFilePathWithoutExtension = if (packageName.isEmpty()) {
+                className
+            } else {
+                "${packageName.replace('.', '/')}/$className"
+            }
+
+            fun reportStubsOutputForIC(generatedFile: File) {
+                if (!reportOutputFiles) return
+                if (classFilePathWithoutExtension == "error/NonExistentClass") return
+                val sourceFiles = (outputFiles?.get(classFilePathWithoutExtension)
+                    ?: error("The `outputFiles` map is not properly initialized (key = $classFilePathWithoutExtension)")).sourceFiles
+                messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sourceFiles, generatedFile))
+            }
+
+            reportStubsOutputForIC(sourceFile)
+            sourceFile.writeText(stub.prettyPrint(kaptContext.context))
+
+            kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
+        }
+    }
+
+    private fun saveIncrementalData(
+        kaptContext: KaptContextForStubGeneration,
+        messageCollector: MessageCollector
+    ) {
+        val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
+
+        val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
+        kaptContext.generationState.factory.writeAll(
+            incrementalDataOutputDir,
+            if (!reportOutputFiles) null else fun(sources: List<File>, output: File) {
+                messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
+            }
+        )
     }
 
     private fun generateAndSaveStubs(
@@ -238,6 +396,8 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 class Kapt4CompilerPluginRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         if (!configuration.getBoolean(USE_FIR)) return
+
+        doOpenInternalPackagesIfRequired()
 
         FirAnalysisHandlerExtension.registerExtension(Kapt4AnalysisHandlerExtension())
     }

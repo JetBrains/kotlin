@@ -10,6 +10,8 @@ plugins {
 dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:plugin-api"))
+    compileOnly(project(":compiler:cli"))
+    compileOnly(toolsJarApi())
     implementation(project(":kotlin-annotation-processing-compiler"))
     compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":analysis:analysis-api-standalone"))

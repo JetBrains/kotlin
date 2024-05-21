@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
 
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.cli.common.GroupedKtSources
+import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -37,7 +38,8 @@ data class ModuleCompilerEnvironment(
 )
 
 data class ModuleCompilerOutput(
-    val generationState: GenerationState
+    val generationState: GenerationState,
+    val builderFactory: ClassBuilderFactory
 )
 
 data class ModuleCompilerIrBackendInput(

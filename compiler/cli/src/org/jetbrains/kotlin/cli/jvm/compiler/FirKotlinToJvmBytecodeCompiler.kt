@@ -91,7 +91,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
 
         val project = projectEnvironment.project
-        FirAnalysisHandlerExtension.analyze(project, compilerConfiguration)?.let { return it }
+        FirAnalysisHandlerExtension.analyze(project, module, compilerConfiguration)?.let { return it }
 
         val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
         val context = CompilationContext(
