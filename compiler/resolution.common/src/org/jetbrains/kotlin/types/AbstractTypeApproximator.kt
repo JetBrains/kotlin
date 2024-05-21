@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.concurrent.ConcurrentHashMap
 
@@ -596,17 +597,8 @@ abstract class AbstractTypeApproximator(
                      * Inv<in Foo> <: Inv<in subType(Foo)>
                      */
                     val approximatedArgument = if (isApproximateDirectionToSuper(effectiveVariance, toSuper)) {
-                        val approximatedType = approximateToSuperType(argumentType, conf, depth)?.let {
-                            if (isK2 &&
-                                !conf.flexible &&
-                                argumentType.hasFlexibleNullability() &&
-                                parameter.getUpperBounds().any { b -> !b.isNullableType() }
-                            ) {
-                                it.withNullability(false)
-                            } else {
-                                it
-                            }
-                        }
+                        val approximatedType = approximateToSuperType(argumentType, conf, depth)
+                            ?.makeApproximatedFlexibleNotNullIfUpperBoundNotNull(argumentType, parameter, conf)
 
                         if (conf.intersection == TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
                             && argumentType.typeConstructor().isIntersection()
@@ -690,8 +682,9 @@ abstract class AbstractTypeApproximator(
                     //  Inv<In<C>> <: Inv<in In<Any?>>
                     //
                     // So, both of the options are possible, but since such case is rare we will chose Inv<out In<Int>> for now
-                    val approximatedSuperType =
-                        approximateToSuperType(argumentType, conf, depth) ?: continue@loop // null means that this type we can leave as is
+                    val approximatedSuperType = approximateToSuperType(argumentType, conf, depth)
+                        ?.makeApproximatedFlexibleNotNullIfUpperBoundNotNull(argumentType, parameter, conf)
+                        ?: continue@loop // null means that this type we can leave as is
                     if (approximatedSuperType.isTrivialSuper()) {
                         val approximatedSubType =
                             approximateToSubType(argumentType, conf, depth) ?: continue@loop // seems like this is never null
@@ -715,6 +708,27 @@ abstract class AbstractTypeApproximator(
         val newArgumentsList = List(type.argumentsCount()) { index -> newArguments[index] ?: type.getArgument(index) }
         val approximatedType = type.replaceArguments(newArgumentsList)
         return approximateLocalTypes(approximatedType, conf, toSuper, depth) ?: approximatedType
+    }
+
+    private fun KotlinTypeMarker.makeApproximatedFlexibleNotNullIfUpperBoundNotNull(
+        nonApproximatedType: KotlinTypeMarker,
+        parameter: TypeParameterMarker,
+        conf: TypeApproximatorConfiguration,
+    ): KotlinTypeMarker {
+        if (!isK2 || conf.flexible) {
+            return this
+        }
+
+        return applyIf(
+            nonApproximatedType.isFlexibleOrCapturedWithFlexibleSuperTypes() &&
+                    parameter.getUpperBounds().any { b -> !b.isNullableType() }) {
+            withNullability(false)
+        }
+    }
+
+    private fun KotlinTypeMarker.isFlexibleOrCapturedWithFlexibleSuperTypes(): Boolean {
+        return hasFlexibleNullability() ||
+                (asSimpleType()?.asCapturedType()?.typeConstructor()?.supertypes()?.all { it.hasFlexibleNullability() } == true)
     }
 
     private fun shouldUseSubTypeForCapturedArgument(
