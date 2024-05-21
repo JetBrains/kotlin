@@ -42633,6 +42633,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       public void testSmartCastAndSuppressedVisibility() {
         runTest("compiler/testData/diagnostics/tests/visibility/smartCastAndSuppressedVisibility.kt");
       }
+
+      @Test
+      @TestMetadata("visibleDeclarationThroughInvisibleTypeAlias.kt")
+      public void testVisibleDeclarationThroughInvisibleTypeAlias() {
+        runTest("compiler/testData/diagnostics/tests/visibility/visibleDeclarationThroughInvisibleTypeAlias.kt");
+      }
     }
 
     @Nested
