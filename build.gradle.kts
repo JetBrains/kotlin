@@ -897,6 +897,7 @@ tasks {
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
         dependsOn(":kotlin-util-klib-abi:test")
+        dependsOn(":kotlinx-metadata-klib:test")
         dependsOn(":generators:test")
     }
 
