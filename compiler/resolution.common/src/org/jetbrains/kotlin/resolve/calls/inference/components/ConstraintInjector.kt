@@ -416,7 +416,8 @@ class ConstraintInjector(
                 )
 
             if (!isSubtypeOf(upperType)) {
-                // todo improve error reporting -- add information about base types
+                // TODO: Get rid of this additional workarounds for flexible types once KT-59138 is fixed and
+                //  the relevant feature for disabling it will be removed.
                 if (shouldTryUseDifferentFlexibilityForUpperType && upperType.isSimpleType()) {
                     /*
                      * Please don't reuse this logic.
