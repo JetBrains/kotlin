@@ -117,6 +117,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(KtTestUtil.getJdk8Home().getAbsolutePath().replace("\\", "/"), "$JDK_1_8")
                 .replace(KtTestUtil.getJdk11Home().getAbsolutePath().replace("\\", "/"), "$JDK_11")
                 .replace(KtTestUtil.getJdk17Home().getAbsolutePath().replace("\\", "/"), "$JDK_17")
+                .replace(KtTestUtil.getJdk21Home().getAbsolutePath().replace("\\", "/"), "$JDK_21")
                 .replaceAll("info: executable production duration: \\d+ms", "info: executable production duration: [time]")
                 .replace(KotlinCompilerVersion.VERSION, "$VERSION$")
                 .replace(System.getProperty("java.runtime.version"), "$JVM_VERSION$")
@@ -252,8 +253,14 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             return null;
         }
 
-        if (arg.equals("$JDK_1_8")) return KtTestUtil.getJdk8Home().getAbsolutePath();
-        if (arg.equals("$JDK_11_0")) return KtTestUtil.getJdk11Home().getAbsolutePath();
+        switch (arg) {
+            case "$JDK_1_8":
+                return KtTestUtil.getJdk8Home().getAbsolutePath();
+            case "$JDK_11_0":
+                return KtTestUtil.getJdk11Home().getAbsolutePath();
+            case "$JDK_21":
+                return KtTestUtil.getJdk21Home().getAbsolutePath();
+        }
 
         String argWithColonsReplaced = arg
                 .replace("\\:", "$COLON$")

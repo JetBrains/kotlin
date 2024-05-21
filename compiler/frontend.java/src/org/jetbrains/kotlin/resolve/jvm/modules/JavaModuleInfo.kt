@@ -112,7 +112,7 @@ class JavaModuleInfo(
                 }, ClassReader.SKIP_DEBUG or ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES)
             } catch (e: Exception) {
                 throw IllegalStateException(
-                    "Could not load module definition from: $file. The file might be broken " +
+                    "Could not load module definition from: ${file.canonicalPath}. The file might be broken " +
                             "by incorrect post-processing via bytecode tools. Please remove this file from the classpath.",
                     e
                 )
