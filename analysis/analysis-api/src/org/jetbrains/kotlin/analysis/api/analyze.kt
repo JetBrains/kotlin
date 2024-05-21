@@ -27,7 +27,7 @@ public inline fun <R> analyze(
     action: KaSession.() -> R
 ): R =
     KaSessionProvider.getInstance(useSiteKtElement.project)
-        .analyse(useSiteKtElement, action)
+        .analyze(useSiteKtElement, action)
 
 /**
  * Executes the given [action] in a [KaSession] context.

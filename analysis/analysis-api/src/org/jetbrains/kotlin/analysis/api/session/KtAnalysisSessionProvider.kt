@@ -32,7 +32,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     // compatibility, their implementations should not be changed unless absolutely necessary. It should be possible to put most
     // functionality into `beforeEnteringAnalysis` and/or `afterLeavingAnalysis`.
 
-    public inline fun <R> analyse(
+    public inline fun <R> analyze(
         useSiteKtElement: KtElement,
         action: KaSession.() -> R,
     ): R {
@@ -61,33 +61,33 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
     }
 
     /**
-     * [beforeEnteringAnalysis] hooks into analysis *before* [analyse]'s action is executed.
+     * [beforeEnteringAnalysis] hooks into analysis *before* [analyze]'s action is executed.
      *
-     * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyse] is inlined.
+     * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
     @KaAnalysisApiInternals
     public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteElement: KtElement)
 
     /**
-     * [beforeEnteringAnalysis] hooks into analysis *before* [analyse]'s action is executed.
+     * [beforeEnteringAnalysis] hooks into analysis *before* [analyze]'s action is executed.
      *
-     * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyse] is inlined.
+     * The signature of [beforeEnteringAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
     @KaAnalysisApiInternals
     public abstract fun beforeEnteringAnalysis(session: KaSession, useSiteModule: KtModule)
 
     /**
-     * [afterLeavingAnalysis] hooks into analysis *after* [analyse]'s action has been executed.
+     * [afterLeavingAnalysis] hooks into analysis *after* [analyze]'s action has been executed.
      *
-     * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyse] is inlined.
+     * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
     @KaAnalysisApiInternals
     public abstract fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement)
 
     /**
-     * [afterLeavingAnalysis] hooks into analysis *after* [analyse]'s action has been executed.
+     * [afterLeavingAnalysis] hooks into analysis *after* [analyze]'s action has been executed.
      *
-     * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyse] is inlined.
+     * The signature of [afterLeavingAnalysis] should be kept stable to avoid breaking binary compatibility, since [analyze] is inlined.
      */
     @KaAnalysisApiInternals
     public abstract fun afterLeavingAnalysis(session: KaSession, useSiteModule: KtModule)
