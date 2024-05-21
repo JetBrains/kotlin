@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.isValid
-import org.jetbrains.kotlin.analysis.api.session.KaAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -17,7 +17,7 @@ abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalida
     override val resultFileSuffix: String get() = "analysis_session"
 
     override fun getSession(ktModule: KtModule) =
-        KaAnalysisSessionProvider.getInstance(ktModule.project).getAnalysisSessionByUseSiteKtModule(ktModule)
+        KaSessionProvider.getInstance(ktModule.project).getAnalysisSessionByUseSiteKtModule(ktModule)
 
     override fun getSessionKtModule(session: KaSession): KtModule = session.useSiteModule
     override fun isSessionValid(session: KaSession): Boolean = session.isValid()

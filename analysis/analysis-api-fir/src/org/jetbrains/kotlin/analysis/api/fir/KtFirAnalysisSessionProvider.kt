@@ -12,7 +12,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.KaReadActionConfinementLifetimeToken
-import org.jetbrains.kotlin.analysis.api.session.KaAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService
@@ -26,10 +26,10 @@ import java.util.concurrent.ConcurrentMap
 import kotlin.reflect.KClass
 
 /**
- * [KaFirAnalysisSessionProvider] keeps [KaFirSession]s in a cache, which are actively invalidated with their associated underlying
+ * [KaFirSessionProvider] keeps [KaFirSession]s in a cache, which are actively invalidated with their associated underlying
  * [LLFirSession][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession]s.
  */
-internal class KaFirAnalysisSessionProvider(project: Project) : KaAnalysisSessionProvider(project) {
+internal class KaFirSessionProvider(project: Project) : KaSessionProvider(project) {
     // `KaFirSession`s must be soft-referenced to allow simultaneous garbage collection of an unused `KaFirSession` together
     // with its `LLFirSession`.
     private val cache: ConcurrentMap<KtModule, KaSession> = ContainerUtil.createConcurrentSoftValueMap()
@@ -68,9 +68,9 @@ internal class KaFirAnalysisSessionProvider(project: Project) : KaAnalysisSessio
      * Note: Races cannot happen because the listener is guaranteed to be invoked in a write action.
      */
     internal class SessionInvalidationListener(val project: Project) : LLFirSessionInvalidationListener {
-        private val analysisSessionProvider: KaFirAnalysisSessionProvider
-            get() = getInstance(project) as? KaFirAnalysisSessionProvider
-                ?: error("Expected the analysis session provider to be a `${KaFirAnalysisSessionProvider::class.simpleName}`.")
+        private val analysisSessionProvider: KaFirSessionProvider
+            get() = getInstance(project) as? KaFirSessionProvider
+                ?: error("Expected the analysis session provider to be a `${KaFirSessionProvider::class.simpleName}`.")
 
         override fun afterInvalidation(modules: Set<KtModule>) {
             modules.forEach { analysisSessionProvider.cache.remove(it) }

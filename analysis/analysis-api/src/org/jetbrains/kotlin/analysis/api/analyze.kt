@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.analysis.api
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analysis.api.session.KaAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleStructureInternals
@@ -26,7 +26,7 @@ public inline fun <R> analyze(
     useSiteKtElement: KtElement,
     action: KaSession.() -> R
 ): R =
-    KaAnalysisSessionProvider.getInstance(useSiteKtElement.project)
+    KaSessionProvider.getInstance(useSiteKtElement.project)
         .analyse(useSiteKtElement, action)
 
 /**
@@ -41,7 +41,7 @@ public inline fun <R> analyze(
     useSiteKtModule: KtModule,
     crossinline action: KaSession.() -> R
 ): R {
-    val sessionProvider = KaAnalysisSessionProvider.getInstance(useSiteKtModule.project)
+    val sessionProvider = KaSessionProvider.getInstance(useSiteKtModule.project)
     return sessionProvider.analyze(useSiteKtModule, action)
 }
 

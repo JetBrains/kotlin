@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * Please use [analyze][org.jetbrains.kotlin.analysis.api.analyze] or [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] instead.
  */
 @OptIn(KaAnalysisApiInternals::class)
-public abstract class KaAnalysisSessionProvider(public val project: Project) : Disposable {
+public abstract class KaSessionProvider(public val project: Project) : Disposable {
     @KaAnalysisApiInternals
     public val tokenFactory: KaLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KaLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
@@ -71,9 +71,9 @@ public abstract class KaAnalysisSessionProvider(public val project: Project) : D
 
     public companion object {
         @KaAnalysisApiInternals
-        public fun getInstance(project: Project): KaAnalysisSessionProvider =
-            project.getService(KaAnalysisSessionProvider::class.java)
+        public fun getInstance(project: Project): KaSessionProvider =
+            project.getService(KaSessionProvider::class.java)
     }
 }
 
-public typealias KtAnalysisSessionProvider = KaAnalysisSessionProvider
+public typealias KtAnalysisSessionProvider = KaSessionProvider
