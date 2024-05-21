@@ -101,7 +101,11 @@ sealed class ClangArgs(
             }
             else -> configurables.targetTriple.toString()
         }
-        add(listOf("-target", targetString))
+        if (configurables is ZephyrConfigurables) {
+            add(listOf("-target", "thumb", "-mfloat-abi=soft", "-mcpu=cortex-m55"))
+        } else {
+            add(listOf("-target", targetString))
+        }
         val hasCustomSysroot = configurables is ZephyrConfigurables
                 || configurables is WasmConfigurables
                 || configurables is AndroidConfigurables

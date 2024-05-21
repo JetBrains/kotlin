@@ -140,4 +140,6 @@ interface ZephyrConfigurables : Configurables, ClangFlags {
     val localToolchainInterface get() = targetList("localToolchainInterfaces")
     val boardSpecificClangFlags get() = targetList("boardSpecificClangFlags")
     val targetAbi get() = targetString("targetAbi")
+    override val absoluteTargetToolchain get() = targetString("localToolchainRoot")!!
+    override val absoluteTargetSysRoot get() = targetString("localToolchainRoot")!!
 }

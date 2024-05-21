@@ -53,10 +53,13 @@ internal class BitcodeCompiler(
         val flags = overrideClangOptions.takeIf(List<String>::isNotEmpty)
                 ?: mutableListOf<String>().apply {
                     addNonEmpty(configurables.clangFlags)
-                    addNonEmpty(listOf("-triple", targetTriple.toString()))
                     if (configurables is ZephyrConfigurables) {
-                        addNonEmpty(configurables.constructClangCC1Args())
+                        // for zephyr, do not link through clang, it needs to be linked against zephyr itself
+                        addNonEmpty(listOf("-target", "thumb", "-mfloat-abi=soft", "-mcpu=cortex-m55", "-c"))
+                    } else {
+                        addNonEmpty(listOf("-triple", targetTriple.toString()))
                     }
+
                     addNonEmpty(when {
                         optimize -> configurables.clangOptFlags
                         debug -> configurables.clangDebugFlags
