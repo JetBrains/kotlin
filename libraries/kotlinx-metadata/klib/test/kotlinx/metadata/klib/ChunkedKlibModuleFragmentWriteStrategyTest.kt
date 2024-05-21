@@ -5,6 +5,7 @@
 
 package kotlinx.metadata.klib
 
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.test.Test
@@ -26,7 +27,6 @@ class ChunkedKlibModuleFragmentWriteStrategyTest {
         val numberOfTopLevelProperties = 300
         val numberOfTopLevelFunctions = 200
 
-        val numberOfClassifiers = numberOfClasses + numberOfTypeAliases
         val numberOfTopLevelCallables = numberOfTopLevelProperties + numberOfTopLevelFunctions
 
         val testData = listOf(
@@ -61,11 +61,31 @@ class ChunkedKlibModuleFragmentWriteStrategyTest {
             assertEquals(numberOfTopLevelProperties, chunkedFragments.sumOf { it.pkg?.properties?.size ?: 0 })
             assertEquals(numberOfTopLevelFunctions, chunkedFragments.sumOf { it.pkg?.functions?.size ?: 0 })
 
-            val expectedAmountOfChunks = numberOfClassifiers / classifiersPerFile +
-                    (if (numberOfClassifiers % classifiersPerFile > 0) 1 else 0) +
-                    numberOfTopLevelCallables / callablesPerFile +
+            val chunksWithClassifiers =
+                chunkedFragments.filter { it.classes.isNotEmpty() || it.pkg?.typeAliases?.isNotEmpty() == true }
+            val chunksWithTopLevelCallables =
+                chunkedFragments.filter { it.pkg?.let { pkg -> pkg.properties.isNotEmpty() || pkg.functions.isNotEmpty() } ?: false }
+
+            assertEquals(chunksWithClassifiers.size + chunksWithTopLevelCallables.size, chunkedFragments.size)
+
+            val distributionOfTopLevelClassNamesOverChunks =
+                hashMapOf</* top-level class name */ ClassName, /* chunks */ MutableList<KmModuleFragment>>()
+
+            for (chunk in chunksWithClassifiers) {
+                val classNames = chunk.className
+                val topLevelClassNames = classNames.mapToSetOrEmpty { it.substringBefore('.') }
+                for (topLevelClassName in topLevelClassNames) {
+                    distributionOfTopLevelClassNamesOverChunks.computeIfAbsent(topLevelClassName) { mutableListOf() } += chunk
+                }
+            }
+
+            val repeatedTopLevelClassNamesInChunks =
+                distributionOfTopLevelClassNamesOverChunks.filterValues { chunks -> chunks.size > 1 }
+            assertTrue { repeatedTopLevelClassNamesInChunks.isEmpty() }
+
+            val expectedNumberOfChunksWithTopLevelCallables = numberOfTopLevelCallables / callablesPerFile +
                     (if (numberOfTopLevelCallables % callablesPerFile > 0) 1 else 0)
-            assertEquals(expectedAmountOfChunks, chunkedFragments.size)
+            assertEquals(expectedNumberOfChunksWithTopLevelCallables, chunksWithTopLevelCallables.size)
         }
     }
 
