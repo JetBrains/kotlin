@@ -31,7 +31,7 @@ public class KaReadActionConfinementLifetimeToken(private val modificationTracke
         val application = ApplicationManager.getApplication()
         if (application.isDispatchThread && !allowOnEdt.get()) return false
         if (application.isWriteAccessAllowed && !allowFromWriteAction.get()) return false
-        if (KaAnalysisAllowanceManager.resolveIsForbiddenInActionWithName.get() != null) return false
+        if (KaAllowanceManager.resolveIsForbiddenInActionWithName.get() != null) return false
         if (!application.isReadAccessAllowed) return false
         if (!KaReadActionConfinementLifetimeTokenFactory.isInsideAnalysisContext()) return false
         if (KaReadActionConfinementLifetimeTokenFactory.currentToken() != this) return false
@@ -43,7 +43,7 @@ public class KaReadActionConfinementLifetimeToken(private val modificationTracke
         if (application.isDispatchThread && !allowOnEdt.get()) return "Called in EDT thread"
         if (application.isWriteAccessAllowed && !allowFromWriteAction.get()) return "Called from write action"
         if (!application.isReadAccessAllowed) return "Called outside read action"
-        KaAnalysisAllowanceManager.resolveIsForbiddenInActionWithName.get()?.let { actionName ->
+        KaAllowanceManager.resolveIsForbiddenInActionWithName.get()?.let { actionName ->
             return "Resolve is forbidden in $actionName"
         }
         if (!KaReadActionConfinementLifetimeTokenFactory.isInsideAnalysisContext()) return "Called outside analyse method"
