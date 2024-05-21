@@ -28,7 +28,8 @@ fun box(): String {
         stringProperty.visibility
         return "Fail"
     } catch (e: UnsupportedOperationException) {
-        assertEquals("Kotlin reflection is not yet supported for synthetic Java properties", e.message)
+        assertEquals("Kotlin reflection is not yet supported for synthetic Java properties. " +
+                             "Please follow/upvote https://youtrack.jetbrains.com/issue/KT-55980", e.message)
         return "OK"
     }
 }
