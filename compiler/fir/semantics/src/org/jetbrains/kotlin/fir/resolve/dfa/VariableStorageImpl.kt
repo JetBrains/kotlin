@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
-@OptIn(DfaInternals::class)
 class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
     // These are basically hash sets, since they map each key to itself. The only point of having them as maps
     // is to deduplicate equal instances with lookups. The impact of that is questionable, but whatever.
@@ -139,6 +138,19 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
             val newDispatchReceiver = dispatchReceiver?.let(::getOrPut)
             val newExtensionReceiver = extensionReceiver?.let(::getOrPut)
             RealVariable(symbol, isReceiver, newDispatchReceiver, newExtensionReceiver, originalType, nextVariableIndex).remember()
+        }
+    }
+
+    private tailrec fun FirElement.unwrapElement(): FirElement {
+        return when (this) {
+            is FirWhenSubjectExpression -> whenRef.value.let { it.subjectVariable ?: it.subject ?: return this }.unwrapElement()
+            is FirSmartCastExpression -> originalExpression.unwrapElement()
+            is FirSafeCallExpression -> selector.unwrapElement()
+            is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
+            is FirCheckNotNullCall -> argument.unwrapElement()
+            is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.unwrapElement()
+            is FirVariableAssignment -> lValue.unwrapElement()
+            else -> this
         }
     }
 

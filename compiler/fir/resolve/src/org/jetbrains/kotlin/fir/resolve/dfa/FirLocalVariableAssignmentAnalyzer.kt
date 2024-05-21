@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -26,8 +24,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 /**
  *  Helper that checks if an access to a local variable access is stable.
  *
- *  To determine the stability of an access, call [isAccessToUnstableLocalVariable]. Note that the class contains mutable states. So
- *  [isAccessToUnstableLocalVariable] only works for an access during the natural FIR tree traversal. This class will not work if one
+ *  To determine the stability of an access, call [isUnstableInCurrentScope]. Note that the class contains mutable states. So
+ *  [isUnstableInCurrentScope] only works for an access during the natural FIR tree traversal. This class will not work if one
  *  queries after the traversal is done.
  **/
 internal class FirLocalVariableAssignmentAnalyzer {
@@ -59,31 +57,26 @@ internal class FirLocalVariableAssignmentAnalyzer {
     }
 
     /** Checks whether the given access is an unstable access to a local variable at this moment. */
-    @OptIn(DfaInternals::class)
-    fun isAccessToUnstableLocalVariable(fir: FirElement, targetTypes: Set<ConeKotlinType>?, session: FirSession): Boolean {
+    fun isUnstableInCurrentScope(declaration: FirDeclaration, types: Set<ConeKotlinType>?, session: FirSession): Boolean {
+        // Only captured local vars can be stable/unstable depending on scope; everything else has the same stability everywhere.
         if (assignedLocalVariablesByDeclaration == null) return false
-
-        val realFir = fir.unwrapElement() as? FirQualifiedAccessExpression ?: return false
-        val property = realFir.calleeReference.toResolvedPropertySymbol()?.fir ?: return false
-        // Have data => have a root function => `scopes` is not empty.
-        return !isStableType(scopes.top().second[property], targetTypes, session) || postponedLambdas.all().any { lambdas ->
+        if (declaration !is FirProperty || !declaration.isLocal || !declaration.isVar) return false
+        return !allAssignmentsPreserveType(scopes.top().second[declaration], types, session) || postponedLambdas.all().any { lambdas ->
             // Control-flow-postponed lambdas' assignments should be in `functionScopes.top()`.
             // The reason we can't check them here is that one of the entries may be the lambda
             // that is currently being analyzed, and assignments in it are, in fact, totally fine.
-            lambdas.any { (lambda, dataFlowOnly) -> dataFlowOnly && property in lambda.assignedInside }
+            lambdas.any { (lambda, dataFlowOnly) -> dataFlowOnly && declaration in lambda.assignedInside }
         }
     }
 
-    private fun isStableType(assignments: Collection<Assignment>?, targetTypes: Set<ConeKotlinType>?, session: FirSession): Boolean {
-        if (assignments == null) return true // No assignments => always stable.
-        if (targetTypes == null) return false // No target type => always unstable.
-        if (assignments.any { it.type == null }) return false // At least 1 unknown assignment type => always unstable.
-
-        // Stability is determined by assignments. All assignments must be a subtype of all target types.
-        return assignments.all { assignment ->
-            targetTypes.all { AbstractTypeChecker.isSubtypeOf(session.typeContext, assignment.type!!, it) }
-        }
-    }
+    // Variables are only stable for smart casting if there are no assignments that could make the smart
+    // cast incorrect by assigning a value that is not of the smart casted type. This includes assignments
+    // that are not resolved yet, as their type is unknown. For aliasing, variables are always unstable
+    // if there are any assignments; in that case, `types` is null.
+    private fun allAssignmentsPreserveType(assignments: Set<Assignment>?, types: Set<ConeKotlinType>?, session: FirSession): Boolean =
+        assignments.isNullOrEmpty() || (types != null &&
+                assignments.all { it.type != null } &&
+                assignments.all { assignment -> types.all { AbstractTypeChecker.isSubtypeOf(session.typeContext, assignment.type!!, it) } })
 
     private fun getInfoForDeclaration(symbol: Any): Fork? {
         val root = rootFunction ?: return null
