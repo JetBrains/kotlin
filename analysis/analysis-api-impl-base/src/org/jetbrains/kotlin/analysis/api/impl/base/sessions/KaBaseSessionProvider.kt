@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.sessions
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker
 import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteActionStartedChecker
@@ -41,6 +42,9 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
     }
 
     override fun beforeEnteringAnalysis(session: KtAnalysisSession, useSiteElement: KtElement) {
+        // Catch issues with analysis on invalid PSI as early as possible.
+        PsiUtilCore.ensureValid(useSiteElement)
+
         beforeEnteringAnalysis(session)
     }
 
