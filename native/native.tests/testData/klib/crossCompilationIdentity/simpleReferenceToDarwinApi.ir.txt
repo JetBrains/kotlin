@@ -1,8 +1,8 @@
 MODULE_FRAGMENT name:<simpleReferenceToDarwinApi>
   FILE fqName:simple fileName:simpleReferenceToDarwinApi.kt
-    FUN name:use signature:simple/use|use(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassPublicSymbolImpl>
+    FUN name:use signature:simple/use|use(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
       BLOCK_BODY
-        VAR name:x type:<unbound IrClassPublicSymbolImpl> [val]
-          CONSTRUCTOR_CALL 'UNBOUND IrConstructorPublicSymbolImpl' type=<unbound IrClassPublicSymbolImpl> origin=null
-        RETURN type=<unbound IrClassPublicSymbolImpl> from='public final fun use (): <unbound IrClassPublicSymbolImpl> declared in simple'
-          GET_VAR 'val x: <unbound IrClassPublicSymbolImpl> [val] declared in simple.use' type=<unbound IrClassPublicSymbolImpl> origin=null
+        VAR name:x type:<unbound IrClassSymbolImpl> [val]
+          CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl' type=<unbound IrClassSymbolImpl> origin=null
+        RETURN type=<unbound IrClassSymbolImpl> from='public final fun use (): <unbound IrClassSymbolImpl> declared in simple'
+          GET_VAR 'val x: <unbound IrClassSymbolImpl> [val] declared in simple.use' type=<unbound IrClassSymbolImpl> origin=null
