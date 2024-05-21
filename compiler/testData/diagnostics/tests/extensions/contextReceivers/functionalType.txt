@@ -1,14 +1,23 @@
 package
 
-context(C) public fun f2(/*0*/ g: context(C) (Param) -> kotlin.Unit): kotlin.Unit
-context(C) public fun f4(/*0*/ g: context(C) () -> kotlin.Unit): kotlin.Unit
+context(C) public fun f3(/*0*/ g: context(C) (Param) -> kotlin.Unit): kotlin.Unit
+context(C) public fun f5(/*0*/ g: context(C) () -> kotlin.Unit): kotlin.Unit
+context(C) public fun f6(/*0*/ g: (context(C) () -> kotlin.Unit)?): kotlin.Unit
 public fun test(): kotlin.Unit
 context(C) public fun R.f1(/*0*/ g: context(C) R.(Param) -> kotlin.Unit): kotlin.Unit
-context(C) public fun R.f3(/*0*/ g: context(C) R.() -> kotlin.Unit): kotlin.Unit
+context(C) public fun R.f2(/*0*/ g: @MyAnnotation() (context(C) R.(Param) -> kotlin.Unit)): kotlin.Unit
+context(C) public fun R.f4(/*0*/ g: context(C) R.() -> kotlin.Unit): kotlin.Unit
 
 public final class C {
     public constructor C()
     public final val c: kotlin.Int = 42
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class MyAnnotation : kotlin.Annotation {
+    public constructor MyAnnotation()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

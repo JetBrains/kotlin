@@ -346,16 +346,6 @@ internal class DescriptorRendererImpl(
 
         val receiverType = type.getReceiverTypeFromFunctionType()
         val contextReceiversTypes = type.getContextReceiverTypesFromFunctionType()
-        if (contextReceiversTypes.isNotEmpty()) {
-            append("context(")
-            val withoutLast = contextReceiversTypes.subList(0, contextReceiversTypes.lastIndex)
-            for (contextReceiverType in withoutLast) {
-                renderNormalizedType(contextReceiverType)
-                append(", ")
-            }
-            renderNormalizedType(contextReceiversTypes.last())
-            append(") ")
-        }
 
         val isSuspend = type.isSuspendFunctionType
         val isNullable = type.isMarkedNullable
@@ -375,6 +365,17 @@ internal class DescriptorRendererImpl(
 
                 append("(")
             }
+        }
+
+        if (contextReceiversTypes.isNotEmpty()) {
+            append("context(")
+            val withoutLast = contextReceiversTypes.subList(0, contextReceiversTypes.lastIndex)
+            for (contextReceiverType in withoutLast) {
+                renderNormalizedType(contextReceiverType)
+                append(", ")
+            }
+            renderNormalizedType(contextReceiversTypes.last())
+            append(") ")
         }
 
         renderModifier(this, isSuspend, "suspend")
