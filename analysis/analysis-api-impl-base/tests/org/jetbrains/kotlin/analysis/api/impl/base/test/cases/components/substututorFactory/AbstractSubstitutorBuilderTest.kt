@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substu
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -42,7 +43,7 @@ abstract class AbstractSubstitutorBuilderTest : AbstractAnalysisApiBasedTest() {
                 appendLine("KtDeclaration: ${declaration::class.simpleName}")
 
                 appendLine("Symbol:")
-                appendLine(symbol.render())
+                appendLine(symbol.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES))
 
                 appendLine()
 

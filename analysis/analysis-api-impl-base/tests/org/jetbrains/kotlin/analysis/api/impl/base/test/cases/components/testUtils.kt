@@ -281,7 +281,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
         else -> error("unknown symbol $this")
     }
 
-    val renderingOptions = KaDeclarationRendererForSource.WITH_SHORT_NAMES.with {
+    val renderer = KaDeclarationRendererForSource.WITH_SHORT_NAMES.with {
         modifiersRenderer = modifiersRenderer.with {
             keywordsRenderer = keywordsRenderer.with { keywordFilter = KaRendererKeywordFilter.NONE }
         }
@@ -289,7 +289,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
 
     printCollection(scope.getAllSymbols().toList(), separator = "\n\n") { symbol ->
         val containingDeclaration = symbol.getContainingSymbol() as KaClassLikeSymbol
-        append(symbol.render(renderingOptions))
+        append(symbol.render(renderer))
         append(" fromClass ")
         append(containingDeclaration.classIdIfNonLocal?.asString())
         if (symbol.typeParameters.isNotEmpty()) {
@@ -297,7 +297,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
             withIndent {
                 printCollection(symbol.typeParameters, separator = "\n") { typeParameter ->
                     val containingDeclarationForTypeParameter = typeParameter.getContainingSymbol()
-                    append(typeParameter.render(renderingOptions))
+                    append(typeParameter.render(renderer))
                     append(" from ")
                     append(containingDeclarationForTypeParameter?.qualifiedNameString())
                 }
@@ -309,7 +309,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
             withIndent {
                 printCollection(symbol.valueParameters, separator = "\n") { typeParameter ->
                     val containingDeclarationForValueParameter = typeParameter.getContainingSymbol()
-                    append(typeParameter.render(renderingOptions))
+                    append(typeParameter.render(renderer))
                     append(" from ")
                     append(containingDeclarationForValueParameter?.qualifiedNameString())
                 }

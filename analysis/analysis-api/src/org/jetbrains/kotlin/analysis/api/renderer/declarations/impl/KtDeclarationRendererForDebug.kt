@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.declarations.impl
 
+import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KaSamConstructorSymbolRenderer
@@ -24,6 +25,11 @@ public object KaDeclarationRendererForDebug {
         samConstructorRenderer = KaSamConstructorSymbolRenderer.AS_FUNCTION
         typeRenderer = KaTypeRendererForDebug.WITH_QUALIFIED_NAMES
         declarationTypeApproximator = KaRendererTypeApproximator.TO_DENOTABLE
+    }
+
+    public val WITH_SHORT_NAMES: KaDeclarationRenderer = WITH_QUALIFIED_NAMES.with {
+        annotationRenderer = KaAnnotationRendererForSource.WITH_SHORT_NAMES
+        typeRenderer = KaTypeRendererForDebug.WITH_SHORT_NAMES
     }
 }
 

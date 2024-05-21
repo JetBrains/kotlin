@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -43,7 +44,7 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
 
             val visible = isVisible(declarationSymbol, useSiteFileSymbol, null, useSiteElement)
             """
-                Declaration: ${(declarationSymbol as KaDeclarationSymbol).render()}
+                Declaration: ${(declarationSymbol as KaDeclarationSymbol).render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}
                 At usage site: ${useSiteElement.text}
                 Is visible: $visible
             """.trimIndent()

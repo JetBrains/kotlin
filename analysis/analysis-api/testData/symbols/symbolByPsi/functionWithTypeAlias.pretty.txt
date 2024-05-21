@@ -1,4 +1,4 @@
-fun function(t: TypeAlias)
+fun function(t: TypeAlias /* = A */)
 
 fun function(t: A)
 
