@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
@@ -316,14 +315,12 @@ fun compileModuleToAnalyzedFir(
     )
 
     val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
-    val metadataDestinationBaseDir =
-        moduleConfiguration.get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY) ?: createTempDirectory("kotlinMetadata").toFile()
+    moduleConfiguration.get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY) ?: createTempDirectory("kotlinMetadata").toFile()
     val metadataVersion = moduleConfiguration.get(CommonConfigurationKeys.METADATA_VERSION) ?: BuiltInsBinaryVersion.INSTANCE
 
     val outputs = sessionWithSources.map { (session, sources) ->
         buildResolveAndCheckFirViaLightTree(
             session, sources,
-            File(metadataDestinationBaseDir, "${session.moduleData.name.asString()}-metadata"),
             metadataVersion, moduleConfiguration.languageVersionSettings,
             diagnosticsReporter, countFilesAndLines
         )

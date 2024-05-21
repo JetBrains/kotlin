@@ -56,7 +56,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
         }
     }
 
-    FirDeclarationOrigin.Precompiled -> KaSymbolOrigin.SOURCE
+    FirDeclarationOrigin.Precompiled, FirDeclarationOrigin.CommonArtefact -> KaSymbolOrigin.SOURCE
     FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns -> KaSymbolOrigin.LIBRARY
     is FirDeclarationOrigin.Java.Source -> KaSymbolOrigin.JAVA_SOURCE
     is FirDeclarationOrigin.Java.Library -> KaSymbolOrigin.JAVA_LIBRARY

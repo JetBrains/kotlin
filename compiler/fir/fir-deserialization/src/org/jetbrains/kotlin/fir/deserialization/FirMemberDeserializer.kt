@@ -197,7 +197,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
      * If loading happens in post-compute, then symbol for type alias is already computed and should be provided in [preComputedSymbol]
      * @See AbstractFirDeserializedSymbolProvider.findAndDeserializeTypeAlias
      */
-    fun loadTypeAlias(proto: ProtoBuf.TypeAlias, preComputedSymbol: FirTypeAliasSymbol? = null): FirTypeAlias {
+    fun loadTypeAlias(
+        proto: ProtoBuf.TypeAlias,
+        preComputedSymbol: FirTypeAliasSymbol? = null,
+        deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
+    ): FirTypeAlias {
         val flags = proto.flags
         val name = c.nameResolver.getName(proto.name)
         val classId = ClassId(c.packageFqName, name)
@@ -206,7 +210,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val versionRequirements = VersionRequirement.create(proto, c)
         return buildTypeAlias {
             moduleData = c.moduleData
-            origin = FirDeclarationOrigin.Library
+            origin = deserializationOrigin
             this.name = name
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusImpl(
@@ -238,6 +242,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         propertySymbol: FirPropertySymbol,
         local: FirDeserializationContext,
         propertyModality: Modality,
+        deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
     ): FirPropertyAccessor {
         val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else defaultAccessorFlags
         val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))
@@ -246,7 +251,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         return if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
             buildPropertyAccessor {
                 moduleData = c.moduleData
-                origin = FirDeclarationOrigin.Library
+                origin = deserializationOrigin
                 this.returnTypeRef = returnTypeRef
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 isGetter = true
@@ -264,7 +269,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             FirDefaultPropertyGetter(
                 null,
                 c.moduleData,
-                FirDeclarationOrigin.Library,
+                deserializationOrigin,
                 returnTypeRef,
                 visibility,
                 propertySymbol,
@@ -291,6 +296,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         propertySymbol: FirPropertySymbol,
         local: FirDeserializationContext,
         propertyModality: Modality,
+        deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
     ): FirPropertyAccessor {
         val setterFlags = if (proto.hasSetterFlags()) proto.setterFlags else defaultAccessorFlags
         val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(setterFlags))
@@ -299,7 +305,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         return if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
             buildPropertyAccessor {
                 moduleData = c.moduleData
-                origin = FirDeclarationOrigin.Library
+                origin = deserializationOrigin
                 this.returnTypeRef = FirImplicitUnitTypeRef(source)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 isGetter = false
@@ -314,7 +320,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     symbol,
                     proto,
                     AbstractAnnotationDeserializer.CallableKind.PROPERTY_SETTER,
-                    classProto
+                    classProto,
+                    deserializationOrigin = deserializationOrigin
                 )
                 this.propertySymbol = propertySymbol
             }.apply {
@@ -324,7 +331,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             FirDefaultPropertySetter(
                 null,
                 c.moduleData,
-                FirDeclarationOrigin.Library,
+                deserializationOrigin,
                 returnTypeRef,
                 visibility,
                 propertySymbol,
@@ -345,7 +352,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     fun loadProperty(
         proto: ProtoBuf.Property,
         classProto: ProtoBuf.Class? = null,
-        classSymbol: FirClassSymbol<*>? = null
+        classSymbol: FirClassSymbol<*>? = null,
+        deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
     ): FirProperty {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
         val callableName = c.nameResolver.getName(proto.name)
@@ -379,7 +387,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val versionRequirements = VersionRequirement.create(proto, c)
         return buildProperty {
             moduleData = c.moduleData
-            origin = FirDeclarationOrigin.Library
+            origin = deserializationOrigin
             this.returnTypeRef = returnTypeRef
             receiverParameter = proto.receiverType(c.typeTable)?.toTypeRef(local)?.let { receiverType ->
                 buildReceiverParameter {
@@ -418,7 +426,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 )
             backingField = FirDefaultPropertyBackingField(
                 c.moduleData,
-                FirDeclarationOrigin.Library,
+                deserializationOrigin,
                 source = null,
                 backingFieldAnnotations,
                 returnTypeRef,
@@ -435,7 +443,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     returnTypeRef,
                     symbol,
                     local,
-                    propertyModality
+                    propertyModality,
+                    deserializationOrigin
                 )
             }
             if (Flags.HAS_SETTER.get(flags)) {
@@ -447,7 +456,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     returnTypeRef,
                     symbol,
                     local,
-                    propertyModality
+                    propertyModality,
+                    deserializationOrigin
                 )
             }
             this.containerSource = c.containerSource
@@ -559,7 +569,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 symbol,
                 proto,
                 AbstractAnnotationDeserializer.CallableKind.OTHERS,
-                classProto
+                classProto,
+                deserializationOrigin = deserializationOrigin
             )
             annotations +=
                 c.annotationDeserializer.loadFunctionAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
@@ -584,7 +595,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     fun loadConstructor(
         proto: ProtoBuf.Constructor,
         classProto: ProtoBuf.Class,
-        classBuilder: FirRegularClassBuilder
+        classBuilder: FirRegularClassBuilder,
+        deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
     ): FirConstructor {
         val flags = proto.flags
         val relativeClassName = c.relativeClassName!!
@@ -609,7 +621,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             FirConstructorBuilder()
         }.apply {
             moduleData = c.moduleData
-            origin = FirDeclarationOrigin.Library
+            origin = deserializationOrigin
             returnTypeRef = delegatedSelfType
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             val isInner = classBuilder.status.isInner
@@ -642,7 +654,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 proto,
                 AbstractAnnotationDeserializer.CallableKind.OTHERS,
                 classProto,
-                addDefaultValue = classBuilder.symbol.classId == StandardClassIds.Enum
+                addDefaultValue = classBuilder.symbol.classId == StandardClassIds.Enum,
+                deserializationOrigin = deserializationOrigin
             )
             annotations +=
                 c.annotationDeserializer.loadConstructorAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
@@ -670,7 +683,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         callableProto: MessageLite,
         callableKind: AbstractAnnotationDeserializer.CallableKind,
         classProto: ProtoBuf.Class?,
-        addDefaultValue: Boolean = false
+        addDefaultValue: Boolean = false,
+        deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
     ): List<FirValueParameter> {
         return valueParameters.mapIndexed { index, proto ->
             val flags = if (proto.hasFlags()) proto.flags else 0
@@ -678,7 +692,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             buildValueParameter {
                 moduleData = c.moduleData
                 this.containingFunctionSymbol = functionSymbol
-                origin = FirDeclarationOrigin.Library
+                origin = deserializationOrigin
                 returnTypeRef = proto.type(c.typeTable).toTypeRef(c)
                 this.name = name
                 symbol = FirValueParameterSymbol(name)

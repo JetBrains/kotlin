@@ -216,7 +216,8 @@ abstract class AbstractFirDeserializedSymbolProvider(
             val ids = part.typeAliasNameIndex[classId.shortClassName]
             if (ids == null || ids.isEmpty()) return@firstNotNullOfOrNull null
             val aliasProto = part.proto.getTypeAlias(ids.single())
-            val postProcessor: DeserializedTypeAliasPostProcessor = { part.context.memberDeserializer.loadTypeAlias(aliasProto, it) }
+            val postProcessor: DeserializedTypeAliasPostProcessor =
+                { part.context.memberDeserializer.loadTypeAlias(aliasProto, it, defaultDeserializationOrigin) }
             FirTypeAliasSymbol(classId) to postProcessor
         } ?: (null to null)
     }
@@ -274,7 +275,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
             val propertyIds = part.topLevelPropertyNameIndex[callableId.callableName] ?: return@flatMap emptyList()
             propertyIds.map {
                 val proto = part.proto.getProperty(it)
-                val fir = part.context.memberDeserializer.loadProperty(proto)
+                val fir = part.context.memberDeserializer.loadProperty(proto, deserializationOrigin = defaultDeserializationOrigin)
                 loadPropertyExtensions(part, proto, fir)
                 fir.symbol
             }

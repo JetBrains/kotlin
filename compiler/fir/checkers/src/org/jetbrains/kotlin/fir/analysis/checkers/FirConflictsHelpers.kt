@@ -467,6 +467,7 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
         !session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), dispatchReceiver = null)
     ) return
     if (areNonConflictingCallables(declaration, conflictingSymbol)) return
+    if (conflicting.origin == FirDeclarationOrigin.CommonArtefact) return
 
     declarationConflictingSymbols.getOrPut(declaration) { SmartSet.create() }.add(conflictingSymbol)
 }

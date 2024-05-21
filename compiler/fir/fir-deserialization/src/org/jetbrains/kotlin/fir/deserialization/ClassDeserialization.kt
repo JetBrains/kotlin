@@ -137,14 +137,14 @@ fun deserializeClassToSymbol(
 
         addDeclarations(
             classProto.functionList.map {
-                classDeserializer.loadFunction(it, classProto, symbol)
+                classDeserializer.loadFunction(it, classProto, symbol, deserializationOrigin = origin)
             }
         )
 
         val propertiesOrderFromExtension = classProto.getPropertyOrderFromMetadataExtension()
         addDeclarations(
             classProto.propertiesInOrder(versionRequirements, propertiesOrderFromExtension).map { propertyProto ->
-                classDeserializer.loadProperty(propertyProto, classProto, symbol).also { property ->
+                classDeserializer.loadProperty(propertyProto, classProto, symbol, deserializationOrigin = origin).also { property ->
                     if (propertyProto.name in propertiesOrderFromExtension) {
                         property.registeredInSerializationPluginMetadataExtension = true
                     }
@@ -154,7 +154,7 @@ fun deserializeClassToSymbol(
 
         addDeclarations(
             classProto.constructorList.map {
-                classDeserializer.loadConstructor(it, classProto, this)
+                classDeserializer.loadConstructor(it, classProto, this, deserializationOrigin = origin)
             }
         )
 
@@ -166,7 +166,7 @@ fun deserializeClassToSymbol(
         )
 
         addDeclarations(
-            classProto.typeAliasList.mapNotNull(classDeserializer::loadTypeAlias)
+            classProto.typeAliasList.mapNotNull { classDeserializer.loadTypeAlias(it, deserializationOrigin = origin) }
         )
 
         addDeclarations(

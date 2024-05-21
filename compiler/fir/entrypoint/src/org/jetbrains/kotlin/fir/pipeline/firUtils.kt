@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -24,11 +26,9 @@ import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
-import org.jetbrains.kotlin.library.metadata.buildKotlinMetadataLibrary
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.readSourceFileWithMapping
-import java.io.File
 import kotlin.reflect.KFunction2
 
 fun FirSession.buildFirViaLightTree(
@@ -89,10 +89,14 @@ fun resolveAndCheckFir(
     return ModuleCompilerAnalyzedOutput(session, scopeSession, fir)
 }
 
+class FirSerializedMetadataComponent(val serializedMetadata: SerializedMetadata): FirSessionComponent
+
+val FirSession.serializedMetadata: FirSerializedMetadataComponent? by FirSession.nullableSessionComponentAccessor()
+
+@OptIn(SessionConfiguration::class)
 fun buildResolveAndCheckFirViaLightTree(
     session: FirSession,
     ktFiles: Collection<KtSourceFile>,
-    metadataDestinationDir: File,
     metadataVersion: BinaryVersion,
     languageVersionSettings: LanguageVersionSettings,
     diagnosticsReporter: BaseDiagnosticsCollector,
@@ -106,7 +110,7 @@ fun buildResolveAndCheckFirViaLightTree(
 
         val moduleName = session.moduleData.name.asString()
         val serializedMetadata = makeSerializedMetadataFromFragments(fragments, languageVersionSettings, moduleName)
-        buildKotlinMetadataLibrary(serializedMetadata, metadataDestinationDir, moduleName)
+        session.register(FirSerializedMetadataComponent::class, FirSerializedMetadataComponent(serializedMetadata))
     }
     return analyzedOutput
 }

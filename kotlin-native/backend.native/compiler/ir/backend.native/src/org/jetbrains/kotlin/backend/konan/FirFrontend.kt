@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 
@@ -118,6 +120,8 @@ internal fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment)
         addAll(groupedSources.platformSources)
     }
 
+    val metadataVersion = configuration.get(CommonConfigurationKeys.METADATA_VERSION) ?: BuiltInsBinaryVersion.INSTANCE
+
     return firFrontend(
             input,
             ktSourceFiles,
@@ -125,7 +129,9 @@ internal fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment)
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
             buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
-                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
+                buildResolveAndCheckFirViaLightTree(
+                        session, files, metadataVersion, configuration.languageVersionSettings, diagnosticsReporter, null
+                )
             },
     )
 }

@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirCliSession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.pipeline.serializedMetadata
 import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirLibrarySessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -147,9 +150,24 @@ abstract class FirAbstractSessionFactory {
         // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
         // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
         // to prevent false positive resolution errors (see KT-57369 for an example).
-        return (moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies)
+        val directsAndFriends = (moduleData.dependencies + moduleData.friendDependencies)
             .mapNotNull { sessionProvider?.getSession(it) }
             .flatMap { it.symbolProvider.flatten() }
+        val dependsOns = moduleData.allDependsOnDependencies
+            .mapNotNull { sessionProvider?.getSession(it) }
+            .flatMap {
+                if (it.moduleData.isCommon) {
+                    listOf(
+                        LazySerializedMetadataSymbolProvider(
+                            it,
+                            SingleModuleDataProvider(it.moduleData),
+                            kotlinScopeProvider,
+                            { it.serializedMetadata?.serializedMetadata }
+                        )
+                    )
+                } else it.symbolProvider.flatten()
+            }
+        return (directsAndFriends + dependsOns)
             .distinct()
             .sortedBy { it.session.kind }
     }

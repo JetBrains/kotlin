@@ -18,6 +18,7 @@ sealed class FirDeclarationOrigin(
     object Source : FirDeclarationOrigin(fromSource = true)
     object Library : FirDeclarationOrigin()
     object Precompiled : FirDeclarationOrigin() // currently used for incremental compilation
+    object CommonArtefact : FirDeclarationOrigin()
     object BuiltIns : FirDeclarationOrigin()
     sealed class Java(displayName: String, fromSource: Boolean = false) : FirDeclarationOrigin(displayName, fromSource = fromSource) {
         object Source : Java("Java(Source)", fromSource = true)
