@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
@@ -40,9 +39,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val PROVIDE_JAVA_AS_BINARIES by directive(
         "Compile Kotlin with classpath JAR binaries for all .java sources instead of with .java sources themselves"
-    )
-    val COMPILE_JAVA_TO_BINARIES_USING by enumDirective<TestJavacVersion>(
-        "Provide a specific javac version for compiling classpath JAR binaries for all .java sources"
     )
 
     val STRING_CONCAT by enumDirective(

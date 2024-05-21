@@ -18,18 +18,17 @@ import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.MockLibraryUtil.compileJavaFilesLibraryToJar
-import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.handlers.PhasedIrDumpHandler
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.PROVIDE_JAVA_AS_BINARIES
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_TO_BINARIES_USING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENABLE_DEBUG_MODE
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LAMBDAS
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.PROVIDE_JAVA_AS_BINARIES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SAM_CONVERSIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOT
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_CALL_ASSERTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_PARAM_ASSERTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EMIT_JVM_TYPE_ANNOTATIONS
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEASE
@@ -49,6 +47,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_OPTIMI
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.NO_UNIFIED_NULL_CHECKS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OLD_INNER_CLASSES_LOGIC
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PARAMETERS_METADATA
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_TYPE_TABLE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -253,8 +252,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             if (javaModuleInfoFiles.isNotEmpty()) {
                 configuration.addJavaBinaryRootsByJavaModules(configurationKind, javaModuleInfoFiles)
             } else {
-                val javaVersionToCompile = registeredDirectives[COMPILE_JAVA_TO_BINARIES_USING].singleOrNull()
-                val useJava11ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_11
                 val jvmClasspathRoots = configuration.jvmClasspathRoots.map { it.absolutePath }
                 val additionalClassPath = testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath.orEmpty()
                 configuration.addJvmClasspathRoot(
@@ -263,7 +260,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                         "${module.name}-$JAVA_BINARIES_JAR_NAME",
                         extraClasspath = jvmClasspathRoots + additionalClassPath,
                         assertions = JUnit5Assertions,
-                        useJava11 = useJava11ToCompileIncludedJavaFiles
+                        useJava11 = registeredDirectives[JDK_KIND].singleOrNull() == TestJdkKind.FULL_JDK_11,
                     )
                 )
             }

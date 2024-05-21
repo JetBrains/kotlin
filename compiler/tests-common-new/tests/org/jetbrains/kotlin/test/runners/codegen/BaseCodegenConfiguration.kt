@@ -193,7 +193,6 @@ fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind, jvmTa
         JvmEnvironmentConfigurationDirectives.JDK_KIND with jdkKind
         JvmEnvironmentConfigurationDirectives.JVM_TARGET with jvmTarget
         +ConfigurationDirectives.WITH_STDLIB
-        +CodegenTestDirectives.USE_JAVAC_BASED_ON_JVM_TARGET
         +CodegenTestDirectives.IGNORE_DEXING
     }
 }

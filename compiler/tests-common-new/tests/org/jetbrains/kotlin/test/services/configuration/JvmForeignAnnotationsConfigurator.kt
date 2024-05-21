@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.test.TestJavacVersion
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.JSPECIFY_STATE
@@ -90,8 +90,8 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
             File(annotationPath.path).copyRecursively(it)
         }
         val jsr305JarFile = createJsr305Jar(configuration)
-        val javaVersionToCompile = registeredDirectives[JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_TO_BINARIES_USING].singleOrNull()
-        val useJava11ToCompileIncludedJavaFiles = javaVersionToCompile == TestJavacVersion.JAVAC_11
+        val useJava11ToCompileIncludedJavaFiles =
+            registeredDirectives[JvmEnvironmentConfigurationDirectives.JDK_KIND].singleOrNull() == TestJdkKind.FULL_JDK_11
         val foreignAnnotationsJar = MockLibraryUtil.compileJavaFilesLibraryToJar(
             javaFilesDir.path,
             "foreign-annotations",
