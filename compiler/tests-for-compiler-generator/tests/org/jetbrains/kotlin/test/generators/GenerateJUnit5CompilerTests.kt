@@ -205,6 +205,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("ir/interpreter", excludeDirs = listOf("helpers"))
             }
 
+            testClass<AbstractClassicJvmIntegrationDiagnosticTest> {
+                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            }
+
             // ------------- Inline scopes tests duplication -------------
 
             testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes> {
@@ -411,6 +415,14 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractFirScriptCodegenTest> {
                 model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractFirPsiJvmIntegrationDiagnosticTest> {
+                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            }
+
+            testClass<AbstractFirLightTreeJvmIntegrationDiagnosticTest> {
+                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 

@@ -29,21 +29,17 @@ import org.jetbrains.kotlin.checkers.ThirdPartyAnnotationPathsKt;
 import org.jetbrains.kotlin.cli.common.CLITool;
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties;
 import org.jetbrains.kotlin.cli.common.ExitCode;
-import org.jetbrains.kotlin.cli.common.Usage;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler;
-import org.jetbrains.kotlin.config.KotlinCompilerVersion;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.test.CompilerTestUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.JsMetadataVersion;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
@@ -105,27 +101,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             @NotNull String tmpdir
     ) {
         String testDataAbsoluteDir = new File(testDataDir).getAbsolutePath();
-        String tmpDirAbsoluteDir = new File(tmpdir).getAbsolutePath();
-        String normalizedOutputWithoutExitCode = StringUtil.convertLineSeparators(pureOutput)
+        String output = pureOutput
                 .replace(testDataAbsoluteDir, TESTDATA_DIR)
-                .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), TESTDATA_DIR)
-                .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
-                .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getParentFile().getAbsolutePath(), "$DIST_DIR$")
-                .replace(org.jetbrains.kotlin.konan.file.File.Companion.getUserDir().getAbsolutePath(), "$USER_DIR$")
-                .replace(tmpDirAbsoluteDir, "$TMP_DIR$")
-                .replace("\\", "/")
-                .replace(KtTestUtil.getJdk8Home().getAbsolutePath().replace("\\", "/"), "$JDK_1_8")
-                .replace(KtTestUtil.getJdk11Home().getAbsolutePath().replace("\\", "/"), "$JDK_11")
-                .replace(KtTestUtil.getJdk17Home().getAbsolutePath().replace("\\", "/"), "$JDK_17")
-                .replaceAll("info: executable production duration: \\d+ms", "info: executable production duration: [time]")
-                .replace(KotlinCompilerVersion.VERSION, "$VERSION$")
-                .replace(System.getProperty("java.runtime.version"), "$JVM_VERSION$")
-                .replace(" " + JvmMetadataVersion.INSTANCE, " $ABI_VERSION$")
-                .replace(" " + JsMetadataVersion.INSTANCE, " $ABI_VERSION$")
-                .replace(" " + JvmMetadataVersion.INSTANCE_NEXT, " $ABI_VERSION_NEXT$")
-                .replace("\n" + Usage.BAT_DELIMITER_CHARACTERS_NOTE + "\n", "")
-                .replaceAll("log4j:WARN.*\n", "");
-
+                .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), TESTDATA_DIR);
+        String normalizedOutputWithoutExitCode = CompilerTestUtil.normalizeCompilerOutput(output, tmpdir);
 
         // Debug output for KT-64822 investigation
         System.out.println("testDataAbsoluteDir: " + testDataAbsoluteDir);
