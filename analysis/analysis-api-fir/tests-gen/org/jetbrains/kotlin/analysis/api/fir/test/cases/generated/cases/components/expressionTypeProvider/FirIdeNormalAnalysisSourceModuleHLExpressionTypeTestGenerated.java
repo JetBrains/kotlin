@@ -53,6 +53,12 @@ public class FirIdeNormalAnalysisSourceModuleHLExpressionTypeTestGenerated exten
   }
 
   @Test
+  @TestMetadata("approximatedCapturedFlexible.kt")
+  public void testApproximatedCapturedFlexible() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedCapturedFlexible.kt");
+  }
+
+  @Test
   @TestMetadata("arrayElement_arrayOfNulls.kt")
   public void testArrayElement_arrayOfNulls() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElement_arrayOfNulls.kt");
