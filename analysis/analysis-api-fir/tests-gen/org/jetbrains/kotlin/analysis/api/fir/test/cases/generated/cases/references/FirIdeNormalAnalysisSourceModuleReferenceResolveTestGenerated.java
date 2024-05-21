@@ -2938,6 +2938,22 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
         runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency/NestedCollectionAliasesUnresolvedStringAlias.kt");
       }
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeAlias/withErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WithErrors {
+      @Test
+      public void testAllFilesPresentInWithErrors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeAlias/withErrors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("UnresolvedExpandedType.kt")
+      public void testUnresolvedExpandedType() {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeAlias/withErrors/UnresolvedExpandedType.kt");
+      }
+    }
   }
 
   @Nested

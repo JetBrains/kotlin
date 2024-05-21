@@ -526,6 +526,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceResolveTestGenerated
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeAlias/missingDependency"), Pattern.compile("^(.+)\\.kts$"), null, true);
       }
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeAlias/withErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WithErrors {
+      @Test
+      public void testAllFilesPresentInWithErrors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeAlias/withErrors"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
   }
 
   @Nested

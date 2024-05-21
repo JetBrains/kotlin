@@ -1,0 +1,2 @@
+Resolved to:
+0: (in main) fun foo(t: main.T)
