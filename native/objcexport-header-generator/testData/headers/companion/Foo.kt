@@ -13,6 +13,20 @@ class Foo3 {
     }
 }
 
+class Foo4 {
+    companion object NamedCompanion {
+
+    }
+}
+
+class Foo5 {
+    @OptIn(ExperimentalObjCName::class)
+    @kotlin.native.ObjCName("CompanionInObjC", "CompanionInSwift")
+    companion object NamedCompanion {
+
+    }
+}
+
 class Foo1 {
     companion object {
         const val constant = 42

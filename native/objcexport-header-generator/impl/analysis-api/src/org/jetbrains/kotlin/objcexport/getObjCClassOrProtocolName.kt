@@ -30,22 +30,23 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
  *
  */
 context(KtAnalysisSession, KtObjCExportSession)
-fun KtClassLikeSymbol.getObjCClassOrProtocolName(): ObjCExportClassOrProtocolName {
+fun KtClassLikeSymbol.getObjCClassOrProtocolName(bareName: Boolean = false): ObjCExportClassOrProtocolName {
     val resolvedObjCNameAnnotation = resolveObjCNameAnnotation()
 
     return ObjCExportClassOrProtocolName(
-        objCName = getObjCName(resolvedObjCNameAnnotation),
-        swiftName = getSwiftName(resolvedObjCNameAnnotation)
+        objCName = getObjCName(resolvedObjCNameAnnotation, bareName),
+        swiftName = getSwiftName(resolvedObjCNameAnnotation, bareName)
     )
 }
 
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassLikeSymbol.getObjCName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
+    bareName: Boolean = false,
 ): String {
     val objCName = (resolvedObjCNameAnnotation?.objCName ?: nameOrAnonymous.asString()).toValidObjCSwiftIdentifier()
 
-    if (resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
+    if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return objCName
     }
 
@@ -63,9 +64,10 @@ private fun KtClassLikeSymbol.getObjCName(
 context(KtAnalysisSession, KtObjCExportSession)
 private fun KtClassLikeSymbol.getSwiftName(
     resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = resolveObjCNameAnnotation(),
+    bareName: Boolean = false,
 ): String {
     val swiftName = (resolvedObjCNameAnnotation?.swiftName ?: nameOrAnonymous.asString()).toValidObjCSwiftIdentifier()
-    if (resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
+    if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return swiftName
     }
 

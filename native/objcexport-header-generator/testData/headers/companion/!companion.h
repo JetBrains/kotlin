@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class Foo1Companion, Foo2Companion, Foo3Companion;
+@class Foo1Companion, Foo2Companion, Foo3Companion, Foo4NamedCompanion, Foo5CompanionInObjC;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
@@ -74,6 +74,38 @@ __attribute__((swift_name("Foo3.Companion")))
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) Foo3Companion *shared __attribute__((swift_name("shared")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+@interface Foo4 : Base
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (class, readonly, getter=companion) Foo4NamedCompanion *companion __attribute__((swift_name("companion")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Foo4.NamedCompanion")))
+@interface Foo4NamedCompanion : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)namedCompanion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) Foo4NamedCompanion *shared __attribute__((swift_name("shared")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+@interface Foo5 : Base
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (class, readonly, getter=companion) Foo5CompanionInObjC *companion __attribute__((swift_name("companion")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Foo5.CompanionInSwift")))
+@interface Foo5CompanionInObjC : Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companionInObjC __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) Foo5CompanionInObjC *shared __attribute__((swift_name("shared")));
 @end
 
 #pragma pop_macro("_Nullable_result")
