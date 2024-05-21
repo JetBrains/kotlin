@@ -23926,6 +23926,30 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("lambdaParameterRemainFlexible.kt")
+        public void testLambdaParameterRemainFlexible() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/lambdaParameterRemainFlexible.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterRemainFlexibleRegularConstructor.kt")
+        public void testLambdaParameterRemainFlexibleRegularConstructor() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/lambdaParameterRemainFlexibleRegularConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterRemainFlexibleRegularConstructorWithDnnRepresentation.kt")
+        public void testLambdaParameterRemainFlexibleRegularConstructorWithDnnRepresentation() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/lambdaParameterRemainFlexibleRegularConstructorWithDnnRepresentation.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameterRemainFlexibleWithDnnRepresentation.kt")
+        public void testLambdaParameterRemainFlexibleWithDnnRepresentation() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/lambdaParameterRemainFlexibleWithDnnRepresentation.kt");
+        }
+
+        @Test
         @TestMetadata("privateCandidatesWithWrongArguments.kt")
         public void testPrivateCandidatesWithWrongArguments() {
           runTest("compiler/testData/diagnostics/tests/j+k/sam/privateCandidatesWithWrongArguments.kt");
