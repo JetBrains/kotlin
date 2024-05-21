@@ -1,6 +1,6 @@
 # Analysis API Usage
 
-To use Analysis API, you need to be in the `KtAnalysisSessoin` context. Basically, it means that you need to call [`analyse(contextElement: KtElement, action: KtAnalysisSession.() -> R): R`](https://github.com/JetBrains/kotlin/blob/master/analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api/KtAnalysisSessionProvider.kt#L106) function. All your actions with Analysis API will be performed with `KtAnalysisSessoin` receiver available.
+To use Analysis API, you need to be in the `KtAnalysisSession` context. Basically, it means that you need to call [`analyse(contextElement: KtElement, action: KtAnalysisSession.() -> R): R`](https://github.com/JetBrains/kotlin/blob/master/analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api/KtAnalysisSessionProvider.kt#L106) function. All your actions with Analysis API will be performed with `KtAnalysisSession` receiver available.
 ```kotlin
 analyse(psiElementForContext) { // you are inside KtAnalysisSession Context
     // you can use a wide variety of Analysis API functions here: work with types, symbols, signatures, scopes and more.
@@ -20,6 +20,6 @@ fun KtAnalysisSession.getSymbol() : KtSymbol {
 ```
 
 ## No leakages of KtLifetimeTokenOwners from KtAnalysisSession context
-All `KtLifetimeTokenOwners` you get inside a `KtAnalysisSessoin` context should never leak it. But you may:
+All `KtLifetimeTokenOwners` you get inside a `KtAnalysisSession` context should never leak it. But you may:
 * Store your `KtLifetimeTokenOwners` as a field inside a class that implements `KtLifetimeTokenOwners`. This way your outer class is `KtLifetimeTokenOwners` itself and all rules apply to it. 
-* Pass it to another function with a `KtAnalysisSessoin` receiver.
+* Pass it to another function with a `KtAnalysisSession` receiver.
