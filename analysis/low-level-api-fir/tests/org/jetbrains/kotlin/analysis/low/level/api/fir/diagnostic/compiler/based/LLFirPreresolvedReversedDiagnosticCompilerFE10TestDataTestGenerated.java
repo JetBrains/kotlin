@@ -1234,6 +1234,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("projectionProblemInIsTypealiasArgument.kt")
+    public void testProjectionProblemInIsTypealiasArgument() {
+      runTest("compiler/testData/diagnostics/tests/projectionProblemInIsTypealiasArgument.kt");
+    }
+
+    @Test
     @TestMetadata("ProjectionsInSupertypes.kt")
     public void testProjectionsInSupertypes() {
       runTest("compiler/testData/diagnostics/tests/ProjectionsInSupertypes.kt");
