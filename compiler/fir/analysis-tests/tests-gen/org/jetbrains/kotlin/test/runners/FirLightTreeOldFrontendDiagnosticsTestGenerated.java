@@ -1246,6 +1246,24 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("projectionProblemInIsMultiTypealiasArgument.kt")
+    public void testProjectionProblemInIsMultiTypealiasArgument() {
+      runTest("compiler/testData/diagnostics/tests/projectionProblemInIsMultiTypealiasArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("projectionProblemInIsTypealiasArgument.kt")
+    public void testProjectionProblemInIsTypealiasArgument() {
+      runTest("compiler/testData/diagnostics/tests/projectionProblemInIsTypealiasArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("projectionProblemWithTypealiasArgument.kt")
+    public void testProjectionProblemWithTypealiasArgument() {
+      runTest("compiler/testData/diagnostics/tests/projectionProblemWithTypealiasArgument.kt");
+    }
+
+    @Test
     @TestMetadata("ProjectionsInSupertypes.kt")
     public void testProjectionsInSupertypes() {
       runTest("compiler/testData/diagnostics/tests/ProjectionsInSupertypes.kt");
