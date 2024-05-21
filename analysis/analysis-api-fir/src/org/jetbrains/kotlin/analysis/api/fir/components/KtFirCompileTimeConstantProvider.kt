@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KaCompileTimeConstantProvider
-import org.jetbrains.kotlin.analysis.api.components.KaConstantEvaluationMode
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
@@ -27,9 +26,8 @@ internal class KaFirCompileTimeConstantProvider(
 
     override fun evaluate(
         expression: KtExpression,
-        mode: KaConstantEvaluationMode,
     ): KaConstantValue? {
-        return evaluateFir(expression.getOrBuildFir(firResolveSession), expression, mode)
+        return evaluateFir(expression.getOrBuildFir(firResolveSession), expression)
     }
 
     override fun evaluateAsAnnotationValue(expression: KtExpression): KaAnnotationValue? =
@@ -40,12 +38,11 @@ internal class KaFirCompileTimeConstantProvider(
     private fun evaluateFir(
         fir: FirElement?,
         sourcePsi: KtExpression,
-        mode: KaConstantEvaluationMode,
     ): KaConstantValue? {
         return when {
             fir is FirPropertyAccessExpression || fir is FirExpression || fir is FirNamedReference -> {
                 try {
-                    FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(fir, mode)
+                    FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(fir)
                 } catch (e: ArithmeticException) {
                     KaConstantValue.KaErrorConstantValue(e.localizedMessage, sourcePsi)
                 }

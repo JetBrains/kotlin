@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.components.KaConstantEvaluationMode
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
@@ -90,7 +89,7 @@ internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSessi
 
 internal fun FirExpression.asKaInitializerValue(builder: KaSymbolByFirBuilder, forAnnotationDefaultValue: Boolean): KaInitializerValue {
     val ktExpression = psi as? KtExpression
-    val evaluated = FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(this, KaConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION)
+    val evaluated = FirCompileTimeConstantEvaluator.evaluateAsKtConstantValue(this)
 
     return when (evaluated) {
         null -> if (forAnnotationDefaultValue) {

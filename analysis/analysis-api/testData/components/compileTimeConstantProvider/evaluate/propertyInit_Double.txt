@@ -1,9 +1,3 @@
 expression: 3.14
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: 3.14
 constantValueKind: Double
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: 3.14
-constantLikeValueKind: Double

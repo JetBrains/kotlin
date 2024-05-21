@@ -1,9 +1,3 @@
 expression: bar
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: 42
 constantValueKind: Int
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: 42
-constantLikeValueKind: Int

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
-import org.jetbrains.kotlin.analysis.api.components.KaConstantEvaluationMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -56,19 +55,18 @@ internal object FirCompileTimeConstantEvaluator {
     // TODO: Handle boolean operators, class reference, array, annotation values, etc.
     fun evaluate(
         fir: FirElement?,
-        mode: KaConstantEvaluationMode,
     ): FirLiteralExpression? =
         when (fir) {
             is FirPropertyAccessExpression -> {
                 when (val referredVariable = fir.calleeReference.toResolvedVariableSymbol()) {
                     is FirPropertySymbol -> {
                         if (referredVariable.callableId.isStringLength) {
-                            evaluate(fir.explicitReceiver, mode)?.evaluateStringLength()
+                            evaluate(fir.explicitReceiver)?.evaluateStringLength()
                         } else {
-                            referredVariable.toLiteralExpression(mode)
+                            referredVariable.toLiteralExpression()
                         }
                     }
-                    is FirFieldSymbol -> referredVariable.toLiteralExpression(mode)
+                    is FirFieldSymbol -> referredVariable.toLiteralExpression()
                     else -> null
                 }
             }
@@ -76,13 +74,13 @@ internal object FirCompileTimeConstantEvaluator {
                 fir.adaptToConstKind()
             }
             is FirFunctionCall -> {
-                evaluateFunctionCall(fir, mode)
+                evaluateFunctionCall(fir)
             }
             is FirStringConcatenationCall -> {
-                evaluateStringConcatenationCall(fir, mode)
+                evaluateStringConcatenationCall(fir)
             }
             is FirNamedReference -> {
-                fir.toResolvedPropertySymbol()?.toLiteralExpression(mode)
+                fir.toResolvedPropertySymbol()?.toLiteralExpression()
             }
             else -> null
         }
@@ -90,35 +88,22 @@ internal object FirCompileTimeConstantEvaluator {
     private val CallableId.isStringLength: Boolean
         get() = classId == StandardClassIds.String && callableName.identifierOrNullIfSpecial == "length"
 
-    private fun FirPropertySymbol.toLiteralExpression(
-        mode: KaConstantEvaluationMode,
-    ): FirLiteralExpression? {
-        return when {
-            mode == KaConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION && !isConst -> null
-            isVal -> {
-                withTrackingVariableEvaluation(this) { evaluate(resolvedInitializer, mode) }
-            }
-            else -> null
-        }
+    private fun FirPropertySymbol.toLiteralExpression(): FirLiteralExpression? {
+        return if (isConst && isVal) {
+            withTrackingVariableEvaluation(this) { evaluate(resolvedInitializer) }
+        } else null
     }
 
-    private fun FirFieldSymbol.toLiteralExpression(
-        mode: KaConstantEvaluationMode,
-    ): FirLiteralExpression? {
-        return when {
-            mode == KaConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION && !(isStatic && isFinal) -> null
-            isVal -> {
-                withTrackingVariableEvaluation(this) { evaluate(resolvedInitializer, mode) }
-            }
-            else -> null
-        }
+    private fun FirFieldSymbol.toLiteralExpression(): FirLiteralExpression? {
+        return if (isStatic && isFinal && isVal) {
+            withTrackingVariableEvaluation(this) { evaluate(resolvedInitializer) }
+        } else null
     }
 
     fun evaluateAsKtConstantValue(
         fir: FirElement,
-        mode: KaConstantEvaluationMode,
     ): KaConstantValue? {
-        val evaluated = evaluate(fir, mode) ?: return null
+        val evaluated = evaluate(fir) ?: return null
 
         val value = evaluated.value
         val psi = evaluated.psi as? KtElement
@@ -167,11 +152,10 @@ internal object FirCompileTimeConstantEvaluator {
 
     private fun evaluateStringConcatenationCall(
         stringConcatenationCall: FirStringConcatenationCall,
-        mode: KaConstantEvaluationMode,
     ): FirLiteralExpression? {
         val concatenated = buildString {
             for (arg in stringConcatenationCall.arguments) {
-                val evaluated = evaluate(arg, mode) ?: return null
+                val evaluated = evaluate(arg) ?: return null
                 append(evaluated.value.toString())
             }
         }
@@ -181,17 +165,16 @@ internal object FirCompileTimeConstantEvaluator {
 
     private fun evaluateFunctionCall(
         functionCall: FirFunctionCall,
-        mode: KaConstantEvaluationMode,
     ): FirLiteralExpression? {
         val function = functionCall.getOriginalFunction() as? FirSimpleFunction ?: return null
 
-        val opr1 = evaluate(functionCall.explicitReceiver, mode) ?: return null
+        val opr1 = evaluate(functionCall.explicitReceiver) ?: return null
         opr1.evaluate(function)?.let {
             return it.adjustType(functionCall.resolvedType)
         }
 
         val argument = functionCall.arguments.firstOrNull() ?: return null
-        val opr2 = evaluate(argument, mode) ?: return null
+        val opr2 = evaluate(argument) ?: return null
         opr1.evaluate(function, opr2)?.let {
             return it.adjustType(functionCall.resolvedType)
         }
