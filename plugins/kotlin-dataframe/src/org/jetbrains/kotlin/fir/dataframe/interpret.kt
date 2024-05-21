@@ -138,7 +138,7 @@ fun <T> KotlinTypeFacade.interpret(
                     }
 
                     is FirAnonymousFunctionExpression -> {
-                        val result = (expression.anonymousFunction.body!!.statements.last() as FirReturnExpression).result
+                        val result = (expression.anonymousFunction.body?.statements?.lastOrNull() as? FirReturnExpression)?.result
                         val col: Any? = when (result) {
                             is FirPropertyAccessExpression -> {
                                 columnWithPathApproximations(result)
