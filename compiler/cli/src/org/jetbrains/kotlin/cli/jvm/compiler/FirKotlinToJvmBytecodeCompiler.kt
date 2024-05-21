@@ -79,6 +79,35 @@ object FirKotlinToJvmBytecodeCompiler {
         return true
     }
 
+    fun runFrontendForAnalysis(
+        projectEnvironment: VfsBasedProjectEnvironment,
+        compilerConfiguration: CompilerConfiguration,
+        messageCollector: MessageCollector,
+        allSources: List<KtFile>,
+        buildFile: File?,
+        module: Module,
+    ): FirResult {
+        val targetIds = compilerConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
+        val incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
+        val project = projectEnvironment.project
+
+        val moduleConfiguration = compilerConfiguration.applyModuleProperties(module, buildFile)
+        val context = CompilationContext(
+            module,
+            allSources,
+            projectEnvironment,
+            messageCollector,
+            moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME),
+            moduleConfiguration,
+            targetIds,
+            incrementalComponents,
+            extensionRegistrars = FirExtensionRegistrar.getInstances(project),
+            irGenerationExtensions = IrGenerationExtension.getInstances(project)
+        )
+        val diagnosticsReporter = createPendingReporter(messageCollector)
+        return context.runFrontend(allSources, diagnosticsReporter, module.getModuleName(), module.getFriendPaths(), true)!!
+    }
+
     fun compileModulesUsingFrontendIRAndPsi(
         projectEnvironment: VfsBasedProjectEnvironment,
         compilerConfiguration: CompilerConfiguration,
@@ -170,6 +199,7 @@ object FirKotlinToJvmBytecodeCompiler {
         diagnosticsReporter: BaseDiagnosticsCollector,
         rootModuleName: String,
         friendPaths: List<String>,
+        ignoreErrors: Boolean = false,
     ): FirResult? {
         val performanceManager = configuration.get(CLIConfigurationKeys.PERF_MANAGER)
         performanceManager?.notifyAnalysisStarted()
@@ -211,7 +241,7 @@ object FirKotlinToJvmBytecodeCompiler {
         outputs.runPlatformCheckers(diagnosticsReporter)
 
         performanceManager?.notifyAnalysisFinished()
-        return runUnless(syntaxErrors || scriptsInCommonSourcesErrors || diagnosticsReporter.hasErrors) { FirResult(outputs) }
+        return runUnless(!ignoreErrors && (syntaxErrors || scriptsInCommonSourcesErrors || diagnosticsReporter.hasErrors)) { FirResult(outputs) }
     }
 
     private fun FrontendContext.reportCommonScriptsError(ktFiles: List<KtFile>): Boolean {

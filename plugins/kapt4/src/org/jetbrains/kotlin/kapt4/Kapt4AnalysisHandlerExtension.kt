@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.kapt4
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
+import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt3.base.util.info
 import org.jetbrains.kotlin.kapt3.measureTimeMillis
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
@@ -32,12 +34,17 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.metadataVersion
 import java.io.File
 
+/**
+ * This extension implements K2 kapt via Analysis API standalone.
+ * This implementation is discontinued, and is left in the codebase only as a potential fallback in case we encounter critical problems
+ * with the new implementation ([FirKaptAnalysisHandlerExtension]).
+ */
 private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
     override fun isApplicable(configuration: CompilerConfiguration): Boolean {
         return configuration[KAPT_OPTIONS] != null && configuration.getBoolean(USE_FIR)
     }
 
-    override fun doAnalysis(configuration: CompilerConfiguration): Boolean {
+    override fun doAnalysis(project: Project, configuration: CompilerConfiguration): Boolean {
         val optionsBuilder = configuration[KAPT_OPTIONS]!!
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val logger = MessageCollectorBackedKaptLogger(
@@ -220,7 +227,13 @@ class Kapt4CompilerPluginRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         if (!configuration.getBoolean(USE_FIR)) return
 
-        FirAnalysisHandlerExtension.registerExtension(Kapt4AnalysisHandlerExtension())
+        doOpenInternalPackagesIfRequired()
+
+        val implementation =
+            if (System.getProperty("kotlin.kapt.aa.impl") != null) Kapt4AnalysisHandlerExtension()
+            else FirKaptAnalysisHandlerExtension()
+
+        FirAnalysisHandlerExtension.registerExtension(implementation)
     }
 
     override val supportsK2: Boolean
