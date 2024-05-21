@@ -52,24 +52,17 @@ class BNativeHeir : B() {
 }
 
 fun testExternalObjCMetaClassCast() {
-    try {
-        BNativeHeir as A.Companion
-    } catch (e: Exception) {
-        assertTrue(e is ClassCastException)
-    }
+    val fooClass: Any = A
+    assertTrue(fooClass is A.Companion)
+    val barClass: Any = B
+    assertTrue(barClass is AMeta)
 
-    try {
-        ANativeHeir as A.Companion
-    } catch (e: Exception) {
-        assertTrue(e is ClassCastException)
-    }
-
-    assertTrue(A is A.Companion)
-
+    val aNativeHeir: Any = ANativeHeir
+    assertFailsWith<ClassCastException> { aNativeHeir as A.Companion }
+    val bNativeHeir: Any = BNativeHeir
+    assertFailsWith<ClassCastException> { bNativeHeir as A.Companion }
     val fooObjectClass: Any = A
-    val barObjectClass: Any = B
-    assertFalse(fooObjectClass is BMeta)
-    assertTrue(barObjectClass is AMeta)
+    assertFailsWith<ClassCastException> { fooObjectClass as BMeta }
 }
 
 
@@ -91,43 +84,30 @@ class BarK: FooK() {
 }
 
 fun testAnyCast() {
-    try {
-        Any() as NSObject.Companion
-    } catch (e: Exception) {
-        assertTrue(e is ClassCastException)
-    }
-
-    try {
-        Any() as NSNumber.Companion
-    } catch (e: Exception) {
-        assertTrue(e is ClassCastException)
-    }
+    assertFailsWith<ClassCastException> { Any() as NSObject.Companion }
+    assertFailsWith<ClassCastException> { Any() as NSNumber.Companion }
 }
 
-fun testMetaClassCast() {
+fun testMetaClassTypeChecking() {
     assertFalse(Any() is NSObject.Companion)
     assertFalse(Any() is NSNumber.Companion)
 
     val nsObjectClass: Any = NSObject
     assertFalse(nsObjectClass is NSNumberMeta)
 
-    try {
-        NSNumber as NSObject.Companion
-    } catch (e: Exception) {
-        assertTrue(e is ClassCastException)
-    }
-    assertTrue(NSData is NSData.Companion)
+    val nsDataClass: Any = NSData
+    assertTrue(nsDataClass is NSData.Companion)
+
+    val nsNumberClass: Any = NSNumber
+    assertFalse(nsNumberClass is NSObject.Companion)
 }
 
-fun testNonObjCObjectTypeCast() {
+fun testNonObjCObjectTypeChecking() {
     val foo: Any = FooK
     assertTrue(foo is FooK.Companion)
 
-    try {
-        BarK as FooK.Companion
-    } catch (e: Exception) {
-        assertTrue(e is ClassCastException)
-    }
+    val bar: Any = BarK
+    assertFalse(bar is FooK.Companion)
 }
 
 @OptIn(kotlinx.cinterop.BetaInteropApi::class)
@@ -145,9 +125,9 @@ fun testObjCMetaClassTypeChecking() {
 
 fun box(): String {
     testAnyCast()
-    testMetaClassCast()
+    testMetaClassTypeChecking()
     testExternalObjCMetaClassCast()
-    testNonObjCObjectTypeCast()
+    testNonObjCObjectTypeChecking()
     testObjCMetaClassTypeChecking()
 
     return "OK"
