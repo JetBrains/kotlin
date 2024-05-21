@@ -6,10 +6,15 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.Project
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.attributes.LibraryElements
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 
 const val COMPILE_ONLY = "compileOnly"
 const val COMPILE = "compile"
@@ -99,3 +104,26 @@ internal fun ConfigurationContainer.maybeCreateDependencyScope(
     name: String,
     configurationOnCreate: Configuration.() -> Unit = {},
 ): Configuration = findDependencyScope(name) ?: createDependencyScope(name, configurationOnCreate).get()
+
+internal fun Configuration.addSecondaryOutgoingJvmClassesVariant(
+    project: Project,
+    kotlinCompilation: KotlinCompilation<*>
+) {
+    val apiClassesVariant = outgoing.variants.maybeCreate(CLASSES_SECONDARY_VARIANT_NAME)
+    apiClassesVariant.attributes.attribute(
+        LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+        project.objects.named(LibraryElements.CLASSES)
+    )
+
+    project.whenEvaluated {
+        // Java-library plugin already has done all required work here
+        if (project.plugins.hasPlugin("java-library")) return@whenEvaluated
+
+        kotlinCompilation.output.classesDirs.files.forEach { classesDir ->
+            apiClassesVariant.artifact(classesDir) {
+                it.type = ArtifactTypeDefinition.JVM_CLASS_DIRECTORY
+                it.builtBy(kotlinCompilation.output.classesDirs.buildDependencies)
+            }
+        }
+    }
+}
