@@ -59,9 +59,6 @@ object FieldSets {
         field(name, symbolType, nullable, withReplace)
             .apply { symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED }
 
-    fun referencedSymbol(symbolType: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false): Field =
-        referencedSymbol("symbol", symbolType, nullable, withReplace)
-
     fun body(nullable: Boolean = false, withReplace: Boolean = false) =
         field("body", block, nullable, withReplace = withReplace)
 

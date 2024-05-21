@@ -458,7 +458,7 @@ object IrTree : AbstractTreeBuilder() {
     val moduleFragment: Element by element(Declaration) {
         needTransformMethod()
         transformByChildren = true
-        
+
         +descriptor("ModuleDescriptor").apply {
             optInAnnotation = null
         }
@@ -560,7 +560,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val externalPackageFragment: Element by element(Declaration) {
         transformByChildren = true
-        
+
         kDoc = """
             This is a root parent element for external declarations (meaning those that come from
             another compilation unit/module, not to be confused with [IrPossiblyExternalDeclaration.isExternal]). 
@@ -586,7 +586,7 @@ object IrTree : AbstractTreeBuilder() {
     val file: Element by element(Declaration) {
         needTransformMethod()
         transformByChildren = true
-        
+
         parent(packageFragment)
         parent(mutableAnnotationContainer)
         parent(metadataSourceOwner)
@@ -634,7 +634,7 @@ object IrTree : AbstractTreeBuilder() {
     val declarationReference: Element by element(Expression) {
         parent(expression)
 
-        +referencedSymbol(IrSymbolTree.rootElement, mutable = false)
+        +referencedSymbol("symbol", IrSymbolTree.rootElement, mutable = false)
         //diff: no accept
     }
     val memberAccessExpression: Element by element(Expression) {
@@ -646,7 +646,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("dispatchReceiver", expression, nullable = true)
         +field("extensionReceiver", expression, nullable = true)
-        +referencedSymbol(s, mutable = false)
+        +referencedSymbol("symbol", s, mutable = false)
         +field("origin", statementOriginType, nullable = true)
         +listField("valueArguments", expression.copy(nullable = true), mutability = Array) {
             visibility = Visibility.PROTECTED
@@ -728,7 +728,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(functionAccessExpression)
         parent(type<AnnotationMarker>())
 
-        +referencedSymbol(constructorSymbol)
+        +referencedSymbol("symbol", constructorSymbol)
         +field("source", type<SourceElement>())
         +field("constructorTypeArgumentsCount", int)
     }
@@ -741,13 +741,13 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(getSingletonValue)
 
-        +referencedSymbol(classSymbol)
+        +referencedSymbol("symbol", classSymbol)
     }
     val getEnumValue: Element by element(Expression) {
 
         parent(getSingletonValue)
 
-        +referencedSymbol(enumEntrySymbol)
+        +referencedSymbol("symbol", enumEntrySymbol)
     }
 
     val rawFunctionReference: Element by element(Expression) {
@@ -761,7 +761,7 @@ object IrTree : AbstractTreeBuilder() {
         On the JVM platform it represents a [java.lang.invoke.MethodHandle] constant.
         """.trimIndent()
 
-        +referencedSymbol(functionSymbol)
+        +referencedSymbol("symbol", functionSymbol)
     }
     val containerExpression: Element by element(Expression) {
         parent(expression)
@@ -820,7 +820,7 @@ object IrTree : AbstractTreeBuilder() {
     val call: Element by element(Expression) {
         parent(functionAccessExpression)
 
-        +referencedSymbol(simpleFunctionSymbol)
+        +referencedSymbol("symbol", simpleFunctionSymbol)
         +referencedSymbol("superQualifierSymbol", classSymbol, nullable = true)
     }
     val callableReference: Element by element(Expression) {
@@ -828,7 +828,7 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(memberAccessExpression.withArgs("S" to s))
 
-        +referencedSymbol(s)
+        +referencedSymbol("symbol", s)
     }
     val functionReference: Element by element(Expression) {
 
@@ -853,7 +853,7 @@ object IrTree : AbstractTreeBuilder() {
     val classReference: Element by element(Expression) {
         parent(declarationReference)
 
-        +referencedSymbol(classifierSymbol)
+        +referencedSymbol("symbol", classifierSymbol)
         +field("classType", irTypeType)
     }
     val const: Element by element(Expression) {
@@ -890,7 +890,7 @@ object IrTree : AbstractTreeBuilder() {
     val delegatingConstructorCall: Element by element(Expression) {
         parent(functionAccessExpression)
 
-        +referencedSymbol(constructorSymbol)
+        +referencedSymbol("symbol", constructorSymbol)
     }
     val dynamicExpression: Element by element(Expression) {
         parent(expression)
@@ -911,7 +911,7 @@ object IrTree : AbstractTreeBuilder() {
     val enumConstructorCall: Element by element(Expression) {
         parent(functionAccessExpression)
 
-        +referencedSymbol(constructorSymbol)
+        +referencedSymbol("symbol", constructorSymbol)
     }
     val errorExpression: Element by element(Expression) {
         needAcceptMethod()
@@ -932,7 +932,7 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationReference)
 
-        +referencedSymbol(fieldSymbol)
+        +referencedSymbol("symbol", fieldSymbol)
         +field("superQualifierSymbol", classSymbol, nullable = true)
         +field("receiver", expression, nullable = true)
         +field("origin", statementOriginType, nullable = true)
@@ -1058,7 +1058,7 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationReference)
 
-        +referencedSymbol(valueSymbol)
+        +referencedSymbol("symbol", valueSymbol)
         +field("origin", statementOriginType, nullable = true)
     }
     val getValue: Element by element(Expression) {

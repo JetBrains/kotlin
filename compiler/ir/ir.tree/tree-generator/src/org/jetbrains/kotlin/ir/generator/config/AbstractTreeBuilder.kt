@@ -96,16 +96,6 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
     }
 
     /**
-     * Constructs a field that represents a symbol that the element references but not owns.
-     */
-    protected fun referencedSymbol(
-        type: TypeRefWithNullability,
-        nullable: Boolean = false,
-        mutable: Boolean = true,
-        initializer: SingleField.() -> Unit = {},
-    ) = referencedSymbol("symbol", type, nullable, mutable, initializer)
-
-    /**
      * Constructs a field that represents a list of symbols that the element references but not owns.
      */
     protected fun referencedSymbolList(

@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.generators.tree.AbstractField
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.TypeRef
-import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.withArgs
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -50,7 +49,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         typeParameterRef.configure {
-            +referencedSymbol(typeParameterSymbolType)
+            +referencedSymbol("symbol", typeParameterSymbolType)
         }
 
         typeParametersOwner.configure {
@@ -105,7 +104,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("returnTypeRef", typeRef, withReplace = true).withTransform()
             +field("receiverParameter", receiverParameter, nullable = true, withReplace = true).withTransform()
             +field("deprecationsProvider", deprecationsProviderType).withReplace().apply { isMutable = true }
-            +referencedSymbol(callableSymbolType.withArgs(callableDeclaration))
+            +referencedSymbol("symbol", callableSymbolType.withArgs(callableDeclaration))
 
             +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
             +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
@@ -719,7 +718,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         resolvedReifiedParameterReference.configure {
-            +referencedSymbol(typeParameterSymbolType)
+            +referencedSymbol("symbol", typeParameterSymbolType)
         }
 
         stringConcatenationCall.configure {
