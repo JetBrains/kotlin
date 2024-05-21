@@ -462,4 +462,29 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         ).assertSuccess()
         return clangResult
     }
+
+    @Test
+    @TestMetadata("arc_contract")
+    fun arcContract() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val root = interopObjCDir.resolve("arc_contract")
+        val bcFile = buildDir.resolve("arc_contract.bc")
+        runProcess(
+            "${testRunSettings.configurables.absoluteLlvmHome}/bin/llvm-as",
+            root.resolve("main.ll").absolutePath,
+            "-o",
+            bcFile.absolutePath
+        )
+        val testCase = generateTestCaseWithSingleFile(
+            root.resolve("main.kt"),
+            testKind = TestKind.STANDALONE_NO_TR,
+            extras = TestCase.NoTestRunnerExtras(),
+            freeCompilerArgs = TestCompilerArgs("-native-library", bcFile.absolutePath),
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+                outputDataFile = TestRunCheck.OutputDataFile(file = root.resolve("main.out"))
+            )
+        )
+        val compilationResult = compileToExecutableInOneStage(testCase).assertSuccess()
+        runExecutableAndVerify(testCase, TestExecutable.fromCompilationResult(testCase, compilationResult))
+    }
 }

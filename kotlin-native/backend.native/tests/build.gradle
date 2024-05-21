@@ -273,22 +273,6 @@ dynamicTest("interop_kt43502") {
     useGoldenData = true
 }
 
-if (PlatformInfo.isAppleTarget(project)) {
-    standaloneTest("objc_arc_contract") {
-        def bcFile = project.layout.buildDirectory.file("objc_arc_contract.bc").get().asFile
-        doBeforeBuild {
-            mkdir(bcFile.parentFile)
-            ExecLlvmKt.execLlvmUtility(project, "llvm-as") {
-                args "$projectDir/interop/objc_arc_contract/main.ll"
-                args "-o", bcFile.toString()
-            }
-        }
-        source = "interop/objc_arc_contract/main.kt"
-        useGoldenData = true
-        flags = ["-native-library", bcFile.toString()]
-    }
-}
-
 standaloneTest("kt51302") {
     enabled = project.target.name == PlatformInfo.hostName
     source = "serialization/KT-51302/main.kt"
