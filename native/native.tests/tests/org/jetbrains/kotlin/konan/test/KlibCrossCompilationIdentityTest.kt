@@ -142,10 +142,6 @@ abstract class KlibCrossCompilationIdentityTest : AbstractNativeSimpleTest() {
     }
 }
 
-@EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
-@EnforcedProperty(ClassLevelProperty.TEST_TARGET, "ios_arm64")
-class ClassicFEKlibCrossCompilationIdentityTest : KlibCrossCompilationIdentityTest()
-
 @FirPipeline
 @Tag("frontend-fir")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
