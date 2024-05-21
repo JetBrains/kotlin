@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.PATH_TO_DARWIN_DIST_PROPERTY
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -61,7 +63,12 @@ val gcTest = nativeTest("gcTest", "gc")
 val testTags = findProperty("kotlin.native.tests.tags")?.toString()
 // Note: arbitrary JUnit tag expressions can be used in this property.
 // See https://junit.org/junit5/docs/current/user-guide/#running-tests-tag-expressions
-val test by nativeTest("test", testTags, requirePlatformLibs = true)
+val test by nativeTest("test", testTags, requirePlatformLibs = true) {
+    options {
+        // See [org.jetbrains.kotlin.konan.test.KlibCrossCompilationIdentityTest.FULL_CROSS_DIST_ENABLED_PROPERTY]
+        systemProperty("kotlin.fullCrossDistEnabled", kotlinBuildProperties.getOrNull(PATH_TO_DARWIN_DIST_PROPERTY) != null)
+    }
+}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
