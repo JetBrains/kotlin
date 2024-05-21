@@ -20,9 +20,12 @@
 #if KONAN_MACOSX || KONAN_IOS || KONAN_TVOS || KONAN_WATCHOS || KONAN_ANDROID
 #include <stdlib.h>
 #elif KONAN_LINUX
-#include <sys/random.h>
+#include <unistd.h>
+#include <sys/syscall.h>
 #elif KONAN_WINDOWS
+#include <windows.h>
 #include <bcrypt.h>
+#include <ntdef.h>
 #endif
 
 #include "KAssert.h"
@@ -613,17 +616,17 @@ void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
 #elif KONAN_LINUX
     long count = 0;
     while (count < size) {
-        long ret = getrandom(address + count, size - count, 0); // blocking
+        long ret = syscall(SYS_getrandom, address + count, size - count, 0); // blocking
         if (ret >= 0) {
             count += ret;
         } else {
-            RuntimeFail("getrandom failed with an unexpected errno: %d", errno);
+            RuntimeFail("getrandom returned a negative value: %ld, errno: %d", ret, errno);
         }
     }
 #elif KONAN_WINDOWS
     NTSTATUS status = BCryptGenRandom(NULL, (PUCHAR)address, (ULONG)size, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
-    if (status != STATUS_SUCCESS) {
-        RuntimeFail("Unexpected failure in random bytes generation: %d", status);
+    if (!NT_SUCCESS(status)) {
+        RuntimeFail("Unexpected failure in random bytes generation: %ld", status);
     }
 #else
 #error "How to Kotlin_ByteArray_fillWithRandomBytes()?"
