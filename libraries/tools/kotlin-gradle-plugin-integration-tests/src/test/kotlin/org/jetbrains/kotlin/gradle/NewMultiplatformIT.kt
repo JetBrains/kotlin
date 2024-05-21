@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
 import org.junit.Assert
 import org.junit.Test
 import java.util.*
@@ -739,43 +737,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
             targetsToTest.forEach {
                 checkIntegrationTestOutput(it)
             }
-        }
-    }
-
-    @Test
-    fun testKlibsWithTheSameProjectName() = with(transformProjectWithPluginsDsl("new-mpp-klibs-with-same-name")) {
-        // KT-36721.
-        build("assemble") {
-            assertSuccessful()
-            assertTasksExecuted(
-                ":foo:foo:compileKotlinJs",
-                ":foo:foo:compileKotlinLinux",
-                ":foo:compileKotlinJs",
-                ":foo:compileKotlinLinux",
-                ":compileKotlinJs",
-                ":compileKotlinLinux"
-            )
-
-            fun getManifest(relativePath: String): Properties =
-                with(ZipFile(projectDir.resolve(relativePath))) {
-                    return this.getInputStream(getEntry("default/manifest")).use { stream ->
-                        Properties().apply { load(stream) }
-                    }
-                }
-
-            val interopManifest = getManifest("foo/build/classes/kotlin/linux/main/cinterop/foo-cinterop-bar.klib")
-            assertEquals("org.sample.one:foo-cinterop-bar", interopManifest[KLIB_PROPERTY_UNIQUE_NAME])
-
-            val nativeManifest = getManifest("foo/build/classes/kotlin/linux/main/klib/foo.klib")
-            assertEquals("org.sample.one:foo", nativeManifest[KLIB_PROPERTY_UNIQUE_NAME])
-            // Check the short name that is used as a prefix in generated ObjC headers.
-            assertEquals("foo", nativeManifest[KLIB_PROPERTY_SHORT_NAME])
-
-            val jsManifest = projectDir.resolve("foo/build/classes/kotlin/js/main/default/manifest")
-                .inputStream().use { stream ->
-                    Properties().apply { load(stream) }
-                }
-            assertEquals("org.sample.one:foo", jsManifest[KLIB_PROPERTY_UNIQUE_NAME])
         }
     }
 
