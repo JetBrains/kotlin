@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -257,8 +258,12 @@ internal fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClass
         names.flatMap { scope.getProperties(it) }
     }
 
+    val mapping = symbol.typeParameterSymbols
+        .mapIndexed { i, symbol -> symbol to coneClassLikeType.typeArguments[i] }
+        .toMap()
+
     val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().map { propertySymbol ->
-        columnOf(propertySymbol)
+        columnOf(propertySymbol, mapping)
     }
 
     return PluginDataFrameSchema(columns)
@@ -288,7 +293,7 @@ private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAcc
     }
 }
 
-private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
+private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTypeParameterSymbol, ConeTypeProjection>): SimpleCol =
     when {
         shouldBeConvertedToFrameColumn(it) -> {
                 val nestedColumns = it.resolvedReturnType.typeArguments[0].type
@@ -296,7 +301,7 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
                     ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
                     ?.collectAllProperties()
                     ?.filterIsInstance<FirPropertySymbol>()
-                    ?.map { columnOf(it) }
+                    ?.map { columnOf(it, mapping) }
                     ?: emptyList()
 
                 SimpleFrameColumn(it.name.identifier, nestedColumns, false, anyDataFrame)
@@ -308,13 +313,18 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
                 ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
                 ?.collectAllProperties()
                 ?.filterIsInstance<FirPropertySymbol>()
-                ?.map { columnOf(it) }
+                ?.map { columnOf(it, mapping) }
                 ?: emptyList()
             SimpleColumnGroup(it.name.identifier, nestedColumns, anyRow)
         }
-        else -> SimpleCol(
-            it.name.identifier, TypeApproximation(it.resolvedReturnType)
-        )
+        else -> {
+            val type = when (val type = it.resolvedReturnType) {
+                is ConeTypeParameterType -> mapping[type.lookupTag.typeParameterSymbol] as ConeKotlinType
+                else -> type
+            }
+
+            SimpleCol(it.name.identifier, TypeApproximation(type))
+        }
     }
 
 private fun KotlinTypeFacade.shouldBeConvertedToColumnGroup(it: FirPropertySymbol) =
