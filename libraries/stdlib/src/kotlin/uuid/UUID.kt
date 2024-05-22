@@ -287,7 +287,8 @@ public class UUID internal constructor(
         /**
          * Generates a new random UUID instance.
          *
-         * The returned UUID is of variant 2 and version 4.
+         * The returned UUID is of [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1)
+         * and [version 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.2).
          * It is generated using a cryptographically secure pseudorandom number generator (CSPRNG) available in the platform.
          * Thus, if the underlying system has not collected enough entropy, this function may hang until the strong entropy is collected and the CSPRNG is initialized.
          *
