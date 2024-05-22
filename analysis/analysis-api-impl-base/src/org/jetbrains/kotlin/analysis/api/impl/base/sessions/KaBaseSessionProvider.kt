@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker
 import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteActionStartedChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
-import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.providers.KaCachedService
 import org.jetbrains.kotlin.analysis.providers.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker
 
-abstract class KaBaseAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
+abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(project) {
     /**
      * Caches [KaAnalysisPermissionChecker] to avoid repeated [Project.getService] calls in [analyze].
      */

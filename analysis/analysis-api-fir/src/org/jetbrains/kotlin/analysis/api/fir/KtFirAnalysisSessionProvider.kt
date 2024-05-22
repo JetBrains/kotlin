@@ -11,7 +11,7 @@ import com.intellij.openapi.util.LowMemoryWatcher
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
@@ -30,7 +30,7 @@ import kotlin.reflect.KClass
  * [KaFirSessionProvider] keeps [KaFirSession]s in a cache, which are actively invalidated with their associated underlying
  * [LLFirSession][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession]s.
  */
-internal class KaFirSessionProvider(project: Project) : KaBaseAnalysisSessionProvider(project) {
+internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(project) {
     // `KaFirSession`s must be soft-referenced to allow simultaneous garbage collection of an unused `KaFirSession` together
     // with its `LLFirSession`.
     private val cache: ConcurrentMap<KtModule, KaSession> = ContainerUtil.createConcurrentSoftValueMap()

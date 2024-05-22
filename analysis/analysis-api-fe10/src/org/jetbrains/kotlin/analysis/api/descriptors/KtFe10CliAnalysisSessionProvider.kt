@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.psi.KtElement
 
-internal class KaFe10SessionProvider(project: Project) : KaBaseAnalysisSessionProvider(project) {
+internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(project) {
     override fun getAnalysisSession(useSiteKtElement: KtElement): KaSession {
         val facade = Fe10AnalysisFacade.getInstance(project)
         val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
