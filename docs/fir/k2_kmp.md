@@ -295,14 +295,10 @@ class Impl : K {
 
 ```
 
-***Note: Approach described below is a target. It's not yet enabled by default. See KT-61514 for details.***
-
 In the given example during the actualization, common compilation would produce (1) and (2), which need to be combined
 into one fake override.
 
-There is a new scheme, which is enabled by -Xuse-ir-fake-override-builder flag, and should become default at some point.
-
-In it, [Fir2Ir](#fir2ir) creates a special symbol for fake overrides calls, and no declarations for fake overrides 
+To achieve this, [Fir2Ir](#fir2ir) creates a special symbol for fake overrides calls, and no declarations for fake overrides 
 (except one in [Lazy classes](#lazy-classes)). A special symbol, represented by [org.jetbrains.kotlin.ir.symbols.impl.IrFakeOverrideSymbolBase](../../compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/symbols/impl/IrFakeOverrideSymbol.kt) and its inheritors,
 is effectively a pair of real declaration symbol and dispatch receiver class. This symbol can't be bound,
 so backend can't work with it. To fix it, there is a phase, which replaces them with normal ones
