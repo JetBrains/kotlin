@@ -9,6 +9,7 @@ import org.jetbrains.dataframe.impl.codeGen.CodeGenerator
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.dataframe.*
 import org.jetbrains.kotlin.fir.dataframe.extensions.ExtensionsGenerator
 import org.jetbrains.kotlin.fir.dataframe.services.BaseTestRunner
@@ -108,6 +109,9 @@ abstract class TestWithCompileTimeInformation : BaseTestRunner() {
             }
             return emptyList()
         }
+
+        override val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>
+            get() = TODO()
     }
 }
 
@@ -183,7 +187,7 @@ class Explode : TestWithCompileTimeInformation() {
         //File("plugins/kotlin-dataframe/testData/unit/dummy.kt").writeText()
 
         compilationCallback = {
-            val facade = KotlinTypeFacadeImpl(it)
+            val facade = KotlinTypeFacadeImpl(it, TODO())
             grouped.explodeTest(facade, dropEmpty = true, pluginDataFrameSchema = schema)
         }
 
@@ -200,7 +204,7 @@ class Explode : TestWithCompileTimeInformation() {
         dumpSchema(df)
 
         compilationCallback = {
-            val facade = KotlinTypeFacadeImpl(it)
+            val facade = KotlinTypeFacadeImpl(it, TODO())
             df.explodeTest(facade, dropEmpty = true, pluginDataFrameSchema = schema)
         }
 

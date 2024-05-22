@@ -1,6 +1,7 @@
 package org.jetbrains.kotlinx.dataframe
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
@@ -36,6 +38,7 @@ val DATA_ROW_CLASS_ID: ClassId
 interface KotlinTypeFacade {
     val session: FirSession
     val resolutionPath: String? get() = null
+    val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>
 
     fun Marker.type() = type
 
@@ -134,7 +137,10 @@ private fun ConeKotlinType.isBuiltinType(classId: ClassId, isNullable: Boolean?)
 
 private fun String.collectionsId() = ClassId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier(this))
 
-class KotlinTypeFacadeImpl(override val session: FirSession) : KotlinTypeFacade
+class KotlinTypeFacadeImpl(
+    override val session: FirSession,
+    override val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>
+) : KotlinTypeFacade
 
 class Marker private constructor(internal val type: ConeKotlinType) {
     companion object {

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.flatten
 import org.jetbrains.kotlin.fir.dataframe.pluginDataFrameSchema
@@ -33,15 +34,20 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacadeImpl
+import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 
-class ExpressionAnalysisAdditionalChecker(session: FirSession) : FirAdditionalCheckersExtension(session) {
+class ExpressionAnalysisAdditionalChecker(
+    session: FirSession,
+    cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>
+) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
-        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(Checker())
+        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(Checker(cache))
     }
 }
 
-private class Checker : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
+private class Checker(val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>) : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
     companion object {
         val ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
         val CAST_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
@@ -49,7 +55,7 @@ private class Checker : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) 
     }
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        with(KotlinTypeFacadeImpl(context.session)) {
+        with(KotlinTypeFacadeImpl(context.session, cache)) {
             analyzeCast(expression, reporter, context)
 //            analyzeRefinedCallShape(expression, reporter = object : InterpretationErrorReporter {
 //                override var errorReported: Boolean = false
