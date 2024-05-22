@@ -13,6 +13,7 @@ class SamWithLambda {
     fun test1(): J<String?> = J<String?> { x -> x }
     fun test2(): J<String?> = J<String?> { x -> null }
     fun test3(): J<String?> = <!TYPE_MISMATCH!>J<String> { x -> x }<!>
+    fun test3r(): J<String> = <!TYPE_MISMATCH!>J<String?> { x -> x }<!>
     fun test4(): J<String?> = J<String?> <!TYPE_MISMATCH!>{ x: String -> x }<!>
     fun test5(): J<String?> = J<String?> { x -> "x" }
     fun test6(): J<String?> = J<String?> { x: String? -> "x" }
