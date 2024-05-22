@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.SyntheticPropertiesCacheKey
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
@@ -44,7 +42,6 @@ import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_COLLECTION_PARAMETER_NAMES
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsBuiltinMethodWithErasedValueParameters
@@ -561,8 +558,7 @@ class JavaClassUseSiteMemberScope(
 
         // E.g. contains(T)
         val unwrappedMemberFromSupertypeWithValueParametersToBeErased =
-            memberFromSupertypeWithValueParametersToBeErased.fir.originalForSubstitutionOverride
-                ?: memberFromSupertypeWithValueParametersToBeErased.fir
+            memberFromSupertypeWithValueParametersToBeErased.unwrapFakeOverrides().fir
 
         val functionFromSupertypeWithValueParametersToBeErased = unwrappedMemberFromSupertypeWithValueParametersToBeErased
             .initialSignatureAttr
@@ -645,7 +641,9 @@ class JavaClassUseSiteMemberScope(
     private fun FirNamedFunctionSymbol.hasSameJvmDescriptor(
         builtinWithErasedParameters: FirNamedFunctionSymbol
     ): Boolean {
-        return fir.computeJvmDescriptor(includeReturnType = false) == builtinWithErasedParameters.fir.computeJvmDescriptor(includeReturnType = false)
+        val ownDescriptor = fir.computeJvmDescriptor(includeReturnType = false)
+        val otherDescriptor = builtinWithErasedParameters.fir.computeJvmDescriptor(includeReturnType = false)
+        return ownDescriptor == otherDescriptor
     }
 
     /**
