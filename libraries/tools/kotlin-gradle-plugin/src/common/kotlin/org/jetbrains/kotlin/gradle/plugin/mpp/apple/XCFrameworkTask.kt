@@ -15,6 +15,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
@@ -64,6 +65,7 @@ internal class XCFrameworkTaskHolder(
     }
 }
 
+@KotlinGradlePluginPublicDsl
 class XCFrameworkConfig {
     private val taskHolders: List<XCFrameworkTaskHolder>
 
@@ -99,6 +101,7 @@ class XCFrameworkConfig {
     }
 }
 
+@KotlinGradlePluginPublicDsl
 fun Project.XCFramework(xcFrameworkName: String = name) = XCFrameworkConfig(this, xcFrameworkName)
 
 private fun Project.eraseIfDefault(xcFrameworkName: String) =

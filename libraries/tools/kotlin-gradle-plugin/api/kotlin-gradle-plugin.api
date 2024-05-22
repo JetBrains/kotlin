@@ -738,6 +738,108 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/Id
 	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractExecutable : org/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractNativeLibrary : org/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public final fun export (Ljava/lang/Object;)V
+	public final fun export (Ljava/lang/Object;Lgroovy/lang/Closure;)V
+	public final fun export (Ljava/lang/Object;Lorg/gradle/api/Action;)V
+	public final fun getExportConfigurationName ()Ljava/lang/String;
+	public final fun getTransitiveExport ()Z
+	public final fun setTransitiveExport (Z)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/Executable : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractExecutable {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public final fun entryPoint (Ljava/lang/String;)V
+	public fun getBaseName ()Ljava/lang/String;
+	public final fun getEntryPoint ()Ljava/lang/String;
+	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+	public final fun getRunTask ()Lorg/gradle/api/tasks/AbstractExecTask;
+	public final fun getRunTaskName ()Ljava/lang/String;
+	public final fun getRunTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public fun setBaseName (Ljava/lang/String;)V
+	public final fun setEntryPoint (Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractNativeLibrary, org/gradle/api/attributes/HasAttributes {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public final fun embedBitcode (Ljava/lang/String;)V
+	public final fun embedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
+	public synthetic fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
+	public fun getAttributes ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/HierarchyAttributeContainer;
+	public final fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
+	public final fun getEmbedBitcodeMode ()Lorg/gradle/api/provider/Property;
+	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+	public final fun isStatic ()Z
+	public final fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
+	public final fun setStatic (Z)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary : org/gradle/api/Named {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun binaryOption (Ljava/lang/String;Ljava/lang/String;)V
+	public fun getBaseName ()Ljava/lang/String;
+	public final fun getBinaryOptions ()Ljava/util/Map;
+	public final fun getBuildType ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;
+	public final fun getCompilation ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;
+	public final fun getDebuggable ()Z
+	public final fun getFreeCompilerArgs ()Ljava/util/List;
+	public final fun getLinkTask ()Lorg/jetbrains/kotlin/gradle/tasks/KotlinNativeLink;
+	public final fun getLinkTaskName ()Ljava/lang/String;
+	public final fun getLinkTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public final fun getLinkerOpts ()Ljava/util/List;
+	public fun getName ()Ljava/lang/String;
+	public final fun getOptimized ()Z
+	public final fun getOutputDirectory ()Ljava/io/File;
+	public final fun getOutputDirectoryProperty ()Lorg/gradle/api/file/DirectoryProperty;
+	public final fun getOutputFile ()Ljava/io/File;
+	public abstract fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+	public final fun getProject ()Lorg/gradle/api/Project;
+	public final fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public final fun linkerOpts (Ljava/lang/Iterable;)V
+	public final fun linkerOpts ([Ljava/lang/String;)V
+	public fun setBaseName (Ljava/lang/String;)V
+	public final fun setBinaryOptions (Ljava/util/Map;)V
+	public final fun setCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public final fun setDebuggable (Z)V
+	public final fun setFreeCompilerArgs (Ljava/util/List;)V
+	public final fun setLinkerOpts (Ljava/util/List;)V
+	public final fun setOptimized (Z)V
+	public final fun setOutputDirectory (Ljava/io/File;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/SharedLibrary : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractNativeLibrary {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/StaticLibrary : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractNativeLibrary {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractExecutable {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkConfig {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public fun <init> (Lorg/gradle/api/Project;Ljava/lang/String;)V
+	public fun <init> (Lorg/gradle/api/Project;Ljava/lang/String;Ljava/util/Set;)V
+	public final fun add (Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkTaskKt {
+	public static final fun XCFramework (Lorg/gradle/api/Project;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkConfig;
+	public static synthetic fun XCFramework$default (Lorg/gradle/api/Project;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkConfig;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/CreateExternalKotlinCompilationKt {
 	public static final fun createCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;
 	public static final fun createCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;
