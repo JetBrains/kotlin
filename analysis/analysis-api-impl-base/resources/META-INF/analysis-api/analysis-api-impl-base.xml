@@ -26,11 +26,6 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.providers.impl.KotlinProjectMessageBusProvider"
     />
 
-    <applicationService
-        serviceInterface="org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseAnalysisPermissionRegistry"
-    />
-
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseAnalysisPermissionChecker"

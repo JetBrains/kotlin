@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirSt
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.LLFirStandaloneLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.api.standalone.base.providers.KotlinStandaloneAnalysisPermissionOptions
 import org.jetbrains.kotlin.analysis.api.standalone.base.services.LLStandaloneFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
 import org.jetbrains.kotlin.analysis.providers.lifetime.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.providers.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.providers.permissions.KotlinAnalysisPermissionOptions
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
@@ -227,7 +225,8 @@ public class StandaloneAnalysisAPISessionBuilder(
 internal object StandaloneSessionServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
     override fun registerApplicationServices(application: MockApplication) {
         application.apply {
-            registerService(KotlinAnalysisPermissionOptions::class.java, KotlinStandaloneAnalysisPermissionOptions::class.java)
+            // TODO (KT-68386): Re-enable once KT-68386 is fixed.
+            //registerService(KotlinAnalysisPermissionOptions::class.java, KotlinStandaloneAnalysisPermissionOptions::class.java)
         }
     }
 

@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.permissions
 
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry
 import org.jetbrains.kotlin.analysis.providers.KaCachedService
 import org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker
+import org.jetbrains.kotlin.analysis.providers.permissions.KotlinAnalysisPermissionOptions
 
 internal class KaBaseAnalysisPermissionChecker : KaAnalysisPermissionChecker {
     /**
@@ -20,11 +22,20 @@ internal class KaBaseAnalysisPermissionChecker : KaAnalysisPermissionChecker {
         KaAnalysisPermissionRegistry.getInstance()
     }
 
+    /**
+     * Caches [KotlinAnalysisPermissionOptions] to avoid repeated `getService` calls in [analyze][org.jetbrains.kotlin.analysis.api.analyze]
+     * and validity assertions.
+     */
+    @KaCachedService
+    private val permissionOptions by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinAnalysisPermissionOptions.getInstance()
+    }
+
     override fun isAnalysisAllowed(): Boolean {
         val application = ApplicationManager.getApplication()
 
-        if (application.isDispatchThread && !permissionRegistry.isAnalysisAllowedOnEdt) return false
-        if (application.isWriteAccessAllowed && !permissionRegistry.isAnalysisAllowedInWriteAction) return false
+        if (isProhibitedEdtAnalysis(application)) return false
+        if (isProhibitedWriteActionAnalysis(application)) return false
         if (permissionRegistry.explicitAnalysisRestriction != null) return false
 
         return true
@@ -33,11 +44,11 @@ internal class KaBaseAnalysisPermissionChecker : KaAnalysisPermissionChecker {
     override fun getRejectionReason(): String {
         val application = ApplicationManager.getApplication()
 
-        if (application.isDispatchThread && !permissionRegistry.isAnalysisAllowedOnEdt) {
+        if (isProhibitedEdtAnalysis(application)) {
             return "Called in the EDT thread."
         }
 
-        if (application.isWriteAccessAllowed && !permissionRegistry.isAnalysisAllowedInWriteAction) {
+        if (isProhibitedWriteActionAnalysis(application)) {
             return "Called from a write action."
         }
 
@@ -47,4 +58,14 @@ internal class KaBaseAnalysisPermissionChecker : KaAnalysisPermissionChecker {
 
         error("Cannot get a rejection reason when analysis is allowed.")
     }
+
+    private fun isProhibitedEdtAnalysis(application: Application): Boolean =
+        application.isDispatchThread &&
+                !permissionOptions.defaultIsAnalysisAllowedOnEdt &&
+                !permissionRegistry.isAnalysisAllowedOnEdt
+
+    private fun isProhibitedWriteActionAnalysis(application: Application): Boolean =
+        application.isWriteAccessAllowed &&
+                !permissionOptions.defaultIsAnalysisAllowedInWriteAction &&
+                !permissionRegistry.isAnalysisAllowedInWriteAction
 }
