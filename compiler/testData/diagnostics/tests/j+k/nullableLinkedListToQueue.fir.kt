@@ -29,12 +29,12 @@ class X {
 }
 
 fun test(x : X) {
-    x.bar(<!ARGUMENT_TYPE_MISMATCH!>LinkedList<String?>()<!>)
-    bar(<!ARGUMENT_TYPE_MISMATCH!>B<String?>()<!>)
+    x.bar(LinkedList<String?>())
+    bar(B<String?>())
     func(A<B<String>>())
     func(<!ARGUMENT_TYPE_MISMATCH!>A<B<String?>>()<!>)
     func(<!ARGUMENT_TYPE_MISMATCH!>A<B<String?>?>()<!>)
-    func(<!ARGUMENT_TYPE_MISMATCH!>A<B<String>?>()<!>)
+    func(A<B<String>?>())
 }
 
 class C {

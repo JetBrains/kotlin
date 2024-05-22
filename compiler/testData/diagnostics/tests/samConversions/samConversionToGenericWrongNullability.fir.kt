@@ -33,15 +33,15 @@ typealias StringAlias = String
 
 fun main() {
     Supplier<String> {
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+        returnNullableString()
     }
 
     Supplier<StringAlias> {
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+        returnNullableString()
     }
 
     Supplier<String> {
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>TestValueProvider.getNullableString()<!>
+        TestValueProvider.getNullableString()
     }
 
     val sam: Supplier<String> = Supplier{
@@ -50,17 +50,17 @@ fun main() {
 
     Supplier<String> {
         val x = 1
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>when(x) {
+        when(x) {
             1 -> returnNullableString()
             else -> ""
-        }<!>
+        }
     }
 
     Supplier<String> {
-        if (true) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
-        run { return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!> }
+        if (true) return@Supplier returnNullableString()
+        run { return@Supplier returnNullableString() }
         try {
-            if (true) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+            if (true) return@Supplier returnNullableString()
             2
         } finally {
             Unit
@@ -104,7 +104,7 @@ fun main() {
 
     Supplier<String>(
         fun(): String? {
-            if (true) return <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+            if (true) return returnNullableString()
             return ""
         }
     )
@@ -117,7 +117,7 @@ fun main() {
     }
 
     Supplier<String> {
-        if (true) return@Supplier <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
+        if (true) return@Supplier returnNullableString()
         ""
     }
 
@@ -191,13 +191,13 @@ fun scopes () {
 
 fun <T: Number> test1(x: T) {
     Supplier<T> {
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>x.foo()<!>
+        x.foo()
     }
 }
 
 fun <T> test2(x: T) where T: Any?, T: Comparable<T> {
     Supplier<T> {
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>x.foo()<!>
+        x.foo()
     }
 }
 
@@ -207,6 +207,6 @@ fun <T> T.foo2(): T? = null!!
 
 fun test()  {
     Supplier<String> {
-        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString().foo2()<!>
+        returnNullableString().foo2()
     }
 }

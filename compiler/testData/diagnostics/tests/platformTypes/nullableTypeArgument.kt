@@ -5,6 +5,6 @@ fun foo() {
     val list = ArrayList<String?>()
 
     for (s in list) {
-        s<!UNSAFE_CALL!>.<!>length
+        s.length
     }
 }
