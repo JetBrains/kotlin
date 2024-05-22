@@ -15,7 +15,8 @@ import kotlin.internal.InlineOnly
  * of the bits layout and their meaning, refer to [RFC 9562](https://www.rfc-editor.org/rfc/rfc9562).
  *
  * The standard textual representation of a UUID is "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", where each 'x'
- * is a hexadecimal digit. This class provides utility functions for the creation, parsing, and operations on UUIDs.
+ * is a hexadecimal digit, e.g., "550e8400-e29b-41d4-a716-446655440000".
+ * This class provides utility functions for the creation, parsing, and operations on UUIDs.
  */
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
@@ -29,10 +30,13 @@ public class UUID internal constructor(
      * This function is intended for use when one needs to perform bitwise operations with the UUID.
      *
      * The [action] will receive two [Long] arguments:
-     *   - `mostSignificantBits`: The most significant 64 bits of this UUID.
-     *   - `leastSignificantBits`: The least significant 64 bits of this UUID.
+     *   - `mostSignificantBits`: The most significant 64 bits of this UUID presented in big-endian byte order.
+     *   - `leastSignificantBits`: The least significant 64 bits of this UUID presented in big-endian byte order.
+     * For example, for a UUID `550e8400-e29b-41d4-a716-446655440000`, the breakdown is the following:
+     *   - `mostSignificantBits = 0x550e8400e29b41d4L`.
+     *   - `leastSignificantBits = 0xa716446655440000uL.toLong()`.
      *
-     * For example, to retrieve the version number of this UUID:
+     * For example, to retrieve the [version number](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.2) of this UUID:
      * ```kotlin
      * val version = uuid.toLongs { mostSignificantBits, _ ->
      *     ((mostSignificantBits shr 12) and 0xF).toInt()
@@ -58,13 +62,16 @@ public class UUID internal constructor(
      * This function is intended for use when one needs to perform bitwise operations with the UUID.
      *
      * The [action] will receive two [ULong] arguments:
-     *   - `mostSignificantBits`: The most significant 64 bits of this UUID.
-     *   - `leastSignificantBits`: The least significant 64 bits of this UUID.
+     *   - `mostSignificantBits`: The most significant 64 bits of this UUID presented in big-endian byte order.
+     *   - `leastSignificantBits`: The least significant 64 bits of this UUID presented in big-endian byte order.
+     * For example, for a UUID `550e8400-e29b-41d4-a716-446655440000`, the breakdown is the following:
+     *   - `mostSignificantBits = 0x550e8400e29b41d4uL`.
+     *   - `leastSignificantBits = 0xa716446655440000uL`.
      *
-     * For example, to identify whether a UUID is of the IETF variant (variant 2):
+     * For example, to identify whether a UUID is of the [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1):
      * ```kotlin
      * val isIETFVariant = uuid.toULongs { _, leastSignificantBits ->
-     *     (leastSignificantBits shr 62) == 2uL }
+     *     (leastSignificantBits shr 62) == 2uL
      * }
      * ```
      *
@@ -120,7 +127,9 @@ public class UUID internal constructor(
     /**
      * Returns a byte array representation of this UUID.
      *
-     * The array is 16 bytes long, representing the UUID in big-endian byte order.
+     * The returned array contains 16 bytes. Each byte in the array sequentially represents
+     * the next 8 bits of the UUID, starting from the most significant 8 bits
+     * in the first byte to the least significant 8 bits in the last byte.
      *
      * @see UUID.fromByteArray
      * @sample samples.uuid.UUIDs.toByteArray
@@ -169,8 +178,10 @@ public class UUID internal constructor(
         /**
          * Creates a UUID from specified 128 bits split into two 64-bit Longs.
          *
-         * @param mostSignificantBits The most significant 64 bits.
-         * @param leastSignificantBits The least significant 64 bits.
+         * This function interprets the provided `Long` values in big-endian byte order.
+         *
+         * @param mostSignificantBits The most significant 64 bits of the UUID.
+         * @param leastSignificantBits The least significant 64 bits of the UUID.
          * @return A new UUID based on the specified bits.
          *
          * @see UUID.toLongs
@@ -182,8 +193,10 @@ public class UUID internal constructor(
         /**
          * Creates a UUID from specified 128 bits split into two 64-bit ULongs.
          *
-         * @param mostSignificantBits The most significant 64 bits.
-         * @param leastSignificantBits The least significant 64 bits.
+         * This function interprets the provided `ULong` values in big-endian byte order.
+         *
+         * @param mostSignificantBits The most significant 64 bits of the UUID.
+         * @param leastSignificantBits The least significant 64 bits of the UUID.
          * @return A new UUID based on the specified bits.
          *
          * @see UUID.toULongs
@@ -193,10 +206,14 @@ public class UUID internal constructor(
             UUID(mostSignificantBits.toLong(), leastSignificantBits.toLong())
 
         /**
-         * Creates a UUID from specified 128 bits split into 16 big-endian bytes.
+         * Creates a UUID from a byte array containing 128 bits split into 16 bytes.
+         *
+         * Each byte in the [byteArray] sequentially represents
+         * the next 8 bits of the UUID, starting from the most significant 8 bits
+         * in the first byte to the least significant 8 bits in the last byte.
          *
          * @param byteArray A 16-byte array containing the UUID bits.
-         * @throws IllegalArgumentException If the size of the [byteArray] is not 16.
+         * @throws IllegalArgumentException If the size of the [byteArray] is not exactly 16.
          * @return A new UUID based on the specified bits.
          *
          * @see UUID.toByteArray
