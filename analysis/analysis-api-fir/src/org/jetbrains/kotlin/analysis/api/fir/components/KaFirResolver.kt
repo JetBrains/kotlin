@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
@@ -77,25 +76,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal class KaFirResolver(
-    override val analysisSession: KaFirSession,
-    override val token: KaLifetimeToken,
-) : KaAbstractResolver(), KaFirSessionComponent {
-    private val equalsSymbolInAny: FirNamedFunctionSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val session = analysisSession.useSiteSession
-        val anyFirClass = session.builtinTypes.anyType.toRegularClassSymbol(session) ?: return@lazy null
-        val scope = session.declaredMemberScope(
-            anyFirClass,
-            memberRequiredPhase = FirResolvePhase.STATUS,
-        )
-
-        var result: FirNamedFunctionSymbol? = null
-        scope.processFunctionsByName(EQUALS) {
-            result = it
-        }
-        result
-    }
-
+internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbstractResolver(), KaFirSessionComponent {
     override fun resolveCall(psi: KtElement): KaCallInfo? {
         return wrapError(psi) {
             val ktCallInfos = getCallInfo(
@@ -116,6 +97,35 @@ internal class KaFirResolver(
             check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
             ktCallInfos.singleOrNull()
         }
+    }
+
+    override fun collectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> = wrapError(psi) {
+        getCallInfo(
+            psi,
+            getErrorCallInfo = { emptyList() },
+            getCallInfo = { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
+                collectCallCandidates(
+                    psiToResolve,
+                    resolveCalleeExpressionOfFunctionCall,
+                    resolveFragmentOfCall
+                )
+            }
+        )
+    }
+
+    private val equalsSymbolInAny: FirNamedFunctionSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val session = analysisSession.useSiteSession
+        val anyFirClass = session.builtinTypes.anyType.toRegularClassSymbol(session) ?: return@lazy null
+        val scope = session.declaredMemberScope(
+            anyFirClass,
+            memberRequiredPhase = FirResolvePhase.STATUS,
+        )
+
+        var result: FirNamedFunctionSymbol? = null
+        scope.processFunctionsByName(EQUALS) {
+            result = it
+        }
+        result
     }
 
     private inline fun <T> getCallInfo(
@@ -939,20 +949,6 @@ internal class KaFirResolver(
         val elementType = resolvedType.arrayElementType()?.asKtType() ?: return emptyMap()
         val typeParameter = partiallyAppliedSymbol.symbol.typeParameters.singleOrNull() ?: return emptyMap()
         return mapOf(typeParameter to elementType)
-    }
-
-    override fun collectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> = wrapError(psi) {
-        getCallInfo(
-            psi,
-            getErrorCallInfo = { emptyList() },
-            getCallInfo = { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
-                collectCallCandidates(
-                    psiToResolve,
-                    resolveCalleeExpressionOfFunctionCall,
-                    resolveFragmentOfCall
-                )
-            }
-        )
     }
 
     // TODO: Refactor common code with FirElement.toKtCallInfo() when other FirResolvables are handled

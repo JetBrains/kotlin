@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe1
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
@@ -67,87 +66,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 internal class KaFe10Resolver(
     override val analysisSession: KaFe10Session,
 ) : KaAbstractResolver(), KaFe10SessionComponent {
-    private companion object {
-        private val operatorWithAssignmentVariant = setOf(
-            OperatorNameConventions.PLUS,
-            OperatorNameConventions.MINUS,
-            OperatorNameConventions.TIMES,
-            OperatorNameConventions.DIV,
-            OperatorNameConventions.REM,
-            OperatorNameConventions.MOD,
-        )
-
-        private val callArgErrors = setOf(
-            Errors.ARGUMENT_PASSED_TWICE,
-            Errors.MIXING_NAMED_AND_POSITIONED_ARGUMENTS,
-            Errors.NAMED_PARAMETER_NOT_FOUND,
-            Errors.NAMED_ARGUMENTS_NOT_ALLOWED,
-            Errors.VARARG_OUTSIDE_PARENTHESES,
-            Errors.SPREAD_OF_NULLABLE,
-            Errors.SPREAD_OF_LAMBDA_OR_CALLABLE_REFERENCE,
-            Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS,
-            Errors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE,
-            Errors.TOO_MANY_ARGUMENTS,
-            Errors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION,
-            Errors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION,
-            *Errors.TYPE_MISMATCH_ERRORS.toTypedArray(),
-        )
-
-        private val resolutionFailureErrors: Set<DiagnosticFactoryWithPsiElement<*, *>> = setOf(
-            Errors.INVISIBLE_MEMBER,
-            Errors.NO_VALUE_FOR_PARAMETER,
-            Errors.MISSING_RECEIVER,
-            Errors.NO_RECEIVER_ALLOWED,
-            Errors.ILLEGAL_SELECTOR,
-            Errors.FUNCTION_EXPECTED,
-            Errors.FUNCTION_CALL_EXPECTED,
-            Errors.NO_CONSTRUCTOR,
-            Errors.OVERLOAD_RESOLUTION_AMBIGUITY,
-            Errors.NONE_APPLICABLE,
-            Errors.CANNOT_COMPLETE_RESOLVE,
-            Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER,
-            Errors.CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY,
-            Errors.TYPE_PARAMETER_AS_REIFIED,
-            Errors.DEFINITELY_NON_NULLABLE_AS_REIFIED,
-            Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION,
-            Errors.REIFIED_TYPE_UNSAFE_SUBSTITUTION,
-            Errors.CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION,
-            Errors.RESOLUTION_TO_CLASSIFIER,
-            Errors.RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS,
-            Errors.PARENTHESIZED_COMPANION_LHS_DEPRECATION,
-            Errors.RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS,
-            Errors.UNRESOLVED_REFERENCE,
-            *Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.factories,
-            *Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT.factories,
-        )
-
-        private val syntaxErrors = setOf(
-            Errors.ASSIGNMENT_IN_EXPRESSION_CONTEXT,
-        )
-
-        val diagnosticWithResolvedCallsAtPosition1 = setOf(
-            Errors.OVERLOAD_RESOLUTION_AMBIGUITY,
-            Errors.NONE_APPLICABLE,
-            Errors.CANNOT_COMPLETE_RESOLVE,
-            Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER,
-            Errors.ASSIGN_OPERATOR_AMBIGUITY,
-            Errors.ITERATOR_AMBIGUITY,
-        )
-
-        val diagnosticWithResolvedCallsAtPosition2 = setOf(
-            Errors.COMPONENT_FUNCTION_AMBIGUITY,
-            Errors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
-            Errors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
-            Errors.DELEGATE_PD_METHOD_NONE_APPLICABLE,
-        )
-
-        private val DiagnosticFactoryForDeprecation<*, *, *>.factories: Array<DiagnosticFactoryWithPsiElement<*, *>>
-            get() = arrayOf(warningFactory, errorFactory)
-    }
-
-    override val token: KaLifetimeToken
-        get() = analysisSession.token
-
     override fun resolveCall(psi: KtElement): KaCallInfo? = with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
         if (!canBeResolvedAsCall(psi)) return null
 
@@ -691,5 +609,83 @@ internal class KaFe10Resolver(
         }
 
         return result
+    }
+
+    private companion object {
+        private val operatorWithAssignmentVariant = setOf(
+            OperatorNameConventions.PLUS,
+            OperatorNameConventions.MINUS,
+            OperatorNameConventions.TIMES,
+            OperatorNameConventions.DIV,
+            OperatorNameConventions.REM,
+            OperatorNameConventions.MOD,
+        )
+
+        private val callArgErrors = setOf(
+            Errors.ARGUMENT_PASSED_TWICE,
+            Errors.MIXING_NAMED_AND_POSITIONED_ARGUMENTS,
+            Errors.NAMED_PARAMETER_NOT_FOUND,
+            Errors.NAMED_ARGUMENTS_NOT_ALLOWED,
+            Errors.VARARG_OUTSIDE_PARENTHESES,
+            Errors.SPREAD_OF_NULLABLE,
+            Errors.SPREAD_OF_LAMBDA_OR_CALLABLE_REFERENCE,
+            Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS,
+            Errors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE,
+            Errors.TOO_MANY_ARGUMENTS,
+            Errors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION,
+            Errors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION,
+            *Errors.TYPE_MISMATCH_ERRORS.toTypedArray(),
+        )
+
+        private val resolutionFailureErrors: Set<DiagnosticFactoryWithPsiElement<*, *>> = setOf(
+            Errors.INVISIBLE_MEMBER,
+            Errors.NO_VALUE_FOR_PARAMETER,
+            Errors.MISSING_RECEIVER,
+            Errors.NO_RECEIVER_ALLOWED,
+            Errors.ILLEGAL_SELECTOR,
+            Errors.FUNCTION_EXPECTED,
+            Errors.FUNCTION_CALL_EXPECTED,
+            Errors.NO_CONSTRUCTOR,
+            Errors.OVERLOAD_RESOLUTION_AMBIGUITY,
+            Errors.NONE_APPLICABLE,
+            Errors.CANNOT_COMPLETE_RESOLVE,
+            Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER,
+            Errors.CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY,
+            Errors.TYPE_PARAMETER_AS_REIFIED,
+            Errors.DEFINITELY_NON_NULLABLE_AS_REIFIED,
+            Errors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION,
+            Errors.REIFIED_TYPE_UNSAFE_SUBSTITUTION,
+            Errors.CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION,
+            Errors.RESOLUTION_TO_CLASSIFIER,
+            Errors.RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS,
+            Errors.PARENTHESIZED_COMPANION_LHS_DEPRECATION,
+            Errors.RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS,
+            Errors.UNRESOLVED_REFERENCE,
+            *Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.factories,
+            *Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT.factories,
+        )
+
+        private val syntaxErrors = setOf(
+            Errors.ASSIGNMENT_IN_EXPRESSION_CONTEXT,
+        )
+
+        val diagnosticWithResolvedCallsAtPosition1 = setOf(
+            Errors.OVERLOAD_RESOLUTION_AMBIGUITY,
+            Errors.NONE_APPLICABLE,
+            Errors.CANNOT_COMPLETE_RESOLVE,
+            Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER,
+            Errors.ASSIGN_OPERATOR_AMBIGUITY,
+            Errors.ITERATOR_AMBIGUITY,
+        )
+
+        val diagnosticWithResolvedCallsAtPosition2 = setOf(
+            Errors.COMPONENT_FUNCTION_AMBIGUITY,
+            Errors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
+            Errors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
+            Errors.DELEGATE_PD_METHOD_NONE_APPLICABLE,
+        )
+
+        private val DiagnosticFactoryForDeprecation<*, *, *>.factories: Array<DiagnosticFactoryWithPsiElement<*, *>>
+            get() = arrayOf(warningFactory, errorFactory)
     }
 }
