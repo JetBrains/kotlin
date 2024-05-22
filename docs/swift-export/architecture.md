@@ -17,7 +17,8 @@ Effectively, it consists of several global compiler passes:
 
 And it works pretty well! However, this approach has a number of drawbacks:
 1. It integrates poorly with an IDE. 
-Objective-C export was written as a global "batch" tool while good IDE integration requires the local-first approach.
+
+    Objective-C export was written as a global "batch" tool while good IDE integration requires the local-first approach.
 2. Effectively, Kotlin/Native has 2 LLVM IR generators: one for Kotlin IR, and another for Objective-C bridges. Keeping these things in sync
 requires additional efforts.
 3. Objective-C export is tied to descriptors that are a K1 legacy, and moving it to K2 requires additional efforts.
