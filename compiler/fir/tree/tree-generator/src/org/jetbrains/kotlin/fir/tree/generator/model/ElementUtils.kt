@@ -77,11 +77,11 @@ fun fieldList(
     kind: AbstractField.Kind? = null,
 ): Field {
     val name = elementOrRef.element.name.replaceFirstChar(Char::lowercaseChar) + "s"
-    return FieldList(
+    return fieldList(
         name = name,
-        baseType = elementOrRef,
+        type = elementOrRef,
         withReplace = withReplace,
-        kind = kind ?: getDefaultFieldKind(elementOrRef),
+        kind = kind,
         useMutableOrEmpty = useMutableOrEmpty
     )
 }

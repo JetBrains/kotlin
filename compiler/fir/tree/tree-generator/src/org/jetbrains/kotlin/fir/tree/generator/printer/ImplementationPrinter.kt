@@ -59,7 +59,7 @@ internal class ImplementationPrinter(
             val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
             val isAbstract = kind == ImplementationKind.AbstractClass || kind == ImplementationKind.SealedClass
             val bindingCalls = element.allFields.filter {
-                it.withBindThis && it.hasSymbolType && it !is FieldList && it.name != "companionObjectSymbol"
+                it.withBindThis && it.containsSymbol && it !is FieldList && it.name != "companionObjectSymbol"
             }.takeIf {
                 it.isNotEmpty() && !isInterface && !isAbstract &&
                         !element.typeName.contains("Reference")
@@ -329,6 +329,3 @@ internal class ImplementationPrinter(
         }
     }
 }
-
-private val Field.hasSymbolType: Boolean
-    get() = (typeRef as? ClassRef<*>)?.simpleName?.contains("Symbol") ?: false

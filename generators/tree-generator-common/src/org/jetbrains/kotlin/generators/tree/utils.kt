@@ -113,8 +113,9 @@ val AbstractElement<*, *, *>.safeDecapitalizedName: String
     }
 
 fun getDefaultFieldKind(type: TypeRef): AbstractField.Kind {
-    return when (type) {
-        is ElementOrRef<*> -> AbstractField.Kind.ChildElement
+    val dereferencedType = (type as? ElementOrRef<*>)?.element ?: type
+    return when (dereferencedType) {
+        is AbstractElement<*, *, *> -> AbstractField.Kind.ChildElement
         else -> AbstractField.Kind.RegularField
     }
 }

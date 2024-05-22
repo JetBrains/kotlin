@@ -58,6 +58,9 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     open val containsElement: Boolean
         get() = typeRef is ElementOrRef<*> || this is ListField && baseType is ElementOrRef<*>
 
+    val hasSymbolType: Boolean
+        get() = (typeRef as? ClassRef<*>)?.simpleName?.contains("Symbol") ?: false
+
     /**
      * Indicates how the field will be initialized.
      *
