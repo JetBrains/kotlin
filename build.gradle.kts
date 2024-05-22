@@ -48,6 +48,7 @@ plugins {
         id("kotlin.native.build-tools-conventions") apply false
     }
     `jvm-toolchains`
+    alias(libs.plugins.gradle.node) apply false
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
@@ -1125,11 +1126,9 @@ if (disableVerificationTasks) {
 
 gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
 
-val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
-
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
-        if (cacheRedirectorEnabled) {
+        if (kotlinBuildProperties.isCacheRedirectorEnabled) {
             downloadBaseUrl = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
         }
 
@@ -1139,8 +1138,16 @@ plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin:
     }
 }
 
+plugins.withType(com.github.gradle.node.NodePlugin::class) {
+    extensions.configure(com.github.gradle.node.NodeExtension::class) {
+        if (kotlinBuildProperties.isCacheRedirectorEnabled) {
+            distBaseUrl = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
+        }
+    }
+}
+
 afterEvaluate {
-    if (cacheRedirectorEnabled) {
+    if (kotlinBuildProperties.isCacheRedirectorEnabled) {
         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
             rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().downloadBaseUrl =
                 "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
