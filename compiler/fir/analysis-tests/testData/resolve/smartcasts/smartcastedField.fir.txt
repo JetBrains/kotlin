@@ -1,7 +1,7 @@
 FILE: main.kt
-    private final val anyProperty: R|Property<kotlin/Any>| = R|/Property.Property|<R|kotlin/Any|>()
+    private final val anyProperty: R|Property<kotlin/Any>| = R|/Property.Property|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Any) kotlin/Any!|>()
         private get(): R|Property<kotlin/Any>|
-    private final val boundedProperty: R|Property<kotlin/String>| = R|/Property.Property|<R|kotlin/String|>()
+    private final val boundedProperty: R|Property<kotlin/String>| = R|/Property.Property|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String) kotlin/String!|>()
         private get(): R|Property<kotlin/String>|
     public final fun test_1(x: R|Property<kotlin/Any>|): R|kotlin/Unit| {
         when () {
