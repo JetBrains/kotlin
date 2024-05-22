@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.dataframe.extensions.CandidateInterceptor
 import org.jetbrains.kotlin.fir.dataframe.extensions.DataRowSchemaSupertype
 import org.jetbrains.kotlin.fir.dataframe.extensions.ExpressionAnalysisAdditionalChecker
@@ -25,6 +27,12 @@ import org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.api.schema
+import org.jetbrains.kotlinx.dataframe.io.readJson
+import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.toPluginDataFrameSchema
 
 val PATH: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("annotation qualified name")
 
@@ -57,12 +65,21 @@ class FirDataFrameExtensionRegistrar(
         +::ExtensionsGenerator
         +::ReturnTypeBasedReceiverInjector
         +{ it: FirSession ->
-            CandidateInterceptor(path, it)
+            CandidateInterceptor(path, it, jsonCache(it))
         }
         +::TokenGenerator
         +::DataRowSchemaSupertype
-        +::ExpressionAnalysisAdditionalChecker
+        +{ it: FirSession ->
+            ExpressionAnalysisAdditionalChecker(it, jsonCache(it))
+        }
     }
+
+    private fun jsonCache(it: FirSession): FirCache<String, PluginDataFrameSchema, KotlinTypeFacade> =
+        it.firCachesFactory.createCache { path: String, context ->
+            with(context) {
+                DataFrame.readJson(path).schema().toPluginDataFrameSchema()
+            }
+        }
 }
 
 @OptIn(ExperimentalCompilerApi::class)

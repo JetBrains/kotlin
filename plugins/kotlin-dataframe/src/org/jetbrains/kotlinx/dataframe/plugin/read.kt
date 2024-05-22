@@ -39,12 +39,12 @@ internal class ReadJson0 : AbstractInterpreter<PluginDataFrameSchema>() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val file = resolveFile(path)
-        val df = if (file != null && file.exists()) {
-            DataFrame.readJson(file)
+        val schema = if (file != null && file.exists()) {
+            DataFrame.readJson(file).schema().toPluginDataFrameSchema()
         } else {
-            DataFrame.readJson(path)
+            cache.getValue(path, this)
         }
-        return df.schema().toPluginDataFrameSchema()
+        return schema
     }
 }
 

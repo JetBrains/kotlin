@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.dataframe.CallShapeData
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.Names
@@ -81,6 +82,7 @@ import kotlin.math.abs
 class CandidateInterceptor(
     val path: String?,
     session: FirSession,
+    override val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     companion object {
         val DEFAULT_NAME = "DataFrameType"
