@@ -71,7 +71,8 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
                 ConstraintsSize = 0,
                 HasSideEffects = 1,
                 IsAlignStack = 0,
-                Dialect = LLVMInlineAsmDialect.LLVMInlineAsmDialectATT
+                Dialect = LLVMInlineAsmDialect.LLVMInlineAsmDialectATT,
+                CanThrow = 0,
         )
     }
 
