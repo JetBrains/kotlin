@@ -173,7 +173,6 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
             if (dynamic) +linkerDynamicFlags
             if (dynamic) +"-Wl,-soname,${File(executable).name}"
             +linkerKonanFlags
-            if (mimallocEnabled) +mimallocLinkerDependencies
             +libraries
             +linkerArgs
         })
@@ -284,7 +283,6 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags
             +linkerKonanFlags
-            if (mimallocEnabled) +mimallocLinkerDependencies
             if (compilerRtLibrary != null) +compilerRtLibrary!!
             +librariesArgs
             +linkerArgs
@@ -426,7 +424,6 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             +objectFiles
             +libraries
             +linkerArgs
-            if (mimallocEnabled) +mimallocLinkerDependencies
             // See explanation about `-u__llvm_profile_runtime` here:
             // https://github.com/llvm/llvm-project/blob/21e270a479a24738d641e641115bce6af6ed360a/llvm/lib/Transforms/Instrumentation/InstrProfiling.cpp#L930
             +linkerKonanFlags
@@ -509,7 +506,6 @@ class MingwLinker(targetProperties: MingwConfigurables)
             +libraries
             +linkerArgs
             +linkerKonanFlags.filterNot { it in skipDefaultArguments }
-            if (mimallocEnabled) +mimallocLinkerDependencies
             +additionalArguments
         }
 
