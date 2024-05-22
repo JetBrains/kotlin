@@ -34,7 +34,7 @@ FILE: Eq.kt
             public get(): R|lib/a/A<R, S>|
 
         public open override fun withL(l: R|kotlin/Int|): R|lib/a/C.WithL<R, S>| {
-            ^withL Q|lib/a/C|.R|lib/a/C.MyWithL.MyWithL|<R|R|, R|S|>()
+            ^withL Q|lib/a/C|.R|lib/a/C.MyWithL.MyWithL|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=R) R!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=S) S!|>()
         }
 
     }

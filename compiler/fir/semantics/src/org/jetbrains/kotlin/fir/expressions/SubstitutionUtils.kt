@@ -29,6 +29,8 @@ fun FirQualifiedAccessExpression.createConeSubstitutorFromTypeArguments(
     callableSymbol: FirCallableSymbol<*>,
     session: FirSession,
     discardErrorTypes: Boolean = false,
+    // TODO: Get rid of this parameter once KT-59138 is fixed and the relevant feature for disabling it will be removed
+    unwrapExplicitTypeArgumentForMadeFlexibleSynthetically: Boolean = false,
 ): ConeSubstitutor {
     val typeArgumentMap = buildMap {
         // Type arguments are ignored defensively if `callableSymbol` can't provide enough type parameters (and vice versa). For
@@ -37,7 +39,14 @@ fun FirQualifiedAccessExpression.createConeSubstitutorFromTypeArguments(
         typeArguments.zip(callableSymbol.typeParameterSymbols).forEach { (typeArgument, typeParameterSymbol) ->
             val type = (typeArgument as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@forEach
             if (type is ConeErrorType && discardErrorTypes) return@forEach
-            put(typeParameterSymbol, type)
+
+            val resultingType = when {
+                unwrapExplicitTypeArgumentForMadeFlexibleSynthetically ->
+                    type.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.coneType ?: type
+                else -> type
+            }
+
+            put(typeParameterSymbol, resultingType)
         }
     }
     return substitutorByMap(typeArgumentMap, session)

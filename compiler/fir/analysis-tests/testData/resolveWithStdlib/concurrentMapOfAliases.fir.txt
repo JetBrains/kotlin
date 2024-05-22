@@ -5,7 +5,7 @@ FILE: concurrentMapOfAliases.kt
             super<R|kotlin/Any|>()
         }
 
-        private final val foo: R|java/util/concurrent/ConcurrentHashMap<kotlin/String, kotlin/CharSequence>| = Q|java/util/concurrent|.R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|kotlin/String|, R|kotlin/CharSequence|>()
+        private final val foo: R|java/util/concurrent/ConcurrentHashMap<kotlin/String, kotlin/CharSequence>| = Q|java/util/concurrent|.R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String) kotlin/String!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/CharSequence) kotlin/CharSequence!|>()
             private get(): R|java/util/concurrent/ConcurrentHashMap<kotlin/String, kotlin/CharSequence>|
 
         private final fun bar(): R|kotlin/Unit| {
