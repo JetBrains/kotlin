@@ -48,7 +48,7 @@ class TeamCityErrorPlugin {
             });
 
             compilation.warnings
-                .filter(warning => warningsFilters.some(warningFilter => !warningFilter(warning, compilation)))
+                .filter(warning => warningsFilters.every(warningFilter => !warningFilter(warning, compilation)))
                 .forEach(warning => {
                     const type = 'warn';
 

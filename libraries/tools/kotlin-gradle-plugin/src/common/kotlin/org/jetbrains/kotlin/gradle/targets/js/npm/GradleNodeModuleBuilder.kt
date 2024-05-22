@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
-import org.jetbrains.kotlin.gradle.targets.js.HTML
-import org.jetbrains.kotlin.gradle.targets.js.JS
-import org.jetbrains.kotlin.gradle.targets.js.JS_MAP
-import org.jetbrains.kotlin.gradle.targets.js.META_JS
+import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import java.io.File
 
@@ -99,6 +96,8 @@ private fun isKotlinJsRuntimeFile(file: File): Boolean {
     if (!file.isFile) return false
     val name = file.name
     return name.endsWith(".$JS")
+            || name.endsWith(".$MJS")
+            || name.endsWith(".$WASM")
             || name.endsWith(".$JS_MAP")
             || name.endsWith(".$HTML")
 }

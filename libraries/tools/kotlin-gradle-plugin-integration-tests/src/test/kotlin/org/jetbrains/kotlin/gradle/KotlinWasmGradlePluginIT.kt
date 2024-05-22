@@ -252,4 +252,19 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Wasm sync task copies main compilation resources to test NPM package")
+    @GradleTest
+    fun wasmSyncTaskCopiesMainResourcesToTest(gradleVersion: GradleVersion) {
+        project("mpp-wasm-js-browser-nodejs", gradleVersion) {
+            build(":wasmJsNodeTest") {
+                assertTasksExecuted(":wasmJsNodeTest")
+                assertTasksExecuted(":wasmJsTestTestDevelopmentExecutableCompileSync")
+
+                val packageDir = "build/js/packages/mpp-wasm-js-browser-nodejs-wasm-js-test/kotlin"
+                assertFileExists(projectPath.resolve("$packageDir/data.json"))
+                assertFileExists(projectPath.resolve("$packageDir/data-test.json"))
+            }
+        }
+    }
 }

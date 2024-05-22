@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
@@ -143,9 +145,21 @@ constructor(
         }
 
     private val configureTestSideEffect: Unit by lazy {
-        compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
-            .all { compilation ->
-                compilation.binaries.executableIrInternal(compilation)
+        val mainCompilation = compilations.matching { it.isMain() }
+
+        compilations.matching { it.isTest() }
+            .all { testCompilation ->
+                val testBinaries = testCompilation.binaries.executableIrInternal(testCompilation)
+
+                if (wasmTargetType != KotlinWasmTargetType.WASI) {
+                    testBinaries.forEach { binary ->
+                        binary.linkSyncTask.configure { task ->
+                            mainCompilation.all {
+                                task.from.from(project.tasks.named(it.processResourcesTaskName))
+                            }
+                        }
+                    }
+                }
             }
     }
 

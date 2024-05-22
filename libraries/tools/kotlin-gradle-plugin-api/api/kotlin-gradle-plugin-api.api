@@ -1357,7 +1357,9 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/CompileUsingKo
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/IncrementalSyncTask : org/gradle/api/Task {
 	public abstract fun getDestinationDir ()Ljava/io/File;
 	public abstract fun getDestinationDirectory ()Lorg/gradle/api/provider/Property;
+	public abstract fun getDuplicatesStrategy ()Lorg/gradle/api/file/DuplicatesStrategy;
 	public abstract fun getFrom ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun setDuplicatesStrategy (Lorg/gradle/api/file/DuplicatesStrategy;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/tasks/IncrementalSyncTask$DefaultImpls {
