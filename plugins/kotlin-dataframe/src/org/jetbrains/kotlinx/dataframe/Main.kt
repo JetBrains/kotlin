@@ -39,6 +39,7 @@ interface KotlinTypeFacade {
     val session: FirSession
     val resolutionPath: String? get() = null
     val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>
+    val schemasDirectory: String?
 
     fun Marker.type() = type
 
@@ -139,7 +140,9 @@ private fun String.collectionsId() = ClassId(StandardClassIds.BASE_COLLECTIONS_P
 
 class KotlinTypeFacadeImpl(
     override val session: FirSession,
-    override val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>
+    override val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>,
+    override val schemasDirectory: String?
+
 ) : KotlinTypeFacade
 
 class Marker private constructor(internal val type: ConeKotlinType) {
