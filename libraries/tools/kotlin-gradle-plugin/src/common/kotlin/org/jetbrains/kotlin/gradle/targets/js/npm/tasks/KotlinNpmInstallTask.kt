@@ -43,9 +43,6 @@ abstract class KotlinNpmInstallTask :
     private val rootResolver: KotlinRootNpmResolver
         get() = nodeJs.resolver
 
-    private val packagesDir: Provider<Directory>
-        get() = nodeJs.projectPackagesDirectory
-
     // -----
 
     private val nodsJsEnvironment by lazy {
@@ -55,6 +52,8 @@ abstract class KotlinNpmInstallTask :
     private val packageManagerEnv by lazy {
         nodeJs.packageManagerExtension.get().environment
     }
+
+    private val packagesDir: Provider<Directory> = nodeJs.projectPackagesDirectory
 
     @Input
     val args: MutableList<String> = mutableListOf()
