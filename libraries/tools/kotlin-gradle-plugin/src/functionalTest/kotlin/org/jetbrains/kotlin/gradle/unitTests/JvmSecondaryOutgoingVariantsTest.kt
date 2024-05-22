@@ -33,9 +33,7 @@ class JvmSecondaryOutgoingVariantsTest {
 
         project.evaluate()
 
-        project.assertDefaultClassesVariants(
-            3 // In this case, we have two duplicated Kotlin artifacts
-        )
+        project.assertDefaultClassesVariants()
     }
 
     @Test
