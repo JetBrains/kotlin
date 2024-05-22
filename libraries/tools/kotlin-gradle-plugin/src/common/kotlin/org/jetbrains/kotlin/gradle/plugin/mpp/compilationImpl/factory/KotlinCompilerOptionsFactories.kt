@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.baseModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
+import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.utils.KotlinMultiplatformCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 
 internal object KotlinMultiplatformCommonCompilerOptionsFactory : KotlinCompilationImplFactory.KotlinCompilerOptionsFactory {
@@ -18,8 +20,7 @@ internal object KotlinMultiplatformCommonCompilerOptionsFactory : KotlinCompilat
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
         val compilerOptions = object : DeprecatedHasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> {
             override val options: KotlinMultiplatformCommonCompilerOptions = target.project.objects
-                .newInstance(KotlinMultiplatformCommonCompilerOptionsDefault::class.java)
-                .configureExperimentalTryNext(target.project)
+                .KotlinMultiplatformCommonCompilerOptionsDefault(target.project)
         }
 
         @Suppress("DEPRECATION")
@@ -60,8 +61,7 @@ internal object KotlinJsCompilerOptionsFactory : KotlinCompilationImplFactory.Ko
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
         val compilerOptions = object : DeprecatedHasCompilerOptions<KotlinJsCompilerOptions> {
             override val options: KotlinJsCompilerOptions = target.project.objects
-                .newInstance(KotlinJsCompilerOptionsDefault::class.java)
-                .configureExperimentalTryNext(target.project)
+                .KotlinJsCompilerOptionsDefault(target.project)
         }
 
         @Suppress("DEPRECATION")
@@ -79,8 +79,7 @@ internal object KotlinJvmCompilerOptionsFactory : KotlinCompilationImplFactory.K
         @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
         val compilerOptions = object : DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> {
             override val options: KotlinJvmCompilerOptions = target.project.objects
-                .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-                .configureExperimentalTryNext(target.project)
+                .KotlinJvmCompilerOptionsDefault(target.project)
         }
 
         @Suppress("DEPRECATION")

@@ -87,7 +87,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":app:jvmTest",
             ),
         ) {
-            assertCompiledKotlinSources(listOf(touchedAppJvm).relativizeTo(projectPath), output) //KT-63476
+            assertIncrementalCompilation(listOf(touchedAppJvm).relativizeTo(projectPath))
         }
 
         /**

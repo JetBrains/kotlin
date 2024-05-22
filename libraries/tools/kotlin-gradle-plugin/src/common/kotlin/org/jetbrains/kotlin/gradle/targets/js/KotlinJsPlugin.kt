@@ -83,7 +83,7 @@ open class KotlinJsPlugin: Plugin<Project> {
         kotlinExtension.sourceSets.maybeCreate(TEST_COMPILATION_NAME)
 
         kotlinExtension.registerTargetObserver { target ->
-            target?.compilerOptions?.configureExperimentalTryNext(project)
+            target?.compilerOptions?.configureCommonCompilerOptions(project)
         }
     }
 }

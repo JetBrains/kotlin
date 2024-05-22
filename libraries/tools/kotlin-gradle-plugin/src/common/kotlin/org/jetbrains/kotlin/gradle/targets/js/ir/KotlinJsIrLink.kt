@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
+import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
 import javax.inject.Inject
 
 @CacheableTask
@@ -33,7 +33,7 @@ abstract class KotlinJsIrLink @Inject constructor(
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor,
 ) : Kotlin2JsCompile(
-    objectFactory.newInstance(KotlinJsCompilerOptionsDefault::class.java).configureExperimentalTryNext(project),
+    objectFactory.KotlinJsCompilerOptionsDefault(project),
     objectFactory,
     workerExecutor
 ), UsesBuildFusService {

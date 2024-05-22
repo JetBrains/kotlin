@@ -71,12 +71,11 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         }
 
         testIndividualTarget("compileKotlinJvm") {
-            assertCompiledKotlinSources(
+            assertIncrementalCompilation(
                 listOf(
                     usedInAppPlatform,
                     resolvePath("app", "jvmMain", "DependsOnLibCommon.kt")
-                ).relativizeTo(projectPath),
-                output
+                ).relativizeTo(projectPath)
             )
         }
         testIndividualTarget("compileKotlinJs") {
@@ -115,12 +114,11 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":lib:compileKotlinJvm"
             ),
             afterEachStep = {
-                assertCompiledKotlinSources(
-                    expectedSources = listOf(
+                assertIncrementalCompilation(
+                    listOf(
                         jvmUtil,
                         resolvePath("app", "jvmMain", "DependsOnLibJvm.kt")
-                    ).relativizeTo(projectPath),
-                    output = output
+                    ).relativizeTo(projectPath)
                 )
             }
         )
@@ -214,7 +212,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         checkIncrementalBuild(
             tasksExpectedToExecute = setOf(":app:compileKotlinJvm")
         ) {
-            assertCompiledKotlinSources(listOf(changedJvmSource).relativizeTo(projectPath), output)
+            assertIncrementalCompilation(listOf(changedJvmSource).relativizeTo(projectPath))
         }
 
         /**

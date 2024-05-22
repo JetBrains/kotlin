@@ -48,8 +48,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
         checkIncrementalBuild(
             tasksExpectedToExecute = setOf(":app:compileKotlinJvm")
         ) {
-            //TODO: it just doesn't print "Incremental compilation completed", why? (KT-63476)
-            assertCompiledKotlinSources(listOf(sourceInAppJvm).relativizeTo(projectPath), output)
+            assertIncrementalCompilation(listOf(sourceInAppJvm).relativizeTo(projectPath))
         }
 
         /**
@@ -94,7 +93,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":lib:compileKotlinJvm"
             ),
         ) {
-            assertCompiledKotlinSources(listOf(sourceInLibJvm).relativizeTo(projectPath), output)
+            assertIncrementalCompilation(listOf(sourceInLibJvm).relativizeTo(projectPath))
         }
 
         /**

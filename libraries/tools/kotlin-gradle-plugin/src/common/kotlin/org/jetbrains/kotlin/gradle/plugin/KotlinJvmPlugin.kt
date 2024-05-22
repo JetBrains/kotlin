@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
+import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
 
 const val KOTLIN_DSL_NAME = "kotlin"
 
@@ -30,7 +30,6 @@ internal open class KotlinJvmPlugin(
             extensionCompilerOptions: KotlinJvmCompilerOptions,
             targetCompilerOptions: KotlinJvmCompilerOptions
         ) {
-            extensionCompilerOptions.verbose.convention(logger.isDebugEnabled)
             extensionCompilerOptions.moduleName.convention(baseModuleName())
             DefaultKotlinJavaToolchain.wireJvmTargetToToolchain(
                 extensionCompilerOptions,
@@ -56,9 +55,7 @@ internal open class KotlinJvmPlugin(
             {
                 object : DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> {
                     override val options: KotlinJvmCompilerOptions =
-                        project.objects
-                            .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
-                            .configureExperimentalTryNext(project)
+                        project.objects.KotlinJvmCompilerOptionsDefault(project)
                 }
             },
             { compilerOptions: KotlinJvmCompilerOptions ->
