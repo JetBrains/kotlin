@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.generator.print.symbol
 
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.AbstractField.SymbolFieldRole
+import org.jetbrains.kotlin.generators.tree.AbstractField.Kind
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.Model
 import org.jetbrains.kotlin.ir.generator.TREE_GENERATOR_README
@@ -23,7 +23,7 @@ import java.io.File
 internal abstract class AbstractSymbolRemapperPrinter(
     private val printer: ImportCollectingPrinter,
     val elements: List<Element>,
-    val roles: List<SymbolFieldRole>,
+    val kinds: List<Kind>,
 ) {
     abstract val symbolRemapperType: ClassRef<*>
 
@@ -35,29 +35,29 @@ internal abstract class AbstractSymbolRemapperPrinter(
     open val kDoc: String?
         get() = null
 
-    protected open fun shouldPrintMethodForSymbol(symbolClass: Symbol, role: SymbolFieldRole): Boolean = true
+    protected open fun shouldPrintMethodForSymbol(symbolClass: Symbol, kind: Kind): Boolean = true
 
-    private fun ImportCollectingPrinter.printMethod(symbolClass: Symbol, returnType: Symbol, role: SymbolFieldRole) {
+    private fun ImportCollectingPrinter.printMethod(symbolClass: Symbol, returnType: Symbol, kind: Kind) {
         val symbolParameter = FunctionParameter("symbol", symbolClass)
         printFunctionDeclaration(
-            symbolRemapperMethodName(symbolClass, role),
+            symbolRemapperMethodName(symbolClass, kind),
             parameters = listOf(symbolParameter),
             returnType = returnType,
             override = symbolRemapperSuperTypes.isNotEmpty(),
         )
-        printMethodImplementation(symbolParameter, symbolClass, role)
+        printMethodImplementation(symbolParameter, symbolClass, kind)
     }
 
     protected open fun ImportCollectingPrinter.printMethodImplementation(
         symbolParameter: FunctionParameter,
         symbolClass: Symbol,
-        role: SymbolFieldRole
+        kind: Kind
     ) {
         if (symbolClass.subElements.isNotEmpty()) {
             print(" = when (", symbolParameter.name, ")")
             printBlock {
                 for (subSymbol in symbolClass.subElements) {
-                    println("is ", subSymbol.render(), " -> ", symbolRemapperMethodName(subSymbol, role), "(", symbolParameter.name, ")")
+                    println("is ", subSymbol.render(), " -> ", symbolRemapperMethodName(subSymbol, kind), "(", symbolParameter.name, ")")
                 }
             }
         } else {
@@ -85,11 +85,11 @@ internal abstract class AbstractSymbolRemapperPrinter(
                 print(joinToString(prefix = " : ") { it.render() + if (it.kind == TypeKind.Class) "()" else "" })
             }
             printBlock {
-                for (role in roles) {
-                    val fieldsAndSymbols = findFieldsWithSymbols(elements, role)
+                for (kind in kinds) {
+                    val fieldsAndSymbols = findFieldsWithSymbols(elements, kind)
                     val symbols = fieldsAndSymbols.keys.flatMap { it.elementDescendantsAndSelfDepthFirst() }.distinct()
                     for (symbolType in symbols) {
-                        if (!shouldPrintMethodForSymbol(symbolType, role)) continue
+                        if (!shouldPrintMethodForSymbol(symbolType, kind)) continue
                         val fields = symbolType.elementAncestorsAndSelfDepthFirst().flatMap { fieldsAndSymbols[it].orEmpty() }.toList()
 
                         // If this symbol type is used in some field as is, use it as the return type of the corresponding method.
@@ -114,7 +114,7 @@ internal abstract class AbstractSymbolRemapperPrinter(
                             }
                             printKDoc(kDoc)
                         }
-                        printMethod(symbolType, mostSpecificReturnType, role)
+                        printMethod(symbolType, mostSpecificReturnType, kind)
                     }
                 }
                 printAdditionalDeclarations()
@@ -127,7 +127,7 @@ internal class DeclaredSymbolRemapperInterfacePrinter(
     printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolRemapperType: ClassRef<*>,
-) : AbstractSymbolRemapperPrinter(printer, elements, roles = listOf(SymbolFieldRole.DECLARED)) {
+) : AbstractSymbolRemapperPrinter(printer, elements, kinds = listOf(Kind.DeclaredSymbol)) {
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.Interface
 
@@ -139,7 +139,7 @@ internal class ReferencedSymbolRemapperInterfacePrinter(
     printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolRemapperType: ClassRef<*>,
-) : AbstractSymbolRemapperPrinter(printer, elements, roles = listOf(SymbolFieldRole.REFERENCED)) {
+) : AbstractSymbolRemapperPrinter(printer, elements, kinds = listOf(Kind.ElementReference)) {
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.Interface
 
@@ -151,7 +151,7 @@ internal class SymbolRemapperInterfacePrinter(
     printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolRemapperType: ClassRef<*>,
-) : AbstractSymbolRemapperPrinter(printer, elements, roles = emptyList()) {
+) : AbstractSymbolRemapperPrinter(printer, elements, kinds = emptyList()) {
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.Interface
 
@@ -172,7 +172,7 @@ internal class SymbolRemapperInterfacePrinter(
 private class EmptySymbolRemapperPrinter(
     printer: ImportCollectingPrinter,
     elements: List<Element>,
-) : AbstractSymbolRemapperPrinter(printer, elements, listOf(SymbolFieldRole.DECLARED, SymbolFieldRole.REFERENCED)) {
+) : AbstractSymbolRemapperPrinter(printer, elements, listOf(Kind.DeclaredSymbol, Kind.ElementReference)) {
 
     override val symbolRemapperType = emptySymbolRemapperType
 
@@ -186,14 +186,14 @@ private class EmptySymbolRemapperPrinter(
         get() = "The default implementation of [${org.jetbrains.kotlin.ir.generator.symbolRemapperType.simpleName}]\n" +
                 "that just keeps the old symbols everywhere."
 
-    override fun shouldPrintMethodForSymbol(symbolClass: Symbol, role: SymbolFieldRole): Boolean {
+    override fun shouldPrintMethodForSymbol(symbolClass: Symbol, kind: Kind): Boolean {
         return symbolClass.subElements.isEmpty()
     }
 
     override fun ImportCollectingPrinter.printMethodImplementation(
         symbolParameter: FunctionParameter,
         symbolClass: Symbol,
-        role: SymbolFieldRole,
+        kind: Kind,
     ) {
         println(" = ", symbolParameter.name)
     }

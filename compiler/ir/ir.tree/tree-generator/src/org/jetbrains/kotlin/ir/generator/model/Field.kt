@@ -31,7 +31,7 @@ sealed class Field(
     override fun updateFieldsInCopy(copy: Field) {
         super.updateFieldsInCopy(copy)
         copy.customSetter = customSetter
-        copy.symbolFieldRole = symbolFieldRole
+        copy.kind = kind
     }
 }
 
@@ -39,7 +39,7 @@ class SingleField(
     name: String,
     override var typeRef: TypeRefWithNullability,
     mutable: Boolean,
-    override val isChild: Boolean,
+    override var kind: Kind,
 ) : Field(name, mutable) {
 
     override val symbolClass: Symbol?
@@ -52,7 +52,7 @@ class SingleField(
         typeRef = typeRef.substitute(map) as TypeRefWithNullability
     }
 
-    override fun internalCopy() = SingleField(name, typeRef, isMutable, isChild)
+    override fun internalCopy() = SingleField(name, typeRef, isMutable, kind)
 }
 
 class ListField(
@@ -61,7 +61,7 @@ class ListField(
     private val isNullable: Boolean,
     override val listType: ClassRef<PositionTypeParameterRef>,
     mutable: Boolean,
-    override val isChild: Boolean,
+    override var kind: Kind,
 ) : Field(name, mutable), AbstractListField {
 
     override val typeRef: ClassRef<PositionTypeParameterRef>
@@ -77,7 +77,7 @@ class ListField(
         baseType = baseType.substitute(map)
     }
 
-    override fun internalCopy() = ListField(name, baseType, isNullable, listType, isMutable, isChild)
+    override fun internalCopy() = ListField(name, baseType, isNullable, listType, isMutable, kind)
 
     enum class Mutability {
         Var,

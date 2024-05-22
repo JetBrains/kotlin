@@ -111,3 +111,10 @@ val AbstractElement<*, *, *>.safeDecapitalizedName: String
         "Class" -> "klass"
         else -> name.replaceFirstChar(Char::lowercaseChar)
     }
+
+fun getDefaultFieldKind(type: TypeRef): AbstractField.Kind {
+    return when (type) {
+        is ElementOrRef<*> -> AbstractField.Kind.ChildElement
+        else -> AbstractField.Kind.RegularField
+    }
+}

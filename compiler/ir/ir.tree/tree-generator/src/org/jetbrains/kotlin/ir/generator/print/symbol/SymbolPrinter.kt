@@ -18,7 +18,7 @@ internal class SymbolPrinter(
     model: Model<Element>,
 ) : AbstractElementPrinter<Symbol, SymbolField>(printer) {
 
-    private val fieldsWithReferencedSymbols = findFieldsWithSymbols(model.elements, AbstractField.SymbolFieldRole.REFERENCED)
+    private val fieldsWithReferencedSymbols = findFieldsWithSymbols(model.elements, AbstractField.Kind.ElementReference)
 
     override fun makeFieldPrinter(printer: ImportCollectingPrinter) = object : AbstractFieldPrinter<SymbolField>(printer) {
         override fun forceMutable(field: SymbolField): Boolean = field.isMutable

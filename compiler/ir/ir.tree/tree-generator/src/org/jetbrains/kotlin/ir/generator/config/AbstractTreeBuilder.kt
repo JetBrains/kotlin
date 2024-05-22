@@ -39,12 +39,15 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
         type: TypeRefWithNullability,
         nullable: Boolean = false,
         mutable: Boolean = true,
-        isChild: Boolean = true,
-        initializer: SingleField.() -> Unit = {}
+        kind: AbstractField.Kind? = null,
+        initializer: SingleField.() -> Unit = {},
     ): SingleField {
-        return SingleField(name, type.copy(nullable), mutable, isChild).apply {
-            initializer()
-        }
+        return SingleField(
+            name = name,
+            typeRef = type.copy(nullable),
+            mutable = mutable,
+            kind = kind ?: getDefaultFieldKind(type)
+        ).apply(initializer)
     }
 
     protected fun listField(
@@ -52,8 +55,8 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
         baseType: TypeRef,
         nullable: Boolean = false,
         mutability: ListField.Mutability,
-        isChild: Boolean = true,
-        initializer: ListField.() -> Unit = {}
+        kind: AbstractField.Kind? = null,
+        initializer: ListField.() -> Unit = {},
     ): ListField {
         val listType = when (mutability) {
             ListField.Mutability.MutableList -> StandardTypes.mutableList
@@ -66,10 +69,8 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
             listType = listType,
             isNullable = nullable,
             mutable = mutability == ListField.Mutability.Var,
-            isChild = isChild,
-        ).apply(initializer).apply {
-            initializer()
-        }
+            kind = kind ?: getDefaultFieldKind(baseType),
+        ).apply(initializer)
     }
 
     /**
@@ -77,37 +78,7 @@ abstract class AbstractTreeBuilder : AbstractElementConfigurator<Element, Field,
      * `element.symbol.owner === element` is always true.
      */
     protected fun declaredSymbol(type: TypeRefWithNullability) =
-        field("symbol", type, mutable = false) {
-            symbolFieldRole = AbstractField.SymbolFieldRole.DECLARED
-        }
-
-    /**
-     * Constructs a field that represents a symbol that the element references but not owns.
-     */
-    protected fun referencedSymbol(
-        name: String,
-        type: TypeRefWithNullability,
-        nullable: Boolean = false,
-        mutable: Boolean = true,
-        initializer: SingleField.() -> Unit = {},
-    ) = field(name, type, nullable, mutable) {
-        symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED
-        initializer()
-    }
-
-    /**
-     * Constructs a field that represents a list of symbols that the element references but not owns.
-     */
-    protected fun referencedSymbolList(
-        name: String,
-        baseType: TypeRefWithNullability,
-        nullable: Boolean = false,
-        mutability: ListField.Mutability = ListField.Mutability.Var,
-        initializer: ListField.() -> Unit = {},
-    ) = listField(name, baseType, nullable, mutability) {
-        symbolFieldRole = AbstractField.SymbolFieldRole.REFERENCED
-        initializer()
-    }
+        field("symbol", type, mutable = false, kind = AbstractField.Kind.DeclaredSymbol)
 
     companion object {
         val int = type<Int>()

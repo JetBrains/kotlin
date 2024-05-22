@@ -15,23 +15,29 @@ fun field(
     type: TypeRefWithNullability,
     nullable: Boolean = false,
     withReplace: Boolean = false,
-    isChild: Boolean = true,
+    kind: AbstractField.Kind? = null,
 ): Field {
     val isMutable = type is GenericElementOrRef<*> || withReplace
-    return SimpleField(name, type.copy(nullable), isChild = isChild, isMutable = isMutable, withReplace = withReplace)
+    return SimpleField(
+        name = name,
+        typeRef = type.copy(nullable),
+        kind = kind ?: getDefaultFieldKind(type),
+        isMutable = isMutable,
+        withReplace = withReplace
+    )
 }
 
 fun field(
     type: ClassOrElementRef,
     nullable: Boolean = false,
     withReplace: Boolean = false,
-    isChild: Boolean = true,
+    kind: AbstractField.Kind? = null,
 ): Field {
     val name = when (type) {
         is ClassRef<*> -> type.simpleName
         is GenericElementOrRef<*> -> type.element.name
     }.replaceFirstChar(Char::lowercaseChar)
-    return field(name, type, nullable, withReplace, isChild)
+    return field(name, type, nullable, withReplace, kind)
 }
 
 fun booleanField(name: String, withReplace: Boolean = false): Field {
@@ -53,19 +59,31 @@ fun fieldList(
     type: TypeRef,
     withReplace: Boolean = false,
     useMutableOrEmpty: Boolean = false,
-    isChild: Boolean = true,
+    kind: AbstractField.Kind? = null,
 ): Field {
-    return FieldList(name, type, withReplace = withReplace, isChild = isChild, useMutableOrEmpty = useMutableOrEmpty)
+    return FieldList(
+        name = name,
+        baseType = type,
+        withReplace = withReplace,
+        kind = kind ?: getDefaultFieldKind(type),
+        useMutableOrEmpty = useMutableOrEmpty
+    )
 }
 
 fun fieldList(
     elementOrRef: ElementOrRef,
     withReplace: Boolean = false,
     useMutableOrEmpty: Boolean = false,
-    isChild: Boolean = true,
+    kind: AbstractField.Kind? = null,
 ): Field {
     val name = elementOrRef.element.name.replaceFirstChar(Char::lowercaseChar) + "s"
-    return FieldList(name, elementOrRef, withReplace = withReplace, isChild = isChild, useMutableOrEmpty = useMutableOrEmpty)
+    return FieldList(
+        name = name,
+        baseType = elementOrRef,
+        withReplace = withReplace,
+        kind = kind ?: getDefaultFieldKind(elementOrRef),
+        useMutableOrEmpty = useMutableOrEmpty
+    )
 }
 
 // ----------- Field set -----------

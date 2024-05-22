@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.StandardTypes
-import org.jetbrains.kotlin.generators.tree.Visibility
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
-import org.jetbrains.kotlin.generators.tree.isSubclassOf
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
@@ -268,7 +265,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.generationCallback = {
                 println()
                 print()
-                println("""
+                println(
+                    """
                     // A temporary API for compatibility with Flysto user project, see KQA-1254
                     constructor(
                         startOffset: Int,
@@ -285,7 +283,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                     ) {
                         this.statements.addAll(statements)
                     }
-                """.replaceIndent(currentIndent))
+                """.replaceIndent(currentIndent)
+                )
             }
         }
 
@@ -293,7 +292,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.generationCallback = {
                 println()
                 print()
-                println("""
+                println(
+                    """
                     // A temporary API for compatibility with Flysto user project, see KQA-1254
                     constructor(
                         startOffset: Int,
@@ -309,7 +309,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                         returnTargetSymbol = returnTargetSymbol,
                         value = value,
                     )
-                """.replaceIndent(currentIndent))
+                """.replaceIndent(currentIndent)
+                )
             }
         }
     }
@@ -358,7 +359,12 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
     override fun configureAllImplementations(model: Model) {
         configureFieldInAllImplementations(
             fieldName = null,
-            fieldPredicate = { it is ListField && it.isChild && it.listType == StandardTypes.mutableList && it.implementationDefaultStrategy?.defaultValue == null }
+            fieldPredicate = {
+                it is ListField
+                        && it.kind == AbstractField.Kind.ChildElement
+                        && it.listType == StandardTypes.mutableList
+                        && it.implementationDefaultStrategy?.defaultValue == null
+            }
         ) {
             default(it, "ArrayList()")
         }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.AbstractField.Kind.ElementReference
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.anonymousInitializerSymbol
@@ -195,7 +196,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +declaredSymbol(s)
         +field("isFakeOverride", boolean)
-        +referencedSymbolList("overriddenSymbols", s)
+        +listField("overriddenSymbols", s, mutability = Var, kind = ElementReference)
     }
     val memberWithContainerSource: Element by element(Declaration) {
         parent(declarationWithName)
@@ -289,7 +290,7 @@ object IrTree : AbstractTreeBuilder() {
             type<ValueClassRepresentation<*>>().withArgs(type(Packages.types, "IrSimpleType")),
             nullable = true,
         )
-        +referencedSymbolList("sealedSubclasses", classSymbol) {
+        +listField("sealedSubclasses", classSymbol, mutability = Var, kind = ElementReference) {
             kDoc = """
             If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
             Otherwise, this is an empty list.
@@ -310,14 +311,14 @@ object IrTree : AbstractTreeBuilder() {
               idempotence invariant and can contain a chain of declarations.
         """.trimIndent()
 
-        +field("attributeOwnerId", attributeContainer, isChild = false)
+        +field("attributeOwnerId", attributeContainer, kind = ElementReference)
         // null <=> this element wasn't inlined
-        +field("originalBeforeInline", attributeContainer, nullable = true, isChild = false)
+        +field("originalBeforeInline", attributeContainer, nullable = true, kind = ElementReference)
     }
     val mutableAnnotationContainer: Element by element(Declaration) {
         parent(type(Packages.declarations, "IrAnnotationContainer"))
 
-        +listField("annotations", constructorCall, mutability = Var, isChild = false) {
+        +listField("annotations", constructorCall, mutability = Var, kind = ElementReference) {
             isOverride = true
         }
     }
@@ -439,7 +440,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isFinal", boolean)
         +field("isStatic", boolean)
         +field("initializer", expressionBody, nullable = true)
-        +referencedSymbol("correspondingPropertySymbol", propertySymbol, nullable = true)
+        +field("correspondingPropertySymbol", propertySymbol, nullable = true, kind = ElementReference)
     }
     val localDelegatedProperty: Element by element(Declaration) {
         parent(declarationBase)
@@ -504,14 +505,14 @@ object IrTree : AbstractTreeBuilder() {
         +field("baseClass", irTypeType, nullable = true) // K1
         +listField("explicitCallParameters", variable, mutability = Var)
         +listField("implicitReceiversParameters", valueParameter, mutability = Var)
-        +referencedSymbolList("providedProperties", propertySymbol)
+        +listField("providedProperties", propertySymbol, mutability = Var, kind = ElementReference)
         +listField("providedPropertiesParameters", valueParameter, mutability = Var)
-        +referencedSymbol("resultProperty", propertySymbol, nullable = true)
+        +field("resultProperty", propertySymbol, nullable = true, kind = ElementReference)
         +field("earlierScriptsParameter", valueParameter, nullable = true)
-        +referencedSymbolList("importedScripts", scriptSymbol, nullable = true)
-        +referencedSymbolList("earlierScripts", scriptSymbol, nullable = true)
-        +referencedSymbol("targetClass", classSymbol, nullable = true)
-        +field("constructor", constructor, nullable = true, isChild = false) // K1
+        +listField("importedScripts", scriptSymbol, nullable = true, mutability = Var, kind = ElementReference)
+        +listField("earlierScripts", scriptSymbol, nullable = true, mutability = Var, kind = ElementReference)
+        +field("targetClass", classSymbol, nullable = true, kind = ElementReference)
+        +field("constructor", constructor, nullable = true, kind = ElementReference) // K1
     }
     val simpleFunction: Element by element(Declaration) {
         parent(function)
@@ -525,7 +526,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isSuspend", boolean)
         +field("isOperator", boolean)
         +field("isInfix", boolean)
-        +referencedSymbol("correspondingPropertySymbol", propertySymbol, nullable = true)
+        +field("correspondingPropertySymbol", propertySymbol, nullable = true, kind = ElementReference)
     }
     val typeAlias: Element by element(Declaration) {
         parent(declarationBase)
@@ -592,7 +593,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(metadataSourceOwner)
 
         +declaredSymbol(fileSymbol)
-        +field("module", moduleFragment, isChild = false)
+        +field("module", moduleFragment, kind = ElementReference)
         +field("fileEntry", type(Packages.tree, "IrFileEntry"))
     }
 
@@ -634,7 +635,7 @@ object IrTree : AbstractTreeBuilder() {
     val declarationReference: Element by element(Expression) {
         parent(expression)
 
-        +referencedSymbol("symbol", IrSymbolTree.rootElement, mutable = false)
+        +field("symbol", IrSymbolTree.rootElement, mutable = false, kind = ElementReference)
         //diff: no accept
     }
     val memberAccessExpression: Element by element(Expression) {
@@ -646,7 +647,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("dispatchReceiver", expression, nullable = true)
         +field("extensionReceiver", expression, nullable = true)
-        +referencedSymbol("symbol", s, mutable = false)
+        +field("symbol", s, mutable = false, kind = ElementReference)
         +field("origin", statementOriginType, nullable = true)
         +listField("valueArguments", expression.copy(nullable = true), mutability = Array) {
             visibility = Visibility.PROTECTED
@@ -728,7 +729,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(functionAccessExpression)
         parent(type<AnnotationMarker>())
 
-        +referencedSymbol("symbol", constructorSymbol)
+        +field("symbol", constructorSymbol, kind = ElementReference)
         +field("source", type<SourceElement>())
         +field("constructorTypeArgumentsCount", int)
     }
@@ -738,16 +739,14 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationReference)
     }
     val getObjectValue: Element by element(Expression) {
-
         parent(getSingletonValue)
 
-        +referencedSymbol("symbol", classSymbol)
+        +field("symbol", classSymbol, kind = ElementReference)
     }
     val getEnumValue: Element by element(Expression) {
-
         parent(getSingletonValue)
 
-        +referencedSymbol("symbol", enumEntrySymbol)
+        +field("symbol", enumEntrySymbol, kind = ElementReference)
     }
 
     val rawFunctionReference: Element by element(Expression) {
@@ -761,7 +760,7 @@ object IrTree : AbstractTreeBuilder() {
         On the JVM platform it represents a [java.lang.invoke.MethodHandle] constant.
         """.trimIndent()
 
-        +referencedSymbol("symbol", functionSymbol)
+        +field("symbol", functionSymbol, kind = ElementReference)
     }
     val containerExpression: Element by element(Expression) {
         parent(expression)
@@ -789,8 +788,8 @@ object IrTree : AbstractTreeBuilder() {
 
         visitorParameterName = "inlinedBlock"
 
-        +field("inlineCall", functionAccessExpression, isChild = false)
-        +field("inlinedElement", rootElement, isChild = false)
+        +field("inlineCall", functionAccessExpression, kind = ElementReference)
+        +field("inlinedElement", rootElement, kind = ElementReference)
     }
     val syntheticBody: Element by element(Expression) {
         visitorParameterName = "body"
@@ -804,7 +803,7 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(expression)
 
-        +field("loop", loop, isChild = false)
+        +field("loop", loop, kind = ElementReference)
         +field("label", string, nullable = true)
     }
     val `break` by element(Expression) {
@@ -820,15 +819,15 @@ object IrTree : AbstractTreeBuilder() {
     val call: Element by element(Expression) {
         parent(functionAccessExpression)
 
-        +referencedSymbol("symbol", simpleFunctionSymbol)
-        +referencedSymbol("superQualifierSymbol", classSymbol, nullable = true)
+        +field("symbol", simpleFunctionSymbol, kind = ElementReference)
+        +field("superQualifierSymbol", classSymbol, nullable = true, kind = ElementReference)
     }
     val callableReference: Element by element(Expression) {
         val s = +param("S", IrSymbolTree.rootElement)
 
         parent(memberAccessExpression.withArgs("S" to s))
 
-        +referencedSymbol("symbol", s)
+        +field("symbol", s, kind = ElementReference)
     }
     val functionReference: Element by element(Expression) {
 
@@ -839,21 +838,21 @@ object IrTree : AbstractTreeBuilder() {
     val propertyReference: Element by element(Expression) {
         parent(callableReference.withArgs("S" to propertySymbol))
 
-        +referencedSymbol("field", fieldSymbol, nullable = true)
-        +referencedSymbol("getter", simpleFunctionSymbol, nullable = true)
-        +referencedSymbol("setter", simpleFunctionSymbol, nullable = true)
+        +field("field", fieldSymbol, nullable = true, kind = ElementReference)
+        +field("getter", simpleFunctionSymbol, nullable = true, kind = ElementReference)
+        +field("setter", simpleFunctionSymbol, nullable = true, kind = ElementReference)
     }
     val localDelegatedPropertyReference: Element by element(Expression) {
         parent(callableReference.withArgs("S" to localDelegatedPropertySymbol))
 
-        +referencedSymbol("delegate", variableSymbol)
-        +referencedSymbol("getter", simpleFunctionSymbol)
-        +referencedSymbol("setter", simpleFunctionSymbol, nullable = true)
+        +field("delegate", variableSymbol, kind = ElementReference)
+        +field("getter", simpleFunctionSymbol, kind = ElementReference)
+        +field("setter", simpleFunctionSymbol, nullable = true, kind = ElementReference)
     }
     val classReference: Element by element(Expression) {
         parent(declarationReference)
 
-        +referencedSymbol("symbol", classifierSymbol)
+        +field("symbol", classifierSymbol, kind = ElementReference)
         +field("classType", irTypeType)
     }
     val const: Element by element(Expression) {
@@ -878,7 +877,7 @@ object IrTree : AbstractTreeBuilder() {
     val constantObject: Element by element(Expression) {
         parent(constantValue)
 
-        +referencedSymbol("constructor", constructorSymbol)
+        +field("constructor", constructorSymbol, kind = ElementReference)
         +listField("valueArguments", constantValue, mutability = MutableList)
         +listField("typeArguments", irTypeType, mutability = MutableList)
     }
@@ -890,7 +889,7 @@ object IrTree : AbstractTreeBuilder() {
     val delegatingConstructorCall: Element by element(Expression) {
         parent(functionAccessExpression)
 
-        +referencedSymbol("symbol", constructorSymbol)
+        +field("symbol", constructorSymbol, kind = ElementReference)
     }
     val dynamicExpression: Element by element(Expression) {
         parent(expression)
@@ -911,7 +910,7 @@ object IrTree : AbstractTreeBuilder() {
     val enumConstructorCall: Element by element(Expression) {
         parent(functionAccessExpression)
 
-        +referencedSymbol("symbol", constructorSymbol)
+        +field("symbol", constructorSymbol, kind = ElementReference)
     }
     val errorExpression: Element by element(Expression) {
         needAcceptMethod()
@@ -932,7 +931,7 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationReference)
 
-        +referencedSymbol("symbol", fieldSymbol)
+        +field("symbol", fieldSymbol, kind = ElementReference)
         +field("superQualifierSymbol", classSymbol, nullable = true)
         +field("receiver", expression, nullable = true)
         +field("origin", statementOriginType, nullable = true)
@@ -961,7 +960,7 @@ object IrTree : AbstractTreeBuilder() {
     val instanceInitializerCall: Element by element(Expression) {
         parent(expression)
 
-        +referencedSymbol("classSymbol", classSymbol)
+        +field("classSymbol", classSymbol, kind = ElementReference)
     }
     val loop: Element by element(Expression) {
         visitorParameterName = "loop"
@@ -989,7 +988,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(expression)
 
         +field("value", expression)
-        +referencedSymbol("returnTargetSymbol", returnTargetSymbol)
+        +field("returnTargetSymbol", returnTargetSymbol, kind = ElementReference)
     }
     val stringConcatenation: Element by element(Expression) {
         parent(expression)
@@ -1058,7 +1057,7 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationReference)
 
-        +referencedSymbol("symbol", valueSymbol)
+        +field("symbol", valueSymbol, kind = ElementReference)
         +field("origin", statementOriginType, nullable = true)
     }
     val getValue: Element by element(Expression) {

@@ -64,8 +64,9 @@ class FieldWithDefault(override val origin: Field) : Field() {
     override var withReplace: Boolean
         get() = origin.withReplace
         set(_) {}
-    override val isChild: Boolean
-        get() = origin.isChild
+    override var kind: Kind
+        get() = origin.kind
+        set(_) {}
     override val containsElement: Boolean
         get() = origin.containsElement
     override var needsSeparateTransform: Boolean
@@ -125,7 +126,7 @@ class FieldWithDefault(override val origin: Field) : Field() {
 class SimpleField(
     override val name: String,
     override var typeRef: TypeRefWithNullability,
-    override val isChild: Boolean,
+    override var kind: Kind,
     override var isMutable: Boolean,
     override var withReplace: Boolean,
     override var isVolatile: Boolean = false,
@@ -137,7 +138,7 @@ class SimpleField(
         return SimpleField(
             name = name,
             typeRef = typeRef,
-            isChild = isChild,
+            kind = kind,
             isMutable = isMutable,
             withReplace = withReplace,
             isVolatile = isVolatile,
@@ -158,7 +159,7 @@ class FieldList(
     override val name: String,
     override var baseType: TypeRef,
     override var withReplace: Boolean,
-    override val isChild: Boolean,
+    override var kind: Kind,
     useMutableOrEmpty: Boolean = false,
 ) : Field(), ListField {
     override val typeRef: ClassRef<PositionTypeParameterRef>
@@ -178,7 +179,7 @@ class FieldList(
             name,
             baseType,
             withReplace,
-            isChild,
+            kind,
             isMutableOrEmptyList
         )
     }

@@ -78,16 +78,6 @@ abstract class AbstractField<Field : AbstractField<Field>> {
      */
     var useInBaseTransformerDetection = true
 
-    /**
-     * Whether this field semantically represents a reference to a child node of the tree.
-     *
-     * This may have the effect of including or excluding this field from visiting it by visitors in the generated
-     * `acceptChildren` and `transformChildren` methods (child fields are always visited in those methods).
-     *
-     * Only has effect if [containsElement] is `true`.
-     */
-    abstract val isChild: Boolean
-
     open val overriddenFields: MutableSet<Field> = mutableSetOf<Field>()
 
     open fun updatePropertiesFromOverriddenFields(parentFields: List<Field>) {
@@ -153,19 +143,36 @@ abstract class AbstractField<Field : AbstractField<Field>> {
         ) : ImplementationDefaultStrategy
     }
 
-    /**
-     * If this field represents a symbol of a declaration ([org.jetbrains.kotlin.ir.symbols.IrSymbol] or
-     * [org.jetbrains.kotlin.fir.symbols.FirBasedSymbol]), determines whether this symbol corresponds to the element containing this field
-     * or some other element.
-     *
-     * In other words, for element `someElement` the following is true:
-     * [symbolFieldRole] == [SymbolFieldRole.DECLARED] iff `someElement.symbol.owner === someElement`.
-     *
-     * If this field does not represent a symbol, this property should be `null`.
-     */
-    var symbolFieldRole: SymbolFieldRole? = null
+    abstract var kind: Kind
 
-    enum class SymbolFieldRole {
-        DECLARED, REFERENCED
+    enum class Kind {
+        /**
+         * Arbitrary data, opaque to the framework.
+         */
+        RegularField,
+
+        /**
+         * A symbol ([org.jetbrains.kotlin.ir.symbols.IrSymbol] or
+         * [org.jetbrains.kotlin.fir.symbols.FirBasedSymbol]) representing this declaration.
+         * I.e. `someElement.symbol.owner === someElement`.
+         */
+        DeclaredSymbol,
+
+        /**
+         * A reference to some other element, or a list of elements, either direct
+         * ([org.jetbrains.kotlin.ir.IrElement], [org.jetbrains.kotlin.fir.FirElement])
+         * or via a symbol
+         * ([org.jetbrains.kotlin.ir.symbols.IrSymbol], [org.jetbrains.kotlin.fir.symbols.FirBasedSymbol]).
+         */
+        ElementReference,
+
+        /**
+         * A reference to a child node or a list of child nodes of the tree.
+         * Child elements have a special behavior:
+         * - They are visited in `acceptChildren` and `transformChildren` methods.
+         * - They may have `parent` property representing the element which contains them.
+         * - In order to maintain the tree structure, every element object is expected to be present in at most one [ChildElement] field.
+         */
+        ChildElement,
     }
 }

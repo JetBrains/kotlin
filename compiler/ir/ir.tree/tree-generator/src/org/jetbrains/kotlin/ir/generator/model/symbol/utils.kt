@@ -5,40 +5,44 @@
 
 package org.jetbrains.kotlin.ir.generator.model.symbol
 
-import org.jetbrains.kotlin.generators.tree.AbstractField.SymbolFieldRole
+import org.jetbrains.kotlin.generators.tree.AbstractField
+import org.jetbrains.kotlin.generators.tree.AbstractField.Kind
 import org.jetbrains.kotlin.generators.tree.ClassOrElementRef
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.classifierSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.typeAliasSymbol
 import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
 import org.jetbrains.kotlin.ir.generator.irTypeAbbreviationType
 import org.jetbrains.kotlin.ir.generator.model.Element
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
-fun symbolRemapperMethodName(symbolClass: Symbol, role: SymbolFieldRole): String {
+fun symbolRemapperMethodName(symbolClass: Symbol, kind: Kind): String {
     val elementName = symbolClass.name.removeSuffix("Symbol")
-    return "get${role.name.lowercase().capitalizeAsciiOnly()}$elementName"
+    val kindDesc = when(kind) {
+        AbstractField.Kind.DeclaredSymbol -> "Declared"
+        AbstractField.Kind.ElementReference -> "Referenced"
+        else -> error("Unexpected kind $kind")
+    }
+    return "get$kindDesc$elementName"
 }
 
 data class FieldWithSymbol(
     val symbolType: Symbol,
     val fieldName: String,
-    val role: SymbolFieldRole,
+    val kind: Kind,
     val fieldContainer: ClassOrElementRef,
 )
 
 private val additionalSymbolFields = listOf(
-    FieldWithSymbol(classifierSymbol, "classifier", SymbolFieldRole.REFERENCED, irSimpleTypeType),
-    FieldWithSymbol(typeAliasSymbol, "typeAlias", SymbolFieldRole.REFERENCED, irTypeAbbreviationType)
+    FieldWithSymbol(classifierSymbol, "classifier", Kind.ElementReference, irSimpleTypeType),
+    FieldWithSymbol(typeAliasSymbol, "typeAlias", Kind.ElementReference, irTypeAbbreviationType)
 )
 
 private val Element.fieldsWithSymbols: List<FieldWithSymbol>
     get() = allFields.mapNotNull { field ->
-        val role = field.symbolFieldRole ?: return@mapNotNull null
         val symbolClass = field.symbolClass ?: return@mapNotNull null
-        FieldWithSymbol(symbolClass, field.name, role, this)
+        FieldWithSymbol(symbolClass, field.name, field.kind, this)
     }
 
-fun findFieldsWithSymbols(elements: List<Element>, role: SymbolFieldRole): Map<Symbol, List<FieldWithSymbol>> {
+fun findFieldsWithSymbols(elements: List<Element>, kind: Kind): Map<Symbol, List<FieldWithSymbol>> {
     val elementSymbolFields = elements.flatMap { element ->
         if (element.implementations.isNotEmpty()) {
             element.fieldsWithSymbols
@@ -47,6 +51,6 @@ fun findFieldsWithSymbols(elements: List<Element>, role: SymbolFieldRole): Map<S
         }
     }
     return (elementSymbolFields + additionalSymbolFields)
-        .filter { it.role == role }
+        .filter { it.kind == kind }
         .groupBy { it.symbolType }
 }

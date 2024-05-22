@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.tree.generator.FieldSets.initializer
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.modality
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.name
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.receivers
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.referencedSymbol
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.returnTypeRef
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.scopeProvider
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.smartcastStability
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFieldConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.generators.tree.AbstractField
+import org.jetbrains.kotlin.generators.tree.AbstractField.Kind.ElementReference
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.TypeRef
 import org.jetbrains.kotlin.generators.tree.withArgs
@@ -49,7 +49,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         typeParameterRef.configure {
-            +referencedSymbol("symbol", typeParameterSymbolType)
+            +field("symbol", typeParameterSymbolType, kind = ElementReference)
         }
 
         typeParametersOwner.configure {
@@ -104,7 +104,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("returnTypeRef", typeRef, withReplace = true).withTransform()
             +field("receiverParameter", receiverParameter, nullable = true, withReplace = true).withTransform()
             +field("deprecationsProvider", deprecationsProviderType).withReplace().apply { isMutable = true }
-            +referencedSymbol("symbol", callableSymbolType.withArgs(callableDeclaration))
+            +field("symbol", callableSymbolType.withArgs(callableDeclaration), kind = ElementReference)
 
             +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
             +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
@@ -300,7 +300,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +name
             +declaredSymbol(regularClassSymbolType)
             +booleanField("hasLazyNestedClassifiers")
-            +referencedSymbol("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true)
+            +field("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true, kind = ElementReference)
             +superTypeRefs(withReplace = true)
             +fieldList(contextReceiver, useMutableOrEmpty = true)
         }
@@ -346,7 +346,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         typeParameter.configure {
             +name
             +declaredSymbol(typeParameterSymbolType)
-            +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)).apply {
+            +field("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star), kind = ElementReference).apply {
                 withBindThis = false
             }
             +field(varianceType)
@@ -370,7 +370,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         property.configure {
             +fieldList(contextReceiver, useMutableOrEmpty = true, withReplace = true).withTransform()
             +declaredSymbol(propertySymbolType)
-            +referencedSymbol("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
+            +field("delegateFieldSymbol", delegateFieldSymbolType, nullable = true, kind = ElementReference)
             +booleanField("isLocal")
             +field("bodyResolveState", propertyBodyResolveStateType, withReplace = true)
             +typeParameters
@@ -378,7 +378,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         propertyAccessor.configure {
             +declaredSymbol(propertyAccessorSymbolType)
-            +referencedSymbol("propertySymbol", firPropertySymbolType).apply {
+            +field("propertySymbol", firPropertySymbolType, kind = ElementReference).apply {
                 withBindThis = false
             }
             +booleanField("isGetter")
@@ -389,7 +389,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         backingField.configure {
             +declaredSymbol(backingFieldSymbolType)
-            +referencedSymbol("propertySymbol", firPropertySymbolType).apply {
+            +field("propertySymbol", firPropertySymbolType, kind = ElementReference).apply {
                 withBindThis = false
             }
             +initializer.withTransform().withReplace()
@@ -443,7 +443,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         valueParameter.configure {
             +declaredSymbol(valueParameterSymbolType)
             +field("defaultValue", expression, nullable = true, withReplace = true)
-            +referencedSymbol("containingFunctionSymbol", functionSymbolType.withArgs(TypeRef.Star)).apply {
+            +field("containingFunctionSymbol", functionSymbolType.withArgs(TypeRef.Star), kind = ElementReference).apply {
                 withBindThis = false
             }
             generateBooleanFields("crossinline", "noinline", "vararg")
@@ -495,7 +495,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +declaredSymbol(anonymousInitializerSymbolType)
             // the containing declaration is nullable, because it is not immediately clear how to obtain it in all places in the fir builder
             // TODO: review and consider making not-nullable (KT-64195)
-            +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true).apply {
+            +field("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true, kind = ElementReference).apply {
                 withBindThis = false
             }
         }
@@ -541,7 +541,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         resolvedImport.configure {
-            +field("delegate", import, isChild = false)
+            +field("delegate", import, kind = ElementReference)
             +field("packageFqName", fqNameType)
             +field("relativeParentClassName", fqNameType, nullable = true)
             +field("resolvedParentClassId", classIdType, nullable = true)
@@ -560,15 +560,15 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         annotationCall.configure {
-            +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
+            +field("argumentMapping", annotationArgumentMapping, withReplace = true, kind = ElementReference)
             +field("annotationResolvePhase", annotationResolvePhaseType, withReplace = true)
-            +referencedSymbol("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)).apply {
+            +field("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star), kind = ElementReference).apply {
                 withBindThis = false
             }
         }
 
         errorAnnotationCall.configure {
-            +field("argumentMapping", annotationArgumentMapping, withReplace = true, isChild = false)
+            +field("argumentMapping", annotationArgumentMapping, withReplace = true, kind = ElementReference)
         }
 
         annotationArgumentMapping.configure {
@@ -708,7 +708,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("packageFqName", fqNameType)
             +field("relativeClassFqName", fqNameType, nullable = true)
             +field("classId", classIdType, nullable = true)
-            +referencedSymbol("symbol", classLikeSymbolType, nullable = true)
+            +field("symbol", classLikeSymbolType, nullable = true, kind = ElementReference)
             +booleanField("isNullableLHSForCallableReference", withReplace = true)
             +booleanField("resolvedToCompanionObject", withReplace = true)
             +booleanField("canBeValue", withReplace = true)
@@ -718,7 +718,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         resolvedReifiedParameterReference.configure {
-            +referencedSymbol("symbol", typeParameterSymbolType)
+            +field("symbol", typeParameterSymbolType, kind = ElementReference)
         }
 
         stringConcatenationCall.configure {
@@ -760,11 +760,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         namedReferenceWithCandidateBase.configure {
-            +referencedSymbol("candidateSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
+            +field("candidateSymbol", firBasedSymbolType.withArgs(TypeRef.Star), kind = ElementReference)
         }
 
         resolvedNamedReference.configure {
-            +referencedSymbol("resolvedSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
+            +field("resolvedSymbol", firBasedSymbolType.withArgs(TypeRef.Star), kind = ElementReference)
         }
 
         resolvedCallableReference.configure {
@@ -773,11 +773,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         delegateFieldReference.configure {
-            +referencedSymbol("resolvedSymbol", delegateFieldSymbolType)
+            +field("resolvedSymbol", delegateFieldSymbolType, kind = ElementReference)
         }
 
         backingFieldReference.configure {
-            +referencedSymbol("resolvedSymbol", backingFieldSymbolType)
+            +field("resolvedSymbol", backingFieldSymbolType, kind = ElementReference)
         }
 
         superReference.configure {
@@ -787,7 +787,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         thisReference.configure {
             +stringField("labelName", nullable = true)
-            +referencedSymbol("boundSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true, withReplace = true)
+            +field("boundSymbol", firBasedSymbolType.withArgs(TypeRef.Star), nullable = true, withReplace = true, kind = ElementReference)
             +intField("contextReceiverNumber", withReplace = true)
             +booleanField("isImplicit")
             +field("diagnostic", coneDiagnosticType, nullable = true, withReplace = true)
@@ -799,7 +799,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         resolvedTypeRef.configure {
             +field("type", coneKotlinTypeType)
-            +field("delegatedTypeRef", typeRef, nullable = true, isChild = false)
+            +field("delegatedTypeRef", typeRef, nullable = true, kind = ElementReference)
             element.otherParents.add(typeRefMarkerType)
         }
 

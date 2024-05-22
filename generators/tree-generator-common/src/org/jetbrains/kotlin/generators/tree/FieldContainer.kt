@@ -49,7 +49,7 @@ interface FieldContainer<out Field : AbstractField<*>> {
     val walkableChildren: List<Field>
         get() = allFields
             .filter {
-                it.containsElement && it.isChild
+                it.containsElement && it.kind == AbstractField.Kind.ChildElement
                         && it.implementationDefaultStrategy?.withGetter != true
             }
             .reorderFieldsIfNecessary(childrenOrderOverride)

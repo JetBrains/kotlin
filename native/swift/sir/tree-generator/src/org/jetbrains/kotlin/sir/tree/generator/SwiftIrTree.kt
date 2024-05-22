@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.sir.tree.generator
 
+import org.jetbrains.kotlin.generators.tree.AbstractField
+import org.jetbrains.kotlin.generators.tree.AbstractField.Kind.ElementReference
 import org.jetbrains.kotlin.generators.tree.StandardTypes.boolean
 import org.jetbrains.kotlin.generators.tree.StandardTypes.string
 import org.jetbrains.kotlin.generators.tree.config.element
@@ -49,7 +51,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("origin", originType)
         +field("visibility", swiftVisibilityType)
         +field(name = "documentation", string, nullable = true, mutable = false)
-        +field("parent", declarationParent, mutable = true, isChild = false) {
+        +field("parent", declarationParent, mutable = true, kind = ElementReference) {
             useInBaseTransformerDetection = false
         }
     }
