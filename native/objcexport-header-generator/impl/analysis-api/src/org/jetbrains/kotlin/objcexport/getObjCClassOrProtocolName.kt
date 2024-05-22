@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
  * ```
  * will use `ObjCFoo` instead of the class name `Foo`
  *
+ * @param bareName if `true`, the symbol name will not be prefixed with module/framework/parent name
+ *
  */
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtClassLikeSymbol.getObjCClassOrProtocolName(bareName: Boolean = false): ObjCExportClassOrProtocolName {
