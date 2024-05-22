@@ -72,7 +72,7 @@ inline const char* name(Tag tag) {
 
         case Tag::kEnumSize: break;
     }
-    RuntimeFail("Unexpected logging tag %d", tag);
+    RuntimeFail("Unexpected logging tag %d", static_cast<int>(tag));
 }
 
 ALWAYS_INLINE inline Level maxLevel(Tag tag, const int32_t logLevels[]) {
