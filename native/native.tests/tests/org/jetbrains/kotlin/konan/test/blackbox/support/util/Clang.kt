@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.native.executors.RunProcessException
 import org.jetbrains.kotlin.native.executors.runProcess
 import java.io.File
+import kotlin.test.assertTrue
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.measureTimedValue
 
@@ -145,4 +147,43 @@ internal fun createModuleMap(directory: File, umbrellaHeader: File): File {
             """.trimIndent()
         )
     }
+}
+
+internal fun AbstractNativeSimpleTest.compileWithClangToStaticLibrary(
+    clangDistribution: ClangDistribution = ClangDistribution.Llvm,
+    clangMode: ClangMode = ClangMode.C,
+    sourceFiles: List<File>,
+    outputFile: File,
+    includeDirectories: List<File> = emptyList(),
+    frameworkDirectories: List<File> = emptyList(),
+    libraryDirectories: List<File> = emptyList(),
+    libraries: List<String> = emptyList(),
+    additionalClangFlags: List<String> = emptyList(),
+) : TestCompilationResult<out TestCompilationArtifact.BinaryLibrary> {
+    val llvmAr = ClangArgs.Native(testRunSettings.configurables).llvmAr().first()
+    val objFile = File("${outputFile.absolutePath}.o")
+    val compilationResult = compileWithClang(
+        clangDistribution,
+        clangMode,
+        sourceFiles,
+        outputFile = objFile,
+        includeDirectories,
+        frameworkDirectories,
+        libraryDirectories,
+        libraries,
+        additionalClangFlags = additionalClangFlags + listOf("-c"),
+        fmodules = false, // with `-fmodules`, ld cannot find symbol `_assert`
+    )
+    val loggedData = when (compilationResult) {
+        is TestCompilationResult.Success -> compilationResult.loggedData
+        is TestCompilationResult.DependencyFailures -> return compilationResult
+        is TestCompilationResult.CompilationToolFailure -> return compilationResult
+        is TestCompilationResult.UnexpectedFailure -> return compilationResult
+    }
+    // Assuming that if the compiler succeeded, llvm-ar cannot fail.
+    runProcess(llvmAr, "-rc", outputFile.absolutePath, objFile.absolutePath) {
+        timeout = Duration.parse("1m")
+    }
+    assertTrue(outputFile.exists())
+    return TestCompilationResult.Success(TestCompilationArtifact.BinaryLibrary(outputFile), loggedData)
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.withOSVersion
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
@@ -375,6 +376,12 @@ internal class BinaryLibraryCompilation(
     override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
+        if (kind == BinaryLibraryKind.DYNAMIC && targets.testTarget.family == Family.MINGW) {
+            val implib = expectedArtifact.libraryFile.run {
+                resolveSibling("${name}.a")
+            }
+            add("-linker-option", "-Wl,--out-implib,${implib.absolutePath}")
+        }
         val libraryKind = when (kind) {
             BinaryLibraryKind.STATIC -> "static"
             BinaryLibraryKind.DYNAMIC -> "dynamic"

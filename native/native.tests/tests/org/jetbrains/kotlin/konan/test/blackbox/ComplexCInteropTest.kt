@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
@@ -50,26 +51,14 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("embedStaticLibraries.kt")
     fun testEmbedStaticLibraries() {
-        val llvmAr = ClangArgs.Native(testRunSettings.configurables).llvmAr().first()
         val embedStaticLibrariesDir = interopDir.resolve("embedStaticLibraries")
         (1..4).forEach {
             val source = embedStaticLibrariesDir.resolve("$it.c")
-            val obj = buildDir.resolve("$it.o")
-            compileWithClang(
-                clangDistribution = ClangDistribution.Llvm,
-                sourceFiles = listOf(source),
-                includeDirectories = emptyList(),
-                outputFile = obj,
-                libraryDirectories = emptyList(),
-                libraries = emptyList(),
-                additionalClangFlags = listOf("-c"),
-                fmodules = false, // with `-fmodules`, ld cannot find symbol `_assert`
-            ).assertSuccess()
             val libFile = buildDir.resolve("$it.a")
-            runProcess(llvmAr, "-rc", libFile.absolutePath, obj.absolutePath) {
-                timeout = Duration.parse("1m")
-            }
-            assertTrue(libFile.exists())
+            compileWithClangToStaticLibrary(
+                sourceFiles = listOf(source),
+                outputFile = libFile,
+            ).assertSuccess()
         }
         val defFile = buildDir.resolve("embedStaticLibraries.def").also {
             it.printWriter().use {
