@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
 
@@ -84,208 +85,300 @@ fun FirResult.convertToIrAndActualize(
     extraActualDeclarationExtractorInitializer: (Fir2IrComponents) -> IrExtraActualDeclarationExtractor?,
     irModuleFragmentPostCompute: (IrModuleFragment) -> Unit = { _ -> },
 ): Fir2IrActualizedResult {
-    require(outputs.isNotEmpty()) { "No modules found" }
+    val pipeline = Fir2IrPipeline(
+        outputs,
+        fir2IrExtensions,
+        fir2IrConfiguration,
+        irGeneratorExtensions,
+        irMangler,
+        firMangler,
+        visibilityConverter,
+        kotlinBuiltIns,
+        typeSystemContextProvider,
+        specialAnnotationsProvider,
+        extraActualDeclarationExtractorInitializer,
+        irModuleFragmentPostCompute
+    )
+    return pipeline.convertToIrAndActualize()
+}
 
-    val commonMemberStorage = Fir2IrCommonMemberStorage(firMangler)
+private class Fir2IrPipeline(
+    val outputs: List<ModuleCompilerAnalyzedOutput>,
+    val fir2IrExtensions: Fir2IrExtensions,
+    val fir2IrConfiguration: Fir2IrConfiguration,
+    val irGeneratorExtensions: Collection<IrGenerationExtension>,
+    val irMangler: KotlinMangler.IrMangler,
+    val firMangler: FirMangler,
+    val visibilityConverter: Fir2IrVisibilityConverter,
+    val kotlinBuiltIns: KotlinBuiltIns,
+    val typeSystemContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
+    val specialAnnotationsProvider: IrSpecialAnnotationsProvider?,
+    val extraActualDeclarationExtractorInitializer: (Fir2IrComponents) -> IrExtraActualDeclarationExtractor?,
+    val irModuleFragmentPostCompute: (IrModuleFragment) -> Unit,
+) {
+    private class Fir2IrConversionResult(
+        val mainIrFragment: IrModuleFragmentImpl,
+        val dependentIrFragments: List<IrModuleFragmentImpl>,
+        val componentsStorage: Fir2IrComponentsStorage,
+        val commonMemberStorage: Fir2IrCommonMemberStorage,
+        val irBuiltIns: IrBuiltIns,
+        val symbolTable: SymbolTable,
+        val irTypeSystemContext: IrTypeSystemContext
+    )
 
-    val firProvidersWithGeneratedFiles: MutableMap<FirModuleData, FirProviderWithGeneratedFiles> = mutableMapOf()
-    for (firOutput in outputs) {
-        val session = firOutput.session
-        firProvidersWithGeneratedFiles[session.moduleData] = FirProviderWithGeneratedFiles(session, firProvidersWithGeneratedFiles)
+    fun convertToIrAndActualize(): Fir2IrActualizedResult {
+        require(outputs.isNotEmpty()) { "No modules found" }
+
+        val fir2IrOutput = runFir2IrConversion()
+        return fir2IrOutput.runActualizationPipeline()
     }
 
-    val syntheticIrBuiltinsSymbolsContainer = Fir2IrSyntheticIrBuiltinsSymbolsContainer()
+    private fun runFir2IrConversion(): Fir2IrConversionResult {
+        val commonMemberStorage = Fir2IrCommonMemberStorage(firMangler)
 
-    fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(): Fir2IrComponentsStorage {
-        return Fir2IrComponentsStorage(
-            session,
-            scopeSession,
-            fir,
-            IrFactoryImpl,
-            fir2IrExtensions,
-            fir2IrConfiguration,
-            visibilityConverter,
+        val firProvidersWithGeneratedFiles: MutableMap<FirModuleData, FirProviderWithGeneratedFiles> = mutableMapOf()
+        for (firOutput in outputs) {
+            val session = firOutput.session
+            firProvidersWithGeneratedFiles[session.moduleData] = FirProviderWithGeneratedFiles(session, firProvidersWithGeneratedFiles)
+        }
+
+        val syntheticIrBuiltinsSymbolsContainer = Fir2IrSyntheticIrBuiltinsSymbolsContainer()
+
+        lateinit var componentsStorage: Fir2IrComponentsStorage
+
+        val fragments = outputs.map {
+            componentsStorage = Fir2IrComponentsStorage(
+                it.session,
+                it.scopeSession,
+                it.fir,
+                IrFactoryImpl,
+                fir2IrExtensions,
+                fir2IrConfiguration,
+                visibilityConverter,
+                commonMemberStorage,
+                irMangler,
+                kotlinBuiltIns,
+                specialAnnotationsProvider,
+                firProvidersWithGeneratedFiles.getValue(it.session.moduleData),
+                syntheticIrBuiltinsSymbolsContainer,
+            )
+
+            Fir2IrConverter.generateIrModuleFragment(componentsStorage, it.fir).also { moduleFragment ->
+                irModuleFragmentPostCompute(moduleFragment)
+            }
+        }
+
+        val dependentIrFragments = fragments.dropLast(1)
+        val mainIrFragment = fragments.last()
+        val (irBuiltIns, symbolTable) = createBuiltInsAndSymbolTable(componentsStorage, syntheticIrBuiltinsSymbolsContainer)
+
+        mainIrFragment.initializeIrBuiltins(irBuiltIns)
+        dependentIrFragments.forEach { it.initializeIrBuiltins(irBuiltIns) }
+
+        val irTypeSystemContext = typeSystemContextProvider(irBuiltIns)
+
+        return Fir2IrConversionResult(
+            mainIrFragment,
+            dependentIrFragments,
+            componentsStorage,
             commonMemberStorage,
-            irMangler,
-            kotlinBuiltIns,
-            specialAnnotationsProvider,
-            firProvidersWithGeneratedFiles.getValue(session.moduleData),
-            syntheticIrBuiltinsSymbolsContainer,
+            irBuiltIns,
+            symbolTable,
+            irTypeSystemContext
         )
     }
 
-    lateinit var platformComponentsStorage: Fir2IrComponentsStorage
+    private fun createBuiltInsAndSymbolTable(
+        componentsStorage: Fir2IrComponentsStorage,
+        syntheticIrBuiltinsSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer,
+    ): Pair<IrBuiltIns, SymbolTable> {
+        val irBuiltIns = IrBuiltInsOverFir(
+            componentsStorage,
+            FirModuleDescriptor.createSourceModuleDescriptor(componentsStorage.session, kotlinBuiltIns),
+            syntheticIrBuiltinsSymbolsContainer,
+        )
+        val symbolTable = SymbolTable(signaturer = null, IrFactoryImpl, lock = componentsStorage.lock)
 
-    val fragments = outputs.map { firOutput ->
-        val componentsStorage = firOutput.createFir2IrComponentsStorage()
-        platformComponentsStorage = componentsStorage
-        Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir).also {
-            irModuleFragmentPostCompute(it)
-        }
+        fir2IrExtensions.initializeIrBuiltInsAndSymbolTable(irBuiltIns, symbolTable)
+
+        return irBuiltIns to symbolTable
     }
 
-    val dependentIrFragments = fragments.dropLast(1)
-    val mainIrFragment = fragments.last()
+    private fun Fir2IrConversionResult.runActualizationPipeline(): Fir2IrActualizedResult {
+        val irActualizer = createIrActualizer()
 
-    val irBuiltins = IrBuiltInsOverFir(
-        platformComponentsStorage,
-        FirModuleDescriptor.createSourceModuleDescriptor(platformComponentsStorage.session, kotlinBuiltIns),
-        syntheticIrBuiltinsSymbolsContainer,
-    )
-    val symbolTable = SymbolTable(signaturer = null, IrFactoryImpl, lock = commonMemberStorage.lock)
-    fir2IrExtensions.initializeIrBuiltInsAndSymbolTable(irBuiltins, symbolTable)
+        // actualizeCallablesAndMergeModules call below in fact can also actualize classifiers.
+        // So to avoid even more changes, when this mode is disabled, we don't run classifiers
+        // actualization separately. This should go away, after useIrFakeOverrideBuilder becomes
+        // always enabled
+        irActualizer?.actualizeClassifiers()
 
-    mainIrFragment.initializeIrBuiltins(irBuiltins)
-    dependentIrFragments.forEach { it.initializeIrBuiltins(irBuiltins) }
+        generateSyntheticBodiesOfDataValueMembers()
 
-    val irTypeSystemContext = typeSystemContextProvider(irBuiltins)
+        val fakeOverrideBuilder = createFakeOverrideBuilder()
+        buildFakeOverrides(fakeOverrideBuilder)
 
-    val irActualizer = if (dependentIrFragments.isEmpty()) null else IrActualizer(
-        KtDiagnosticReporterWithImplicitIrBasedContext(fir2IrConfiguration.diagnosticReporter, fir2IrConfiguration.languageVersionSettings),
-        irTypeSystemContext,
-        fir2IrConfiguration.expectActualTracker,
-        mainIrFragment,
-        dependentIrFragments,
-        extraActualDeclarationExtractorInitializer(platformComponentsStorage),
-    )
+        val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: emptyMap()
 
-    // actualizeCallablesAndMergeModules call below in fact can also actualize classifiers.
-    // So to avoid even more changes, when this mode is disabled, we don't run classifiers
-    // actualization separately. This should go away, after useIrFakeOverrideBuilder becomes
-    // always enabled
-    irActualizer?.actualizeClassifiers()
+        val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(expectActualMap)
+        resolveFakeOverrideSymbols(fakeOverrideResolver)
 
-    Fir2IrDataClassGeneratedMemberBodyGenerator(irBuiltins)
-        .generateBodiesForClassesWithSyntheticDataClassMembers(commonMemberStorage.generatedDataValueClassSyntheticFunctions, symbolTable)
+        evaluateConstants()
 
-    val temporaryResolver = SpecialFakeOverrideSymbolsResolver(emptyMap())
+        val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)
 
-    val fakeOverrideBuilder = platformComponentsStorage.createFakeOverrideBuilder(irTypeSystemContext)
+        fakeOverrideResolver.cacheFakeOverridesOfAllClasses(mainIrFragment)
+        (fakeOverrideBuilder.strategy as Fir2IrFakeOverrideStrategy).clearFakeOverrideFields()
 
-    fakeOverrideBuilder.buildForAll(dependentIrFragments + mainIrFragment, temporaryResolver)
+        val pluginContext = Fir2IrPluginContext(componentsStorage, irBuiltIns, componentsStorage.moduleDescriptor, symbolTable)
+        pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
 
-    val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: emptyMap()
-    val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(expectActualMap)
-    mainIrFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
-    @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
-    platformComponentsStorage.symbolsMappingForLazyClasses.initializeSymbolMap(fakeOverrideResolver)
+        return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
+    }
 
-    Fir2IrConverter.evaluateConstants(mainIrFragment, platformComponentsStorage)
-    val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)
+    // ------------------------------------------------------ pipeline steps ------------------------------------------------------
 
-    fakeOverrideResolver.cacheFakeOverridesOfAllClasses(mainIrFragment)
+    private fun Fir2IrConversionResult.createIrActualizer(): IrActualizer? {
+        return runIf(dependentIrFragments.isNotEmpty()) {
+            IrActualizer(
+                KtDiagnosticReporterWithImplicitIrBasedContext(
+                    fir2IrConfiguration.diagnosticReporter,
+                    fir2IrConfiguration.languageVersionSettings
+                ),
+                irTypeSystemContext,
+                fir2IrConfiguration.expectActualTracker,
+                mainIrFragment,
+                dependentIrFragments,
+                this@Fir2IrPipeline.extraActualDeclarationExtractorInitializer(componentsStorage),
+            )
+        }
 
-    (fakeOverrideBuilder.strategy as Fir2IrFakeOverrideStrategy).clearFakeOverrideFields()
+    }
 
-    val pluginContext = Fir2IrPluginContext(platformComponentsStorage, irBuiltins, platformComponentsStorage.moduleDescriptor, symbolTable)
-    pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
-    return Fir2IrActualizedResult(
-        mainIrFragment,
-        platformComponentsStorage,
-        pluginContext,
-        actualizationResult,
-        irBuiltins,
-        symbolTable,
-    )
-}
+    private fun Fir2IrConversionResult.generateSyntheticBodiesOfDataValueMembers() {
+        Fir2IrDataClassGeneratedMemberBodyGenerator(irBuiltIns)
+            .generateBodiesForClassesWithSyntheticDataClassMembers(
+                commonMemberStorage.generatedDataValueClassSyntheticFunctions,
+                symbolTable
+            )
+    }
 
-private fun Fir2IrComponentsStorage.createFakeOverrideBuilder(irTypeSystemContext: IrTypeSystemContext): IrFakeOverrideBuilder {
-    return IrFakeOverrideBuilder(
-        irTypeSystemContext,
-        Fir2IrFakeOverrideStrategy(
-            Fir2IrConverter.friendModulesMap(session),
-            isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm(),
-            isOverrideOfPublishedApiFromOtherModuleDisallowed = session.moduleData.platform.isJvm(),
-        ),
-        extensions.externalOverridabilityConditions
-    )
-}
+    private fun Fir2IrConversionResult.createFakeOverrideBuilder(): IrFakeOverrideBuilder {
+        val session = componentsStorage.session
+        return IrFakeOverrideBuilder(
+            irTypeSystemContext,
+            Fir2IrFakeOverrideStrategy(
+                Fir2IrConverter.friendModulesMap(session),
+                isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm(),
+                isOverrideOfPublishedApiFromOtherModuleDisallowed = session.moduleData.platform.isJvm(),
+            ),
+            componentsStorage.extensions.externalOverridabilityConditions
+        )
+    }
 
-private fun resolveOverridenSymbolsInLazyClass(
-    clazz: Fir2IrLazyClass,
-    resolver: SpecialFakeOverrideSymbolsResolver
-) {
-    /*
-     * Eventually, we should be able to process lazy classes with the same code.
-     *
-     * Now we can't do this, because overriding by Java function is not supported correctly in IR builder.
-     * In most cases, nothing need to be done for lazy classes. For other cases, it is
-     * caller responsibility to handle them.
-     *
-     * Super-classes already have processed fake overrides at this moment.
-     * Also, all Fir2IrLazyClass super-classes are always platform classes,
-     * so it's valid to process it with empty expect-actual mapping.
-     *
-     * But this is still a hack, and should be removed within KT-64352
-     */
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    for (declaration in clazz.declarations) {
-        when (declaration) {
-            is IrSimpleFunction -> {
-                declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+    private fun Fir2IrConversionResult.buildFakeOverrides(fakeOverrideBuilder: IrFakeOverrideBuilder) {
+        val temporaryResolver = SpecialFakeOverrideSymbolsResolver(emptyMap())
+        fakeOverrideBuilder.buildForAll(dependentIrFragments + mainIrFragment, temporaryResolver)
+    }
+
+    private fun Fir2IrConversionResult.resolveFakeOverrideSymbols(fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver) {
+        mainIrFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
+        @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
+        componentsStorage.symbolsMappingForLazyClasses.initializeSymbolMap(fakeOverrideResolver)
+    }
+
+    private fun Fir2IrConversionResult.evaluateConstants() {
+        Fir2IrConverter.evaluateConstants(mainIrFragment, componentsStorage)
+    }
+
+    // ------------------------------------------------------ f/o building helpers ------------------------------------------------------
+
+    private fun IrFakeOverrideBuilder.buildForAll(
+        modules: List<IrModuleFragment>,
+        resolver: SpecialFakeOverrideSymbolsResolver
+    ) {
+        val builtFakeOverridesClasses = mutableSetOf<IrClass>()
+        fun buildFakeOverrides(clazz: IrClass) {
+            if (!builtFakeOverridesClasses.add(clazz)) return
+            for (c in clazz.superTypes) {
+                c.getClass()?.let { buildFakeOverrides(it) }
             }
-            is IrProperty -> {
-                declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedProperty(it) }
-                declaration.getter?.let { getter ->
-                    getter.overriddenSymbols = getter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+            if (clazz is IrLazyDeclarationBase) {
+                resolveOverridenSymbolsInLazyClass(clazz as Fir2IrLazyClass, resolver)
+            } else {
+                buildFakeOverridesForClass(clazz, false)
+            }
+        }
+
+        class ClassVisitor : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            private fun isIgnoredClass(declaration: IrClass): Boolean {
+                return when {
+                    declaration.isExpect -> true
+                    declaration.metadata is MetadataSource.CodeFragment -> true
+                    else -> false
                 }
-                declaration.setter?.let { setter ->
-                    setter.overriddenSymbols = setter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                if (!isIgnoredClass(declaration)) {
+                    buildFakeOverrides(declaration)
+                }
+                declaration.acceptChildrenVoid(this)
+            }
+        }
+
+        for (module in modules) {
+            for (file in module.files) {
+                try {
+                    file.acceptVoid(ClassVisitor())
+                } catch (e: ProcessCanceledException) {
+                    throw e
+                } catch (e: Throwable) {
+                    CodegenUtil.reportBackendException(e, "IR fake override builder", file.fileEntry.name) { offset ->
+                        file.fileEntry.takeIf { it.supportsDebugInfo }?.let {
+                            val (line, column) = it.getLineAndColumnNumbers(offset)
+                            line to column
+                        }
+                    }
                 }
             }
         }
     }
-}
 
-private fun IrFakeOverrideBuilder.buildForAll(
-    modules: List<IrModuleFragment>,
-    resolver: SpecialFakeOverrideSymbolsResolver
-) {
-    val builtFakeOverridesClasses = mutableSetOf<IrClass>()
-    fun buildFakeOverrides(clazz: IrClass) {
-        if (!builtFakeOverridesClasses.add(clazz)) return
-        for (c in clazz.superTypes) {
-            c.getClass()?.let { buildFakeOverrides(it) }
-        }
-        if (clazz is IrLazyDeclarationBase) {
-            resolveOverridenSymbolsInLazyClass(clazz as Fir2IrLazyClass, resolver)
-        } else {
-            buildFakeOverridesForClass(clazz, false)
-        }
-    }
-
-    class ClassVisitor : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        private fun isIgnoredClass(declaration: IrClass): Boolean {
-            return when {
-                declaration.isExpect -> true
-                declaration.metadata is MetadataSource.CodeFragment -> true
-                else -> false
-            }
-        }
-
-        override fun visitClass(declaration: IrClass) {
-            if (!isIgnoredClass(declaration)) {
-                buildFakeOverrides(declaration)
-            }
-            declaration.acceptChildrenVoid(this)
-        }
-    }
-
-    for (module in modules) {
-        for (file in module.files) {
-            try {
-                file.acceptVoid(ClassVisitor())
-            } catch (e: ProcessCanceledException) {
-                throw e
-            } catch (e: Throwable) {
-                CodegenUtil.reportBackendException(e, "IR fake override builder", file.fileEntry.name) { offset ->
-                    file.fileEntry.takeIf { it.supportsDebugInfo }?.let {
-                        val (line, column) = it.getLineAndColumnNumbers(offset)
-                        line to column
+    private fun resolveOverridenSymbolsInLazyClass(
+        clazz: Fir2IrLazyClass,
+        resolver: SpecialFakeOverrideSymbolsResolver,
+    ) {
+        /*
+         * Eventually, we should be able to process lazy classes with the same code.
+         *
+         * Now we can't do this, because overriding by Java function is not supported correctly in IR builder.
+         * In most cases, nothing need to be done for lazy classes. For other cases, it is
+         * caller responsibility to handle them.
+         *
+         * Super-classes already have processed fake overrides at this moment.
+         * Also, all Fir2IrLazyClass super-classes are always platform classes,
+         * so it's valid to process it with empty expect-actual mapping.
+         *
+         * But this is still a hack, and should be removed within KT-64352
+         */
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        for (declaration in clazz.declarations) {
+            when (declaration) {
+                is IrSimpleFunction -> {
+                    declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+                }
+                is IrProperty -> {
+                    declaration.overriddenSymbols = declaration.overriddenSymbols.map { resolver.getReferencedProperty(it) }
+                    declaration.getter?.let { getter ->
+                        getter.overriddenSymbols = getter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
+                    }
+                    declaration.setter?.let { setter ->
+                        setter.overriddenSymbols = setter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
                     }
                 }
             }
@@ -293,7 +386,10 @@ private fun IrFakeOverrideBuilder.buildForAll(
     }
 }
 
-fun IrPluginContext.applyIrGenerationExtensions(irModuleFragment: IrModuleFragment, irGenerationExtensions: Collection<IrGenerationExtension>) {
+fun IrPluginContext.applyIrGenerationExtensions(
+    irModuleFragment: IrModuleFragment,
+    irGenerationExtensions: Collection<IrGenerationExtension>,
+) {
     if (irGenerationExtensions.isEmpty()) return
     for (extension in irGenerationExtensions) {
         extension.generate(irModuleFragment, this)
