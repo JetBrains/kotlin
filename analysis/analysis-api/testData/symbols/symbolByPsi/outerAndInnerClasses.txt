@@ -24,7 +24,7 @@ KtTypeParameterSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: X.Y
+  classId: X.Y
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -68,7 +68,7 @@ KtTypeParameterSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: X.Z
+  classId: X.Z
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -136,7 +136,7 @@ KtTypeParameterSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -180,7 +180,7 @@ KtTypeParameterSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -236,7 +236,7 @@ KtTypeParameterSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -280,7 +280,7 @@ KtTypeParameterSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -348,7 +348,7 @@ KtTypeParameterSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -392,7 +392,7 @@ KtTypeParameterSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -424,7 +424,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -501,7 +501,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -533,7 +533,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -610,7 +610,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: X
+  classId: X
   classKind: CLASS
   companionObject: null
   contextReceivers: []

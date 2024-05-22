@@ -39,8 +39,8 @@ class ObjCReceiverTypeTest(
             val innerClassConstructor = innerClass.getMemberScope().getConstructors().first()
 
             assertEquals(
-                innerClassConstructor.objCReceiverType?.expandedClassSymbol?.classIdIfNonLocal,
-                outerClass.classIdIfNonLocal
+                innerClassConstructor.objCReceiverType?.expandedClassSymbol?.classId,
+                outerClass.classId
             )
         }
     }
@@ -65,7 +65,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                foo.objCReceiverType?.expandedClassSymbol?.classIdIfNonLocal
+                foo.objCReceiverType?.expandedClassSymbol?.classId
             )
         }
     }
@@ -91,7 +91,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames._boolean.toSafe()),
-                getter?.objCReceiverType?.expandedClassSymbol?.classIdIfNonLocal
+                getter?.objCReceiverType?.expandedClassSymbol?.classId
             )
         }
     }
@@ -118,7 +118,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                setter?.objCReceiverType?.expandedClassSymbol?.classIdIfNonLocal
+                setter?.objCReceiverType?.expandedClassSymbol?.classId
             )
         }
     }

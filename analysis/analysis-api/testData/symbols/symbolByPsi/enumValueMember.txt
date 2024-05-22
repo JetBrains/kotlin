@@ -1,7 +1,7 @@
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: Style
+  containingClassId: Style
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -338,7 +338,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: Style
+  classId: Style
   classKind: ENUM_CLASS
   companionObject: null
   contextReceivers: []

@@ -46,7 +46,7 @@ internal sealed class KaFirNamedClassOrObjectSymbolBase : KaNamedClassOrObjectSy
      * All kinds of non-local named class or object symbols must have the same kind of hash code. The class ID is the best option, as the
      * same class/object may be represented by multiple different symbols.
      */
-    override fun hashCode(): Int = classIdIfNonLocal?.hashCode() ?: symbolHashCode()
+    override fun hashCode(): Int = classId?.hashCode() ?: symbolHashCode()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Shared Operations
@@ -60,10 +60,10 @@ internal sealed class KaFirNamedClassOrObjectSymbolBase : KaNamedClassOrObjectSy
 
         return when (val symbolKind = symbolKind) {
             KaSymbolKind.LOCAL ->
-                throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString() ?: name.asString())
+                throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classId?.asString() ?: name.asString())
 
             KaSymbolKind.CLASS_MEMBER, KaSymbolKind.TOP_LEVEL ->
-                KaFirClassLikeSymbolPointer(classIdIfNonLocal!!, KaNamedClassOrObjectSymbol::class)
+                KaFirClassLikeSymbolPointer(classId!!, KaNamedClassOrObjectSymbol::class)
 
             else -> throw UnsupportedSymbolKind(this::class, symbolKind)
         }

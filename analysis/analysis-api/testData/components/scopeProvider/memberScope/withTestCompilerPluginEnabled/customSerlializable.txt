@@ -271,7 +271,7 @@ KtFunctionSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: test/Serializer
+  containingClassId: test/Serializer
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

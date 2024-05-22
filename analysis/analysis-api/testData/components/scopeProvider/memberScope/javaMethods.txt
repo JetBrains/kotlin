@@ -283,7 +283,7 @@ KtFunctionSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: JavaClass
+  containingClassId: JavaClass
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false

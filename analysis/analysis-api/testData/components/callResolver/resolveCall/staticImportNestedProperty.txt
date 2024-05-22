@@ -4,7 +4,7 @@ KtSuccessCallInfo:
       dispatchReceiver = KtImplicitReceiverValue:
         symbol = KtNamedClassOrObjectSymbol:
           annotationsList: []
-          classIdIfNonLocal: one/two/TopLevelObject.Nested
+          classId: one/two/TopLevelObject.Nested
           classKind: OBJECT
           companionObject: null
           contextReceivers: []

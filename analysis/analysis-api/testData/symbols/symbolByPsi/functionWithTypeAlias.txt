@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: A
+  classId: A
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -30,7 +30,7 @@ KtNamedClassOrObjectSymbol:
 
 KtTypeAliasSymbol:
   annotationsList: []
-  classIdIfNonLocal: TypeAlias
+  classId: TypeAlias
   expandedType: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []

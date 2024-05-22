@@ -26,7 +26,7 @@ internal val KtClassOrObjectSymbol.implementsCloneable: Boolean
 
 internal val KtClassOrObjectSymbol.isCloneable: Boolean
     get() {
-        return classIdIfNonLocal?.isCloneable ?: false
+        return classId?.isCloneable ?: false
     }
 
 internal val ClassId.isCloneable: Boolean

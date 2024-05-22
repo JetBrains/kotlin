@@ -118,7 +118,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: C
+  classId: C
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -148,7 +148,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: I
+  classId: I
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []

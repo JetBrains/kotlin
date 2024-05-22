@@ -160,7 +160,7 @@ abstract class SymbolLightClassForClassLike<SType : KaClassOrObjectSymbol> prote
 
     override fun getQualifiedName(): String? {
         val classOrObjectFqName = classOrObjectDeclaration?.fqName
-            ?: withClassOrObjectSymbol { s -> s.classIdIfNonLocal?.asSingleFqName() }
+            ?: withClassOrObjectSymbol { s -> s.classId?.asSingleFqName() }
 
         return classOrObjectFqName?.toString()
     }

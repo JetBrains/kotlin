@@ -720,7 +720,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: dependency/api/I
+  classId: dependency/api/I
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -750,7 +750,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: dependency/api/InternalI
+  classId: dependency/api/InternalI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -780,7 +780,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: dependency/api/PrivateI
+  classId: dependency/api/PrivateI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -810,7 +810,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: dependency/api/C1
+  classId: dependency/api/C1
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -840,7 +840,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: dependency/api/InternalC1
+  classId: dependency/api/InternalC1
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -870,7 +870,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: dependency/api/PrivateC1
+  classId: dependency/api/PrivateC1
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -900,7 +900,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: dependency/api/FakeI
+  classId: dependency/api/FakeI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -930,7 +930,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: dependency/api/InternalFakeI
+  classId: dependency/api/InternalFakeI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -960,7 +960,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: dependency/api/PrivateFakeI
+  classId: dependency/api/PrivateFakeI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []

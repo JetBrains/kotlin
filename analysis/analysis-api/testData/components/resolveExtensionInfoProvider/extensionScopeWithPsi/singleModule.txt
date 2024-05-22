@@ -5,7 +5,7 @@ packages: 1
 classifiers: 2
   KtNamedClassOrObjectSymbol:
     annotationsList: []
-    classIdIfNonLocal: generated/GenClass1
+    classId: generated/GenClass1
     classKind: CLASS
     companionObject: null
     contextReceivers: []
@@ -34,7 +34,7 @@ classifiers: 2
         [Resolve extension navigation target for test for KtClass GenClass1]
   KtNamedClassOrObjectSymbol:
     annotationsList: []
-    classIdIfNonLocal: generated/GenClass2
+    classId: generated/GenClass2
     classKind: CLASS
     companionObject: null
     contextReceivers: []

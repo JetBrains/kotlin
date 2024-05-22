@@ -4004,7 +4004,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: kotlin/Int.Companion
+  classId: kotlin/Int.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
   contextReceivers: []
@@ -4035,7 +4035,7 @@ KtNamedClassOrObjectSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: kotlin/Int
+  containingClassId: kotlin/Int
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

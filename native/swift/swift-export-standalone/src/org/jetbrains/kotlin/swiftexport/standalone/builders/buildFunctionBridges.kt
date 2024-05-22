@@ -55,7 +55,7 @@ private fun SirVariable.constructBridgeRequests(generator: BridgeGenerator): Lis
             ?.callableId?.asSingleFqName()
             ?.pathSegments()?.map { it.toString() }
         is SirOrigin.ObjectAccessor -> ((origin.`for` as KotlinSource).symbol as KtNamedClassOrObjectSymbol)
-            .classIdIfNonLocal?.asSingleFqName()
+            .classId?.asSingleFqName()
             ?.pathSegments()?.map { it.toString() }
         else -> null
     } ?: return emptyList()
@@ -79,7 +79,7 @@ private fun SirInit.constructBridgeRequests(generator: BridgeGenerator): List<Br
         return emptyList()
     }
     val fqName = ((origin as? KotlinSource)?.symbol as? KtConstructorSymbol)
-        ?.containingClassIdIfNonLocal?.asSingleFqName()
+        ?.containingClassId?.asSingleFqName()
         ?.pathSegments()?.map { it.toString() }
         ?: return emptyList()
 

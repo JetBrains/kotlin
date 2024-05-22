@@ -205,7 +205,7 @@ KtEnumEntrySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: MyEnumClass
+  classId: MyEnumClass
   classKind: ENUM_CLASS
   companionObject: null
   contextReceivers: []

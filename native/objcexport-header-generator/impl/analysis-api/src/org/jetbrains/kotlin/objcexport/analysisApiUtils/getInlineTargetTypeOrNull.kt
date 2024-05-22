@@ -49,7 +49,7 @@ internal fun KtNamedClassOrObjectSymbol.getInlineTargetTypeOrNull(): KtType? {
 context(KtAnalysisSession)
 private fun KtNamedClassOrObjectSymbol.isInlineIncludingKotlinNativeSpecialClasses(): Boolean {
     if (this.isInline) return true
-    val classId = classIdIfNonLocal ?: return false
+    val classId = classId ?: return false
 
     /* Top Level symbols can be special K/N types */
     if (getContainingSymbol() is KtClassOrObjectSymbol) return false

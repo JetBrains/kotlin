@@ -1743,7 +1743,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: OuterClass
+  classId: OuterClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []

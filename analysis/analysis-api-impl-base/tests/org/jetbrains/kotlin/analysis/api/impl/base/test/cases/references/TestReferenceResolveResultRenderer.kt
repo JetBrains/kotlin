@@ -85,9 +85,9 @@ object TestReferenceResolveResultRenderer {
     private fun KaSession.symbolContainerFqName(symbol: KaSymbol): String? {
         if (symbol is KaPackageSymbol || symbol is KaValueParameterSymbol) return null
         val nonLocalFqName = when (symbol) {
-            is KaConstructorSymbol -> symbol.containingClassIdIfNonLocal?.asSingleFqName()
+            is KaConstructorSymbol -> symbol.containingClassId?.asSingleFqName()
             is KaCallableSymbol -> symbol.callableId?.asSingleFqName()?.parent()
-            is KaClassLikeSymbol -> symbol.classIdIfNonLocal?.asSingleFqName()?.parent()
+            is KaClassLikeSymbol -> symbol.classId?.asSingleFqName()?.parent()
             else -> null
         }
         when (nonLocalFqName) {

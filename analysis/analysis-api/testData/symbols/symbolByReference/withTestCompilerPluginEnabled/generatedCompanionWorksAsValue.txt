@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/WithGeneratedCompanion.Companion
+  classId: test/WithGeneratedCompanion.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
   contextReceivers: []

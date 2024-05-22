@@ -87,7 +87,14 @@ public abstract class KaConstructorSymbol : KaFunctionLikeSymbol(),
     KaSymbolWithVisibility {
 
     public abstract val isPrimary: Boolean
-    public abstract val containingClassIdIfNonLocal: ClassId?
+
+    /**
+     * The [ClassId] of the containing class, or `null` if the class is local.
+     */
+    public abstract val containingClassId: ClassId?
+
+    @Deprecated("Use `containingClassId` instead.", ReplaceWith("containingClassId"))
+    public val containingClassIdIfNonLocal: ClassId? get() = containingClassId
 
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.CLASS_MEMBER }

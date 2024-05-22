@@ -104,7 +104,7 @@ internal class KaFirSymbolContainingDeclarationProvider(
             }
 
             is KaClassLikeSymbol -> {
-                val outerClassId = symbol.classIdIfNonLocal?.outerClassId
+                val outerClassId = symbol.classId?.outerClassId
                 if (outerClassId != null) { // Won't work for local and top-level classes, or classes inside a script
                     val outerFirClassifier = symbolFirSession.firProvider.getFirClassifierByFqName(outerClassId) ?: return null
                     return firSymbolBuilder.buildSymbol(outerFirClassifier) as? KaDeclarationSymbol
@@ -213,7 +213,7 @@ internal class KaFirSymbolContainingDeclarationProvider(
                 ?.takeUnless { it.isScript() }
                 ?.javaFileFacadeFqName?.asString()
         } else {
-            val classId = (containingSymbolOrSelf as? KaConstructorSymbol)?.containingClassIdIfNonLocal
+            val classId = (containingSymbolOrSelf as? KaConstructorSymbol)?.containingClassId
                 ?: containingSymbolOrSelf.callableId?.classId
             classId?.takeUnless { it.shortClassName.isSpecial }
                 ?.asFqNameString()

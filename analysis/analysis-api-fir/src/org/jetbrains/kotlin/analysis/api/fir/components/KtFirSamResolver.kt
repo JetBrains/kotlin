@@ -20,7 +20,7 @@ internal class KaFirSamResolver(
 ) : KaSamResolver(), KaFirSessionComponent {
 
     override fun getSamConstructor(ktClassLikeSymbol: KaClassLikeSymbol): KaSamConstructorSymbol? {
-        val classId = ktClassLikeSymbol.classIdIfNonLocal ?: return null
+        val classId = ktClassLikeSymbol.classId ?: return null
         val owner = analysisSession.getClassLikeSymbol(classId) as? FirRegularClass ?: return null
         val firSession = analysisSession.useSiteSession
         val resolver = FirSamResolver(

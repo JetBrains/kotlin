@@ -92,7 +92,7 @@ KtKotlinPropertySymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: null
+  containingClassId: null
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

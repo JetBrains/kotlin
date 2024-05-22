@@ -181,7 +181,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/MyClass.Nested
+  classId: test/MyClass.Nested
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -212,7 +212,7 @@ KtNamedClassOrObjectSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: test/MyClass
+  containingClassId: test/MyClass
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

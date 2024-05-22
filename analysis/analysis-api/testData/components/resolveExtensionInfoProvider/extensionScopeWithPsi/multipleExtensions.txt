@@ -8,7 +8,7 @@ packages: 2
 classifiers: 2
   KtNamedClassOrObjectSymbol:
     annotationsList: []
-    classIdIfNonLocal: rex1/RexClass1
+    classId: rex1/RexClass1
     classKind: INTERFACE
     companionObject: null
     contextReceivers: []
@@ -37,7 +37,7 @@ classifiers: 2
         [Resolve extension navigation target for test for KtClass RexClass1]
   KtNamedClassOrObjectSymbol:
     annotationsList: []
-    classIdIfNonLocal: rex2/RexClass2
+    classId: rex2/RexClass2
     classKind: INTERFACE
     companionObject: null
     contextReceivers: []

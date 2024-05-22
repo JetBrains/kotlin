@@ -3,7 +3,7 @@ KtNamedClassOrObjectSymbol:
     <Error class: unknown class>()
       psi: null
   ]
-  classIdIfNonLocal: JavaClass
+  classId: JavaClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []

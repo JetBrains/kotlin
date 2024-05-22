@@ -3,7 +3,7 @@ KtNamedClassOrObjectSymbol:
     <Error class: unknown class>()
       psi: KtAnnotationEntry
   ]
-  classIdIfNonLocal: foo/MyClass
+  classId: foo/MyClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []

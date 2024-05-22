@@ -37,8 +37,8 @@ internal class KaFirNamedClassOrObjectSymbol(
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
-    override val classIdIfNonLocal: ClassId?
-        get() = withValidityAssertion { firSymbol.getClassIdIfNonLocal() }
+    override val classId: ClassId?
+        get() = withValidityAssertion { firSymbol.getClassId() }
 
     override val modality: Modality
         get() = withValidityAssertion {

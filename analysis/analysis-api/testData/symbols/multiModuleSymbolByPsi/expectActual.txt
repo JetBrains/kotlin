@@ -2,7 +2,7 @@
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/A
+  classId: sample/A
   classKind: OBJECT
   companionObject: null
   contextReceivers: []
@@ -28,7 +28,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/B
+  classId: sample/B
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -55,7 +55,7 @@ KtNamedClassOrObjectSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: sample/B
+  containingClassId: sample/B
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -97,7 +97,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: sample/B
+  containingClassId: sample/B
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -138,7 +138,7 @@ KtConstructorSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/B.Nested
+  classId: sample/B.Nested
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -262,7 +262,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/C
+  classId: sample/C
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -288,7 +288,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/C.Nested
+  classId: sample/C.Nested
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -475,7 +475,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/A
+  classId: sample/A
   classKind: OBJECT
   companionObject: null
   contextReceivers: []
@@ -501,7 +501,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/B
+  classId: sample/B
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -528,7 +528,7 @@ KtNamedClassOrObjectSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: sample/B
+  containingClassId: sample/B
   contextReceivers: []
   hasStableParameterNames: true
   isActual: true
@@ -570,7 +570,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: sample/B
+  containingClassId: sample/B
   contextReceivers: []
   hasStableParameterNames: true
   isActual: true
@@ -611,7 +611,7 @@ KtConstructorSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/B.Nested
+  classId: sample/B.Nested
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -735,7 +735,7 @@ KtKotlinPropertySymbol:
 
 KtTypeAliasSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/C
+  classId: sample/C
   expandedType: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
@@ -750,7 +750,7 @@ KtTypeAliasSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/D
+  classId: sample/D
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -776,7 +776,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/D.Nested
+  classId: sample/D.Nested
   classKind: CLASS
   companionObject: null
   contextReceivers: []

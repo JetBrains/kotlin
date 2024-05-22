@@ -3,7 +3,7 @@ KtNamedClassOrObjectSymbol:
     kotlin/jvm/JvmInline()
       psi: KtAnnotationEntry
   ]
-  classIdIfNonLocal: ValueClass
+  classId: ValueClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []

@@ -12,7 +12,7 @@ scopes:
     classifiers: 2
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: test/Base.NestedFromClass
+        classId: test/Base.NestedFromClass
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -37,7 +37,7 @@ scopes:
         visibility: Public
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: test/Base.InnerFromClass
+        classId: test/Base.InnerFromClass
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -74,7 +74,7 @@ scopes:
     classifiers: 3
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: test/BaseInterface
+        classId: test/BaseInterface
         classKind: INTERFACE
         companionObject: null
         contextReceivers: []
@@ -99,7 +99,7 @@ scopes:
         visibility: Public
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: test/Base
+        classId: test/Base
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -124,7 +124,7 @@ scopes:
         visibility: Public
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: test/Child
+        classId: test/Child
         classKind: CLASS
         companionObject: null
         contextReceivers: []

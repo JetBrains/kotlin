@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/KotlinClass
+  classId: test/KotlinClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -30,7 +30,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/SuperClass
+  classId: test/SuperClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -64,7 +64,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/JavaClass
+  classId: test/JavaClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []

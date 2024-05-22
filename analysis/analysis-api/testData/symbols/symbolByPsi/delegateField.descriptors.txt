@@ -1,7 +1,7 @@
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: MyColor
+  containingClassId: MyColor
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -365,7 +365,7 @@ KtConstructorSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: MyColor
+  classId: MyColor
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -723,7 +723,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: Some
+  classId: Some
   classKind: CLASS
   companionObject: null
   contextReceivers: []

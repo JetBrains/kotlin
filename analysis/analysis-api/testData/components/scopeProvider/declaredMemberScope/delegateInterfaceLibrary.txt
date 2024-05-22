@@ -748,7 +748,7 @@ KtFunctionSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: I
+  containingClassId: I
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

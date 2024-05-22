@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: java/lang/String
+  classId: java/lang/String
   classKind: CLASS
   companionObject: null
   contextReceivers: []

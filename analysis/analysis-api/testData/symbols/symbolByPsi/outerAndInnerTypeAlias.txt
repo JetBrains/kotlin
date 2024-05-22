@@ -12,7 +12,7 @@ KtTypeParameterSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: X
+  classId: X
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -44,7 +44,7 @@ KtNamedClassOrObjectSymbol:
 
 KtTypeAliasSymbol:
   annotationsList: []
-  classIdIfNonLocal: TopLevelAlias
+  classId: TopLevelAlias
   expandedType: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: [
@@ -67,7 +67,7 @@ KtTypeAliasSymbol:
 
 KtTypeAliasSymbol:
   annotationsList: []
-  classIdIfNonLocal: A.NestedLevelAlias
+  classId: A.NestedLevelAlias
   expandedType: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: [
@@ -90,7 +90,7 @@ KtTypeAliasSymbol:
 
 KtTypeAliasSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   expandedType: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: [
@@ -113,7 +113,7 @@ KtTypeAliasSymbol:
 
 KtTypeAliasSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   expandedType: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: [
@@ -136,7 +136,7 @@ KtTypeAliasSymbol:
 
 KtTypeAliasSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   expandedType: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: [
@@ -159,7 +159,7 @@ KtTypeAliasSymbol:
 
 KtTypeAliasSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   expandedType: KtUsualClassType:
     annotationsList: []
     ownTypeArguments: [
@@ -221,7 +221,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -290,7 +290,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -359,7 +359,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: A
+  classId: A
   classKind: CLASS
   companionObject: null
   contextReceivers: []

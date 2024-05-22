@@ -206,7 +206,7 @@ public class DebugSymbolRenderer(
             append(computeApiEntityName(getFrontendIndependentKClassOf(symbol)))
             append("(")
             when (symbol) {
-                is KaClassLikeSymbol -> renderId(symbol.classIdIfNonLocal, symbol)
+                is KaClassLikeSymbol -> renderId(symbol.classId, symbol)
                 is KaCallableSymbol -> renderId(symbol.callableId, symbol)
                 is KaNamedSymbol -> renderValue(symbol.name, printer, renderSymbolsFully = false)
                 is KaFileSymbol -> renderValue((symbol.psi as KtFile).name, printer, renderSymbolsFully = false)

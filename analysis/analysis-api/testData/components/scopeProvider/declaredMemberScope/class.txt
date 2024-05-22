@@ -131,7 +131,7 @@ KtKotlinPropertySymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: test/C
+  containingClassId: test/C
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

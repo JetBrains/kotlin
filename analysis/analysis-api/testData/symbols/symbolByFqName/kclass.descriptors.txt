@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: kotlin/reflect/KClass
+  classId: kotlin/reflect/KClass
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []

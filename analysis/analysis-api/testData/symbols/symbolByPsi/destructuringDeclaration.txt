@@ -1,7 +1,7 @@
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: P
+  containingClassId: P
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -252,7 +252,7 @@ KtConstructorSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: P
+  classId: P
   classKind: CLASS
   companionObject: null
   contextReceivers: []

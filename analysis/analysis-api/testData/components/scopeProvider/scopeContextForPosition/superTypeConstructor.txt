@@ -18,7 +18,7 @@ scopes:
     classifiers: 2
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: test/Base
+        classId: test/Base
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -43,7 +43,7 @@ scopes:
         visibility: Public
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: test/Child
+        classId: test/Child
         classKind: CLASS
         companionObject: null
         contextReceivers: []

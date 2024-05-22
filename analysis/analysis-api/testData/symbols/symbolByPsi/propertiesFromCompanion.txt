@@ -880,7 +880,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: MyClass.Companion
+  classId: MyClass.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
   contextReceivers: []
@@ -910,7 +910,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: MyClass
+  classId: MyClass
   classKind: CLASS
   companionObject: KtNamedClassOrObjectSymbol(MyClass.Companion)
   contextReceivers: []

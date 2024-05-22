@@ -91,7 +91,7 @@ private fun KtClassOrObjectSymbol.toPropertyType() = ObjCClassType(
     typeArguments = emptyList(),
     extras = objCTypeExtras {
         requiresForwardDeclaration = true
-        originClassId = classIdIfNonLocal
+        originClassId = classId
     }
 )
 

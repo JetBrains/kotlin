@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: kotlin/Lazy
+  classId: kotlin/Lazy
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []

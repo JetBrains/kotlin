@@ -61,7 +61,7 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
                 packageFragmentProto.class_List.forEach { classProto ->
                     val classId = ClassId.fromString(nameResolver.getQualifiedClassName(classProto.fqName))
                     val classSymbol = getClassOrObjectSymbolByClassId(classId) ?: fail("Failed to find symbol '$classId'")
-                    actual.appendLine("Classifier: ${classSymbol.classIdIfNonLocal}; klibSourceFile: ${classSymbol.getKlibSourceFileName()}")
+                    actual.appendLine("Classifier: ${classSymbol.classId}; klibSourceFile: ${classSymbol.getKlibSourceFileName()}")
                 }
 
                 val propertyNames = packageFragmentProto.`package`.propertyList

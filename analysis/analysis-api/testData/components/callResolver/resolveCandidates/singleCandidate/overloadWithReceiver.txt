@@ -6,7 +6,7 @@ KtApplicableCallCandidateInfo:
       extensionReceiver = KtImplicitReceiverValue:
         symbol = KtNamedClassOrObjectSymbol:
           annotationsList: []
-          classIdIfNonLocal: foo/Foo
+          classId: foo/Foo
           classKind: CLASS
           companionObject: null
           contextReceivers: []

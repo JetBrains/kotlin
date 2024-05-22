@@ -100,7 +100,7 @@ internal class KaFirVisibilityChecker(
                 }
 
             JavaVisibilities.PackageVisibility -> {
-                val isSamePackage = classIdIfNonLocal.packageFqName == useSiteFile.firSymbol.fir.packageFqName
+                val isSamePackage = classId.packageFqName == useSiteFile.firSymbol.fir.packageFqName
                 if (!isSamePackage) return false
 
                 return when (val outerClass = this.outerClass) {

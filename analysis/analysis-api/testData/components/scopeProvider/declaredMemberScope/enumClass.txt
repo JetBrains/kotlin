@@ -1,7 +1,7 @@
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: test/E
+  containingClassId: test/E
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheri
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.getSingleTestTargetSymbolOfType
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
-import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingMode
-import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -29,7 +27,7 @@ abstract class AbstractSealedInheritorsTest : AbstractAnalysisApiBasedTest() {
             val classSymbol = getSingleTestTargetSymbolOfType<KaNamedClassOrObjectSymbol>(ktFile, testDataPath)
 
             val actualText = classSymbol.getSealedClassInheritors().joinToString("\n\n") { inheritor ->
-                "${inheritor.classIdIfNonLocal!!}\n${inheritor.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}"
+                "${inheritor.classId!!}\n${inheritor.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}"
             }
 
             testServices.assertions.assertEqualsToTestDataFileSibling(actualText)

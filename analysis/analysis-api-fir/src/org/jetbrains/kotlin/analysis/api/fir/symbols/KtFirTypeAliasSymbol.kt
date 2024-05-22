@@ -35,7 +35,7 @@ internal class KaFirTypeAliasSymbol(
 ) : KaTypeAliasSymbol(), KaFirSymbol<FirTypeAliasSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
     override val name: Name get() = withValidityAssertion { firSymbol.name }
-    override val classIdIfNonLocal: ClassId? get() = withValidityAssertion { firSymbol.getClassIdIfNonLocal() }
+    override val classId: ClassId? get() = withValidityAssertion { firSymbol.getClassId() }
 
     override val visibility: Visibility
         get() = withValidityAssertion {
@@ -63,9 +63,9 @@ internal class KaFirTypeAliasSymbol(
 
         when (val symbolKind = symbolKind) {
             KaSymbolKind.LOCAL ->
-                throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString() ?: name.asString())
+                throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classId?.asString() ?: name.asString())
 
-            KaSymbolKind.CLASS_MEMBER, KaSymbolKind.TOP_LEVEL -> KaFirClassLikeSymbolPointer(classIdIfNonLocal!!, KaTypeAliasSymbol::class)
+            KaSymbolKind.CLASS_MEMBER, KaSymbolKind.TOP_LEVEL -> KaFirClassLikeSymbolPointer(classId!!, KaTypeAliasSymbol::class)
             else -> throw UnsupportedSymbolKind(this::class, symbolKind)
         }
     }

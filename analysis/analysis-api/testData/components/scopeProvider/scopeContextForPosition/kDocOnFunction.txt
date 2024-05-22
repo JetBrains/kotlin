@@ -126,7 +126,7 @@ scopes:
       KtConstructorSymbol:
         annotationsList: []
         callableId: null
-        containingClassIdIfNonLocal: test/Receiver
+        containingClassId: test/Receiver
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
@@ -215,7 +215,7 @@ scopes:
     classifiers: 3
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: test/Receiver
+        classId: test/Receiver
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -240,7 +240,7 @@ scopes:
         visibility: Public
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: test/Param1
+        classId: test/Param1
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -265,7 +265,7 @@ scopes:
         visibility: Public
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: test/Param2
+        classId: test/Param2
         classKind: CLASS
         companionObject: null
         contextReceivers: []

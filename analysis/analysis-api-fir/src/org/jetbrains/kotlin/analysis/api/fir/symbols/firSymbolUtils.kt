@@ -87,7 +87,7 @@ internal fun FirCallableSymbol<*>.getCallableId(): CallableId? {
     }
 }
 
-internal fun FirClassLikeSymbol<*>.getClassIdIfNonLocal(): ClassId? =
+internal fun FirClassLikeSymbol<*>.getClassId(): ClassId? =
     classId.takeUnless { it.isLocal }
 
 internal fun FirCallableSymbol<*>.dispatchReceiverType(

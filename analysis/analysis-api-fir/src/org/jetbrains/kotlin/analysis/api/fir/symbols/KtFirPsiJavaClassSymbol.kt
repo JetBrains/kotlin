@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
-import org.jetbrains.kotlin.analysis.utils.classIdIfNonLocal
+import org.jetbrains.kotlin.analysis.utils.classId
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -51,8 +51,8 @@ internal class KaFirPsiJavaClassSymbol(
 
     override val name: Name = withValidityAssertion { javaClass.name }
 
-    override val classIdIfNonLocal: ClassId = withValidityAssertion {
-        psi.classIdIfNonLocal ?: error("${KaFirPsiJavaClassSymbol::class.simpleName} requires a non-local PSI class.")
+    override val classId: ClassId = withValidityAssertion {
+        psi.classId ?: error("${KaFirPsiJavaClassSymbol::class.simpleName} requires a non-local PSI class.")
     }
 
     override val origin: KaSymbolOrigin
@@ -61,7 +61,7 @@ internal class KaFirPsiJavaClassSymbol(
     override val symbolKind: KaSymbolKind
         get() = withValidityAssertion {
             when {
-                classIdIfNonLocal.outerClassId != null -> KaSymbolKind.CLASS_MEMBER
+                classId.outerClassId != null -> KaSymbolKind.CLASS_MEMBER
                 else -> KaSymbolKind.TOP_LEVEL
             }
         }
@@ -77,7 +77,7 @@ internal class KaFirPsiJavaClassSymbol(
         get() = withValidityAssertion { javaClass.visibility }
 
     override val isInner: Boolean
-        get() = withValidityAssertion { classIdIfNonLocal.outerClassId != null && !javaClass.isStatic }
+        get() = withValidityAssertion { classId.outerClassId != null && !javaClass.isStatic }
 
     val outerClass: KaFirPsiJavaClassSymbol?
         get() = psi.containingClass?.let { KaFirPsiJavaClassSymbol(it, analysisSession) }
@@ -125,7 +125,7 @@ internal class KaFirPsiJavaClassSymbol(
         val firClassSymbol = provider.getFirClass(psi)
 
         require(firClassSymbol != null) {
-            "A FIR class symbol should be available for ${KaFirPsiJavaClassSymbol::class.simpleName} `$classIdIfNonLocal`."
+            "A FIR class symbol should be available for ${KaFirPsiJavaClassSymbol::class.simpleName} `$classId`."
         }
         firClassSymbol
     }

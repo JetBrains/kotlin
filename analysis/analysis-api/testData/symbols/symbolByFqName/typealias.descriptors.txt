@@ -1,6 +1,6 @@
 KtTypeAliasSymbol:
   annotationsList: []
-  classIdIfNonLocal: kotlin/DeepRecursiveFunctionBlock
+  classId: kotlin/DeepRecursiveFunctionBlock
   expandedType: KtFunctionalType:
     annotationsList: []
     ownTypeArguments: [

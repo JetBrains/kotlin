@@ -130,7 +130,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/KotlinClass.C2
+  classId: test/KotlinClass.C2
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -160,7 +160,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/KotlinClass.O2
+  classId: test/KotlinClass.O2
   classKind: OBJECT
   companionObject: null
   contextReceivers: []
@@ -190,7 +190,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/KotlinClass.Companion
+  classId: test/KotlinClass.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
   contextReceivers: []
@@ -221,7 +221,7 @@ KtNamedClassOrObjectSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: test/KotlinClass
+  containingClassId: test/KotlinClass
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

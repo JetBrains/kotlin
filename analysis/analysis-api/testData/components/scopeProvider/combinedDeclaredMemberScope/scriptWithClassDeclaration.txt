@@ -130,7 +130,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: Person
+  classId: Person
   classKind: CLASS
   companionObject: null
   contextReceivers: []

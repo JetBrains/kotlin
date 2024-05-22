@@ -45,7 +45,7 @@ internal class KaFe10PsiConstructorSymbol(
     override val isPrimary: Boolean
         get() = withValidityAssertion { psi is KtPrimaryConstructor }
 
-    override val containingClassIdIfNonLocal: ClassId?
+    override val containingClassId: ClassId?
         get() = withValidityAssertion { psi.getContainingClassOrObject().getClassId() }
 
     override val valueParameters: List<KaValueParameterSymbol>

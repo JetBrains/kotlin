@@ -56,7 +56,7 @@ internal class KaFe10TypeCreator(
             val name = when (builder) {
                 is KaClassTypeBuilder.ByClassId -> builder.classId.asString()
                 is KaClassTypeBuilder.BySymbol ->
-                    builder.symbol.classIdIfNonLocal?.asString()
+                    builder.symbol.classId?.asString()
                         ?: builder.symbol.name?.asString()
                         ?: SpecialNames.ANONYMOUS_STRING
             }

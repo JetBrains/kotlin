@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: kotlin/collections/MutableMap.MutableEntry
+  classId: kotlin/collections/MutableMap.MutableEntry
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []

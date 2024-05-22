@@ -6,7 +6,7 @@ scopes:
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: pkg/A
+        classId: pkg/A
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -58,7 +58,7 @@ scopes:
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: B
+        classId: B
         classKind: CLASS
         companionObject: null
         contextReceivers: []

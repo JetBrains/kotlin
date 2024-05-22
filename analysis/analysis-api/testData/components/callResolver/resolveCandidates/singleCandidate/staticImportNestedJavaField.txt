@@ -4,7 +4,7 @@ KtApplicableCallCandidateInfo:
       dispatchReceiver = KtImplicitReceiverValue:
         symbol = KtNamedClassOrObjectSymbol:
           annotationsList: []
-          classIdIfNonLocal: Dependency.Nested
+          classId: Dependency.Nested
           classKind: CLASS
           companionObject: null
           contextReceivers: []

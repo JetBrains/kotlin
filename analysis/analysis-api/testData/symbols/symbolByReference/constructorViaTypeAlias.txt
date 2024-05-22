@@ -1,7 +1,7 @@
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/util/ArrayList
+  containingClassId: java/util/ArrayList
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false

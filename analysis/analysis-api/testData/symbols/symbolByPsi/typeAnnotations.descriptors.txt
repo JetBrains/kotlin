@@ -3,7 +3,7 @@ KtNamedClassOrObjectSymbol:
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
   ]
-  classIdIfNonLocal: Anno1
+  classId: Anno1
   classKind: ANNOTATION_CLASS
   companionObject: null
   contextReceivers: []
@@ -36,7 +36,7 @@ KtNamedClassOrObjectSymbol:
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
   ]
-  classIdIfNonLocal: Anno2
+  classId: Anno2
   classKind: ANNOTATION_CLASS
   companionObject: null
   contextReceivers: []
@@ -69,7 +69,7 @@ KtNamedClassOrObjectSymbol:
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
   ]
-  classIdIfNonLocal: Anno3
+  classId: Anno3
   classKind: ANNOTATION_CLASS
   companionObject: null
   contextReceivers: []
@@ -102,7 +102,7 @@ KtNamedClassOrObjectSymbol:
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
   ]
-  classIdIfNonLocal: Anno4
+  classId: Anno4
   classKind: ANNOTATION_CLASS
   companionObject: null
   contextReceivers: []
@@ -133,7 +133,7 @@ KtNamedClassOrObjectSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: Anno5
+  containingClassId: Anno5
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -274,7 +274,7 @@ KtNamedClassOrObjectSymbol:
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
   ]
-  classIdIfNonLocal: Anno5
+  classId: Anno5
   classKind: ANNOTATION_CLASS
   companionObject: null
   contextReceivers: []
@@ -304,7 +304,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: I
+  classId: I
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -504,7 +504,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: X
+  classId: X
   classKind: CLASS
   companionObject: null
   contextReceivers: []

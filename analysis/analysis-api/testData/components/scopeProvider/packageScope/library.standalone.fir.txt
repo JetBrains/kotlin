@@ -720,7 +720,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: library/api/FakeI
+  classId: library/api/FakeI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -750,7 +750,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: library/api/InternalFakeI
+  classId: library/api/InternalFakeI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -780,7 +780,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: library/api/PrivateFakeI
+  classId: library/api/PrivateFakeI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -810,7 +810,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: library/api/PrivateI
+  classId: library/api/PrivateI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -840,7 +840,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: library/api/InternalI
+  classId: library/api/InternalI
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -870,7 +870,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: library/api/I
+  classId: library/api/I
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -900,7 +900,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: library/api/C1
+  classId: library/api/C1
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -930,7 +930,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: library/api/InternalC1
+  classId: library/api/InternalC1
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -960,7 +960,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: library/api/PrivateC1
+  classId: library/api/PrivateC1
   classKind: CLASS
   companionObject: null
   contextReceivers: []

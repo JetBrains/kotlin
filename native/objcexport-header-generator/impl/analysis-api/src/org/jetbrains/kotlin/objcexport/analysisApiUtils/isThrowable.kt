@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.name.ClassId
 context(KtAnalysisSession)
 internal val KtClassOrObjectSymbol.isThrowable: Boolean
     get() {
-        val classId = classIdIfNonLocal ?: return false
+        val classId = classId ?: return false
         return classId.isThrowable
     }
 

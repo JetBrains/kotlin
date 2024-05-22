@@ -130,7 +130,7 @@ KtKotlinPropertySymbol:
 
 KtAnonymousObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: ANONYMOUS_OBJECT
   isActual: false
   isExpect: false
@@ -242,7 +242,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: AnonymousContainer
+  classId: AnonymousContainer
   classKind: CLASS
   companionObject: null
   contextReceivers: []

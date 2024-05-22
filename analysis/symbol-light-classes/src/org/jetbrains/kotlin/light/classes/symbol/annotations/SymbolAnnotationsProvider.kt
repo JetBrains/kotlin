@@ -46,6 +46,6 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
     override fun hashCode(): Int = annotatedSymbolPointer.hashCode()
 
     override fun ownerClassId(): ClassId? = withAnnotatedSymbol { annotatedSymbol ->
-        (annotatedSymbol as? KaClassLikeSymbol)?.classIdIfNonLocal
+        (annotatedSymbol as? KaClassLikeSymbol)?.classId
     }
 }

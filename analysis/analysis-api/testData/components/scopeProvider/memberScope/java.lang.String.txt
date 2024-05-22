@@ -4093,7 +4093,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: java/lang/String.CaseInsensitiveComparator
+  classId: java/lang/String.CaseInsensitiveComparator
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -4136,7 +4136,7 @@ KtNamedClassOrObjectSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -4161,7 +4161,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -4210,7 +4210,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -4259,7 +4259,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -4356,7 +4356,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -4456,7 +4456,7 @@ KtConstructorSymbol:
       psi: null
   ]
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -4580,7 +4580,7 @@ KtConstructorSymbol:
       psi: null
   ]
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -4653,7 +4653,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -4773,7 +4773,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -4893,7 +4893,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -4965,7 +4965,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5037,7 +5037,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5134,7 +5134,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5183,7 +5183,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5232,7 +5232,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5281,7 +5281,7 @@ KtConstructorSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false
@@ -5357,7 +5357,7 @@ KtConstructorSymbol:
       psi: null
   ]
   callableId: null
-  containingClassIdIfNonLocal: java/lang/String
+  containingClassId: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false

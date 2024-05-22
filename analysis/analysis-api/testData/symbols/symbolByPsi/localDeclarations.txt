@@ -55,7 +55,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: null
+  classId: null
   classKind: CLASS
   companionObject: null
   contextReceivers: []

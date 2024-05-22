@@ -71,13 +71,13 @@ private fun KtClassOrObjectSymbol.translateToObjCObjectType(): ObjCNonNullRefere
 
 context(KtAnalysisSession)
 private fun KtClassOrObjectSymbol.isObjCMetaClass(): Boolean {
-    if (classIdIfNonLocal == objCClassClassId) return true
+    if (classId == objCClassClassId) return true
     return getDeclaredSuperInterfaceSymbols().any { superInterfaceSymbol -> superInterfaceSymbol.isObjCMetaClass() }
 }
 
 context(KtAnalysisSession)
 private fun KtClassOrObjectSymbol.isObjCProtocolClass(): Boolean {
-    if (classIdIfNonLocal == objCProtocolClassId) return true
+    if (classId == objCProtocolClassId) return true
     return getDeclaredSuperInterfaceSymbols().any { superInterfaceSymbol -> superInterfaceSymbol.isObjCProtocolClass() }
 }
 
@@ -88,7 +88,7 @@ private fun KtClassOrObjectSymbol.isExternalObjCClass(): Boolean {
 
 context(KtAnalysisSession)
 private fun KtClassOrObjectSymbol.isObjCForwardDeclaration(): Boolean {
-    val classId = classIdIfNonLocal ?: return false
+    val classId = classId ?: return false
     return when (NativeForwardDeclarationKind.packageFqNameToKind[classId.packageFqName]) {
         null, NativeForwardDeclarationKind.Struct -> false
         NativeForwardDeclarationKind.ObjCProtocol, NativeForwardDeclarationKind.ObjCClass -> true

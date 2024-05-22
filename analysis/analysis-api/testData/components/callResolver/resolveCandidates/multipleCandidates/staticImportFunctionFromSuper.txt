@@ -5,7 +5,7 @@ KtApplicableCallCandidateInfo:
       dispatchReceiver = KtImplicitReceiverValue:
         symbol = KtNamedClassOrObjectSymbol:
           annotationsList: []
-          classIdIfNonLocal: one/two/TopLevelObject
+          classId: one/two/TopLevelObject
           classKind: OBJECT
           companionObject: null
           contextReceivers: []
@@ -48,7 +48,7 @@ KtInapplicableCallCandidateInfo:
       dispatchReceiver = KtImplicitReceiverValue:
         symbol = KtNamedClassOrObjectSymbol:
           annotationsList: []
-          classIdIfNonLocal: one/two/TopLevelObject
+          classId: one/two/TopLevelObject
           classKind: OBJECT
           companionObject: null
           contextReceivers: []

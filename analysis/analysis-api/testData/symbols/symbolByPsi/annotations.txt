@@ -1,7 +1,7 @@
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: Anno
+  containingClassId: Anno
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -252,7 +252,7 @@ KtConstructorSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: Anno
+  classId: Anno
   classKind: ANNOTATION_CLASS
   companionObject: null
   contextReceivers: []
@@ -327,7 +327,7 @@ KtNamedClassOrObjectSymbol:
     Anno(param1 = "param", param2 = 2)
       psi: KtAnnotationEntry
   ]
-  classIdIfNonLocal: X
+  classId: X
   classKind: CLASS
   companionObject: null
   contextReceivers: []

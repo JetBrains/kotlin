@@ -209,7 +209,7 @@ scopes:
       KtConstructorSymbol:
         annotationsList: []
         callableId: null
-        containingClassIdIfNonLocal: JavaClass
+        containingClassId: JavaClass
         contextReceivers: []
         hasStableParameterNames: false
         isActual: false
@@ -262,7 +262,7 @@ scopes:
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: JavaClass
+        classId: JavaClass
         classKind: CLASS
         companionObject: null
         contextReceivers: []

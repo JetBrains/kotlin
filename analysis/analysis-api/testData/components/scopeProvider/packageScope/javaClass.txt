@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/KotlinClass
+  classId: test/KotlinClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []

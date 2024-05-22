@@ -28,7 +28,7 @@ internal class KaFe10DescConstructorSymbol(
     override val isPrimary: Boolean
         get() = withValidityAssertion { descriptor.isPrimary }
 
-    override val containingClassIdIfNonLocal: ClassId?
+    override val containingClassId: ClassId?
         get() = withValidityAssertion { descriptor.constructedClass.classId }
 
     override val valueParameters: List<KaValueParameterSymbol>

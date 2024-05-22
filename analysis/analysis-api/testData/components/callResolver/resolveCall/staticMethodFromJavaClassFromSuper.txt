@@ -5,7 +5,7 @@ KtSuccessCallInfo:
       dispatchReceiver = KtImplicitReceiverValue:
         symbol = KtNamedClassOrObjectSymbol:
           annotationsList: []
-          classIdIfNonLocal: Child
+          classId: Child
           classKind: CLASS
           companionObject: null
           contextReceivers: []

@@ -76,7 +76,7 @@ class StandaloneSessionBuilderTest : TestWithDisposable() {
             Assertions.assertInstanceOf(KaSuccessCallInfo::class.java, ktCallInfo); ktCallInfo as KaSuccessCallInfo
             val symbol = ktCallInfo.successfulFunctionCallOrNull()?.symbol
             Assertions.assertInstanceOf(KaConstructorSymbol::class.java, symbol); symbol as KaConstructorSymbol
-            Assertions.assertEquals(ClassId.topLevel(FqName("java.lang.Thread")), symbol.containingClassIdIfNonLocal)
+            Assertions.assertEquals(ClassId.topLevel(FqName("java.lang.Thread")), symbol.containingClassId)
         }
     }
 

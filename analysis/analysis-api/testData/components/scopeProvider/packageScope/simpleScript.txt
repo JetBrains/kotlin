@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/C
+  classId: test/C
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -30,7 +30,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/I
+  classId: test/I
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
@@ -60,7 +60,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/O
+  classId: test/O
   classKind: OBJECT
   companionObject: null
   contextReceivers: []

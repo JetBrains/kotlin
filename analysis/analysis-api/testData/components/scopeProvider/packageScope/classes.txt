@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/A
+  classId: test/A
   classKind: CLASS
   companionObject: KtNamedClassOrObjectSymbol(test/A.Companion)
   contextReceivers: []
@@ -30,7 +30,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/InternalA
+  classId: test/InternalA
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -60,7 +60,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/PrivateA
+  classId: test/PrivateA
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -90,7 +90,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/B
+  classId: test/B
   classKind: CLASS
   companionObject: KtNamedClassOrObjectSymbol(test/B.Companion)
   contextReceivers: []
@@ -120,7 +120,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/InternalB
+  classId: test/InternalB
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -150,7 +150,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/PrivateB
+  classId: test/PrivateB
   classKind: CLASS
   companionObject: null
   contextReceivers: []

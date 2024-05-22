@@ -1,6 +1,6 @@
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: kotlin/collections/Iterator
+  classId: kotlin/collections/Iterator
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []

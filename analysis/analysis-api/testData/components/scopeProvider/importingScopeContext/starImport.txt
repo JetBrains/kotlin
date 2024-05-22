@@ -7,7 +7,7 @@ scopes:
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: other/A
+        classId: other/A
         classKind: CLASS
         companionObject: null
         contextReceivers: []

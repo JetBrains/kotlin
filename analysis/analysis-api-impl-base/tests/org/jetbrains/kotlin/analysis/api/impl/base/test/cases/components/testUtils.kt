@@ -274,8 +274,8 @@ internal fun KaSession.assertStableResult(
 
 internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String = prettyPrint {
     fun KaSymbol.qualifiedNameString() = when (this) {
-        is KaConstructorSymbol -> "<constructor> ${containingClassIdIfNonLocal?.asString()}"
-        is KaClassLikeSymbol -> classIdIfNonLocal!!.asString()
+        is KaConstructorSymbol -> "<constructor> ${containingClassId?.asString()}"
+        is KaClassLikeSymbol -> classId!!.asString()
         is KaCallableSymbol -> callableId!!.toString()
         else -> error("unknown symbol $this")
     }
@@ -290,7 +290,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
         val containingDeclaration = symbol.getContainingSymbol() as KaClassLikeSymbol
         append(symbol.render(renderer))
         append(" fromClass ")
-        append(containingDeclaration.classIdIfNonLocal?.asString())
+        append(containingDeclaration.classId?.asString())
         if (symbol.typeParameters.isNotEmpty()) {
             appendLine()
             withIndent {

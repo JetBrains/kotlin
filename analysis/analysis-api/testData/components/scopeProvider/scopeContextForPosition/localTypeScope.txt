@@ -249,7 +249,7 @@ scopes:
       KtConstructorSymbol:
         annotationsList: []
         callableId: null
-        containingClassIdIfNonLocal: null
+        containingClassId: null
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
@@ -272,7 +272,7 @@ scopes:
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: null
+        classId: null
         classKind: CLASS
         companionObject: null
         contextReceivers: []

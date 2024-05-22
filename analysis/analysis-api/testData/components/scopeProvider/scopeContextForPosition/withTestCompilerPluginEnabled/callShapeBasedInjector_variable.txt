@@ -216,7 +216,7 @@ scopes:
       KtConstructorSymbol:
         annotationsList: []
         callableId: null
-        containingClassIdIfNonLocal: null
+        containingClassId: null
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
@@ -317,7 +317,7 @@ scopes:
     classifiers: 2
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: DataFrame
+        classId: DataFrame
         classKind: INTERFACE
         companionObject: null
         contextReceivers: []
@@ -344,7 +344,7 @@ scopes:
         visibility: Public
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: Refine
+        classId: Refine
         classKind: ANNOTATION_CLASS
         companionObject: null
         contextReceivers: []

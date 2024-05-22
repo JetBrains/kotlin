@@ -725,7 +725,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: kotlin/Enum.Companion
+  classId: kotlin/Enum.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
   contextReceivers: []
@@ -756,7 +756,7 @@ KtNamedClassOrObjectSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: null
+  containingClassId: null
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

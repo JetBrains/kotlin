@@ -41,7 +41,7 @@ internal class KaFe10DescTypeAliasSymbol(
     override val symbolKind: KaSymbolKind
         get() = withValidityAssertion { descriptor.ktSymbolKind }
 
-    override val classIdIfNonLocal: ClassId?
+    override val classId: ClassId?
         get() = withValidityAssertion { descriptor.classId }
 
     override val isActual: Boolean get() = withValidityAssertion { descriptor.isActual }

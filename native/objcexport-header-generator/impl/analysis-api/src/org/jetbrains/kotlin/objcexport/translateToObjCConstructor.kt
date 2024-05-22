@@ -29,7 +29,7 @@ fun KtClassOrObjectSymbol.translateToObjCConstructors(): List<ObjCMethod> {
         .toMutableList()
 
     /* Create special 'alloc' constructors */
-    if (this.classIdIfNonLocal?.asFqNameString() in arrayTypes ||
+    if (this.classId?.asFqNameString() in arrayTypes ||
         classKind.isObject || classKind == KtClassKind.ENUM_CLASS
     ) {
         result.add(

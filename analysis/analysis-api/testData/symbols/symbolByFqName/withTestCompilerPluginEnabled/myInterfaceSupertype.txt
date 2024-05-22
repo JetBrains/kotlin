@@ -3,7 +3,7 @@ KtNamedClassOrObjectSymbol:
     org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype()
       psi: KtAnnotationEntry
   ]
-  classIdIfNonLocal: foo/MyClass
+  classId: foo/MyClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []

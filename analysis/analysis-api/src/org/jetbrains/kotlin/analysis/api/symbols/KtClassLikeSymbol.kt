@@ -36,7 +36,13 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
 public typealias KtTypeParameterSymbol = KaTypeParameterSymbol
 
 public sealed class KaClassLikeSymbol : KaClassifierSymbol(), KaSymbolWithKind, KaPossibleMemberSymbol, KaPossibleMultiplatformSymbol {
-    public abstract val classIdIfNonLocal: ClassId?
+    /**
+     * The [ClassId] of this class, or `null` if this class is local.
+     */
+    public abstract val classId: ClassId?
+
+    @Deprecated("Use `classId` instead.", ReplaceWith("classId"))
+    public val classIdIfNonLocal: ClassId? get() = classId
 
     abstract override fun createPointer(): KaSymbolPointer<KaClassLikeSymbol>
 }
@@ -70,7 +76,7 @@ public typealias KtClassOrObjectSymbol = KaClassOrObjectSymbol
 
 public abstract class KaAnonymousObjectSymbol : KaClassOrObjectSymbol() {
     final override val classKind: KaClassKind get() = withValidityAssertion { KaClassKind.ANONYMOUS_OBJECT }
-    final override val classIdIfNonLocal: ClassId? get() = withValidityAssertion { null }
+    final override val classId: ClassId? get() = withValidityAssertion { null }
     final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.LOCAL }
     final override val name: Name? get() = withValidityAssertion { null }
     final override val isActual: Boolean get() = withValidityAssertion { false }

@@ -19,7 +19,7 @@ public class SirDeclarationNamerImpl : SirDeclarationNamer {
 
     private fun KtDeclarationSymbol.getName(): String? {
         return when (this) {
-            is KtNamedClassOrObjectSymbol -> this.classIdIfNonLocal?.shortClassName
+            is KtNamedClassOrObjectSymbol -> this.classId?.shortClassName
             is KtFunctionLikeSymbol -> this.callableId?.callableName
             is KtVariableSymbol -> this.callableId?.callableName
             else -> error(this)

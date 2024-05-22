@@ -150,7 +150,7 @@ public fun runSwiftExport(
         override fun swiftFqName(type: SirType): String = type.swift
         override fun kotlinFqName(type: SirType): String {
             require(type is SirNominalType)
-            return ((type.type.origin as KotlinSource).symbol as KtClassLikeSymbol).classIdIfNonLocal!!.asFqNameString()
+            return ((type.type.origin as KotlinSource).symbol as KtClassLikeSymbol).classId!!.asFqNameString()
         }
     })
     val bridgeRequests = buildBridgeRequests(bridgeGenerator, buildResult.mainModule)

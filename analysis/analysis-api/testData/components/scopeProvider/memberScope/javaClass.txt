@@ -288,7 +288,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: JavaClass.NestedClass
+  classId: JavaClass.NestedClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -318,7 +318,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: JavaClass.InnerClass
+  classId: JavaClass.InnerClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -348,7 +348,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: SuperClass.NestedSuperClass
+  classId: SuperClass.NestedSuperClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -378,7 +378,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: SuperClass.InnerSuperClass
+  classId: SuperClass.InnerSuperClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -409,7 +409,7 @@ KtNamedClassOrObjectSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: JavaClass
+  containingClassId: JavaClass
   contextReceivers: []
   hasStableParameterNames: false
   isActual: false

@@ -104,7 +104,7 @@ internal class KaFe10PsiNamedClassOrObjectSymbol(
             descriptor?.getSupertypesWithAny()?.map { it.toKtType(analysisContext) } ?: emptyList()
         }
 
-    override val classIdIfNonLocal: ClassId?
+    override val classId: ClassId?
         get() = withValidityAssertion { psi.getClassId() }
 
     override val name: Name

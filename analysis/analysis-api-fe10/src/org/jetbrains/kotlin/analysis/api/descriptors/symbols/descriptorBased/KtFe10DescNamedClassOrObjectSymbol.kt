@@ -80,7 +80,7 @@ internal class KaFe10DescNamedClassOrObjectSymbol(
             descriptor.getSupertypesWithAny().map { it.toKtType(analysisContext) }
         }
 
-    override val classIdIfNonLocal: ClassId?
+    override val classId: ClassId?
         get() = withValidityAssertion { descriptor.classId }
 
     override val symbolKind: KaSymbolKind

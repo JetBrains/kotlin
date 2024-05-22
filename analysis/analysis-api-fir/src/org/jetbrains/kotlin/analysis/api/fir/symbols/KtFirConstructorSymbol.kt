@@ -51,7 +51,7 @@ internal class KaFirConstructorSymbol(
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 
-    override val containingClassIdIfNonLocal: ClassId?
+    override val containingClassId: ClassId?
         get() = withValidityAssertion { firSymbol.containingClassLookupTag()?.classId?.takeUnless { it.isLocal } }
 
     override val isPrimary: Boolean get() = withValidityAssertion { firSymbol.isPrimary }

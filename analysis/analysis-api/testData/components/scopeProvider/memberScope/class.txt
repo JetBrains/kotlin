@@ -402,7 +402,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/C.C2
+  classId: test/C.C2
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -432,7 +432,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/C.O2
+  classId: test/C.O2
   classKind: OBJECT
   companionObject: null
   contextReceivers: []
@@ -462,7 +462,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/C.Companion
+  classId: test/C.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
   contextReceivers: []
@@ -492,7 +492,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/A.C1
+  classId: test/A.C1
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -522,7 +522,7 @@ KtNamedClassOrObjectSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: test/A.O1
+  classId: test/A.O1
   classKind: OBJECT
   companionObject: null
   contextReceivers: []
@@ -553,7 +553,7 @@ KtNamedClassOrObjectSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: test/C
+  containingClassId: test/C
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

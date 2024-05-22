@@ -54,7 +54,7 @@ internal class KaFe10PsiTypeAliasSymbol(
     override val expandedType: KaType
         get() = withValidityAssertion { descriptor?.expandedType?.toKtType(analysisContext) ?: createErrorType() }
 
-    override val classIdIfNonLocal: ClassId?
+    override val classId: ClassId?
         get() = withValidityAssertion { psi.getClassId() }
 
     override val symbolKind: KaSymbolKind

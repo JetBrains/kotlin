@@ -182,7 +182,7 @@ KtFunctionSymbol:
 KtConstructorSymbol:
   annotationsList: []
   callableId: null
-  containingClassIdIfNonLocal: test/WithGeneratedCompanion.Companion
+  containingClassId: test/WithGeneratedCompanion.Companion
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false

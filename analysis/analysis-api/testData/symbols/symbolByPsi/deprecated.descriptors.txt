@@ -534,7 +534,7 @@ KtNamedClassOrObjectSymbol:
     kotlin/Deprecated(message = "don't use MyClass")
       psi: KtAnnotationEntry
   ]
-  classIdIfNonLocal: MyClass
+  classId: MyClass
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -700,7 +700,7 @@ KtFunctionSymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: Foo
+  classId: Foo
   classKind: CLASS
   companionObject: null
   contextReceivers: []

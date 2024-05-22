@@ -79,7 +79,7 @@ public enum class ShortenStrategy {
 
     public companion object {
         public val defaultClassShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = {
-            if (it.classIdIfNonLocal?.isNestedClass == true) {
+            if (it.classId?.isNestedClass == true) {
                 SHORTEN_IF_ALREADY_IMPORTED
             } else {
                 SHORTEN_AND_IMPORT
@@ -91,7 +91,7 @@ public enum class ShortenStrategy {
                 is KaEnumEntrySymbol -> DO_NOT_SHORTEN
 
                 is KaConstructorSymbol -> {
-                    val isNestedClassConstructor = symbol.containingClassIdIfNonLocal?.isNestedClass == true
+                    val isNestedClassConstructor = symbol.containingClassId?.isNestedClass == true
 
                     if (isNestedClassConstructor) {
                         SHORTEN_IF_ALREADY_IMPORTED

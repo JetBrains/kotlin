@@ -29,7 +29,7 @@ object DecompiledPsiDeclarationProvider {
         constructorSymbol: KaConstructorSymbol,
         project: Project
     ): PsiElement? {
-        val classId = constructorSymbol.containingClassIdIfNonLocal ?: return null
+        val classId = constructorSymbol.containingClassId ?: return null
         val psiClass = project.createPsiDeclarationProvider(constructorSymbol.scope(project))
             ?.getClassesByClassId(classId)
             ?.firstOrNull() ?: return null
@@ -75,7 +75,7 @@ object DecompiledPsiDeclarationProvider {
         classLikeSymbol: KaClassLikeSymbol,
         project: Project
     ): PsiElement? {
-        return classLikeSymbol.classIdIfNonLocal?.let {
+        return classLikeSymbol.classId?.let {
             project.createPsiDeclarationProvider(classLikeSymbol.scope(project))
                 ?.getClassesByClassId(it)
                 ?.firstOrNull()

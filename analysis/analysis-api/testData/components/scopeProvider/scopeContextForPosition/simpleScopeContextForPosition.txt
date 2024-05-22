@@ -174,7 +174,7 @@ scopes:
       KtConstructorSymbol:
         annotationsList: []
         callableId: null
-        containingClassIdIfNonLocal: A
+        containingClassId: A
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
@@ -353,7 +353,7 @@ scopes:
       KtConstructorSymbol:
         annotationsList: []
         callableId: null
-        containingClassIdIfNonLocal: B
+        containingClassId: B
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
@@ -520,7 +520,7 @@ scopes:
     classifiers: 2
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: C.NestedInC
+        classId: C.NestedInC
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -545,7 +545,7 @@ scopes:
         visibility: Public
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: JavaClass.NestedInJavaClass
+        classId: JavaClass.NestedInJavaClass
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -737,7 +737,7 @@ scopes:
       KtConstructorSymbol:
         annotationsList: []
         callableId: null
-        containingClassIdIfNonLocal: C
+        containingClassId: C
         contextReceivers: []
         hasStableParameterNames: true
         isActual: false
@@ -760,7 +760,7 @@ scopes:
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: C.NestedInC
+        classId: C.NestedInC
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -791,7 +791,7 @@ scopes:
     classifiers: 1
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: JavaClass.NestedInJavaClass
+        classId: JavaClass.NestedInJavaClass
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -846,7 +846,7 @@ scopes:
     classifiers: 3
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: A
+        classId: A
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -871,7 +871,7 @@ scopes:
         visibility: Public
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: B
+        classId: B
         classKind: CLASS
         companionObject: null
         contextReceivers: []
@@ -896,7 +896,7 @@ scopes:
         visibility: Public
       KtNamedClassOrObjectSymbol:
         annotationsList: []
-        classIdIfNonLocal: C
+        classId: C
         classKind: CLASS
         companionObject: null
         contextReceivers: []
