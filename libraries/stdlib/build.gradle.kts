@@ -290,25 +290,31 @@ kotlin {
         commonWasmTargetConfiguration()
     }
 
-    if (kotlinBuildProperties.isInIdeaSync) {
-        val hostOs = System.getProperty("os.name")
-        val isMingwX64 = hostOs.startsWith("Windows")
-        val nativeTarget = when {
-            hostOs == "Mac OS X" -> macosX64("native")
-            hostOs == "Linux" -> linuxX64("native")
-            isMingwX64 -> mingwX64("native")
-            else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
-        }
-        nativeTarget.apply {
-            compilations.all {
-                @Suppress("DEPRECATION")
-                kotlinOptions {
-                    freeCompilerArgs += listOf(
-                        "-Xallow-kotlin-package",
-                        "-Xexpect-actual-classes",
-                        "-nostdlib",
-                    )
+    val hostOs = System.getProperty("os.name")
+    val isMingwX64 = hostOs.startsWith("Windows")
+    val nativeTarget = when {
+        hostOs == "Mac OS X" -> macosX64("native")
+        hostOs == "Linux" -> linuxX64("native")
+        isMingwX64 -> mingwX64("native")
+        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
+    }
+    nativeTarget.apply {
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions {
+                    moduleName = "stdlib"
+                    mainCompilationWithK1()
                 }
+            }
+            @Suppress("DEPRECATION")
+            kotlinOptions {
+                freeCompilerArgs += listOf(
+                    "-Xallow-kotlin-package",
+                    "-Xexpect-actual-classes",
+                    "-nostdlib",
+                    "-no-default-libs",
+                    "-Werror"
+                )
             }
         }
     }
@@ -548,31 +554,37 @@ kotlin {
             }
         }
 
-        if (kotlinBuildProperties.isInIdeaSync) {
-            val nativeKotlinTestCommon by creating {
-                dependsOn(commonMain.get())
-                val prepareKotlinTestCommonNativeSources by tasks.registering(Sync::class) {
-                    from("../kotlin.test/common/src/main/kotlin")
-                    from("../kotlin.test/annotations-common/src/main/kotlin")
-                    into(layout.buildDirectory.dir("src/native-kotlin-test-common-sources"))
-                }
+        val nativeKotlinTestCommon by creating {
+            dependsOn(commonMain.get())
+            val prepareKotlinTestCommonNativeSources by tasks.registering(Sync::class) {
+                from("../kotlin.test/common/src/main/kotlin")
+                from("../kotlin.test/annotations-common/src/main/kotlin")
+                into(layout.buildDirectory.dir("src/native-kotlin-test-common-sources"))
+            }
 
-                kotlin {
-                    srcDir(prepareKotlinTestCommonNativeSources.requiredForImport())
-                }
+            kotlin {
+                srcDir(prepareKotlinTestCommonNativeSources.requiredForImport())
             }
-            val nativeMain by getting {
-                dependsOn(nativeWasmMain)
-                dependsOn(nativeKotlinTestCommon)
-                kotlin {
-                    srcDir("$rootDir/kotlin-native/runtime/src/main/kotlin")
-                    srcDir("$rootDir/kotlin-native/Interop/Runtime/src/main/kotlin")
-                    srcDir("$rootDir/kotlin-native/Interop/Runtime/src/native/kotlin")
-                }
-                languageSettings {
-                    optIn("kotlin.native.internal.InternalForKotlinNative")
-                }
+        }
+        val nativeInteropCommon by creating {
+            kotlin {
+                srcDir("$rootDir/kotlin-native/Interop/Runtime/src/main/kotlin")
             }
+        }
+        val nativeMain by getting {
+            dependsOn(nativeWasmMain)
+            dependsOn(nativeKotlinTestCommon)
+            dependsOn(nativeInteropCommon)
+            kotlin {
+                srcDir("$rootDir/kotlin-native/runtime/src/main/kotlin")
+                srcDir("$rootDir/kotlin-native/Interop/Runtime/src/native/kotlin")
+                srcDir("$rootDir/kotlin-native/Interop/JsRuntime/src/main/kotlin")
+            }
+            languageSettings {
+                optIn("kotlin.native.internal.InternalForKotlinNative")
+            }
+        }
+        if (kotlinBuildProperties.isInIdeaSync) {
             val nativeTest by getting {
                 dependsOn(nativeWasmTest)
                 kotlin {
