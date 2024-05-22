@@ -83,6 +83,7 @@ class CandidateInterceptor(
     val path: String?,
     session: FirSession,
     override val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>,
+    override val schemasDirectory: String?,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     companion object {
         val DEFAULT_NAME = "DataFrameType"

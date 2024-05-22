@@ -94,7 +94,7 @@ abstract class TestWithCompileTimeInformation : BaseTestRunner() {
 //        val tokenState: MutableMap<ClassId, SchemaContext>,
         val getTestFilePath: () -> String,
         val setTestSubject: (PluginDataFrameSchema) -> Unit,
-        val onCompile: (FirSession) -> Unit
+        val onCompile: (FirSession) -> Unit, override val schemasDirectory: String? = null
     ) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
         override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
             functionCall.calleeReference.name.identifierOrNullIfSpecial?.let {
@@ -187,7 +187,7 @@ class Explode : TestWithCompileTimeInformation() {
         //File("plugins/kotlin-dataframe/testData/unit/dummy.kt").writeText()
 
         compilationCallback = {
-            val facade = KotlinTypeFacadeImpl(it, TODO())
+            val facade = KotlinTypeFacadeImpl(it, TODO(), TODO())
             grouped.explodeTest(facade, dropEmpty = true, pluginDataFrameSchema = schema)
         }
 
@@ -204,7 +204,7 @@ class Explode : TestWithCompileTimeInformation() {
         dumpSchema(df)
 
         compilationCallback = {
-            val facade = KotlinTypeFacadeImpl(it, TODO())
+            val facade = KotlinTypeFacadeImpl(it, TODO(), TODO())
             df.explodeTest(facade, dropEmpty = true, pluginDataFrameSchema = schema)
         }
 

@@ -1,5 +1,7 @@
 package org.jetbrains.kotlinx.dataframe.plugin
 
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.annotations.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.annotations.Arguments
@@ -23,8 +25,7 @@ internal class ReadCSV0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.fileOrUrl: String by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        resolutionPath
-        val file = resolveFile(fileOrUrl)
+        val file = resolveFile(resolutionPath, fileOrUrl)
         val df = if (file != null && file.exists()) {
             DataFrame.readCSV(file)
         } else {
@@ -38,17 +39,34 @@ internal class ReadJson0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.path: String by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val file = resolveFile(path)
-        val schema = if (file != null && file.exists()) {
-            DataFrame.readJson(file).schema().toPluginDataFrameSchema()
-        } else {
-            cache.getValue(path, this)
+        val schema = schemasDirectory?.let {
+            try {
+                val text = File(it, "schemas.json").readText()
+                val json = Json.decodeFromString<List<IoSchema>>(text)
+                val map = json.associate { it.argument to it.schema }
+                val schema = map[path]?.deserializeToPluginDataFrameSchema()
+                schema
+            } catch (e: Exception) {
+                null
+            }
         }
-        return schema
+        if (schema != null) return schema
+        val df = readJson(resolutionPath, path)
+        return df.schema().toPluginDataFrameSchema()
     }
 }
 
-private fun Arguments.resolveFile(path: String): File? {
+fun readJson(resolutionPath: String?, path: String): DataFrame<Any?> {
+    val file = resolveFile(resolutionPath, path)
+    val df = if (file != null && file.exists()) {
+        DataFrame.readJson(file)
+    } else {
+        DataFrame.readJson(path)
+    }
+    return df
+}
+
+private fun resolveFile(resolutionPath: String?, path: String): File? {
     return  resolutionPath?.let {
         try {
             val file = File(it)

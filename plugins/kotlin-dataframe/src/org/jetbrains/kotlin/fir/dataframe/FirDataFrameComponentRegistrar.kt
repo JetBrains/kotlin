@@ -35,6 +35,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.toPluginDataFrameSchema
 
 val PATH: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("annotation qualified name")
+val SCHEMAS: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("directory to store IO schemas")
 
 // listOf("-P", "plugin:org.jetbrains.kotlinx.dataframe:path=/home/nikita/IdeaProjects/run-df")
 @OptIn(ExperimentalCompilerApi::class)
@@ -43,21 +44,26 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
         val RESOLUTION_DIRECTORY = CliOption(
             "path", "<path>", "", required = false, allowMultipleOccurrences = false
         )
+        val SCHEMAS_DIRECTORY = CliOption(
+            "schemas", "<schemas>", "", required = false, allowMultipleOccurrences = false
+        )
     }
     override val pluginId: String = "org.jetbrains.kotlinx.dataframe"
 
-    override val pluginOptions: Collection<AbstractCliOption> = listOf(RESOLUTION_DIRECTORY)
+    override val pluginOptions: Collection<AbstractCliOption> = listOf(RESOLUTION_DIRECTORY, SCHEMAS_DIRECTORY)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         return when (option) {
             RESOLUTION_DIRECTORY -> configuration.put(PATH, value)
+            SCHEMAS_DIRECTORY -> configuration.put(SCHEMAS, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }
 }
 
 class FirDataFrameExtensionRegistrar(
-    private val path: String?
+    private val path: String?,
+    val schemasDirectory: String?
 ) : FirExtensionRegistrar() {
     @OptIn(FirExtensionApiInternals::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
@@ -65,12 +71,12 @@ class FirDataFrameExtensionRegistrar(
         +::ExtensionsGenerator
         +::ReturnTypeBasedReceiverInjector
         +{ it: FirSession ->
-            CandidateInterceptor(path, it, jsonCache(it))
+            CandidateInterceptor(path, it, jsonCache(it), schemasDirectory)
         }
         +::TokenGenerator
         +::DataRowSchemaSupertype
         +{ it: FirSession ->
-            ExpressionAnalysisAdditionalChecker(it, jsonCache(it))
+            ExpressionAnalysisAdditionalChecker(it, jsonCache(it), schemasDirectory)
         }
     }
 
@@ -86,8 +92,10 @@ class FirDataFrameExtensionRegistrar(
 class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(configuration.get(PATH)))
-        IrGenerationExtension.registerExtension(IrBodyFiller())
+        val schemasDirectory = configuration.get(SCHEMAS)
+        val path = configuration.get(PATH)
+        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(path, schemasDirectory))
+        IrGenerationExtension.registerExtension(IrBodyFiller(path, schemasDirectory))
     }
 
     override val supportsK2: Boolean = true

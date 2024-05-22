@@ -26,7 +26,10 @@ class ExperimentalExtensionRegistrarConfigurator(testServices: TestServices) : E
         module: TestModule,
         configuration: CompilerConfiguration
     ) {
-        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(configuration.get(PATH)!!))
-        IrGenerationExtension.registerExtension(IrBodyFiller())
+        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(
+            configuration.get(PATH)!!,
+            null
+        ))
+        IrGenerationExtension.registerExtension(IrBodyFiller(configuration.get(PATH), null))
     }
 }
