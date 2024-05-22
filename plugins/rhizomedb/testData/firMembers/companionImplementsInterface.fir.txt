@@ -1,0 +1,19 @@
+FILE: companionImplementsInterface.kt
+    public abstract interface MarkerInterface : R|kotlin/Any| {
+    }
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+        public constructor(): R|MyEntity| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|MarkerInterface|, R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
+            private constructor(): R|MyEntity.Companion| {
+                super<R|com/jetbrains/rhizomedb/EntityType<MyEntity>|>()
+            }
+
+            public final val X: R|kotlin/Int| = Int(42)
+                public get(): R|kotlin/Int|
+
+        }
+
+    }

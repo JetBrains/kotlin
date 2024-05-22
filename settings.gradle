@@ -373,6 +373,10 @@ include ":kotlinx-serialization-compiler-plugin",
         ":kotlin-serialization",
         ":kotlin-serialization-unshaded"
 
+include ":rhizomedb-compiler-plugin",
+        ":rhizomedb-compiler-plugin.embeddable",
+        ":rhizomedb-compiler-plugin.k2"
+
 if (!buildProperties.inJpsBuildIdeaSync) {
     include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
             ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
@@ -862,6 +866,10 @@ project(':kotlinx-serialization-compiler-plugin.k2').projectDir = "$rootDir/plug
 project(':kotlinx-serialization-compiler-plugin.common').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.common" as File
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
+
+project(':rhizomedb-compiler-plugin').projectDir = file("$rootDir/plugins/rhizomedb")
+project(':rhizomedb-compiler-plugin.embeddable').projectDir = file("$rootDir/plugins/rhizomedb/rhizomedb.embeddable")
+project(':rhizomedb-compiler-plugin.k2').projectDir = file("$rootDir/plugins/rhizomedb/rhizomedb.k2")
 
 project(':kotlin-atomicfu-compiler-plugin').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-compiler")
 project(':kotlin-atomicfu-compiler-plugin-embeddable').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-compiler-embeddable")
