@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 @Suppress("AnalysisApiMissingLifetimeCheck")
 public abstract class KaSession(final override val token: KaLifetimeToken) : KaLifetimeOwner,
     KaSmartCastProviderMixIn,
-    KaCallResolverMixIn,
+    KaResolverMixIn,
     KaSamResolverMixIn,
     KaDiagnosticProviderMixIn,
     KaScopeProviderMixIn,
@@ -114,8 +114,11 @@ public abstract class KaSession(final override val token: KaLifetimeToken) : KaL
     internal val symbolProvider: KaSymbolProvider get() = symbolProviderImpl
     protected abstract val symbolProviderImpl: KaSymbolProvider
 
-    internal val callResolver: KaCallResolver get() = callResolverImpl
-    protected abstract val callResolverImpl: KaCallResolver
+    @KtAnalysisNonPublicApi
+    internal val resolver: KaResolver get() = resolverImpl
+
+    @KtAnalysisNonPublicApi
+    protected abstract val resolverImpl: KaResolver
 
     internal val samResolver: KaSamResolver get() = samResolverImpl
     protected abstract val samResolverImpl: KaSamResolver

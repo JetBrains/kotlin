@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
+import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.calls.KaCompoundAccess
 import org.jetbrains.kotlin.analysis.api.calls.KaExplicitReceiverValue
-import org.jetbrains.kotlin.analysis.api.components.KaCallResolver
+import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-abstract class KaAbstractCallResolver : KaCallResolver() {
-
+@KaAnalysisApiInternals
+abstract class KaAbstractResolver : KaResolver() {
     protected fun KtBinaryExpression.getCompoundAssignKind(): KaCompoundAccess.CompoundAssign.Kind {
         val compoundAssignKind = when (operationToken) {
             KtTokens.PLUSEQ -> KaCompoundAccess.CompoundAssign.Kind.PLUS_ASSIGN
