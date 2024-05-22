@@ -612,9 +612,14 @@ class WasmDeserializer(inputStream: InputStream) {
 
     private fun idError(): Nothing = error("Invalid id")
 
-    class Flags(private var flags: UInt = 0U) {
+    /**
+     * Convenience wrapper class around a bitset byte
+     */
+    class Flags(private var flags: UInt) {
         operator fun get(i: Int): Boolean {
-            if (i > 8) error("Flags structure can't have more than 8 flags")
+            if (i >= UByte.SIZE_BITS) {
+                error("Flags structure can't have more than ${UByte.SIZE_BITS} flags")
+            }
             return (flags and (1U shl i)) != 0U
         }
 
