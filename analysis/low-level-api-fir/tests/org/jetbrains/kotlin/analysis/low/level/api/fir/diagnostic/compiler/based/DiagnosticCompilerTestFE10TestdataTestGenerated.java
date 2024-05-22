@@ -5700,6 +5700,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("localClassWithCapturedTypeParameters.kt")
+        public void testLocalClassWithCapturedTypeParameters() {
+          runTest("compiler/testData/diagnostics/tests/callableReference/generic/localClassWithCapturedTypeParameters.kt");
+        }
+
+        @Test
         @TestMetadata("nestedCallWithOverload.kt")
         public void testNestedCallWithOverload() {
           runTest("compiler/testData/diagnostics/tests/callableReference/generic/nestedCallWithOverload.kt");
