@@ -4,7 +4,6 @@
  */
 
 
-import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileNativeBinary
 
@@ -147,40 +146,6 @@ allprojects {
     ext.testOutputFramework = rootProject.file("$testOutputRoot/framework")
 }
 testOutputExternal.mkdirs()
-
-void konanc(String[] args) {
-    String kotlincNative = PlatformInfo.isWindows() ? "kotlinc-native.bat" : "kotlinc-native"
-    String allArgs = args.join(" ")
-    String commandWithArguments = "$kotlinNativeDist/bin/$kotlincNative $allArgs"
-
-    println(commandWithArguments)
-
-    Process process = commandWithArguments.execute()
-    int exitCode = process.waitFor()
-
-    if (exitCode != 0) {
-        String stdOut = IOGroovyMethods.getText(process.inputStream)
-        String stdErr = IOGroovyMethods.getText(process.errorStream)
-
-        StringBuilder builder = new StringBuilder()
-        builder.append("Error during execution of the command: $commandWithArguments\n")
-        builder.append("exitCode = $exitCode\n")
-        builder.append("=== STDOUT: BEGIN ===\n")
-        if (!stdOut.isEmpty()) {
-            builder.append(stdOut)
-            if (!stdOut.endsWith("\n")) builder.append("\n")
-        }
-        builder.append("=== STDOUT: END ===\n")
-        builder.append("=== STDERR: BEGIN ===\n")
-        if (!stdErr.isEmpty()) {
-            builder.append(stdErr)
-            if (!stdErr.endsWith("\n")) builder.append("\n")
-        }
-        builder.append("=== STDERR: END ===\n")
-
-        throw new GradleException(builder.toString())
-    }
-}
 
 tasks.named("clean", Delete.class) {
     delete(testOutputRoot)
@@ -362,25 +327,6 @@ standaloneTest("kt51302") {
     enabled = project.target.name == PlatformInfo.hostName
     source = "serialization/KT-51302/main.kt"
     flags = ["-l", "$projectDir/serialization/KT-51302/kt51302_dependency"]
-}
-
-standaloneTest("split_compilation_pipeline") {
-    // Test infrastructure does not support passing flags only to the second stage,
-    // and we can't pass -Xcompile-from-bitcode when producing library. Thus, this test
-    // does not support 2-stage compilation for now.
-    // Also, it is failing for some reason on Windows CI, but since MinGW targets are not inteneded
-    // to use this mode, we can disable it for these targets.
-    enabled = !twoStageEnabled && project.target.name != "mingw_x64" && project.target.name != "mingw_x86"
-    def dir = project.layout.buildDirectory.get().asFile.absolutePath
-    source = "link/private_fake_overrides/override_main.kt"
-    doBeforeBuild {
-        konanc("$projectDir/link/private_fake_overrides/override_lib.kt -p library -target ${target.name} -o $dir/lib.klib")
-        konanc("$projectDir/$source -target ${target.name} -o $dir/out.klib -l $dir/lib.klib " +
-                "-Xtemporary-files-dir=$dir/tmp/split " +
-                "-Xwrite-dependencies-to=${dir}/split_compilation_pipeline.deps")
-    }
-    flags = ["-Xread-dependencies-from=${dir}/split_compilation_pipeline.deps", "-Xcompile-from-bitcode=${dir}/tmp/split/out.bc"]
-    useGoldenData = true
 }
 
 dependencies {

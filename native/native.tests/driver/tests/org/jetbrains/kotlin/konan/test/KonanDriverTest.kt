@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.konan.test
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.konan.test.blackbox.support.NativeSimpleTestSupport
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
+import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
@@ -23,6 +20,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.executor
 import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File
@@ -219,5 +217,51 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             timeout = Duration.parse("5m")
         }
         testRunSettings.executor.runProcess(kexe.absolutePath)
+    }
+
+    @Test
+    fun testSplitCompilationPipeline() {
+        val rootDir = testSuiteDir.resolve("split_compilation_pipeline")
+        val libFile = buildDir.resolve("lib.klib")
+        runProcess(
+            konanc.absolutePath,
+            rootDir.resolve("override_lib.kt").absolutePath,
+            "-produce", "library",
+            "-o", libFile.absolutePath,
+            "-target", targets.testTarget.visibleName,
+        ) {
+            timeout = konancTimeout
+        }
+
+        val tmpFilesDir = buildDir.resolve("tmpFiles").apply {
+            deleteRecursively()
+            mkdirs()
+        }
+        val depsFile = buildDir.resolve("deps.deps")
+
+        val mainFile = buildDir.resolve("out.klib")
+        runProcess(
+            konanc.absolutePath,
+            rootDir.resolve("override_main.kt").absolutePath,
+            "-o", mainFile.absolutePath,
+            "-target", targets.testTarget.visibleName,
+            "-l", libFile.absolutePath,
+            "-Xtemporary-files-dir=${tmpFilesDir.absolutePath}",
+            "-Xwrite-dependencies-to=${depsFile.absolutePath}",
+        ) {
+            timeout = konancTimeout
+        }
+
+        val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
+        runProcess(
+            konanc.absolutePath,
+            rootDir.resolve("override_main.kt").absolutePath,
+            "-o", kexe.absolutePath,
+            "-target", targets.testTarget.visibleName,
+            "-Xread-dependencies-from=${depsFile.absolutePath}",
+            "-Xcompile-from-bitcode=${tmpFilesDir.absolutePath}/out.bc"
+        )
+        val output = testRunSettings.executor.runProcess(kexe.absolutePath).output
+        KotlinTestUtils.assertEqualsToFile(rootDir.resolve("override_main.out"), output)
     }
 }
