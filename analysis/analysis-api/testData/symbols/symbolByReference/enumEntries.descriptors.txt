@@ -2,7 +2,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -24,11 +24,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: MyKotlinEnum
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /MyKotlinEnum.entries
+  callableId: /MyKotlinEnum.entries
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true

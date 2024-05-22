@@ -2,7 +2,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -24,11 +24,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KtLibraryModule "Library kotlin-script-runtime"
     deprecationStatus: null
-  callableIdIfNonLocal: kotlin/script/templates/standard/ScriptTemplateWithArgs.args
+  callableId: kotlin/script/templates/standard/ScriptTemplateWithArgs.args
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true

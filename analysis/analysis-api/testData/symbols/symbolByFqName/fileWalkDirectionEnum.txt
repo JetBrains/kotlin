@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/listOf
+  callableId: kotlin/collections/listOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -35,7 +35,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -68,7 +68,7 @@ KtFunctionSymbol:
     kotlin/internal/InlineOnly()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/collections/listOf
+  callableId: kotlin/collections/listOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -109,7 +109,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/listOf
+  callableId: kotlin/collections/listOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -144,7 +144,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

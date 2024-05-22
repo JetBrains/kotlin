@@ -42,7 +42,7 @@ object DecompiledPsiDeclarationProvider {
         functionLikeSymbol: KaFunctionLikeSymbol,
         project: Project
     ): PsiElement? {
-        return functionLikeSymbol.callableIdIfNonLocal?.let {
+        return functionLikeSymbol.callableId?.let {
             val candidates = project.createPsiDeclarationProvider(functionLikeSymbol.scope(project))
                 ?.getFunctions(it)
             if (candidates?.size == 1)
@@ -58,7 +58,7 @@ object DecompiledPsiDeclarationProvider {
         variableLikeSymbol: KaVariableLikeSymbol,
         project: Project
     ): PsiElement? {
-        return variableLikeSymbol.callableIdIfNonLocal?.let {
+        return variableLikeSymbol.callableId?.let {
             val candidates = project.createPsiDeclarationProvider(variableLikeSymbol.scope(project))
                 ?.getProperties(it)
             if (candidates?.size == 1)

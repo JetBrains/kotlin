@@ -13,18 +13,18 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.collections.List<kotlin.collections.List<S>>
       symbol = x: kotlin.collections.List<T>
-      callableIdIfNonLocal = null,
+      callableId = null,
     KtVariableLikeSignature:
       name = y
       receiverType = null
       returnType = kotlin.collections.Map<kotlin.collections.List<S>, kotlin.collections.List<kotlin.Long>>
       symbol = y: kotlin.collections.Map<T, kotlin.collections.List<S>>
-      callableIdIfNonLocal = null,
+      callableId = null,
     KtVariableLikeSignature:
       name = k
       receiverType = null
       returnType = kotlin.String
       symbol = k: kotlin.String
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = /foo
+  callableId = /foo

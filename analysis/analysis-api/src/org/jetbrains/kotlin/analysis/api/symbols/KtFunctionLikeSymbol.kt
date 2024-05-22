@@ -30,7 +30,7 @@ public typealias KtFunctionLikeSymbol = KaFunctionLikeSymbol
 
 public abstract class KaAnonymousFunctionSymbol : KaFunctionLikeSymbol() {
     final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.LOCAL }
-    final override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { null }
+    final override val callableId: CallableId? get() = withValidityAssertion { null }
 
     final override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
@@ -89,7 +89,7 @@ public abstract class KaConstructorSymbol : KaFunctionLikeSymbol(),
     public abstract val isPrimary: Boolean
     public abstract val containingClassIdIfNonLocal: ClassId?
 
-    final override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { null }
+    final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.CLASS_MEMBER }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }

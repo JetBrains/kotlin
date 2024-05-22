@@ -35,7 +35,7 @@ internal class KaFe10DescJavaFieldSymbol(
     override val isVal: Boolean
         get() = withValidityAssertion { !descriptor.isVar }
 
-    override val callableIdIfNonLocal: CallableId?
+    override val callableId: CallableId?
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
     override val returnType: KaType

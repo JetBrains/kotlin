@@ -1,6 +1,6 @@
 KtLocalVariableSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   isExtension: false
   isVal: true
@@ -20,7 +20,7 @@ KtLocalVariableSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /usage
+  callableId: /usage
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

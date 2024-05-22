@@ -47,7 +47,7 @@ internal class KaFirFunctionSymbol(
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 
     override val isBuiltinFunctionInvoke: Boolean
-        get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
+        get() = withValidityAssertion { callableId in kotlinFunctionInvokeCallableIds }
 
     override val contractEffects: List<KaContractEffectDeclaration> by cached {
         firSymbol.resolvedContractDescription?.effects
@@ -82,7 +82,7 @@ internal class KaFirFunctionSymbol(
     override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
     override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
 
-    override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
+    override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
     override val symbolKind: KaSymbolKind
         get() = withValidityAssertion {
@@ -114,7 +114,7 @@ internal class KaFirFunctionSymbol(
             )
 
             KaSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
-                callableIdIfNonLocal?.toString() ?: name.asString()
+                callableId?.toString() ?: name.asString()
             )
 
             else -> throw UnsupportedSymbolKind(this::class, kind)

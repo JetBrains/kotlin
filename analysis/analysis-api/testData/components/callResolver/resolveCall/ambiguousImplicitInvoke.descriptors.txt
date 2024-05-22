@@ -18,9 +18,9 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.String
               symbol = a: kotlin.String
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = null
+          callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {},
     KtSimpleFunctionCall:
@@ -41,9 +41,9 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = null
+          callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
   ]

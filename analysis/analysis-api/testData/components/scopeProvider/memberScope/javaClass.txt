@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /JavaClass.hello
+  callableId: /JavaClass.hello
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -39,7 +39,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /JavaClass.method
+  callableId: /JavaClass.method
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -70,7 +70,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -107,7 +107,7 @@ KtFunctionSymbol:
     java/lang/Override()
       psi: null
   ]
-  callableIdIfNonLocal: /SuperClass.getActualRandomNumber
+  callableId: /SuperClass.getActualRandomNumber
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -146,7 +146,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
+  callableId: kotlin/Any.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -175,7 +175,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -210,7 +210,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+  callableId: kotlin/Any.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -249,7 +249,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
+  callableId: kotlin/Any.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -408,7 +408,7 @@ KtNamedClassOrObjectSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: JavaClass
   contextReceivers: []
   hasStableParameterNames: false

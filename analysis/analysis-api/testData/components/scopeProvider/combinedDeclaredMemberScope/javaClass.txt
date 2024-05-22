@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /JavaClass.bar
+  callableId: /JavaClass.bar
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -34,7 +34,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /JavaClass.hello
+  callableId: /JavaClass.hello
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -73,7 +73,7 @@ KtFunctionSymbol:
 
 KtJavaFieldSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /JavaClass.foo
+  callableId: /JavaClass.foo
   contextReceivers: []
   isExtension: false
   isStatic: true
@@ -156,7 +156,7 @@ KtNamedClassOrObjectSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: JavaClass
   contextReceivers: []
   hasStableParameterNames: false

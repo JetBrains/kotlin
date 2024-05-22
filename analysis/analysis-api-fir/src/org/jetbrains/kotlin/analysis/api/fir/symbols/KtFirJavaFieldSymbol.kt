@@ -43,7 +43,7 @@ internal class KaFirJavaFieldSymbol(
     override val name: Name get() = withValidityAssertion { firSymbol.name }
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
 
-    override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
+    override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
     override val modality: Modality get() = withValidityAssertion { firSymbol.modality }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }

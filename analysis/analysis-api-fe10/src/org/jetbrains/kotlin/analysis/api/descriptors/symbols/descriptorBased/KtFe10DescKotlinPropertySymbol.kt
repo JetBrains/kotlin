@@ -77,7 +77,7 @@ internal class KaFe10DescKotlinPropertySymbol(
     override val hasSetter: Boolean
         get() = withValidityAssertion { !descriptor.isDynamic() && !isVal }
 
-    override val callableIdIfNonLocal: CallableId?
+    override val callableId: CallableId?
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
     override val initializer: KaInitializerValue?

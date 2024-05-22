@@ -17,9 +17,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = test.pkg.MyInterface!
             symbol = actor: test.pkg.MyInterface!
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = test/pkg/MyHandler.act
+        callableId = test/pkg/MyHandler.act
     typeArgumentsMapping = {}
     argumentMapping = {
       ::callback -> (KtVariableLikeSignature:
@@ -27,5 +27,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = test.pkg.MyInterface!
         symbol = actor: test.pkg.MyInterface!
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

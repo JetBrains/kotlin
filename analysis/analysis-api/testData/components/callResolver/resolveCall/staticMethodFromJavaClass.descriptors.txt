@@ -9,6 +9,6 @@ KtSuccessCallInfo:
         returnType = kotlin.Unit
         symbol = /BaseClass.foo(): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = /BaseClass.foo
+        callableId = /BaseClass.foo
     typeArgumentsMapping = {}
     argumentMapping = {}

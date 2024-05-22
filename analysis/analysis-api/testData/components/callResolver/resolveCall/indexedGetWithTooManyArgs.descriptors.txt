@@ -18,15 +18,15 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
-              callableIdIfNonLocal = null,
+              callableId = null,
             KtVariableLikeSignature:
               name = b
               receiverType = null
               returnType = kotlin.String
               symbol = b: kotlin.String
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = /C.get
+          callableId = /C.get
       typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
@@ -34,13 +34,13 @@ KtErrorCallInfo:
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
-          callableIdIfNonLocal = null),
+          callableId = null),
         "foo" -> (KtVariableLikeSignature:
           name = b
           receiverType = null
           returnType = kotlin.String
           symbol = b: kotlin.String
-          callableIdIfNonLocal = null)
+          callableId = null)
       }
   ]
   diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final operator fun get(a: Int, b: String): Boolean defined in C>

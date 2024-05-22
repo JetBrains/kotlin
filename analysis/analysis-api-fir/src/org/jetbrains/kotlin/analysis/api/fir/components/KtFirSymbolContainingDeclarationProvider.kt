@@ -214,7 +214,7 @@ internal class KaFirSymbolContainingDeclarationProvider(
                 ?.javaFileFacadeFqName?.asString()
         } else {
             val classId = (containingSymbolOrSelf as? KaConstructorSymbol)?.containingClassIdIfNonLocal
-                ?: containingSymbolOrSelf.callableIdIfNonLocal?.classId
+                ?: containingSymbolOrSelf.callableId?.classId
             classId?.takeUnless { it.shortClassName.isSpecial }
                 ?.asFqNameString()
         }

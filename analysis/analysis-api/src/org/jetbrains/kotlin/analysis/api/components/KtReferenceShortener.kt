@@ -101,7 +101,7 @@ public enum class ShortenStrategy {
                 }
 
                 else -> {
-                    val isNotTopLevel = symbol.callableIdIfNonLocal?.classId != null
+                    val isNotTopLevel = symbol.callableId?.classId != null
 
                     if (isNotTopLevel) {
                         SHORTEN_IF_ALREADY_IMPORTED

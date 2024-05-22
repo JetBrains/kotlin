@@ -10,7 +10,7 @@ KtKotlinPropertySymbol:
       DelegateAnnotation()
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -27,11 +27,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithDelegateAndAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /lazyProperty
+  callableId: /lazyProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: true
     hasStableParameterNames: true

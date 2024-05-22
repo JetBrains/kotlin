@@ -1,6 +1,6 @@
 KtLocalVariableSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   isExtension: false
   isVal: true
@@ -20,7 +20,7 @@ KtLocalVariableSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -85,7 +85,7 @@ KtNamedClassOrObjectSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /yyy
+  callableId: /yyy
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

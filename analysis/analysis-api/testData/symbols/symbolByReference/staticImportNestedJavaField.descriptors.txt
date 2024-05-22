@@ -1,6 +1,6 @@
 KtJavaFieldSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /Dependency.Nested.bar
+  callableId: /Dependency.Nested.bar
   contextReceivers: []
   isExtension: false
   isStatic: true

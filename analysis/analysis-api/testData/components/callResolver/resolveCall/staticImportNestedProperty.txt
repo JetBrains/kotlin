@@ -34,7 +34,7 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = val bar: kotlin.Int
-        callableIdIfNonLocal = one/two/TopLevelObject.Nested.bar
+        callableId = one/two/TopLevelObject.Nested.bar
     simpleAccess = Read:
 
     typeArgumentsMapping = {}

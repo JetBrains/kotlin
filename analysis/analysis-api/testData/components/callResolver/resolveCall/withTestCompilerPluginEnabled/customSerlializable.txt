@@ -17,9 +17,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = test.FirstTarget
             symbol = x: test.FirstTarget
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = test/Serializer.serializeFirstTarget
+        callableId = test/Serializer.serializeFirstTarget
     typeArgumentsMapping = {}
     argumentMapping = {
       target -> (KtVariableLikeSignature:
@@ -27,5 +27,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = test.FirstTarget
         symbol = x: test.FirstTarget
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

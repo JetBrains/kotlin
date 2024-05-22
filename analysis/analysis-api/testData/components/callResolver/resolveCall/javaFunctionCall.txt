@@ -12,6 +12,6 @@ KtSuccessCallInfo:
         returnType = kotlin.Unit
         symbol = /JavaClass.javaMethod(<dispatch receiver>: JavaClass): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = /JavaClass.javaMethod
+        callableId = /JavaClass.javaMethod
     typeArgumentsMapping = {}
     argumentMapping = {}

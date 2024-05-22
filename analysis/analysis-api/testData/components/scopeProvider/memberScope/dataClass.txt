@@ -2,7 +2,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -19,11 +19,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /Abc.firstProperty
+  callableId: /Abc.firstProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -93,7 +93,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -110,11 +110,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /Abc.secondProperty
+  callableId: /Abc.secondProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -184,7 +184,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -201,11 +201,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /Abc.thirdProperty
+  callableId: /Abc.thirdProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -273,7 +273,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /Abc.check
+  callableId: /Abc.check
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -314,7 +314,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -331,11 +331,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: Abc
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /Abc.bodyProperty
+  callableId: /Abc.bodyProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: true
     hasStableParameterNames: true
@@ -419,7 +419,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /Abc.component1
+  callableId: /Abc.component1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -458,7 +458,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /Abc.component2
+  callableId: /Abc.component2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -497,7 +497,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /Abc.component3
+  callableId: /Abc.component3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -536,7 +536,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /Abc.copy
+  callableId: /Abc.copy
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -565,7 +565,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: true
@@ -589,7 +589,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: true
@@ -613,7 +613,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: true
@@ -648,7 +648,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /Abc.equals
+  callableId: /Abc.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -677,7 +677,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -712,7 +712,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /Abc.hashCode
+  callableId: /Abc.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -751,7 +751,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /Abc.toString
+  callableId: /Abc.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -790,7 +790,7 @@ KtFunctionSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: Abc
   contextReceivers: []
   hasStableParameterNames: true
@@ -809,13 +809,13 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -832,11 +832,11 @@ KtConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
-        callableIdIfNonLocal: /Abc.firstProperty
+        callableId: /Abc.firstProperty
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -922,13 +922,13 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -945,11 +945,11 @@ KtConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
-        callableIdIfNonLocal: /Abc.secondProperty
+        callableId: /Abc.secondProperty
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -1035,13 +1035,13 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -1058,11 +1058,11 @@ KtConstructorSymbol:
           getContainingJvmClassName: Abc
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
-        callableIdIfNonLocal: /Abc.thirdProperty
+        callableId: /Abc.thirdProperty
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true

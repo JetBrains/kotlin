@@ -13,9 +13,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = Annotation
             symbol = vararg annos: Annotation
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = null
+        callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
       [Annotation("v1", "v2"), Annotation(["v3", "v4"])] -> (KtVariableLikeSignature:
@@ -23,5 +23,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = Annotation
         symbol = vararg annos: Annotation
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

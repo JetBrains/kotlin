@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /Dependency.Nested.foo
+  callableId: /Dependency.Nested.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false

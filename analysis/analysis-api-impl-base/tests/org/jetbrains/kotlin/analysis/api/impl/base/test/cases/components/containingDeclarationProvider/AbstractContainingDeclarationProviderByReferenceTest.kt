@@ -36,7 +36,7 @@ abstract class AbstractContainingDeclarationProviderByReferenceTest : AbstractAn
 
     private fun render(symbol: KaSymbol): String {
         val qualifiedName = when (symbol) {
-            is KaCallableSymbol -> symbol.callableIdIfNonLocal?.toString()
+            is KaCallableSymbol -> symbol.callableId?.toString()
             is KaClassLikeSymbol -> symbol.classIdIfNonLocal?.toString()
             else -> null
         }

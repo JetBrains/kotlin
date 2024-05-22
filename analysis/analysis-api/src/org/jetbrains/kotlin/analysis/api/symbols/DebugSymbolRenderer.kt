@@ -108,7 +108,7 @@ public class DebugSymbolRenderer(
 
         withIndent {
             appendLine()
-            renderProperty(KaCallableSymbol::callableIdIfNonLocal, printer, renderSymbolsFully = false, symbol)
+            renderProperty(KaCallableSymbol::callableId, printer, renderSymbolsFully = false, symbol)
             if (symbol is KaNamedSymbol) {
                 appendLine()
                 renderProperty(KaNamedSymbol::name, printer, renderSymbolsFully = false, symbol)
@@ -207,7 +207,7 @@ public class DebugSymbolRenderer(
             append("(")
             when (symbol) {
                 is KaClassLikeSymbol -> renderId(symbol.classIdIfNonLocal, symbol)
-                is KaCallableSymbol -> renderId(symbol.callableIdIfNonLocal, symbol)
+                is KaCallableSymbol -> renderId(symbol.callableId, symbol)
                 is KaNamedSymbol -> renderValue(symbol.name, printer, renderSymbolsFully = false)
                 is KaFileSymbol -> renderValue((symbol.psi as KtFile).name, printer, renderSymbolsFully = false)
                 else -> error("Unsupported symbol ${symbol::class}")

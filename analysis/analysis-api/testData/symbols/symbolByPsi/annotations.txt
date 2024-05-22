@@ -1,6 +1,6 @@
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: Anno
   contextReceivers: []
   hasStableParameterNames: true
@@ -19,13 +19,13 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -42,11 +42,11 @@ KtConstructorSymbol:
           getContainingJvmClassName: Anno
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
-        callableIdIfNonLocal: /Anno.param1
+        callableId: /Anno.param1
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -132,13 +132,13 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -155,11 +155,11 @@ KtConstructorSymbol:
           getContainingJvmClassName: Anno
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
-        callableIdIfNonLocal: /Anno.param2
+        callableId: /Anno.param2
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -285,7 +285,7 @@ KtFunctionSymbol:
     Anno(param1 = "funparam", param2 = 3)
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: /X.x
+  callableId: /X.x
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

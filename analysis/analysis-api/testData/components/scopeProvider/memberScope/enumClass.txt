@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Enum.clone
+  callableId: kotlin/Enum.clone
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -43,7 +43,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/E.compareTo
+  callableId: test/E.compareTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -72,7 +72,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -107,7 +107,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Enum.equals
+  callableId: kotlin/Enum.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -136,7 +136,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -175,7 +175,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Enum.hashCode
+  callableId: kotlin/Enum.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -218,7 +218,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Enum.toString
+  callableId: kotlin/Enum.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -266,7 +266,7 @@ KtKotlinPropertySymbol:
   ]
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -283,11 +283,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
     deprecationStatus: null
-  callableIdIfNonLocal: kotlin/Enum.name
+  callableId: kotlin/Enum.name
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -365,7 +365,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -382,11 +382,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: kotlin.Enum
     getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
     deprecationStatus: null
-  callableIdIfNonLocal: kotlin/Enum.ordinal
+  callableId: kotlin/Enum.ordinal
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -462,7 +462,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/E.getDeclaringClass
+  callableId: test/E.getDeclaringClass
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -500,7 +500,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Enum.finalize
+  callableId: kotlin/Enum.finalize
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -573,7 +573,7 @@ KtNamedClassOrObjectSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: test/E
   contextReceivers: []
   hasStableParameterNames: true

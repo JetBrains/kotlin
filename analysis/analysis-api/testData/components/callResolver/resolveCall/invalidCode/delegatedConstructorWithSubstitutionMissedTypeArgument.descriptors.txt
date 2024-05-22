@@ -10,7 +10,7 @@ KtErrorCallInfo:
           returnType = kotlin.Any
           symbol = <constructor>(): kotlin.Any
           valueParameters = []
-          callableIdIfNonLocal = null
+          callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {}
   ]

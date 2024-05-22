@@ -10,7 +10,7 @@ KtInapplicableCallCandidateInfo:
         returnType = kotlin.Unit
         symbol = /generic(): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = /generic
+        callableId = /generic
     typeArgumentsMapping = {
       A -> (ERROR_TYPE),
       B -> (ERROR_TYPE),

@@ -15,15 +15,15 @@ KtErrorCallInfo:
               receiverType = null
               returnType = T
               symbol = t: T
-              callableIdIfNonLocal = null,
+              callableId = null,
             KtVariableLikeSignature:
               name = a
               receiverType = null
               returnType = kotlin.Char
               symbol = a: kotlin.Char
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = /function
+          callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
@@ -31,7 +31,7 @@ KtErrorCallInfo:
           receiverType = null
           returnType = T
           symbol = t: T
-          callableIdIfNonLocal = null)
+          callableId = null)
       },
     KtSimpleFunctionCall:
       isImplicitInvoke = false
@@ -48,15 +48,15 @@ KtErrorCallInfo:
               receiverType = null
               returnType = U
               symbol = u: U
-              callableIdIfNonLocal = null,
+              callableId = null,
             KtVariableLikeSignature:
               name = b
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = /function
+          callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
@@ -64,7 +64,7 @@ KtErrorCallInfo:
           receiverType = null
           returnType = U
           symbol = u: U
-          callableIdIfNonLocal = null)
+          callableId = null)
       },
     KtSimpleFunctionCall:
       isImplicitInvoke = false
@@ -81,15 +81,15 @@ KtErrorCallInfo:
               receiverType = null
               returnType = V
               symbol = v: V
-              callableIdIfNonLocal = null,
+              callableId = null,
             KtVariableLikeSignature:
               name = c
               receiverType = null
               returnType = kotlin.String
               symbol = c: kotlin.String
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = /function
+          callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
@@ -97,7 +97,7 @@ KtErrorCallInfo:
           receiverType = null
           returnType = V
           symbol = v: V
-          callableIdIfNonLocal = null)
+          callableId = null)
       }
   ]
   diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:

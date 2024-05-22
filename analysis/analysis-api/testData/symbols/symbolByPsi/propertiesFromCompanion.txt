@@ -2,7 +2,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -19,11 +19,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /MyClass.Companion.property
+  callableId: /MyClass.Companion.property
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -93,7 +93,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -110,11 +110,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /MyClass.Companion.constProperty
+  callableId: /MyClass.Companion.constProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -187,7 +187,7 @@ KtKotlinPropertySymbol:
   ]
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -204,11 +204,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /MyClass.Companion.staticProperty
+  callableId: /MyClass.Companion.staticProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -281,7 +281,7 @@ KtKotlinPropertySymbol:
       kotlin/jvm/JvmField()
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -298,11 +298,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /MyClass.Companion.fieldProperty
+  callableId: /MyClass.Companion.fieldProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -372,7 +372,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -389,11 +389,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /MyClass.Companion.variable
+  callableId: /MyClass.Companion.variable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -444,7 +444,7 @@ KtKotlinPropertySymbol:
     type: kotlin/Int
   setter: KtPropertySetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -456,7 +456,7 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     parameter: KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -488,7 +488,7 @@ KtKotlinPropertySymbol:
     valueParameters: [
       KtValueParameterSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -543,7 +543,7 @@ KtKotlinPropertySymbol:
   ]
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -560,11 +560,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /MyClass.Companion.staticVariable
+  callableId: /MyClass.Companion.staticVariable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -615,7 +615,7 @@ KtKotlinPropertySymbol:
     type: kotlin/Int
   setter: KtPropertySetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -627,7 +627,7 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     parameter: KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -659,7 +659,7 @@ KtKotlinPropertySymbol:
     valueParameters: [
       KtValueParameterSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -714,7 +714,7 @@ KtKotlinPropertySymbol:
       kotlin/jvm/JvmField()
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -731,11 +731,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: MyClass.Companion
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /MyClass.Companion.fieldVariable
+  callableId: /MyClass.Companion.fieldVariable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -786,7 +786,7 @@ KtKotlinPropertySymbol:
     type: kotlin/Int
   setter: KtPropertySetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -798,7 +798,7 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     parameter: KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -830,7 +830,7 @@ KtKotlinPropertySymbol:
     valueParameters: [
       KtValueParameterSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false

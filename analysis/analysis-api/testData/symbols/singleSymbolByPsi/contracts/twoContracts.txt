@@ -3,7 +3,7 @@ KtFunctionSymbol:
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: /twoContracts
+  callableId: /twoContracts
   contextReceivers: []
   contractEffects: [
     KtContractConditionalContractEffectDeclaration:
@@ -21,7 +21,7 @@ KtFunctionSymbol:
                   parameterSymbol:
                     KtValueParameterSymbol:
                       annotationsList: []
-                      callableIdIfNonLocal: null
+                      callableId: null
                       contextReceivers: []
                       generatedPrimaryConstructorProperty: null
                       hasDefaultValue: false
@@ -51,7 +51,7 @@ KtFunctionSymbol:
                   parameterSymbol:
                     KtValueParameterSymbol:
                       annotationsList: []
-                      callableIdIfNonLocal: null
+                      callableId: null
                       contextReceivers: []
                       generatedPrimaryConstructorProperty: null
                       hasDefaultValue: false
@@ -81,7 +81,7 @@ KtFunctionSymbol:
           parameterSymbol:
             KtValueParameterSymbol:
               annotationsList: []
-              callableIdIfNonLocal: null
+              callableId: null
               contextReceivers: []
               generatedPrimaryConstructorProperty: null
               hasDefaultValue: false
@@ -136,7 +136,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -160,7 +160,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -184,7 +184,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

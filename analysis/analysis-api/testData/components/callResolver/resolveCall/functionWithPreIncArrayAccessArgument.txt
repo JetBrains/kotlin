@@ -14,15 +14,15 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = i: kotlin.Int
-            callableIdIfNonLocal = null,
+            callableId = null,
           KtVariableLikeSignature:
             name = list
             receiverType = null
             returnType = kotlin.collections.MutableList<kotlin.Int>
             symbol = list: kotlin.collections.MutableList<kotlin.Int>
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /foo
+        callableId = /foo
     typeArgumentsMapping = {}
     argumentMapping = {
       ++list[i] -> (KtVariableLikeSignature:
@@ -30,11 +30,11 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = i: kotlin.Int
-        callableIdIfNonLocal = null),
+        callableId = null),
       list -> (KtVariableLikeSignature:
         name = list
         receiverType = null
         returnType = kotlin.collections.MutableList<kotlin.Int>
         symbol = list: kotlin.collections.MutableList<kotlin.Int>
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

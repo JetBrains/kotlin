@@ -109,8 +109,8 @@ internal class KaFe10PsiKotlinPropertySymbol(
     override val isVal: Boolean
         get() = withValidityAssertion { !psi.isVar }
 
-    override val callableIdIfNonLocal: CallableId?
-        get() = withValidityAssertion { psi.callableIdIfNonLocal }
+    override val callableId: CallableId?
+        get() = withValidityAssertion { psi.callableId }
 
     override val returnType: KaType
         get() = withValidityAssertion { descriptor?.type?.toKtType(analysisContext) ?: createErrorType() }

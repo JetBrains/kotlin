@@ -5,7 +5,7 @@ KtKotlinPropertySymbol:
   ]
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -22,14 +22,14 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: one.SimpleClass
     getContainingModule: KtLibraryModule "Library lib"
     deprecationStatus: null
-  callableIdIfNonLocal: one/SimpleClass.memberVariableWithAnnotations
+  callableId: one/SimpleClass.memberVariableWithAnnotations
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: [
       one/Anno()
         psi: null
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -83,7 +83,7 @@ KtKotlinPropertySymbol:
       one/Anno()
         psi: null
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -98,7 +98,7 @@ KtKotlinPropertySymbol:
         one/Anno()
           psi: null
       ]
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -133,7 +133,7 @@ KtKotlinPropertySymbol:
           one/Anno()
             psi: null
         ]
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false

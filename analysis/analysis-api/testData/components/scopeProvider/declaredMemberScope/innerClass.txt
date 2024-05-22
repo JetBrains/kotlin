@@ -30,7 +30,7 @@ KtNamedClassOrObjectSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: test/B
   contextReceivers: []
   hasStableParameterNames: true

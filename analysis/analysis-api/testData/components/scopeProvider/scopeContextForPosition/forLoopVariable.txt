@@ -13,7 +13,7 @@ scopes:
     callables: 1
       KtLocalVariableSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         isExtension: false
         isVal: true
@@ -45,7 +45,7 @@ scopes:
     callables: 1
       KtValueParameterSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -82,7 +82,7 @@ scopes:
     callables: 1
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: test/usage
+        callableId: test/usage
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -111,7 +111,7 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false

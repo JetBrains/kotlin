@@ -80,7 +80,7 @@ internal class KaFe10DescSyntheticJavaPropertySymbol(
     override val initializer: KaInitializerValue?
         get() = withValidityAssertion { createKtInitializerValue((psi as? KtProperty)?.initializer, descriptor, analysisContext) }
 
-    override val callableIdIfNonLocal: CallableId?
+    override val callableId: CallableId?
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
     override val returnType: KaType

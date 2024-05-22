@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.sir.SirCallableKind
 internal val KtCallableSymbol.sirCallableKind: SirCallableKind
     get() = when (symbolKind) {
         KtSymbolKind.TOP_LEVEL -> {
-            val isRootPackage = callableIdIfNonLocal?.packageName?.isRoot
+            val isRootPackage = callableId?.packageName?.isRoot
             if (isRootPackage == true) {
                 SirCallableKind.FUNCTION
             } else {

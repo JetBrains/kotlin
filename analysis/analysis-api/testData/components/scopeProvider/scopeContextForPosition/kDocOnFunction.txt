@@ -13,7 +13,7 @@ scopes:
     callables: 3
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.equals
+        callableId: kotlin/Any.equals
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -42,7 +42,7 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -64,7 +64,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.hashCode
+        callableId: kotlin/Any.hashCode
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -94,7 +94,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.toString
+        callableId: kotlin/Any.toString
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -125,7 +125,7 @@ scopes:
     constructors: 1
       KtConstructorSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         containingClassIdIfNonLocal: test/Receiver
         contextReceivers: []
         hasStableParameterNames: true
@@ -150,7 +150,7 @@ scopes:
     callables: 2
       KtValueParameterSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -170,7 +170,7 @@ scopes:
         typeParameters: []
       KtValueParameterSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -291,7 +291,7 @@ scopes:
     callables: 1
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: test/function
+        callableId: test/function
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -328,7 +328,7 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -348,7 +348,7 @@ scopes:
             typeParameters: []
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false

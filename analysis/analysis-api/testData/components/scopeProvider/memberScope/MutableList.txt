@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.add
+  callableId: kotlin/collections/MutableList.add
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -29,7 +29,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -67,7 +67,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.add
+  callableId: kotlin/collections/MutableList.add
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -96,7 +96,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -120,7 +120,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -158,7 +158,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.addAll
+  callableId: kotlin/collections/MutableList.addAll
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -187,7 +187,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -211,7 +211,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -254,7 +254,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.addAll
+  callableId: kotlin/collections/MutableList.addAll
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -283,7 +283,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -326,7 +326,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.clear
+  callableId: kotlin/collections/MutableList.clear
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -369,7 +369,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.listIterator
+  callableId: kotlin/collections/MutableList.listIterator
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -416,7 +416,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.listIterator
+  callableId: kotlin/collections/MutableList.listIterator
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -449,7 +449,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -488,7 +488,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.remove
+  callableId: kotlin/collections/MutableList.remove
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -517,7 +517,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -555,7 +555,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.removeAll
+  callableId: kotlin/collections/MutableList.removeAll
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -584,7 +584,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -627,7 +627,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.removeAt
+  callableId: kotlin/collections/MutableList.removeAt
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -655,7 +655,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -694,7 +694,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.retainAll
+  callableId: kotlin/collections/MutableList.retainAll
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -723,7 +723,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -766,7 +766,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.set
+  callableId: kotlin/collections/MutableList.set
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -794,7 +794,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -818,7 +818,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -856,7 +856,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.subList
+  callableId: kotlin/collections/MutableList.subList
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -889,7 +889,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -913,7 +913,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -953,7 +953,7 @@ KtFunctionSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: kotlin/collections/MutableList.size
+  callableId: kotlin/collections/MutableList.size
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -1001,7 +1001,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.isEmpty
+  callableId: kotlin/collections/MutableList.isEmpty
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1044,7 +1044,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.contains
+  callableId: kotlin/collections/MutableList.contains
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1073,7 +1073,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1111,7 +1111,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.iterator
+  callableId: kotlin/collections/MutableList.iterator
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1158,7 +1158,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.containsAll
+  callableId: kotlin/collections/MutableList.containsAll
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1187,7 +1187,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1230,7 +1230,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.get
+  callableId: kotlin/collections/MutableList.get
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1258,7 +1258,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1297,7 +1297,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.indexOf
+  callableId: kotlin/collections/MutableList.indexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1326,7 +1326,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1364,7 +1364,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.lastIndexOf
+  callableId: kotlin/collections/MutableList.lastIndexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1393,7 +1393,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1431,7 +1431,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
+  callableId: kotlin/Any.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1460,7 +1460,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1495,7 +1495,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+  callableId: kotlin/Any.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1534,7 +1534,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
+  callableId: kotlin/Any.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1573,7 +1573,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.getFirst
+  callableId: kotlin/collections/MutableList.getFirst
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1615,7 +1615,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.getLast
+  callableId: kotlin/collections/MutableList.getLast
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

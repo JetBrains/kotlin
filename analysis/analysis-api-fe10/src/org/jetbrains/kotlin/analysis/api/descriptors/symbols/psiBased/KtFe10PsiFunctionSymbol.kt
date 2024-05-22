@@ -80,7 +80,7 @@ internal class KaFe10PsiFunctionSymbol(
         get() = withValidityAssertion { psi.hasModifier(KtTokens.TAILREC_KEYWORD) }
 
     override val isBuiltinFunctionInvoke: Boolean
-        get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
+        get() = withValidityAssertion { callableId in kotlinFunctionInvokeCallableIds }
 
     override val isActual: Boolean
         get() = withValidityAssertion { descriptor?.isActual ?: psi.hasActualModifier() }
@@ -94,8 +94,8 @@ internal class KaFe10PsiFunctionSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
 
-    override val callableIdIfNonLocal: CallableId?
-        get() = withValidityAssertion { psi.callableIdIfNonLocal }
+    override val callableId: CallableId?
+        get() = withValidityAssertion { psi.callableId }
 
     override val returnType: KaType
         get() = withValidityAssertion { descriptor?.returnType?.toKtType(analysisContext) ?: createErrorType() }

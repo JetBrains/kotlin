@@ -13,9 +13,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = Color
             symbol = color: Color
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = null
+        callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
       Color.R -> (KtVariableLikeSignature:
@@ -23,5 +23,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = Color
         symbol = color: Color
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

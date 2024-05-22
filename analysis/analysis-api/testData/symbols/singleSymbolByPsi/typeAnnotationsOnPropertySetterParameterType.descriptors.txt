@@ -1,6 +1,6 @@
 KtPropertySetterSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   hasBody: true
   hasStableParameterNames: true
@@ -12,7 +12,7 @@ KtPropertySetterSymbol:
   origin: SOURCE
   parameter: KtValueParameterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     generatedPrimaryConstructorProperty: null
     hasDefaultValue: false
@@ -51,7 +51,7 @@ KtPropertySetterSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

@@ -1,6 +1,6 @@
 KtLocalVariableSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   isExtension: false
   isVal: true
@@ -20,7 +20,7 @@ KtLocalVariableSymbol:
 
 KtAnonymousFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
@@ -35,7 +35,7 @@ KtAnonymousFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -65,7 +65,7 @@ KtAnonymousFunctionSymbol:
 
 KtLocalVariableSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   isExtension: false
   isVal: true
@@ -94,7 +94,7 @@ KtLocalVariableSymbol:
 
 KtLocalVariableSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   isExtension: false
   isVal: true
@@ -114,7 +114,7 @@ KtLocalVariableSymbol:
 
 KtAnonymousFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
@@ -129,7 +129,7 @@ KtAnonymousFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -159,7 +159,7 @@ KtAnonymousFunctionSymbol:
 
 KtLocalVariableSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   isExtension: false
   isVal: true
@@ -188,7 +188,7 @@ KtLocalVariableSymbol:
 
 KtLocalVariableSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   isExtension: false
   isVal: true
@@ -208,7 +208,7 @@ KtLocalVariableSymbol:
 
 KtAnonymousFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
@@ -223,7 +223,7 @@ KtAnonymousFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -253,7 +253,7 @@ KtAnonymousFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /foo
+  callableId: /foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -288,7 +288,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /bar
+  callableId: /bar
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -317,7 +317,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

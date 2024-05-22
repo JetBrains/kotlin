@@ -42,7 +42,10 @@ public sealed class KaCallableSignature<out S : KaCallableSymbol> : KaLifetimeOw
     /**
      * A [CallableId] of a substituted symbol
      */
-    public open val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { symbol.callableIdIfNonLocal }
+    public open val callableId: CallableId? get() = withValidityAssertion { symbol.callableId }
+
+    @Deprecated("Use `callableId` instead.", ReplaceWith("callableId"))
+    public val callableIdIfNonLocal: CallableId? get() = callableId
 
     /**
      * Applies a [substitutor] to the given signature and return a new signature with substituted types.

@@ -40,7 +40,7 @@ abstract class AbstractCreateInheritanceTypeSubstitutorTest : AbstractAnalysisAp
                         withIndent {
                             for (function in functions) {
                                 val signature = function.substitute(substitutor)
-                                append(signature.callableIdIfNonLocal!!.callableName.asString())
+                                append(signature.callableId!!.callableName.asString())
                                 printCollection(signature.valueParameters, prefix = "(", postfix = ")") {
                                     append(it.returnType.render(typeRenderer, position = Variance.IN_VARIANCE))
                                 }

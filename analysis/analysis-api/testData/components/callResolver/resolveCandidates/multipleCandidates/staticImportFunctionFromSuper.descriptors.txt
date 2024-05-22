@@ -35,7 +35,7 @@ KtApplicableCallCandidateInfo:
         returnType = kotlin.Unit
         symbol = one/two/BaseClass.foo(<dispatch receiver>: one.two.BaseClass): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = one/two/BaseClass.foo
+        callableId = one/two/BaseClass.foo
     typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = true
@@ -83,9 +83,9 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = i: kotlin.Int
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = one/two/BaseClass.foo
+        callableId = one/two/BaseClass.foo
     typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = false

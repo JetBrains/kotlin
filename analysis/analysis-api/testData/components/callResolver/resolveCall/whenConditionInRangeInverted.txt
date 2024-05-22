@@ -17,9 +17,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = int: kotlin.Int
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /contains
+        callableId = /contains
     typeArgumentsMapping = {
       T -> (MyClass)
     }
@@ -29,5 +29,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = int: kotlin.Int
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

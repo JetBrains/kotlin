@@ -17,9 +17,9 @@ KtApplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.String
             symbol = t: T
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /invoke
+        callableId = /invoke
     typeArgumentsMapping = {
       T -> (kotlin.String)
     }
@@ -29,6 +29,6 @@ KtApplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.String
         symbol = t: T
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = true

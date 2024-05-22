@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /foo
+  callableId: /foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -29,7 +29,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -66,11 +66,11 @@ KtFunctionSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /$$result
+  callableId: /$$result
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true

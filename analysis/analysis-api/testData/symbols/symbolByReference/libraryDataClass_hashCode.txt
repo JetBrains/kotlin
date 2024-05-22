@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: one/DataClass.hashCode
+  callableId: one/DataClass.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

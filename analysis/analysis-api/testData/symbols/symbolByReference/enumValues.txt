@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /MyKotlinEnum.values
+  callableId: /MyKotlinEnum.values
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

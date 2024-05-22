@@ -1,6 +1,6 @@
 KtSamConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/Runnable
+  callableId: java/lang/Runnable
   contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
@@ -16,7 +16,7 @@ KtSamConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

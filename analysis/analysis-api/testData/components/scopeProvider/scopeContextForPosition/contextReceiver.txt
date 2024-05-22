@@ -19,7 +19,7 @@ scopes:
     callables: 4
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: /Context.memberInContext
+        callableId: /Context.memberInContext
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -49,7 +49,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.equals
+        callableId: kotlin/Any.equals
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -78,7 +78,7 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -100,7 +100,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.hashCode
+        callableId: kotlin/Any.hashCode
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -130,7 +130,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.toString
+        callableId: kotlin/Any.toString
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -161,7 +161,7 @@ scopes:
     constructors: 1
       KtConstructorSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         containingClassIdIfNonLocal: Context
         contextReceivers: []
         hasStableParameterNames: true
@@ -241,7 +241,7 @@ scopes:
     callables: 1
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: /test
+        callableId: /test
         contextReceivers: [
           KtContextReceiver:
             label: null

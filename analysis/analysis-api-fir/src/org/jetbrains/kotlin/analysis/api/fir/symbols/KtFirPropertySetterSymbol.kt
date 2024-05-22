@@ -75,7 +75,7 @@ internal class KaFirPropertySetterSymbol(
      * Returns [CallableId] of the delegated Java method if the corresponding property of this setter is a synthetic Java property.
      * Otherwise, returns `null`
      */
-    override val callableIdIfNonLocal: CallableId? by cached {
+    override val callableId: CallableId? by cached {
         val fir = firSymbol.fir
         if (fir is FirSyntheticPropertyAccessor) {
             fir.delegate.symbol.callableId

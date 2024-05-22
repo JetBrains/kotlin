@@ -1,6 +1,6 @@
 KtValueParameterSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
   hasDefaultValue: false

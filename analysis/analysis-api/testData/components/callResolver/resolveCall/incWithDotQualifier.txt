@@ -12,6 +12,6 @@ KtSuccessCallInfo:
         returnType = F
         symbol = /F.peek(<dispatch receiver>: F): F
         valueParameters = []
-        callableIdIfNonLocal = /F.peek
+        callableId = /F.peek
     typeArgumentsMapping = {}
     argumentMapping = {}

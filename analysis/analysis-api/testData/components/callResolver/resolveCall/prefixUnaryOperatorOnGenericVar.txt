@@ -14,7 +14,7 @@ KtSuccessCallInfo:
           returnType = kotlin.Int
           symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
           valueParameters = []
-          callableIdIfNonLocal = kotlin/Int.inc
+          callableId = kotlin/Int.inc
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = KtExplicitReceiverValue:
@@ -26,7 +26,7 @@ KtSuccessCallInfo:
         receiverType = CInt32VarX<kotlin.Int>
         returnType = kotlin.Int
         symbol = var value: T
-        callableIdIfNonLocal = /value
+        callableId = /value
     typeArgumentsMapping = {
       T -> (kotlin.Int)
     }

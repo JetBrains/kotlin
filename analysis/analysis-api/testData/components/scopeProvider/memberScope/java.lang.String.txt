@@ -1,6 +1,6 @@
 KtJavaFieldSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.value
+  callableId: java/lang/String.value
   contextReceivers: []
   isExtension: false
   isStatic: false
@@ -26,7 +26,7 @@ KtJavaFieldSymbol:
 
 KtJavaFieldSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.hash
+  callableId: java/lang/String.hash
   contextReceivers: []
   isExtension: false
   isStatic: false
@@ -53,7 +53,7 @@ KtJavaFieldSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.hash32
+  callableId: java/lang/String.hash32
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -92,7 +92,7 @@ KtFunctionSymbol:
 
 KtJavaFieldSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.hash32
+  callableId: java/lang/String.hash32
   contextReceivers: []
   isExtension: false
   isStatic: false
@@ -120,11 +120,11 @@ KtJavaFieldSymbol:
 KtSyntheticJavaPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: java/lang/String.length
+  callableId: java/lang/String.length
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: java/lang/String.length
+    callableId: java/lang/String.length
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -190,7 +190,7 @@ KtSyntheticJavaPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.isEmpty
+  callableId: java/lang/String.isEmpty
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -229,7 +229,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.codePointAt
+  callableId: java/lang/String.codePointAt
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -258,7 +258,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -293,7 +293,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.codePointBefore
+  callableId: java/lang/String.codePointBefore
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -322,7 +322,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -357,7 +357,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.codePointCount
+  callableId: java/lang/String.codePointCount
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -386,7 +386,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -410,7 +410,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -445,7 +445,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.offsetByCodePoints
+  callableId: java/lang/String.offsetByCodePoints
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -474,7 +474,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -498,7 +498,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -533,7 +533,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.getChars
+  callableId: java/lang/String.getChars
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -562,7 +562,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -585,7 +585,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -620,7 +620,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.getChars
+  callableId: java/lang/String.getChars
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -649,7 +649,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -673,7 +673,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -697,7 +697,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -720,7 +720,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -758,7 +758,7 @@ KtFunctionSymbol:
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
-  callableIdIfNonLocal: java/lang/String.getBytes
+  callableId: java/lang/String.getBytes
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -787,7 +787,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -811,7 +811,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -835,7 +835,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -858,7 +858,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -893,7 +893,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.getBytes
+  callableId: java/lang/String.getBytes
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -921,7 +921,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -955,7 +955,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.getBytes
+  callableId: java/lang/String.getBytes
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -983,7 +983,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1017,7 +1017,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.getBytes
+  callableId: java/lang/String.getBytes
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1055,7 +1055,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.equals
+  callableId: java/lang/String.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1084,7 +1084,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1119,7 +1119,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.contentEquals
+  callableId: java/lang/String.contentEquals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1148,7 +1148,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1182,7 +1182,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.contentEquals
+  callableId: java/lang/String.contentEquals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1211,7 +1211,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1245,7 +1245,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.equalsIgnoreCase
+  callableId: java/lang/String.equalsIgnoreCase
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1274,7 +1274,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1308,7 +1308,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.compareTo
+  callableId: java/lang/String.compareTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1337,7 +1337,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1371,7 +1371,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.compareToIgnoreCase
+  callableId: java/lang/String.compareToIgnoreCase
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1400,7 +1400,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1434,7 +1434,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.regionMatches
+  callableId: java/lang/String.regionMatches
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1463,7 +1463,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1487,7 +1487,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1510,7 +1510,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1534,7 +1534,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1569,7 +1569,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.regionMatches
+  callableId: java/lang/String.regionMatches
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1598,7 +1598,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1622,7 +1622,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1646,7 +1646,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1669,7 +1669,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1693,7 +1693,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1728,7 +1728,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.startsWith
+  callableId: java/lang/String.startsWith
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1757,7 +1757,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1780,7 +1780,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1815,7 +1815,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.startsWith
+  callableId: java/lang/String.startsWith
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1844,7 +1844,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1878,7 +1878,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.endsWith
+  callableId: java/lang/String.endsWith
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1907,7 +1907,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1941,7 +1941,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.hashCode
+  callableId: java/lang/String.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -1980,7 +1980,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.indexOf
+  callableId: java/lang/String.indexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2009,7 +2009,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2044,7 +2044,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.indexOf
+  callableId: java/lang/String.indexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2073,7 +2073,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2097,7 +2097,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2132,7 +2132,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.indexOf
+  callableId: java/lang/String.indexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2161,7 +2161,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2195,7 +2195,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.indexOf
+  callableId: java/lang/String.indexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2224,7 +2224,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2247,7 +2247,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2282,7 +2282,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.indexOfSupplementary
+  callableId: java/lang/String.indexOfSupplementary
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2311,7 +2311,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2335,7 +2335,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2370,7 +2370,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.lastIndexOf
+  callableId: java/lang/String.lastIndexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2399,7 +2399,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2434,7 +2434,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.lastIndexOf
+  callableId: java/lang/String.lastIndexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2463,7 +2463,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2487,7 +2487,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2522,7 +2522,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.lastIndexOf
+  callableId: java/lang/String.lastIndexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2551,7 +2551,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2585,7 +2585,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.lastIndexOf
+  callableId: java/lang/String.lastIndexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2614,7 +2614,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2637,7 +2637,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2672,7 +2672,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.lastIndexOfSupplementary
+  callableId: java/lang/String.lastIndexOfSupplementary
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2701,7 +2701,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2725,7 +2725,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2760,7 +2760,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.substring
+  callableId: java/lang/String.substring
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2788,7 +2788,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2823,7 +2823,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.substring
+  callableId: java/lang/String.substring
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2851,7 +2851,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2875,7 +2875,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2910,7 +2910,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.subSequence
+  callableId: java/lang/String.subSequence
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -2939,7 +2939,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2963,7 +2963,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2998,7 +2998,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.concat
+  callableId: java/lang/String.concat
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3026,7 +3026,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3060,7 +3060,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.replace
+  callableId: java/lang/String.replace
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3088,7 +3088,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3112,7 +3112,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3147,7 +3147,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.replace
+  callableId: java/lang/String.replace
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3175,7 +3175,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3198,7 +3198,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3232,7 +3232,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.matches
+  callableId: java/lang/String.matches
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3261,7 +3261,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3295,7 +3295,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.contains
+  callableId: java/lang/String.contains
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3324,7 +3324,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3358,7 +3358,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.replaceFirst
+  callableId: java/lang/String.replaceFirst
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3386,7 +3386,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3409,7 +3409,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3443,7 +3443,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.replaceAll
+  callableId: java/lang/String.replaceAll
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3471,7 +3471,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3494,7 +3494,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3528,7 +3528,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.split
+  callableId: java/lang/String.split
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3556,7 +3556,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3579,7 +3579,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3614,7 +3614,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.split
+  callableId: java/lang/String.split
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3642,7 +3642,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3676,7 +3676,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.toLowerCase
+  callableId: java/lang/String.toLowerCase
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3704,7 +3704,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3738,7 +3738,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.toLowerCase
+  callableId: java/lang/String.toLowerCase
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3776,7 +3776,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.toUpperCase
+  callableId: java/lang/String.toUpperCase
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3804,7 +3804,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3838,7 +3838,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.toUpperCase
+  callableId: java/lang/String.toUpperCase
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3876,7 +3876,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.trim
+  callableId: java/lang/String.trim
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3914,7 +3914,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.toString
+  callableId: java/lang/String.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3953,7 +3953,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.toCharArray
+  callableId: java/lang/String.toCharArray
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -3991,7 +3991,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.intern
+  callableId: java/lang/String.intern
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4029,7 +4029,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: java/lang/String.get
+  callableId: java/lang/String.get
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -4058,7 +4058,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4135,7 +4135,7 @@ KtNamedClassOrObjectSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4160,7 +4160,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4179,7 +4179,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4209,7 +4209,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4228,7 +4228,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4258,7 +4258,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4277,7 +4277,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4300,7 +4300,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4324,7 +4324,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4355,7 +4355,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4374,7 +4374,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4397,7 +4397,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4421,7 +4421,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4455,7 +4455,7 @@ KtConstructorSymbol:
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4474,7 +4474,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4497,7 +4497,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4521,7 +4521,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4545,7 +4545,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4579,7 +4579,7 @@ KtConstructorSymbol:
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4598,7 +4598,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4621,7 +4621,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4652,7 +4652,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4671,7 +4671,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4694,7 +4694,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4718,7 +4718,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4742,7 +4742,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4772,7 +4772,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4791,7 +4791,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4814,7 +4814,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4838,7 +4838,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4862,7 +4862,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4892,7 +4892,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4911,7 +4911,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4934,7 +4934,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -4964,7 +4964,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -4983,7 +4983,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5006,7 +5006,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5036,7 +5036,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5055,7 +5055,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5078,7 +5078,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5102,7 +5102,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5133,7 +5133,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5152,7 +5152,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5182,7 +5182,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5201,7 +5201,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5231,7 +5231,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5250,7 +5250,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5280,7 +5280,7 @@ KtConstructorSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5299,7 +5299,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5322,7 +5322,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5356,7 +5356,7 @@ KtConstructorSymbol:
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
   ]
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: java/lang/String
   contextReceivers: []
   hasStableParameterNames: false
@@ -5375,7 +5375,7 @@ KtConstructorSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5399,7 +5399,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -5423,7 +5423,7 @@ KtConstructorSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

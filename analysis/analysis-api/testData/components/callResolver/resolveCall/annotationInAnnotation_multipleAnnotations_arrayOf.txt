@@ -14,9 +14,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = Annotation
             symbol = vararg elements: T
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = kotlin/arrayOf
+        callableId = kotlin/arrayOf
     typeArgumentsMapping = {
       T -> (Annotation)
     }
@@ -26,11 +26,11 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = Annotation
         symbol = vararg elements: T
-        callableIdIfNonLocal = null),
+        callableId = null),
       Annotation(strings = arrayOf("v3", "v4")) -> (KtVariableLikeSignature:
         name = elements
         receiverType = null
         returnType = Annotation
         symbol = vararg elements: T
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

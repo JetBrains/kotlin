@@ -17,15 +17,15 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = @R|kotlin.ParameterName|(name = String(a)) @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
             symbol = p1: P1
-            callableIdIfNonLocal = null,
+            callableId = null,
           KtVariableLikeSignature:
             name = b
             receiverType = null
             returnType = @R|kotlin.ParameterName|(name = String(b)) @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
             symbol = p2: P2
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = kotlin/Function2.invoke
+        callableId = kotlin/Function2.invoke
     typeArgumentsMapping = {}
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
@@ -33,11 +33,11 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = @R|kotlin.ParameterName|(name = String(a)) @R|kotlin.ParameterName|(name = String(notMe))  kotlin.Int
         symbol = p1: P1
-        callableIdIfNonLocal = null),
+        callableId = null),
       "" -> (KtVariableLikeSignature:
         name = b
         receiverType = null
         returnType = @R|kotlin.ParameterName|(name = String(b)) @R|kotlin.ParameterName|(name = String(meNeither))  kotlin.String
         symbol = p2: P2
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

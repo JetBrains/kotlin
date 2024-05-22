@@ -5,7 +5,7 @@ KtBackingFieldSymbol:
     java/lang/Deprecated()
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   isExtension: false
   name: field

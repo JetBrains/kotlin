@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -39,7 +39,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -78,7 +78,7 @@ KtFunctionSymbol:
 
 KtEnumEntrySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /MyEnumClass.FirstEntry
+  callableId: /MyEnumClass.FirstEntry
   containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
   enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
@@ -99,7 +99,7 @@ KtEnumEntrySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -140,7 +140,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -157,11 +157,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: null
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: true
     hasStableParameterNames: true
@@ -225,7 +225,7 @@ KtKotlinPropertySymbol:
 
 KtEnumEntrySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /MyEnumClass.SecondEntry
+  callableId: /MyEnumClass.SecondEntry
   containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
   enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
@@ -246,7 +246,7 @@ KtEnumEntrySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -285,7 +285,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -314,7 +314,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -349,7 +349,7 @@ KtFunctionSymbol:
 
 KtEnumEntrySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /MyEnumClass.ThirdEntry
+  callableId: /MyEnumClass.ThirdEntry
   containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
   enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
@@ -370,7 +370,7 @@ KtEnumEntrySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /MyEnumClass.foo
+  callableId: /MyEnumClass.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -409,7 +409,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /MyEnumClass.foo
+  callableId: /MyEnumClass.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -438,7 +438,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -475,7 +475,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -492,11 +492,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: MyEnumClass
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /MyEnumClass.i
+  callableId: /MyEnumClass.i
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true

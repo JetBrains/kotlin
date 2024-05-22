@@ -1,7 +1,7 @@
 KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   getter: null
   hasBackingField: true

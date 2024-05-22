@@ -5,7 +5,7 @@ KtPropertyGetterSymbol:
     ExplicitGetAnnotation()
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   hasBody: true
   hasStableParameterNames: true

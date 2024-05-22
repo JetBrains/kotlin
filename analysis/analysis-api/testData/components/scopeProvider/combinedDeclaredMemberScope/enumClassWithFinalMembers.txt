@@ -1,6 +1,6 @@
 KtEnumEntrySymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/E.A
+  callableId: test/E.A
   containingEnumClassIdIfNonLocal: test/E
   contextReceivers: []
   enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
@@ -21,7 +21,7 @@ KtEnumEntrySymbol:
 
 KtEnumEntrySymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/E.B
+  callableId: test/E.B
   containingEnumClassIdIfNonLocal: test/E
   contextReceivers: []
   enumEntryInitializer: null
@@ -44,7 +44,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -61,11 +61,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: test.E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: test/E.foo
+  callableId: test/E.foo
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -133,7 +133,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/E.bar
+  callableId: test/E.bar
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -172,7 +172,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/E.values
+  callableId: test/E.values
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -212,7 +212,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/E.valueOf
+  callableId: test/E.valueOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -241,7 +241,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -273,11 +273,11 @@ KtFunctionSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: test/E.entries
+  callableId: test/E.entries
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -347,7 +347,7 @@ KtKotlinPropertySymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: test/E
   contextReceivers: []
   hasStableParameterNames: true

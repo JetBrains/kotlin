@@ -5,7 +5,7 @@ KtKotlinPropertySymbol:
   ]
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -22,11 +22,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /i
+  callableId: /i
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -88,7 +88,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -105,14 +105,14 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /i2
+  callableId: /i2
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: [
       kotlin/Deprecated(message = "don't use getter of i2")
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -174,7 +174,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -191,11 +191,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /i3
+  callableId: /i3
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -245,7 +245,7 @@ KtKotlinPropertySymbol:
       kotlin/Deprecated(message = "don't use getter of i3")
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -257,7 +257,7 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     parameter: KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -289,7 +289,7 @@ KtKotlinPropertySymbol:
     valueParameters: [
       KtValueParameterSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -333,7 +333,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -350,14 +350,14 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /i4
+  callableId: /i4
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: [
       kotlin/Deprecated(message = "don't use getter of i4")
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -407,7 +407,7 @@ KtKotlinPropertySymbol:
       kotlin/Deprecated(message = "don't use setter of i4")
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -419,7 +419,7 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     parameter: KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -451,7 +451,7 @@ KtKotlinPropertySymbol:
     valueParameters: [
       KtValueParameterSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -496,7 +496,7 @@ KtFunctionSymbol:
     kotlin/Deprecated(message = "don't use f")
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: /f
+  callableId: /f
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -569,7 +569,7 @@ KtKotlinPropertySymbol:
   ]
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -586,11 +586,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: Foo
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /Foo.i2
+  callableId: /Foo.i2
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -661,7 +661,7 @@ KtFunctionSymbol:
     kotlin/Deprecated(message = "don't use f2")
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: /Foo.f2
+  callableId: /Foo.f2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -735,7 +735,7 @@ KtKotlinPropertySymbol:
   ]
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -752,11 +752,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /j
+  callableId: /j
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -821,7 +821,7 @@ KtKotlinPropertySymbol:
   ]
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -838,11 +838,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /j2
+  callableId: /j2
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -907,7 +907,7 @@ KtKotlinPropertySymbol:
       java/lang/Deprecated()
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -924,11 +924,11 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: DeprecatedKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
-  callableIdIfNonLocal: /j3
+  callableId: /j3
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true

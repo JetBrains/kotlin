@@ -17,7 +17,7 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = var i: kotlin.Int
-        callableIdIfNonLocal = /A.i
+        callableId = /A.i
     simpleAccess = Write:
       value = 1
     typeArgumentsMapping = {}

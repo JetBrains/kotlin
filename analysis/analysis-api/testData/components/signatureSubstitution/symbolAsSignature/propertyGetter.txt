@@ -8,4 +8,4 @@ KtFunctionLikeSignature:
   returnType = kotlin.Int
   symbol = <getter>(): kotlin.Int
   valueParameters = []
-  callableIdIfNonLocal = null
+  callableId = null

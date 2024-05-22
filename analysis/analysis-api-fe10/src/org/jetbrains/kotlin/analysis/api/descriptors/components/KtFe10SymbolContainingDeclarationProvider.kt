@@ -110,7 +110,7 @@ internal class KaFe10SymbolContainingDeclarationProvider(
                         ?.javaFileFacadeFqName?.asString()
                 } else {
                     val classId = (containingSymbolOrSelf as? KaConstructorSymbol)?.containingClassIdIfNonLocal
-                        ?: (containingSymbolOrSelf as? KaCallableSymbol)?.callableIdIfNonLocal?.classId
+                        ?: (containingSymbolOrSelf as? KaCallableSymbol)?.callableId?.classId
                     classId?.takeUnless { it.shortClassName.isSpecial }
                         ?.asFqNameString()
                 }

@@ -60,7 +60,7 @@ internal class KaFirSamConstructorSymbol(
 
     override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
 
-    override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
+    override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }

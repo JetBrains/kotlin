@@ -33,7 +33,7 @@ scopes:
     callables: 1
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: other/b
+        callableId: other/b
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

@@ -11,7 +11,7 @@ KtSuccessCallInfo:
         receiverType = CInt32VarX<kotlin.Int>
         returnType = kotlin.Int
         symbol = var value: T
-        callableIdIfNonLocal = /value
+        callableId = /value
     simpleAccess = Write:
       value = 42
     typeArgumentsMapping = {

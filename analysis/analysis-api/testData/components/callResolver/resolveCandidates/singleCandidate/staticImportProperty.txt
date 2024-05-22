@@ -34,7 +34,7 @@ KtApplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = val bar: kotlin.Int
-        callableIdIfNonLocal = one/two/TopLevelObject.bar
+        callableId = one/two/TopLevelObject.bar
     simpleAccess = Read:
 
     typeArgumentsMapping = {}

@@ -13,7 +13,7 @@ scopes:
     callables: 1
       KtValueParameterSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false
@@ -41,7 +41,7 @@ scopes:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -54,11 +54,11 @@ scopes:
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
-        callableIdIfNonLocal: test/Child.constructorProp
+        callableId: test/Child.constructorProp
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -105,7 +105,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: test/Child.childMember
+        callableId: test/Child.childMember
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -137,7 +137,7 @@ scopes:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -150,11 +150,11 @@ scopes:
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
-        callableIdIfNonLocal: test/Child.childProp
+        callableId: test/Child.childProp
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -203,7 +203,7 @@ scopes:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -216,11 +216,11 @@ scopes:
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
-        callableIdIfNonLocal: test/Base.value
+        callableId: test/Base.value
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -267,7 +267,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: test/Base.baseMember
+        callableId: test/Base.baseMember
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -299,7 +299,7 @@ scopes:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -312,11 +312,11 @@ scopes:
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
-        callableIdIfNonLocal: test/Base.baseProp
+        callableId: test/Base.baseProp
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -363,7 +363,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.equals
+        callableId: kotlin/Any.equals
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -392,7 +392,7 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -414,7 +414,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.hashCode
+        callableId: kotlin/Any.hashCode
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -444,7 +444,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.toString
+        callableId: kotlin/Any.toString
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -475,7 +475,7 @@ scopes:
     constructors: 1
       KtConstructorSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         containingClassIdIfNonLocal: test/Child
         contextReceivers: []
         hasStableParameterNames: true
@@ -494,13 +494,13 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
               annotationsList: []
               backingFieldSymbol: KtBackingFieldSymbol:
                 annotationsList: []
-                callableIdIfNonLocal: null
+                callableId: null
                 contextReceivers: []
                 isExtension: false
                 name: field
@@ -513,11 +513,11 @@ scopes:
                   type: kotlin/Int
                 symbolKind: LOCAL
                 typeParameters: []
-              callableIdIfNonLocal: test/Child.constructorProp
+              callableId: test/Child.constructorProp
               contextReceivers: []
               getter: KtPropertyGetterSymbol:
                 annotationsList: []
-                callableIdIfNonLocal: null
+                callableId: null
                 contextReceivers: []
                 hasBody: false
                 hasStableParameterNames: true
@@ -579,7 +579,7 @@ scopes:
             typeParameters: []
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false

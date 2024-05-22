@@ -13,9 +13,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = kotlin.String
             symbol = name: kotlin.String
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = null
+        callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
       "Foo" -> (KtVariableLikeSignature:
@@ -23,5 +23,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = kotlin.String
         symbol = name: kotlin.String
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

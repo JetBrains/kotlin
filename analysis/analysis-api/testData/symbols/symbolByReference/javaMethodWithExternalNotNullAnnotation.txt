@@ -3,7 +3,7 @@ KtFunctionSymbol:
     org/jetbrains/annotations/NotNull()
       psi: null
   ]
-  callableIdIfNonLocal: /JavaClass.foo
+  callableId: /JavaClass.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false

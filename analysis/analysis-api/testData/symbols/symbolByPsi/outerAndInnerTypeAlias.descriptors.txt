@@ -182,7 +182,7 @@ KtTypeAliasSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -251,7 +251,7 @@ KtNamedClassOrObjectSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -320,7 +320,7 @@ KtNamedClassOrObjectSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /A.check
+  callableId: /A.check
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

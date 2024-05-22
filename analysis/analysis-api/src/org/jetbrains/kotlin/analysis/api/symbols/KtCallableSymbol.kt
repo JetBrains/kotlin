@@ -14,7 +14,14 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.CallableId
 
 public sealed class KaCallableSymbol : KaSymbolWithKind, KaPossibleMemberSymbol, KaDeclarationSymbol, KaContextReceiversOwner {
-    public abstract val callableIdIfNonLocal: CallableId?
+    /**
+     * The callable's [CallableId] if it exists, or `null` otherwise (e.g. when the callable is local).
+     */
+    public abstract val callableId: CallableId?
+
+    @Deprecated("Use `callableId` instead.", ReplaceWith("callableId"))
+    public val callableIdIfNonLocal: CallableId? get() = callableId
+
     public abstract val returnType: KaType
 
     public abstract val receiverParameter: KaReceiverParameterSymbol?

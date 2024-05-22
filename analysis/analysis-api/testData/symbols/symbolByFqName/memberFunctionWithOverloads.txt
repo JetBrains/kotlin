@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.listIterator
+  callableId: kotlin/collections/List.listIterator
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -47,7 +47,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.listIterator
+  callableId: kotlin/collections/List.listIterator
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -80,7 +80,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

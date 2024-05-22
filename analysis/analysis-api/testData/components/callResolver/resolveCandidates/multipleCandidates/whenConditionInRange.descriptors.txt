@@ -17,9 +17,9 @@ KtApplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = int: kotlin.Int
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /contains
+        callableId = /contains
     typeArgumentsMapping = {
       T -> (MyClass)
     }
@@ -29,6 +29,6 @@ KtApplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = int: kotlin.Int
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = true

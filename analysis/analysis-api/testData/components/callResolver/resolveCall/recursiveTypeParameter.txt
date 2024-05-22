@@ -40,9 +40,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
             symbol = builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /AbstractModule.install
+        callableId = /AbstractModule.install
     typeArgumentsMapping = {}
     argumentMapping = {
       CoroutineModule.builder() -> (KtVariableLikeSignature:
@@ -50,5 +50,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
         symbol = builder: ft<AbstractModule.Builder<*>, AbstractModule.Builder<*>?>
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

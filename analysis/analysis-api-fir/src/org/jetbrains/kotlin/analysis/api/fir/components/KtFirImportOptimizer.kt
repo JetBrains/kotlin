@@ -301,7 +301,7 @@ internal class KaFirImportOptimizer(
                 buildList {
                     when (symbol) {
                         is KaCallableSymbol -> {
-                            val callableId = symbol.callableIdIfNonLocal ?: return emptyList()
+                            val callableId = symbol.callableId ?: return emptyList()
                             val fqName = callableId.asSingleFqName()
                             val classFqName = callableId.classId?.asSingleFqName()
                             // either it is a member declaration

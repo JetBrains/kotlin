@@ -1,11 +1,11 @@
 KtSyntheticJavaPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /Derived.something
+  callableId: /Derived.something
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: /Derived.getSomething
+    callableId: /Derived.getSomething
     contextReceivers: []
     hasBody: true
     hasStableParameterNames: true
@@ -54,7 +54,7 @@ KtSyntheticJavaPropertySymbol:
     type: kotlin/String
   setter: KtPropertySetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: /Derived.setSomething
+    callableId: /Derived.setSomething
     contextReceivers: []
     hasBody: true
     hasStableParameterNames: true
@@ -66,7 +66,7 @@ KtSyntheticJavaPropertySymbol:
     origin: JAVA_SYNTHETIC_PROPERTY
     parameter: KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -98,7 +98,7 @@ KtSyntheticJavaPropertySymbol:
     valueParameters: [
       KtValueParameterSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false

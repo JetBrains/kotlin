@@ -1,24 +1,24 @@
 KtFunctionSymbol:
-  callableIdIfNonLocal: null
+  callableId: null
   name: noGenerics
   origin: SOURCE
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: null
+  callableId: null
   name: withOuter
   origin: SOURCE
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.equals
+  callableId: kotlin/Any.equals
   name: equals
   origin: LIBRARY
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.hashCode
+  callableId: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.toString
+  callableId: kotlin/Any.toString
   name: toString
   origin: LIBRARY

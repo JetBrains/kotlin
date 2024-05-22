@@ -5,7 +5,7 @@ KtPropertySetterSymbol:
     ExplicitSetAnnotation()
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   hasBody: true
   hasStableParameterNames: true
@@ -22,7 +22,7 @@ KtPropertySetterSymbol:
       SetparamAnnotation()
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     generatedPrimaryConstructorProperty: null
     hasDefaultValue: false
@@ -59,7 +59,7 @@ KtPropertySetterSymbol:
         SetparamAnnotation()
           psi: KtAnnotationEntry
       ]
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

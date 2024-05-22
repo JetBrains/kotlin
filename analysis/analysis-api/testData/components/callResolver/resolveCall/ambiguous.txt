@@ -15,9 +15,9 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Char
               symbol = a: kotlin.Char
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = /function
+          callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
@@ -25,7 +25,7 @@ KtErrorCallInfo:
           receiverType = null
           returnType = kotlin.Char
           symbol = a: kotlin.Char
-          callableIdIfNonLocal = null)
+          callableId = null)
       },
     KtSimpleFunctionCall:
       isImplicitInvoke = false
@@ -42,9 +42,9 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = /function
+          callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
@@ -52,7 +52,7 @@ KtErrorCallInfo:
           receiverType = null
           returnType = kotlin.Boolean
           symbol = b: kotlin.Boolean
-          callableIdIfNonLocal = null)
+          callableId = null)
       },
     KtSimpleFunctionCall:
       isImplicitInvoke = false
@@ -69,9 +69,9 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.String
               symbol = c: kotlin.String
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = /function
+          callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
@@ -79,7 +79,7 @@ KtErrorCallInfo:
           receiverType = null
           returnType = kotlin.String
           symbol = c: kotlin.String
-          callableIdIfNonLocal = null)
+          callableId = null)
       }
   ]
   diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:

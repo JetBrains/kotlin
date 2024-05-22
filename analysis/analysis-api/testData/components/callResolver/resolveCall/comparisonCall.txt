@@ -17,9 +17,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = other: kotlin.Int
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = kotlin/Int.compareTo
+        callableId = kotlin/Int.compareTo
     typeArgumentsMapping = {}
     argumentMapping = {
       j -> (KtVariableLikeSignature:
@@ -27,5 +27,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = other: kotlin.Int
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

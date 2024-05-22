@@ -15,9 +15,9 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Int
               symbol = p1: kotlin.Int
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = null
+          callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
         s -> (KtVariableLikeSignature:
@@ -25,7 +25,7 @@ KtErrorCallInfo:
           receiverType = null
           returnType = kotlin.Int
           symbol = p1: kotlin.Int
-          callableIdIfNonLocal = null)
+          callableId = null)
       }
   ]
   diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>

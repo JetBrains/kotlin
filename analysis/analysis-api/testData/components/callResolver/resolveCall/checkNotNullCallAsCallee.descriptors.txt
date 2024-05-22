@@ -14,9 +14,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = kotlin.Function0<kotlin.Unit>?
             symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
     typeArgumentsMapping = {
       <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.Function0<kotlin.Unit>)
     }
@@ -26,5 +26,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = kotlin.Function0<kotlin.Unit>?
         symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

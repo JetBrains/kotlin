@@ -1,6 +1,6 @@
 KtJavaFieldSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /JavaClass.field
+  callableId: /JavaClass.field
   contextReceivers: []
   isExtension: false
   isStatic: false
@@ -27,7 +27,7 @@ KtJavaFieldSymbol:
 
 KtJavaFieldSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /JavaClass.field2
+  callableId: /JavaClass.field2
   contextReceivers: []
   isExtension: false
   isStatic: false
@@ -53,7 +53,7 @@ KtJavaFieldSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
+  callableId: kotlin/Any.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -82,7 +82,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -117,7 +117,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+  callableId: kotlin/Any.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -156,7 +156,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
+  callableId: kotlin/Any.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -195,7 +195,7 @@ KtFunctionSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: JavaClass
   contextReceivers: []
   hasStableParameterNames: false

@@ -35,6 +35,6 @@ KtSuccessCallInfo:
         returnType = kotlin.Unit
         symbol = one/two/TopLevelObject.Nested.foo(<dispatch receiver>: one.two.TopLevelObject.Nested): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = one/two/TopLevelObject.Nested.foo
+        callableId = one/two/TopLevelObject.Nested.foo
     typeArgumentsMapping = {}
     argumentMapping = {}

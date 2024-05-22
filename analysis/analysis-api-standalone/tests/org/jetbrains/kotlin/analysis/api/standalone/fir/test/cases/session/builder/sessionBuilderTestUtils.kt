@@ -41,7 +41,7 @@ fun KtCallExpression.assertIsCallOf(callableId: CallableId) {
         Assertions.assertInstanceOf(KaSuccessCallInfo::class.java, ktCallInfo); ktCallInfo as KaSuccessCallInfo
         val symbol = ktCallInfo.successfulFunctionCallOrNull()?.symbol
         Assertions.assertInstanceOf(KaFunctionSymbol::class.java, symbol); symbol as KaFunctionSymbol
-        Assertions.assertEquals(callableId, symbol.callableIdIfNonLocal)
+        Assertions.assertEquals(callableId, symbol.callableId)
     }
 }
 

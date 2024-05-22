@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.sir.providers.impl
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildExtension
 import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
@@ -31,7 +29,7 @@ public class SirParentProviderImpl(
             // top level function. -> parent is either extension for package, of plain module in case of <root> package
             val packageFqName = when (symbol) {
                 is KtNamedClassOrObjectSymbol -> symbol.classIdIfNonLocal?.packageFqName
-                is KtCallableSymbol -> symbol.callableIdIfNonLocal?.packageName
+                is KtCallableSymbol -> symbol.callableId?.packageName
                 is KtTypeAliasSymbol -> symbol.classIdIfNonLocal?.packageFqName
                 else -> null
             } ?: error("encountered unknown origin: $symbol. This exception should be reworked during KT-65980")

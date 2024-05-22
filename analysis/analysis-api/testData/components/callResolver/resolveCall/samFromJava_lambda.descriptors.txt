@@ -17,15 +17,15 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = test.pkg.MyInterface!
             symbol = actor: test.pkg.MyInterface!
-            callableIdIfNonLocal = null,
+            callableId = null,
           KtVariableLikeSignature:
             name = actors
             receiverType = null
             returnType = (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
             symbol = actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = test/pkg/MyHandler.stash
+        callableId = test/pkg/MyHandler.stash
     typeArgumentsMapping = {}
     argumentMapping = {
       lambda -> (KtVariableLikeSignature:
@@ -33,11 +33,11 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = test.pkg.MyInterface!
         symbol = actor: test.pkg.MyInterface!
-        callableIdIfNonLocal = null),
+        callableId = null),
       list -> (KtVariableLikeSignature:
         name = actors
         receiverType = null
         returnType = (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
         symbol = actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

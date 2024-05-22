@@ -12,7 +12,7 @@ KtTypeParameterSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /foo
+  callableId: /foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -43,7 +43,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false

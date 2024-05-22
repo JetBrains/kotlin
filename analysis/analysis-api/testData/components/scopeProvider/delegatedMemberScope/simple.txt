@@ -1,7 +1,7 @@
 KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /A.zoo
+  callableId: /A.zoo
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -55,7 +55,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /A.foo
+  callableId: /A.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -95,7 +95,7 @@ KtFunctionSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /A.foo
+  callableId: /A.foo
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -139,7 +139,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /A.smth
+  callableId: /A.smth
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -189,7 +189,7 @@ KtFunctionSymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /A.bar
+  callableId: /A.bar
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -234,7 +234,7 @@ KtKotlinPropertySymbol:
 KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /A.doo
+  callableId: /A.doo
   contextReceivers: []
   getter: null
   hasBackingField: false

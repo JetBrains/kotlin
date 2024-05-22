@@ -17,15 +17,15 @@ KtApplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
             symbol = keySelector: kotlin.Function1<T, K>
-            callableIdIfNonLocal = null,
+            callableId = null,
           KtVariableLikeSignature:
             name = valueTransform
             receiverType = null
             returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
             symbol = valueTransform: kotlin.Function1<T, V>
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = kotlin/collections/groupBy
+        callableId = kotlin/collections/groupBy
     typeArgumentsMapping = {
       T -> (kotlin.collections.IndexedValue<kotlin.Int>),
       K -> (kotlin.Int),
@@ -37,13 +37,13 @@ KtApplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
         symbol = keySelector: kotlin.Function1<T, K>
-        callableIdIfNonLocal = null),
+        callableId = null),
       { (idx, _) -> idx } -> (KtVariableLikeSignature:
         name = valueTransform
         receiverType = null
         returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
         symbol = valueTransform: kotlin.Function1<T, V>
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = true
 
@@ -67,9 +67,9 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
             symbol = keySelector: kotlin.Function1<T, K>
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = kotlin/collections/groupBy
+        callableId = kotlin/collections/groupBy
     typeArgumentsMapping = {
       T -> (kotlin.collections.IndexedValue<kotlin.Int>),
       K -> (kotlin.Int)
@@ -80,7 +80,7 @@ KtInapplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
         symbol = keySelector: kotlin.Function1<T, K>
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = false
 
@@ -104,15 +104,15 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.collections.IndexedValue<kotlin.Int>>
             symbol = keySelector: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, K>
-            callableIdIfNonLocal = null,
+            callableId = null,
           KtVariableLikeSignature:
             name = valueTransform
             receiverType = null
             returnType = kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.Int>
             symbol = valueTransform: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.Int>
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /groupBy
+        callableId = /groupBy
     typeArgumentsMapping = {
       K -> (kotlin.collections.IndexedValue<kotlin.Int>)
     }
@@ -122,12 +122,12 @@ KtInapplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.collections.IndexedValue<kotlin.Int>>
         symbol = keySelector: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, K>
-        callableIdIfNonLocal = null),
+        callableId = null),
       { (idx, _) -> idx } -> (KtVariableLikeSignature:
         name = valueTransform
         receiverType = null
         returnType = kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.Int>
         symbol = valueTransform: kotlin.Function1<kotlin.Pair<kotlin.Int, kotlin.Int>, kotlin.Int>
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = false

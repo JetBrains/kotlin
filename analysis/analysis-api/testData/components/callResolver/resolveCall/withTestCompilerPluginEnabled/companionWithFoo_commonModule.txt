@@ -12,6 +12,6 @@ KtSuccessCallInfo:
         returnType = kotlin.Int
         symbol = test/WithGeneratedCompanion.Companion.foo(<dispatch receiver>: test.WithGeneratedCompanion.Companion): kotlin.Int
         valueParameters = []
-        callableIdIfNonLocal = test/WithGeneratedCompanion.Companion.foo
+        callableId = test/WithGeneratedCompanion.Companion.foo
     typeArgumentsMapping = {}
     argumentMapping = {}

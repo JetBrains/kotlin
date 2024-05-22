@@ -68,7 +68,7 @@ internal class KaFe10PsiPropertySetterSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
 
-    override val callableIdIfNonLocal: CallableId?
+    override val callableId: CallableId?
         get() = withValidityAssertion { null }
 
     override val returnType: KaType

@@ -10,4 +10,4 @@ KtVariableLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = var foo: kotlin.Int
-  callableIdIfNonLocal = /foo
+  callableId = /foo

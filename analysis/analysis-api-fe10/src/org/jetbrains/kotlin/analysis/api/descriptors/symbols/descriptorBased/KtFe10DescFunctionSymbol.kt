@@ -93,7 +93,7 @@ internal class KaFe10DescFunctionSymbol private constructor(
         get() = withValidityAssertion { descriptor.isTailrec }
 
     override val isBuiltinFunctionInvoke: Boolean
-        get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
+        get() = withValidityAssertion { callableId in kotlinFunctionInvokeCallableIds }
 
     override val isActual: Boolean
         get() = withValidityAssertion { descriptor.isActual }
@@ -113,7 +113,7 @@ internal class KaFe10DescFunctionSymbol private constructor(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { descriptor.ktHasStableParameterNames }
 
-    override val callableIdIfNonLocal: CallableId?
+    override val callableId: CallableId?
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
 
     override val returnType: KaType

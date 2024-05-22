@@ -8,7 +8,7 @@ KtKotlinPropertySymbol:
       FieldAnnotation()
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -25,14 +25,14 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: PropertyWithAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /prop
+  callableId: /prop
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: [
       GetAnnotation()
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -82,7 +82,7 @@ KtKotlinPropertySymbol:
       SetAnnotation()
         psi: KtAnnotationEntry
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -97,7 +97,7 @@ KtKotlinPropertySymbol:
         SetparamAnnotation()
           psi: KtAnnotationEntry
       ]
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -132,7 +132,7 @@ KtKotlinPropertySymbol:
           SetparamAnnotation()
             psi: KtAnnotationEntry
         ]
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDefaultValue: false

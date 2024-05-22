@@ -9,7 +9,7 @@ KtApplicableCallCandidateInfo:
         returnType = kotlin.Unit
         symbol = /Dependency.Nested.foo(): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = /Dependency.Nested.foo
+        callableId = /Dependency.Nested.foo
     typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = true
@@ -31,9 +31,9 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = i: kotlin.Int
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /Dependency.Nested.foo
+        callableId = /Dependency.Nested.foo
     typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = false

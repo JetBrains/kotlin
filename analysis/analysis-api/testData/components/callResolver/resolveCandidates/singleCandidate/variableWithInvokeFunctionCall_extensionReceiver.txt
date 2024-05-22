@@ -12,7 +12,7 @@ KtApplicableCallCandidateInfo:
         returnType = kotlin.Unit
         symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = /invoke
+        callableId = /invoke
     typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = true

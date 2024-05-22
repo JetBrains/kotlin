@@ -17,9 +17,9 @@ KtApplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
             symbol = action: kotlin.Function1<T, kotlin.Unit>
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = kotlin/collections/forEach
+        callableId = kotlin/collections/forEach
     typeArgumentsMapping = {
       T -> (kotlin.Int)
     }
@@ -29,7 +29,7 @@ KtApplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
         symbol = action: kotlin.Function1<T, kotlin.Unit>
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = true
 
@@ -53,9 +53,9 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
             symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /forEach
+        callableId = /forEach
     typeArgumentsMapping = {}
     argumentMapping = {
       { } -> (KtVariableLikeSignature:
@@ -63,6 +63,6 @@ KtInapplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
         symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = false

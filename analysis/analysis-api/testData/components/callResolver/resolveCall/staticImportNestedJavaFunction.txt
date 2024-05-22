@@ -35,6 +35,6 @@ KtSuccessCallInfo:
         returnType = kotlin.Unit
         symbol = /Dependency.Nested.foo(): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = /Dependency.Nested.foo
+        callableId = /Dependency.Nested.foo
     typeArgumentsMapping = {}
     argumentMapping = {}

@@ -16,6 +16,6 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.collections.List<kotlin.Long>
       symbol = x: kotlin.collections.List<B>
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = /fooo
+  callableId = /fooo

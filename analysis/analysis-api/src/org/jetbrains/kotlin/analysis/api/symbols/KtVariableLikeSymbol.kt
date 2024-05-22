@@ -40,7 +40,7 @@ public abstract class KaBackingFieldSymbol : KaVariableLikeSymbol() {
     final override val psi: PsiElement? get() = withValidityAssertion { null }
     final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.LOCAL }
     override val origin: KaSymbolOrigin get() = withValidityAssertion { KaSymbolOrigin.PROPERTY_BACKING_FIELD }
-    final override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { null }
+    final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
@@ -220,7 +220,7 @@ public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
 public typealias KtSyntheticJavaPropertySymbol = KaSyntheticJavaPropertySymbol
 
 public abstract class KaLocalVariableSymbol : KaVariableSymbol(), KaSymbolWithKind {
-    final override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { null }
+    final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
@@ -240,7 +240,7 @@ public typealias KtParameterSymbol = KaParameterSymbol
 
 public abstract class KaValueParameterSymbol : KaVariableLikeSymbol(), KaParameterSymbol, KaSymbolWithKind, KaAnnotatedSymbol {
     final override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.LOCAL }
-    final override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { null }
+    final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }

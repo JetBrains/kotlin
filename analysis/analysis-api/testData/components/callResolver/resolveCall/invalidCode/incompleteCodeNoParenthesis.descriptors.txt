@@ -9,6 +9,6 @@ KtSuccessCallInfo:
         returnType = ALE<kotlin.String>
         symbol = <constructor>(): ALE<T>
         valueParameters = []
-        callableIdIfNonLocal = null
+        callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {}

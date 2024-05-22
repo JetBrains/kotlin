@@ -13,7 +13,7 @@ scopes:
     callables: 1
       KtLocalVariableSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         isExtension: false
         isVal: true
@@ -42,7 +42,7 @@ scopes:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -55,11 +55,11 @@ scopes:
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -106,7 +106,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -136,7 +136,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.equals
+        callableId: kotlin/Any.equals
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -165,7 +165,7 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -187,7 +187,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.hashCode
+        callableId: kotlin/Any.hashCode
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -217,7 +217,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.toString
+        callableId: kotlin/Any.toString
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -248,7 +248,7 @@ scopes:
     constructors: 1
       KtConstructorSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         containingClassIdIfNonLocal: null
         contextReceivers: []
         hasStableParameterNames: true
@@ -298,7 +298,7 @@ scopes:
     callables: 1
       KtLocalVariableSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         isExtension: false
         isVal: true
@@ -349,7 +349,7 @@ scopes:
     callables: 1
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: /z
+        callableId: /z
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

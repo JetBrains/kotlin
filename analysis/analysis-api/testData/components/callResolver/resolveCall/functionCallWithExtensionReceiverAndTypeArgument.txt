@@ -17,9 +17,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = a: B
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /function
+        callableId = /function
     typeArgumentsMapping = {
       A -> (kotlin.String),
       B -> (kotlin.Int)
@@ -30,5 +30,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = a: B
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

@@ -1,79 +1,79 @@
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.iterator
+  callableId: java/util/Collection.iterator
   name: iterator
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.equals
+  callableId: kotlin/Any.equals
   name: equals
   origin: LIBRARY
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.hashCode
+  callableId: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: kotlin/Any.toString
+  callableId: kotlin/Any.toString
   name: toString
   origin: LIBRARY
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.size
+  callableId: java/util/Collection.size
   name: size
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.isEmpty
+  callableId: java/util/Collection.isEmpty
   name: isEmpty
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.contains
+  callableId: java/util/Collection.contains
   name: contains
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.toArray
+  callableId: java/util/Collection.toArray
   name: toArray
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.toArray
+  callableId: java/util/Collection.toArray
   name: toArray
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.add
+  callableId: java/util/Collection.add
   name: add
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.remove
+  callableId: java/util/Collection.remove
   name: remove
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.containsAll
+  callableId: java/util/Collection.containsAll
   name: containsAll
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.addAll
+  callableId: java/util/Collection.addAll
   name: addAll
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.removeAll
+  callableId: java/util/Collection.removeAll
   name: removeAll
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.retainAll
+  callableId: java/util/Collection.retainAll
   name: retainAll
   origin: JAVA
 
 KtFunctionSymbol:
-  callableIdIfNonLocal: java/util/Collection.clear
+  callableId: java/util/Collection.clear
   name: clear
   origin: JAVA

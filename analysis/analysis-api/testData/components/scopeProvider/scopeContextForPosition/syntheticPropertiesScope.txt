@@ -19,7 +19,7 @@ scopes:
     callables: 5
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: /JavaClass.getValue
+        callableId: /JavaClass.getValue
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
@@ -48,7 +48,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.equals
+        callableId: kotlin/Any.equals
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -77,7 +77,7 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -99,7 +99,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.hashCode
+        callableId: kotlin/Any.hashCode
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -129,7 +129,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.toString
+        callableId: kotlin/Any.toString
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -160,11 +160,11 @@ scopes:
       KtSyntheticJavaPropertySymbol:
         annotationsList: []
         backingFieldSymbol: null
-        callableIdIfNonLocal: /JavaClass.value
+        callableId: /JavaClass.value
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: /JavaClass.getValue
+          callableId: /JavaClass.getValue
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -208,7 +208,7 @@ scopes:
     constructors: 1
       KtConstructorSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         containingClassIdIfNonLocal: JavaClass
         contextReceivers: []
         hasStableParameterNames: false
@@ -263,7 +263,7 @@ scopes:
     callables: 1
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: /test
+        callableId: /test
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

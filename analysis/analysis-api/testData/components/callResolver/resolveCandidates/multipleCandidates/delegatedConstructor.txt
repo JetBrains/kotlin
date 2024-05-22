@@ -10,7 +10,7 @@ KtInapplicableCallCandidateInfo:
         returnType = A
         symbol = <constructor>(): A
         valueParameters = []
-        callableIdIfNonLocal = null
+        callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = false
@@ -32,9 +32,9 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.String
             symbol = p: kotlin.String
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = null
+        callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = false
@@ -55,9 +55,9 @@ KtApplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = x: kotlin.Int
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = null
+        callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
       5 -> (KtVariableLikeSignature:
@@ -65,6 +65,6 @@ KtApplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = x: kotlin.Int
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = true

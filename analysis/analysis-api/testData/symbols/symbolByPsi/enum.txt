@@ -1,6 +1,6 @@
 KtEnumEntrySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /X.Y
+  callableId: /X.Y
   containingEnumClassIdIfNonLocal: X
   contextReceivers: []
   enumEntryInitializer: null
@@ -21,7 +21,7 @@ KtEnumEntrySymbol:
 
 KtEnumEntrySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /X.Z
+  callableId: /X.Z
   containingEnumClassIdIfNonLocal: X
   contextReceivers: []
   enumEntryInitializer: null

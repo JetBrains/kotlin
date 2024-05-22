@@ -1,6 +1,6 @@
 KtBackingFieldSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   isExtension: false
   name: field

@@ -13,6 +13,6 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = value: kotlin.Int
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = null
+  callableId = null

@@ -12,6 +12,6 @@ KtSuccessCallInfo:
         returnType = test.MyClass
         symbol = test/MyClass.materialize(<dispatch receiver>: test.MyClass): test.MyClass
         valueParameters = []
-        callableIdIfNonLocal = test/MyClass.materialize
+        callableId = test/MyClass.materialize
     typeArgumentsMapping = {}
     argumentMapping = {}

@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/fooApi3
+  callableId: library/api/fooApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -35,7 +35,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/internalFooApi3
+  callableId: library/api/internalFooApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -70,7 +70,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/privateFooApi3
+  callableId: library/api/privateFooApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -105,7 +105,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/barApi3
+  callableId: library/api/barApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -150,7 +150,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/internalBarApi3
+  callableId: library/api/internalBarApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -195,7 +195,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/privateBarApi3
+  callableId: library/api/privateBarApi3
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -240,7 +240,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/fooApi2
+  callableId: library/api/fooApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -275,7 +275,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/internalFooApi2
+  callableId: library/api/internalFooApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -310,7 +310,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/privateFooApi2
+  callableId: library/api/privateFooApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -345,7 +345,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/barApi2
+  callableId: library/api/barApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -390,7 +390,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/internalBarApi2
+  callableId: library/api/internalBarApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -435,7 +435,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/privateBarApi2
+  callableId: library/api/privateBarApi2
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -480,7 +480,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/fooApi1
+  callableId: library/api/fooApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -515,7 +515,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/internalFooApi1
+  callableId: library/api/internalFooApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -550,7 +550,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/privateFooApi1
+  callableId: library/api/privateFooApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -585,7 +585,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/barApi1
+  callableId: library/api/barApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -630,7 +630,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/internalBarApi1
+  callableId: library/api/internalBarApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -675,7 +675,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: library/api/privateBarApi1
+  callableId: library/api/privateBarApi1
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

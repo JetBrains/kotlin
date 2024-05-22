@@ -1,7 +1,7 @@
 Inital from Sources of main:
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /foo
+  callableId: /foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

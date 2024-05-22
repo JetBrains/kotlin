@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: one/two/TopLevelObject.foo
+  callableId: one/two/TopLevelObject.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

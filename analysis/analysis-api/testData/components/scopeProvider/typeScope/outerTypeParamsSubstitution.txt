@@ -12,21 +12,21 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = x: X
-      callableIdIfNonLocal = null,
+      callableId = null,
     KtVariableLikeSignature:
       name = y
       receiverType = null
       returnType = Y
       symbol = y: Y
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = /A.foo
+  callableId = /A.foo
 KtVariableLikeSignature:
   name = map
   receiverType = null
   returnType = kotlin.collections.Map<kotlin.Int, kotlin.String>
   symbol = val map: kotlin.collections.Map<X, kotlin.String>
-  callableIdIfNonLocal = /A.map
+  callableId = /A.map
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Boolean
@@ -37,27 +37,27 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.Any?
       symbol = other: kotlin.Any?
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = kotlin/Any.equals
+  callableId = kotlin/Any.equals
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
-  callableIdIfNonLocal = kotlin/Any.hashCode
+  callableId = kotlin/Any.hashCode
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
   valueParameters = []
-  callableIdIfNonLocal = kotlin/Any.toString
+  callableId = kotlin/Any.toString
 
 
 Declaration Scope:
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /A.foo
+  callableId: /A.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -95,7 +95,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -114,7 +114,7 @@ KtFunctionSymbol:
       typeParameters: []
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -137,7 +137,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -158,11 +158,11 @@ KtKotlinPropertySymbol:
       type: kotlin/collections/Map<X, kotlin/String>
     symbolKind: LOCAL
     typeParameters: []
-  callableIdIfNonLocal: /A.map
+  callableId: /A.map
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -225,7 +225,7 @@ KtKotlinPropertySymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
+  callableId: kotlin/Any.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -254,7 +254,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -276,7 +276,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+  callableId: kotlin/Any.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -306,7 +306,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
+  callableId: kotlin/Any.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

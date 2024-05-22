@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.callableIdIfNonLocal
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.callableId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.createErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -45,8 +45,8 @@ internal class KaFe10PsiEnumEntrySymbol(
             return containingClass.getClassId()
         }
 
-    override val callableIdIfNonLocal: CallableId?
-        get() = withValidityAssertion { psi.callableIdIfNonLocal }
+    override val callableId: CallableId?
+        get() = withValidityAssertion { psi.callableId }
 
     override val returnType: KaType
         get() = withValidityAssertion {

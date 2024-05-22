@@ -3,7 +3,7 @@ KtFunctionSymbol:
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: /referenceReceiverInContract
+  callableId: /referenceReceiverInContract
   contextReceivers: []
   contractEffects: [
     KtContractConditionalContractEffectDeclaration:

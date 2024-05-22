@@ -14,9 +14,9 @@ KtApplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = i: T
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = null
+        callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
@@ -24,7 +24,7 @@ KtApplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = i: T
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = true
 
@@ -45,15 +45,15 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = i: T
-            callableIdIfNonLocal = null,
+            callableId = null,
           KtVariableLikeSignature:
             name = str
             receiverType = null
             returnType = kotlin.String
             symbol = str: kotlin.String
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = null
+        callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
@@ -61,6 +61,6 @@ KtInapplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = i: T
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = false

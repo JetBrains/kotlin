@@ -15,15 +15,15 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = t: T
-            callableIdIfNonLocal = null,
+            callableId = null,
           KtVariableLikeSignature:
             name = a
             receiverType = null
             returnType = kotlin.Char
             symbol = a: kotlin.Char
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /function
+        callableId = /function
     typeArgumentsMapping = {
       T -> (kotlin.Int)
     }
@@ -33,7 +33,7 @@ KtInapplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = t: T
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = true
 
@@ -54,15 +54,15 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = u: U
-            callableIdIfNonLocal = null,
+            callableId = null,
           KtVariableLikeSignature:
             name = b
             receiverType = null
             returnType = kotlin.Boolean
             symbol = b: kotlin.Boolean
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /function
+        callableId = /function
     typeArgumentsMapping = {
       U -> (kotlin.Int)
     }
@@ -72,7 +72,7 @@ KtInapplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = u: U
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = true
 
@@ -93,15 +93,15 @@ KtInapplicableCallCandidateInfo:
             receiverType = null
             returnType = kotlin.Int
             symbol = v: V
-            callableIdIfNonLocal = null,
+            callableId = null,
           KtVariableLikeSignature:
             name = c
             receiverType = null
             returnType = kotlin.String
             symbol = c: kotlin.String
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /function
+        callableId = /function
     typeArgumentsMapping = {
       V -> (kotlin.Int)
     }
@@ -111,6 +111,6 @@ KtInapplicableCallCandidateInfo:
         receiverType = null
         returnType = kotlin.Int
         symbol = v: V
-        callableIdIfNonLocal = null)
+        callableId = null)
     }
   isInBestCandidates = true

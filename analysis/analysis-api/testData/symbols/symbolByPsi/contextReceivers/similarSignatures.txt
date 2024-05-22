@@ -60,7 +60,7 @@ KtNamedClassOrObjectSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /tooo
+  callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null
@@ -102,7 +102,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /tooo
+  callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null
@@ -144,7 +144,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /tooo
+  callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null
@@ -192,7 +192,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /tooo
+  callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null

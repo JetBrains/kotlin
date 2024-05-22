@@ -23,7 +23,7 @@ public class SimpleUnsupportedDeclarationReporter : UnsupportedDeclarationReport
 
     override fun report(symbol: KtSymbolWithVisibility, reason: String) {
         val declarationName = when (symbol) {
-            is KtCallableSymbol -> symbol.callableIdIfNonLocal?.asSingleFqName()?.asString()
+            is KtCallableSymbol -> symbol.callableId?.asSingleFqName()?.asString()
             is KtClassOrObjectSymbol -> symbol.classIdIfNonLocal?.asSingleFqName()?.asString()
             is KtNamedSymbol -> symbol.name.asString()
             else -> null

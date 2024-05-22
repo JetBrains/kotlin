@@ -20,6 +20,6 @@ KtSuccessCallInfo:
         returnType = kotlin.Unit
         symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = /foo
+        callableId = /foo
     typeArgumentsMapping = {}
     argumentMapping = {}

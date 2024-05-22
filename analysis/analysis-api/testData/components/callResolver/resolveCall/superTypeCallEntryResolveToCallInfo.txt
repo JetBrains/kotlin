@@ -9,6 +9,6 @@ KtSuccessCallInfo:
         returnType = java.lang.Object
         symbol = <constructor>(): java.lang.Object
         valueParameters = []
-        callableIdIfNonLocal = null
+        callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {}

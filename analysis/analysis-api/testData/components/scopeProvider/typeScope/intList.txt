@@ -12,9 +12,9 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = element: E
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = kotlin/collections/List.contains
+  callableId = kotlin/collections/List.contains
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Boolean
@@ -25,9 +25,9 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.collections.Collection<kotlin.Int>
       symbol = elements: kotlin.collections.Collection<E>
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = kotlin/collections/List.containsAll
+  callableId = kotlin/collections/List.containsAll
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
@@ -38,9 +38,9 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = index: kotlin.Int
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = kotlin/collections/List.get
+  callableId = kotlin/collections/List.get
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
@@ -51,21 +51,21 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = element: E
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = kotlin/collections/List.indexOf
+  callableId = kotlin/collections/List.indexOf
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/collections/List.isEmpty(<dispatch receiver>: kotlin.collections.List<E>): kotlin.Boolean
   valueParameters = []
-  callableIdIfNonLocal = kotlin/collections/List.isEmpty
+  callableId = kotlin/collections/List.isEmpty
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.collections.Iterator<kotlin.Int>
   symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
   valueParameters = []
-  callableIdIfNonLocal = kotlin/collections/List.iterator
+  callableId = kotlin/collections/List.iterator
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
@@ -76,15 +76,15 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = element: E
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = kotlin/collections/List.lastIndexOf
+  callableId = kotlin/collections/List.lastIndexOf
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.collections.ListIterator<kotlin.Int>
   symbol = kotlin/collections/List.listIterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.ListIterator<E>
   valueParameters = []
-  callableIdIfNonLocal = kotlin/collections/List.listIterator
+  callableId = kotlin/collections/List.listIterator
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.collections.ListIterator<kotlin.Int>
@@ -95,9 +95,9 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = index: kotlin.Int
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = kotlin/collections/List.listIterator
+  callableId = kotlin/collections/List.listIterator
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.collections.List<kotlin.Int>
@@ -108,21 +108,21 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.Int
       symbol = fromIndex: kotlin.Int
-      callableIdIfNonLocal = null,
+      callableId = null,
     KtVariableLikeSignature:
       name = toIndex
       receiverType = null
       returnType = kotlin.Int
       symbol = toIndex: kotlin.Int
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = kotlin/collections/List.subList
+  callableId = kotlin/collections/List.subList
 KtVariableLikeSignature:
   name = size
   receiverType = null
   returnType = kotlin.Int
   symbol = val size: kotlin.Int
-  callableIdIfNonLocal = kotlin/collections/List.size
+  callableId = kotlin/collections/List.size
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Boolean
@@ -133,39 +133,39 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.Any?
       symbol = other: kotlin.Any?
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = kotlin/Any.equals
+  callableId = kotlin/Any.equals
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
-  callableIdIfNonLocal = kotlin/Any.hashCode
+  callableId = kotlin/Any.hashCode
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
   valueParameters = []
-  callableIdIfNonLocal = kotlin/Any.toString
+  callableId = kotlin/Any.toString
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/collections/List.getFirst(<dispatch receiver>: kotlin.collections.List<E>): E
   valueParameters = []
-  callableIdIfNonLocal = kotlin/collections/List.getFirst
+  callableId = kotlin/collections/List.getFirst
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/collections/List.getLast(<dispatch receiver>: kotlin.collections.List<E>): E
   valueParameters = []
-  callableIdIfNonLocal = kotlin/collections/List.getLast
+  callableId = kotlin/collections/List.getLast
 
 
 Declaration Scope:
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.contains
+  callableId: kotlin/collections/List.contains
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -194,7 +194,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -215,7 +215,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.containsAll
+  callableId: kotlin/collections/List.containsAll
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -244,7 +244,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -270,7 +270,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.get
+  callableId: kotlin/collections/List.get
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -298,7 +298,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -320,7 +320,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.indexOf
+  callableId: kotlin/collections/List.indexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -349,7 +349,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -370,7 +370,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.isEmpty
+  callableId: kotlin/collections/List.isEmpty
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -400,7 +400,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.iterator
+  callableId: kotlin/collections/List.iterator
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -434,7 +434,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.lastIndexOf
+  callableId: kotlin/collections/List.lastIndexOf
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -463,7 +463,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -484,7 +484,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.listIterator
+  callableId: kotlin/collections/List.listIterator
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -518,7 +518,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.listIterator
+  callableId: kotlin/collections/List.listIterator
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -551,7 +551,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -573,7 +573,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.subList
+  callableId: kotlin/collections/List.subList
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -606,7 +606,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -626,7 +626,7 @@ KtFunctionSymbol:
       typeParameters: []
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -650,7 +650,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -663,11 +663,11 @@ KtKotlinPropertySymbol:
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
-  callableIdIfNonLocal: kotlin/collections/List.size
+  callableId: kotlin/collections/List.size
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true
@@ -714,7 +714,7 @@ KtKotlinPropertySymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
+  callableId: kotlin/Any.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -743,7 +743,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -765,7 +765,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+  callableId: kotlin/Any.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -795,7 +795,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
+  callableId: kotlin/Any.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -825,7 +825,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.getFirst
+  callableId: kotlin/collections/List.getFirst
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -854,7 +854,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.getLast
+  callableId: kotlin/collections/List.getLast
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

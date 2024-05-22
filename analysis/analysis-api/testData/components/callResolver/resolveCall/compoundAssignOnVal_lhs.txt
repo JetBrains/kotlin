@@ -8,7 +8,7 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = A
         symbol = l: A
-        callableIdIfNonLocal = null
+        callableId = null
     simpleAccess = Read:
 
     typeArgumentsMapping = {}

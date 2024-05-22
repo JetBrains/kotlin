@@ -2,7 +2,7 @@ KtKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -19,7 +19,7 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: ContextReceiversOnPropertyKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  callableIdIfNonLocal: /y
+  callableId: /y
   contextReceivers: [
     KtContextReceiver:
       label: null
@@ -36,7 +36,7 @@ KtKotlinPropertySymbol:
   ]
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: true
     hasStableParameterNames: true

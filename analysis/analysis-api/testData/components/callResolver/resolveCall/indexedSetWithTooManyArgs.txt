@@ -18,21 +18,21 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Int
               symbol = a: kotlin.Int
-              callableIdIfNonLocal = null,
+              callableId = null,
             KtVariableLikeSignature:
               name = b
               receiverType = null
               returnType = kotlin.String
               symbol = b: kotlin.String
-              callableIdIfNonLocal = null,
+              callableId = null,
             KtVariableLikeSignature:
               name = value
               receiverType = null
               returnType = kotlin.Boolean
               symbol = value: kotlin.Boolean
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = /C.set
+          callableId = /C.set
       typeArgumentsMapping = {}
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
@@ -40,19 +40,19 @@ KtErrorCallInfo:
           receiverType = null
           returnType = kotlin.Int
           symbol = a: kotlin.Int
-          callableIdIfNonLocal = null),
+          callableId = null),
         "foo" -> (KtVariableLikeSignature:
           name = b
           receiverType = null
           returnType = kotlin.String
           symbol = b: kotlin.String
-          callableIdIfNonLocal = null),
+          callableId = null),
         false -> (KtVariableLikeSignature:
           name = value
           receiverType = null
           returnType = kotlin.Boolean
           symbol = value: kotlin.Boolean
-          callableIdIfNonLocal = null)
+          callableId = null)
       }
   ]
   diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public final operator fun /C.set(a: kotlin/Int, b: kotlin/String, value: kotlin/Boolean): kotlin/Unit'.>

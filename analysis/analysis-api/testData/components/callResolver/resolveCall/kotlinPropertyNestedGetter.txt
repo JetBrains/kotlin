@@ -11,7 +11,7 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = KtSubClass
         symbol = val instance: KtSubClass
-        callableIdIfNonLocal = /KtClass.instance
+        callableId = /KtClass.instance
     simpleAccess = Read:
 
     typeArgumentsMapping = {}

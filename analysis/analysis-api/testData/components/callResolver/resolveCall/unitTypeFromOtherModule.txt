@@ -14,6 +14,6 @@ KtSuccessCallInfo:
         returnType = kotlin.Unit
         symbol = dependency/A.foo(<dispatch receiver>: dependency.A<T>): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = dependency/A.foo
+        callableId = dependency/A.foo
     typeArgumentsMapping = {}
     argumentMapping = {}

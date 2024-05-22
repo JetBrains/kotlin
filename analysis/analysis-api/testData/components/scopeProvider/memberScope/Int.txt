@@ -3,7 +3,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.and
+  callableId: kotlin/Int.and
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -32,7 +32,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -70,7 +70,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.compareTo
+  callableId: kotlin/Int.compareTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -99,7 +99,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -137,7 +137,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.compareTo
+  callableId: kotlin/Int.compareTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -166,7 +166,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -204,7 +204,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.compareTo
+  callableId: kotlin/Int.compareTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -233,7 +233,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -271,7 +271,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.compareTo
+  callableId: kotlin/Int.compareTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -300,7 +300,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -338,7 +338,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.compareTo
+  callableId: kotlin/Int.compareTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -367,7 +367,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -405,7 +405,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.compareTo
+  callableId: kotlin/Int.compareTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -434,7 +434,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -469,7 +469,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Int.dec
+  callableId: kotlin/Int.dec
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -511,7 +511,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.div
+  callableId: kotlin/Int.div
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -540,7 +540,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -578,7 +578,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.div
+  callableId: kotlin/Int.div
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -607,7 +607,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -645,7 +645,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.div
+  callableId: kotlin/Int.div
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -674,7 +674,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -712,7 +712,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.div
+  callableId: kotlin/Int.div
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -741,7 +741,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -779,7 +779,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.div
+  callableId: kotlin/Int.div
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -808,7 +808,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -846,7 +846,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.div
+  callableId: kotlin/Int.div
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -875,7 +875,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -913,7 +913,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.equals
+  callableId: kotlin/Int.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -942,7 +942,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -977,7 +977,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Int.inc
+  callableId: kotlin/Int.inc
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1019,7 +1019,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.inv
+  callableId: kotlin/Int.inv
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1061,7 +1061,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.minus
+  callableId: kotlin/Int.minus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1090,7 +1090,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1128,7 +1128,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.minus
+  callableId: kotlin/Int.minus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1157,7 +1157,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1195,7 +1195,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.minus
+  callableId: kotlin/Int.minus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1224,7 +1224,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1262,7 +1262,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.minus
+  callableId: kotlin/Int.minus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1291,7 +1291,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1329,7 +1329,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.minus
+  callableId: kotlin/Int.minus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1358,7 +1358,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1396,7 +1396,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.minus
+  callableId: kotlin/Int.minus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1425,7 +1425,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1463,7 +1463,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.or
+  callableId: kotlin/Int.or
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1492,7 +1492,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1530,7 +1530,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.plus
+  callableId: kotlin/Int.plus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1559,7 +1559,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1597,7 +1597,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.plus
+  callableId: kotlin/Int.plus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1626,7 +1626,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1664,7 +1664,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.plus
+  callableId: kotlin/Int.plus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1693,7 +1693,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1731,7 +1731,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.plus
+  callableId: kotlin/Int.plus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1760,7 +1760,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1798,7 +1798,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.plus
+  callableId: kotlin/Int.plus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1827,7 +1827,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1865,7 +1865,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.plus
+  callableId: kotlin/Int.plus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1894,7 +1894,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1929,7 +1929,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Int.rangeTo
+  callableId: kotlin/Int.rangeTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -1958,7 +1958,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -1993,7 +1993,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Int.rangeTo
+  callableId: kotlin/Int.rangeTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2022,7 +2022,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2057,7 +2057,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Int.rangeTo
+  callableId: kotlin/Int.rangeTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2086,7 +2086,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2121,7 +2121,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Int.rangeTo
+  callableId: kotlin/Int.rangeTo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2150,7 +2150,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2190,7 +2190,7 @@ KtFunctionSymbol:
     kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.rangeUntil
+  callableId: kotlin/Int.rangeUntil
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2219,7 +2219,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2259,7 +2259,7 @@ KtFunctionSymbol:
     kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.rangeUntil
+  callableId: kotlin/Int.rangeUntil
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2288,7 +2288,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2328,7 +2328,7 @@ KtFunctionSymbol:
     kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.rangeUntil
+  callableId: kotlin/Int.rangeUntil
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2357,7 +2357,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2397,7 +2397,7 @@ KtFunctionSymbol:
     kotlin/WasExperimental(markerClass = [kotlin.ExperimentalStdlibApi::class])
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.rangeUntil
+  callableId: kotlin/Int.rangeUntil
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2426,7 +2426,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2466,7 +2466,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.rem
+  callableId: kotlin/Int.rem
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2495,7 +2495,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2535,7 +2535,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.rem
+  callableId: kotlin/Int.rem
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2564,7 +2564,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2604,7 +2604,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.rem
+  callableId: kotlin/Int.rem
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2633,7 +2633,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2673,7 +2673,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.rem
+  callableId: kotlin/Int.rem
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2702,7 +2702,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2742,7 +2742,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.rem
+  callableId: kotlin/Int.rem
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2771,7 +2771,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2811,7 +2811,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.rem
+  callableId: kotlin/Int.rem
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2840,7 +2840,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2878,7 +2878,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.shl
+  callableId: kotlin/Int.shl
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2907,7 +2907,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -2945,7 +2945,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.shr
+  callableId: kotlin/Int.shr
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -2974,7 +2974,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3012,7 +3012,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.times
+  callableId: kotlin/Int.times
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3041,7 +3041,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3079,7 +3079,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.times
+  callableId: kotlin/Int.times
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3108,7 +3108,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3146,7 +3146,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.times
+  callableId: kotlin/Int.times
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3175,7 +3175,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3213,7 +3213,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.times
+  callableId: kotlin/Int.times
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3242,7 +3242,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3280,7 +3280,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.times
+  callableId: kotlin/Int.times
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3309,7 +3309,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3347,7 +3347,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.times
+  callableId: kotlin/Int.times
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3376,7 +3376,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3414,7 +3414,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.toByte
+  callableId: kotlin/Int.toByte
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3456,7 +3456,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.toChar
+  callableId: kotlin/Int.toChar
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3498,7 +3498,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.toDouble
+  callableId: kotlin/Int.toDouble
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3540,7 +3540,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.toFloat
+  callableId: kotlin/Int.toFloat
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3582,7 +3582,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.toInt
+  callableId: kotlin/Int.toInt
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3624,7 +3624,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.toLong
+  callableId: kotlin/Int.toLong
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3666,7 +3666,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.toShort
+  callableId: kotlin/Int.toShort
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3708,7 +3708,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.toString
+  callableId: kotlin/Int.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3750,7 +3750,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.unaryMinus
+  callableId: kotlin/Int.unaryMinus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3792,7 +3792,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.unaryPlus
+  callableId: kotlin/Int.unaryPlus
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3834,7 +3834,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.ushr
+  callableId: kotlin/Int.ushr
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3863,7 +3863,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3901,7 +3901,7 @@ KtFunctionSymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  callableIdIfNonLocal: kotlin/Int.xor
+  callableId: kotlin/Int.xor
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -3930,7 +3930,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -3965,7 +3965,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+  callableId: kotlin/Any.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -4034,7 +4034,7 @@ KtNamedClassOrObjectSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: kotlin/Int
   contextReceivers: []
   hasStableParameterNames: true

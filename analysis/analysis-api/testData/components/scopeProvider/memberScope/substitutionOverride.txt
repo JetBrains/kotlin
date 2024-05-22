@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/Base.noGeneric
+  callableId: test/Base.noGeneric
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -43,7 +43,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/Base.noGenericWithExplicitType
+  callableId: test/Base.noGenericWithExplicitType
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -86,7 +86,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/ClassWithGenericBase.withOuterGeneric
+  callableId: test/ClassWithGenericBase.withOuterGeneric
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -115,7 +115,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -150,7 +150,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/ClassWithGenericBase.withOuterGenericWithExplicitType
+  callableId: test/ClassWithGenericBase.withOuterGenericWithExplicitType
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -179,7 +179,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -214,7 +214,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/Base.withOwnGeneric
+  callableId: test/Base.withOwnGeneric
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -245,7 +245,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -283,7 +283,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/Base.withOwnGenericWithExplicitType
+  callableId: test/Base.withOwnGenericWithExplicitType
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -314,7 +314,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -352,7 +352,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/ClassWithGenericBase.withOuterAndOwnGeneric
+  callableId: test/ClassWithGenericBase.withOuterAndOwnGeneric
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -383,7 +383,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -407,7 +407,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -441,7 +441,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: test/ClassWithGenericBase.withOuterAndOwnGenericWithExplicitType
+  callableId: test/ClassWithGenericBase.withOuterAndOwnGenericWithExplicitType
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -472,7 +472,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -496,7 +496,7 @@ KtFunctionSymbol:
       deprecationStatus: null
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -530,7 +530,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
+  callableId: kotlin/Any.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -559,7 +559,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -594,7 +594,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+  callableId: kotlin/Any.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -633,7 +633,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
+  callableId: kotlin/Any.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -672,7 +672,7 @@ KtFunctionSymbol:
 
 KtConstructorSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   containingClassIdIfNonLocal: test/ClassWithGenericBase
   contextReceivers: []
   hasStableParameterNames: true

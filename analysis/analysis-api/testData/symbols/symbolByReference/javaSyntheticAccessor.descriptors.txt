@@ -1,11 +1,11 @@
 KtSyntheticJavaPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /JavaClass.foo
+  callableId: /JavaClass.foo
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: /JavaClass.getFoo
+    callableId: /JavaClass.getFoo
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true

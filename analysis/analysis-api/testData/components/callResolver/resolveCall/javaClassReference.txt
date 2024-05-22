@@ -15,15 +15,15 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Int
               symbol = size: kotlin.Int
-              callableIdIfNonLocal = null,
+              callableId = null,
             KtVariableLikeSignature:
               name = init
               receiverType = null
               returnType = kotlin.Function1<kotlin.Int, T>
               symbol = init: kotlin.Function1<kotlin.Int, T>
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = null
+          callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }

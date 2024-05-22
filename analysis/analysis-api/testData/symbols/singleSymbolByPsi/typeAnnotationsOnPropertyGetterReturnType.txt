@@ -1,6 +1,6 @@
 KtPropertyGetterSymbol:
   annotationsList: []
-  callableIdIfNonLocal: null
+  callableId: null
   contextReceivers: []
   hasBody: true
   hasStableParameterNames: true

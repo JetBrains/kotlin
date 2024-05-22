@@ -39,9 +39,9 @@ internal class KaFirEnumEntrySymbol(
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val containingEnumClassIdIfNonLocal: ClassId? get() = withValidityAssertion { callableIdIfNonLocal?.classId }
+    override val containingEnumClassIdIfNonLocal: ClassId? get() = withValidityAssertion { callableId?.classId }
 
-    override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
+    override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
     override val enumEntryInitializer: KaFirEnumEntryInitializerSymbol? by cached {
         if (firSymbol.fir.initializer == null) {

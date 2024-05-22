@@ -9,6 +9,6 @@ KtSuccessCallInfo:
         returnType = kotlin.Int
         symbol = /Foo.foo(<dispatch receiver>: Foo<T>): T
         valueParameters = []
-        callableIdIfNonLocal = /Foo.foo
+        callableId = /Foo.foo
     typeArgumentsMapping = {}
     argumentMapping = {}

@@ -5,7 +5,7 @@ KtKotlinPropertySymbol:
   ]
   backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: []
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     isExtension: false
     name: field
@@ -22,14 +22,14 @@ KtKotlinPropertySymbol:
     getContainingJvmClassName: one.LibKt
     getContainingModule: KtLibraryModule "Library lib"
     deprecationStatus: null
-  callableIdIfNonLocal: one/topLevelPropertyWithAnnotations
+  callableId: one/topLevelPropertyWithAnnotations
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: [
       one/Anno()
         psi: null
     ]
-    callableIdIfNonLocal: null
+    callableId: null
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true

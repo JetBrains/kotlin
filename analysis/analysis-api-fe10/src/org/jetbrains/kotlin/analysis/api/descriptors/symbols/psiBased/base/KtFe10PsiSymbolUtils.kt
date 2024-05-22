@@ -74,7 +74,7 @@ internal val KtElement.ktSymbolKind: KaSymbolKind
         return KaSymbolKind.LOCAL
     }
 
-internal val KtDeclaration.callableIdIfNonLocal: CallableId?
+internal val KtDeclaration.callableId: CallableId?
     get() = calculateCallableId(allowLocal = false)
 
 internal val KtElement.kaSymbolOrigin: KaSymbolOrigin

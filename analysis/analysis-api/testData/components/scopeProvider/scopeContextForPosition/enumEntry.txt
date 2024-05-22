@@ -58,7 +58,7 @@ scopes:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -71,11 +71,11 @@ scopes:
             type: kotlin/String
           symbolKind: LOCAL
           typeParameters: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -122,7 +122,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -152,7 +152,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Enum.clone
+        callableId: kotlin/Enum.clone
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -182,7 +182,7 @@ scopes:
         visibility: Protected
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: /E.compareTo
+        callableId: /E.compareTo
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -211,7 +211,7 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -233,7 +233,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Enum.equals
+        callableId: kotlin/Enum.equals
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -262,7 +262,7 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -284,7 +284,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Enum.hashCode
+        callableId: kotlin/Enum.hashCode
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -314,7 +314,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Enum.toString
+        callableId: kotlin/Enum.toString
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -349,7 +349,7 @@ scopes:
         ]
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -362,11 +362,11 @@ scopes:
             type: kotlin/String
           symbolKind: LOCAL
           typeParameters: []
-        callableIdIfNonLocal: kotlin/Enum.name
+        callableId: kotlin/Enum.name
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -415,7 +415,7 @@ scopes:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           isExtension: false
           name: field
@@ -428,11 +428,11 @@ scopes:
             type: kotlin/Int
           symbolKind: LOCAL
           typeParameters: []
-        callableIdIfNonLocal: kotlin/Enum.ordinal
+        callableId: kotlin/Enum.ordinal
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -479,7 +479,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: /E.getDeclaringClass
+        callableId: /E.getDeclaringClass
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
@@ -508,7 +508,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Enum.finalize
+        callableId: kotlin/Enum.finalize
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
@@ -539,7 +539,7 @@ scopes:
     constructors: 1
       KtConstructorSymbol:
         annotationsList: []
-        callableIdIfNonLocal: null
+        callableId: null
         containingClassIdIfNonLocal: null
         contextReceivers: []
         hasStableParameterNames: true
@@ -564,7 +564,7 @@ scopes:
     callables: 4
       KtEnumEntrySymbol:
         annotationsList: []
-        callableIdIfNonLocal: /E.A
+        callableId: /E.A
         containingEnumClassIdIfNonLocal: E
         contextReceivers: []
         enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
@@ -580,7 +580,7 @@ scopes:
         typeParameters: []
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: /E.values
+        callableId: /E.values
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -615,7 +615,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: /E.valueOf
+        callableId: /E.valueOf
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -644,7 +644,7 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -667,11 +667,11 @@ scopes:
       KtKotlinPropertySymbol:
         annotationsList: []
         backingFieldSymbol: null
-        callableIdIfNonLocal: /E.entries
+        callableId: /E.entries
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
           annotationsList: []
-          callableIdIfNonLocal: null
+          callableId: null
           contextReceivers: []
           hasBody: false
           hasStableParameterNames: true
@@ -765,7 +765,7 @@ scopes:
     callables: 3
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.equals
+        callableId: kotlin/Any.equals
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -794,7 +794,7 @@ scopes:
         valueParameters: [
           KtValueParameterSymbol:
             annotationsList: []
-            callableIdIfNonLocal: null
+            callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDefaultValue: false
@@ -816,7 +816,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.hashCode
+        callableId: kotlin/Any.hashCode
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
@@ -846,7 +846,7 @@ scopes:
         visibility: Public
       KtFunctionSymbol:
         annotationsList: []
-        callableIdIfNonLocal: kotlin/Any.toString
+        callableId: kotlin/Any.toString
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true

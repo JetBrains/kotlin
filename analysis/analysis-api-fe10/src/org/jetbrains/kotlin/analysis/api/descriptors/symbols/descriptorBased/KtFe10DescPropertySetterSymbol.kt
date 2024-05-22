@@ -46,7 +46,7 @@ internal class KaFe10DescPropertySetterSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
 
-    override val callableIdIfNonLocal: CallableId?
+    override val callableId: CallableId?
         get() = withValidityAssertion { descriptor.correspondingProperty.setterCallableIdIfNotLocal }
 
     override val parameter: KaValueParameterSymbol

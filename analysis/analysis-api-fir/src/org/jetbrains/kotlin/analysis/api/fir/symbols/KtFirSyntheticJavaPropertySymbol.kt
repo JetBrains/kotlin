@@ -57,7 +57,7 @@ internal class KaFirSyntheticJavaPropertySymbol(
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 
-    override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
+    override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
     override val getter: KaPropertyGetterSymbol
         get() = withValidityAssertion {

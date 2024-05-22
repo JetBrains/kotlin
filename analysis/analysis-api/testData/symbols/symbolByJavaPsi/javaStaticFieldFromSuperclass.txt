@@ -1,6 +1,6 @@
 KtJavaFieldSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /SuperClass.count
+  callableId: /SuperClass.count
   contextReceivers: []
   isExtension: false
   isStatic: true

@@ -40,9 +40,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = Test.Foo
             symbol = foo: Test.Foo
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = /Test.test
+        callableId = /Test.test
     typeArgumentsMapping = {}
     argumentMapping = {
       { uiMethod() } -> (KtVariableLikeSignature:
@@ -50,5 +50,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = Test.Foo
         symbol = foo: Test.Foo
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

@@ -34,7 +34,7 @@ internal class KaFe10DescEnumEntrySymbol(
     override val containingEnumClassIdIfNonLocal: ClassId?
         get() = withValidityAssertion { enumDescriptor.classId }
 
-    override val callableIdIfNonLocal: CallableId?
+    override val callableId: CallableId?
         get() = withValidityAssertion {
             val enumClassId = enumDescriptor.classId ?: return null
             CallableId(

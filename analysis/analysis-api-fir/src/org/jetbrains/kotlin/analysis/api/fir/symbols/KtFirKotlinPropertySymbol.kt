@@ -79,7 +79,7 @@ internal class KaFirKotlinPropertySymbol(
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 
-    override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
+    override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { firSymbol.createKtTypeParameters(builder) }

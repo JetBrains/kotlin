@@ -14,9 +14,9 @@ KtSuccessCallInfo:
             receiverType = null
             returnType = T
             symbol = i: T
-            callableIdIfNonLocal = null
+            callableId = null
         ]
-        callableIdIfNonLocal = null
+        callableId = null
     typeArgumentsMapping = {
       T -> (kotlin.Int)
     }
@@ -26,5 +26,5 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = T
         symbol = i: T
-        callableIdIfNonLocal = null)
+        callableId = null)
     }

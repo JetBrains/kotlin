@@ -8,7 +8,7 @@ KtSuccessCallInfo:
         receiverType = null
         returnType = kotlin.Function0<kotlin.Unit>
         symbol = f: kotlin.Function0<kotlin.Unit>
-        callableIdIfNonLocal = null
+        callableId = null
     simpleAccess = Read:
 
     typeArgumentsMapping = {}

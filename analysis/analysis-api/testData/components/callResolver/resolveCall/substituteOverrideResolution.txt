@@ -14,6 +14,6 @@ KtSuccessCallInfo:
         returnType = kotlin.Unit
         symbol = kotlin/collections/MutableList.clear(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = kotlin/collections/MutableList.clear
+        callableId = kotlin/collections/MutableList.clear
     typeArgumentsMapping = {}
     argumentMapping = {}

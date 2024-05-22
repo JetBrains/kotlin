@@ -35,7 +35,7 @@ KtApplicableCallCandidateInfo:
         returnType = kotlin.Unit
         symbol = foo/myRun(<extension receiver>: kotlin.Any): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = foo/myRun
+        callableId = foo/myRun
     typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = true
@@ -51,7 +51,7 @@ KtApplicableCallCandidateInfo:
         returnType = kotlin.Unit
         symbol = foo/myRun(): kotlin.Unit
         valueParameters = []
-        callableIdIfNonLocal = foo/myRun
+        callableId = foo/myRun
     typeArgumentsMapping = {}
     argumentMapping = {}
   isInBestCandidates = false

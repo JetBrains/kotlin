@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /A.x
+  callableId: /A.x
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -39,7 +39,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /A.y
+  callableId: /A.y
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true

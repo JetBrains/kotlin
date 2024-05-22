@@ -10,7 +10,7 @@ KtErrorCallInfo:
           returnType = test.Test<T>
           symbol = <constructor>(): test.Test<T>
           valueParameters = []
-          callableIdIfNonLocal = null
+          callableId = null
       typeArgumentsMapping = {
         T -> (test.Bar)
       }

@@ -7,7 +7,7 @@ KtFunctionLikeSignature:
   returnType = kotlin.Int!
   symbol = /JavaClass.getValue(<dispatch receiver>: JavaClass): kotlin.Int!
   valueParameters = []
-  callableIdIfNonLocal = /JavaClass.getValue
+  callableId = /JavaClass.getValue
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Boolean
@@ -18,33 +18,33 @@ KtFunctionLikeSignature:
       receiverType = null
       returnType = kotlin.Any?
       symbol = other: kotlin.Any?
-      callableIdIfNonLocal = null
+      callableId = null
   ]
-  callableIdIfNonLocal = kotlin/Any.equals
+  callableId = kotlin/Any.equals
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
-  callableIdIfNonLocal = kotlin/Any.hashCode
+  callableId = kotlin/Any.hashCode
 KtFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
   valueParameters = []
-  callableIdIfNonLocal = kotlin/Any.toString
+  callableId = kotlin/Any.toString
 KtVariableLikeSignature:
   name = value
   receiverType = null
   returnType = kotlin.Int!
   symbol = val value: kotlin.Int!
-  callableIdIfNonLocal = /JavaClass.value
+  callableId = /JavaClass.value
 
 
 Declaration Scope:
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /JavaClass.getValue
+  callableId: /JavaClass.getValue
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
@@ -73,7 +73,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
+  callableId: kotlin/Any.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -102,7 +102,7 @@ KtFunctionSymbol:
   valueParameters: [
     KtValueParameterSymbol:
       annotationsList: []
-      callableIdIfNonLocal: null
+      callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
@@ -124,7 +124,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+  callableId: kotlin/Any.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -154,7 +154,7 @@ KtFunctionSymbol:
   visibility: Public
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
+  callableId: kotlin/Any.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -185,11 +185,11 @@ KtFunctionSymbol:
 KtSyntheticJavaPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
-  callableIdIfNonLocal: /JavaClass.value
+  callableId: /JavaClass.value
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
-    callableIdIfNonLocal: /JavaClass.getValue
+    callableId: /JavaClass.getValue
     contextReceivers: []
     hasBody: false
     hasStableParameterNames: true

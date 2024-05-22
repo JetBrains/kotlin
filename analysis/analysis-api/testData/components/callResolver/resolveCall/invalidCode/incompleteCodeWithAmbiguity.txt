@@ -15,9 +15,9 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Int
               symbol = len: kotlin.Int
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = null
+          callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
@@ -37,9 +37,9 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.String
               symbol = s: kotlin.String
-              callableIdIfNonLocal = null
+              callableId = null
           ]
-          callableIdIfNonLocal = null
+          callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }

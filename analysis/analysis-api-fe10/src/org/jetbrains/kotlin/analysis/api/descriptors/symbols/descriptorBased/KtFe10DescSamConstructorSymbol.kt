@@ -39,7 +39,7 @@ internal class KaFe10DescSamConstructorSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { descriptor.ktHasStableParameterNames }
 
-    override val callableIdIfNonLocal: CallableId?
+    override val callableId: CallableId?
         get() = withValidityAssertion { expandedDescriptor.callableIdIfNotLocal }
 
     override val returnType: KaType
