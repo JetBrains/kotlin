@@ -36,11 +36,13 @@ class Fir2IrConfiguration private constructor(
     val inlineConstTracker: InlineConstTracker?,
     val expectActualTracker: ExpectActualTracker?,
     val allowNonCachedDeclarations: Boolean,
+    val skipBodies: Boolean,
 ) {
     companion object {
         fun forJvmCompilation(
             compilerConfiguration: CompilerConfiguration,
             diagnosticReporter: DiagnosticReporter,
+            skipBodies: Boolean
         ): Fir2IrConfiguration =
             Fir2IrConfiguration(
                 languageVersionSettings = compilerConfiguration.languageVersionSettings,
@@ -52,6 +54,7 @@ class Fir2IrConfiguration private constructor(
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
+                skipBodies = skipBodies,
             )
 
         fun forKlibCompilation(
@@ -68,6 +71,7 @@ class Fir2IrConfiguration private constructor(
                 inlineConstTracker = null,
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
+                skipBodies = false,
             )
 
         fun forAnalysisApi(
@@ -85,6 +89,7 @@ class Fir2IrConfiguration private constructor(
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = true,
+                skipBodies = false,
             )
     }
 }

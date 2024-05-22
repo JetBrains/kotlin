@@ -35,17 +35,15 @@ import org.jetbrains.kotlin.kapt3.EfficientProcessorLoader
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.*
-import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
-import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
-import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
-import org.jetbrains.kotlin.kapt3.base.util.info
+import org.jetbrains.kotlin.kapt3.base.util.*
 import org.jetbrains.kotlin.kapt3.measureTimeMillis
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.modules.*
+import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.io.File
@@ -115,7 +113,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
         val projectDisposable = Disposer.newDisposable("K2KaptSession.project")
         val projectEnvironment =
-            createProjectEnvironment(configuration, projectDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
+            createProjectEnvironment(updatedConfiguration, projectDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
         if (messageCollector.hasErrors()) {
             return false
         }
@@ -135,8 +133,10 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         logger.info { "Initial analysis took $analysisTime ms" }
 
         val (classFilesCompilationTime, codegenOutput) = measureTimeMillis {
-            val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
-            val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
+            // Ignore all FE errors
+            val cleanDiagnosticReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
+            val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, cleanDiagnosticReporter)
+            val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment, skipBodies = true)
 
             generateCodeFromIr(irInput, compilerEnvironment, skipBodies = true)
         }
@@ -150,6 +150,24 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
         KaptContextForStubGeneration(options, false, logger, compiledClasses, origins, codegenOutput.generationState).use { context ->
             generateKotlinSourceStubs(context)
+        }
+
+        if (options.mode.runAnnotationProcessing) {
+            val (annotationProcessingTime) = measureTimeMillis {
+                KaptContext(
+                    options,
+                    false,
+                    logger
+                ).use { context ->
+                    try {
+                        runProcessors(context, options)
+                    } catch (e: KaptBaseError) {
+                        return false
+                    }
+                }
+            }
+
+            logger.info { "Annotation processing took $annotationProcessingTime ms" }
         }
 
         return true
@@ -258,6 +276,8 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             it.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")
         } else null
 
+        val sourceFiles = mutableListOf<String>()
+
         for (kaptStub in stubs) {
             val stub = kaptStub.file
             val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
@@ -274,6 +294,8 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                 "${packageName.replace('.', '/')}/$className"
             }
 
+            sourceFiles += classFilePathWithoutExtension
+
             fun reportStubsOutputForIC(generatedFile: File) {
                 if (!reportOutputFiles) return
                 if (classFilePathWithoutExtension == "error/NonExistentClass") return
@@ -287,6 +309,8 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
             kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
         }
+
+        logger.info { "Source files: ${sourceFiles}" }
     }
 
     private fun saveIncrementalData(

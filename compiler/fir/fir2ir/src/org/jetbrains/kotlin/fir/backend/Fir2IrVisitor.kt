@@ -331,8 +331,12 @@ class Fir2IrVisitor(
 
         declarationStorage.enterScope(irFunction.symbol)
         conversionScope.withParent(irFunction) {
-            val irBlock = codeFragment.block.convertToIrBlock(forceUnitType = false)
-            irFunction.body = irFactory.createExpressionBody(irBlock)
+            irFunction.body = if (configuration.skipBodies) {
+                irFactory.createExpressionBody(IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.returnType))
+            } else {
+                val irBlock = codeFragment.block.convertToIrBlock(forceUnitType = false)
+                irFactory.createExpressionBody(irBlock)
+            }
         }
         declarationStorage.leaveScope(irFunction.symbol)
 
@@ -392,7 +396,9 @@ class Fir2IrVisitor(
         val irAnonymousInitializer = declarationStorage.getIrAnonymousInitializer(anonymousInitializer)
         declarationStorage.enterScope(irAnonymousInitializer.symbol)
         conversionScope.withInitBlock(irAnonymousInitializer) {
-            irAnonymousInitializer.body = convertToIrBlockBody(anonymousInitializer.body!!)
+            irAnonymousInitializer.body =
+                if (configuration.skipBodies) irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                else convertToIrBlockBody(anonymousInitializer.body!!)
         }
         declarationStorage.leaveScope(irAnonymousInitializer.symbol)
         return irAnonymousInitializer

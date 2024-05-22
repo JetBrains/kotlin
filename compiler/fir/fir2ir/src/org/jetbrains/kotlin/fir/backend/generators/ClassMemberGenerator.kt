@@ -122,61 +122,70 @@ internal class ClassMemberGenerator(
                 annotationGenerator.generate(irFunction, firFunction)
             }
             if (firFunction is FirConstructor && irFunction is IrConstructor && !firFunction.isExpect && !irFunction.isExternal) {
-                val body = factory.createBlockBody(startOffset, endOffset)
-                val delegatedConstructor = firFunction.delegatedConstructor
-                val irClass = parent as IrClass
-                if (delegatedConstructor != null) {
-                    val irDelegatingConstructorCall = conversionScope.forDelegatingConstructorCall(irFunction, irClass) {
-                        delegatedConstructor.toIrDelegatingConstructorCall()
-                    }
-                    body.statements += irDelegatingConstructorCall
-                }
-
-                if (containingClass is FirRegularClass && containingClass.contextReceivers.isNotEmpty()) {
-                    val contextReceiverFields =
-                        c.classifierStorage.getFieldsWithContextReceiversForClass(irClass, containingClass)
-
-                    val thisParameter =
-                        conversionScope.dispatchReceiverParameter(irClass) ?: error("No found this parameter for $irClass")
-
-                    for (index in containingClass.contextReceivers.indices) {
-                        require(contextReceiverFields.size > index) {
-                            "Not defined context receiver #${index} for $irClass. " +
-                                    "Context receivers found: $contextReceiverFields"
+                if (configuration.skipBodies) {
+                    irFunction.body = factory.createBlockBody(startOffset, endOffset)
+                } else {
+                    val body = factory.createBlockBody(startOffset, endOffset)
+                    val delegatedConstructor = firFunction.delegatedConstructor
+                    val irClass = parent as IrClass
+                    if (delegatedConstructor != null) {
+                        val irDelegatingConstructorCall = conversionScope.forDelegatingConstructorCall(irFunction, irClass) {
+                            delegatedConstructor.toIrDelegatingConstructorCall()
                         }
-                        val irValueParameter = valueParameters[index]
-                        body.statements.add(
-                            IrSetFieldImpl(
-                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                contextReceiverFields[index].symbol,
-                                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, thisParameter.type, thisParameter.symbol),
-                                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
-                                c.builtins.unitType,
-                            )
-                        )
+                        body.statements += irDelegatingConstructorCall
                     }
-                }
 
-                if (delegatedConstructor?.isThis == false) {
-                    val instanceInitializerCall = IrInstanceInitializerCallImpl(
-                        startOffset, endOffset, irClass.symbol, irFunction.constructedClassType
-                    )
-                    body.statements += instanceInitializerCall
-                }
+                    if (containingClass is FirRegularClass && containingClass.contextReceivers.isNotEmpty()) {
+                        val contextReceiverFields =
+                            c.classifierStorage.getFieldsWithContextReceiversForClass(irClass, containingClass)
 
-                val regularBody = firFunction.body?.let { visitor.convertToIrBlockBody(it) }
-                if (regularBody != null) {
-                    body.statements += regularBody.statements
-                }
-                if (body.statements.isNotEmpty()) {
-                    irFunction.body = body
+                        val thisParameter =
+                            conversionScope.dispatchReceiverParameter(irClass) ?: error("No found this parameter for $irClass")
+
+                        for (index in containingClass.contextReceivers.indices) {
+                            require(contextReceiverFields.size > index) {
+                                "Not defined context receiver #${index} for $irClass. " +
+                                        "Context receivers found: $contextReceiverFields"
+                            }
+                            val irValueParameter = valueParameters[index]
+                            body.statements.add(
+                                IrSetFieldImpl(
+                                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                    contextReceiverFields[index].symbol,
+                                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, thisParameter.type, thisParameter.symbol),
+                                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
+                                    c.builtins.unitType,
+                                )
+                            )
+                        }
+                    }
+
+                    if (delegatedConstructor?.isThis == false) {
+                        val instanceInitializerCall = IrInstanceInitializerCallImpl(
+                            startOffset, endOffset, irClass.symbol, irFunction.constructedClassType
+                        )
+                        body.statements += instanceInitializerCall
+                    }
+
+                    val regularBody = firFunction.body?.let { visitor.convertToIrBlockBody(it) }
+                    if (regularBody != null) {
+                        body.statements += regularBody.statements
+                    }
+                    if (body.statements.isNotEmpty()) {
+                        irFunction.body = body
+                    }
                 }
             } else if (irFunction !is IrConstructor && !irFunction.isExpect) {
                 when {
                     // Create fake bodies for Enum.values/Enum.valueOf
                     irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> {
-                        val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(irFunction.name)
-                        irFunction.body = IrSyntheticBodyImpl(startOffset, endOffset, kind)
+                        irFunction.body =
+                            if (configuration.skipBodies) {
+                                factory.createExpressionBody(IrConstImpl.defaultValueForType(startOffset, endOffset, irFunction.returnType))
+                            } else {
+                                val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(irFunction.name)
+                                IrSyntheticBodyImpl(startOffset, endOffset, kind)
+                            }
                     }
                     irFunction.parent is IrClass && irFunction.parentAsClass.isData -> {
                         require(irFunction is IrSimpleFunction)
@@ -193,7 +202,9 @@ internal class ClassMemberGenerator(
                         }
                     }
                     else -> {
-                        irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
+                        irFunction.body =
+                            if (configuration.skipBodies) factory.createBlockBody(startOffset, endOffset)
+                            else firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
                     }
                 }
             }
@@ -290,22 +301,31 @@ internal class ClassMemberGenerator(
                     val fieldSymbol = backingField?.symbol
                     val declaration = this
                     if (fieldSymbol != null) {
-                        body = factory.createBlockBody(
-                            startOffset, endOffset,
-                            listOf(
+                        body =
+                            if (configuration.skipBodies) {
                                 if (isSetter) {
-                                    IrSetFieldImpl(startOffset, endOffset, fieldSymbol, builtins.unitType).apply {
-                                        setReceiver(declaration)
-                                        value = IrGetValueImpl(startOffset, endOffset, propertyType, valueParameters.first().symbol)
-                                    }
+                                    factory.createBlockBody(startOffset, endOffset)
                                 } else {
-                                    IrReturnImpl(
-                                        startOffset, endOffset, builtins.nothingType, symbol,
-                                        IrGetFieldImpl(startOffset, endOffset, fieldSymbol, propertyType).setReceiver(declaration)
-                                    )
+                                    factory.createExpressionBody(IrConstImpl.defaultValueForType(startOffset, endOffset, returnType))
                                 }
-                            )
-                        )
+                            } else {
+                                factory.createBlockBody(
+                                    startOffset, endOffset,
+                                    listOf(
+                                        if (isSetter) {
+                                            IrSetFieldImpl(startOffset, endOffset, fieldSymbol, builtins.unitType).apply {
+                                                setReceiver(declaration)
+                                                value = IrGetValueImpl(startOffset, endOffset, propertyType, valueParameters.first().symbol)
+                                            }
+                                        } else {
+                                            IrReturnImpl(
+                                                startOffset, endOffset, builtins.nothingType, symbol,
+                                                IrGetFieldImpl(startOffset, endOffset, fieldSymbol, propertyType).setReceiver(declaration)
+                                            )
+                                        }
+                                    )
+                                )
+                            }
                     }
                     declarationStorage.leaveScope(this.symbol)
                 }
