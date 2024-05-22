@@ -94,7 +94,6 @@ fun FirResult.convertToIrAndActualize(
         firProvidersWithGeneratedFiles[session.moduleData] = FirProviderWithGeneratedFiles(session, firProvidersWithGeneratedFiles)
     }
 
-    val platformFirOutput = outputs.last()
     val syntheticIrBuiltinsSymbolsContainer = Fir2IrSyntheticIrBuiltinsSymbolsContainer()
 
     fun ModuleCompilerAnalyzedOutput.createFir2IrComponentsStorage(): Fir2IrComponentsStorage {
@@ -115,31 +114,18 @@ fun FirResult.convertToIrAndActualize(
         )
     }
 
-    val platformComponentsStorage = platformFirOutput.createFir2IrComponentsStorage()
+    lateinit var platformComponentsStorage: Fir2IrComponentsStorage
 
-    val dependentIrFragments = mutableListOf<IrModuleFragmentImpl>()
-    lateinit var mainIrFragment: IrModuleFragmentImpl
-
-    // We need to build all modules before rebuilding fake overrides
-    // to avoid fixing declaration storages
-    for (firOutput in outputs) {
-        val isMainOutput = firOutput === platformFirOutput
-        val componentsStorage = if (isMainOutput) {
-            platformComponentsStorage
-        } else {
-            firOutput.createFir2IrComponentsStorage()
-        }
-
-        val irModuleFragment = Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir).also {
+    val fragments = outputs.map { firOutput ->
+        val componentsStorage = firOutput.createFir2IrComponentsStorage()
+        platformComponentsStorage = componentsStorage
+        Fir2IrConverter.generateIrModuleFragment(componentsStorage, firOutput.fir).also {
             irModuleFragmentPostCompute(it)
         }
-
-        if (isMainOutput) {
-            mainIrFragment = irModuleFragment
-        } else {
-            dependentIrFragments.add(irModuleFragment)
-        }
     }
+
+    val dependentIrFragments = fragments.dropLast(1)
+    val mainIrFragment = fragments.last()
 
     val irBuiltins = IrBuiltInsOverFir(
         platformComponentsStorage,
