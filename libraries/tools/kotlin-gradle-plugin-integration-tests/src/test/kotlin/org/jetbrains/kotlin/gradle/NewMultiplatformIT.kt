@@ -575,71 +575,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDefaultSourceSetsDsl() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
-        setupWorkingDir()
-
-        val testOutputPrefix = "# default source set "
-        val testOutputRegex = Regex("${Regex.escape(testOutputPrefix)} (.*?) (.*?) (.*)")
-
-        gradleBuildScript().appendText(
-            "\n" + """
-            kotlin.targets.each { target ->
-                target.compilations.each { compilation ->
-                    println "$testOutputPrefix ${'$'}{target.name} ${'$'}{compilation.name} ${'$'}{compilation.defaultSourceSet.name}"
-                }
-            }
-            """.trimIndent()
-        )
-
-        build {
-            assertSuccessful()
-
-            val actualDefaultSourceSets = testOutputRegex.findAll(output).mapTo(mutableSetOf()) {
-                it.groupValues.let { (_, target, compilation, sourceSet) -> Triple(target, compilation, sourceSet) }
-            }
-
-            val expectedDefaultSourceSets = listOf(
-                "jvm6", "nodeJs", "mingw64", "linux64", "macos64", "macosArm64", "wasmJs"
-            ).flatMapTo(mutableSetOf()) { target ->
-                listOf("main", "test").map { compilation ->
-                    Triple(
-                        target, compilation,
-                        "$target${compilation.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
-                    )
-                }
-            } + Triple("metadata", "main", "commonMain")
-
-            assertEquals(expectedDefaultSourceSets, actualDefaultSourceSets)
-        }
-    }
-
-    @Test
-    fun testUnusedSourceSetsReport() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
-        setupWorkingDir()
-
-        gradleBuildScript().appendText("\nkotlin { sourceSets { foo { } } }")
-
-        build {
-            assertSuccessful()
-            assertHasDiagnostic(KotlinToolingDiagnostics.UnusedSourceSetsWarning)
-        }
-
-        gradleBuildScript().appendText("\nkotlin { sourceSets { bar { dependsOn foo } } }")
-
-        build {
-            assertSuccessful()
-            assertHasDiagnostic(KotlinToolingDiagnostics.UnusedSourceSetsWarning)
-        }
-
-        gradleBuildScript().appendText("\nkotlin { sourceSets { jvm6Main { dependsOn bar } } }")
-
-        build {
-            assertSuccessful()
-            assertNoDiagnostic(KotlinToolingDiagnostics.UnusedSourceSetsWarning)
-        }
-    }
-
-    @Test
     fun testAssociateCompilations() {
         testAssociateCompilationsImpl()
     }
@@ -729,16 +664,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
             targetsToTest.forEach {
                 checkIntegrationTestOutput(it)
             }
-        }
-    }
-
-    @Test
-    fun testPublishEmptySourceSets() = with(Project("mpp-empty-sources")) {
-        setupWorkingDir()
-        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-
-        build("publish") {
-            assertSuccessful()
         }
     }
 
