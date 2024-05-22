@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.objcexport.analysisApiUtils
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KtClassType
-import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.symbol
 
 /**
  * @return The **declared** super interfaces (**not the transitive closure**)
@@ -19,10 +17,7 @@ context(KtAnalysisSession)
 internal fun KtClassOrObjectSymbol.getDeclaredSuperInterfaceSymbols(): List<KtClassOrObjectSymbol> {
     return superTypes
         .asSequence()
-        .mapNotNull { type -> type as? KtClassType }
-        .flatMap { type -> type.qualifiers }
-        .mapNotNull { qualifier -> qualifier as? KaClassTypeQualifier.KaResolvedClassTypeQualifier }
-        .mapNotNull { it.symbol as? KtClassOrObjectSymbol }
+        .mapNotNull { type -> type.symbol as? KtClassOrObjectSymbol }
         .filter { !it.isCloneable } // TODO: Write unit test for this
         .filter { superInterface -> superInterface.classKind == KtClassKind.INTERFACE }
         .toList()
