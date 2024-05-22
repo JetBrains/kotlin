@@ -223,7 +223,9 @@ Platform compilation pipeline consists of the following steps:
    - [Run the FIR2IR, store the resulting IR module fragment.](#fir2ir)
      - *[Re-use the FIR2IR state](#fir2ir-shared-state) 
 2. [Combine all resulting IR module fragments](#iractualizer)
+   - Create BuiltIns and SymbolTable 
    - Perform [actualization](#actualization)
+   - Generate synthetic members bodies of `data` and `value` classes
    - Check that every expect declaration has corresponding actual and was actualized.
    - *Reconstruct fake-overrides.
    - Remove expect declarations.
