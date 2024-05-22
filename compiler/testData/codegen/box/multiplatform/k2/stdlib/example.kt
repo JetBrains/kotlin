@@ -91,6 +91,10 @@ public expect fun intArrayOf(vararg elements: Int): IntArray
 @SinceKotlin("1.1")
 public expect inline fun <reified T : Enum<T>> enumValues(): Array<T>
 
+@Target(AnnotationTarget.TYPE)
+@MustBeDocumented
+public annotation class ExtensionFunctionType
+
 // FILE: testCommon.kt
 
 enum class TestEnumInCommon {
@@ -106,6 +110,9 @@ fun testStringPlusInCommon() = "asdf" + 42
 fun anyInCommon() = Any()
 fun throwableInCommon() = Throwable()
 fun testIntArrayOf() = intArrayOf(1, 2, 3)
+
+// Reproduce `IrConstructorSymbolImpl is unbound` for explicitely declared `@ExtensionFunctionType`
+typealias funWithSuspend = suspend Any.() -> Any
 
 // MODULE: platform()()(common)
 // FILE: testPlatform.kt
