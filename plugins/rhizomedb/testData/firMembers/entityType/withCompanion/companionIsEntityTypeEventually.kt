@@ -5,7 +5,7 @@ abstract class MyEntityType(
     cons: (EID) -> MyEntity
 ) : EntityType<MyEntity>(ident, cons)
 
-@GeneratedEntityType
+<!WRONG_ENTITY_TYPE_TARGET("target companion already extends a class")!>@GeneratedEntityType<!>
 data class MyEntity(override val eid: EID) : Entity {
     companion object : MyEntityType("MyEntity", ::MyEntity) {
         val X = 42

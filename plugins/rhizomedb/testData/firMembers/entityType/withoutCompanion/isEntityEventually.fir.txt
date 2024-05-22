@@ -15,7 +15,7 @@ FILE: isEntityEventually.kt
 
         public final fun copy(eid: R|com/jetbrains/rhizomedb/EID| = this@R|/MyEntity|.R|/MyEntity.eid|): R|MyEntity|
 
-        public final companion object Companion : R|kotlin/Any|, R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
+        public final companion object Companion : R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
         }
 
     }

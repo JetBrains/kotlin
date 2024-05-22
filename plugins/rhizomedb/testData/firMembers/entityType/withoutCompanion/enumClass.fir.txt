@@ -30,9 +30,12 @@ FILE: enumClass.kt
         public final static val entries: R|kotlin/enums/EnumEntries<MyEntity>|
             public get(): R|kotlin/enums/EnumEntries<MyEntity>|
 
+        public final companion object Companion : R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
+        }
+
     }
     public final fun foo(): R|kotlin/Unit| {
-        Q|MyEntity|.<Unresolved name: all>#()
-        Q|MyEntity|.<Unresolved name: single>#()
-        Q|MyEntity|.<Unresolved name: singleOrNull>#()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.all: R|kotlin/collections/Set<MyEntity>|>|()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.single: R|MyEntity|>|()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.singleOrNull: R|MyEntity?|>|()
     }

@@ -9,9 +9,8 @@ import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.rhizomedb.fir.resolve.RhizomedbPackages
+import org.jetbrains.rhizomedb.fir.RhizomedbPackages
 
 val IrBuiltIns.entityTypeClass: IrClassSymbol
     get() {

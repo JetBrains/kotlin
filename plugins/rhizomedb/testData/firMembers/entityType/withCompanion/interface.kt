@@ -1,6 +1,6 @@
 import com.jetbrains.rhizomedb.*
 
-@GeneratedEntityType
+<!WRONG_ENTITY_TYPE_TARGET("target should be a regular class")!>@GeneratedEntityType<!>
 interface MyEntity : Entity {
     // OPTIONAL_COMPANION
     companion object {
@@ -9,7 +9,7 @@ interface MyEntity : Entity {
 }
 
 fun foo() {
-    MyEntity.<!NONE_APPLICABLE!>all<!>()
-    MyEntity.<!NONE_APPLICABLE!>single<!>()
-    MyEntity.<!NONE_APPLICABLE!>singleOrNull<!>()
+    MyEntity.all()
+    MyEntity.single()
+    MyEntity.singleOrNull()
 }

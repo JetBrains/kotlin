@@ -1,6 +1,6 @@
 import com.jetbrains.rhizomedb.*
 
-@GeneratedEntityType
+<!WRONG_ENTITY_TYPE_TARGET("target should be a regular class")!>@GeneratedEntityType<!>
 object MyEntity : Entity {
     override val eid: EID = 0
 }

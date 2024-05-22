@@ -6,7 +6,6 @@
 package org.jetbrains.rhizomedb
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.rhizomedb.runners.AbstractRhizomedbFirLightTreeAsmLikeInstructionsListingTest
 import org.jetbrains.rhizomedb.runners.AbstractRhizomedbFirPsiDiagnosticTest
 import java.io.File
@@ -46,8 +45,6 @@ private fun generateTestFilesWithoutCompanion() {
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
-
     generateTestFilesWithoutCompanion()
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(
@@ -55,12 +52,7 @@ fun main(args: Array<String>) {
             "plugins/rhizomedb/testData"
         ) {
             // ------------------------------- diagnostics -------------------------------
-//            testClass<AbstractSerializationPluginDiagnosticTest>() {
-//                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
-//            }
-//
             testClass<AbstractRhizomedbFirPsiDiagnosticTest> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
                 model("firMembers")
             }
 

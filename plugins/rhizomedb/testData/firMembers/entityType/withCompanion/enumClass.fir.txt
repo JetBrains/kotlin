@@ -21,7 +21,7 @@ FILE: enumClass.kt
 
         }
 
-        public final companion object Companion : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any|, R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
             private constructor(): R|MyEntity.Companion| {
                 super<R|kotlin/Any|>()
             }
@@ -42,7 +42,7 @@ FILE: enumClass.kt
 
     }
     public final fun foo(): R|kotlin/Unit| {
-        Q|MyEntity|.<Ambiguity: all, [com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all, com/jetbrains/rhizomedb/all]>#()
-        Q|MyEntity|.<Ambiguity: single, [com/jetbrains/rhizomedb/single, com/jetbrains/rhizomedb/single]>#()
-        Q|MyEntity|.<Ambiguity: singleOrNull, [com/jetbrains/rhizomedb/singleOrNull, com/jetbrains/rhizomedb/singleOrNull]>#()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.all: R|kotlin/collections/Set<MyEntity>|>|()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.single: R|MyEntity|>|()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.singleOrNull: R|MyEntity?|>|()
     }

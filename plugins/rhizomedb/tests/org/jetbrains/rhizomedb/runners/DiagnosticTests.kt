@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeAsmLikeInstructionListingTest
-import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.rhizomedb.configureForRhizomedb
 
@@ -31,10 +30,6 @@ abstract class AbstractRhizomedbFirPsiDiagnosticTest : AbstractFirPsiDiagnosticT
         with(builder) {
             configureForRhizomedb()
             disableOptInErrors()
-
-            forTestsMatching("*/diagnostics/*") {
-                configurationForClassicAndFirTestsAlongside()
-            }
 
             forTestsMatching("*/firMembers/*") {
                 defaultDirectives {

@@ -1,0 +1,32 @@
+FILE: manyAttribute.kt
+    public abstract interface MarkerInterface : R|kotlin/Any| {
+    }
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+        public constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
+            public get(): R|com/jetbrains/rhizomedb/EID|
+
+        @R|com/jetbrains/rhizomedb/Many|() @R|com/jetbrains/rhizomedb/TransientAttribute|() public final val manyMarkers: R|kotlin/collections/Set<MarkerInterface>|by this@R|/MyEntity.Companion|.R|/MyEntity.Companion.manyMarkersAttr|
+            public get(): R|kotlin/collections/Set<MarkerInterface>| {
+                ^ this@R|/MyEntity|.D|/MyEntity.manyMarkers|.R|SubstitutionOverride<com/jetbrains/rhizomedb/Attributes.Many.getValue: R|kotlin/collections/Set<MarkerInterface>|>|(this@R|/MyEntity|, ::R|/MyEntity.manyMarkers|)
+            }
+
+        public final operator fun component1(): R|com/jetbrains/rhizomedb/EID|
+
+        public final fun copy(eid: R|com/jetbrains/rhizomedb/EID| = this@R|/MyEntity|.R|/MyEntity.eid|): R|MyEntity|
+
+        public final companion object Companion : R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
+            public final val manyMarkersAttr: R|com/jetbrains/rhizomedb/Attributes.Many<MarkerInterface, MyEntity>|
+                public get(): R|com/jetbrains/rhizomedb/Attributes.Many<MarkerInterface, MyEntity>|
+
+        }
+
+    }
+    public final fun foo(marker: R|MarkerInterface|): R|kotlin/collections/Set<MarkerInterface>| {
+        lval entity: R|MyEntity| = R|com/jetbrains/rhizomedb/entity|<R|MyEntity|, R|MarkerInterface|>(Q|MyEntity|.R|/MyEntity.Companion.manyMarkersAttr|, R|<local>/marker|) ?: ^foo R|kotlin/collections/emptySet|<R|MarkerInterface|>()
+        lval result: R|kotlin/collections/Set<MarkerInterface>| = R|<local>/entity|.R|com/jetbrains/rhizomedb/get|<R|MyEntity|, R|MarkerInterface|>(Q|MyEntity|.R|/MyEntity.Companion.manyMarkersAttr|)
+        ^foo R|<local>/result|
+    }

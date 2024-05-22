@@ -1,0 +1,41 @@
+FILE: companionNotEntityType.kt
+    public abstract interface MarkerInterface : R|kotlin/Any| {
+    }
+    public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+        public constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
+            public get(): R|com/jetbrains/rhizomedb/EID|
+
+        @R|com/jetbrains/rhizomedb/ValueAttribute|() public final val string: R|kotlin/String|by <Unresolved name: stringAttr>#
+            public get(): R|kotlin/String| {
+                ^ this@R|/MyEntity|.D|/MyEntity.string|.<Ambiguity: getValue, [kotlin/getValue, kotlin/getValue, kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#(this@R|/MyEntity|, ::R|/MyEntity.string|)
+            }
+
+        @R|com/jetbrains/rhizomedb/TransientAttribute|() public final val serializer: <ERROR TYPE REF: Symbol not found for KSerializer>by <Unresolved name: serializerAttr>#
+            public get(): <ERROR TYPE REF: Symbol not found for KSerializer> {
+                ^ this@R|/MyEntity|.D|/MyEntity.serializer|.<Ambiguity: getValue, [kotlin/getValue, kotlin/getValue, kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#(this@R|/MyEntity|, ::R|/MyEntity.serializer|)
+            }
+
+        @R|com/jetbrains/rhizomedb/RefAttribute|() public final val entity: R|com/jetbrains/rhizomedb/Entity|by <Unresolved name: entityAttr>#
+            public get(): R|com/jetbrains/rhizomedb/Entity| {
+                ^ this@R|/MyEntity|.D|/MyEntity.entity|.<Ambiguity: getValue, [kotlin/getValue, kotlin/getValue, kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#(this@R|/MyEntity|, ::R|/MyEntity.entity|)
+            }
+
+        public final companion object Companion : R|MarkerInterface| {
+            private constructor(): R|MyEntity.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val X: R|kotlin/Int| = Int(42)
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final operator fun component1(): R|com/jetbrains/rhizomedb/EID|
+
+        public final fun copy(eid: R|com/jetbrains/rhizomedb/EID| = this@R|/MyEntity|.R|/MyEntity.eid|): R|MyEntity|
+
+    }

@@ -6,7 +6,6 @@
 package org.jetbrains.rhizomedb.fir
 
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.rhizomedb.fir.resolve.RhizomedbAnnotations
 
 object RhizomedbFirPredicates {
     internal val annotatedWithEntityType = DeclarationPredicate.create {
@@ -19,12 +18,7 @@ object RhizomedbFirPredicates {
                 annotated(RhizomedbAnnotations.referenceAttributeFqName)
     }
 
-    internal val parentAnnotatedWithEntityType = DeclarationPredicate.create {
-        parentAnnotated(RhizomedbAnnotations.generatedEntityTypeFqName)
-    }
-
-    internal val selfOrParentAnnotatedWithEntityType = DeclarationPredicate.create {
-        annotated(RhizomedbAnnotations.generatedEntityTypeFqName) or
-                parentAnnotated(RhizomedbAnnotations.generatedEntityTypeFqName)
+    internal val annotatedWithMany = DeclarationPredicate.create {
+        annotated(RhizomedbAnnotations.manyFqName)
     }
 }

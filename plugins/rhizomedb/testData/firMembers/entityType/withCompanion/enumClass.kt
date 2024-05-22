@@ -1,6 +1,6 @@
 import com.jetbrains.rhizomedb.*
 
-@GeneratedEntityType
+<!WRONG_ENTITY_TYPE_TARGET("target should be a regular class")!>@GeneratedEntityType<!>
 enum class MyEntity(override val eid: EID) : Entity {
     <!WRONG_ANNOTATION_TARGET!>@GeneratedEntityType<!>
     A(0),
@@ -13,7 +13,7 @@ enum class MyEntity(override val eid: EID) : Entity {
 }
 
 fun foo() {
-    MyEntity.<!NONE_APPLICABLE!>all<!>()
-    MyEntity.<!NONE_APPLICABLE!>single<!>()
-    MyEntity.<!NONE_APPLICABLE!>singleOrNull<!>()
+    MyEntity.all()
+    MyEntity.single()
+    MyEntity.singleOrNull()
 }

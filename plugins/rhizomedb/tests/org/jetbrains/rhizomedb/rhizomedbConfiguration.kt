@@ -6,7 +6,6 @@
 package org.jetbrains.rhizomedb
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.rhizomedb.fir.RhizomedbFirExtensionRegistrar
+import org.jetbrains.rhizomedb.fir.extensions.RhizomedbFirExtensionRegistrar
 import org.jetbrains.rhizomedb.ir.GeneratedDeclarationsIrBodyFiller
 import java.io.File
 

@@ -1,7 +1,6 @@
 import com.jetbrains.rhizomedb.*
 
 data class MyEntity(override val eid: EID) : Entity {
-    // OPTIONAL_COMPANION
     companion object {
         val X = 42
     }

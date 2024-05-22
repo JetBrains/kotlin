@@ -1,0 +1,22 @@
+FILE: abstractClass.kt
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public abstract class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+        public constructor(): R|MyEntity| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any|, R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
+            private constructor(): R|MyEntity.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val X: R|kotlin/Int| = Int(42)
+                public get(): R|kotlin/Int|
+
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.all: R|kotlin/collections/Set<MyEntity>|>|()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.single: R|MyEntity|>|()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.singleOrNull: R|MyEntity?|>|()
+    }

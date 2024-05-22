@@ -8,7 +8,6 @@ package org.jetbrains.rhizomedb.fir
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.rhizomedb.fir.resolve.RhizomedbSymbolNames
 
 enum class RhizomedbAttributeKind {
     REQUIRED, OPTIONAL, MANY

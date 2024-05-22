@@ -1,0 +1,15 @@
+FILE: sealedClass.kt
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public sealed class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+        protected constructor(): R|MyEntity| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.all: R|kotlin/collections/Set<MyEntity>|>|()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.single: R|MyEntity|>|()
+        Q|MyEntity|.R|SubstitutionOverride</MyEntity.Companion.singleOrNull: R|MyEntity?|>|()
+    }

@@ -1,0 +1,32 @@
+FILE: nonManySet.kt
+    public abstract interface MarkerInterface : R|kotlin/Any| {
+    }
+    @R|com/jetbrains/rhizomedb/GeneratedEntityType|() public final data class MyEntity : R|com/jetbrains/rhizomedb/Entity| {
+        public constructor(eid: R|com/jetbrains/rhizomedb/EID|): R|MyEntity| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
+            public get(): R|com/jetbrains/rhizomedb/EID|
+
+        @R|com/jetbrains/rhizomedb/TransientAttribute|() public final val markers: R|kotlin/collections/Set<MarkerInterface>|by this@R|/MyEntity.Companion|.R|/MyEntity.Companion.markersAttr|
+            public get(): R|kotlin/collections/Set<MarkerInterface>| {
+                ^ this@R|/MyEntity|.D|/MyEntity.markers|.R|SubstitutionOverride<com/jetbrains/rhizomedb/Attributes.Required.getValue: R|kotlin/collections/Set<MarkerInterface>|>|(this@R|/MyEntity|, ::R|/MyEntity.markers|)
+            }
+
+        public final operator fun component1(): R|com/jetbrains/rhizomedb/EID|
+
+        public final fun copy(eid: R|com/jetbrains/rhizomedb/EID| = this@R|/MyEntity|.R|/MyEntity.eid|): R|MyEntity|
+
+        public final companion object Companion : R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
+            public final val markersAttr: R|com/jetbrains/rhizomedb/Attributes.Required<kotlin/collections/Set<MarkerInterface>, MyEntity>|
+                public get(): R|com/jetbrains/rhizomedb/Attributes.Required<kotlin/collections/Set<MarkerInterface>, MyEntity>|
+
+        }
+
+    }
+    public final fun foo(markers: R|kotlin/collections/Set<MarkerInterface>|): R|kotlin/collections/Set<MarkerInterface>| {
+        lval entity: R|MyEntity| = R|com/jetbrains/rhizomedb/entity|<R|MyEntity|, R|kotlin/collections/Set<MarkerInterface>|>(Q|MyEntity|.R|/MyEntity.Companion.markersAttr|, R|<local>/markers|) ?: R|kotlin/error|(String(No Entity))
+        lval result: R|kotlin/collections/Set<MarkerInterface>| = R|<local>/entity|.R|com/jetbrains/rhizomedb/get|<R|MyEntity|, R|kotlin/collections/Set<MarkerInterface>|>(Q|MyEntity|.R|/MyEntity.Companion.markersAttr|)
+        ^foo R|<local>/result|
+    }

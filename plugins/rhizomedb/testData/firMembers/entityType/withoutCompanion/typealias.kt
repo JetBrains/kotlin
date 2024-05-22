@@ -1,7 +1,7 @@
 import com.jetbrains.rhizomedb.*
 
-<!WRONG_ANNOTATION_TARGET!>
-@GeneratedEntityType<!>
+
+<!WRONG_ANNOTATION_TARGET!>@GeneratedEntityType<!>
 typealias MyEntity = Entity
 
 fun foo() {

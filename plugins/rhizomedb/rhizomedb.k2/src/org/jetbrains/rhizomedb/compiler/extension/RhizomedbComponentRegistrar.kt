@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
-import org.jetbrains.rhizomedb.fir.RhizomedbFirExtensionRegistrar
+import org.jetbrains.rhizomedb.fir.extensions.RhizomedbFirExtensionRegistrar
 import org.jetbrains.rhizomedb.ir.GeneratedDeclarationsIrBodyFiller
 
 class RhizomedbComponentRegistrar : CompilerPluginRegistrar() {
