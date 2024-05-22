@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 public sealed class KaVariableLikeSymbol : KaCallableSymbol(), KaNamedSymbol, KaSymbolWithKind, KaPossibleMemberSymbol {
@@ -88,9 +87,6 @@ public abstract class KaEnumEntrySymbol : KaVariableLikeSymbol(), KaSymbolWithKi
 
     final override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }
-
-    //todo reduntant, remove
-    public abstract val containingEnumClassIdIfNonLocal: ClassId?
 
     /**
      * Returns the enum entry's initializer, or `null` if the enum entry doesn't have a body.

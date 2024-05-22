@@ -1,7 +1,6 @@
 KtEnumEntrySymbol:
   annotationsList: []
   callableId: kotlin/LazyThreadSafetyMode.SYNCHRONIZED
-  containingEnumClassIdIfNonLocal: kotlin/LazyThreadSafetyMode
   contextReceivers: []
   enumEntryInitializer: KtEnumEntrySymbol(kotlin/LazyThreadSafetyMode.SYNCHRONIZED)
   isExtension: false

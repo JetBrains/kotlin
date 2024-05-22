@@ -1,7 +1,6 @@
 KtEnumEntrySymbol:
   annotationsList: []
   callableId: test/E.A
-  containingEnumClassIdIfNonLocal: test/E
   contextReceivers: []
   enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
@@ -22,7 +21,6 @@ KtEnumEntrySymbol:
 KtEnumEntrySymbol:
   annotationsList: []
   callableId: test/E.B
-  containingEnumClassIdIfNonLocal: test/E
   contextReceivers: []
   enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false

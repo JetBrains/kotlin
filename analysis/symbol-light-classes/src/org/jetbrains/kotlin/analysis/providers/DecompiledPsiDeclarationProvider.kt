@@ -86,7 +86,7 @@ object DecompiledPsiDeclarationProvider {
         enumEntrySymbol: KaEnumEntrySymbol,
         project: Project
     ): PsiElement? {
-        val classId = enumEntrySymbol.containingEnumClassIdIfNonLocal ?: return null
+        val classId = enumEntrySymbol.callableId?.classId ?: return null
         val psiClass = project.createPsiDeclarationProvider(enumEntrySymbol.scope(project))
             ?.getClassesByClassId(classId)
             ?.firstOrNull() ?: return null

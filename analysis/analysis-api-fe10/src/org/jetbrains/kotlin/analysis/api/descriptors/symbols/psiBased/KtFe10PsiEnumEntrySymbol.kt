@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KaFe10PsiEnumEntrySymbol(
@@ -38,12 +36,6 @@ internal class KaFe10PsiEnumEntrySymbol(
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
         bindingContext[BindingContext.CLASS, psi]
     }
-
-    override val containingEnumClassIdIfNonLocal: ClassId?
-        get() = withValidityAssertion {
-            val containingClass = psi.containingClass()?.takeIf { it.isEnum() } ?: return null
-            return containingClass.getClassId()
-        }
 
     override val callableId: CallableId?
         get() = withValidityAssertion { psi.callableId }

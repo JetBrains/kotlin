@@ -565,7 +565,6 @@ scopes:
       KtEnumEntrySymbol:
         annotationsList: []
         callableId: /E.A
-        containingEnumClassIdIfNonLocal: E
         contextReceivers: []
         enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
         isExtension: false

@@ -92,7 +92,6 @@ KtKotlinPropertySymbol:
 KtEnumEntrySymbol:
   annotationsList: []
   callableId: /MyEnumClass.FirstEntry
-  containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
   enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
@@ -113,7 +112,6 @@ KtEnumEntrySymbol:
 KtEnumEntrySymbol:
   annotationsList: []
   callableId: /MyEnumClass.SecondEntry
-  containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
   enumEntryInitializer: null
   isExtension: false
@@ -332,7 +330,6 @@ KtKotlinPropertySymbol:
 KtEnumEntrySymbol:
   annotationsList: []
   callableId: /MyEnumClass.ThirdEntry
-  containingEnumClassIdIfNonLocal: MyEnumClass
   contextReceivers: []
   enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false

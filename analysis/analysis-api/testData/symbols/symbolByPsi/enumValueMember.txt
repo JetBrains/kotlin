@@ -227,7 +227,6 @@ KtKotlinPropertySymbol:
 KtEnumEntrySymbol:
   annotationsList: []
   callableId: /Style.SHEET
-  containingEnumClassIdIfNonLocal: Style
   contextReceivers: []
   enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFirEnumEntrySymbol(
@@ -39,7 +38,6 @@ internal class KaFirEnumEntrySymbol(
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val containingEnumClassIdIfNonLocal: ClassId? get() = withValidityAssertion { callableId?.classId }
 
     override val callableId: CallableId? get() = withValidityAssertion { firSymbol.getCallableId() }
 

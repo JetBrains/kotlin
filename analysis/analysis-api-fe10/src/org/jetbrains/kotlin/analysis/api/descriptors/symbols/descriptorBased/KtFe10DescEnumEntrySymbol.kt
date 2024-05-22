@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal class KaFe10DescEnumEntrySymbol(
@@ -30,9 +29,6 @@ internal class KaFe10DescEnumEntrySymbol(
 ) : KaEnumEntrySymbol(), KaEnumEntryInitializerSymbol, KaFe10DescMemberSymbol<ClassDescriptor> {
     private val enumDescriptor: ClassDescriptor
         get() = descriptor.containingDeclaration as ClassDescriptor
-
-    override val containingEnumClassIdIfNonLocal: ClassId?
-        get() = withValidityAssertion { enumDescriptor.classId }
 
     override val callableId: CallableId?
         get() = withValidityAssertion {
