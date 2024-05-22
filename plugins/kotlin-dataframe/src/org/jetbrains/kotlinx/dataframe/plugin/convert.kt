@@ -1,10 +1,15 @@
 package org.jetbrains.kotlinx.dataframe.plugin
 
+import org.jetbrains.kotlin.fir.dataframe.Names
+import org.jetbrains.kotlin.fir.dataframe.pluginDataFrameSchema
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.annotations.AbstractInterpreter
 import org.jetbrains.kotlinx.dataframe.annotations.AbstractSchemaModificationInterpreter
 import org.jetbrains.kotlinx.dataframe.annotations.Arguments
 import org.jetbrains.kotlinx.dataframe.annotations.ConvertApproximation
-import org.jetbrains.kotlinx.dataframe.annotations.FrameColumnTypeApproximation
 import org.jetbrains.kotlinx.dataframe.annotations.Present
 import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation
 import org.jetbrains.kotlinx.dataframe.api.Infer
@@ -51,7 +56,7 @@ public class With0 : AbstractSchemaModificationInterpreter() {
     }
 }
 
-internal fun convertImpl(
+internal fun KotlinTypeFacade.convertImpl(
     pluginDataFrameSchema: PluginDataFrameSchema,
     columns: List<List<String>>,
     type: TypeApproximation
@@ -60,7 +65,14 @@ internal fun convertImpl(
         require(column.kind() == SimpleColumnKind.VALUE) {
             "$path must be ${SimpleColumnKind.VALUE}, but was ${column.kind()}"
         }
-        column.changeType(type)
+        val unwrappedType = type.type
+        // TODO: AnyRow
+        if (unwrappedType is ConeClassLikeType && unwrappedType.classId == Names.DF_CLASS_ID && !unwrappedType.isNullable) {
+            val f = unwrappedType.typeArguments.single()
+            SimpleFrameColumn(column.name, pluginDataFrameSchema(f).columns(), false, anyDataFrame)
+        } else {
+            column.changeType(type)
+        }
     }
 }
 
