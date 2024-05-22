@@ -50,7 +50,7 @@ object O
 ```
 ```swift
 public class O : KotlinRuntime.KotlinBase {
-    public static var shared: Playground.O {
+    public static var shared: O {
         get {
             ...
         }

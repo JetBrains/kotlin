@@ -26,7 +26,7 @@ requires additional efforts.
 
 ## Swift export
 
-Given Objective-C experience, we wanted to try something else in Swift export. Luckily, in 2023, we have more tools at our disposal:
+Given Objective-C experience, we wanted to try something else in Swift export. Luckily, when we started Swift export in 2023, we had more tools at our disposal:
 1. Mighty Analysis API. While still a work in progress, Analysis API has a goal of creating a stable public API for Kotlin compiler frontend.
 It is developed with the IDE use-case in mind, given that it is used for the K2 IDE plugin. 
 Moreover, it is suitable for standalone cases (KSP2, Dokka, Kapt 4) as well.
