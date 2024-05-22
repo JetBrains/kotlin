@@ -826,6 +826,7 @@ tasks {
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
         dependsOn(":compiler:fir:fir2ir:aggregateTests")
+        dependsOn(":compiler:ir.backend.common:test")
     }
 
     register("nightlyFirCompilerTest") {

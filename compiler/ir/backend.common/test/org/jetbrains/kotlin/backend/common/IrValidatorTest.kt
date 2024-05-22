@@ -158,7 +158,7 @@ class IrValidatorTest {
             buildInvalidIrTreeWithLocations(),
             listOf(
                 Message(
-                    WARNING,
+                    ERROR,
                     "[IR VALIDATION] IrValidatorTest: unexpected type: expected <uninitialized parent>.Unit, got <uninitialized parent>.Any\n" +
                             "CALL 'public final fun foo (): <uninitialized parent>.Unit declared in org.sample' type=<uninitialized parent>.Any origin=null",
                     CompilerMessageLocation.create("test.kt", 1, 7, null),
