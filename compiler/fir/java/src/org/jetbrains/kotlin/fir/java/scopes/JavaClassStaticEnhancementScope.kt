@@ -29,16 +29,14 @@ class JavaClassStaticEnhancementScope(
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         useSiteStaticScope.processFunctionsByName(name) process@{ original ->
             val enhancedFunction = signatureEnhancement.enhancedFunction(original, name)
-            if (enhancedFunction is FirNamedFunctionSymbol) {
-                processor(enhancedFunction)
-            }
+            processor(enhancedFunction)
         }
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         useSiteStaticScope.processDeclaredConstructors process@{ original ->
-            val function = signatureEnhancement.enhancedFunction(original, name = null)
-            processor(function as FirConstructorSymbol)
+            val function = signatureEnhancement.enhancedConstructor(original)
+            processor(function)
         }
     }
 }

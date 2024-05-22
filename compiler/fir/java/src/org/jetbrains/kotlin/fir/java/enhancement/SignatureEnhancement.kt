@@ -96,6 +96,18 @@ class FirSignatureEnhancement(
     private val enhancementsCache = session.enhancedSymbolStorage.cacheByOwner.getValue(owner.symbol, null)
 
     fun enhancedFunction(
+        function: FirNamedFunctionSymbol,
+        name: Name,
+        precomputedOverridden: List<FirCallableDeclaration>? = null,
+    ): FirNamedFunctionSymbol {
+        return enhancedFunctionImpl(function, name, precomputedOverridden) as FirNamedFunctionSymbol
+    }
+
+    fun enhancedConstructor(constructor: FirConstructorSymbol): FirConstructorSymbol {
+        return enhancedFunctionImpl(constructor, name = null, precomputedOverridden = null) as FirConstructorSymbol
+    }
+
+    private fun enhancedFunctionImpl(
         function: FirFunctionSymbol<*>,
         name: Name?,
         precomputedOverridden: List<FirCallableDeclaration>? = null,
@@ -941,7 +953,7 @@ class FirEnhancedSymbolsStorage(private val cachesFactory: FirCachesFactory) : F
                 postCompute = { _, enhancedVersion, enhancement ->
                     val enhancedVersionFir = enhancedVersion.fir
                     (enhancedVersionFir.initialSignatureAttr)?.let {
-                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it, it.name) as FirNamedFunctionSymbol
+                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it, it.name)
                     }
                 }
             )
