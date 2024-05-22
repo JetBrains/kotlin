@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import kotlin.properties.ReadOnlyProperty
@@ -583,7 +584,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val llvmEhTypeidFor = llvmIntrinsic(
             "llvm.eh.typeid.for",
             functionType(int32Type, false, int8PtrType),
-            "nounwind", "readnone"
+            *listOfNotNull(
+                    "nounwind",
+                    "readnone".takeIf { HostManager.hostIsMac } // See https://youtrack.jetbrains.com/issue/KT-69002
+            ).toTypedArray()
     )
 
     var tlsCount = 0
