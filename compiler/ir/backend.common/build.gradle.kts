@@ -11,7 +11,6 @@ dependencies {
     api(project(":compiler:ir.interpreter"))
     compileOnly(intellijCore())
 
-    testImplementation(kotlinStdlib())
     testImplementation(kotlinTest("junit"))
     testImplementation(projectTests(":compiler:tests-common-new"))
 }
