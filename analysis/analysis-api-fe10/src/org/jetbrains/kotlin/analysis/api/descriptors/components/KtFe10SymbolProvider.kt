@@ -146,7 +146,7 @@ internal class KaFe10SymbolProvider(
         return KaFe10PackageSymbol(packageFqName, analysisContext)
     }
 
-    override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KaLocalVariableSymbol {
+    override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KaVariableSymbol {
         return KaFe10PsiLocalVariableSymbol(psi, analysisContext)
     }
 

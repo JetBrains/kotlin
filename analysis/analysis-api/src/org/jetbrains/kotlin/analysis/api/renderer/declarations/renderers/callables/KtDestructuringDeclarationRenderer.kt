@@ -40,7 +40,7 @@ public interface KaDestructuringDeclarationRenderer {
                         }
                         printCollection(symbol.entries, prefix = "(", postfix = ")") {
                             with(rendererWithoutValVar) {
-                                localVariableRenderer.renderSymbol(analysisSession, it, rendererWithoutValVar, this@printCollection)
+                                renderDeclaration(analysisSession, it, this@printCollection)
                             }
                         }
                     }

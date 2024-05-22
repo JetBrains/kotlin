@@ -53,7 +53,7 @@ public abstract class KaSymbolProvider : KaSessionComponent() {
     public abstract fun getNamedClassOrObjectSymbol(psi: KtClassOrObject): KaNamedClassOrObjectSymbol?
     public abstract fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KaPropertyAccessorSymbol
     public abstract fun getClassInitializerSymbol(psi: KtClassInitializer): KaClassInitializerSymbol
-    public abstract fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KaLocalVariableSymbol
+    public abstract fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KaVariableSymbol
     public abstract fun getDestructuringDeclarationSymbol(psi: KtDestructuringDeclaration): KaDestructuringDeclarationSymbol
 
     public abstract fun getPackageSymbolIfPackageExists(packageFqName: FqName): KaPackageSymbol?
@@ -173,7 +173,7 @@ public interface KaSymbolProviderMixIn : KaSessionMixIn {
      * @return symbol corresponding to the local variable introduced by individual destructuring declaration entries.
      * E.g. `val (x, y) = p` has two declaration entries, one corresponding to `x`, one to `y`.
      */
-    public fun KtDestructuringDeclarationEntry.getDestructuringDeclarationEntrySymbol(): KaLocalVariableSymbol =
+    public fun KtDestructuringDeclarationEntry.getDestructuringDeclarationEntrySymbol(): KaVariableSymbol =
         analysisSession.symbolProvider.getDestructuringDeclarationEntrySymbol(this)
 
     @Suppress("PropertyName")
