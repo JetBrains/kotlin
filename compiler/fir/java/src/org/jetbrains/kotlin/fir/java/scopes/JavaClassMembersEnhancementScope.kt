@@ -87,7 +87,7 @@ class JavaClassMembersEnhancementScope(
     ): ProcessorAction {
         val unwrappedSymbol = if (callableSymbol.origin == FirDeclarationOrigin.RenamedForOverride) {
             @Suppress("UNCHECKED_CAST")
-            callableSymbol.fir.initialSignatureAttr?.symbol as? S ?: callableSymbol
+            callableSymbol.fir.initialSignatureAttr as? S ?: callableSymbol
         } else {
             callableSymbol
         }

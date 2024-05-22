@@ -104,12 +104,12 @@ class Fir2IrLazySimpleFunction(
     }
 
     override val initialSignatureFunction: IrFunction? by lazy {
-        val originalFunction = fir.initialSignatureAttr as? FirFunction ?: return@lazy null
+        val originalFunction = fir.initialSignatureAttr ?: return@lazy null
         val lookupTag = firParent?.symbol?.toLookupTag()
 
         // `initialSignatureFunction` is not called during fir2ir conversion
         @OptIn(UnsafeDuringIrConstructionAPI::class)
-        declarationStorage.getIrFunctionSymbol(originalFunction.symbol, lookupTag).owner.also {
+        declarationStorage.getIrFunctionSymbol(originalFunction, lookupTag).owner.also {
             check(it !== this) { "Initial function can not be the same as remapped function" }
         }
     }

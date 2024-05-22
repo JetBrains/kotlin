@@ -940,8 +940,8 @@ class FirEnhancedSymbolsStorage(private val cachesFactory: FirCachesFactory) : F
                 },
                 postCompute = { _, enhancedVersion, enhancement ->
                     val enhancedVersionFir = enhancedVersion.fir
-                    (enhancedVersionFir.initialSignatureAttr as? FirSimpleFunction)?.let {
-                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it.symbol, it.name).fir
+                    (enhancedVersionFir.initialSignatureAttr)?.let {
+                        enhancedVersionFir.initialSignatureAttr = enhancement.enhancedFunction(it, it.name) as FirNamedFunctionSymbol
                     }
                 }
             )

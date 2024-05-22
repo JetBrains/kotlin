@@ -197,7 +197,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         if (containingClass.isRealOwnerOf(this) && fir.isSubstitutionOverride) originalForSubstitutionOverride!! else this
 
     private inline fun <reified S : FirCallableSymbol<*>> S.unwrapRenamedForOverride(): S =
-        if (origin == FirDeclarationOrigin.RenamedForOverride) fir.initialSignatureAttr?.symbol as? S ?: this else this
+        if (origin == FirDeclarationOrigin.RenamedForOverride) fir.initialSignatureAttr as? S ?: this else this
 
     private inline fun <reified S : FirCallableSymbol<*>> chooseMostSpecificOverridden(
         containingClassLookupTag: ConeClassLikeLookupTag,

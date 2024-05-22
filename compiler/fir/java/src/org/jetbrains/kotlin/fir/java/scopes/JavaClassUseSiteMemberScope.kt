@@ -562,7 +562,6 @@ class JavaClassUseSiteMemberScope(
 
         val functionFromSupertypeWithValueParametersToBeErased = unwrappedMemberFromSupertypeWithValueParametersToBeErased
             .initialSignatureAttr
-            ?.symbol as? FirNamedFunctionSymbol
             ?: unwrappedMemberFromSupertypeWithValueParametersToBeErased.symbol
 
         // E.g. contains(Object) from Java
@@ -599,7 +598,7 @@ class JavaClassUseSiteMemberScope(
                 }
             }
         }.apply {
-            initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters.fir
+            initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
         }.symbol
 
         if (allParametersAreAny) {
@@ -624,7 +623,7 @@ class JavaClassUseSiteMemberScope(
                 symbol = newSymbol
                 dispatchReceiverType = klass.defaultType()
             }.apply {
-                initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters.fir
+                initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
                 isHiddenToOvercomeSignatureClash = true
             }
             // Collect synthetic function which is a hidden copy of declared one with unerased parameters
@@ -749,7 +748,7 @@ class JavaClassUseSiteMemberScope(
                     origin?.let { this.origin = it }
                 }
             }.apply {
-                initialSignatureAttr = original
+                initialSignatureAttr = original.symbol
                 if (isHidden) {
                     isHiddenToOvercomeSignatureClash = true
                 }
