@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 
 @MppGradlePluginTests
-class MppDslSourceSetDependsOnIT : KGPBaseTest() {
+class MppDslSourceSetsIT : KGPBaseTest() {
 
     @GradleTest
     @TestMetadata(value = "new-mpp-lib-and-app/sample-lib")
@@ -31,6 +31,23 @@ class MppDslSourceSetDependsOnIT : KGPBaseTest() {
 
             buildAndFail("assemble") {
                 assertOutputContains("a -> c -> b -> a")
+            }
+        }
+    }
+
+    @GradleTest
+    @TestMetadata(value = "mpp-empty-sources")
+    fun testPublishEmptySourceSets(gradleVersion: GradleVersion) {
+        project(
+            projectName = "mpp-empty-sources",
+            gradleVersion = gradleVersion,
+        ) {
+            build("publish") {
+                assertTasksNoSource(
+                    ":compileKotlinJs",
+                    ":compileKotlinJvm",
+                )
+                assertTasksExecuted(":publish")
             }
         }
     }
