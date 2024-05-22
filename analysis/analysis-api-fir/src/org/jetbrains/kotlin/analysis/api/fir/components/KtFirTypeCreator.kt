@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -27,11 +27,11 @@ internal class KaFirTypeCreator(
     override val token: KaLifetimeToken
 ) : KaTypeCreator(), KaFirSessionComponent {
 
-    override fun buildClassType(builder: KaClassTypeBuilder): KaClassType {
+    override fun buildClassType(builder: KaClassTypeBuilder): KaType {
         val lookupTag = when (builder) {
             is KaClassTypeBuilder.ByClassId -> {
                 val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(builder.classId)
-                    ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).asKtType() as KaClassType
+                    ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).asKtType()
                 classSymbol.toLookupTag()
             }
             is KaClassTypeBuilder.BySymbol -> {
@@ -48,7 +48,7 @@ internal class KaFirTypeCreator(
             builder.nullability.isNullable
         ) as ConeClassLikeType
 
-        return coneType.asKtType() as KaClassType
+        return coneType.asKtType()
     }
 
     override fun buildTypeParameterType(builder: KaTypeParameterTypeBuilder): KaTypeParameterType {

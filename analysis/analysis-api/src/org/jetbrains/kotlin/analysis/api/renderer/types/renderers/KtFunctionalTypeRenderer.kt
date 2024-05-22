@@ -76,7 +76,7 @@ public interface KaFunctionalTypeRenderer {
             " ".separated(
                 { typeRenderer.annotationsRenderer.renderAnnotations(analysisSession, type, printer) },
                 {
-                    typeRenderer.classIdRenderer.renderClassTypeQualifier(analysisSession, type, typeRenderer, printer)
+                    typeRenderer.classIdRenderer.renderClassTypeQualifier(analysisSession, type, type.qualifiers, typeRenderer, printer)
                     if (type.nullability == KaTypeNullability.NULLABLE) {
                         append('?')
                     }

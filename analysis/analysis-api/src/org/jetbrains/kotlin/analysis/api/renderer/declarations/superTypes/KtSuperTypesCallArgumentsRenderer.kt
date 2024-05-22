@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.superTypes
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 
@@ -41,7 +40,7 @@ public interface KaSuperTypesCallArgumentsRenderer {
             printer: PrettyPrinter,
         ) {
             with(analysisSession) {
-                if ((type as? KaClassType)?.expandedSymbol?.classKind?.isClass != true) {
+                if (type.expandedSymbol?.classKind?.isClass != true) {
                     return
                 }
                 printer.append("()")

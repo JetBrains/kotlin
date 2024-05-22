@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
 public abstract class KaTypeCreator : KaSessionComponent() {
-    public abstract fun buildClassType(builder: KaClassTypeBuilder): KaClassType
+    public abstract fun buildClassType(builder: KaClassTypeBuilder): KaType
 
     public abstract fun buildTypeParameterType(builder: KaTypeParameterTypeBuilder): KaTypeParameterType
 }
@@ -35,13 +34,13 @@ public typealias KtTypeCreatorMixIn = KaTypeCreatorMixIn
 public inline fun KaTypeCreatorMixIn.buildClassType(
     classId: ClassId,
     build: KaClassTypeBuilder.() -> Unit = {},
-): KaClassType =
+): KaType =
     analysisSession.typesCreator.buildClassType(KaClassTypeBuilder.ByClassId(classId, token).apply(build))
 
 public inline fun KaTypeCreatorMixIn.buildClassType(
     symbol: KaClassLikeSymbol,
     build: KaClassTypeBuilder.() -> Unit = {},
-): KaClassType =
+): KaType =
     analysisSession.typesCreator.buildClassType(KaClassTypeBuilder.BySymbol(symbol, token).apply(build))
 
 public inline fun KaTypeCreatorMixIn.buildTypeParameterType(
