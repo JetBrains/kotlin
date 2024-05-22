@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10ClassErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10UsualClassType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -39,7 +39,7 @@ internal class KaFe10TypeCreator(
     override val token: KaLifetimeToken
         get() = analysisSession.token
 
-    override fun buildClassType(builder: KaClassTypeBuilder): KaClassType {
+    override fun buildClassType(builder: KaClassTypeBuilder): KaType {
         val descriptor: ClassDescriptor? = when (builder) {
             is KaClassTypeBuilder.ByClassId -> {
                 val fqName = builder.classId.asSingleFqName()
