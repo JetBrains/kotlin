@@ -34,8 +34,6 @@ fun buildProject(
     .builder()
     .apply(projectBuilder)
     .build()
-    //temporary solution for BuildEventsListenerRegistry
-    .also { addBuildEventsListenerRegistryMock(it) }
     .also { disableDownloadingKonanFromMavenCentral(it) }
     .apply(configureProject)
     .let { it as ProjectInternal }
@@ -98,7 +96,6 @@ fun Project.androidApplication(code: ApplicationExtension.() -> Unit) {
 }
 
 fun Project.applyMultiplatformPlugin(): KotlinMultiplatformExtension {
-    addBuildEventsListenerRegistryMock(this)
     disableLegacyWarning(project)
     plugins.apply("kotlin-multiplatform")
     return extensions.getByName("kotlin") as KotlinMultiplatformExtension

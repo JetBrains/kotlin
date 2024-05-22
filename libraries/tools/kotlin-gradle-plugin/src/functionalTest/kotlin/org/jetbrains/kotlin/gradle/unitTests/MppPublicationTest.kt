@@ -29,7 +29,6 @@ import kotlin.test.*
 class MppPublicationTest {
 
     private val project = ProjectBuilder.builder().build().also {
-        addBuildEventsListenerRegistryMock(it)
         disableLegacyWarning(it)
     } as ProjectInternal
 

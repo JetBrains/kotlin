@@ -214,7 +214,6 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
         /* Not yet, executed, because Android is not applied yet */
         project.assertNoWarningMessage()
 
-        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
         project.checkDiagnostics("agpCompatibility/androidIsAppliedAfterCheckerCall")
     }
@@ -223,7 +222,6 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     fun `test - WhenAndroidIsApplied - android is applied before the health check call`() {
         val project = ProjectBuilder.builder().build()
         project.gradle.registerMinimalVariantImplementationFactoriesForTests()
-        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
 
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied(
@@ -237,7 +235,6 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     fun `test - WhenAndroidIsApplied - called multiple times - still emits only a single message`() {
         val project = ProjectBuilder.builder().build()
         project.gradle.registerMinimalVariantImplementationFactoriesForTests()
-        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
 
         repeat(10) {
@@ -263,7 +260,6 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     @Test
     fun `test - is not executed when android plugin is applied - kotlin-android plugin`() {
         val project = ProjectBuilder.builder().build()
-        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply("kotlin-android")
         project.plugins.apply(LibraryPlugin::class.java)
 

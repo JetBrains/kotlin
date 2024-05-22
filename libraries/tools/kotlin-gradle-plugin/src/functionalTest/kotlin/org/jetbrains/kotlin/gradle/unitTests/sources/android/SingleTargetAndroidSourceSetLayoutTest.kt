@@ -13,7 +13,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -23,7 +22,6 @@ class SingleTargetAndroidSourceSetLayoutTest {
     private val project = ProjectBuilder.builder().build() as ProjectInternal
 
     private val android: LibraryExtension = run {
-        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply(LibraryPlugin::class.java)
         project.extensions.getByName("android") as LibraryExtension
     }
