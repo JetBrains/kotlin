@@ -237,7 +237,7 @@ fun <T> KotlinTypeFacade.interpret(
     }
 }
 
-internal fun KotlinTypeFacade.pluginDataFrameSchema(schemaTypeArg: ConeTypeProjection): PluginDataFrameSchema {
+fun KotlinTypeFacade.pluginDataFrameSchema(schemaTypeArg: ConeTypeProjection): PluginDataFrameSchema {
     val schema = if (schemaTypeArg.isStarProjection) {
         PluginDataFrameSchema(emptyList())
     } else {
@@ -246,7 +246,7 @@ internal fun KotlinTypeFacade.pluginDataFrameSchema(schemaTypeArg: ConeTypeProje
     return schema
 }
 
-internal fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrameSchema {
+fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrameSchema {
     val symbol = coneClassLikeType.toSymbol(session) as FirRegularClassSymbol
     val declarationSymbols = if (symbol.isLocal && symbol.resolvedSuperTypes.firstOrNull() != session.builtinTypes.anyType.type) {
         val rootSchemaSymbol = symbol.resolvedSuperTypes.first().toSymbol(session) as FirRegularClassSymbol
