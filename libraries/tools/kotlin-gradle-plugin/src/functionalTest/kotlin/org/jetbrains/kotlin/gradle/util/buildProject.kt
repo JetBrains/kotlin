@@ -10,10 +10,10 @@ import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.cocoapodsExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionImpl
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
+import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.konan.target.Xcode
 import org.jetbrains.kotlin.konan.target.XcodeVersion
 
 fun buildProject(
@@ -62,6 +62,7 @@ fun buildProjectWithJvm(
 }
 
 fun buildProjectWithCocoapods(projectBuilder: ProjectBuilder.() -> Unit = {}, code: Project.() -> Unit = {}) = buildProject(projectBuilder) {
+    project.applyMultiplatformPlugin()
     project.applyCocoapodsPlugin()
     code()
 }
@@ -103,15 +104,14 @@ fun Project.applyMultiplatformPlugin(): KotlinMultiplatformExtension {
     return extensions.getByName("kotlin") as KotlinMultiplatformExtension
 }
 
-fun Project.applyCocoapodsPlugin(): CocoapodsExtension {
-    val kotlinExtension = applyMultiplatformPlugin()
+fun Project.applyCocoapodsPlugin() {
     plugins.apply("org.jetbrains.kotlin.native.cocoapods")
-    return kotlinExtension.getExtension<CocoapodsExtension>("cocoapods")!!.also {
-        it.version = "1.0"
-    }
+    kotlin { cocoapods { version = "1.0" } }
 }
 
-fun KotlinMultiplatformExtension.cocoapods(code: CocoapodsExtension.() -> Unit) = cocoapodsExtension.code()
+fun KotlinMultiplatformExtension.cocoapods(code: CocoapodsExtension.() -> Unit) {
+    getExtension<CocoapodsExtension>("cocoapods")!!.apply(code)
+}
 
 val Project.propertiesExtension: ExtraPropertiesExtension
     get() = extensions.getByType(ExtraPropertiesExtension::class.java)

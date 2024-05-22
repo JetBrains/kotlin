@@ -37,7 +37,6 @@ import javax.inject.Inject
 import kotlin.reflect.KClass
 
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
-private const val COCOAPODS_PROJECT_EXTENSION_NAME = "cocoapods"
 
 internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinTopLevelExtension>): KotlinTopLevelExtension {
     return extensions.create(KOTLIN_PROJECT_EXTENSION_NAME, extensionClass.java, this)
@@ -66,9 +65,6 @@ internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
 
 internal val Project.multiplatformExtension: KotlinMultiplatformExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
-
-internal val KotlinMultiplatformExtension.cocoapodsExtension: CocoapodsExtension
-    get() = (this as ExtensionAware).extensions.getByName(COCOAPODS_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
 abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTopLevelExtensionConfig {
 
