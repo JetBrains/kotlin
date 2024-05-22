@@ -15,3 +15,8 @@ unsigned LLVMGetProgramAddressSpace(LLVMModuleRef moduleRef) {
     auto module = unwrap(moduleRef);
     return module ? module->getDataLayout().getProgramAddressSpace() : 0;
 }
+
+void LLVMSetOpaquePointers(LLVMContextRef contextRef, int value) {
+    auto context = unwrap(contextRef);
+    context->setOpaquePointers(value);
+}

@@ -94,7 +94,7 @@ internal class NativeGenerationState(
     private val llvmDelegate = lazy { CodegenLlvmHelpers(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
     private val debugInfoDelegate = lazy { DebugInfo(this) }
 
-    override val llvmContext = LLVMContextCreate()!!
+    override val llvmContext = LLVMContextCreate()!!.also { LLVMSetOpaquePointers(it, if (config.useLlvmOpaquePointers) 1 else 0) }
     val runtime by runtimeDelegate
     override val llvm by llvmDelegate
     val debugInfo by debugInfoDelegate
