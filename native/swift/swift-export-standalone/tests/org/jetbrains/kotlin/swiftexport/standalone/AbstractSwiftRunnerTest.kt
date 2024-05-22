@@ -6,41 +6,23 @@
 package org.jetbrains.kotlin.swiftexport.standalone
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSwiftExportTest
+import org.jetbrains.kotlin.konan.test.blackbox.compileToNativeKLib
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompilerWithoutOutputInterceptor
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
 import java.util.Properties
 import kotlin.io.path.*
-import kotlin.streams.asSequence
 import kotlin.test.assertSame
 
-enum class InputModuleKind {
-    Source, Binary
-}
-
-abstract class AbstractSourceBasedSwiftRunnerTest : AbstractSwiftRunnerTest(
-    renderDocComments = true,
-    inputModuleKind = InputModuleKind.Source,
-)
-
 abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftRunnerTest(
-    renderDocComments = false,
-    inputModuleKind = InputModuleKind.Binary,
+    renderDocComments = false, // in source mode we were able to render docs from the original kotlin. I believe without sources we have lost this ability?
 )
 
 abstract class AbstractSwiftRunnerTest(
     private val renderDocComments: Boolean,
-    private val inputModuleKind: InputModuleKind,
 ) : AbstractNativeSwiftExportTest() {
 
     private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
@@ -69,35 +51,17 @@ abstract class AbstractSwiftRunnerTest(
         KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText())
     }
 
-    override fun constructSwiftInput(testPathFull: File): InputModule {
+    override fun constructSwiftInput(testPathFull: File): InputModule.Binary {
         val moduleRoot = testPathFull.toPath() / "input_root/"
-
-        return when (inputModuleKind) {
-            InputModuleKind.Source -> {
-                InputModule.Source(
-                    path = moduleRoot,
-                    name = "main"
-                )
-            }
-            InputModuleKind.Binary -> {
-                InputModule.Binary(
-                    path = compileToNativeKLib(moduleRoot),
-                    name = "main"
-                )
-            }
-        }
+        return InputModule.Binary(
+            path = compileToNativeKLib(moduleRoot),
+            name = "main"
+        )
     }
 
     override fun constructSwiftExportConfig(testPathFull: File): SwiftExportConfig {
-        val unsupportedTypeStrategy = when (inputModuleKind) {
-            InputModuleKind.Source -> ErrorTypeStrategy.SpecialType
-            InputModuleKind.Binary -> ErrorTypeStrategy.Fail
-        }
-
-        val errorTypeStrategy = when (inputModuleKind) {
-            InputModuleKind.Source -> ErrorTypeStrategy.SpecialType
-            InputModuleKind.Binary -> ErrorTypeStrategy.Fail
-        }
+        val unsupportedTypeStrategy = ErrorTypeStrategy.Fail
+        val errorTypeStrategy = ErrorTypeStrategy.Fail
 
         val defaultConfig: Map<String, String> = mapOf(
             SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
@@ -138,27 +102,6 @@ abstract class AbstractSwiftRunnerTest(
 
     override fun collectKotlinFiles(testPathFull: File): List<File> =
         (testPathFull.toPath() / "input_root").toFile().walk().filter { it.extension == "kt" }.map { testPathFull.resolve(it) }.toList()
-}
-
-internal fun AbstractNativeSimpleTest.compileToNativeKLib(kLibSourcesRoot: Path): Path {
-    val ktFiles = Files.walk(kLibSourcesRoot).asSequence().filter { it.extension == "kt" }.toList()
-    val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib").toPath()
-
-    val arguments = buildList {
-        ktFiles.mapTo(this) { it.absolutePathString() }
-        addAll(listOf("-produce", "library"))
-        addAll(listOf("-output", testKlib.absolutePathString()))
-    }
-
-    // Avoid creating excessive number of classloaders
-    val classLoader = testRunSettings.get<KotlinNativeClassLoader>().classLoader
-    val compileResult = callCompilerWithoutOutputInterceptor(arguments.toTypedArray(), classLoader)
-
-    check(compileResult.exitCode == ExitCode.OK) {
-        "Compilation error: $compileResult"
-    }
-
-    return testKlib
 }
 
 private object KonanHome {
