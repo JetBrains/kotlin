@@ -138,6 +138,11 @@ class ComposeIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+                .suppressDeprecationWarningsOn(
+                    "JB Compose produces deprecation warning: https://github.com/JetBrains/compose-multiplatform/issues/3945"
+                ) {
+                    gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_7)
+                }
         ) {
             build(":composeApp:assembleDebug") {
                 assertOutputDoesNotContain("Detected Android Gradle Plugin compose compiler configuration")
