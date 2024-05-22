@@ -81,7 +81,7 @@ class Fir2IrJvmResultsConverter(
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
         val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
-        val fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(compilerConfiguration, diagnosticReporter)
+        val fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(compilerConfiguration, diagnosticReporter, skipBodies = false)
 
         val fir2irResult = inputArtifact.toFirResult().convertToIrAndActualize(
             fir2IrExtensions,
