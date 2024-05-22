@@ -577,9 +577,10 @@ val interopSrcDirs = listOf(
 val testAnnotationCommonSrcDir = project(":kotlin-test").files("annotations-common/src/main/kotlin").files
 val testCommonSrcDir = project(":kotlin-test").files("common/src/main/kotlin").files
 
+val nativeWasmSrcDir = project(":kotlin-stdlib").file("native-wasm/src/")
+
 val stdLibSrcDirs = interopSrcDirs + listOf(
         project.file("src/main/kotlin"),
-        project(":kotlin-stdlib").file("native-wasm/src/")
 )
 
 lateinit var stdlibBuildTask: TaskProvider<Task>
@@ -608,6 +609,10 @@ konanArtifacts {
                 "-api-version",
                 "2.0",
                 "-Xsuppress-api-version-greater-than-language-version-error",
+                "-Xallow-kotlin-package",
+                "-Xdont-warn-on-error-suppression",
+                "-Xskip-prerelease-check",
+                "-Xshort-module-name=kotlin-stdlib",
         )
 
         commonSrcDir(builtinsSrcDir)
@@ -615,6 +620,7 @@ konanArtifacts {
         testAnnotationCommonSrcDir.forEach { commonSrcDir(it) }
         testCommonSrcDir.forEach { commonSrcDir(it) }
         commonSrcDir(interopRuntimeCommonSrcDir)
+        commonSrcDir(nativeWasmSrcDir)
         stdLibSrcDirs.forEach { srcDir(it) }
     }
 
