@@ -558,6 +558,8 @@ tasks.named("clean", Delete::class) {
 
 // region: Stdlib
 
+val builtinsSrcDir = project(":core:builtins").file("src/kotlin/internal")
+
 val commonStdlibSrcDirs = project(":kotlin-stdlib")
         .files(
                 "common/src/kotlin",
@@ -608,6 +610,7 @@ konanArtifacts {
                 "-Xsuppress-api-version-greater-than-language-version-error",
         )
 
+        commonSrcDir(builtinsSrcDir)
         commonStdlibSrcDirs.forEach { commonSrcDir(it) }
         testAnnotationCommonSrcDir.forEach { commonSrcDir(it) }
         testCommonSrcDir.forEach { commonSrcDir(it) }
