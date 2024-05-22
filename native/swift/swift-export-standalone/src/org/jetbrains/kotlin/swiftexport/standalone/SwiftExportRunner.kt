@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
+import org.jetbrains.kotlin.sir.providers.utils.SimpleUnsupportedDeclarationReporter
+import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.RENDER_DOC_COMMENTS
@@ -35,7 +38,8 @@ public data class SwiftExportConfig(
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
     val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
-) {
+    val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
+    ) {
     public companion object {
         /**
          * How should the generated stubs refer to C bridging module?
@@ -53,6 +57,15 @@ public data class SwiftExportConfig(
         public const val RENDER_DOC_COMMENTS: String = "RENDER_DOC_COMMENTS"
 
         public const val ROOT_PACKAGE: String = "rootPackage"
+    }
+}
+
+public enum class UnsupportedDeclarationReporterKind {
+    Silent, Inline;
+
+    internal fun toReporter(): UnsupportedDeclarationReporter = when (this) {
+        Silent -> SilentUnsupportedDeclarationReporter
+        Inline -> SimpleUnsupportedDeclarationReporter()
     }
 }
 
@@ -131,7 +144,8 @@ public fun runSwiftExport(
         )
         DEFAULT_BRIDGE_MODULE_NAME
     }
-    val buildResult = buildSwiftModule(input, config)
+    val unsupportedDeclarationReporter = config.unsupportedDeclarationReporterKind.toReporter()
+    val buildResult = buildSwiftModule(input, config, unsupportedDeclarationReporter)
     val bridgeGenerator = createBridgeGenerator(object : SirTypeNamer {
         override fun swiftFqName(type: SirType): String = type.swift
         override fun kotlinFqName(type: SirType): String {
@@ -143,12 +157,20 @@ public fun runSwiftExport(
     if (bridgeRequests.isNotEmpty()) {
         buildResult.mainModule.updateImports(listOf(SirImport(bridgeModuleName)))
     }
+    val additionalSwiftLinesProvider = if (unsupportedDeclarationReporter is SimpleUnsupportedDeclarationReporter) {
+        // Lazily call after SIR printer to make sure that all declarations are collected.
+        { unsupportedDeclarationReporter.messages.map { "// $it" } }
+    } else {
+        { emptyList() }
+    }
     dumpResultToFiles(
-        listOf(buildResult.mainModule, buildResult.moduleForPackageEnums),
-        bridgeGenerator,
-        bridgeRequests, output,
+        sirModules = listOf(buildResult.mainModule, buildResult.moduleForPackageEnums),
+        bridgeGenerator = bridgeGenerator,
+        requests = bridgeRequests,
+        output = output,
         stableDeclarationsOrder = stableDeclarationsOrder,
-        renderDocComments = renderDocComments
+        renderDocComments = renderDocComments,
+        additionalSwiftLinesProvider = additionalSwiftLinesProvider,
     )
 }
 

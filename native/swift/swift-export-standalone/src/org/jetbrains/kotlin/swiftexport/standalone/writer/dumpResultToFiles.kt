@@ -19,6 +19,7 @@ internal fun dumpResultToFiles(
     output: SwiftExportFiles,
     stableDeclarationsOrder: Boolean,
     renderDocComments: Boolean,
+    additionalSwiftLinesProvider: () -> List<String>,
 ) {
     val cHeaderFile = output.cHeaderBridges.toFile()
     val ktBridgeFile = output.kotlinBridges.toFile()
@@ -27,13 +28,17 @@ internal fun dumpResultToFiles(
     val bridges = generateBridgeSources(bridgeGenerator, requests, stableDeclarationsOrder)
     val swiftSources = sirModules.asSequence().map { module ->
         SirAsSwiftSourcesPrinter.print(module, stableDeclarationsOrder, renderDocComments)
-    }
+    } + additionalSwiftLinesProvider()
     dumpTextAtFile(bridges.ktSrc, ktBridgeFile)
     dumpTextAtFile(bridges.cSrc, cHeaderFile)
     dumpTextAtFile(swiftSources, swiftFile)
 }
 
-private fun generateBridgeSources(bridgeGenerator: BridgeGenerator, requests: List<BridgeRequest>, stableDeclarationsOrder: Boolean): BridgeSources {
+private fun generateBridgeSources(
+    bridgeGenerator: BridgeGenerator,
+    requests: List<BridgeRequest>,
+    stableDeclarationsOrder: Boolean,
+): BridgeSources {
     val kotlinBridgePrinter = createKotlinBridgePrinter()
     val cBridgePrinter = createCBridgePrinter()
 

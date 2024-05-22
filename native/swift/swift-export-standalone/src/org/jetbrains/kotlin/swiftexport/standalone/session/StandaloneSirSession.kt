@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.impl.*
+import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 
 internal class StandaloneSirSession(
@@ -16,6 +17,7 @@ internal class StandaloneSirSession(
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     moduleForPackageEnums: SirModule,
+    unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
     moduleProviderBuilder: () -> SirModuleProvider,
 ) : SirSession {
 
@@ -33,6 +35,6 @@ internal class StandaloneSirSession(
         errorTypeStrategy = errorTypeStrategy,
         unsupportedTypeStrategy = unsupportedTypeStrategy
     )
-    override val visibilityChecker = SirVisibilityCheckerImpl()
+    override val visibilityChecker = SirVisibilityCheckerImpl(unsupportedDeclarationReporter)
     override val childrenProvider = SirDeclarationChildrenProviderImpl(sirSession)
 }

@@ -105,9 +105,21 @@ abstract class AbstractSwiftRunnerTest(
             SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
         )
 
+        var unsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent
         val discoveredConfig = (testPathFull.toPath() / "config.properties").takeIf { it.exists() }?.let { configPath ->
             Properties().apply { load(configPath.toFile().inputStream()) }.let { properties ->
-                properties.propertyNames().asSequence().mapNotNull { it as? String }.associateWith { properties.getProperty(it) }.toMap()
+                properties.propertyNames().asSequence()
+                    .filterIsInstance<String>()
+                    .associateWith { properties.getProperty(it) }
+                    .filter { (key, value) -> when {
+                        key == "unsupportedDeclarationsReporterKind" -> {
+                            UnsupportedDeclarationReporterKind.entries
+                                .singleOrNull { it.name.lowercase() == value.lowercase() }
+                                ?.let { unsupportedDeclarationReporterKind = it }
+                            false
+                        }
+                        else -> true
+                    } }
             }
         } ?: emptyMap()
 
@@ -120,6 +132,7 @@ abstract class AbstractSwiftRunnerTest(
             errorTypeStrategy = errorTypeStrategy,
             unsupportedTypeStrategy = unsupportedTypeStrategy,
             outputPath = tmpdir.toPath(),
+            unsupportedDeclarationReporterKind = unsupportedDeclarationReporterKind,
         )
     }
 

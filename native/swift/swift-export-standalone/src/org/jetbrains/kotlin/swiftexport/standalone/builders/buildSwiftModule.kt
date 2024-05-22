@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirMutableDeclarationContainer
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
+import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
@@ -39,6 +40,7 @@ internal class SwiftModuleBuildResults(
 internal fun buildSwiftModule(
     input: InputModule,
     config: SwiftExportConfig,
+    unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
 ): SwiftModuleBuildResults {
     val (useSiteModule, mainModule, scopeProvider) = when (input) {
         is InputModule.Source -> createModuleWithScopeProviderFromSources(config.distribution, input)
@@ -54,6 +56,7 @@ internal fun buildSwiftModule(
             errorTypeStrategy = config.errorTypeStrategy.toInternalType(),
             unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
             moduleForPackageEnums = moduleForPackageEnums,
+            unsupportedDeclarationReporter = unsupportedDeclarationReporter,
             moduleProviderBuilder = { sirOneToOneModuleProvider }
         )
         with(sirSession) {

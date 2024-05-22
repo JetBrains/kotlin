@@ -72,6 +72,12 @@ public class SourceBasedSwiftExportRunnerTest extends AbstractSourceBasedSwiftRu
   }
 
   @Test
+  @TestMetadata("unsupportedDeclarationsReporting")
+  public void testUnsupportedDeclarationsReporting() {
+    runTest("native/swift/swift-export-standalone/testData/unsupportedDeclarationsReporting/");
+  }
+
+  @Test
   @TestMetadata("variables")
   public void testVariables() {
     runTest("native/swift/swift-export-standalone/testData/variables/");
