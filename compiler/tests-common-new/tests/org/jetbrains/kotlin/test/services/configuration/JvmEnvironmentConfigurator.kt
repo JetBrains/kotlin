@@ -348,6 +348,14 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
     private fun CompilerConfiguration.registerModuleDependencies(module: TestModule) {
         addJvmClasspathRoots(module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList())
 
+        val isJava9Module = module.files.any(TestFile::isModuleInfoJavaFile)
+        for (dependency in module.allDependencies.filter { it.kind == DependencyKind.Binary }.toFileList()) {
+            if (isJava9Module) {
+                add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(dependency))
+            }
+            addJvmClasspathRoot(dependency)
+        }
+
         val binaryFriends = module.friendDependencies.filter { it.kind == DependencyKind.Binary }
         if (binaryFriends.isNotEmpty()) {
             put(JVMConfigurationKeys.FRIEND_PATHS, binaryFriends.toFileList().map { it.absolutePath })

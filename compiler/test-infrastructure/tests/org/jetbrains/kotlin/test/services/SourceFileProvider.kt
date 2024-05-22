@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.services
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.KtInMemoryTextSourceFile
 import org.jetbrains.kotlin.KtSourceFile
@@ -121,6 +122,9 @@ val TestFile.isKtsFile: Boolean
 
 val TestFile.isJavaFile: Boolean
     get() = name.endsWith(".java")
+
+val TestFile.isModuleInfoJavaFile: Boolean
+    get() = name == PsiJavaModule.MODULE_INFO_FILE
 
 val TestFile.isJsFile: Boolean
     get() = name.endsWith(".js")
