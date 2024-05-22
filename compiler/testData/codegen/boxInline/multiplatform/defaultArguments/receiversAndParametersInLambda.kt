@@ -7,6 +7,7 @@
 //  otherwise DCE keeps members of expect D referenced from lambdas in default arguments instead of members of actual D
 // IGNORE_BACKEND: JS, JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_INLINER_K1: IR
 
 // FILE: 1.kt
 
