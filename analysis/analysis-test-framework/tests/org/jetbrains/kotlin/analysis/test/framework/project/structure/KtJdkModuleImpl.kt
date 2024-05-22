@@ -9,8 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.test.getAnalyzerServices
 import java.nio.file.Path
 
 class KtJdkModuleImpl(
@@ -20,9 +18,6 @@ class KtJdkModuleImpl(
     override val project: Project,
     private val binaryRoots: Collection<Path>,
 ) : KtModuleWithModifiableDependencies(), KtSdkModule {
-    override val analyzerServices: PlatformDependentAnalyzerServices
-        get() = platform.getAnalyzerServices()
-
     override fun getBinaryRoots(): Collection<Path> = binaryRoots
 
     override val directRegularDependencies: MutableList<KtModule> = mutableListOf()

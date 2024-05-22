@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModu
 import org.jetbrains.kotlin.analysis.project.structure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 internal class KtNotUnderContentRootModuleImpl(
     override val name: String,
@@ -26,7 +25,6 @@ internal class KtNotUnderContentRootModuleImpl(
     override val project: Project,
 ) : KtNotUnderContentRootModule, KtModuleWithPlatform {
     override val transitiveDependsOnDependencies: List<KtModule> by lazy { computeTransitiveDependsOnDependencies(directDependsOnDependencies) }
-    override val analyzerServices: PlatformDependentAnalyzerServices = super.analyzerServices
 
     override val contentScope: GlobalSearchScope =
         if (file != null) GlobalSearchScope.fileScope(file) else GlobalSearchScope.EMPTY_SCOPE

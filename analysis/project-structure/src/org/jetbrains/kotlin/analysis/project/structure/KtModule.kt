@@ -11,7 +11,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import java.nio.file.Path
 
 /**
@@ -68,8 +67,6 @@ public sealed interface KtModule {
      * @see [TargetPlatform]
      */
     public val platform: TargetPlatform
-
-    public val analyzerServices: PlatformDependentAnalyzerServices
 
     /**
      * [Project] to which the current module belongs.
@@ -170,7 +167,6 @@ public interface KtLibrarySourceModule : KtModule {
  */
 public class KtBuiltinsModule(
     override val platform: TargetPlatform,
-    override val analyzerServices: PlatformDependentAnalyzerServices,
     override val project: Project
 ) : KtBinaryModule {
     override val directRegularDependencies: List<KtModule> get() = emptyList()

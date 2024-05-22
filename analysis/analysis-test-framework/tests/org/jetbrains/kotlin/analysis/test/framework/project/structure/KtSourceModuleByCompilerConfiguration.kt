@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
-import org.jetbrains.kotlin.test.getAnalyzerServices
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -108,9 +106,6 @@ abstract class KtModuleByCompilerConfiguration(
 
     val platform: TargetPlatform
         get() = testModule.targetPlatform
-
-    val analyzerServices: PlatformDependentAnalyzerServices
-        get() = testModule.targetPlatform.getAnalyzerServices()
 }
 
 class KtSourceModuleByCompilerConfiguration(
@@ -181,7 +176,6 @@ private class LibraryByRoots(
     override val transitiveDependsOnDependencies: List<KtModule> get() = emptyList()
     override val directFriendDependencies: List<KtModule> get() = emptyList()
     override val platform: TargetPlatform get() = parentModule.platform
-    override val analyzerServices: PlatformDependentAnalyzerServices get() = parentModule.analyzerServices
     override fun getBinaryRoots(): Collection<Path> = roots
 
     override fun equals(other: Any?): Boolean {

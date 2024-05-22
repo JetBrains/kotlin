@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.computeTransitiveDependsOnDependencies
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 internal class KtSourceModuleImpl(
     override val directRegularDependencies: List<KtModule>,
@@ -27,6 +26,7 @@ internal class KtSourceModuleImpl(
     internal val sourceRoots: List<PsiFileSystemItem>,
 ) : KtSourceModule, KtModuleWithPlatform {
     override val stableModuleName: String? get() = moduleName
-    override val transitiveDependsOnDependencies: List<KtModule> by lazy { computeTransitiveDependsOnDependencies(directDependsOnDependencies) }
-    override val analyzerServices: PlatformDependentAnalyzerServices = super.analyzerServices
+    override val transitiveDependsOnDependencies: List<KtModule> by lazy {
+        computeTransitiveDependsOnDependencies(directDependsOnDependencies)
+    }
 }

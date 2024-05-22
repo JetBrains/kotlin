@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 internal interface KtModuleWithPlatform {
     val platform: TargetPlatform
-
-    val analyzerServices: PlatformDependentAnalyzerServices
-        get() = platform.getAnalyzerServices()
 }

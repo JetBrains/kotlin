@@ -30,10 +30,8 @@ import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.descriptorUtil.platform
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -185,8 +183,6 @@ internal class KaFe10SymbolContainingDeclarationProvider(
             override val contentScope: GlobalSearchScope = ProjectScope.getLibrariesScope(project)
             override val platform: TargetPlatform
                 get() = descriptor.platform!!
-            override val analyzerServices: PlatformDependentAnalyzerServices
-                get() = JvmPlatformAnalyzerServices
             override val project: Project
                 get() = analysisSession.analysisContext.resolveSession.project
 
