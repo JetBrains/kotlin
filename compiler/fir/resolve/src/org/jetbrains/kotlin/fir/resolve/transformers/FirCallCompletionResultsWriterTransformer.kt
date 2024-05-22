@@ -812,8 +812,9 @@ class FirCallCompletionResultsWriterTransformer(
         candidate: Candidate,
     ): List<FirTypeProjection> {
         val typeArguments = computeTypeArgumentTypes(candidate)
-            .mapIndexed { index, type ->
+            .mapIndexed { index, typeFromFinalSubstitutor ->
                 val argument = access.typeArguments.getOrNull(index)
+                val type = typeFromFinalSubstitutor.storeNonFlexibleCounterpartInAttributeIfNecessary(argument)
                 val sourceForTypeArgument = argument?.source
                     ?: access.calleeReference.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeArgument)
                 when (argument) {
@@ -845,6 +846,27 @@ class FirCallCompletionResultsWriterTransformer(
         return if (typeArguments.size < access.typeArguments.size) {
             typeArguments + access.typeArguments.subList(typeArguments.size, access.typeArguments.size)
         } else typeArguments
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
+     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
+     */
+    private fun ConeKotlinType.storeNonFlexibleCounterpartInAttributeIfNecessary(
+        argument: FirTypeProjection?,
+    ): ConeKotlinType {
+        if (this !is ConeFlexibleType) return this
+        if (argument !is FirTypeProjectionWithVariance) return this
+
+        return withAttributes(
+            attributes.plus(
+                ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
+                    argument.typeRef.coneType.fullyExpandedType(
+                        session
+                    )
+                )
+            )
+        )
     }
 
     private fun computeTypeArgumentTypes(

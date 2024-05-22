@@ -14,7 +14,7 @@ import java.util.function.Supplier
 
 fun test(){
     Supplier<String> {
-        JavaBox(null).a
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>JavaBox(null).a<!>
     }
 
     val sam : Supplier<String> = Supplier {
