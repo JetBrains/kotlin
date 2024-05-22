@@ -14,6 +14,135 @@ import kotlin.test.assertTrue
 
 class ExpectActualsTest : BaseAbstractTest() {
 
+    private val multiplatformConfiguration = dokkaConfiguration {
+        sourceSets {
+            val commonId = sourceSet {
+                sourceRoots = listOf("src/common/")
+                analysisPlatform = "common"
+                name = "common"
+                displayName = "common"
+            }.value.sourceSetID
+            sourceSet {
+                sourceRoots = listOf("src/jvm/")
+                analysisPlatform = "jvm"
+                name = "jvm"
+                displayName = "jvm"
+                dependentSourceSets = setOf(commonId)
+            }
+            sourceSet {
+                sourceRoots = listOf("src/native/")
+                analysisPlatform = "native"
+                name = "native"
+                displayName = "native"
+                dependentSourceSets = setOf(commonId)
+            }
+        }
+    }
+    private val commonSourceSetId =
+        multiplatformConfiguration.sourceSets.single { it.displayName == "common" }.sourceSetID
+
+    @Test
+    fun `property inside expect class should be marked as expect`() = testInline(
+        """
+        /src/common/test.kt
+        expect class ExpectActualClass {
+          val property: String?
+        }
+        
+        /src/jvm/test.kt
+        actual class ExpectActualClass {
+          actual val property: String? = null
+        }
+        
+        /src/native/test.kt
+        actual class ExpectActualClass {
+          actual val property: String? = null
+        }
+        """.trimMargin(),
+        multiplatformConfiguration
+    ) {
+        documentablesTransformationStage = { module ->
+            val cls = module.packages.single().classlikes.single { it.name == "ExpectActualClass" }
+            assertTrue(cls.isExpectActual)
+            assertEquals(commonSourceSetId, cls.expectPresentInSet?.sourceSetID)
+            val property = cls.properties.single { it.name == "property" }
+            assertTrue(property.isExpectActual)
+            assertEquals(commonSourceSetId, property.expectPresentInSet?.sourceSetID)
+        }
+    }
+
+    @Test
+    fun `function inside expect class should be marked as expect`() = testInline(
+        """
+        /src/common/test.kt
+        expect class ExpectActualClass {
+          fun function(): String?
+        }
+        
+        /src/jvm/test.kt
+        actual class ExpectActualClass {
+          actual fun function(): String? = null
+        }
+        
+        /src/native/test.kt
+        actual class ExpectActualClass {
+          actual fun function(): String? = null
+        }
+        """.trimMargin(),
+        multiplatformConfiguration
+    ) {
+        documentablesTransformationStage = { module ->
+            val cls = module.packages.single().classlikes.single { it.name == "ExpectActualClass" }
+            assertTrue(cls.isExpectActual)
+            assertEquals(commonSourceSetId, cls.expectPresentInSet?.sourceSetID)
+            val function = cls.functions.single { it.name == "function" }
+            assertTrue(function.isExpectActual)
+            assertEquals(commonSourceSetId, function.expectPresentInSet?.sourceSetID)
+        }
+    }
+
+    @Test
+    fun `top level expect property should be marked as expect`() = testInline(
+        """
+        /src/common/test.kt
+        expect val property: String?
+        
+        /src/jvm/test.kt
+        actual val property: String? = null
+        
+        /src/native/test.kt
+        actual val property: String? = null
+        """.trimMargin(),
+        multiplatformConfiguration
+    ) {
+        documentablesTransformationStage = { module ->
+            val property = module.packages.single().properties.single { it.name == "property" }
+            assertTrue(property.isExpectActual)
+            assertEquals(commonSourceSetId, property.expectPresentInSet?.sourceSetID)
+        }
+    }
+
+    @Test
+    fun `top level expect function should be marked as expect`() = testInline(
+        """
+        /src/common/test.kt
+        expect fun function(): String?
+        
+        /src/jvm/test.kt
+        actual fun function(): String? = null
+        
+        /src/native/test.kt
+        actual fun function(): String? = null
+        """.trimMargin(),
+        multiplatformConfiguration
+    ) {
+        documentablesTransformationStage = { module ->
+            val function = module.packages.single().functions.single { it.name == "function" }
+            assertTrue(function.isExpectActual)
+            assertEquals(commonSourceSetId, function.expectPresentInSet?.sourceSetID)
+        }
+    }
+
     @Test
     fun `three same named expect actual classes`() {
 
