@@ -164,7 +164,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
 
-    val suspendFunctionsFromAnyThreadFromObjC: Boolean by lazy { configuration.get(BinaryOptions.objcExportSuspendFunctionLaunchThreadRestriction) == ObjCExportSuspendFunctionLaunchThreadRestriction.NONE }
+    val suspendFunctionsFromAnyThreadFromObjC: Boolean by lazy {
+        configuration.get(BinaryOptions.objcExportSuspendFunctionLaunchThreadRestriction) !=
+                ObjCExportSuspendFunctionLaunchThreadRestriction.MAIN
+    }
+
     val freezing: Freezing
         get() = configuration.get(BinaryOptions.freezing)?.also {
             if (it != Freezing.Disabled) {

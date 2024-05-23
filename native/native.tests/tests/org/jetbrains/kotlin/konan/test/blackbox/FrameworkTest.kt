@@ -381,8 +381,8 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun objCExportTestStatic() {
-        objCExportTestImpl("Static", listOf("-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=none"),
-                           listOf("-D", "ALLOW_SUSPEND_ANY_THREAD"), true, false)
+        objCExportTestImpl("Static", listOf("-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=main"),
+                           listOf("-D", "DISALLOW_SUSPEND_ANY_THREAD"), true, false)
     }
 
     private fun objCExportTestImpl(
