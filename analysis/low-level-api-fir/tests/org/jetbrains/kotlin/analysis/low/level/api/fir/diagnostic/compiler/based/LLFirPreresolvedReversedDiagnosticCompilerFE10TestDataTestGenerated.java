@@ -8069,6 +8069,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("enumEntryAccessInCapturedBlock.kt")
+      public void testEnumEntryAccessInCapturedBlock() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumEntryAccessInCapturedBlock.kt");
+      }
+
+      @Test
       @TestMetadata("enumInterdependence.kt")
       public void testEnumInterdependence() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumInterdependence.kt");
