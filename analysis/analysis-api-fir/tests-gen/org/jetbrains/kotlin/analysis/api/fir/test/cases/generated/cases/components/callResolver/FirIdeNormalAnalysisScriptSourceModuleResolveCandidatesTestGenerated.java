@@ -79,16 +79,6 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
   }
 
   @Nested
-  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/assignments")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Assignments {
-    @Test
-    public void testAllFilesPresentInAssignments() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/assignments"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
-  }
-
-  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/callableReferences")
   @TestDataPath("$PROJECT_ROOT")
   public class CallableReferences {
@@ -525,6 +515,56 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
     @Test
     public void testAllFilesPresentInNonCalls() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/nonCalls"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/operators")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Operators {
+    @Test
+    public void testAllFilesPresentInOperators() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/assignment")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Assignment {
+      @Test
+      public void testAllFilesPresentInAssignment() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/assignment"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/compareTo")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CompareTo {
+      @Test
+      public void testAllFilesPresentInCompareTo() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/compareTo"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/contains")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Contains {
+      @Test
+      public void testAllFilesPresentInContains() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/contains"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/equals")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Equals {
+      @Test
+      public void testAllFilesPresentInEquals() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/equals"), Pattern.compile("^(.+)\\.kts$"), null, true);
+      }
     }
   }
 

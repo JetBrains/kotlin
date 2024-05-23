@@ -1,0 +1,2 @@
+Resolved to:
+0: (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int

@@ -1,0 +1,327 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = element: T
+            callableId = null
+        ]
+        callableId = kotlin/collections/plusAssign
+    typeArgumentsMapping = {
+      T -> (kotlin.Int)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = element
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = element: T
+        callableId = null)
+    }
+  isInBestCandidates = true
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: OTHER_ERROR with plusAssign>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.Array<T>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Array<kotlin.Int>
+            symbol = elements: kotlin.Array<T>
+            callableId = null
+        ]
+        callableId = kotlin/collections/plusAssign
+    typeArgumentsMapping = {
+      T -> (kotlin.Int)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Array<kotlin.Int>
+        symbol = elements: kotlin.Array<T>
+        callableId = null)
+    }
+  isInBestCandidates = false
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: OTHER_ERROR with plusAssign>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.collections.Iterable<T>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.collections.Iterable<kotlin.Int>
+            symbol = elements: kotlin.collections.Iterable<T>
+            callableId = null
+        ]
+        callableId = kotlin/collections/plusAssign
+    typeArgumentsMapping = {
+      T -> (kotlin.Int)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.collections.Iterable<kotlin.Int>
+        symbol = elements: kotlin.collections.Iterable<T>
+        callableId = null)
+    }
+  isInBestCandidates = false
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: OTHER_ERROR with plusAssign>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.sequences.Sequence<T>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.sequences.Sequence<kotlin.Int>
+            symbol = elements: kotlin.sequences.Sequence<T>
+            callableId = null
+        ]
+        callableId = kotlin/collections/plusAssign
+    typeArgumentsMapping = {
+      T -> (kotlin.Int)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.sequences.Sequence<kotlin.Int>
+        symbol = elements: kotlin.sequences.Sequence<T>
+        callableId = null)
+    }
+  isInBestCandidates = false
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with plusAssign>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.collections.MutableMap<in ERROR_TYPE, in ERROR_TYPE>
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableMap<in K, in V>, map: kotlin.collections.Map<K, V>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = map
+            receiverType = null
+            returnType = kotlin.collections.Map<ERROR_TYPE, ERROR_TYPE>
+            symbol = map: kotlin.collections.Map<K, V>
+            callableId = null
+        ]
+        callableId = kotlin/collections/plusAssign
+    typeArgumentsMapping = {
+      K -> (ERROR_TYPE),
+      V -> (ERROR_TYPE)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = map
+        receiverType = null
+        returnType = kotlin.collections.Map<ERROR_TYPE, ERROR_TYPE>
+        symbol = map: kotlin.collections.Map<K, V>
+        callableId = null)
+    }
+  isInBestCandidates = false
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with plusAssign>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.collections.MutableMap<in ERROR_TYPE, in ERROR_TYPE>
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableMap<in K, in V>, pair: kotlin.Pair<K, V>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = pair
+            receiverType = null
+            returnType = kotlin.Pair<ERROR_TYPE, ERROR_TYPE>
+            symbol = pair: kotlin.Pair<K, V>
+            callableId = null
+        ]
+        callableId = kotlin/collections/plusAssign
+    typeArgumentsMapping = {
+      K -> (ERROR_TYPE),
+      V -> (ERROR_TYPE)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = pair
+        receiverType = null
+        returnType = kotlin.Pair<ERROR_TYPE, ERROR_TYPE>
+        symbol = pair: kotlin.Pair<K, V>
+        callableId = null)
+    }
+  isInBestCandidates = false
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with plusAssign>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.collections.MutableMap<in ERROR_TYPE, in ERROR_TYPE>
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableMap<in K, in V>, pairs: kotlin.Array<out kotlin.Pair<K, V>>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = pairs
+            receiverType = null
+            returnType = kotlin.Array<out kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
+            symbol = pairs: kotlin.Array<out kotlin.Pair<K, V>>
+            callableId = null
+        ]
+        callableId = kotlin/collections/plusAssign
+    typeArgumentsMapping = {
+      K -> (ERROR_TYPE),
+      V -> (ERROR_TYPE)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = pairs
+        receiverType = null
+        returnType = kotlin.Array<out kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
+        symbol = pairs: kotlin.Array<out kotlin.Pair<K, V>>
+        callableId = null)
+    }
+  isInBestCandidates = false
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with plusAssign>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.collections.MutableMap<in ERROR_TYPE, in ERROR_TYPE>
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableMap<in K, in V>, pairs: kotlin.collections.Iterable<kotlin.Pair<K, V>>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = pairs
+            receiverType = null
+            returnType = kotlin.collections.Iterable<kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
+            symbol = pairs: kotlin.collections.Iterable<kotlin.Pair<K, V>>
+            callableId = null
+        ]
+        callableId = kotlin/collections/plusAssign
+    typeArgumentsMapping = {
+      K -> (ERROR_TYPE),
+      V -> (ERROR_TYPE)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = pairs
+        receiverType = null
+        returnType = kotlin.collections.Iterable<kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
+        symbol = pairs: kotlin.collections.Iterable<kotlin.Pair<K, V>>
+        callableId = null)
+    }
+  isInBestCandidates = false
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with plusAssign>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.collections.MutableMap<in ERROR_TYPE, in ERROR_TYPE>
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableMap<in K, in V>, pairs: kotlin.sequences.Sequence<kotlin.Pair<K, V>>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = pairs
+            receiverType = null
+            returnType = kotlin.sequences.Sequence<kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
+            symbol = pairs: kotlin.sequences.Sequence<kotlin.Pair<K, V>>
+            callableId = null
+        ]
+        callableId = kotlin/collections/plusAssign
+    typeArgumentsMapping = {
+      K -> (ERROR_TYPE),
+      V -> (ERROR_TYPE)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = pairs
+        receiverType = null
+        returnType = kotlin.sequences.Sequence<kotlin.Pair<ERROR_TYPE, ERROR_TYPE>>
+        symbol = pairs: kotlin.sequences.Sequence<kotlin.Pair<K, V>>
+        callableId = null)
+    }
+  isInBestCandidates = false

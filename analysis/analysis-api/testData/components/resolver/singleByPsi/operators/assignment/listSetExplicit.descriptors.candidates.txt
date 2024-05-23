@@ -1,0 +1,139 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableId = null,
+          KtVariableLikeSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = element: E
+            callableId = null
+        ]
+        callableId = kotlin/collections/MutableList.set
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      0 -> (KtVariableLikeSignature:
+        name = index
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = index: kotlin.Int
+        callableId = null),
+      1 -> (KtVariableLikeSignature:
+        name = element
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = element: E
+        callableId = null)
+    }
+  isInBestCandidates = true
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with set>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.collections.MutableMap<kotlin.Int, kotlin.Int>
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/set(<extension receiver>: kotlin.collections.MutableMap<K, V>, key: K, value: V): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = key
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = key: K
+            callableId = null,
+          KtVariableLikeSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: V
+            callableId = null
+        ]
+        callableId = kotlin/collections/set
+    typeArgumentsMapping = {
+      K -> (kotlin.Int),
+      V -> (kotlin.Int)
+    }
+    argumentMapping = {
+      0 -> (KtVariableLikeSignature:
+        name = key
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = key: K
+        callableId = null),
+      1 -> (KtVariableLikeSignature:
+        name = value
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = value: V
+        callableId = null)
+    }
+  isInBestCandidates = false
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with set>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = l
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.text.StringBuilder
+        returnType = kotlin.Unit
+        symbol = kotlin/text/set(<extension receiver>: kotlin.text.StringBuilder, index: kotlin.Int, value: kotlin.Char): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableId = null,
+          KtVariableLikeSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Char
+            symbol = value: kotlin.Char
+            callableId = null
+        ]
+        callableId = kotlin/text/set
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      0 -> (KtVariableLikeSignature:
+        name = index
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = index: kotlin.Int
+        callableId = null),
+      1 -> (KtVariableLikeSignature:
+        name = value
+        receiverType = null
+        returnType = kotlin.Char
+        symbol = value: kotlin.Char
+        callableId = null)
+    }
+  isInBestCandidates = false
