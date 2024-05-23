@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.expressions.explicitTypeArgumentIfMadeFlexibleSynthetically
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -251,10 +252,15 @@ private fun reportUpperBoundViolationWarningIfNecessary(
 ) {
     if (additionalUpperBoundsProvider == null) return
     val additionalUpperBound = additionalUpperBoundsProvider.getAdditionalUpperBound(upperBound) ?: return
+    // While [org.jetbrains.kotlin.fir.resolve.calls.CreateFreshTypeVariableSubstitutorStage.getTypePreservingFlexibilityWrtTypeVariable]
+    // is here, to obtain original explicit type arguments, we need to look into special attribute.
+    // TODO: Get rid of this unwrapping once KT-59138 is fixed and the relevant feature for disabling it will be removed
+    val properArgumentType =
+        argumentType.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.coneType ?: argumentType
 
     if (!AbstractTypeChecker.isSubtypeOf(
             typeSystemContext,
-            argumentType,
+            properArgumentType,
             additionalUpperBound,
             stubTypesEqualToAnything = true
         )
@@ -263,7 +269,7 @@ private fun reportUpperBoundViolationWarningIfNecessary(
             isReportExpansionError && argumentTypeRef == null -> additionalUpperBoundsProvider.diagnosticForTypeAlias
             else -> additionalUpperBoundsProvider.diagnostic
         }
-        reporter.reportOn(argumentSource, factory, upperBound, argumentType.type, context)
+        reporter.reportOn(argumentSource, factory, upperBound, properArgumentType.type, context)
     }
 }
 
