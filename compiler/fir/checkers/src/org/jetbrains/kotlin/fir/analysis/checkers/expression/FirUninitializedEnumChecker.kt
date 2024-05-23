@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature.ProperUninitializedEnumEntryAccessAnalysis
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -72,6 +73,8 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
     // https://youtrack.jetbrains.com/issue/KT-6054
     // https://youtrack.jetbrains.com/issue/KT-11769
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        // If the feature for proper analysis is enabled, FirEnumEntryInitializationChecker will report all errors
+        if (context.languageVersionSettings.supportsFeature(ProperUninitializedEnumEntryAccessAnalysis)) return
         val source = expression.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
 
