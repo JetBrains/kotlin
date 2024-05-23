@@ -35,7 +35,7 @@ KaConstructorSymbol:
           returnType: KaUsualClassType:
             annotationsList: []
             typeArguments: [
-              out KaTypeErrorType:
+              out KaErrorType:
                 annotationsList: []
                 type: ERROR_TYPE
             ]
@@ -64,7 +64,7 @@ KaConstructorSymbol:
           returnType: KaUsualClassType:
             annotationsList: []
             typeArguments: [
-              out KaTypeErrorType:
+              out KaErrorType:
                 annotationsList: []
                 type: ERROR_TYPE
             ]
@@ -102,7 +102,7 @@ KaConstructorSymbol:
         returnType: KaUsualClassType:
           annotationsList: []
           typeArguments: [
-            out KaTypeErrorType:
+            out KaErrorType:
               annotationsList: []
               type: ERROR_TYPE
           ]
@@ -132,7 +132,7 @@ KaConstructorSymbol:
       name: ints
       origin: SOURCE
       receiverParameter: null
-      returnType: KaTypeErrorType:
+      returnType: KaErrorType:
         annotationsList: []
         type: ERROR_TYPE
       symbolKind: LOCAL

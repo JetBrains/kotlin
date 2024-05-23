@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
@@ -37,6 +38,11 @@ internal class KaFe10ClassErrorType(
             }
         }
 
+    @KaAnalysisNonPublicApi
+    override val presentableText: String?
+        get() = withValidityAssertion { fe10Type.formatParams.first() }
+
+    @KaAnalysisNonPublicApi
     override val errorMessage: String
         get() = withValidityAssertion { fe10Type.debugMessage }
 

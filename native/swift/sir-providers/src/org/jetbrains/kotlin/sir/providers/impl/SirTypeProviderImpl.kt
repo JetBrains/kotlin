@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.types.*
@@ -32,6 +33,7 @@ public class SirTypeProviderImpl(
             .handleErrors(reportErrorType, reportUnsupportedType)
             .handleImports(ktAnalysisSession, processTypeImports)
 
+    @OptIn(KaAnalysisNonPublicApi::class)
     private fun buildSirNominalType(ktType: KaType, ktAnalysisSession: KaSession): SirType {
         fun buildPrimitiveType(ktType: KaType): SirType? = with(ktAnalysisSession) {
             when {

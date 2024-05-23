@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.types.KaTypeErrorType
+import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
@@ -19,22 +20,27 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeTypeVariableTypeIsNotInferred
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
-internal class KaFirTypeErrorType(
+internal class KaFirErrorType(
     override val coneType: ConeErrorType,
     private val builder: KaSymbolByFirBuilder,
-) : KaTypeErrorType(), KaFirType {
+) : KaErrorType, KaFirType {
     override val token: KaLifetimeToken get() = builder.token
 
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
-    override val errorMessage: String get() = withValidityAssertion { coneType.diagnostic.reason }
 
-    override fun tryRenderAsNonErrorType(): String? = withValidityAssertion {
-        when (val diagnostic = coneType.diagnostic) {
-            is ConeCannotInferTypeParameterType -> diagnostic.typeParameter.name.asString()
-            is ConeTypeVariableTypeIsNotInferred -> diagnostic.typeVariableType.typeConstructor.debugName
-            else -> null
+    @KaAnalysisNonPublicApi
+    override val errorMessage: String
+        get() = withValidityAssertion { coneType.diagnostic.reason }
+
+    @KaAnalysisNonPublicApi
+    override val presentableText: String?
+        get() = withValidityAssertion {
+            when (val diagnostic = coneType.diagnostic) {
+                is ConeCannotInferTypeParameterType -> diagnostic.typeParameter.name.asString()
+                is ConeTypeVariableTypeIsNotInferred -> diagnostic.typeVariableType.typeConstructor.debugName
+                else -> null
+            }
         }
-    }
 
     override val annotationsList: KaAnnotationsList by cached {
         KaFirAnnotationListForType.create(coneType, builder)

@@ -16,6 +16,7 @@ KaClassErrorType:
   candidateSymbols: []
   errorMessage: Symbol not found for base/Foo
   nullability: NON_NULLABLE
+  presentableText: base.Foo
   qualifiers: [
     qualifier:
       name: base

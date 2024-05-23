@@ -41,7 +41,7 @@ KaFunctionSymbol:
       name: ints
       origin: SOURCE
       receiverParameter: null
-      returnType: KaTypeErrorType:
+      returnType: KaErrorType:
         annotationsList: []
         type: ERROR_TYPE
       symbolKind: LOCAL

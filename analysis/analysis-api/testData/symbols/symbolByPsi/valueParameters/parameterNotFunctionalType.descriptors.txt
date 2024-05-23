@@ -51,7 +51,7 @@ KaFunctionSymbol:
           KaClassErrorType:
             annotationsList: []
             type: ERROR_TYPE
-          KaTypeErrorType:
+          KaErrorType:
             annotationsList: []
             type: ERROR_TYPE
         ]
@@ -76,7 +76,7 @@ KaFunctionSymbol:
       name: <no name provided>
       origin: SOURCE
       receiverParameter: null
-      returnType: KaTypeErrorType:
+      returnType: KaErrorType:
         annotationsList: []
         type: ERROR_TYPE
       symbolKind: LOCAL

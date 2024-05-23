@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.types.KaExpandedTypeRenderingM
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaCapturedTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaFlexibleTypeRenderer
-import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaTypeErrorTypeRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaErrorTypeRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaUnresolvedClassErrorTypeRenderer
 
 public object KaTypeRendererForDebug {
@@ -17,7 +17,7 @@ public object KaTypeRendererForDebug {
         expandedTypeRenderingMode = KaExpandedTypeRenderingMode.RENDER_ABBREVIATED_TYPE_WITH_EXPANDED_TYPE_COMMENT
         capturedTypeRenderer = KaCapturedTypeRenderer.AS_CAPTURED_TYPE_WITH_PROJECTION
         flexibleTypeRenderer = KaFlexibleTypeRenderer.AS_SHORT
-        typeErrorTypeRenderer = KaTypeErrorTypeRenderer.WITH_ERROR_MESSAGE
+        errorTypeRenderer = KaErrorTypeRenderer.WITH_ERROR_MESSAGE
         unresolvedClassErrorTypeRenderer = KaUnresolvedClassErrorTypeRenderer.WITH_ERROR_MESSAGE
     }
 
@@ -25,7 +25,7 @@ public object KaTypeRendererForDebug {
         expandedTypeRenderingMode = KaExpandedTypeRenderingMode.RENDER_ABBREVIATED_TYPE_WITH_EXPANDED_TYPE_COMMENT
         capturedTypeRenderer = KaCapturedTypeRenderer.AS_CAPTURED_TYPE_WITH_PROJECTION
         flexibleTypeRenderer = KaFlexibleTypeRenderer.AS_SHORT
-        typeErrorTypeRenderer = KaTypeErrorTypeRenderer.WITH_ERROR_MESSAGE
+        errorTypeRenderer = KaErrorTypeRenderer.WITH_ERROR_MESSAGE
         unresolvedClassErrorTypeRenderer = KaUnresolvedClassErrorTypeRenderer.WITH_ERROR_MESSAGE
     }
 }

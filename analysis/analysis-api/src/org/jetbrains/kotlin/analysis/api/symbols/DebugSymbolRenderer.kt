@@ -419,16 +419,32 @@ public class DebugSymbolRenderer(
         renderList(value.annotations, printer, renderSymbolsFully = false)
     }
 
-    private fun getFrontendIndependentKClassOf(instanceOfClass: Any): KClass<*> {
-        var current: Class<*> = instanceOfClass.javaClass
-
-        while (true) {
-            val className = current.name
-            if (symbolImplementationPackageNames.none { className.startsWith("$it.") }) {
-                return current.kotlin
-            }
-            current = current.superclass
+    private fun getFrontendIndependentKClassOf(value: Any): KClass<*> {
+        fun KClass<*>.isFrontendIndependent(): Boolean {
+            if (this == Any::class) return false
+            val qualifiedName = qualifiedName ?: return false
+            return symbolImplementationPackageNames.none { qualifiedName.startsWith("$it.") }
         }
+
+        val valueClass = value::class
+        val allClasses = listOf(valueClass) + valueClass.allSuperclasses
+
+        val matchingClasses = allClasses.filter { it.isFrontendIndependent() }
+        val matchingClassSet = matchingClasses.toSet()
+
+        val matchingClassesRanking = matchingClasses
+            .associateWith { matchingClassSet.intersect(it.allSuperclasses).size }
+
+        // Find supertypes with the highest number of frontend-independent supertypes
+        // It means more specific classes will be selected (such as KaClassSymbol instead of KaSymbol)
+        val minSupertypeCount = matchingClassesRanking.maxOf { it.value }
+
+        // If there are multiple matching classes, at least choose some stable one (based on the simple name ordering)
+        return matchingClassesRanking
+            .filter { it.value == minSupertypeCount }
+            .keys
+            .sortedBy { it.simpleName }
+            .first()
     }
 
     private fun PsiElement.firstLineOfPsi(): String {

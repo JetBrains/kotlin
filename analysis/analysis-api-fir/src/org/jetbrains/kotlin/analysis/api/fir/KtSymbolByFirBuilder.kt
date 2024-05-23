@@ -459,9 +459,12 @@ internal class KaSymbolByFirBuilder(
                 }
                 is ConeTypeParameterType -> KaFirTypeParameterType(coneType, this@KaSymbolByFirBuilder)
                 is ConeErrorType -> when (val diagnostic = coneType.diagnostic) {
-                    is ConeUnresolvedError, is ConeUnmatchedTypeArgumentsError ->
+                    is ConeUnresolvedError, is ConeUnmatchedTypeArgumentsError -> {
                         KaFirClassErrorType(coneType, diagnostic, this@KaSymbolByFirBuilder)
-                    else -> KaFirTypeErrorType(coneType, this@KaSymbolByFirBuilder)
+                    }
+                    else -> {
+                        KaFirErrorType(coneType, this@KaSymbolByFirBuilder)
+                    }
                 }
                 is ConeDynamicType -> KaFirDynamicType(coneType, this@KaSymbolByFirBuilder)
                 is ConeFlexibleType -> KaFirFlexibleType(coneType, this@KaSymbolByFirBuilder)

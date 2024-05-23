@@ -24,7 +24,7 @@ public class KaTypeRenderer private constructor(
     public val flexibleTypeRenderer: KaFlexibleTypeRenderer,
     public val functionalTypeRenderer: KaFunctionalTypeRenderer,
     public val intersectionTypeRenderer: KaIntersectionTypeRenderer,
-    public val typeErrorTypeRenderer: KaTypeErrorTypeRenderer,
+    public val errorTypeRenderer: KaErrorTypeRenderer,
     public val typeParameterTypeRenderer: KaTypeParameterTypeRenderer,
     public val unresolvedClassErrorTypeRenderer: KaUnresolvedClassErrorTypeRenderer,
     public val usualClassTypeRenderer: KaUsualClassTypeRenderer,
@@ -105,7 +105,7 @@ public class KaTypeRenderer private constructor(
             is KaIntersectionType -> intersectionTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
             is KaTypeParameterType -> typeParameterTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
             is KaClassErrorType -> unresolvedClassErrorTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
-            is KaTypeErrorType -> typeErrorTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
+            is KaErrorType -> errorTypeRenderer.renderType(this, type, this@KaTypeRenderer, printer)
         }
     }
 
@@ -119,7 +119,7 @@ public class KaTypeRenderer private constructor(
             this.flexibleTypeRenderer = renderer.flexibleTypeRenderer
             this.functionalTypeRenderer = renderer.functionalTypeRenderer
             this.intersectionTypeRenderer = renderer.intersectionTypeRenderer
-            this.typeErrorTypeRenderer = renderer.typeErrorTypeRenderer
+            this.errorTypeRenderer = renderer.errorTypeRenderer
             this.typeParameterTypeRenderer = renderer.typeParameterTypeRenderer
             this.unresolvedClassErrorTypeRenderer = renderer.unresolvedClassErrorTypeRenderer
             this.usualClassTypeRenderer = renderer.usualClassTypeRenderer
@@ -147,7 +147,7 @@ public class KaTypeRenderer private constructor(
         public lateinit var flexibleTypeRenderer: KaFlexibleTypeRenderer
         public lateinit var functionalTypeRenderer: KaFunctionalTypeRenderer
         public lateinit var intersectionTypeRenderer: KaIntersectionTypeRenderer
-        public lateinit var typeErrorTypeRenderer: KaTypeErrorTypeRenderer
+        public lateinit var errorTypeRenderer: KaErrorTypeRenderer
         public lateinit var typeParameterTypeRenderer: KaTypeParameterTypeRenderer
         public lateinit var unresolvedClassErrorTypeRenderer: KaUnresolvedClassErrorTypeRenderer
         public lateinit var usualClassTypeRenderer: KaUsualClassTypeRenderer
@@ -167,7 +167,7 @@ public class KaTypeRenderer private constructor(
             flexibleTypeRenderer,
             functionalTypeRenderer,
             intersectionTypeRenderer,
-            typeErrorTypeRenderer,
+            errorTypeRenderer,
             typeParameterTypeRenderer,
             unresolvedClassErrorTypeRenderer,
             usualClassTypeRenderer,
