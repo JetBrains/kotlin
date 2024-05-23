@@ -217,20 +217,17 @@ fun checkUpperBoundViolated(
                     }
                 } else {
                     // Only check if the original check was successful to prevent duplicate diagnostics
-                    val additionalUpperBound = additionalUpperBoundsProvider?.getAdditionalUpperBound(upperBound)
-                    if (additionalUpperBound != null && !AbstractTypeChecker.isSubtypeOf(
-                            typeSystemContext,
-                            argumentType,
-                            additionalUpperBound,
-                            stubTypesEqualToAnything = true
-                        )
-                    ) {
-                        val factory = when {
-                            isReportExpansionError && argumentTypeRef == null -> additionalUpperBoundsProvider.diagnosticForTypeAlias
-                            else -> additionalUpperBoundsProvider.diagnostic
-                        }
-                        reporter.reportOn(argumentSource, factory, upperBound, argumentType.type, context)
-                    }
+                    reportUpperBoundViolationWarningIfNecessary(
+                        additionalUpperBoundsProvider,
+                        argumentType,
+                        upperBound,
+                        context,
+                        typeSystemContext,
+                        reporter,
+                        isReportExpansionError,
+                        argumentTypeRef,
+                        argumentSource
+                    )
                 }
             }
 
@@ -238,6 +235,35 @@ fun checkUpperBoundViolated(
                 checkUpperBoundViolated(argumentTypeRef, argumentType, context, reporter, isIgnoreTypeParameters)
             }
         }
+    }
+}
+
+private fun reportUpperBoundViolationWarningIfNecessary(
+    additionalUpperBoundsProvider: FirPlatformUpperBoundsProvider?,
+    argumentType: ConeKotlinType,
+    upperBound: ConeKotlinType,
+    context: CheckerContext,
+    typeSystemContext: ConeInferenceContext,
+    reporter: DiagnosticReporter,
+    isReportExpansionError: Boolean,
+    argumentTypeRef: FirTypeRef?,
+    argumentSource: KtSourceElement?,
+) {
+    if (additionalUpperBoundsProvider == null) return
+    val additionalUpperBound = additionalUpperBoundsProvider.getAdditionalUpperBound(upperBound) ?: return
+
+    if (!AbstractTypeChecker.isSubtypeOf(
+            typeSystemContext,
+            argumentType,
+            additionalUpperBound,
+            stubTypesEqualToAnything = true
+        )
+    ) {
+        val factory = when {
+            isReportExpansionError && argumentTypeRef == null -> additionalUpperBoundsProvider.diagnosticForTypeAlias
+            else -> additionalUpperBoundsProvider.diagnostic
+        }
+        reporter.reportOn(argumentSource, factory, upperBound, argumentType.type, context)
     }
 }
 
