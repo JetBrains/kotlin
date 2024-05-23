@@ -244,10 +244,6 @@ void createInterop(String name, Closure conf) {
     }
 }
 
-createInterop("sockets") {
-    it.defFile 'interop/basics/sockets.def'
-}
-
 createInterop("kt43502") {
     it.defFile 'interop/kt43502/kt43502.def'
     it.headers "$projectDir/interop/kt43502/kt43502.h"

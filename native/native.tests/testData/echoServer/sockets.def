@@ -10,3 +10,7 @@ static int interop_errno() {
 static short interop_htons(short x) {
 	return htons(x);
 }
+
+static short interop_ntohs(short x) {
+	return ntohs(x);
+}

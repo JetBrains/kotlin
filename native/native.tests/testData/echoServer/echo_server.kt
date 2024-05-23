@@ -7,14 +7,7 @@
 import kotlinx.cinterop.*
 import sockets.*
 
-fun main(args: Array<String>) {
-    if (args.size < 1) {
-        println("Usage: ./echo_server <port>")
-        return
-    }
-
-    val port = atoi(args[0]).toUShort()
-
+fun main() {
     memScoped {
 
         val bufferLength = 100L
@@ -28,7 +21,7 @@ fun main(args: Array<String>) {
             memset(this.ptr, 0, sockaddr_in.size.convert())
             sin_family = AF_INET.convert()
             sin_addr.s_addr = htons(0u).convert()
-            sin_port = htons(port)
+            sin_port = htons(0u)
         }
 
         bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toUInt())
@@ -36,6 +29,17 @@ fun main(args: Array<String>) {
 
         listen(listenFd, 10)
                 .toInt().ensureUnixCallResult { it == 0 }
+
+        val actualAddr = alloc<sockaddr_in>()
+        val actualAddrLen = alloc<UIntVar>()
+        val port = with(actualAddr) {
+            actualAddrLen.value = sockaddr_in.size.convert()
+            memset(this.ptr, 0, sockaddr_in.size.convert())
+            getsockname(listenFd, actualAddr.ptr.reinterpret(), actualAddrLen.ptr)
+                .toInt().ensureUnixCallResult { it == 0 }
+            interop_ntohs(sin_port.toShort()).toUShort()
+        }
+        println(port)
 
         val commFd = accept(listenFd, null, null)
                 .toInt().ensureUnixCallResult { it >= 0 }
