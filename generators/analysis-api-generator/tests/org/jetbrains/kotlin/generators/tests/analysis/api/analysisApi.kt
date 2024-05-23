@@ -80,9 +80,11 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuil
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
+import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
@@ -333,6 +335,15 @@ private fun AnalysisApiTestGroup.generateAnalysisApiStandaloneTests() {
 
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("callResolver", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        val init: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = {
+            when (it.analysisApiMode) {
+                AnalysisApiMode.Ide ->
+                    model(it, "singleByPsi")
+                AnalysisApiMode.Standalone ->
+                    model(it, "singleByPsi", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+            }
+        }
+
         test<AbstractResolveCallTest> {
             when (it.analysisApiMode) {
                 AnalysisApiMode.Ide ->
@@ -342,9 +353,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             }
         }
 
-        test<AbstractResolveCandidatesTest> {
-            model(it, "resolveCandidates")
-        }
+        test<AbstractResolveCandidatesTest>(init = init)
     }
 
     component("compileTimeConstantProvider") {
