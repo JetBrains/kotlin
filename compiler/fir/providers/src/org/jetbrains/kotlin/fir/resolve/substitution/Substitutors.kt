@@ -221,8 +221,8 @@ data class ChainedSubstitutor(val first: ConeSubstitutor, val second: ConeSubsti
     }
 
     override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
-        first.substituteArgument(projection, index)?.let { return second.substituteArgument(projection, index) }
-        return second.substituteArgument(projection, index)
+        val firstResult = first.substituteArgument(projection, index)
+        return second.substituteArgument(firstResult ?: projection, index) ?: firstResult
     }
 
     override fun toString(): String {
