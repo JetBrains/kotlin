@@ -6,7 +6,8 @@
 package org.jetbrains.rhizomedb
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.rhizomedb.runners.AbstractRhizomedbFirLightTreeAsmLikeInstructionsListingTest
+import org.jetbrains.rhizomedb.runners.AbstractRhizomedbBlackBoxCodegenTest
+import org.jetbrains.rhizomedb.runners.AbstractRhizomedbJvmIrTextTest
 import org.jetbrains.rhizomedb.runners.AbstractRhizomedbFirPsiDiagnosticTest
 import java.io.File
 import kotlin.io.path.createParentDirectories
@@ -58,8 +59,12 @@ fun main(args: Array<String>) {
 
             // ------------------------------- asm instructions -------------------------------
 
-            testClass<AbstractRhizomedbFirLightTreeAsmLikeInstructionsListingTest> {
+            testClass<AbstractRhizomedbJvmIrTextTest> {
                 model("codegen")
+            }
+
+            testClass<AbstractRhizomedbBlackBoxCodegenTest> {
+                model("blackbox")
             }
         }
     }

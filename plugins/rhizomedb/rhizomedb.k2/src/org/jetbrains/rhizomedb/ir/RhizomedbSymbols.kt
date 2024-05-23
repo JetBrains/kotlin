@@ -19,6 +19,18 @@ val IrBuiltIns.entityTypeClass: IrClassSymbol
         }
     }
 
+val IrBuiltIns.mixinType: IrClassSymbol
+    get() {
+        return requireNotNull(findClass(Name.identifier("Mixin"), RhizomedbPackages.packageFqName)) {
+            "Where is EntityType?"
+        }
+    }
+
+val IrBuiltIns.entityModuleFunction: IrSimpleFunctionSymbol
+    get() {
+        return findFunctions(Name.identifier("entityModule"), RhizomedbPackages.packageFqName).single()
+    }
+
 val IrBuiltIns.requiredTransientFunction: IrSimpleFunctionSymbol
     get() {
         return requireNotNull(entityTypeClass.functionByName("requiredTransient"))

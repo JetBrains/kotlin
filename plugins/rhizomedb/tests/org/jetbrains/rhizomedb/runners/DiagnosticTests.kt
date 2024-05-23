@@ -6,11 +6,11 @@
 package org.jetbrains.rhizomedb.runners
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeAsmLikeInstructionListingTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrTextTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.rhizomedb.configureForRhizomedb
 
@@ -40,13 +40,18 @@ abstract class AbstractRhizomedbFirPsiDiagnosticTest : AbstractFirPsiDiagnosticT
     }
 }
 
-open class AbstractRhizomedbFirLightTreeAsmLikeInstructionsListingTest : AbstractFirLightTreeAsmLikeInstructionListingTest() {
+open class AbstractRhizomedbJvmIrTextTest : AbstractFirLightTreeJvmIrTextTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useAdditionalService(::LibraryProvider)
-        builder.defaultDirectives {
-            +AsmLikeInstructionListingDirectives.FIR_DIFFERENCE
-        }
+        builder.configureForRhizomedb()
+    }
+}
+
+open class AbstractRhizomedbBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useAdditionalService(::LibraryProvider)
         builder.configureForRhizomedb()
     }
 }

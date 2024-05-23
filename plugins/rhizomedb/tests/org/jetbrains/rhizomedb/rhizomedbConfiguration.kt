@@ -6,10 +6,12 @@
 package org.jetbrains.rhizomedb
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -54,6 +56,9 @@ private val rhizomeClasspath = System.getProperty("rhizome.classpath")?.split(Fi
     ?: error("Unable to get a valid classpath from 'rhizome.classpath' property")
 
 fun TestConfigurationBuilder.configureForRhizomedb(target: TargetBackend = TargetBackend.JVM) {
+    globalDefaults {
+        targetPlatform = JvmPlatforms.jvm17
+    }
     useConfigurators(::RhizomedbEnvironmentConfigurator)
     useAdditionalSourceProviders(::RhizomedbAdditionalSourceFileProvider)
     useCustomRuntimeClasspathProviders(::RhizomedbRuntimeClasspathProvider)

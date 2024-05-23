@@ -398,6 +398,7 @@ include ":kotlinx-serialization-compiler-plugin",
 include ":rhizomedb-compiler-plugin",
         ":rhizomedb-compiler-plugin.embeddable",
         ":rhizomedb-compiler-plugin.k2",
+        ":rhizomedb-compiler-plugin.testDeps",
         ":rhizomedb-gradle"
 
 if (!buildProperties.inJpsBuildIdeaSync) {
@@ -908,6 +909,7 @@ project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/
 project(':rhizomedb-compiler-plugin').projectDir = file("$rootDir/plugins/rhizomedb")
 project(':rhizomedb-compiler-plugin.embeddable').projectDir = file("$rootDir/plugins/rhizomedb/rhizomedb.embeddable")
 project(':rhizomedb-compiler-plugin.k2').projectDir = file("$rootDir/plugins/rhizomedb/rhizomedb.k2")
+project(':rhizomedb-compiler-plugin.testDeps').projectDir = file("$rootDir/plugins/rhizomedb/rhizomedb.testDeps")
 project(':rhizomedb-gradle').projectDir = file("$rootDir/plugins/rhizomedb/rhizomedb.gradle")
 
 project(':kotlin-atomicfu-compiler-plugin').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-compiler")

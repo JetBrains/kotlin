@@ -14,6 +14,7 @@ class GeneratedDeclarationsIrBodyFiller : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         val transformers = listOf(
             TransformerForCompanionGenerator(pluginContext),
+            TransformerForAttributeGenerator(pluginContext),
         )
 
         for (transformer in transformers) {

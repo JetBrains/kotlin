@@ -1,0 +1,278 @@
+// CHECK:
+//   Mangled name: MyEntity
+//   Public signature: /MyEntity|null[0]
+@GeneratedEntityType(mixins = [])
+data class MyEntity : Entity {
+  // CHECK:
+  //   Mangled name: MyEntity{}eid
+  //   Public signature: /MyEntity.eid|1348168300802925533[0]
+  //   Public signature debug description: {}eid
+  override val eid: Int
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity#<get-eid>(){}kotlin.Int
+    //   Public signature: /MyEntity.eid.<get-eid>|-4292404582573972115[0]
+    //   Public signature debug description: <get-eid>(){}kotlin.Int
+    override get
+
+  // CHECK:
+  //   Mangled name: MyEntity{}string
+  //   Public signature: /MyEntity.string|-528183805128847417[0]
+  //   Public signature debug description: {}string
+  @ValueAttribute(flags = [])
+  val string: String
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity#<get-string>(){}kotlin.String
+    //   Public signature: /MyEntity.string.<get-string>|2389239443190785132[0]
+    //   Public signature debug description: <get-string>(){}kotlin.String
+    get
+
+  // CHECK:
+  //   Mangled name: MyEntity.Companion
+  //   Public signature: /MyEntity.Companion|null[0]
+  companion object Companion : EntityType<MyEntity> {
+    // CHECK:
+    //   Mangled name: MyEntity.Companion{}stringAttr
+    //   Public signature: /MyEntity.Companion.stringAttr|-3863710509670889639[0]
+    //   Public signature debug description: {}stringAttr
+    val stringAttr: Required<String, MyEntity>
+      // CHECK JVM_IR:
+      //   Mangled name: MyEntity.Companion#<get-stringAttr>(){}com.jetbrains.rhizomedb.Attributes.Required<kotlin.String,MyEntity>
+      //   Public signature: /MyEntity.Companion.stringAttr.<get-stringAttr>|-1832924809192047124[0]
+      //   Public signature debug description: <get-stringAttr>(){}com.jetbrains.rhizomedb.Attributes.Required<kotlin.String,MyEntity>
+      get
+
+    // CHECK:
+    //   Mangled name: MyEntity.Companion#<init>(){}
+    //   Public signature: /MyEntity.Companion.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    constructor() /* primary */
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#all(){}kotlin.collections.Set<MyEntity>
+    //   Public signature: /MyEntity.Companion.all|-691401993304584625[0]
+    //   Public signature debug description: all(){}kotlin.collections.Set<MyEntity>
+    /* fake */ override fun all(): Set<MyEntity>
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#equals(kotlin.Any?){}kotlin.Boolean
+    //   Public signature: /MyEntity.Companion.equals|722809408929142791[0]
+    //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#hashCode(){}kotlin.Int
+    //   Public signature: /MyEntity.Companion.hashCode|-8048879360829830756[0]
+    //   Public signature debug description: hashCode(){}kotlin.Int
+    /* fake */ override fun hashCode(): Int
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#manyRef(kotlin.String;kotlin.Array<out|com.jetbrains.rhizomedb.RefFlags>...){0§<com.jetbrains.rhizomedb.Entity>}com.jetbrains.rhizomedb.Attributes.Many<0:0,MyEntity>
+    //   Public signature: /MyEntity.Companion.manyRef|-8111262048493990425[0]
+    //   Public signature debug description: manyRef(kotlin.String;kotlin.Array<out|com.jetbrains.rhizomedb.RefFlags>...){0§<com.jetbrains.rhizomedb.Entity>}com.jetbrains.rhizomedb.Attributes.Many<0:0,MyEntity>
+    protected /* fake */ override fun <T : Entity> manyRef(name: String, vararg refFlags: RefFlags): Many<T, MyEntity>
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#manyTransient(kotlin.String;com.jetbrains.rhizomedb.Indexing){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Many<0:0,MyEntity>
+    //   Public signature: /MyEntity.Companion.manyTransient|-6276308658132377497[0]
+    //   Public signature debug description: manyTransient(kotlin.String;com.jetbrains.rhizomedb.Indexing){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Many<0:0,MyEntity>
+    protected /* fake */ override fun <T : Any> manyTransient(name: String, valueFlags: Indexing): Many<T, MyEntity>
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#manyValues(kotlin.String;kotlinx.serialization.KSerializer<0:0>;com.jetbrains.rhizomedb.Indexing){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Many<0:0,MyEntity>
+    //   Public signature: /MyEntity.Companion.manyValues|8340968993305558695[0]
+    //   Public signature debug description: manyValues(kotlin.String;kotlinx.serialization.KSerializer<0:0>;com.jetbrains.rhizomedb.Indexing){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Many<0:0,MyEntity>
+    protected /* fake */ override fun <T : Any> manyValues(name: String, serializer: KSerializer<T>, valueFlags: Indexing): Many<T, MyEntity>
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#new@com.jetbrains.rhizomedb.ChangeScope(com.jetbrains.rhizomedb.EntityBuilder<MyEntity>){}MyEntity
+    //   Public signature: /MyEntity.Companion.new|253350009251845711[0]
+    //   Public signature debug description: new@com.jetbrains.rhizomedb.ChangeScope(com.jetbrains.rhizomedb.EntityBuilder<MyEntity>){}MyEntity
+    /* fake */ override fun ChangeScope.new(builder: EntityBuilder<MyEntity>): MyEntity
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#optionalRef(kotlin.String;kotlin.Array<out|com.jetbrains.rhizomedb.RefFlags>...){0§<com.jetbrains.rhizomedb.Entity>}com.jetbrains.rhizomedb.Attributes.Optional<0:0,MyEntity>
+    //   Public signature: /MyEntity.Companion.optionalRef|2962563793105138340[0]
+    //   Public signature debug description: optionalRef(kotlin.String;kotlin.Array<out|com.jetbrains.rhizomedb.RefFlags>...){0§<com.jetbrains.rhizomedb.Entity>}com.jetbrains.rhizomedb.Attributes.Optional<0:0,MyEntity>
+    protected /* fake */ override fun <T : Entity> optionalRef(name: String, vararg refFlags: RefFlags): Optional<T, MyEntity>
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#optionalTransient(kotlin.String;com.jetbrains.rhizomedb.Indexing;com.jetbrains.rhizomedb.DefaultValue<0:0>?){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Optional<0:0,MyEntity>
+    //   Public signature: /MyEntity.Companion.optionalTransient|-8375588929021538388[0]
+    //   Public signature debug description: optionalTransient(kotlin.String;com.jetbrains.rhizomedb.Indexing;com.jetbrains.rhizomedb.DefaultValue<0:0>?){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Optional<0:0,MyEntity>
+    protected /* fake */ override fun <T : Any> optionalTransient(name: String, valueFlags: Indexing, defaultValueProvider: DefaultValue<T>?): Optional<T, MyEntity>
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#optionalValue(kotlin.String;kotlinx.serialization.KSerializer<0:0>;com.jetbrains.rhizomedb.Indexing;com.jetbrains.rhizomedb.DefaultValue<0:0>?){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Optional<0:0,MyEntity>
+    //   Public signature: /MyEntity.Companion.optionalValue|-993672596242574999[0]
+    //   Public signature debug description: optionalValue(kotlin.String;kotlinx.serialization.KSerializer<0:0>;com.jetbrains.rhizomedb.Indexing;com.jetbrains.rhizomedb.DefaultValue<0:0>?){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Optional<0:0,MyEntity>
+    protected /* fake */ override fun <T : Any> optionalValue(name: String, serializer: KSerializer<T>, valueFlags: Indexing, defaultValueProvider: DefaultValue<T>?): Optional<T, MyEntity>
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#requiredRef(kotlin.String;kotlin.Array<out|com.jetbrains.rhizomedb.RefFlags>...){0§<com.jetbrains.rhizomedb.Entity>}com.jetbrains.rhizomedb.Attributes.Required<0:0,MyEntity>
+    //   Public signature: /MyEntity.Companion.requiredRef|8615512736618650520[0]
+    //   Public signature debug description: requiredRef(kotlin.String;kotlin.Array<out|com.jetbrains.rhizomedb.RefFlags>...){0§<com.jetbrains.rhizomedb.Entity>}com.jetbrains.rhizomedb.Attributes.Required<0:0,MyEntity>
+    protected /* fake */ override fun <T : Entity> requiredRef(name: String, vararg refFlags: RefFlags): Required<T, MyEntity>
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#requiredTransient(kotlin.String;com.jetbrains.rhizomedb.Indexing;com.jetbrains.rhizomedb.DefaultValue<0:0>?){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Required<0:0,MyEntity>
+    //   Public signature: /MyEntity.Companion.requiredTransient|-2630105594845675007[0]
+    //   Public signature debug description: requiredTransient(kotlin.String;com.jetbrains.rhizomedb.Indexing;com.jetbrains.rhizomedb.DefaultValue<0:0>?){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Required<0:0,MyEntity>
+    protected /* fake */ override fun <T : Any> requiredTransient(name: String, valueFlags: Indexing, defaultValueProvider: DefaultValue<T>?): Required<T, MyEntity>
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#requiredValue(kotlin.String;kotlinx.serialization.KSerializer<0:0>;com.jetbrains.rhizomedb.Indexing;com.jetbrains.rhizomedb.DefaultValue<0:0>?){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Required<0:0,MyEntity>
+    //   Public signature: /MyEntity.Companion.requiredValue|-7180963684425799726[0]
+    //   Public signature debug description: requiredValue(kotlin.String;kotlinx.serialization.KSerializer<0:0>;com.jetbrains.rhizomedb.Indexing;com.jetbrains.rhizomedb.DefaultValue<0:0>?){0§<kotlin.Any>}com.jetbrains.rhizomedb.Attributes.Required<0:0,MyEntity>
+    protected /* fake */ override fun <T : Any> requiredValue(name: String, serializer: KSerializer<T>, valueFlags: Indexing, defaultValueProvider: DefaultValue<T>?): Required<T, MyEntity>
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#single(){}MyEntity
+    //   Public signature: /MyEntity.Companion.single|7407154556165451314[0]
+    //   Public signature debug description: single(){}MyEntity
+    /* fake */ override fun single(): MyEntity
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#singleOrNull(){}MyEntity?
+    //   Public signature: /MyEntity.Companion.singleOrNull|5746873307045267268[0]
+    //   Public signature debug description: singleOrNull(){}MyEntity?
+    /* fake */ override fun singleOrNull(): MyEntity?
+
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity.Companion#toString(){}kotlin.String
+    //   Public signature: /MyEntity.Companion.toString|6958853723545266802[0]
+    //   Public signature debug description: toString(){}kotlin.String
+    /* fake */ override fun toString(): String
+
+    // CHECK:
+    //   Mangled name: MyEntity.Companion{}attrs
+    //   Public signature: /MyEntity.Companion.attrs|-1545660280425525050[0]
+    //   Public signature debug description: {}attrs
+    /* fake */ override val attrs: List<Attribute<*>>
+      // CHECK JVM_IR:
+      //   Mangled name: MyEntity.Companion#<get-attrs>(){}kotlin.collections.List<com.jetbrains.rhizomedb.Attribute<*>>
+      //   Public signature: /MyEntity.Companion.attrs.<get-attrs>|5970150274061001610[0]
+      //   Public signature debug description: <get-attrs>(){}kotlin.collections.List<com.jetbrains.rhizomedb.Attribute<*>>
+      /* fake */ override get(): List<Attribute<*>>
+
+    // CHECK:
+    //   Mangled name: MyEntity.Companion{}eid
+    //   Public signature: /MyEntity.Companion.eid|1348168300802925533[0]
+    //   Public signature debug description: {}eid
+    /* fake */ override val eid: Int
+      // CHECK JVM_IR:
+      //   Mangled name: MyEntity.Companion#<get-eid>(){}kotlin.Int
+      //   Public signature: /MyEntity.Companion.eid.<get-eid>|-4292404582573972115[0]
+      //   Public signature debug description: <get-eid>(){}kotlin.Int
+      /* fake */ override get(): Int
+
+    // CHECK:
+    //   Mangled name: MyEntity.Companion{}entityClass
+    //   Public signature: /MyEntity.Companion.entityClass|1040135429065656263[0]
+    //   Public signature debug description: {}entityClass
+    /* fake */ override val entityClass: KClass<out Entity>
+      // CHECK JVM_IR:
+      //   Mangled name: MyEntity.Companion#<get-entityClass>(){}kotlin.reflect.KClass<out|com.jetbrains.rhizomedb.Entity>
+      //   Public signature: /MyEntity.Companion.entityClass.<get-entityClass>|2383023602731204351[0]
+      //   Public signature debug description: <get-entityClass>(){}kotlin.reflect.KClass<out|com.jetbrains.rhizomedb.Entity>
+      /* fake */ override get(): KClass<out Entity>
+
+    // CHECK:
+    //   Mangled name: MyEntity.Companion{}entityTypeIdent
+    //   Public signature: /MyEntity.Companion.entityTypeIdent|8899801132104531782[0]
+    //   Public signature debug description: {}entityTypeIdent
+    /* fake */ override val entityTypeIdent: String
+      // CHECK JVM_IR:
+      //   Mangled name: MyEntity.Companion#<get-entityTypeIdent>(){}kotlin.String
+      //   Public signature: /MyEntity.Companion.entityTypeIdent.<get-entityTypeIdent>|-2172989337413723771[0]
+      //   Public signature debug description: <get-entityTypeIdent>(){}kotlin.String
+      /* fake */ override get(): String
+
+    // CHECK:
+    //   Mangled name: MyEntity.Companion{}module
+    //   Public signature: /MyEntity.Companion.module|1804047971655160220[0]
+    //   Public signature debug description: {}module
+    /* fake */ override val module: String
+      // CHECK JVM_IR:
+      //   Mangled name: MyEntity.Companion#<get-module>(){}kotlin.String
+      //   Public signature: /MyEntity.Companion.module.<get-module>|5974655955904904351[0]
+      //   Public signature debug description: <get-module>(){}kotlin.String
+      /* fake */ override get(): String
+
+    // CHECK:
+    //   Mangled name: MyEntity.Companion{}namespace
+    //   Public signature: /MyEntity.Companion.namespace|-8504436917892872268[0]
+    //   Public signature debug description: {}namespace
+    /* fake */ override val namespace: String
+      // CHECK JVM_IR:
+      //   Mangled name: MyEntity.Companion#<get-namespace>(){}kotlin.String
+      //   Public signature: /MyEntity.Companion.namespace.<get-namespace>|478476609228223379[0]
+      //   Public signature debug description: <get-namespace>(){}kotlin.String
+      /* fake */ override get(): String
+
+    // CHECK:
+    //   Mangled name: MyEntity.Companion{}presentableText
+    //   Public signature: /MyEntity.Companion.presentableText|1419710698133025983[0]
+    //   Public signature debug description: {}presentableText
+    /* fake */ override val presentableText: String
+      // CHECK JVM_IR:
+      //   Mangled name: MyEntity.Companion#<get-presentableText>(){}kotlin.String
+      //   Public signature: /MyEntity.Companion.presentableText.<get-presentableText>|6275216016935177638[0]
+      //   Public signature debug description: <get-presentableText>(){}kotlin.String
+      /* fake */ override get(): String
+
+  }
+
+  // CHECK:
+  //   Mangled name: MyEntity#<init>(kotlin.Int){}
+  //   Public signature: /MyEntity.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(eid: Int) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEntity#component1(){}kotlin.Int
+  //   Public signature: /MyEntity.component1|-8217597213800111288[0]
+  //   Public signature debug description: component1(){}kotlin.Int
+  operator fun component1(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEntity#copy(kotlin.Int){}MyEntity
+  //   Public signature: /MyEntity.copy|7559982822222365885[0]
+  //   Public signature debug description: copy(kotlin.Int){}MyEntity
+  fun copy(eid: Int): MyEntity
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEntity#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /MyEntity.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEntity#hashCode(){}kotlin.Int
+  //   Public signature: /MyEntity.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEntity#toString(){}kotlin.String
+  //   Public signature: /MyEntity.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
+  override fun toString(): String
+
+  // CHECK:
+  //   Mangled name: MyEntity{}entityClass
+  //   Public signature: /MyEntity.entityClass|1040135429065656263[0]
+  //   Public signature debug description: {}entityClass
+  /* fake */ override val entityClass: KClass<out Entity>
+    // CHECK JVM_IR:
+    //   Mangled name: MyEntity#<get-entityClass>(){}kotlin.reflect.KClass<out|com.jetbrains.rhizomedb.Entity>
+    //   Public signature: /MyEntity.entityClass.<get-entityClass>|2383023602731204351[0]
+    //   Public signature debug description: <get-entityClass>(){}kotlin.reflect.KClass<out|com.jetbrains.rhizomedb.Entity>
+    /* fake */ override get(): KClass<out Entity>
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(){}kotlin.String
+//   Public signature: /foo|485335955883620819[0]
+//   Public signature debug description: foo(){}kotlin.String
+fun foo(): String

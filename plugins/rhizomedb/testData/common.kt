@@ -21,3 +21,15 @@ annotation class TransientAttribute(vararg val flags: Indexing)
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.PROPERTY)
 annotation class RefAttribute(vararg val flags: RefFlags)
+
+inline fun <T> assertEquals(expected: T, actual: T, report: (String) -> Unit) {
+    if (expected != actual) {
+        report("$expected != $actual")
+    }
+}
+
+fun changeBox(body: ChangeScope.() -> String): String {
+    var res = "<BODY FAILED>"
+    DB.empty().change { res = body() }
+    return res
+}

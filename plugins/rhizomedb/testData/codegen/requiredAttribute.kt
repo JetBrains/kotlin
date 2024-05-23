@@ -7,10 +7,6 @@ import com.jetbrains.rhizomedb.*
 data class MyEntity(override val eid: EID) : Entity {
     @ValueAttribute
     val string: String = ""
-
-    companion object : EntityType<MyEntity>(MyEntity::class, ::MyEntity) {
-
-    }
 }
 
 fun foo(): String {

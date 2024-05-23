@@ -1,0 +1,530 @@
+FILE fqName:<root> fileName:/requiredAttribute.kt
+  CLASS CLASS name:MyEntity modality:FINAL visibility:public [data] superTypes:[com.jetbrains.rhizomedb.Entity]
+    annotations:
+      GeneratedEntityType(mixins = [])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEntity
+    PROPERTY name:eid visibility:public modality:OPEN [val]
+      overridden:
+        public abstract eid: kotlin.Int declared in com.jetbrains.rhizomedb.Entity
+      FIELD PROPERTY_BACKING_FIELD name:eid type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'eid: kotlin.Int declared in <root>.MyEntity.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-eid> visibility:public modality:OPEN <> ($this:<root>.MyEntity) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:eid visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-eid> (): kotlin.Int declared in com.jetbrains.rhizomedb.Entity
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyEntity
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-eid> (): kotlin.Int declared in <root>.MyEntity'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:eid type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.MyEntity declared in <root>.MyEntity.<get-eid>' type=<root>.MyEntity origin=null
+    PROPERTY name:string visibility:public modality:FINAL [val]
+      annotations:
+        ValueAttribute(flags = [])
+      FIELD PROPERTY_BACKING_FIELD name:string type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value=""
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-string> visibility:public modality:FINAL <> ($this:<root>.MyEntity) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:string visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.MyEntity
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-string> (): kotlin.String declared in <root>.MyEntity'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:string type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.MyEntity declared in <root>.MyEntity.<get-string>' type=<root>.MyEntity origin=null
+    CLASS GENERATED[org.jetbrains.rhizomedb.fir.RhizomedbPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEntity.Companion
+      PROPERTY GENERATED[org.jetbrains.rhizomedb.fir.RhizomedbPluginKey] name:stringAttr visibility:public modality:FINAL [val]
+        FIELD name:stringAttr-field type:com.jetbrains.rhizomedb.Attributes.Required<kotlin.String, <root>.MyEntity> visibility:private/*private to this*/ [static]
+          EXPRESSION_BODY
+            CALL 'protected final fun requiredTransient <T> (name: kotlin.String, valueFlags: com.jetbrains.rhizomedb.Indexing, defaultValueProvider: com.jetbrains.rhizomedb.DefaultValue<T of com.jetbrains.rhizomedb.EntityType.requiredTransient>?): com.jetbrains.rhizomedb.Attributes.Required<T of com.jetbrains.rhizomedb.EntityType.requiredTransient, E of com.jetbrains.rhizomedb.EntityType> declared in com.jetbrains.rhizomedb.EntityType' type=com.jetbrains.rhizomedb.Attributes.Required<T of com.jetbrains.rhizomedb.EntityType.requiredTransient, E of com.jetbrains.rhizomedb.EntityType> origin=null
+              <T>: <none>
+              $this: GET_OBJECT 'CLASS GENERATED[org.jetbrains.rhizomedb.fir.RhizomedbPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>]' type=<root>.MyEntity.Companion
+              name: CONST String type=kotlin.String value="stringAttr"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-stringAttr> visibility:public modality:FINAL <> ($this:<root>.MyEntity.Companion) returnType:com.jetbrains.rhizomedb.Attributes.Required<kotlin.String, <root>.MyEntity>
+          correspondingProperty: PROPERTY GENERATED[org.jetbrains.rhizomedb.fir.RhizomedbPluginKey] name:stringAttr visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.MyEntity.Companion
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-stringAttr> (): com.jetbrains.rhizomedb.Attributes.Required<kotlin.String, <root>.MyEntity> declared in <root>.MyEntity.Companion'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stringAttr type:com.jetbrains.rhizomedb.Attributes.Required<kotlin.String, <root>.MyEntity> visibility:private [final]' type=com.jetbrains.rhizomedb.Attributes.Required<kotlin.String, <root>.MyEntity> origin=null
+                receiver: GET_VAR '<this>: <root>.MyEntity.Companion declared in <root>.MyEntity.Companion.<get-stringAttr>' type=<root>.MyEntity.Companion origin=null
+      CONSTRUCTOR visibility:public <> () returnType:<root>.MyEntity.Companion [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (ident: kotlin.String, module: kotlin.String, reify: kotlin.Function1<kotlin.Int, E of com.jetbrains.rhizomedb.EntityType>, vararg mixins: com.jetbrains.rhizomedb.Mixin<in E of com.jetbrains.rhizomedb.EntityType>) declared in com.jetbrains.rhizomedb.EntityType'
+            <E>: <root>.MyEntity
+            ident: CONST String type=kotlin.String value="MyEntity"
+            module: CALL 'public final fun entityModule (entityClass: kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Entity>): kotlin.String declared in com.jetbrains.rhizomedb' type=kotlin.String origin=null
+              entityClass: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:KClass modality:ABSTRACT visibility:public superTypes:[kotlin.reflect.KDeclarationContainer; kotlin.reflect.KAnnotatedElement; kotlin.reflect.KClassifier]' type=kotlin.reflect.KClass<*>
+            reify: FUNCTION_REFERENCE 'public constructor <init> (eid: kotlin.Int) declared in <root>.MyEntity' type=kotlin.Function1<kotlin.Int, <root>.MyEntity> origin=null reflectionTarget=<same>
+            mixins: VARARG type=kotlin.Array<com.jetbrains.rhizomedb.Mixin<in <root>.MyEntity>> varargElementType=com.jetbrains.rhizomedb.Mixin<in <root>.MyEntity>
+      FUN FAKE_OVERRIDE name:all visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:kotlin.collections.Set<<root>.MyEntity> [fake_override]
+        overridden:
+          public final fun all (): kotlin.collections.Set<E of com.jetbrains.rhizomedb.EntityType> declared in com.jetbrains.rhizomedb.EntityType
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in com.jetbrains.rhizomedb.EntityType
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:kotlin.Int [fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in com.jetbrains.rhizomedb.EntityType
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+      FUN FAKE_OVERRIDE name:manyRef visibility:protected modality:FINAL <T> ($this:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>, name:kotlin.String, refFlags:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags>) returnType:com.jetbrains.rhizomedb.Attributes.Many<T of <root>.MyEntity.Companion.manyRef, <root>.MyEntity> [fake_override]
+        overridden:
+          protected final fun manyRef <T> (name: kotlin.String, vararg refFlags: com.jetbrains.rhizomedb.RefFlags): com.jetbrains.rhizomedb.Attributes.Many<T of com.jetbrains.rhizomedb.EntityType.manyRef, E of com.jetbrains.rhizomedb.EntityType> declared in com.jetbrains.rhizomedb.EntityType
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[com.jetbrains.rhizomedb.Entity] reified:false
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>
+        VALUE_PARAMETER name:name index:0 type:kotlin.String
+        VALUE_PARAMETER name:refFlags index:1 type:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> varargElementType:com.jetbrains.rhizomedb.RefFlags [vararg]
+      FUN FAKE_OVERRIDE name:manyTransient visibility:protected modality:FINAL <T> ($this:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>, name:kotlin.String, valueFlags:com.jetbrains.rhizomedb.Indexing) returnType:com.jetbrains.rhizomedb.Attributes.Many<T of <root>.MyEntity.Companion.manyTransient, <root>.MyEntity> [fake_override]
+        overridden:
+          protected final fun manyTransient <T> (name: kotlin.String, valueFlags: com.jetbrains.rhizomedb.Indexing): com.jetbrains.rhizomedb.Attributes.Many<T of com.jetbrains.rhizomedb.EntityType.manyTransient, E of com.jetbrains.rhizomedb.EntityType> declared in com.jetbrains.rhizomedb.EntityType
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>
+        VALUE_PARAMETER name:name index:0 type:kotlin.String
+        VALUE_PARAMETER name:valueFlags index:1 type:com.jetbrains.rhizomedb.Indexing
+      FUN FAKE_OVERRIDE name:manyValues visibility:protected modality:FINAL <T> ($this:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>, name:kotlin.String, serializer:kotlinx.serialization.KSerializer<T of <root>.MyEntity.Companion.manyValues>, valueFlags:com.jetbrains.rhizomedb.Indexing) returnType:com.jetbrains.rhizomedb.Attributes.Many<T of <root>.MyEntity.Companion.manyValues, <root>.MyEntity> [fake_override]
+        overridden:
+          protected final fun manyValues <T> (name: kotlin.String, serializer: kotlinx.serialization.KSerializer<T of com.jetbrains.rhizomedb.EntityType.manyValues>, valueFlags: com.jetbrains.rhizomedb.Indexing): com.jetbrains.rhizomedb.Attributes.Many<T of com.jetbrains.rhizomedb.EntityType.manyValues, E of com.jetbrains.rhizomedb.EntityType> declared in com.jetbrains.rhizomedb.EntityType
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>
+        VALUE_PARAMETER name:name index:0 type:kotlin.String
+        VALUE_PARAMETER name:serializer index:1 type:kotlinx.serialization.KSerializer<T of <root>.MyEntity.Companion.manyValues>
+        VALUE_PARAMETER name:valueFlags index:2 type:com.jetbrains.rhizomedb.Indexing
+      FUN FAKE_OVERRIDE name:new visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>, $receiver:com.jetbrains.rhizomedb.ChangeScope, builder:com.jetbrains.rhizomedb.EntityBuilder<<root>.MyEntity>) returnType:<root>.MyEntity [fake_override]
+        overridden:
+          public final fun new (builder: com.jetbrains.rhizomedb.EntityBuilder<E of com.jetbrains.rhizomedb.EntityType>): E of com.jetbrains.rhizomedb.EntityType declared in com.jetbrains.rhizomedb.EntityType
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+        $receiver: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.ChangeScope
+        VALUE_PARAMETER name:builder index:0 type:com.jetbrains.rhizomedb.EntityBuilder<<root>.MyEntity>
+      FUN FAKE_OVERRIDE name:optionalRef visibility:protected modality:FINAL <T> ($this:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>, name:kotlin.String, refFlags:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags>) returnType:com.jetbrains.rhizomedb.Attributes.Optional<T of <root>.MyEntity.Companion.optionalRef, <root>.MyEntity> [fake_override]
+        overridden:
+          protected final fun optionalRef <T> (name: kotlin.String, vararg refFlags: com.jetbrains.rhizomedb.RefFlags): com.jetbrains.rhizomedb.Attributes.Optional<T of com.jetbrains.rhizomedb.EntityType.optionalRef, E of com.jetbrains.rhizomedb.EntityType> declared in com.jetbrains.rhizomedb.EntityType
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[com.jetbrains.rhizomedb.Entity] reified:false
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>
+        VALUE_PARAMETER name:name index:0 type:kotlin.String
+        VALUE_PARAMETER name:refFlags index:1 type:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> varargElementType:com.jetbrains.rhizomedb.RefFlags [vararg]
+      FUN FAKE_OVERRIDE name:optionalTransient visibility:protected modality:FINAL <T> ($this:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>, name:kotlin.String, valueFlags:com.jetbrains.rhizomedb.Indexing, defaultValueProvider:com.jetbrains.rhizomedb.DefaultValue<T of <root>.MyEntity.Companion.optionalTransient>?) returnType:com.jetbrains.rhizomedb.Attributes.Optional<T of <root>.MyEntity.Companion.optionalTransient, <root>.MyEntity> [fake_override]
+        overridden:
+          protected final fun optionalTransient <T> (name: kotlin.String, valueFlags: com.jetbrains.rhizomedb.Indexing, defaultValueProvider: com.jetbrains.rhizomedb.DefaultValue<T of com.jetbrains.rhizomedb.EntityType.optionalTransient>?): com.jetbrains.rhizomedb.Attributes.Optional<T of com.jetbrains.rhizomedb.EntityType.optionalTransient, E of com.jetbrains.rhizomedb.EntityType> declared in com.jetbrains.rhizomedb.EntityType
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>
+        VALUE_PARAMETER name:name index:0 type:kotlin.String
+        VALUE_PARAMETER name:valueFlags index:1 type:com.jetbrains.rhizomedb.Indexing
+        VALUE_PARAMETER name:defaultValueProvider index:2 type:com.jetbrains.rhizomedb.DefaultValue<T of <root>.MyEntity.Companion.optionalTransient>?
+      FUN FAKE_OVERRIDE name:optionalValue visibility:protected modality:FINAL <T> ($this:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>, name:kotlin.String, serializer:kotlinx.serialization.KSerializer<T of <root>.MyEntity.Companion.optionalValue>, valueFlags:com.jetbrains.rhizomedb.Indexing, defaultValueProvider:com.jetbrains.rhizomedb.DefaultValue<T of <root>.MyEntity.Companion.optionalValue>?) returnType:com.jetbrains.rhizomedb.Attributes.Optional<T of <root>.MyEntity.Companion.optionalValue, <root>.MyEntity> [fake_override]
+        overridden:
+          protected final fun optionalValue <T> (name: kotlin.String, serializer: kotlinx.serialization.KSerializer<T of com.jetbrains.rhizomedb.EntityType.optionalValue>, valueFlags: com.jetbrains.rhizomedb.Indexing, defaultValueProvider: com.jetbrains.rhizomedb.DefaultValue<T of com.jetbrains.rhizomedb.EntityType.optionalValue>?): com.jetbrains.rhizomedb.Attributes.Optional<T of com.jetbrains.rhizomedb.EntityType.optionalValue, E of com.jetbrains.rhizomedb.EntityType> declared in com.jetbrains.rhizomedb.EntityType
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>
+        VALUE_PARAMETER name:name index:0 type:kotlin.String
+        VALUE_PARAMETER name:serializer index:1 type:kotlinx.serialization.KSerializer<T of <root>.MyEntity.Companion.optionalValue>
+        VALUE_PARAMETER name:valueFlags index:2 type:com.jetbrains.rhizomedb.Indexing
+        VALUE_PARAMETER name:defaultValueProvider index:3 type:com.jetbrains.rhizomedb.DefaultValue<T of <root>.MyEntity.Companion.optionalValue>?
+      FUN FAKE_OVERRIDE name:requiredRef visibility:protected modality:FINAL <T> ($this:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>, name:kotlin.String, refFlags:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags>) returnType:com.jetbrains.rhizomedb.Attributes.Required<T of <root>.MyEntity.Companion.requiredRef, <root>.MyEntity> [fake_override]
+        overridden:
+          protected final fun requiredRef <T> (name: kotlin.String, vararg refFlags: com.jetbrains.rhizomedb.RefFlags): com.jetbrains.rhizomedb.Attributes.Required<T of com.jetbrains.rhizomedb.EntityType.requiredRef, E of com.jetbrains.rhizomedb.EntityType> declared in com.jetbrains.rhizomedb.EntityType
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[com.jetbrains.rhizomedb.Entity] reified:false
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>
+        VALUE_PARAMETER name:name index:0 type:kotlin.String
+        VALUE_PARAMETER name:refFlags index:1 type:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> varargElementType:com.jetbrains.rhizomedb.RefFlags [vararg]
+      FUN FAKE_OVERRIDE name:requiredTransient visibility:protected modality:FINAL <T> ($this:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>, name:kotlin.String, valueFlags:com.jetbrains.rhizomedb.Indexing, defaultValueProvider:com.jetbrains.rhizomedb.DefaultValue<T of <root>.MyEntity.Companion.requiredTransient>?) returnType:com.jetbrains.rhizomedb.Attributes.Required<T of <root>.MyEntity.Companion.requiredTransient, <root>.MyEntity> [fake_override]
+        overridden:
+          protected final fun requiredTransient <T> (name: kotlin.String, valueFlags: com.jetbrains.rhizomedb.Indexing, defaultValueProvider: com.jetbrains.rhizomedb.DefaultValue<T of com.jetbrains.rhizomedb.EntityType.requiredTransient>?): com.jetbrains.rhizomedb.Attributes.Required<T of com.jetbrains.rhizomedb.EntityType.requiredTransient, E of com.jetbrains.rhizomedb.EntityType> declared in com.jetbrains.rhizomedb.EntityType
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>
+        VALUE_PARAMETER name:name index:0 type:kotlin.String
+        VALUE_PARAMETER name:valueFlags index:1 type:com.jetbrains.rhizomedb.Indexing
+        VALUE_PARAMETER name:defaultValueProvider index:2 type:com.jetbrains.rhizomedb.DefaultValue<T of <root>.MyEntity.Companion.requiredTransient>?
+      FUN FAKE_OVERRIDE name:requiredValue visibility:protected modality:FINAL <T> ($this:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>, name:kotlin.String, serializer:kotlinx.serialization.KSerializer<T of <root>.MyEntity.Companion.requiredValue>, valueFlags:com.jetbrains.rhizomedb.Indexing, defaultValueProvider:com.jetbrains.rhizomedb.DefaultValue<T of <root>.MyEntity.Companion.requiredValue>?) returnType:com.jetbrains.rhizomedb.Attributes.Required<T of <root>.MyEntity.Companion.requiredValue, <root>.MyEntity> [fake_override]
+        overridden:
+          protected final fun requiredValue <T> (name: kotlin.String, serializer: kotlinx.serialization.KSerializer<T of com.jetbrains.rhizomedb.EntityType.requiredValue>, valueFlags: com.jetbrains.rhizomedb.Indexing, defaultValueProvider: com.jetbrains.rhizomedb.DefaultValue<T of com.jetbrains.rhizomedb.EntityType.requiredValue>?): com.jetbrains.rhizomedb.Attributes.Required<T of com.jetbrains.rhizomedb.EntityType.requiredValue, E of com.jetbrains.rhizomedb.EntityType> declared in com.jetbrains.rhizomedb.EntityType
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.Attributes<<root>.MyEntity>
+        VALUE_PARAMETER name:name index:0 type:kotlin.String
+        VALUE_PARAMETER name:serializer index:1 type:kotlinx.serialization.KSerializer<T of <root>.MyEntity.Companion.requiredValue>
+        VALUE_PARAMETER name:valueFlags index:2 type:com.jetbrains.rhizomedb.Indexing
+        VALUE_PARAMETER name:defaultValueProvider index:3 type:com.jetbrains.rhizomedb.DefaultValue<T of <root>.MyEntity.Companion.requiredValue>?
+      FUN FAKE_OVERRIDE name:single visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:<root>.MyEntity [fake_override]
+        overridden:
+          public final fun single (): E of com.jetbrains.rhizomedb.EntityType declared in com.jetbrains.rhizomedb.EntityType
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+      FUN FAKE_OVERRIDE name:singleOrNull visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:<root>.MyEntity? [fake_override]
+        overridden:
+          public final fun singleOrNull (): E of com.jetbrains.rhizomedb.EntityType? declared in com.jetbrains.rhizomedb.EntityType
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:kotlin.String [fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in com.jetbrains.rhizomedb.EntityType
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+      PROPERTY FAKE_OVERRIDE name:attrs visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final attrs: kotlin.collections.List<com.jetbrains.rhizomedb.Attribute<*>> declared in com.jetbrains.rhizomedb.EntityType
+        FUN FAKE_OVERRIDE name:<get-attrs> visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:kotlin.collections.List<com.jetbrains.rhizomedb.Attribute<*>> [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:attrs visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final fun <get-attrs> (): kotlin.collections.List<com.jetbrains.rhizomedb.Attribute<*>> declared in com.jetbrains.rhizomedb.EntityType
+          $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+      PROPERTY FAKE_OVERRIDE name:eid visibility:public modality:OPEN [fake_override,val]
+        overridden:
+          public open eid: kotlin.Int declared in com.jetbrains.rhizomedb.EntityType
+        FUN FAKE_OVERRIDE name:<get-eid> visibility:public modality:OPEN <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:kotlin.Int [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:eid visibility:public modality:OPEN [fake_override,val]
+          overridden:
+            public open fun <get-eid> (): kotlin.Int declared in com.jetbrains.rhizomedb.EntityType
+          $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+      PROPERTY FAKE_OVERRIDE name:entityClass visibility:public modality:OPEN [fake_override,val]
+        annotations:
+          Deprecated(message = "use EntityType", replaceWith = ReplaceWith(expression = "entityType", imports = []), level = <null>)
+        overridden:
+          public open entityClass: kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Entity> declared in com.jetbrains.rhizomedb.EntityType
+        FUN FAKE_OVERRIDE name:<get-entityClass> visibility:public modality:OPEN <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Entity> [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:entityClass visibility:public modality:OPEN [fake_override,val]
+          overridden:
+            public open fun <get-entityClass> (): kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Entity> declared in com.jetbrains.rhizomedb.EntityType
+          $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+      PROPERTY FAKE_OVERRIDE name:entityTypeIdent visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final entityTypeIdent: kotlin.String declared in com.jetbrains.rhizomedb.EntityType
+        FUN FAKE_OVERRIDE name:<get-entityTypeIdent> visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:kotlin.String [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:entityTypeIdent visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final fun <get-entityTypeIdent> (): kotlin.String declared in com.jetbrains.rhizomedb.EntityType
+          $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+      PROPERTY FAKE_OVERRIDE name:module visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final module: kotlin.String declared in com.jetbrains.rhizomedb.EntityType
+        FUN FAKE_OVERRIDE name:<get-module> visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:kotlin.String [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:module visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final fun <get-module> (): kotlin.String declared in com.jetbrains.rhizomedb.EntityType
+          $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+      PROPERTY FAKE_OVERRIDE name:namespace visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final namespace: kotlin.String declared in com.jetbrains.rhizomedb.EntityType
+        FUN FAKE_OVERRIDE name:<get-namespace> visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:kotlin.String [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:namespace visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final fun <get-namespace> (): kotlin.String declared in com.jetbrains.rhizomedb.EntityType
+          $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+      PROPERTY FAKE_OVERRIDE name:presentableText visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final presentableText: kotlin.String declared in com.jetbrains.rhizomedb.EntityType
+        FUN FAKE_OVERRIDE name:<get-presentableText> visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>) returnType:kotlin.String [fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:presentableText visibility:public modality:FINAL [fake_override,val]
+          overridden:
+            public final fun <get-presentableText> (): kotlin.String declared in com.jetbrains.rhizomedb.EntityType
+          $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>
+    CONSTRUCTOR visibility:public <> (eid:kotlin.Int) returnType:<root>.MyEntity [primary]
+      VALUE_PARAMETER name:eid index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyEntity modality:FINAL visibility:public [data] superTypes:[com.jetbrains.rhizomedb.Entity]'
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.MyEntity) returnType:kotlin.Int [operator]
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyEntity
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.MyEntity'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:eid type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+            receiver: GET_VAR '<this>: <root>.MyEntity declared in <root>.MyEntity.component1' type=<root>.MyEntity origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.MyEntity, eid:kotlin.Int) returnType:<root>.MyEntity
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyEntity
+      VALUE_PARAMETER name:eid index:0 type:kotlin.Int
+        EXPRESSION_BODY
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:eid type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+            receiver: GET_VAR '<this>: <root>.MyEntity declared in <root>.MyEntity.copy' type=<root>.MyEntity origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun copy (eid: kotlin.Int): <root>.MyEntity declared in <root>.MyEntity'
+          CONSTRUCTOR_CALL 'public constructor <init> (eid: kotlin.Int) declared in <root>.MyEntity' type=<root>.MyEntity origin=null
+            eid: GET_VAR 'eid: kotlin.Int declared in <root>.MyEntity.copy' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.MyEntity, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in com.jetbrains.rhizomedb.Entity
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyEntity
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+              arg0: GET_VAR '<this>: <root>.MyEntity declared in <root>.MyEntity.equals' type=<root>.MyEntity origin=null
+              arg1: GET_VAR 'other: kotlin.Any? declared in <root>.MyEntity.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyEntity'
+              CONST Boolean type=kotlin.Boolean value=true
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.MyEntity
+              GET_VAR 'other: kotlin.Any? declared in <root>.MyEntity.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyEntity'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.MyEntity [val]
+          TYPE_OP type=<root>.MyEntity origin=CAST typeOperand=<root>.MyEntity
+            GET_VAR 'other: kotlin.Any? declared in <root>.MyEntity.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:eid type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: <root>.MyEntity declared in <root>.MyEntity.equals' type=<root>.MyEntity origin=null
+                arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:eid type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.MyEntity declared in <root>.MyEntity.equals' type=<root>.MyEntity origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyEntity'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyEntity'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.MyEntity) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in com.jetbrains.rhizomedb.Entity
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyEntity
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.MyEntity'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:eid type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.MyEntity declared in <root>.MyEntity.hashCode' type=<root>.MyEntity origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.MyEntity) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in com.jetbrains.rhizomedb.Entity
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyEntity
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.MyEntity'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="MyEntity("
+            CONST String type=kotlin.String value="eid="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:eid type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.MyEntity declared in <root>.MyEntity.toString' type=<root>.MyEntity origin=null
+            CONST String type=kotlin.String value=")"
+    PROPERTY FAKE_OVERRIDE name:entityClass visibility:public modality:OPEN [fake_override,val]
+      annotations:
+        Deprecated(message = "use EntityType", replaceWith = ReplaceWith(expression = "entityType", imports = []), level = <null>)
+      overridden:
+        public open entityClass: kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Entity> declared in com.jetbrains.rhizomedb.Entity
+      FUN FAKE_OVERRIDE name:<get-entityClass> visibility:public modality:OPEN <> ($this:com.jetbrains.rhizomedb.Entity) returnType:kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Entity> [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:entityClass visibility:public modality:OPEN [fake_override,val]
+        overridden:
+          public open fun <get-entityClass> (): kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Entity> declared in com.jetbrains.rhizomedb.Entity
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.Entity
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:entity type:<root>.MyEntity [val]
+        BLOCK type=<root>.MyEntity origin=ELVIS
+          VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.MyEntity? [val]
+            CALL 'public final fun entity <E, T> (entityAttribute: com.jetbrains.rhizomedb.EntityAttribute<E of com.jetbrains.rhizomedb.entity, T of com.jetbrains.rhizomedb.entity>, value: T of com.jetbrains.rhizomedb.entity): E of com.jetbrains.rhizomedb.entity? declared in com.jetbrains.rhizomedb' type=<root>.MyEntity? origin=null
+              <E>: <root>.MyEntity
+              <T>: kotlin.String
+              entityAttribute: CALL 'public final fun <get-stringAttr> (): com.jetbrains.rhizomedb.Attributes.Required<kotlin.String, <root>.MyEntity> declared in <root>.MyEntity.Companion' type=com.jetbrains.rhizomedb.Attributes.Required<kotlin.String, <root>.MyEntity> origin=GET_PROPERTY
+                $this: GET_OBJECT 'CLASS GENERATED[org.jetbrains.rhizomedb.fir.RhizomedbPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>]' type=<root>.MyEntity.Companion
+              value: CONST String type=kotlin.String value="Hello"
+          WHEN type=<root>.MyEntity origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp_1: <root>.MyEntity? declared in <root>.foo' type=<root>.MyEntity? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CALL 'public final fun error (message: kotlin.Any): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
+                message: CONST String type=kotlin.String value="No Entity"
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: GET_VAR 'val tmp_1: <root>.MyEntity? declared in <root>.foo' type=<root>.MyEntity? origin=null
+      VAR name:result type:kotlin.String [val]
+        CALL 'public final fun get <E, V> (attribute: com.jetbrains.rhizomedb.Attributes.Required<V of com.jetbrains.rhizomedb.get, E of com.jetbrains.rhizomedb.get>): V of com.jetbrains.rhizomedb.get declared in com.jetbrains.rhizomedb' type=kotlin.String origin=GET_ARRAY_ELEMENT
+          <E>: <root>.MyEntity
+          <V>: kotlin.String
+          $receiver: GET_VAR 'val entity: <root>.MyEntity declared in <root>.foo' type=<root>.MyEntity origin=null
+          attribute: CALL 'public final fun <get-stringAttr> (): com.jetbrains.rhizomedb.Attributes.Required<kotlin.String, <root>.MyEntity> declared in <root>.MyEntity.Companion' type=com.jetbrains.rhizomedb.Attributes.Required<kotlin.String, <root>.MyEntity> origin=GET_PROPERTY
+            $this: GET_OBJECT 'CLASS GENERATED[org.jetbrains.rhizomedb.fir.RhizomedbPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[com.jetbrains.rhizomedb.EntityType<<root>.MyEntity>]' type=<root>.MyEntity.Companion
+      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.String declared in <root>'
+        GET_VAR 'val result: kotlin.String declared in <root>.foo' type=kotlin.String origin=null
+FILE fqName:com.jetbrains.rhizomedb fileName:/common.kt
+  CLASS ANNOTATION_CLASS name:EntityConstructor modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Retention(value = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:SOURCE' type=kotlin.annotation.AnnotationRetention)
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:CLASS' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.jetbrains.rhizomedb.EntityConstructor
+    CONSTRUCTOR visibility:public <> () returnType:com.jetbrains.rhizomedb.EntityConstructor [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:EntityConstructor modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:GeneratedEntityType modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Retention(value = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:SOURCE' type=kotlin.annotation.AnnotationRetention)
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:CLASS' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.jetbrains.rhizomedb.GeneratedEntityType
+    PROPERTY name:mixins visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:mixins type:kotlin.Array<out kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Mixin<*>>> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'mixins: kotlin.Array<out kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Mixin<*>>> declared in com.jetbrains.rhizomedb.GeneratedEntityType.<init>' type=kotlin.Array<out kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Mixin<*>>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-mixins> visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.GeneratedEntityType) returnType:kotlin.Array<out kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Mixin<*>>>
+        correspondingProperty: PROPERTY name:mixins visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.GeneratedEntityType
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-mixins> (): kotlin.Array<out kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Mixin<*>>> declared in com.jetbrains.rhizomedb.GeneratedEntityType'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:mixins type:kotlin.Array<out kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Mixin<*>>> visibility:private [final]' type=kotlin.Array<out kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Mixin<*>>> origin=null
+              receiver: GET_VAR '<this>: com.jetbrains.rhizomedb.GeneratedEntityType declared in com.jetbrains.rhizomedb.GeneratedEntityType.<get-mixins>' type=com.jetbrains.rhizomedb.GeneratedEntityType origin=null
+    CONSTRUCTOR visibility:public <> (mixins:kotlin.Array<out kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Mixin<*>>>) returnType:com.jetbrains.rhizomedb.GeneratedEntityType [primary]
+      VALUE_PARAMETER name:mixins index:0 type:kotlin.Array<out kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Mixin<*>>> varargElementType:kotlin.reflect.KClass<out com.jetbrains.rhizomedb.Mixin<*>> [vararg]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:GeneratedEntityType modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:RefAttribute modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Retention(value = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:SOURCE' type=kotlin.annotation.AnnotationRetention)
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.jetbrains.rhizomedb.RefAttribute
+    PROPERTY name:flags visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:flags type:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'flags: kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> declared in com.jetbrains.rhizomedb.RefAttribute.<init>' type=kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-flags> visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.RefAttribute) returnType:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags>
+        correspondingProperty: PROPERTY name:flags visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.RefAttribute
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-flags> (): kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> declared in com.jetbrains.rhizomedb.RefAttribute'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:flags type:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> visibility:private [final]' type=kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> origin=null
+              receiver: GET_VAR '<this>: com.jetbrains.rhizomedb.RefAttribute declared in com.jetbrains.rhizomedb.RefAttribute.<get-flags>' type=com.jetbrains.rhizomedb.RefAttribute origin=null
+    CONSTRUCTOR visibility:public <> (flags:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags>) returnType:com.jetbrains.rhizomedb.RefAttribute [primary]
+      VALUE_PARAMETER name:flags index:0 type:kotlin.Array<out com.jetbrains.rhizomedb.RefFlags> varargElementType:com.jetbrains.rhizomedb.RefFlags [vararg]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:RefAttribute modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:TransientAttribute modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Retention(value = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:SOURCE' type=kotlin.annotation.AnnotationRetention)
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.jetbrains.rhizomedb.TransientAttribute
+    PROPERTY name:flags visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:flags type:kotlin.Array<out com.jetbrains.rhizomedb.Indexing> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'flags: kotlin.Array<out com.jetbrains.rhizomedb.Indexing> declared in com.jetbrains.rhizomedb.TransientAttribute.<init>' type=kotlin.Array<out com.jetbrains.rhizomedb.Indexing> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-flags> visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.TransientAttribute) returnType:kotlin.Array<out com.jetbrains.rhizomedb.Indexing>
+        correspondingProperty: PROPERTY name:flags visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.TransientAttribute
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-flags> (): kotlin.Array<out com.jetbrains.rhizomedb.Indexing> declared in com.jetbrains.rhizomedb.TransientAttribute'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:flags type:kotlin.Array<out com.jetbrains.rhizomedb.Indexing> visibility:private [final]' type=kotlin.Array<out com.jetbrains.rhizomedb.Indexing> origin=null
+              receiver: GET_VAR '<this>: com.jetbrains.rhizomedb.TransientAttribute declared in com.jetbrains.rhizomedb.TransientAttribute.<get-flags>' type=com.jetbrains.rhizomedb.TransientAttribute origin=null
+    CONSTRUCTOR visibility:public <> (flags:kotlin.Array<out com.jetbrains.rhizomedb.Indexing>) returnType:com.jetbrains.rhizomedb.TransientAttribute [primary]
+      VALUE_PARAMETER name:flags index:0 type:kotlin.Array<out com.jetbrains.rhizomedb.Indexing> varargElementType:com.jetbrains.rhizomedb.Indexing [vararg]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:TransientAttribute modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:ValueAttribute modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Retention(value = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:SOURCE' type=kotlin.annotation.AnnotationRetention)
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.jetbrains.rhizomedb.ValueAttribute
+    PROPERTY name:flags visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:flags type:kotlin.Array<out com.jetbrains.rhizomedb.Indexing> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'flags: kotlin.Array<out com.jetbrains.rhizomedb.Indexing> declared in com.jetbrains.rhizomedb.ValueAttribute.<init>' type=kotlin.Array<out com.jetbrains.rhizomedb.Indexing> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-flags> visibility:public modality:FINAL <> ($this:com.jetbrains.rhizomedb.ValueAttribute) returnType:kotlin.Array<out com.jetbrains.rhizomedb.Indexing>
+        correspondingProperty: PROPERTY name:flags visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:com.jetbrains.rhizomedb.ValueAttribute
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-flags> (): kotlin.Array<out com.jetbrains.rhizomedb.Indexing> declared in com.jetbrains.rhizomedb.ValueAttribute'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:flags type:kotlin.Array<out com.jetbrains.rhizomedb.Indexing> visibility:private [final]' type=kotlin.Array<out com.jetbrains.rhizomedb.Indexing> origin=null
+              receiver: GET_VAR '<this>: com.jetbrains.rhizomedb.ValueAttribute declared in com.jetbrains.rhizomedb.ValueAttribute.<get-flags>' type=com.jetbrains.rhizomedb.ValueAttribute origin=null
+    CONSTRUCTOR visibility:public <> (flags:kotlin.Array<out com.jetbrains.rhizomedb.Indexing>) returnType:com.jetbrains.rhizomedb.ValueAttribute [primary]
+      VALUE_PARAMETER name:flags index:0 type:kotlin.Array<out com.jetbrains.rhizomedb.Indexing> varargElementType:com.jetbrains.rhizomedb.Indexing [vararg]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:ValueAttribute modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:assertEquals visibility:public modality:FINAL <T> (expected:T of com.jetbrains.rhizomedb.assertEquals, actual:T of com.jetbrains.rhizomedb.assertEquals, report:kotlin.Function1<kotlin.String, kotlin.Unit>) returnType:kotlin.Unit [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:expected index:0 type:T of com.jetbrains.rhizomedb.assertEquals
+    VALUE_PARAMETER name:actual index:1 type:T of com.jetbrains.rhizomedb.assertEquals
+    VALUE_PARAMETER name:report index:2 type:kotlin.Function1<kotlin.String, kotlin.Unit>
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'expected: T of com.jetbrains.rhizomedb.assertEquals declared in com.jetbrains.rhizomedb.assertEquals' type=T of com.jetbrains.rhizomedb.assertEquals origin=null
+              arg1: GET_VAR 'actual: T of com.jetbrains.rhizomedb.assertEquals declared in com.jetbrains.rhizomedb.assertEquals' type=T of com.jetbrains.rhizomedb.assertEquals origin=null
+          then: BLOCK type=kotlin.Unit origin=null
+            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+              $this: GET_VAR 'report: kotlin.Function1<kotlin.String, kotlin.Unit> declared in com.jetbrains.rhizomedb.assertEquals' type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+              p1: STRING_CONCATENATION type=kotlin.String
+                GET_VAR 'expected: T of com.jetbrains.rhizomedb.assertEquals declared in com.jetbrains.rhizomedb.assertEquals' type=T of com.jetbrains.rhizomedb.assertEquals origin=null
+                CONST String type=kotlin.String value=" != "
+                GET_VAR 'actual: T of com.jetbrains.rhizomedb.assertEquals declared in com.jetbrains.rhizomedb.assertEquals' type=T of com.jetbrains.rhizomedb.assertEquals origin=null
+  FUN name:changeBox visibility:public modality:FINAL <> (body:@[ExtensionFunctionType] kotlin.Function1<com.jetbrains.rhizomedb.ChangeScope, kotlin.String>) returnType:kotlin.String
+    VALUE_PARAMETER name:body index:0 type:@[ExtensionFunctionType] kotlin.Function1<com.jetbrains.rhizomedb.ChangeScope, kotlin.String>
+    BLOCK_BODY
+      VAR name:res type:kotlin.String [var]
+        CONST String type=kotlin.String value="<BODY FAILED>"
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun change (defaultPart: kotlin.Int, f: @[ExtensionFunctionType] kotlin.Function1<com.jetbrains.rhizomedb.ChangeScope, kotlin.Unit>): com.jetbrains.rhizomedb.Change declared in com.jetbrains.rhizomedb' type=com.jetbrains.rhizomedb.Change origin=null
+          $receiver: CALL 'public final fun empty (): com.jetbrains.rhizomedb.DB declared in com.jetbrains.rhizomedb.DB.Companion' type=com.jetbrains.rhizomedb.DB origin=null
+            $this: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=com.jetbrains.rhizomedb.DB.Companion
+          f: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<com.jetbrains.rhizomedb.ChangeScope, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:com.jetbrains.rhizomedb.ChangeScope) returnType:kotlin.Unit
+              $receiver: VALUE_PARAMETER name:$this$change type:com.jetbrains.rhizomedb.ChangeScope
+              BLOCK_BODY
+                SET_VAR 'var res: kotlin.String declared in com.jetbrains.rhizomedb.changeBox' type=kotlin.Unit origin=EQ
+                  CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.String origin=INVOKE
+                    $this: GET_VAR 'body: @[ExtensionFunctionType] kotlin.Function1<com.jetbrains.rhizomedb.ChangeScope, kotlin.String> declared in com.jetbrains.rhizomedb.changeBox' type=@[ExtensionFunctionType] kotlin.Function1<com.jetbrains.rhizomedb.ChangeScope, kotlin.String> origin=VARIABLE_AS_FUNCTION
+                    p1: GET_VAR '$this$change: com.jetbrains.rhizomedb.ChangeScope declared in com.jetbrains.rhizomedb.changeBox.<anonymous>' type=com.jetbrains.rhizomedb.ChangeScope origin=null
+      RETURN type=kotlin.Nothing from='public final fun changeBox (body: @[ExtensionFunctionType] kotlin.Function1<com.jetbrains.rhizomedb.ChangeScope, kotlin.String>): kotlin.String declared in com.jetbrains.rhizomedb'
+        GET_VAR 'var res: kotlin.String declared in com.jetbrains.rhizomedb.changeBox' type=kotlin.String origin=null

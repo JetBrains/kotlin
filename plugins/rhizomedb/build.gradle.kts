@@ -40,7 +40,9 @@ dependencies {
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
+    testCompileOnly("org.jetbrains.fleet:rhizomedb:1.36.0-FL24724_a9c22bf7da121.11")
     rhizomedbClasspath("org.jetbrains.fleet:rhizomedb:1.36.0-FL24724_a9c22bf7da121.11")
+    rhizomedbClasspath(project(":rhizomedb-compiler-plugin.testDeps"))
 }
 
 java {
@@ -76,6 +78,7 @@ javadocJar()
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
     useJUnitPlatform()
+    dependsOn(project(":rhizomedb-compiler-plugin.testDeps").tasks.named<Jar>("jar"))
 
     val localRhizomeClasspath: FileCollection = rhizomedbClasspath
     doFirst {

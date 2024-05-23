@@ -18,10 +18,16 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/rhizomedb/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
-public class RhizomedbFirLightTreeAsmLikeInstructionsListingTestGenerated extends AbstractRhizomedbFirLightTreeAsmLikeInstructionsListingTest {
+public class RhizomedbJvmIrTextTestGenerated extends AbstractRhizomedbJvmIrTextTest {
   @Test
   public void testAllFilesPresentInCodegen() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+  }
+
+  @Test
+  @TestMetadata("generate.kt")
+  public void testGenerate() {
+    runTest("plugins/rhizomedb/testData/codegen/generate.kt");
   }
 
   @Test
