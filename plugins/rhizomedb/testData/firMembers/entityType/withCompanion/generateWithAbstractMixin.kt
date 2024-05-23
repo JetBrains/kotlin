@@ -1,7 +1,7 @@
 import com.jetbrains.rhizomedb.*
 import kotlin.reflect.KClass
 
-abstract class MyEntityMixin<E : Entity>(ident: String) : Mixin<E>(ident)
+abstract class MyEntityMixin<E : Entity>(ident: String) : Mixin<E>(ident, "test")
 
 @GeneratedEntityType(MyEntityMixin::class)
 data class MyEntity(override val eid: EID) : Entity {

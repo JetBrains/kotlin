@@ -1,7 +1,7 @@
 FILE: generateWithAbstractMixin.kt
     public abstract class MyEntityMixin<E : R|com/jetbrains/rhizomedb/Entity|> : R|com/jetbrains/rhizomedb/Mixin<E>| {
         public constructor<E : R|com/jetbrains/rhizomedb/Entity|>(ident: R|kotlin/String|): R|MyEntityMixin<E>| {
-            super<R|com/jetbrains/rhizomedb/Mixin<E>|>(R|<local>/ident|)
+            super<R|com/jetbrains/rhizomedb/Mixin<E>|>(R|<local>/ident|, String(test))
         }
 
     }

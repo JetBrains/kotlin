@@ -1,7 +1,7 @@
 FILE: companionIsEntityTypeEventually.kt
     public abstract class MyEntityType : R|com/jetbrains/rhizomedb/EntityType<MyEntity>| {
         public constructor(ident: R|kotlin/String|, cons: R|(com/jetbrains/rhizomedb/EID) -> MyEntity|): R|MyEntityType| {
-            super<R|com/jetbrains/rhizomedb/EntityType<MyEntity>|>(R|<local>/ident|, R|<local>/cons|)
+            super<R|com/jetbrains/rhizomedb/EntityType<MyEntity>|>(R|<local>/ident|, String(test), R|<local>/cons|)
         }
 
     }

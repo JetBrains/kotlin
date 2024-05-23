@@ -3,7 +3,7 @@ import com.jetbrains.rhizomedb.*
 abstract class MyEntityType(
     ident: String,
     cons: (EID) -> MyEntity
-) : EntityType<MyEntity>(ident, cons)
+) : EntityType<MyEntity>(ident, "test", cons)
 
 <!WRONG_ENTITY_TYPE_TARGET("target companion already extends a class")!>@GeneratedEntityType<!>
 data class MyEntity(override val eid: EID) : Entity {

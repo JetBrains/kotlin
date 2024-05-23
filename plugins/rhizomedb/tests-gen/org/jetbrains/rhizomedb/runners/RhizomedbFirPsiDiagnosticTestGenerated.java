@@ -6,8 +6,8 @@
 package org.jetbrains.rhizomedb.runners;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.TestMetadata;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +21,7 @@ import java.util.regex.Pattern;
 public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFirPsiDiagnosticTest {
   @Test
   public void testAllFilesPresentInFirMembers() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers"),
-                                                           Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Nested
@@ -31,8 +30,7 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
   public class Attributes {
     @Test
     public void testAllFilesPresentInAttributes() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/attributes"),
-                                                             Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/attributes"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
@@ -65,9 +63,7 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
     public class Ref {
       @Test
       public void testAllFilesPresentInRef() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(),
-                                                               new File("plugins/rhizomedb/testData/firMembers/attributes/ref"),
-                                                               Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/attributes/ref"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -119,9 +115,7 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
     public class Transient {
       @Test
       public void testAllFilesPresentInTransient() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(),
-                                                               new File("plugins/rhizomedb/testData/firMembers/attributes/transient"),
-                                                               Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/attributes/transient"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -179,9 +173,7 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
     public class Value {
       @Test
       public void testAllFilesPresentInValue() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(),
-                                                               new File("plugins/rhizomedb/testData/firMembers/attributes/value"),
-                                                               Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/attributes/value"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -240,8 +232,7 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
   public class EntityType {
     @Test
     public void testAllFilesPresentInEntityType() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/entityType"),
-                                                             Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/entityType"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Nested
@@ -256,9 +247,7 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
 
       @Test
       public void testAllFilesPresentInWithCompanion() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(),
-                                                               new File("plugins/rhizomedb/testData/firMembers/entityType/withCompanion"),
-                                                               Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/entityType/withCompanion"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
@@ -364,8 +353,7 @@ public class RhizomedbFirPsiDiagnosticTestGenerated extends AbstractRhizomedbFir
 
       @Test
       public void testAllFilesPresentInWithoutCompanion() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(
-                "plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/rhizomedb/testData/firMembers/entityType/withoutCompanion"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
 
       @Test
