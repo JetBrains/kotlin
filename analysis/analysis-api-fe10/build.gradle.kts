@@ -49,7 +49,8 @@ tasks.withType<KotlinJvmCompile>().configureEach {
         optIn.addAll(
             listOf(
                 "kotlin.RequiresOptIn",
-                "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals"
+                "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals",
+                "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
             )
         )
         freeCompilerArgs.add("-Xcontext-receivers")
