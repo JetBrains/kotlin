@@ -35,7 +35,7 @@ KtConstructorSymbol:
           returnType: KtUsualClassType:
             annotationsList: []
             typeArguments: [
-              out KtTypeErrorType:
+              out KtErrorType:
                 annotationsList: []
                 type: ERROR_TYPE
             ]
@@ -64,7 +64,7 @@ KtConstructorSymbol:
           returnType: KtUsualClassType:
             annotationsList: []
             typeArguments: [
-              out KtTypeErrorType:
+              out KtErrorType:
                 annotationsList: []
                 type: ERROR_TYPE
             ]
@@ -102,7 +102,7 @@ KtConstructorSymbol:
         returnType: KtUsualClassType:
           annotationsList: []
           typeArguments: [
-            out KtTypeErrorType:
+            out KtErrorType:
               annotationsList: []
               type: ERROR_TYPE
           ]
@@ -132,7 +132,7 @@ KtConstructorSymbol:
       name: ints
       origin: SOURCE
       receiverParameter: null
-      returnType: KtTypeErrorType:
+      returnType: KtErrorType:
         annotationsList: []
         type: ERROR_TYPE
       symbolKind: LOCAL

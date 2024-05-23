@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.types
 
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
@@ -100,16 +101,21 @@ public enum class KaTypeNullability(public val isNullable: Boolean) {
 
 public typealias KtTypeNullability = KaTypeNullability
 
-public sealed interface KaErrorType : KaType {
-    // todo should be replaced with diagnostics
+public interface KaErrorType : KaType {
+    @KaAnalysisNonPublicApi
     public val errorMessage: String
+
+    @KaAnalysisNonPublicApi
+    public val presentableText: String?
+
+    @KaAnalysisNonPublicApi
+    @Deprecated("Use 'presentableText' instead.")
+    public fun tryRenderAsNonErrorType(): String? = presentableText
 }
 
 public typealias KtErrorType = KaErrorType
 
-public abstract class KaTypeErrorType : KaErrorType {
-    public abstract fun tryRenderAsNonErrorType(): String?
-}
+public typealias KaTypeErrorType = KaErrorType
 
 public typealias KtTypeErrorType = KaTypeErrorType
 

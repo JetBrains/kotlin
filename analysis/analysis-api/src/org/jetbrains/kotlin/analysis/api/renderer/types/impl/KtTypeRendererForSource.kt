@@ -22,7 +22,7 @@ public object KaTypeRendererForSource {
         flexibleTypeRenderer = KaFlexibleTypeRenderer.AS_SHORT
         functionalTypeRenderer = KaFunctionalTypeRenderer.AS_CLASS_TYPE_FOR_REFLECTION_TYPES
         intersectionTypeRenderer = KaIntersectionTypeRenderer.AS_INTERSECTION
-        typeErrorTypeRenderer = KaTypeErrorTypeRenderer.AS_CODE_IF_POSSIBLE
+        errorTypeRenderer = KaErrorTypeRenderer.AS_CODE_IF_POSSIBLE
         typeParameterTypeRenderer = KaTypeParameterTypeRenderer.AS_SOURCE
         unresolvedClassErrorTypeRenderer = KaUnresolvedClassErrorTypeRenderer.UNRESOLVED_QUALIFIER
         usualClassTypeRenderer = KaUsualClassTypeRenderer.AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS

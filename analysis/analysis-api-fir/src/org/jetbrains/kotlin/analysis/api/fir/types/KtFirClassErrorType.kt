@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
@@ -43,8 +44,15 @@ internal class KaFirClassErrorType(
         }
     }
 
-
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+
+    @KaAnalysisNonPublicApi
+    override val presentableText: String?
+        get() = withValidityAssertion {
+            qualifiers.joinToString(separator = ".") { it.name.asString() }
+        }
+
+    @KaAnalysisNonPublicApi
     override val errorMessage: String get() = withValidityAssertion { coneDiagnostic.reason }
 
     override val annotationsList: KaAnnotationsList by cached {

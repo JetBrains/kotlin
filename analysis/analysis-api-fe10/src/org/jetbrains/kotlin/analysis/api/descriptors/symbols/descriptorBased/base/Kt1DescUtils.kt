@@ -272,7 +272,7 @@ internal fun KotlinType.toKtType(analysisContext: Fe10AnalysisContext): KaType {
             if (unwrappedType.kind.isUnresolved)
                 KaFe10ClassErrorType(unwrappedType, analysisContext)
             else
-                KaFe10TypeErrorType(unwrappedType, analysisContext)
+                KaFe10ErrorType(unwrappedType, analysisContext)
         }
         is CapturedType -> KaFe10CapturedType(unwrappedType, analysisContext)
         is NewCapturedType -> KaFe10NewCapturedType(unwrappedType, analysisContext)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KaTypeRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
@@ -44,6 +45,7 @@ public interface KaUnresolvedClassErrorTypeRenderer {
     }
 
     public object WITH_ERROR_MESSAGE : KaUnresolvedClassErrorTypeRenderer {
+        @OptIn(KaAnalysisNonPublicApi::class)
         override fun renderType(
             analysisSession: KaSession,
             type: KaClassErrorType,

@@ -41,7 +41,7 @@ KtFunctionSymbol:
       name: ints
       origin: SOURCE
       receiverParameter: null
-      returnType: KtTypeErrorType:
+      returnType: KtErrorType:
         annotationsList: []
         type: ERROR_TYPE
       symbolKind: LOCAL
