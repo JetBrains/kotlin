@@ -5,9 +5,9 @@ interface Generic<out T>
 typealias TA<K> = (String) -> Generic<K>
 
 fun test(it: Any) {
-    val that = it <!UNCHECKED_CAST!>as TA<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>out<!> Any><!>
+    val that = it <!UNCHECKED_CAST!>as TA<<!REDUNDANT_PROJECTION!>out<!> Any><!>
 }
 
 fun rest(it: Any) {
-    val that = it <!UNCHECKED_CAST!>as TA<<!REDUNDANT_PROJECTION!>in<!> Any><!>
+    val that = it <!UNCHECKED_CAST!>as TA<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>in<!> Any><!>
 }

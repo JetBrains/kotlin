@@ -369,7 +369,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun createSubstitutionFromSubtypingStubTypesToTypeVariables(): TypeSubstitutorMarker {
-        return object : AbstractConeSubstitutor(this) {
+        return object : AbstractConeSubstitutor(this@ConeInferenceContext) {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
                 return ((type as? ConeStubTypeForTypeVariableInSubtyping)
                     ?.constructor?.variable?.defaultType)?.withNullability(type.nullability, this@ConeInferenceContext)

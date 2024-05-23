@@ -68,13 +68,18 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         return wrapProjection(projection, newType)
     }
 
-    fun ConeKotlinType.updateNullabilityIfNeeded(originalType: ConeKotlinType): ConeKotlinType {
-        return when {
-            originalType is ConeDefinitelyNotNullType -> this.withNullability(ConeNullability.NOT_NULL, typeContext)
-            originalType.isMarkedNullable -> this.withNullability(ConeNullability.NULLABLE, typeContext)
-            else -> this
+    companion object {
+        fun ConeKotlinType.updateNullabilityIfNeeded(originalType: ConeKotlinType, typeContext: ConeTypeContext): ConeKotlinType {
+            return when {
+                originalType is ConeDefinitelyNotNullType -> this.withNullability(ConeNullability.NOT_NULL, typeContext)
+                originalType.isMarkedNullable -> this.withNullability(ConeNullability.NULLABLE, typeContext)
+                else -> this
+            }
         }
     }
+
+    fun ConeKotlinType.updateNullabilityIfNeeded(originalType: ConeKotlinType): ConeKotlinType =
+        updateNullabilityIfNeeded(originalType, typeContext)
 
     override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
         val newType = substituteType(type)
