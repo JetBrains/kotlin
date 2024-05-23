@@ -122,19 +122,19 @@ internal class ClassMemberGenerator(
                 annotationGenerator.generate(irFunction, firFunction)
             }
             if (firFunction is FirConstructor && irFunction is IrConstructor && !firFunction.isExpect && !irFunction.isExternal) {
-                if (configuration.skipBodies) {
-                    irFunction.body = factory.createBlockBody(startOffset, endOffset)
-                } else {
-                    val body = factory.createBlockBody(startOffset, endOffset)
-                    val delegatedConstructor = firFunction.delegatedConstructor
-                    val irClass = parent as IrClass
-                    if (delegatedConstructor != null) {
-                        val irDelegatingConstructorCall = conversionScope.forDelegatingConstructorCall(irFunction, irClass) {
-                            delegatedConstructor.toIrDelegatingConstructorCall()
-                        }
-                        body.statements += irDelegatingConstructorCall
+                val body = factory.createBlockBody(startOffset, endOffset)
+                val delegatedConstructor = firFunction.delegatedConstructor
+                val irClass = parent as IrClass
+                if (delegatedConstructor != null) {
+                    val irDelegatingConstructorCall = conversionScope.forDelegatingConstructorCall(irFunction, irClass) {
+                        delegatedConstructor.toIrDelegatingConstructorCall()
                     }
+                    body.statements += irDelegatingConstructorCall
+                }
 
+                if (configuration.skipBodies) {
+                    irFunction.body = body
+                } else {
                     if (containingClass is FirRegularClass && containingClass.contextReceivers.isNotEmpty()) {
                         val contextReceiverFields =
                             c.classifierStorage.getFieldsWithContextReceiversForClass(irClass, containingClass)
