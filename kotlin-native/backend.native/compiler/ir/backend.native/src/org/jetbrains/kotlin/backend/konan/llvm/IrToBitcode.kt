@@ -1683,7 +1683,9 @@ internal class CodeGeneratorVisitor(
                 null
         )
 
-        return if (dstClass.isObjCClass()) {
+        return if (dstClass.isCompanion) {
+            functionGenerationContext.icmpEq(objCObject, genGetObjCClass(dstClass.parentAsClass))
+        } else if (dstClass.isObjCClass()) {
             if (dstClass.isInterface) {
                 val isMeta = if (dstClass.isObjCMetaClass()) kTrue else kFalse
                 call(
