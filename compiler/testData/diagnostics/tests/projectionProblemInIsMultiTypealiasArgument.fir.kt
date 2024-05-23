@@ -5,4 +5,4 @@ interface Generic<out T>
 typealias TA<K> = (String) -> Generic<K>
 typealias RA<L> = TA<L>
 
-fun rest(it: Any) = it <!UNCHECKED_CAST!>as RA<<!REDUNDANT_PROJECTION!>in<!> Any><!>
+fun rest(it: Any) = it <!UNCHECKED_CAST!>as RA<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>in<!> Any><!>
