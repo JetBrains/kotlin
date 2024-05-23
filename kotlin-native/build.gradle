@@ -686,6 +686,7 @@ tasks.named("clean", Delete) {
     it.delete(layout.buildDirectory)
     it.delete(bundle.outputs.files)
     it.delete("${projectDir}/compile_commands.json")
+    it.delete(rootProject.file("test.output").absolutePath) // Clean up after legacy test infrastructure
 }
 
 publishing {

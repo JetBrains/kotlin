@@ -18,7 +18,6 @@ package org.jetbrains.kotlin
 
 import org.gradle.api.Action
 import org.gradle.api.GradleException
-import org.gradle.api.Project
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
@@ -106,38 +105,11 @@ abstract class ExecClang @Inject constructor(
         }.map { "-D${it.key}=${it.value}" }
     }
 
-    fun execKonanClang(target: String?, action: Action<in ExecSpec>): ExecResult {
+    fun execKonanClang(target: String, action: Action<in ExecSpec>): ExecResult {
         return this.execClang(clangArgsForCppRuntime(target) + fixBrokenMacroExpansionInXcode15_3(target), action)
-    }
-
-    fun execKonanClang(target: KonanTarget, action: Action<in ExecSpec>): ExecResult {
-        return this.execClang(clangArgsForCppRuntime(target) + fixBrokenMacroExpansionInXcode15_3(target), action)
-    }
-
-    /**
-     * Execute Clang the way that produced object file is compatible with
-     * the one that produced by Kotlin/Native for given [target]. It means:
-     * 1. We pass flags that set sysroot.
-     * 2. We call Clang from toolchain in case of Apple target.
-     */
-    fun execClangForCompilerTests(target: KonanTarget, action: Action<in ExecSpec>): ExecResult {
-        val defaultArgs = platformManager.platform(target).clang.clangArgs.toList()
-        return execOperations.exec {
-            action.execute(this)
-            executable = if (target.family.isAppleFamily) {
-                resolveToolchainExecutable(target, executable)
-            } else {
-                resolveExecutable(executable)
-            }
-            args = defaultArgs + args
-        }
     }
 
     // The toolchain ones execute clang from the toolchain.
-
-    fun execToolchainClang(target: String?, action: Action<in ExecSpec>): ExecResult {
-        return this.execToolchainClang(platformManager.targetManager(target).target, action)
-    }
 
     fun execToolchainClang(target: KonanTarget, action: Action<in ExecSpec>): ExecResult {
         val extendedAction = Action<ExecSpec> {
