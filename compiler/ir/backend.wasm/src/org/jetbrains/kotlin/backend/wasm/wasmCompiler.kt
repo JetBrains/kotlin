@@ -289,7 +289,7 @@ $jsCodeBodyIndented
             || typeof inIon !== 'undefined' // SpiderMonkey
             || typeof jscOptions !== 'undefined' // JavaScriptCore
         );
-    const isBrowser = !isNodeJs && !isDeno && !isStandaloneJsVM && (typeof window !== 'undefined');
+    const isBrowser = !isNodeJs && !isDeno && !isStandaloneJsVM && (typeof window !== 'undefined' || typeof self !== 'undefined');
     
     if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
       throw "Supported JS engine not detected";
