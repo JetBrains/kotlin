@@ -30,6 +30,12 @@ public class NativeKlibCompatibilityTestGenerated extends AbstractNativeKlibComp
   }
 
   @Test
+  @TestMetadata("kt51302")
+  public void testKt51302() {
+    runTest("compiler/testData/klib/versionCompatibility/kt51302/");
+  }
+
+  @Test
   @TestMetadata("varargUsage")
   public void testVarargUsage() {
     runTest("compiler/testData/klib/versionCompatibility/varargUsage/");

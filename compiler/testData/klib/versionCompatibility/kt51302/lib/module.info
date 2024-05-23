@@ -1,0 +1,3 @@
+STEP 0:
+    dependencies: stdlib
+    compiler: BOTTOM_V1

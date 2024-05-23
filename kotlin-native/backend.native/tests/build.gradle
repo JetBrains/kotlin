@@ -176,25 +176,6 @@ boolean isExcluded(String dir) {
 }
 
 /**
- * Creates a task for a standalone test. Configures runner and adds building task.
- */
-Task standaloneTest(String name, Closure configureClosure) {
-    return KotlinNativeTestKt.createTest(project, name, KonanStandaloneTest) { task ->
-        task.configure(configureClosure)
-        if (task.enabled) {
-            konanArtifacts {
-                program(name, targets: [target.name]) {
-                    baseDir   "$testOutputLocal/$name"
-                    srcFiles  task.getSources()
-                    extraOpts task.flags
-                    extraOpts project.globalTestArgs
-                }
-            }
-        }
-    }
-}
-
-/**
  * Creates a task for a dynamic test. Configures runner and adds library and test build tasks.
  */
 Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
@@ -267,12 +248,6 @@ dynamicTest("interop_kt43502") {
     source = "interop/kt43502/main.kt"
     cSource = "$projectDir/interop/kt43502/main.c"
     useGoldenData = true
-}
-
-standaloneTest("kt51302") {
-    enabled = project.target.name == PlatformInfo.hostName
-    source = "serialization/KT-51302/main.kt"
-    flags = ["-l", "$projectDir/serialization/KT-51302/kt51302_dependency"]
 }
 
 dependencies {
