@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
+import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileTask
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
@@ -14,16 +15,12 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
-// These properties are used by the 'konan' plugin, thus we set them before applying it.
-val konanHome: String by extra(kotlinNativeDist.absolutePath)
-extra["org.jetbrains.kotlin.native.home"] = konanHome
-
 val kotlinVersion: String by rootProject.extra
 
 plugins {
+    id("base")
     id("compile-to-bitcode")
     id("runtime-testing")
-    id("konan")
 }
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
@@ -558,74 +555,58 @@ tasks.named("clean", Delete::class) {
 
 // region: Stdlib
 
-val commonStdlibSrcDirs = project(":kotlin-stdlib")
-        .files(
-                "common/src/kotlin",
-                "common/src/generated",
-                "unsigned/src",
-                "src"
-        ).files
+val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
+    group = BasePlugin.BUILD_GROUP
+    description = "Build the Kotlin/Native standard library '$name'"
 
-val interopRuntimeCommonSrcDir = project(":kotlin-native:Interop:Runtime").file("src/main/kotlin")
-val interopSrcDirs = listOf(
-        project(":kotlin-native:Interop:Runtime").file("src/native/kotlin"),
-        project(":kotlin-native:Interop:JsRuntime").file("src/main/kotlin")
-)
+    this.compilerDistributionPath.set(kotlinNativeDist.absolutePath)
+    dependsOn(":kotlin-native:distCompiler")
 
-val testAnnotationCommonSrcDir = project(":kotlin-test").files("annotations-common/src/main/kotlin").files
-val testCommonSrcDir = project(":kotlin-test").files("common/src/main/kotlin").files
+    this.konanTarget.set(HostManager.host)
+    this.outputDirectory.set(
+            layout.buildDirectory.dir("stdlib/${HostManager.hostName}/stdlib")
+    )
 
-val stdLibSrcDirs = interopSrcDirs + listOf(
-        project.file("src/main/kotlin"),
-        project(":kotlin-stdlib").file("native-wasm/src/")
-)
+    this.extraOpts.addAll(
+            "-no-default-libs",
+            "-no-endorsed-libs",
+            "-nostdlib",
+            "-Werror",
+            "-Xexplicit-api=strict",
+            "-Xexpect-actual-classes",
+            "-module-name", "stdlib",
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=kotlin.contracts.ExperimentalContracts",
+            "-opt-in=kotlin.ExperimentalMultiplatform",
+            "-opt-in=kotlin.native.internal.InternalForKotlinNative",
+            "-language-version",
+            "1.9",
+            "-api-version",
+            "2.0",
+            "-Xsuppress-api-version-greater-than-language-version-error",
+    )
 
-lateinit var stdlibBuildTask: TaskProvider<Task>
-
-konanArtifacts {
-    library("stdlib") {
-        baseDir(project.layout.buildDirectory.dir("stdlib").get().asFile)
-
-        enableMultiplatform(true)
-        noStdLib(true)
-        noPack(true)
-        noDefaultLibs(true)
-        noEndorsedLibs(true)
-
-        extraOpts(
-                "-Werror",
-                "-Xexplicit-api=strict",
-                "-Xexpect-actual-classes",
-                "-module-name", "stdlib",
-                "-opt-in=kotlin.RequiresOptIn",
-                "-opt-in=kotlin.contracts.ExperimentalContracts",
-                "-opt-in=kotlin.ExperimentalMultiplatform",
-                "-opt-in=kotlin.native.internal.InternalForKotlinNative",
-                "-language-version",
-                "1.9",
-                "-api-version",
-                "2.0",
-                "-Xsuppress-api-version-greater-than-language-version-error",
-        )
-
-        commonStdlibSrcDirs.forEach { commonSrcDir(it) }
-        testAnnotationCommonSrcDir.forEach { commonSrcDir(it) }
-        testCommonSrcDir.forEach { commonSrcDir(it) }
-        commonSrcDir(interopRuntimeCommonSrcDir)
-        stdLibSrcDirs.forEach { srcDir(it) }
+    val common by sourceSets.creating {
+        srcDir(project(":kotlin-stdlib").file("common/src/kotlin"))
+        srcDir(project(":kotlin-stdlib").file("common/src/generated"))
+        srcDir(project(":kotlin-stdlib").file("unsigned/src"))
+        srcDir(project(":kotlin-stdlib").file("src"))
+        srcDir(project(":kotlin-test").files("annotations-common/src/main/kotlin"))
+        srcDir(project(":kotlin-test").files("common/src/main/kotlin"))
+        srcDir(project(":kotlin-native:Interop:Runtime").file("src/main/kotlin"))
     }
 
-    stdlibBuildTask = project.findKonanBuildTask("stdlib", project.platformManager.hostPlatform.target).apply {
-        configure {
-            dependsOn(":kotlin-native:distCompiler")
-            dependsOn(":prepare:build.version:writeStdlibVersion")
-        }
+    val nativeMain by sourceSets.creating {
+        srcDir(project(":kotlin-native:Interop:Runtime").file("src/native/kotlin"))
+        srcDir(project(":kotlin-native:Interop:JsRuntime").file("src/main/kotlin"))
+        srcDir(project.file("src/main/kotlin"))
+        srcDir(project(":kotlin-stdlib").file("native-wasm/src/"))
     }
+
+    dependsOn(":prepare:build.version:writeStdlibVersion")
 }
 
 val stdlibTask = tasks.register<Copy>("nativeStdlib") {
-    require(::stdlibBuildTask.isInitialized)
-
     from(stdlibBuildTask.map { it.outputs.files })
     into(project.layout.buildDirectory.dir("nativeStdlib"))
 

@@ -110,10 +110,6 @@ gradlePlugin {
             id = "compilation-database"
             implementationClass = "org.jetbrains.kotlin.cpp.CompilationDatabasePlugin"
         }
-        create("konanPlugin") {
-            id = "konan"
-            implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
-        }
         create("native-interop-plugin") {
             id = "native-interop-plugin"
             implementationClass = "org.jetbrains.kotlin.NativeInteropPlugin"

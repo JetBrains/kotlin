@@ -21,20 +21,15 @@ import java.io.File
 val Project.platformManager
     get() = extensions.getByType<PlatformManager>()
 
-val validPropertiesNames = listOf(
-    "konan.home",
-    "org.jetbrains.kotlin.native.home",
-    "kotlin.native.home"
-)
-
-val Project.kotlinNativeDist
-    get() = rootProject.project(":kotlin-native").currentKotlinNativeDist
-
-val Project.currentKotlinNativeDist
-    get() = rootProject.file(validPropertiesNames.firstOrNull { hasProperty(it) }?.let { findProperty(it) } ?: "dist")
-
-val Project.useCustomDist
-    get() = validPropertiesNames.any { hasProperty(it) }
+val Project.kotlinNativeDist: File
+    get() = rootProject.project(":kotlin-native").run {
+        val validPropertiesNames = listOf(
+                "konan.home",
+                "org.jetbrains.kotlin.native.home",
+                "kotlin.native.home"
+        )
+        rootProject.file(validPropertiesNames.firstOrNull { hasProperty(it) }?.let { findProperty(it) } ?: "dist")
+    }
 
 val Project.nativeBundlesLocation
     get() = file(findProperty("nativeBundlesLocation") ?: project.projectDir)
@@ -50,9 +45,6 @@ fun projectOrFiles(proj: Project, notation: String): Any? {
 //endregion
 
 //region Task dependency.
-
-fun Project.findKonanBuildTask(artifact: String, target: KonanTarget): TaskProvider<Task> =
-    tasks.named("compileKonan${artifact.replaceFirstChar { it.uppercase() }}${target.name.replaceFirstChar { it.uppercase() }}")
 
 val Project.isDefaultNativeHome: Boolean
     get() = kotlinNativeDist.absolutePath == project(":kotlin-native").file("dist").absolutePath
