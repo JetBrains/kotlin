@@ -25,6 +25,6 @@ abstract class AbstractResolveCallTest : AbstractResolveTest() {
             call?.let(::stringRepresentation) ?: "null"
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "call.txt")
     }
 }
