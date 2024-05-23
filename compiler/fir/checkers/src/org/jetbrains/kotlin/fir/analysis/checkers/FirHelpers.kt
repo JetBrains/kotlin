@@ -858,39 +858,50 @@ fun isExplicitTypeArgumentSource(source: KtSourceElement?): Boolean =
 
 val FirTypeProjection.isExplicit: Boolean get() = isExplicitTypeArgumentSource(source)
 
-data class PotentiallyProblematicArgument(
-    val target: ConeKotlinType,
+private data class TypeArgumentData(
+    val constructor: ConeKotlinType,
     val index: Int,
-    val mapped: ConeTypeProjection,
-    val bindex: FirTypeRefSource,
+    val projection: ConeTypeProjection,
+    val source: FirTypeRefSource,
 )
 
-fun extractZippedArgumentsTypeRefAndSourceRecursively(typeRef: FirTypeRef): List<Pair<ConeTypeProjection, FirTypeRefSource>> =
+private fun extractTypeArgumentDataRecursively(typeRef: FirTypeRef): List<TypeArgumentData> =
     extractArgumentsTypeRefAndSource(typeRef)
         ?.let { typeRef.coneType.typeArguments.zip(it) }
-        ?.flatMap { listOf(it) + it.second.typeRef?.let(::extractZippedArgumentsTypeRefAndSourceRecursively).orEmpty() }
+        ?.flatMapIndexed { index, it ->
+            val ownItem = listOf(TypeArgumentData(typeRef.coneType, index, it.first, it.second))
+            ownItem + it.second.typeRef?.let(::extractTypeArgumentDataRecursively).orEmpty()
+        }
         .orEmpty()
 
-fun collectPotentiallyProblematicArguments(typeRef: FirTypeRef, session: FirSession): List<PotentiallyProblematicArgument> {
-    val typeRefAndSourcesForArguments = extractZippedArgumentsTypeRefAndSourceRecursively(typeRef)
+private fun collectPotentiallyProblematicArguments(typeRef: FirTypeRef, session: FirSession): List<TypeArgumentData> {
+    val shallowArgumentsData = extractTypeArgumentDataRecursively(typeRef)
+    val potentiallyProblematicShallowArgumentsData = shallowArgumentsData.filter { it.projection.kind.canBeProblematic }
+
+    if (typeRef.coneType.toSymbol(session) !is FirTypeAliasSymbol) {
+        return potentiallyProblematicShallowArgumentsData
+    }
 
     return buildList {
         collectPotentiallyProblematicArguments(
             typeRef.coneType,
             ConeSubstitutor.Empty,
-            typeRefAndSourcesForArguments.toMap(),
+            shallowArgumentsData.associateBy(
+                keySelector = { it.projection },
+                valueTransform = { it.source },
+            ),
             emptyMap(),
             this, session
         )
     }
 }
 
-fun collectPotentiallyProblematicArguments(
+private fun collectPotentiallyProblematicArguments(
     type: ConeKotlinType,
     previousSubstitutor: ConeSubstitutor,
-    previousIndicesMappingA: Map<ConeTypeProjection, FirTypeRefSource>,
+    originalProjectionToSource: Map<ConeTypeProjection, FirTypeRefSource>,
     previousIndicesMappingB: Map<FirTypeParameterSymbol, FirTypeRefSource>,
-    result: MutableList<PotentiallyProblematicArgument>,
+    result: MutableList<TypeArgumentData>,
     session: FirSession,
 ) {
     if (type !is ConeClassLikeType) {
@@ -915,7 +926,7 @@ fun collectPotentiallyProblematicArguments(
                 // because we can have `In<Out<in Int>>`, so we must go deeper, and for that
                 // we need some source element to report the error on.
                 else -> {
-                    previousIndicesMappingA[substitutedArgument ?: argument]
+                    originalProjectionToSource[substitutedArgument ?: argument]
                 }
             }
 
@@ -931,7 +942,7 @@ fun collectPotentiallyProblematicArguments(
             // ...because the error has already been reported for the typealias expansion itself.
             if (bindex != null) {
                 if (argument.kind.canBeProblematic || argument.type is ConeTypeParameterType && substitutedArgument != null) {
-                    result += PotentiallyProblematicArgument(substitutedType, index, substitutedArgument ?: argument, bindex)
+                    result += TypeArgumentData(substitutedType, index, substitutedArgument ?: argument, bindex)
                 }
             }
 
@@ -939,7 +950,7 @@ fun collectPotentiallyProblematicArguments(
                 collectPotentiallyProblematicArguments(
                     unsubstitutedArgument,
                     previousSubstitutor,
-                    previousIndicesMappingA,
+                    originalProjectionToSource,
                     previousIndicesMappingB,
                     result, session,
                 )
@@ -962,14 +973,14 @@ fun collectPotentiallyProblematicArguments(
         val nextStepSubstitutor = createParametersSubstitutor(session, typeAliasMapOfPotentiallyProblematicArguments)
         val parametersToIndices = indicesOfPotentiallyProblematicArguments.associateBy(
             keySelector = { typeAliasMap[it].first },
-            valueTransform = { previousIndicesMappingA[typeAliasMap[it].second]
+            valueTransform = { originalProjectionToSource[typeAliasMap[it].second]
                 ?: error("Should have calculated") },
         )
 
         collectPotentiallyProblematicArguments(
             alias.expandedTypeRef.coneType,
             nextStepSubstitutor.chain(previousSubstitutor),
-            previousIndicesMappingA,
+            originalProjectionToSource,
             parametersToIndices,
             result, session
         )
@@ -990,9 +1001,9 @@ fun checkTypeRefForConflictingProjections(
     val potentiallyProblematicArguments = collectPotentiallyProblematicArguments(typeRef, context.session)
 
     for (argumentData in potentiallyProblematicArguments) {
-        val declaration = argumentData.target.toRegularClassSymbol(context.session) ?: error("Shouldn't be here")
+        val declaration = argumentData.constructor.toRegularClassSymbol(context.session) ?: error("Shouldn't be here")
         val proto = declaration.typeParameterSymbols[argumentData.index]
-        val actual = argumentData.mapped
+        val actual = argumentData.projection
         val protoVariance = proto.variance
 
         val projectionRelation = if (actual is ConeKotlinTypeConflictingProjection ||
@@ -1008,7 +1019,7 @@ fun checkTypeRefForConflictingProjections(
             ProjectionRelation.None
         }
 
-        val argTypeRefSource = argumentData.bindex
+        val argTypeRefSource = argumentData.source
 
         if (projectionRelation != ProjectionRelation.None && typeRef.source?.kind !is KtFakeSourceElementKind) {
             reporter.reportOn(
