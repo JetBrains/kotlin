@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.backend.utils.toIrSymbol
 import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.unexpandedConeClassLikeType
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -23,7 +24,11 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExtensionFunctionType
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.NoInfer
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.CommonFlexibleTypeBoundsChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 class Fir2IrTypeConverter(
     private val c: Fir2IrComponents,
@@ -97,7 +102,13 @@ class Fir2IrTypeConverter(
         addRawTypeAnnotation: Boolean = false
     ): IrType {
         return when (this) {
-            is ConeErrorType -> createErrorType()
+            is ConeErrorType -> {
+                val isMarkedNullable = nullability == ConeNullability.NULLABLE
+                when (val diagnostic = diagnostic) {
+                    is ConeUnresolvedError -> createErrorType(diagnostic.qualifier, isMarkedNullable)
+                    else -> createErrorType(diagnostic.reason, isMarkedNullable)
+                }
+            }
             is ConeLookupTagBasedType -> {
                 val typeAnnotations = mutableListOf<IrConstructorCall>()
                 typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
@@ -361,4 +372,5 @@ internal fun ConeKotlinType.approximateForIrOrSelf(c: Fir2IrComponents): ConeKot
     return approximateForIrOrNull(c) ?: this
 }
 
-internal fun createErrorType(): IrErrorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
+internal fun createErrorType(message: String = "<error>", isMarkedNullable: Boolean = false): IrErrorType =
+    IrErrorTypeImpl(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, message), emptyList(), Variance.INVARIANT, isMarkedNullable)
