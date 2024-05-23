@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.types
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
-import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
+import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaTypeErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
@@ -33,9 +33,6 @@ internal class KaFe10TypeErrorType(
         }
     }
 
-
-    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging(analysisContext) }
-
     override val errorMessage: String
         get() = withValidityAssertion { fe10Type.debugMessage }
 
@@ -44,4 +41,8 @@ internal class KaFe10TypeErrorType(
 
     override val abbreviatedType: KaUsualClassType?
         get() = withValidityAssertion { null }
+
+    override fun toString(): String {
+        return fe10Type.renderForDebugging(analysisContext)
+    }
 }

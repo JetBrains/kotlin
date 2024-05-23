@@ -52,7 +52,7 @@ internal class KaFirUsualClassType(
         builder.buildAbbreviatedType(coneType)
     }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
+    override fun toString() = coneType.renderForDebugging()
 }

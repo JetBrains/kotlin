@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtTypeProjection
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
-import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
+import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -31,8 +31,6 @@ internal class KaFe10UsualClassType(
     private val descriptor: ClassDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KaUsualClassType(), KaFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging(analysisContext) }
-
     override val qualifiers: List<KaClassTypeQualifier.KaResolvedClassTypeQualifier>
         get() = withValidityAssertion {
             val nestedType = KaFe10JvmTypeMapperContext.getNestedType(fe10Type)
@@ -73,4 +71,8 @@ internal class KaFe10UsualClassType(
 
     override val abbreviatedType: KaUsualClassType?
         get() = withValidityAssertion { fe10Type.getAbbreviation()?.toKtType(analysisContext) as? KaUsualClassType }
+
+    override fun toString(): String {
+        return fe10Type.renderForDebugging(analysisContext)
+    }
 }

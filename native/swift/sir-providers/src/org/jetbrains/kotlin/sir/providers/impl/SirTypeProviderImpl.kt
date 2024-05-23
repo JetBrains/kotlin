@@ -75,8 +75,7 @@ public class SirTypeProviderImpl(
                 is KtTypeParameterType,
                 -> SirUnsupportedType()
                 is KtErrorType -> SirErrorType(ktType.errorMessage)
-                else -> SirErrorType("Unexpected type ${ktType.asStringForDebugging()}")
-
+                else -> SirErrorType("Unexpected type $ktType")
         }
 
         return ktType.abbreviatedType?.let { buildRegularType(it) }

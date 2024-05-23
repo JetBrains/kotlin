@@ -39,7 +39,7 @@ internal interface KaFe10Type : KaLifetimeOwner, KaAnnotated {
         get() = analysisContext.token
 }
 
-internal fun KotlinType.asStringForDebugging(analysisContext: Fe10AnalysisContext): String {
+internal fun KotlinType.renderForDebugging(analysisContext: Fe10AnalysisContext): String {
     val renderer = KaFe10DebugTypeRenderer()
-    return prettyPrint { renderer.render(analysisContext, this@asStringForDebugging, this@prettyPrint) }
+    return prettyPrint { renderer.render(analysisContext, this@renderForDebugging, this@prettyPrint) }
 }
