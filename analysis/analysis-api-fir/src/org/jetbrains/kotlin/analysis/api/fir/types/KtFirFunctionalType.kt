@@ -86,9 +86,9 @@ internal class KaFirFunctionalType(
         coneType.returnType(builder.rootSession).buildKtType()
     }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
+    override fun toString() = coneType.renderForDebugging()
 
     private fun ConeKotlinType.buildKtType(): KaType = builder.typeBuilder.buildKtType(this)
 }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
-import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
+import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
@@ -21,8 +21,6 @@ internal class KaFe10FlexibleType(
     override val fe10Type: FlexibleType,
     override val analysisContext: Fe10AnalysisContext
 ) : KaFlexibleType(), KaFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging(analysisContext) }
-
     override val lowerBound: KaType
         get() = withValidityAssertion { fe10Type.lowerBound.toKtType(analysisContext) }
 
@@ -34,4 +32,8 @@ internal class KaFe10FlexibleType(
 
     override val abbreviatedType: KaUsualClassType?
         get() = withValidityAssertion { null }
+
+    override fun toString(): String {
+        return fe10Type.renderForDebugging(analysisContext)
+    }
 }

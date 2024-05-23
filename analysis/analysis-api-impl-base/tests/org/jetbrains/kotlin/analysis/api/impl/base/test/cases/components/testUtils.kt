@@ -45,7 +45,7 @@ import kotlin.reflect.full.memberProperties
 
 @OptIn(KaAnalysisApiInternals::class)
 internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
-    fun KaType.render() = asStringForDebugging().replace('/', '.')
+    fun KaType.render() = toString().replace('/', '.')
     return when (this) {
         null -> "null"
         is KaFunctionLikeSymbol -> buildString {
@@ -99,7 +99,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
         is KaSubstitutor.Empty -> "<empty substitutor>"
         is KaMapBackedSubstitutor -> {
             val mappingText = getAsMap().entries
-                .joinToString(prefix = "{", postfix = "}") { (k, v) -> stringRepresentation(k) + " = " + v.asStringForDebugging() }
+                .joinToString(prefix = "{", postfix = "}") { (k, v) -> stringRepresentation(k) + " = " + v }
             "<map substitutor: $mappingText>"
         }
         is KaChainedSubstitutor -> "${stringRepresentation(first)} then ${stringRepresentation(second)}"

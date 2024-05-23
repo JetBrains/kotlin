@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
-import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
+import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
@@ -37,8 +37,6 @@ internal class KaFe10ClassErrorType(
             }
         }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging(analysisContext) }
-
     override val errorMessage: String
         get() = withValidityAssertion { fe10Type.debugMessage }
 
@@ -50,4 +48,8 @@ internal class KaFe10ClassErrorType(
 
     override val abbreviatedType: KaUsualClassType?
         get() = withValidityAssertion { fe10Type.getAbbreviation()?.toKtType(analysisContext) as? KaUsualClassType }
+
+    override fun toString(): String {
+        return fe10Type.renderForDebugging(analysisContext)
+    }
 }

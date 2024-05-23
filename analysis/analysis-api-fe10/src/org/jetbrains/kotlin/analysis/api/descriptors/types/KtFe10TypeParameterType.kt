@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktNullability
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
-import org.jetbrains.kotlin.analysis.api.descriptors.types.base.asStringForDebugging
+import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebugging
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
@@ -24,8 +24,6 @@ internal class KaFe10TypeParameterType(
     private val parameter: TypeParameterDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KaTypeParameterType(), KaFe10Type {
-    override fun asStringForDebugging(): String = withValidityAssertion { fe10Type.asStringForDebugging(analysisContext) }
-
     override val name: Name
         get() = withValidityAssertion { parameter.name }
 
@@ -37,4 +35,8 @@ internal class KaFe10TypeParameterType(
 
     override val abbreviatedType: KaUsualClassType?
         get() = withValidityAssertion { null }
+
+    override fun toString(): String {
+        return fe10Type.renderForDebugging(analysisContext)
+    }
 }

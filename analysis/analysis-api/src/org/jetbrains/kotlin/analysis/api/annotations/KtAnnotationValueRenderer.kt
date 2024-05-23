@@ -76,7 +76,7 @@ internal object KaAnnotationValueRenderer {
                 append("UNRESOLVED_CLASS")
             }
             else -> {
-                append(type.asStringForDebugging())
+                append(type)
             }
         }
     }

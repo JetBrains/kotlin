@@ -35,7 +35,7 @@ internal class KaFirIntersectionType(
     override val abbreviatedType: KaUsualClassType?
         get() = withValidityAssertion { null }
 
-    override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
+    override fun toString() = coneType.renderForDebugging()
 }

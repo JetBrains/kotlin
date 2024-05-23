@@ -80,7 +80,10 @@ public sealed interface KaType : KaLifetimeOwner, KaAnnotated {
      */
     public val abbreviatedType: KaUsualClassType?
 
-    public fun asStringForDebugging(): String
+    @Deprecated("Use 'toString()' instead.", replaceWith = ReplaceWith("toString()"))
+    public fun asStringForDebugging(): String {
+        return withValidityAssertion { toString() }
+    }
 }
 
 public typealias KtType = KaType
@@ -166,7 +169,6 @@ public typealias KtTypeParameterType = KaTypeParameterType
 
 public abstract class KaCapturedType : KaType {
     public abstract val projection: KaTypeProjection
-    override fun toString(): String = asStringForDebugging()
 }
 
 public typealias KtCapturedType = KaCapturedType
@@ -175,8 +177,6 @@ public abstract class KaDefinitelyNotNullType : KaType {
     public abstract val original: KaType
 
     final override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.NON_NULLABLE }
-
-    override fun toString(): String = asStringForDebugging()
 }
 
 public typealias KtDefinitelyNotNullType = KaDefinitelyNotNullType
@@ -187,16 +187,12 @@ public typealias KtDefinitelyNotNullType = KaDefinitelyNotNullType
 public abstract class KaFlexibleType : KaType {
     public abstract val lowerBound: KaType
     public abstract val upperBound: KaType
-
-    override fun toString(): String = asStringForDebugging()
 }
 
 public typealias KtFlexibleType = KaFlexibleType
 
 public abstract class KaIntersectionType : KaType {
     public abstract val conjuncts: List<KaType>
-
-    override fun toString(): String = asStringForDebugging()
 }
 
 public typealias KtIntersectionType = KaIntersectionType
@@ -207,8 +203,6 @@ public typealias KtIntersectionType = KaIntersectionType
  * Although this can be viewed as a flexible type (kotlin.Nothing..kotlin.Any?), a platform may assign special meaning to the
  * values of dynamic type, and handle differently from the regular flexible type.
  */
-public abstract class KaDynamicType : KaType {
-    override fun toString(): String = asStringForDebugging()
-}
+public abstract class KaDynamicType : KaType
 
 public typealias KtDynamicType = KaDynamicType

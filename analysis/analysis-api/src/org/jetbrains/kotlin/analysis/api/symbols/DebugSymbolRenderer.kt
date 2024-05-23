@@ -247,7 +247,7 @@ public class DebugSymbolRenderer(
                 append("type: ")
                 when (typeToRender) {
                     is KaErrorType -> append("ERROR_TYPE")
-                    else -> append(typeToRender.asStringForDebugging())
+                    else -> append(typeToRender.toString())
                 }
             }
         }
