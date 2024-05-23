@@ -163,7 +163,7 @@ class SwiftExportIT : KGPBaseTest() {
             }
 
             val swiftFile = projectPath
-                .resolve("shared/build/iosArm64DebugSwiftExport/files/Shared.swift")
+                .resolve("shared/build/SwiftExport/iosArm64/Debug/files/Shared.swift")
                 .readText()
 
             assert(swiftFile.contains("iosBar()")) { "Swift file doesn't contain iosBar() from iosMain source set" }
