@@ -183,16 +183,23 @@ class WorkerTest {
     fun executeAfterCancelled() {
         val worker = Worker.start()
 
-        val future = worker.execute(TransferMode.SAFE, {}) {
+        val requestedTermination = AtomicInt(0)
+
+        val future = worker.execute(TransferMode.SAFE, { requestedTermination }) { requestedTermination ->
+            // Wait until termination request is definitely in the job queue.
+            while (requestedTermination.value == 0) {}
             // Here we processed termination request.
             assertEquals(false, Worker.current.processQueue())
         }
 
         worker.executeAfter(1_000_000_000L) { error("FAILURE") }
 
-        // Request worker to terminate and wait for the request to be processed.
-        worker.requestTermination(processScheduledJobs = false).result
-        // Now wait for the worker to complete termination, cleaning up after itself.
+        // Request worker to terminate.
+        val terminationRequest = worker.requestTermination(processScheduledJobs = false)
+        requestedTermination.value = 1
+        // Now wait until `processQueue` in `execute` above processes this request.
+        terminationRequest.result
+        // And now wait for the worker to complete termination, cleaning up after itself.
         waitWorkerTermination(worker)
 
         // `future` is bound to terminated `worker` and so it's not available anymore.
