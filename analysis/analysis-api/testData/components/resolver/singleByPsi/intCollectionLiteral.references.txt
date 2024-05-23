@@ -1,0 +1,3 @@
+Resolved to:
+0: (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+1: arr: kotlin.IntArray

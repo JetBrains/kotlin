@@ -239,6 +239,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("classCollectionLiteral.kt")
+  public void testClassCollectionLiteral() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/classCollectionLiteral.kt");
+  }
+
+  @Test
   @TestMetadata("ClassInTypeConstraint.kt")
   public void testClassInTypeConstraint() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ClassInTypeConstraint.kt");
@@ -812,6 +818,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
   @TestMetadata("intArrayOfInAnnotation.kt")
   public void testIntArrayOfInAnnotation() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/intArrayOfInAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("intCollectionLiteral.kt")
+  public void testIntCollectionLiteral() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/intCollectionLiteral.kt");
   }
 
   @Test
