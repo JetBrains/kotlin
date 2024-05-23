@@ -875,12 +875,11 @@ private fun extractTypeArgumentDataRecursively(typeRef: FirTypeRef): List<TypeAr
         .orEmpty()
 
 private fun collectPotentiallyProblematicArguments(typeRef: FirTypeRef, session: FirSession): List<TypeArgumentData> {
-    val shallowArgumentsData = extractTypeArgumentDataRecursively(typeRef)
-    val potentiallyProblematicShallowArgumentsData = shallowArgumentsData.filter { it.projection.kind.canBeProblematic }
+    val shallowArgumentsData = extractTypeArgumentDataRecursively(typeRef).filter { it.projection.kind.canBeProblematic }
     val symbol = typeRef.coneType.toSymbol(session)
 
     if (symbol !is FirTypeAliasSymbol) {
-        return potentiallyProblematicShallowArgumentsData
+        return shallowArgumentsData
     }
 
     return buildList {
@@ -892,6 +891,7 @@ private fun collectPotentiallyProblematicArguments(typeRef: FirTypeRef, session:
                 keySelector = { it.projection },
                 valueTransform = { it.source },
             ),
+            emptyMap(),
             this, session,
         )
     }
@@ -947,11 +947,7 @@ private fun collectPotentiallyProblematicArguments(
         }
     } else {
         collectPotentiallyProblematicArgumentsFromTypeAliasExpansion(
-            symbol, type, previousSubstitutor,
-            projectionToSource + type.typeArguments
-                .filter { it.type is ConeTypeParameterType }
-                .associateWith { projectionToSource[it] ?: error("All parameters must have been declared") },
-            result, session,
+            symbol, type, previousSubstitutor, projectionToSource, previousIndicesMappingB, result, session,
         )
     }
 }
@@ -961,26 +957,31 @@ private fun collectPotentiallyProblematicArgumentsFromTypeAliasExpansion(
     type: ConeKotlinType,
     previousSubstitutor: ConeSubstitutor,
     projectionToSource: Map<ConeTypeProjection, FirTypeRefSource>,
+    previousIndicesMappingB: Map<FirTypeParameterSymbol, FirTypeRefSource>,
     result: MutableList<TypeArgumentData>,
     session: FirSession,
 ) {
     symbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
     val alias = @OptIn(SymbolInternals::class) symbol.fir
     val typeAliasMap = alias.mapParametersToArgumentsOf(type)
-    val indicesOfPotentiallyProblematicArguments = typeAliasMap.indices.filter { typeAliasMap[it].second.kind.canBeProblematic }
+    val indices = typeAliasMap.indices
+    val sources = indices.map {
+        projectionToSource[typeAliasMap[it].second] ?: previousIndicesMappingB[typeAliasMap[it].second.type?.toSymbol(session)]
+    }
+    val interestingIndices = indices.filter { sources[it] != null }
 
-    if (indicesOfPotentiallyProblematicArguments.isEmpty()) {
+    if (interestingIndices.isEmpty()) {
         return
     }
 
-    val typeAliasMapOfPotentiallyProblematicArguments = indicesOfPotentiallyProblematicArguments.associateBy(
+    val typeAliasMapOfPotentiallyProblematicArguments = interestingIndices.associateBy(
         keySelector = { typeAliasMap[it].first },
         valueTransform = { typeAliasMap[it].second },
     )
     val nextStepSubstitutor = createParametersSubstitutor(session, typeAliasMapOfPotentiallyProblematicArguments)
-    val parametersToIndices = indicesOfPotentiallyProblematicArguments.associateBy(
+    val parametersToIndices = interestingIndices.associateBy(
         keySelector = { typeAliasMap[it].first },
-        valueTransform = { projectionToSource[typeAliasMap[it].second] ?: error("Should have calculated") },
+        valueTransform = { sources[it] ?: error("Should have calculated") },
     )
 
     collectPotentiallyProblematicArguments(
@@ -1006,7 +1007,8 @@ fun checkTypeRefForConflictingProjections(
     val potentiallyProblematicArguments = collectPotentiallyProblematicArguments(typeRef, context.session)
 
     for (argumentData in potentiallyProblematicArguments) {
-        val declaration = argumentData.constructor.toRegularClassSymbol(context.session) ?: error("Shouldn't be here")
+        val declaration = argumentData.constructor.toRegularClassSymbol(context.session)
+            ?: error("Shouldn't be here")
         val proto = declaration.typeParameterSymbols[argumentData.index]
         val actual = argumentData.projection
         val protoVariance = proto.variance
