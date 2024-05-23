@@ -1234,6 +1234,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
     }
 
     @Test
+    @TestMetadata("projectionProblemInIsMultiTypealiasArgument.kt")
+    public void testProjectionProblemInIsMultiTypealiasArgument() {
+      runTest("compiler/testData/diagnostics/tests/projectionProblemInIsMultiTypealiasArgument.kt");
+    }
+
+    @Test
     @TestMetadata("projectionProblemInIsTypealiasArgument.kt")
     public void testProjectionProblemInIsTypealiasArgument() {
       runTest("compiler/testData/diagnostics/tests/projectionProblemInIsTypealiasArgument.kt");
