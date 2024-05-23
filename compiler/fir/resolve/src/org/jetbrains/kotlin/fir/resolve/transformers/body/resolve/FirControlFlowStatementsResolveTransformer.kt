@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransf
 import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.text
 
 class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
     FirPartialBodyResolveTransformer(transformer) {
@@ -57,6 +58,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     // ------------------------------- When expressions -------------------------------
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: ResolutionMode): FirStatement {
+        println("transformWhenExpression")
         if (whenExpression.calleeReference is FirResolvedNamedReference && whenExpression.isResolved) {
             return whenExpression
         }
@@ -65,6 +67,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         return context.withWhenExpression(whenExpression, session) with@{
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
+            println("whenExpression.subject: ${whenExpression.subject?.source.text}")
             val subjectType = whenExpression.subject?.resolvedType?.fullyExpandedType(session)
             var completionNeeded = false
             context.withWhenSubjectType(subjectType, components) {

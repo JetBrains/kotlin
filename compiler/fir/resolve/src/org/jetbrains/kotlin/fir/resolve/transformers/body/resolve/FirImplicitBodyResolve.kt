@@ -150,6 +150,7 @@ open class FirImplicitAwareBodyResolveTransformer(
         data: ResolutionMode
     ): FirSimpleFunction {
         return computeCachedTransformationResult(simpleFunction) {
+            println("FirImplicitBodyResolve.transformSimpleFunction")
             super.transformSimpleFunction(simpleFunction, data)
         }
     }

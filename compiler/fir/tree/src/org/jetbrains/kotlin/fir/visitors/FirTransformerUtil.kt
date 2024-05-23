@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.visitors
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.text
 
 fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: D): T {
     return (this as FirPureAbstractElement).transform<T, D>(transformer, data)
@@ -34,6 +35,7 @@ sealed class TransformData<out D> {
 }
 
 inline fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, dataProducer: (Int) -> TransformData<D>) {
+    println("transformInplace")
     val iterator = this.listIterator()
     var index = 0
     while (iterator.hasNext()) {
@@ -43,6 +45,7 @@ inline fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirT
             TransformData.Nothing -> continue
         }
         val result = next.transform<T, D>(transformer, data)
+        println("result ${result.source.text}")
         if (result !== next) {
             iterator.set(result)
         }

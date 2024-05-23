@@ -75,6 +75,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 )
             )
         }
+        println("transformExpression: ${expression}")
         return (expression.transformChildren(transformer, data) as FirStatement)
     }
 
@@ -572,12 +573,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
         context.forBlock(session) {
+            println("transformBlock")
             transformBlockInCurrentScope(block, data)
         }
         return block
     }
 
     internal fun transformBlockInCurrentScope(block: FirBlock, data: ResolutionMode) {
+        println("transformBlockInCurrentScope: ${block.source.text}")
         dataFlowAnalyzer.enterBlock(block)
         val numberOfStatements = block.statements.size
 

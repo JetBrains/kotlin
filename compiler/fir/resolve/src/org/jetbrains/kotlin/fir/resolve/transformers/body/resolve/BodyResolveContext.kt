@@ -327,6 +327,7 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     fun storeVariable(variable: FirVariable, session: FirSession) {
+        println("store variable")
         updateLastScope { storeVariable(variable, session) }
     }
 
@@ -659,6 +660,7 @@ class BodyResolveContext(
         for (parameter in valueParameters) {
             allScope = allScope.storeVariable(parameter, session)
             if (parameter.correspondingProperty == null) {
+                println("scopesWithPrimaryConstructorParameters")
                 parameterScope = parameterScope.storeVariable(parameter, session)
             }
         }
@@ -692,6 +694,8 @@ class BodyResolveContext(
                 // Make all value parameters available in the local scope so that even one parameter that refers to another parameter,
                 // which may not be initialized yet, can be resolved. [FirFunctionParameterChecker] will detect and report an error
                 // if an uninitialized parameter is accessed by a preceding parameter.
+
+                println("forFunctionBody")
                 for (parameter in function.valueParameters) {
                     storeVariable(parameter, holder.session)
                 }
@@ -825,6 +829,7 @@ class BodyResolveContext(
         f: () -> T
     ): T {
         if (!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) {
+            println("withValueParameter")
             storeVariable(valueParameter, session)
         }
         return withContainer(valueParameter, f)
@@ -924,6 +929,7 @@ class BodyResolveContext(
                 } ?: f()
             } else {
                 addInaccessibleImplicitReceiverValue(owningClass, holder)
+                println("forConstructorParametersOrDelegatedConstructorCall")
                 withTowerDataCleanup {
                     addLocalScope(buildSecondaryConstructorParametersScope(constructor, holder.session))
                     constructor.valueParameters.forEach { storeVariable(it, holder.session) }

@@ -102,6 +102,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                 return property
             }
             if (property is FirSyntheticProperty) {
+                println("transformProperty")
                 transformSimpleFunction(property.getter.delegate, data)
                 return property
             }

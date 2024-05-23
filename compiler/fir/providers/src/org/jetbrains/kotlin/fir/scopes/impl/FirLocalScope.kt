@@ -44,6 +44,7 @@ class FirLocalScope private constructor(
     }
 
     fun storeVariable(variable: FirVariable, session: FirSession): FirLocalScope {
+        println("storeVariable: ${variable.name}")
         return FirLocalScope(
             properties.put(variable.name, variable.symbol), functions, classes, session
         )

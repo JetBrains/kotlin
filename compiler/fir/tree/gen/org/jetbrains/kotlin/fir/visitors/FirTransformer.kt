@@ -248,6 +248,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
     }
 
     final override fun visitProperty(property: FirProperty, data: D): FirStatement {
+        println("FirTransformer.VisitProperty")
         return transformProperty(property, data)
     }
 
@@ -328,6 +329,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
     }
 
     final override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: D): FirStatement {
+        println("visitSimpleFunction")
         return transformSimpleFunction(simpleFunction, data)
     }
 
@@ -480,6 +482,7 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
     }
 
     final override fun visitBlock(block: FirBlock, data: D): FirStatement {
+        println("visitBlock")
         return transformBlock(block, data)
     }
 

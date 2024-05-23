@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.text
 
 object FirUpperBoundViolatedDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -29,7 +30,7 @@ object FirUpperBoundViolatedDeclarationChecker : FirBasicDeclarationChecker(MppC
         } else if (declaration is FirTypeAlias) {
             checkUpperBoundViolated(declaration.expandedTypeRef, context, reporter, isIgnoreTypeParameters = true)
         } else if (declaration is FirCallableDeclaration) {
-            if (declaration.returnTypeRef.source?.kind !is KtFakeSourceElementKind) {
+if (declaration.returnTypeRef.source?.kind !is KtFakeSourceElementKind) {
                 checkUpperBoundViolated(
                     declaration.returnTypeRef, context, reporter,
                     isIgnoreTypeParameters = context.containingDeclarations.lastOrNull() is FirTypeAlias

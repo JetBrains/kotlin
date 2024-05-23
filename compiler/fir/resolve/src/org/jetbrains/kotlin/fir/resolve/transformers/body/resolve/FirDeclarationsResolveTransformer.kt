@@ -137,6 +137,8 @@ open class FirDeclarationsResolveTransformer(
             context.withProperty(property) {
                 doTransformTypeParameters(property)
             }
+
+            println("FirDeclarationsResolveTransformer.transformProperty: ${property.origin}")
             return transformLocalVariable(property)
         }
 
@@ -542,7 +544,9 @@ open class FirDeclarationsResolveTransformer(
         variable.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
             .transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
 
+        println("transform local variable")
         context.storeVariable(variable, session)
+
         if (variable.origin != FirDeclarationOrigin.ScriptCustomization.Parameter &&
             variable.origin != FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass)
         {
@@ -703,6 +707,7 @@ open class FirDeclarationsResolveTransformer(
 
     override fun transformCodeFragment(codeFragment: FirCodeFragment, data: ResolutionMode): FirCodeFragment {
         dataFlowAnalyzer.enterCodeFragment(codeFragment)
+        println("transfromCodeFragment")
         context.withCodeFragment(codeFragment, components) {
             transformBlock(codeFragment.block, data)
         }
@@ -829,6 +834,7 @@ open class FirDeclarationsResolveTransformer(
                 }
             }
 
+            println("transformSimpleFunction: ${simpleFunction.name}")
             context.forFunctionBody(simpleFunction, components) {
                 withFullBodyResolve {
                     transformFunctionWithGivenSignature(simpleFunction, shouldResolveEverything = shouldResolveEverything)

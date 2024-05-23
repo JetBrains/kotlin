@@ -2553,7 +2553,6 @@ open class PsiRawFirBuilder(
         }
 
         override fun visitIfExpression(expression: KtIfExpression, data: FirElement?): FirElement {
-            println("visitIfExpression")
             return buildWhenExpression {
 
 
