@@ -31,7 +31,7 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveTest() {
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".candidates.txt")
     }
 
     private fun KaSession.collectCallCandidates(element: KtElement): List<KaCallCandidateInfo> {
