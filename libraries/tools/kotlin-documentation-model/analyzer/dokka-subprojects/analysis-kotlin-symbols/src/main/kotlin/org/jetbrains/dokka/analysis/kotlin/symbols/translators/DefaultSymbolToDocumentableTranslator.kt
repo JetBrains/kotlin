@@ -916,7 +916,8 @@ internal class DokkaSymbolVisitor(
         ExtraModifiers.KotlinOnlyModifiers.Const.takeIf { (this as? KtKotlinPropertySymbol)?.isConst == true },
         ExtraModifiers.KotlinOnlyModifiers.LateInit.takeIf { (this as? KtKotlinPropertySymbol)?.isLateInit == true },
         //ExtraModifiers.JavaOnlyModifiers.Static.takeIf { isJvmStaticInObjectOrClassOrInterface() },
-        //ExtraModifiers.KotlinOnlyModifiers.External.takeIf { isExternal },
+        // TODO https://youtrack.jetbrains.com/issue/KT-68236/Analysis-API-add-isExternal-property-for-KtPropertySymbol
+        ExtraModifiers.KotlinOnlyModifiers.External.takeIf { (psi as? KtProperty)?.hasModifier(KtTokens.EXTERNAL_KEYWORD) == true },
         //ExtraModifiers.KotlinOnlyModifiers.Static.takeIf { isStatic },
         ExtraModifiers.KotlinOnlyModifiers.Override.takeIf { isOverride }
     ).toSet().takeUnless { it.isEmpty() }
