@@ -900,7 +900,7 @@ private fun collectPotentiallyProblematicArguments(typeRef: FirTypeRef, session:
 private fun collectPotentiallyProblematicArguments(
     type: ConeKotlinType,
     previousSubstitutor: ConeSubstitutor,
-    originalProjectionToSource: Map<ConeTypeProjection, FirTypeRefSource>,
+    projectionToSource: Map<ConeTypeProjection, FirTypeRefSource>,
     previousIndicesMappingB: Map<FirTypeParameterSymbol, FirTypeRefSource>,
     result: MutableList<TypeArgumentData>,
     session: FirSession,
@@ -930,16 +930,16 @@ private fun collectPotentiallyProblematicArguments(
             // ```
             // ...because the error has already been reported for the typealias expansion itself.
             if (argument.type is ConeTypeParameterType && substitutedArgument != null) {
-                val bindex = (argument.type as? ConeTypeParameterType)?.toSymbol(session)?.let { previousIndicesMappingB[it] }
+                val source = (argument.type as? ConeTypeParameterType)?.toSymbol(session)?.let { previousIndicesMappingB[it] }
                     ?: error("Should have calculated")
-                result += TypeArgumentData(substitutedType, index, substitutedArgument ?: argument, bindex)
+                result += TypeArgumentData(substitutedType, index, substitutedArgument ?: argument, source)
             }
 
             argument.type?.let { unsubstitutedArgument ->
                 collectPotentiallyProblematicArguments(
                     unsubstitutedArgument,
                     previousSubstitutor,
-                    originalProjectionToSource,
+                    projectionToSource,
                     previousIndicesMappingB,
                     result, session,
                 )
@@ -947,7 +947,11 @@ private fun collectPotentiallyProblematicArguments(
         }
     } else {
         collectPotentiallyProblematicArgumentsFromTypeAliasExpansion(
-            symbol, type, previousSubstitutor, originalProjectionToSource, result, session,
+            symbol, type, previousSubstitutor,
+            projectionToSource + type.typeArguments
+                .filter { it.type is ConeTypeParameterType }
+                .associateWith { projectionToSource[it] ?: error("All parameters must have been declared") },
+            result, session,
         )
     }
 }
@@ -956,7 +960,7 @@ private fun collectPotentiallyProblematicArgumentsFromTypeAliasExpansion(
     symbol: FirTypeAliasSymbol,
     type: ConeKotlinType,
     previousSubstitutor: ConeSubstitutor,
-    originalProjectionToSource: Map<ConeTypeProjection, FirTypeRefSource>,
+    projectionToSource: Map<ConeTypeProjection, FirTypeRefSource>,
     result: MutableList<TypeArgumentData>,
     session: FirSession,
 ) {
@@ -976,13 +980,13 @@ private fun collectPotentiallyProblematicArgumentsFromTypeAliasExpansion(
     val nextStepSubstitutor = createParametersSubstitutor(session, typeAliasMapOfPotentiallyProblematicArguments)
     val parametersToIndices = indicesOfPotentiallyProblematicArguments.associateBy(
         keySelector = { typeAliasMap[it].first },
-        valueTransform = { originalProjectionToSource[typeAliasMap[it].second] ?: error("Should have calculated") },
+        valueTransform = { projectionToSource[typeAliasMap[it].second] ?: error("Should have calculated") },
     )
 
     collectPotentiallyProblematicArguments(
         alias.expandedTypeRef.coneType,
         nextStepSubstitutor.chain(previousSubstitutor),
-        originalProjectionToSource,
+        projectionToSource,
         parametersToIndices,
         result, session
     )
