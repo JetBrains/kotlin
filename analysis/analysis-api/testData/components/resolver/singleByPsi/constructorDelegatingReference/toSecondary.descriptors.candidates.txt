@@ -1,5 +1,5 @@
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public constructor(): A'.>
+  diagnostic = ERROR<null: OTHER_ERROR with <init>>
   candidate = KtDelegatedConstructorCall:
     kind = THIS_CALL
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
@@ -16,7 +16,7 @@ KtInapplicableCallCandidateInfo:
   isInBestCandidates = false
 
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
+  diagnostic = ERROR<null: OTHER_ERROR with <init>>
   candidate = KtDelegatedConstructorCall:
     kind = THIS_CALL
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
@@ -36,7 +36,14 @@ KtInapplicableCallCandidateInfo:
         ]
         callableId = null
     typeArgumentsMapping = {}
-    argumentMapping = {}
+    argumentMapping = {
+      "2" -> (KtVariableLikeSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = a: kotlin.Int
+        callableId = null)
+    }
   isInBestCandidates = false
 
 KtApplicableCallCandidateInfo:

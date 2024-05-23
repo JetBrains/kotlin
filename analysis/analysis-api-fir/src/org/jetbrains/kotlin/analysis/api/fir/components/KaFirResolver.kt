@@ -169,6 +169,7 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
             ?: containingBinaryExpressionForLhs
             ?: containingUnaryExpressionForIncOrDec
             ?: psi.getContainingDotQualifiedExpressionForSelectorExpression()
+            ?: psi.getConstructorDelegationCallForDelegationReferenceExpression()
             ?: psi
         val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveSession) ?: return emptyList()
         if (fir is FirDiagnosticHolder) {
@@ -358,6 +359,14 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
         if (parent is KtDotQualifiedExpression && parent.selectorExpression == this) return parent
         if (parent is KtSafeQualifiedExpression && parent.selectorExpression == this) return parent
         return null
+    }
+
+    /**
+     * When resolving [KtConstructorDelegationReferenceExpression], we instead resolve the containing [KtConstructorDelegationCall].
+     * This way the corresponding FIR element is the [FirDelegatedConstructorCall] instead of the reference
+     */
+    private fun KtElement.getConstructorDelegationCallForDelegationReferenceExpression(): KtConstructorDelegationCall? {
+        return takeIf { it is KtConstructorDelegationReferenceExpression }?.parent as? KtConstructorDelegationCall
     }
 
     private fun createKtCall(

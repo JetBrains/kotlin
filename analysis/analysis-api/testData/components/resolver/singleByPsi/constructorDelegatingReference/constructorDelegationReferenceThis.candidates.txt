@@ -1,1 +1,53 @@
-NO_CANDIDATES
+KtApplicableCallCandidateInfo:
+  candidate = KtDelegatedConstructorCall:
+    kind = THIS_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.BaseClass
+        symbol = <constructor>(i: kotlin.Int): r.BaseClass
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null)
+    }
+  isInBestCandidates = true
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
+  candidate = KtDelegatedConstructorCall:
+    kind = THIS_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = r.BaseClass
+        symbol = <constructor>(s: kotlin.String): r.BaseClass
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = false

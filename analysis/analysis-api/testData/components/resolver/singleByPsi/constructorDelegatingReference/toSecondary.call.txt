@@ -1,1 +1,28 @@
-null
+KtSuccessCallInfo:
+  call = KtDelegatedConstructorCall:
+    kind = THIS_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = A
+        symbol = <constructor>(b: kotlin.String): A
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "2" -> (KtVariableLikeSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.String
+        symbol = b: kotlin.String
+        callableId = null)
+    }

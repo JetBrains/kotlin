@@ -29,7 +29,7 @@ KtApplicableCallCandidateInfo:
   isInBestCandidates = true
 
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
+  diagnostic = ERROR<null: OTHER_ERROR with <init>>
   candidate = KtDelegatedConstructorCall:
     kind = SUPER_CALL
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
@@ -49,5 +49,12 @@ KtInapplicableCallCandidateInfo:
         ]
         callableId = null
     typeArgumentsMapping = {}
-    argumentMapping = {}
+    argumentMapping = {
+      ci -> (KtVariableLikeSignature:
+        name = s
+        receiverType = null
+        returnType = kotlin.String
+        symbol = s: kotlin.String
+        callableId = null)
+    }
   isInBestCandidates = false

@@ -110,6 +110,7 @@ internal class KaFe10Resolver(
         when (psi) {
             is KtCallableReferenceExpression -> return resolveCall(psi.callableReference)
             is KtWhenConditionInRange -> return psi.operationReference.let(::resolveCall)
+            is KtConstructorDelegationReferenceExpression -> return (psi.parent as? KtElement)?.let(::resolveCall)
         }
 
         when (unwrappedPsi) {
