@@ -455,7 +455,13 @@ public class DebugSymbolRenderer(
             "builder",
             "coneType",
             "analysisContext",
-            "fe10Type"
+            "fe10Type",
+
+            // These properties are made obsolete by their counterparts without `*IfNonLocal` (e.g. `classId`), which contain the same
+            // values.
+            "classIdIfNonLocal",
+            "containingClassIdIfNonLocal",
+            "callableIdIfNonLocal",
         )
 
         private val symbolImplementationPackageNames = listOf(
