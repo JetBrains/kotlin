@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -410,6 +411,8 @@ fun createProjectEnvironment(
         configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
             ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
 
+    val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+
     val classpathRootsResolver = ClasspathRootsResolver(
         PsiManager.getInstance(project),
         messageCollector,
@@ -419,11 +422,12 @@ fun createProjectEnvironment(
         !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
         outputDirectory?.let { localFileSystem.findFileByPath(it) },
         javaFileManager,
-        releaseTarget
+        releaseTarget,
+        hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
     )
 
     val (initialRoots, javaModules) =
-        classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
+        classpathRootsResolver.convertClasspathRoots(contentRoots)
 
     val (roots, singleJavaFileRoots) =
         initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }

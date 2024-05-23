@@ -237,6 +237,8 @@ class KotlinCoreEnvironment private constructor(
             configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
                 ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
 
+        val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+
         classpathRootsResolver = ClasspathRootsResolver(
             PsiManager.getInstance(project),
             messageCollector,
@@ -246,11 +248,11 @@ class KotlinCoreEnvironment private constructor(
             !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
             outputDirectory?.let(this::findLocalFile),
             javaFileManager,
-            releaseTarget
+            releaseTarget,
+            hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
 
-        val (initialRoots, javaModules) =
-            classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
+        val (initialRoots, javaModules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
         this.initialRoots.addAll(initialRoots)
 
         val (roots, singleJavaFileRoots) =

@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/emptySourcesWithModuleInfo/module-info.java
+-d
+$TEMP_DIR$

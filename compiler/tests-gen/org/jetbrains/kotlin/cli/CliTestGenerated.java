@@ -468,6 +468,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/emptySources.args");
     }
 
+    @TestMetadata("emptySourcesWithModuleInfo.args")
+    public void testEmptySourcesWithModuleInfo() {
+      runTest("compiler/testData/cli/jvm/emptySourcesWithModuleInfo.args");
+    }
+
     @TestMetadata("enumEntriesForJavaNotEnabled.args")
     public void testEnumEntriesForJavaNotEnabled() {
       runTest("compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.args");
