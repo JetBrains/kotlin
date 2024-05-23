@@ -384,7 +384,7 @@ object LightTreePositioningStrategies {
                     return markElement(it, startOffset, endOffset, tree, baseNode)
                 }
             }
-            return null
+            return markElement(node, startOffset, endOffset, tree)
         }
 
         override fun mark(

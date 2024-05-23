@@ -864,7 +864,7 @@ fun checkTypeRefForConflictingProjections(
     val fullyExpandedType = type?.fullyExpandedType(context.session) ?: return
     val declaration = fullyExpandedType.toSymbol(context.session) as? FirRegularClassSymbol ?: return
     val typeParameters = declaration.typeParameterSymbols
-    val typeArguments = type.typeArguments
+    val typeArguments = fullyExpandedType.typeArguments
 
     val size = minOf(typeParameters.size, typeArguments.size)
 
@@ -872,11 +872,10 @@ fun checkTypeRefForConflictingProjections(
     for (it in 0 until size) {
         val proto = typeParameters[it]
         val actual = typeArguments[it]
-        val fullyExpandedProjection = fullyExpandedType.typeArguments[it]
 
         val protoVariance = proto.variance
 
-        val projectionRelation = if (fullyExpandedProjection is ConeKotlinTypeConflictingProjection ||
+        val projectionRelation = if (actual is ConeKotlinTypeConflictingProjection ||
             actual is ConeKotlinTypeProjectionIn && protoVariance == Variance.OUT_VARIANCE ||
             actual is ConeKotlinTypeProjectionOut && protoVariance == Variance.IN_VARIANCE
         ) {
@@ -889,6 +888,8 @@ fun checkTypeRefForConflictingProjections(
             ProjectionRelation.None
         }
 
+        // This is incorrect because `it` is the index into the expanded type arguments,
+        // not the original typeRef's ones.
         val argTypeRefSource = typeRefAndSourcesForArguments.getOrNull(it) ?: continue
 
         if (projectionRelation != ProjectionRelation.None && typeRef.source?.kind !is KtFakeSourceElementKind) {

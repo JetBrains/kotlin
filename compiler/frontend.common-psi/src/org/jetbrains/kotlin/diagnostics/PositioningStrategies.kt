@@ -417,11 +417,10 @@ object PositioningStrategies {
                     return markElement(element)
                 }
 
-                val modifierList = element.modifierList.sure { "No modifier list, but modifier has been found by the analyzer" }
-                modifierList.getModifier(KtTokens.IN_KEYWORD)?.let { return markElement(it) }
-                modifierList.getModifier(KtTokens.OUT_KEYWORD)?.let { return markElement(it) }
-
-                throw IllegalStateException("None of the modifiers is found: in, out")
+                val modifierList = element.modifierList
+                modifierList?.getModifier(KtTokens.IN_KEYWORD)?.let { return markElement(it) }
+                modifierList?.getModifier(KtTokens.OUT_KEYWORD)?.let { return markElement(it) }
+                return markElement(element)
             }
         }
     }
