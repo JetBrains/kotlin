@@ -936,17 +936,10 @@ fun collectPotentiallyProblematicArguments(
             }
 
             argument.type?.let { unsubstitutedArgument ->
-                val argumentsRefs = bindex?.let {
-                    extractArgumentsTypeRefAndSource(it.typeRef)
-                        ?.let { unsubstitutedArgument.typeArguments.zip(it) }?.toMap()
-//                        ?: error("Should not be here")
-                        ?: emptyMap()
-                } ?: emptyMap()
-
                 collectPotentiallyProblematicArguments(
                     unsubstitutedArgument,
                     previousSubstitutor,
-                    previousIndicesMappingA + argumentsRefs,
+                    previousIndicesMappingA,
                     previousIndicesMappingB,
                     result, session,
                 )
