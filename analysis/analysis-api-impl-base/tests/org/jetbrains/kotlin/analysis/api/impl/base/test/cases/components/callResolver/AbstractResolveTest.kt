@@ -33,7 +33,11 @@ abstract class AbstractResolveTest : AbstractAnalysisApiBasedTest() {
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val expression = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
-            ?: testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(mainFile)
+            ?: testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(
+                ktFile = mainFile,
+                module = mainModule,
+                defaultType = KtElement::class,
+            ) as KtElement
 
         val mainElement = expression.elementToResolve
         doResolutionTest(mainElement, testServices)
