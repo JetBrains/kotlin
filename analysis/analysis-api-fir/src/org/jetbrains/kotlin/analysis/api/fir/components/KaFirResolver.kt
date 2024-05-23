@@ -1116,6 +1116,7 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
                         ?: ((parent as? KtInitializerList)?.parent as? KtEnumEntry)?.containingClassOrObject
                 }
                 is KtConstructorCalleeExpression -> (parent as? KtElement)?.let(::findDerivedClass)
+                is KtEnumEntrySuperclassReferenceExpression -> psi.getReferencedNameElement() as? KtClassOrObject
                 else -> null
             }
         }

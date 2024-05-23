@@ -77,6 +77,7 @@ abstract class KaAbstractResolver : KaResolver() {
         is KtWhenConditionInRange -> true
         is KtCollectionLiteralExpression -> true
         is KtConstructorDelegationReferenceExpression -> true
+        is KtEnumEntrySuperclassReferenceExpression -> true
         else -> false
     }
 
