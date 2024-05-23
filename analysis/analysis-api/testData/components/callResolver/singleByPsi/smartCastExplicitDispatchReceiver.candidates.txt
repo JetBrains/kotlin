@@ -1,0 +1,20 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtSmartCastedReceiverValue:
+        original = KtExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = false
+          type = kotlin.Any
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = length
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val length: kotlin.Int
+        callableId = kotlin/String.length
+    simpleAccess = Read:
+      
+    typeArgumentsMapping = {}
+  isInBestCandidates = true

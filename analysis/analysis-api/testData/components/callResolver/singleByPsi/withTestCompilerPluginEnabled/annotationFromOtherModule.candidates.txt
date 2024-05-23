@@ -1,0 +1,18 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = myClass
+        isSafeNavigation = false
+        type = test.MyClass
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = test.MyClass
+        symbol = test/MyClass.materialize(<dispatch receiver>: test.MyClass): test.MyClass
+        valueParameters = []
+        callableId = test/MyClass.materialize
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true

@@ -1,0 +1,40 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtImplicitReceiverValue:
+        symbol = KtNamedClassOrObjectSymbol:
+          annotationsList: []
+          classId: foo/Foo
+          classKind: CLASS
+          companionObject: null
+          contextReceivers: []
+          isActual: false
+          isData: false
+          isExpect: false
+          isExternal: false
+          isFun: false
+          isInline: false
+          isInner: false
+          modality: FINAL
+          name: Foo
+          origin: SOURCE
+          superTypes: [
+            KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: kotlin/Any
+          ]
+          symbolKind: TOP_LEVEL
+          typeParameters: []
+          visibility: Public
+        type = foo.Foo
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.Any
+        returnType = kotlin.Unit
+        symbol = foo/myRun(<extension receiver>: kotlin.Any): kotlin.Unit
+        valueParameters = []
+        callableId = foo/myRun
+    typeArgumentsMapping = {}
+    argumentMapping = {}

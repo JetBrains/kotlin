@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCandidatesTest;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -43,5 +44,65 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerate
   @Test
   public void testAllFilesPresentInSingleByPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/singleByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/singleByPsi/assignments")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Assignments {
+    @Test
+    public void testAllFilesPresentInAssignments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/singleByPsi/assignments"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/singleByPsi/callableReferences")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CallableReferences {
+    @Test
+    public void testAllFilesPresentInCallableReferences() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/singleByPsi/callableReferences"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/singleByPsi/invalidCode")
+  @TestDataPath("$PROJECT_ROOT")
+  public class InvalidCode {
+    @Test
+    public void testAllFilesPresentInInvalidCode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/singleByPsi/invalidCode"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/singleByPsi/invokeOnObjects")
+  @TestDataPath("$PROJECT_ROOT")
+  public class InvokeOnObjects {
+    @Test
+    public void testAllFilesPresentInInvokeOnObjects() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/singleByPsi/invokeOnObjects"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/singleByPsi/nonCalls")
+  @TestDataPath("$PROJECT_ROOT")
+  public class NonCalls {
+    @Test
+    public void testAllFilesPresentInNonCalls() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/singleByPsi/nonCalls"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/callResolver/singleByPsi/withTestCompilerPluginEnabled")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithTestCompilerPluginEnabled {
+    @Test
+    public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/singleByPsi/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
   }
 }

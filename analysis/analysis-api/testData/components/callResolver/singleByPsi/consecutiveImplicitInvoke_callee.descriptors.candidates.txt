@@ -1,0 +1,49 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null
+    simpleAccess = Read:
+      
+    typeArgumentsMapping = {}
+  isInBestCandidates = false
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with invoke>
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null
+    simpleAccess = Read:
+      
+    typeArgumentsMapping = {}
+  isInBestCandidates = false
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with invoke>
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        callableId = null
+    simpleAccess = Read:
+      
+    typeArgumentsMapping = {}
+  isInBestCandidates = false

@@ -1,0 +1,28 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = AnnotationInner
+        symbol = <constructor>(value: Annotation): AnnotationInner
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = value
+            receiverType = null
+            returnType = Annotation
+            symbol = value: Annotation
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      Annotation("v1", "v2") -> (KtVariableLikeSignature:
+        name = value
+        receiverType = null
+        returnType = Annotation
+        symbol = value: Annotation
+        callableId = null)
+    }
+  isInBestCandidates = true

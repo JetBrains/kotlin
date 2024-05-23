@@ -344,15 +344,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             }
         }
 
-        test<AbstractResolveCallTest> {
-            when (it.analysisApiMode) {
-                AnalysisApiMode.Ide ->
-                    model(it, "resolveCall")
-                AnalysisApiMode.Standalone ->
-                    model(it, "resolveCall", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
-            }
-        }
-
+        test<AbstractResolveCallTest>(init = init)
         test<AbstractResolveCandidatesTest>(init = init)
     }
 

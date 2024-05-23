@@ -1,0 +1,14 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(): Anno
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true

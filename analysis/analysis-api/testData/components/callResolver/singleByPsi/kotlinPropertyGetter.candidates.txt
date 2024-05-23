@@ -1,0 +1,18 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = ktClass
+        isSafeNavigation = false
+        type = KtClass
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val foo: kotlin.Int
+        callableId = /KtClass.foo
+    simpleAccess = Read:
+      
+    typeArgumentsMapping = {}
+  isInBestCandidates = true

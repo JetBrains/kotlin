@@ -1,0 +1,29 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = test/dummyTest(value: test.Test): kotlin.String
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = value
+            receiverType = null
+            returnType = test.Test
+            symbol = value: test.Test
+            callableId = null
+        ]
+        callableId = test/dummyTest
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      Test() -> (KtVariableLikeSignature:
+        name = value
+        receiverType = null
+        returnType = test.Test
+        symbol = value: test.Test
+        callableId = null)
+    }
+  isInBestCandidates = true

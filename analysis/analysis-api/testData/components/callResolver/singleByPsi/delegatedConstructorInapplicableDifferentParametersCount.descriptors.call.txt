@@ -1,0 +1,17 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = A
+          symbol = <constructor>(): A
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<null: OTHER_ERROR with <init>>

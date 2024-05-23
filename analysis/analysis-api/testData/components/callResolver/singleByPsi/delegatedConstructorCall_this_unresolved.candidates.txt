@@ -1,0 +1,53 @@
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public constructor(i: kotlin/Int, j: kotlin/Int): Sub'.>
+  candidate = KtDelegatedConstructorCall:
+    kind = THIS_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Sub
+        symbol = <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            callableId = null,
+          KtVariableLikeSignature:
+            name = j
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = j: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public constructor(p: kotlin/Int): Sub'.>
+  candidate = KtDelegatedConstructorCall:
+    kind = THIS_CALL
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = Sub
+        symbol = <constructor>(p: kotlin.Int): Sub
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = p
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p: kotlin.Int
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true

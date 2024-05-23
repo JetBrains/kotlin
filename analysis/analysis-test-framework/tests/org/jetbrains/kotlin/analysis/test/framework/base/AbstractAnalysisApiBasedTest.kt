@@ -367,11 +367,11 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     private fun isFirDisabledForTheTest(): Boolean =
         AnalysisApiTestDirectives.IGNORE_FIR in testServices.moduleStructure.allDirectives
 
-    protected fun RegisteredDirectives.findSpecificDirective(
-        commonDirective: Directive,
-        k1Directive: Directive,
-        k2Directive: Directive,
-    ): Directive? = commonDirective.takeIf { it in this }
+    protected fun <T : Directive> RegisteredDirectives.findSpecificDirective(
+        commonDirective: T,
+        k1Directive: T,
+        k2Directive: T,
+    ): T? = commonDirective.takeIf { it in this }
         ?: k1Directive.takeIf { configurator.frontendKind == FrontendKind.Fe10 && it in this }
         ?: k2Directive.takeIf { configurator.frontendKind == FrontendKind.Fir && it in this }
 

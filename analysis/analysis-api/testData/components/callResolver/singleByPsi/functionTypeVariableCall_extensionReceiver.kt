@@ -1,4 +1,4 @@
-// IGNORE_STABILITY_K1
+// IGNORE_STABILITY_K1: candidates
 class A {
     fun test() {
         "".<expr>f()</expr>

@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractResolveCandidatesTest : AbstractResolveTest() {
+    override val resolveKind: String get() = "candidates"
+
     override fun doResolutionTest(mainElement: KtElement, testServices: TestServices) {
         val actual = analyseForTest(mainElement) {
             val candidates = collectCallCandidates(mainElement)
@@ -31,7 +33,7 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveTest() {
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".candidates.txt")
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "$resolveKind.txt")
     }
 
     private fun KaSession.collectCallCandidates(element: KtElement): List<KaCallCandidateInfo> {

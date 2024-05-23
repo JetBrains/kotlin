@@ -1,0 +1,29 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(l1: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = l1
+            receiverType = null
+            returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+            symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
+            callableId = null
+        ]
+        callableId = /foo
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      label@ {} -> (KtVariableLikeSignature:
+        name = l1
+        receiverType = null
+        returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+        symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
+        callableId = null)
+    }
+  isInBestCandidates = true
