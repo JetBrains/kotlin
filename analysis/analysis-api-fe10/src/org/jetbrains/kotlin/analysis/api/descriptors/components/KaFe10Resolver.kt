@@ -150,7 +150,7 @@ internal class KaFe10Resolver(
 
             // The regular mechanism doesn't work, so at least the resolved call should be returned
             when (psi) {
-                is KtWhenConditionInRange -> {
+                is KtWhenConditionInRange, is KtCollectionLiteralExpression -> {
                     return resolvedKtCallInfo?.toKtCallCandidateInfos().orEmpty()
                 }
             }

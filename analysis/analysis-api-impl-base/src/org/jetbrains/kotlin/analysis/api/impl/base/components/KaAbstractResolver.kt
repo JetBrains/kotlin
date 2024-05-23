@@ -75,6 +75,7 @@ abstract class KaAbstractResolver : KaResolver() {
         is KtArrayAccessExpression -> true
         is KtCallableReferenceExpression -> true
         is KtWhenConditionInRange -> true
+        is KtCollectionLiteralExpression -> true
         else -> false
     }
 
