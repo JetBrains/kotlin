@@ -877,21 +877,22 @@ private fun extractTypeArgumentDataRecursively(typeRef: FirTypeRef): List<TypeAr
 private fun collectPotentiallyProblematicArguments(typeRef: FirTypeRef, session: FirSession): List<TypeArgumentData> {
     val shallowArgumentsData = extractTypeArgumentDataRecursively(typeRef)
     val potentiallyProblematicShallowArgumentsData = shallowArgumentsData.filter { it.projection.kind.canBeProblematic }
+    val symbol = typeRef.coneType.toSymbol(session)
 
-    if (typeRef.coneType.toSymbol(session) !is FirTypeAliasSymbol) {
+    if (symbol !is FirTypeAliasSymbol) {
         return potentiallyProblematicShallowArgumentsData
     }
 
     return buildList {
-        collectPotentiallyProblematicArguments(
+        collectPotentiallyProblematicArgumentsFromTypeAliasExpansion(
+            symbol,
             typeRef.coneType,
             ConeSubstitutor.Empty,
             shallowArgumentsData.associateBy(
                 keySelector = { it.projection },
                 valueTransform = { it.source },
             ),
-            emptyMap(),
-            this, session
+            this, session,
         )
     }
 }
@@ -917,18 +918,6 @@ private fun collectPotentiallyProblematicArguments(
             val substitutedArgument by lazy {
                 previousSubstitutor.substituteArgument(argument, index)
             }
-            val bindex = when {
-                argument.type is ConeTypeParameterType && substitutedArgument != null -> {
-                    (argument.type as? ConeTypeParameterType)?.toSymbol(session)?.let { previousIndicesMappingB[it] }
-                        ?: error("Should have calculated")
-                }
-                // It's important that we do that not just for `argument.kind.canBeProblematic`,
-                // because we can have `In<Out<in Int>>`, so we must go deeper, and for that
-                // we need some source element to report the error on.
-                else -> {
-                    originalProjectionToSource[substitutedArgument ?: argument]
-                }
-            }
 
             // The substitutor only contains mappings to potentially problematic projections, so that we
             // could tell if this specific type parameter type should be considered interesting or not.
@@ -940,10 +929,10 @@ private fun collectPotentiallyProblematicArguments(
             // fun test(a: Any) = a as TA<Int> // <--
             // ```
             // ...because the error has already been reported for the typealias expansion itself.
-            if (bindex != null) {
-                if (argument.kind.canBeProblematic || argument.type is ConeTypeParameterType && substitutedArgument != null) {
-                    result += TypeArgumentData(substitutedType, index, substitutedArgument ?: argument, bindex)
-                }
+            if (argument.type is ConeTypeParameterType && substitutedArgument != null) {
+                val bindex = (argument.type as? ConeTypeParameterType)?.toSymbol(session)?.let { previousIndicesMappingB[it] }
+                    ?: error("Should have calculated")
+                result += TypeArgumentData(substitutedType, index, substitutedArgument ?: argument, bindex)
             }
 
             argument.type?.let { unsubstitutedArgument ->
@@ -957,34 +946,46 @@ private fun collectPotentiallyProblematicArguments(
             }
         }
     } else {
-        symbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-        val alias = @OptIn(SymbolInternals::class) symbol.fir
-        val typeAliasMap = alias.mapParametersToArgumentsOf(type)
-        val indicesOfPotentiallyProblematicArguments = typeAliasMap.indices.filter { typeAliasMap[it].second.kind.canBeProblematic }
-
-        if (indicesOfPotentiallyProblematicArguments.isEmpty()) {
-            return
-        }
-
-        val typeAliasMapOfPotentiallyProblematicArguments = indicesOfPotentiallyProblematicArguments.associateBy(
-            keySelector = { typeAliasMap[it].first },
-            valueTransform = { typeAliasMap[it].second },
-        )
-        val nextStepSubstitutor = createParametersSubstitutor(session, typeAliasMapOfPotentiallyProblematicArguments)
-        val parametersToIndices = indicesOfPotentiallyProblematicArguments.associateBy(
-            keySelector = { typeAliasMap[it].first },
-            valueTransform = { originalProjectionToSource[typeAliasMap[it].second]
-                ?: error("Should have calculated") },
-        )
-
-        collectPotentiallyProblematicArguments(
-            alias.expandedTypeRef.coneType,
-            nextStepSubstitutor.chain(previousSubstitutor),
-            originalProjectionToSource,
-            parametersToIndices,
-            result, session
+        collectPotentiallyProblematicArgumentsFromTypeAliasExpansion(
+            symbol, type, previousSubstitutor, originalProjectionToSource, result, session,
         )
     }
+}
+
+private fun collectPotentiallyProblematicArgumentsFromTypeAliasExpansion(
+    symbol: FirTypeAliasSymbol,
+    type: ConeKotlinType,
+    previousSubstitutor: ConeSubstitutor,
+    originalProjectionToSource: Map<ConeTypeProjection, FirTypeRefSource>,
+    result: MutableList<TypeArgumentData>,
+    session: FirSession,
+) {
+    symbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+    val alias = @OptIn(SymbolInternals::class) symbol.fir
+    val typeAliasMap = alias.mapParametersToArgumentsOf(type)
+    val indicesOfPotentiallyProblematicArguments = typeAliasMap.indices.filter { typeAliasMap[it].second.kind.canBeProblematic }
+
+    if (indicesOfPotentiallyProblematicArguments.isEmpty()) {
+        return
+    }
+
+    val typeAliasMapOfPotentiallyProblematicArguments = indicesOfPotentiallyProblematicArguments.associateBy(
+        keySelector = { typeAliasMap[it].first },
+        valueTransform = { typeAliasMap[it].second },
+    )
+    val nextStepSubstitutor = createParametersSubstitutor(session, typeAliasMapOfPotentiallyProblematicArguments)
+    val parametersToIndices = indicesOfPotentiallyProblematicArguments.associateBy(
+        keySelector = { typeAliasMap[it].first },
+        valueTransform = { originalProjectionToSource[typeAliasMap[it].second] ?: error("Should have calculated") },
+    )
+
+    collectPotentiallyProblematicArguments(
+        alias.expandedTypeRef.coneType,
+        nextStepSubstitutor.chain(previousSubstitutor),
+        originalProjectionToSource,
+        parametersToIndices,
+        result, session
+    )
 }
 
 private val ProjectionKind.canBeProblematic get() = this == ProjectionKind.IN || this == ProjectionKind.OUT

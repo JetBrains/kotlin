@@ -120,7 +120,7 @@ private fun ConeClassLikeType.applyAttributesFrom(
     return withAttributes(combinedAttributes)
 }
 
-fun FirTypeAlias.mapParametersToArgumentsOf(type: ConeClassLikeType): List<Pair<FirTypeParameterSymbol, ConeTypeProjection>> =
+fun FirTypeAlias.mapParametersToArgumentsOf(type: ConeKotlinType): List<Pair<FirTypeParameterSymbol, ConeTypeProjection>> =
     typeParameters.map { it.symbol }.zip(type.typeArguments)
 
 fun createParametersSubstitutor(
