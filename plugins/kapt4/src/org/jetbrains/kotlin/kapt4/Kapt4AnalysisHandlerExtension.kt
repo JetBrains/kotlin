@@ -120,36 +120,38 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
         val diagnosticsReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
 
-        val (analysisTime, analysisResults) = measureTimeMillis {
-            compileModuleToAnalyzedFir(
-                compilerInput,
-                projectEnvironment,
-                emptyList(),
-                null,
-                diagnosticsReporter,
-            )
-        }
+        if (options.mode.generateStubs) {
+            val (analysisTime, analysisResults) = measureTimeMillis {
+                compileModuleToAnalyzedFir(
+                    compilerInput,
+                    projectEnvironment,
+                    emptyList(),
+                    null,
+                    diagnosticsReporter,
+                )
+            }
 
-        logger.info { "Initial analysis took $analysisTime ms" }
+            logger.info { "Initial analysis took $analysisTime ms" }
 
-        val (classFilesCompilationTime, codegenOutput) = measureTimeMillis {
-            // Ignore all FE errors
-            val cleanDiagnosticReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
-            val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, cleanDiagnosticReporter)
-            val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment, skipBodies = true)
+            val (classFilesCompilationTime, codegenOutput) = measureTimeMillis {
+                // Ignore all FE errors
+                val cleanDiagnosticReporter = FirKotlinToJvmBytecodeCompiler.createPendingReporter(messageCollector)
+                val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, cleanDiagnosticReporter)
+                val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment, skipBodies = true)
 
-            generateCodeFromIr(irInput, compilerEnvironment, skipBodies = true)
-        }
+                generateCodeFromIr(irInput, compilerEnvironment, skipBodies = true)
+            }
 
-        val builderFactory = codegenOutput.builderFactory
-        val compiledClasses = (builderFactory as OriginCollectingClassBuilderFactory).compiledClasses
-        val origins = builderFactory.origins
+            val builderFactory = codegenOutput.builderFactory
+            val compiledClasses = (builderFactory as OriginCollectingClassBuilderFactory).compiledClasses
+            val origins = builderFactory.origins
 
-        logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
-        logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
+            logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
+            logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-        KaptContextForStubGeneration(options, false, logger, compiledClasses, origins, codegenOutput.generationState).use { context ->
-            generateKotlinSourceStubs(context)
+            KaptContextForStubGeneration(options, false, logger, compiledClasses, origins, codegenOutput.generationState).use { context ->
+                generateKotlinSourceStubs(context)
+            }
         }
 
         if (options.mode.runAnnotationProcessing) {
@@ -377,7 +379,9 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         val sources = options.collectJavaSourceFiles(context.sourcesToReprocess)
         if (sources.isEmpty()) return
         EfficientProcessorLoader(options, context.logger).use {
-            context.doAnnotationProcessing(sources, it.loadProcessors().processors)
+            val processors = it.loadProcessors().processors
+            if (processors.isEmpty()) return
+            context.doAnnotationProcessing(sources, processors)
         }
     }
 
