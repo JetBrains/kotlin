@@ -396,6 +396,16 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("objCMappedMixedTypesExtension"))
     }
 
+    @Test
+    fun `test - functionWithReservedMethodName`() {
+        doTest(headersTestDataDir.resolve("functionWithReservedMethodName"))
+    }
+
+    @Test
+    fun `test - functionWithReservedMethodNameAndReturnType`() {
+        doTest(headersTestDataDir.resolve("functionWithReservedMethodNameAndReturnType"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

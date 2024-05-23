@@ -6,11 +6,6 @@ import org.jetbrains.kotlin.backend.konan.cKeywords
  * K1: See implementations of [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.Mapping.reserved]
  */
 private val reservedPropertyNames = cKeywords + setOf("description") // https://youtrack.jetbrains.com/issue/KT-38641
-private val reservedMethodNames = setOf(
-    "retain", "release", "autorelease",
-    "class", "superclass",
-    "hash"
-)
 private val reservedClassNames = setOf(
     "retain", "release", "autorelease",
     "initialize", "load", "alloc", "new", "class", "superclass",
@@ -24,9 +19,6 @@ internal val String.isReservedPropertyName: Boolean
 
 internal val String.isReservedClassName: Boolean // See KT-68050
     get() = this in reservedClassNames
-
-internal val String.isReservedMethodName: Boolean // See KT-68051
-    get() = this in reservedMethodNames
 
 /**
  * There are set of reserved names for classes, methods and properties which should not be translated as they are,
