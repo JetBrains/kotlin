@@ -653,7 +653,8 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-test:kotlin-test-js-it",
             ":native:native.tests",
             ":native:native.tests:driver",
-            ":native:native.tests:stress"
+            ":native:native.tests:stress",
+            ":native:native.tests:klib-compatibility"
 
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib" as File

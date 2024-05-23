@@ -58,6 +58,12 @@ class ModuleInfo(val moduleName: String) {
     }
 
     class Dependency(val moduleName: String, val isFriend: Boolean)
+    enum class CompilerCase {
+        BOTTOM_V1,
+        BOTTOM_V2,
+        INTERMEDIATE,
+        DEFAULT
+    }
 
     class ModuleStep(
         val id: Int,
@@ -65,7 +71,8 @@ class ModuleInfo(val moduleName: String) {
         val modifications: List<Modification>,
         val expectedFileStats: Map<String, Set<String>>,
         val expectedDTS: Set<String>,
-        val rebuildKlib: Boolean
+        val rebuildKlib: Boolean,
+        val compiler: CompilerCase
     )
 
     val steps = hashMapOf</* step ID */ Int, ModuleStep>()
@@ -90,6 +97,7 @@ private const val MODIFICATION_UPDATE = "U"
 private const val MODIFICATION_DELETE = "D"
 private const val EXPECTED_DTS_LIST = "expected dts"
 private const val REBUILD_KLIB = "rebuild klib"
+private const val COMPILER = "compiler"
 
 private val STEP_PATTERN = Pattern.compile("^\\s*STEP\\s+(\\d+)\\.*(\\d+)?\\s*:?$")
 
@@ -265,6 +273,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
         val modifications = mutableListOf<ModuleInfo.Modification>()
         val expectedDTS = mutableSetOf<String>()
         var rebuildKlib = true
+        var compiler = ModuleInfo.CompilerCase.DEFAULT
 
         loop { line ->
             if (line.matches(STEP_PATTERN.toRegex()))
@@ -289,6 +298,9 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
                     REBUILD_KLIB -> getOpArgs().singleOrNull()?.toBooleanStrictOrNull()?.let {
                         rebuildKlib = it
                     } ?: error(diagnosticMessage("$op expects true or false", line))
+                    COMPILER -> getOpArgs().singleOrNull()?.let { ModuleInfo.CompilerCase.valueOf(it) }?.let {
+                        compiler = it
+                    } ?: error(diagnosticMessage("$op expects values from CompilerCase enum", line))
                     else -> error(diagnosticMessage("Unknown op $op", line))
                 }
             }
@@ -311,7 +323,8 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
                 modifications = modifications,
                 expectedFileStats = expectedFileStats,
                 expectedDTS = expectedDTS,
-                rebuildKlib = rebuildKlib
+                rebuildKlib = rebuildKlib,
+                compiler = compiler
             )
         }
     }

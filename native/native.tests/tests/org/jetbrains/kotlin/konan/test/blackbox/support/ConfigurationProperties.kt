@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 internal enum class ProcessLevelProperty(shortName: String) {
     KOTLIN_NATIVE_HOME("nativeHome"),
     COMPILER_CLASSPATH("compilerClasspath"),
-    TEAMCITY("teamcity");
+    TEAMCITY("teamcity"),
+    LATEST_RELEASED_COMPILER_PATH("latestReleasedCompilerPath");
 
     private val propertyName = fullPropertyName(shortName)
 

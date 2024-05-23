@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
 import java.io.IOException
+import java.net.URLClassLoader
 import java.util.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -327,4 +328,18 @@ internal enum class BinaryLibraryKind {
 internal enum class CInterfaceMode(val compilerFlag: String) {
     V1("-Xbinary=cInterfaceMode=v1"),
     NONE("-Xbinary=cInterfaceMode=none")
+}
+
+internal class ReleasedCompiler(private val lazyNativeHome: Lazy<KotlinNativeHome>) {
+    val nativeHome: KotlinNativeHome get() = lazyNativeHome.value
+    val lazyClassloader: Lazy<URLClassLoader> = lazy {
+        val nativeClassPath = setOf(
+            nativeHome.dir.resolve("konan/lib/trove4j.jar"),
+            nativeHome.dir.resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
+        )
+            .map { it.toURI().toURL() }
+            .toTypedArray()
+
+        URLClassLoader(nativeClassPath, null).apply { setDefaultAssertionStatus(true) }
+    }
 }

@@ -1,0 +1,3 @@
+STEP 0:
+    dependencies: stdlib, lib1
+    compiler: INTERMEDIATE

@@ -2,6 +2,8 @@ import TestProperty.*
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.environment
 import org.gradle.kotlin.dsl.project
@@ -30,7 +32,8 @@ private enum class TestProperty(shortName: String) {
     SANITIZER("sanitizer"),
     SHARED_TEST_EXECUTION("sharedTestExecution"),
     EAGER_GROUP_CREATION("eagerGroupCreation"),
-    TEAMCITY("teamcity");
+    TEAMCITY("teamcity"),
+    LATEST_RELEASED_COMPILER_PATH("latestReleasedCompilerPath");
 
     val fullName = "kotlin.internal.native.test.$shortName"
 }
@@ -101,11 +104,14 @@ fun Project.nativeTest(
     customTestDependencies: List<Configuration> = emptyList(),
     compilerPluginDependencies: List<Configuration> = emptyList(),
     allowParallelExecution: Boolean = true,
+    releasedCompilerDist: TaskProvider<Sync>? = null,
+    maxMetaspaceSizeMb: Int = 512,
     body: Test.() -> Unit = {},
 ) = projectTest(
     taskName,
     jUnitMode = JUnitMode.JUnit5,
-    maxHeapSizeMb = 3072 // Extra heap space for Kotlin/Native compiler.
+    maxHeapSizeMb = 3072, // Extra heap space for Kotlin/Native compiler.
+    maxMetaspaceSizeMb = maxMetaspaceSizeMb
 ) {
     group = "verification"
 
@@ -202,6 +208,13 @@ fun Project.nativeTest(
             compute(SANITIZER)
             compute(SHARED_TEST_EXECUTION)
             compute(EAGER_GROUP_CREATION)
+
+            computeLazy(LATEST_RELEASED_COMPILER_PATH) {
+                if (releasedCompilerDist != null) dependsOn(releasedCompilerDist)
+                lazy {
+                    releasedCompilerDist?.get()?.destinationDir?.absolutePath
+                }
+            }
 
             // Pass whether tests are running at TeamCity.
             computePrivate(TEAMCITY) { kotlinBuildProperties.isTeamcityBuild.toString() }

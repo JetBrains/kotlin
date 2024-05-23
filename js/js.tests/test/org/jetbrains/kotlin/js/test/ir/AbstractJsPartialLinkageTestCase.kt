@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.js.test.ir
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JsIrCompiler
-import org.jetbrains.kotlin.cli.js.klib.*
-import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
+import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependency
@@ -59,6 +58,7 @@ abstract class AbstractJsPartialLinkageTestCase(private val compilerType: Compil
             buildDirs: ModuleBuildDirs,
             dependencies: Dependencies,
             klibFile: File,
+            compilerEdition: KlibCompilerEdition
         ) = this@AbstractJsPartialLinkageTestCase.buildKlib(moduleName, buildDirs, dependencies, klibFile)
 
         override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =
