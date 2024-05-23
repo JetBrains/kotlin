@@ -134,6 +134,8 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, DisabledCinteropCommonizationInHmppProjectChecker)
         register(project, DisabledNativeTargetsChecker)
         register(project, JsEnvironmentChecker)
+        register(project, WasmJsEnvironmentChecker)
+        register(project, WasmWasiEnvironmentChecker)
         register(project, PreHmppDependenciesUsageChecker)
         register(project, ExperimentalTryNextUsageChecker)
         register(project, KotlinSourceSetTreeDependsOnMismatchChecker)
