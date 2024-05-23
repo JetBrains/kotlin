@@ -455,6 +455,18 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("enumEntrySuperclassEntry.kt")
+  public void testEnumEntrySuperclassEntry() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/enumEntrySuperclassEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("enumEntrySuperclassReference.kt")
+  public void testEnumEntrySuperclassReference() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/enumEntrySuperclassReference.kt");
+  }
+
+  @Test
   @TestMetadata("EnumValues.kt")
   public void testEnumValues() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/EnumValues.kt");
