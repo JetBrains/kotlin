@@ -81,7 +81,10 @@ class JavaCompilerFacade(private val testServices: TestServices) {
                 ignoreJavaErrors = ignoreErrors
             )
         } else {
-            compileJavaFilesExternally(files, javacOptions, jdkHome)
+            val success = compileJavaFilesExternally(files, javacOptions, jdkHome)
+            if (!success && !ignoreErrors) {
+                throw AssertionError("Java files are not compiled successfully")
+            }
         }
     }
 }
