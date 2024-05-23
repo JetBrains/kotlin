@@ -1,0 +1,2 @@
+Resolved to:
+0: (in r.BaseClass) constructor(i: kotlin.Int)

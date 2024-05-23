@@ -1960,6 +1960,24 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("constructorDelegationReferenceSuper.kt")
+    public void testConstructorDelegationReferenceSuper() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/constructorDelegatingReference/constructorDelegationReferenceSuper.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorDelegationReferenceThis.kt")
+    public void testConstructorDelegationReferenceThis() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/constructorDelegatingReference/constructorDelegationReferenceThis.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorDelegationReferenceThisImplicit.kt")
+    public void testConstructorDelegationReferenceThisImplicit() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/constructorDelegatingReference/constructorDelegationReferenceThisImplicit.kt");
+    }
+
+    @Test
     @TestMetadata("toPrimary.kt")
     public void testToPrimary() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/constructorDelegatingReference/toPrimary.kt");
