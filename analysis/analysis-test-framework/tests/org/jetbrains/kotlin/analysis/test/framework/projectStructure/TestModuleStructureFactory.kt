@@ -122,7 +122,7 @@ object TestModuleStructureFactory {
             addModuleDependencies(testModule, modulesByName, ktModule)
             addLibraryDependencies(testModule, testServices, ktModule, libraryCache::getOrPut)
         }
-        else -> error("Unexpected module type: " + javaClass.name)
+        else -> error("Unexpected module type: " + ktModule.javaClass.name)
     }
 
     private fun addModuleDependencies(
