@@ -47,7 +47,12 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val caretPositions = testServices.expressionMarkerProvider.getAllCarets(mainFile)
+        val caretPositions = testServices.expressionMarkerProvider.getAllCarets(mainFile).ifEmpty {
+            testServices.expressionMarkerProvider.getSelectedRangeOrNull(mainFile)?.let {
+                CaretMarker(tag = "from_expression", offset = it.startOffset)
+            }.let(::listOfNotNull)
+        }
+
         doTestByFileStructure(mainFile, caretPositions, mainModule, testServices)
     }
 
@@ -81,7 +86,7 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     ): String {
         val ktReferences = findReferencesAtCaret(ktFile, caret.offset)
         if (ktReferences.isEmpty()) {
-            testServices.assertions.fail { "No references at caret $caret found" }
+            return "${caret.fullTag}: no references found"
         }
 
         val resolvedTo = analyzeReferenceElement(ktReferences.first().element, mainModule) {

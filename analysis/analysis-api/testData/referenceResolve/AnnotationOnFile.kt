@@ -1,4 +1,4 @@
-@file:[kotlin.<caret>Suppress("message")]
+@file:[kotlin.<expr>Suppress("message")</expr>]
 
 package foo
 
