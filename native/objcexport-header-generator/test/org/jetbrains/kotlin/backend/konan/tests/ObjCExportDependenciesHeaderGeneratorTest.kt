@@ -53,6 +53,48 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     }
 
 
+    /**
+     * See KT-68478
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - kotlinxSerialization`() {
+        doTest(
+            dependenciesDir.resolve("kotlinxSerialization"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerialization),
+                exportedDependencies = setOf(testLibraryKotlinxSerialization)
+            )
+        )
+    }
+
+    /**
+     * See KT-68479
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - kotlinxDatetime`() {
+        doTest(
+            dependenciesDir.resolve("kotlinxDatetime"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxDatetime),
+                exportedDependencies = setOf(testLibraryKotlinxDatetime)
+            )
+        )
+    }
+
+    /**
+     * See KT-68480
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - kotlinxCoroutines`() {
+        doTest(
+            dependenciesDir.resolve("kotlinxCoroutines"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxCoroutines),
+                exportedDependencies = setOf(testLibraryKotlinxCoroutines)
+            )
+        )
+    }
+
     @Test
     fun `test - notExportedDependency`() {
         doTest(

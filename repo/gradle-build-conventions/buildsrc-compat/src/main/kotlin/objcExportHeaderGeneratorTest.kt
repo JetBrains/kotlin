@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64
 import java.io.File
 
 /*
@@ -35,23 +36,46 @@ fun Project.objCExportHeaderGeneratorTest(
      * The resolved klibs will be available as classpath under the `testDependencyKlibs` System property.
      */
     run {
+
         /* Configuration to resolve klibs for the current host */
-        val testDependencyKlibs = configurations.maybeCreate("testDependencyKlibs").also { configuration ->
-            configuration.attributes {
+        val testDependencyProjectKlibs = configurations.maybeCreate("testDependencyProjectKlibs").also { testDependencyProjectKlibs ->
+            testDependencyProjectKlibs.attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
                 attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
                 attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+                /* Project dependencies shall resolve the platform from the current host */
                 attribute(KotlinNativeTarget.konanTargetAttribute, HostManager.host.name)
             }
 
             dependencies {
-                configuration(project(":native:objcexport-header-generator:testLibraryA"))
-                configuration(project(":native:objcexport-header-generator:testLibraryB"))
+                testDependencyProjectKlibs(project(":native:objcexport-header-generator:testLibraryA"))
+                testDependencyProjectKlibs(project(":native:objcexport-header-generator:testLibraryB"))
+            }
+        }
+
+        /* Configuration to resolve klibs for macosArm64 (used to resolve remote libraries consistently on CI and locally) */
+        val testDependencyLibraryKlibs = configurations.maybeCreate("testDependencyLibraryKlibs").also { testDependencyLibraryKlibs ->
+            testDependencyLibraryKlibs.resolutionStrategy.disableDependencyVerification()
+            testDependencyLibraryKlibs.attributes {
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+                attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+                attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+                /* Library dependencies shall resolve the macosArm64 version */
+                attribute(KotlinNativeTarget.konanTargetAttribute, MACOS_ARM64.name)
+            }
+
+            dependencies {
+                testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+                testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+                testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
             }
         }
 
         /* Create a classpath (list of file paths) that will be exposed as System property */
-        val testDependencyKlibsClasspath = testDependencyKlibs.incoming.files.elements.map { elements ->
+        val testDependencyKlibsClasspath = project.files(
+            testDependencyProjectKlibs.incoming.files,
+            testDependencyLibraryKlibs.incoming.files
+        ).elements.map { elements ->
             elements.joinToString(File.pathSeparator) { location -> location.asFile.absolutePath }
         }
 
@@ -60,7 +84,7 @@ fun Project.objCExportHeaderGeneratorTest(
         }
 
         /* Add dependency files as inputs to this test task */
-        inputs.files(testDependencyKlibs).withPathSensitivity(PathSensitivity.RELATIVE)
+        inputs.files(testDependencyProjectKlibs).withPathSensitivity(PathSensitivity.RELATIVE)
     }
 
     useJUnitPlatform()
