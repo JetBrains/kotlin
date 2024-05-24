@@ -20,7 +20,7 @@ class ModuleTransformerForSwitchingBackend(
     val backendForMain: TargetBackend
 ) : ModuleStructureTransformer() {
     override fun transformModuleStructure(moduleStructure: TestModuleStructure, defaultsProvider: DefaultsProvider): TestModuleStructure {
-        if (moduleStructure.modules.size != 2) error("Test should contain only one module")
+        if (moduleStructure.modules.size != 2) error("Test should contain exactly 2 modules")
         val (first, second) = moduleStructure.modules
 
         return TestModuleStructureImpl(
