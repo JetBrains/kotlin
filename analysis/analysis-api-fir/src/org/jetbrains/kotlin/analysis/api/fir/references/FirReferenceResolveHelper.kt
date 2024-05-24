@@ -263,9 +263,16 @@ internal object FirReferenceResolveHelper {
         session: FirSession,
         analysisSession: KaFirSession,
         symbolBuilder: KaSymbolByFirBuilder,
-    ): Collection<KaSymbol> = buildList {
-        expression.processEqualsFunctions(session, analysisSession) {
-            add(it.buildSymbol(symbolBuilder))
+    ): Collection<KaSymbol> {
+        when (expression.operation) {
+            FirOperation.EQ, FirOperation.NOT_EQ -> {}
+            else -> return emptyList()
+        }
+
+        return buildList {
+            expression.processEqualsFunctions(session, analysisSession) {
+                add(it.buildSymbol(symbolBuilder))
+            }
         }
     }
 
