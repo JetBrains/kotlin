@@ -9,13 +9,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.annotations.toFilter
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPsiDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_GETTER
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_SETTER
+import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmNameFromAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.toOptionalFilter
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -65,13 +70,23 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
         return listOfNotNull(javaFileManager.findClass(classId.asFqNameString(), scope))
     }
 
-    override fun getProperties(callableId: CallableId): Collection<PsiMember> {
+    override fun getProperties(variableLikeSymbol: KaVariableLikeSymbol): Collection<PsiMember> {
+        val callableId = variableLikeSymbol.callableId ?: return emptyList()
         val classes = callableId.classId?.let { classId ->
             val classFromCurrentClassId = getClassesByClassId(classId)
             // property in companion object is actually materialized at the containing class.
             val classFromOuterClassID = classId.outerClassId?.let { getClassesByClassId(it) } ?: emptyList()
             classFromCurrentClassId + classFromOuterClassID
         } ?: getClassesInPackage(callableId.packageName)
+        if (classes.isEmpty()) return emptyList()
+
+        val propertySymbol = variableLikeSymbol as? KtPropertySymbol
+        val getterJvmName =
+            propertySymbol?.getter?.getJvmNameFromAnnotation(PROPERTY_GETTER.toOptionalFilter())
+                ?: propertySymbol?.getJvmNameFromAnnotation(PROPERTY_GETTER.toFilter())
+        val setterJvmName =
+            propertySymbol?.setter?.getJvmNameFromAnnotation(PROPERTY_SETTER.toOptionalFilter())
+                ?: propertySymbol?.getJvmNameFromAnnotation(PROPERTY_SETTER.toFilter())
         return classes.flatMap { psiClass ->
             psiClass.children
                 .filterIsInstance<PsiMember>()
@@ -82,6 +97,7 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
                     // PsiField a.k.a. backing field
                     if (name == id) return@filter true
                     // PsiMethod, i.e., accessors
+                    if (name == getterJvmName || name == setterJvmName) return@filter true
                     val nameWithoutPrefix = name.nameWithoutAccessorPrefix ?: return@filter false
                     // E.g., getJVM_FIELD -> JVM_FIELD
                     nameWithoutPrefix == id ||
@@ -102,11 +118,25 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
             else -> null
         }
 
-    override fun getFunctions(callableId: CallableId): Collection<PsiMethod> {
+    override fun getFunctions(functionLikeSymbol: KaFunctionLikeSymbol): Collection<PsiMethod> {
+        val callableId = functionLikeSymbol.callableId ?: return emptyList()
         val classes = callableId.classId?.let { classId ->
             getClassesByClassId(classId)
         } ?: getClassesInPackage(callableId.packageName)
-        val id = callableId.callableName.identifier
+        if (classes.isEmpty()) return emptyList()
+
+        val jvmName = when (functionLikeSymbol) {
+            is KtPropertyGetterSymbol -> {
+                functionLikeSymbol.getJvmNameFromAnnotation(PROPERTY_GETTER.toOptionalFilter())
+            }
+            is KtPropertySetterSymbol -> {
+                functionLikeSymbol.getJvmNameFromAnnotation(PROPERTY_SETTER.toOptionalFilter())
+            }
+            else -> {
+                functionLikeSymbol.getJvmNameFromAnnotation()
+            }
+        }
+        val id = jvmName ?: callableId.callableName.identifier
         return classes.flatMap { psiClass ->
             psiClass.methods.filter { psiMethod ->
                 psiMethod.name == id ||

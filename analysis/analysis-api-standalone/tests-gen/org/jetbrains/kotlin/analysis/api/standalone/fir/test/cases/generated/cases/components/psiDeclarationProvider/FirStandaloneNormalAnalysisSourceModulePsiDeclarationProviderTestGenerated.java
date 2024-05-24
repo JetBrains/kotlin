@@ -58,6 +58,12 @@ public class FirStandaloneNormalAnalysisSourceModulePsiDeclarationProviderTestGe
   }
 
   @Test
+  @TestMetadata("getJavaClass.kt")
+  public void testGetJavaClass() {
+    runTest("analysis/analysis-api/testData/standalone/source/getJavaClass.kt");
+  }
+
+  @Test
   @TestMetadata("listIterator.kt")
   public void testListIterator() {
     runTest("analysis/analysis-api/testData/standalone/source/listIterator.kt");
