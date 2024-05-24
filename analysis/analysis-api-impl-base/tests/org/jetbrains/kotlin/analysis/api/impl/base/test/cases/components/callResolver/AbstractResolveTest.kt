@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractResolveTest : AbstractAnalysisApiBasedTest() {
     protected abstract val resolveKind: String
@@ -40,10 +41,11 @@ abstract class AbstractResolveTest : AbstractAnalysisApiBasedTest() {
             ) as KtElement
 
         val mainElement = expression.elementToResolve
-        doResolutionTest(mainElement, testServices)
+        val actual = generateResolveOutput(mainElement, testServices)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "$resolveKind.txt")
     }
 
-    abstract fun doResolutionTest(mainElement: KtElement, testServices: TestServices)
+    abstract fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String
 
     protected val KtElement.elementToResolve: KtElement
         get() = when (this) {

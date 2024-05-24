@@ -12,14 +12,13 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compare
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractResolveCandidatesTest : AbstractResolveTest() {
     override val resolveKind: String get() = "candidates"
 
-    override fun doResolutionTest(mainElement: KtElement, testServices: TestServices) {
-        val actual = analyseForTest(mainElement) {
+    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String {
+        return analyseForTest(mainElement) {
             val candidates = collectCallCandidates(mainElement)
             ignoreStabilityIfNeeded(testServices.moduleStructure.allDirectives) {
                 val candidatesAgain = collectCallCandidates(mainElement)
@@ -32,8 +31,6 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveTest() {
                 candidates.joinToString("\n\n") { stringRepresentation(it) }
             }
         }
-
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "$resolveKind.txt")
     }
 
     private fun KaSession.collectCallCandidates(element: KtElement): List<KaCallCandidateInfo> {

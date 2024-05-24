@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertS
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractResolveCallTest : AbstractResolveTest() {
     override val resolveKind: String get() = "call"
 
-    override fun doResolutionTest(mainElement: KtElement, testServices: TestServices) {
-        val actual = analyseForTest(mainElement) {
+    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String {
+        return analyseForTest(mainElement) {
             val call = mainElement.resolveCall()
             val secondCall = mainElement.resolveCall()
 
@@ -26,7 +25,5 @@ abstract class AbstractResolveCallTest : AbstractResolveTest() {
 
             call?.let(::stringRepresentation) ?: "null"
         }
-
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "$resolveKind.txt")
     }
 }
