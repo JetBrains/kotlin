@@ -70,7 +70,7 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
             }
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "references.txt")
     }
 
     private fun renderResolvedReferencesForCaretPosition(
