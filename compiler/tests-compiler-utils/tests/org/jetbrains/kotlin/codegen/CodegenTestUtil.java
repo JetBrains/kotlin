@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.test.Assertions;
 import org.jetbrains.kotlin.test.JvmCompilationUtils;
 import org.jetbrains.kotlin.test.KtAssert;
@@ -176,23 +175,6 @@ public class CodegenTestUtil {
         });
 
         return javaFilePaths;
-    }
-
-    private static final boolean IS_SOURCE_6_STILL_SUPPORTED =
-            // JDKs up to 11 do support -source/target 1.6, but later -- don't.
-            Arrays.asList("1.6", "1.7", "1.8", "9", "10", "11").contains(System.getProperty("java.specification.version"));
-
-    private static final String JAVA_COMPILATION_TARGET = System.getProperty("kotlin.test.java.compilation.target");
-
-    @Nullable
-    public static String computeJavaTarget(@NotNull List<String> javacOptions, @Nullable JvmTarget kotlinTarget) {
-        if (JAVA_COMPILATION_TARGET != null && !javacOptions.contains("-target"))
-            return JAVA_COMPILATION_TARGET;
-        if (kotlinTarget != null)
-            return kotlinTarget.getDescription();
-        if (IS_SOURCE_6_STILL_SUPPORTED)
-            return "1.6";
-        return null;
     }
 
     public static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader, boolean reportProblems) {

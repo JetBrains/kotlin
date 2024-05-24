@@ -45,21 +45,20 @@ class JavaCompilerFacade(private val testServices: TestServices) {
         compileJavaFiles(module, configuration[JVMConfigurationKeys.JVM_TARGET] ?: JvmTarget.DEFAULT, javaFiles, finalJavacOptions, ignoreErrors)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun extractJavacOptions(module: TestModule, kotlinTarget: JvmTarget?, isJvmPreviewEnabled: Boolean): List<String> {
         return buildList {
             addAll(module.directives[CodegenTestDirectives.JAVAC_OPTIONS])
-            if (kotlinTarget != null && isJvmPreviewEnabled) {
-                add("--release")
-                add(kotlinTarget.description)
-                add("--enable-preview")
-                return@buildList
-            }
-            CodegenTestUtil.computeJavaTarget(this, kotlinTarget)?.let { javaTarget ->
-                add("-source")
-                add(javaTarget)
-                add("-target")
-                add(javaTarget)
+            if (kotlinTarget != null) {
+                if (isJvmPreviewEnabled) {
+                    add("--release")
+                    add(kotlinTarget.description)
+                    add("--enable-preview")
+                } else {
+                    add("-source")
+                    add(kotlinTarget.description)
+                    add("-target")
+                    add(kotlinTarget.description)
+                }
             }
         }
     }
