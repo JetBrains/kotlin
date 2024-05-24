@@ -137,7 +137,6 @@
 /compiler/testData/codegen/defaultArguments/reflection/ "Kotlin JVM"
 /compiler/testData/codegen/helpers/ "Kotlin JVM"
 /compiler/testData/codegen/innerClassInfo/ "Kotlin JVM"
-/compiler/testData/codegen/java6/ "Kotlin JVM"
 /compiler/testData/codegen/kapt/ "Kotlin Compiler Core"
 # UNKNOWN: /compiler/testData/codegen/light-analysis/
 /compiler/testData/codegen/notNullAssertions/ "Kotlin JVM"

@@ -130,7 +130,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         fun getJdkHome(jdkKindTestJdkKind: TestJdkKind): File? = when (jdkKindTestJdkKind) {
             TestJdkKind.MOCK_JDK -> null
             TestJdkKind.MODIFIED_MOCK_JDK -> null
-            TestJdkKind.FULL_JDK_6 -> File(System.getenv("JDK_16") ?: error("Environment variable JDK_16 is not set"))
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
@@ -142,7 +141,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             TestJdkKind.MOCK_JDK -> KtTestUtil.findMockJdkRtJar()
             TestJdkKind.MODIFIED_MOCK_JDK -> KtTestUtil.findMockJdkRtModified()
             TestJdkKind.ANDROID_API -> KtTestUtil.findAndroidApiJar()
-            TestJdkKind.FULL_JDK_6 -> null
             TestJdkKind.FULL_JDK_11 -> null
             TestJdkKind.FULL_JDK_17 -> null
             TestJdkKind.FULL_JDK_21 -> null
@@ -197,7 +195,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                 configuration.put(JVMConfigurationKeys.NO_JDK, true)
             }
 
-            TestJdkKind.FULL_JDK_6 -> {}
             TestJdkKind.FULL_JDK_11 -> {}
             TestJdkKind.FULL_JDK_17 -> {}
             TestJdkKind.FULL_JDK_21 -> {}

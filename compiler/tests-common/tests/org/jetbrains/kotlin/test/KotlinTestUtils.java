@@ -184,14 +184,6 @@ public class KotlinTestUtils {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, KtTestUtil.findAndroidApiJar());
             configuration.put(JVMConfigurationKeys.NO_JDK, true);
         }
-        else if (jdkKind == TestJdkKind.FULL_JDK_6) {
-            String jdk6 = System.getenv("JDK_1_6");
-            if (jdk6 == null) {
-                jdk6 = System.getenv("JDK_16");
-            }
-            assert jdk6 != null : "Environment variable JDK_1_6 is not set";
-            configuration.put(JVMConfigurationKeys.JDK_HOME, new File(jdk6));
-        }
         else if (jdkKind == TestJdkKind.FULL_JDK_11) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk11Home());
         }
