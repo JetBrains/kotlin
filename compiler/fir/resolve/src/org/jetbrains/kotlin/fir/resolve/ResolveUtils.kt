@@ -445,14 +445,15 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
         }
         is FirSuperReference -> {
             val labelName = calleeReference.labelName
+            val receiverSet = implicitReceiverStack[labelName]
             val implicitReceiver =
                 if (labelName != null) {
-                    implicitReceiverStack[labelName].ifMoreThanOne { areOnlyAnonymousFunctions ->
+                    receiverSet.singleWithoutDuplicatingContextReceiversOrNull() as? ImplicitDispatchReceiverValue ?: run {
                         return buildErrorTypeRef {
                             source = calleeReference.source
-                            diagnostic = clashingLabelDiagnostic(labelName, areOnlyAnonymousFunctions)
+                            diagnostic = receiverSet.ambiguityDiagnosticFor(labelName)
                         }
-                    } as? ImplicitDispatchReceiverValue
+                    }
                 } else {
                     implicitReceiverStack.lastDispatchReceiver()
                 }

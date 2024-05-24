@@ -5,13 +5,13 @@
 
 fun Int.with() {
     <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") <!CANNOT_INFER_PARAMETER_TYPE!>{
-        this<!AMBIGUOUS_LABEL!>@with<!>.inc()
+        this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>inc<!>()
     }<!>
 }
 
 fun Int.bar() {
     <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") bar@<!CANNOT_INFER_PARAMETER_TYPE!>{
-        this<!AMBIGUOUS_LABEL!>@bar<!>.inc()
+        this<!LABEL_NAME_CLASH!>@bar<!>.<!UNRESOLVED_REFERENCE!>inc<!>()
     }<!>
 }
 
@@ -20,11 +20,11 @@ fun foo(f: with.() -> Unit) {}
 class with {
     fun foo() {
         <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") <!CANNOT_INFER_PARAMETER_TYPE!>{
-            this<!AMBIGUOUS_LABEL!>@with<!>.foo()
+            this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
         }<!>
 
         <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") with@<!CANNOT_INFER_PARAMETER_TYPE!>{
-            this<!AMBIGUOUS_LABEL!>@with<!>.foo()
+            this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
         }<!>
 
         with("") other@{
@@ -48,9 +48,9 @@ class TypedThis {
 object OtherTests {
     fun Int.with() {
         <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") <!CANNOT_INFER_PARAMETER_TYPE!>{
-            this<!AMBIGUOUS_LABEL!>@with<!>.toString()
-            this<!AMBIGUOUS_LABEL!>@with<!>.length
-            this<!AMBIGUOUS_LABEL!>@with<!>.inc()
+            this<!LABEL_NAME_CLASH!>@with<!>.toString()
+            this<!LABEL_NAME_CLASH!>@with<!>.length
+            this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>inc<!>()
         }<!>
     }
 }
@@ -58,7 +58,7 @@ object OtherTests {
 object OtherTests2 {
     fun Int.with() {
         with("") {
-            this<!AMBIGUOUS_LABEL!>@with<!>.toString()
+            this<!LABEL_NAME_CLASH!>@with<!>.toString()
         }
     }
 }

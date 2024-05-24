@@ -1,13 +1,13 @@
 FILE: labelClashes.fir.kt
     public final fun R|kotlin/Int|.with(): R|kotlin/Unit| {
         R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ this@with#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+            ^ this@R|special/anonymous|.<Unresolved name: inc>#()
         }
         )
     }
     public final fun R|kotlin/Int|.bar(): R|kotlin/Unit| {
         R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(String(), <L> = bar@fun R|kotlin/String|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ this@bar#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+            ^ this@R|special/anonymous|.<Unresolved name: inc>#()
         }
         )
     }
@@ -20,11 +20,11 @@ FILE: labelClashes.fir.kt
 
         public final fun foo(): R|kotlin/Unit| {
             R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=EXACTLY_ONCE>  {
-                ^ this@with#.<Unresolved name: foo>#()
+                ^ this@R|special/anonymous|.<Unresolved name: foo>#()
             }
             )
             R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=EXACTLY_ONCE>  {
-                ^ this@with#.<Unresolved name: foo>#()
+                ^ this@R|special/anonymous|.<Unresolved name: foo>#()
             }
             )
             R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(), <L> = other@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
@@ -56,9 +56,9 @@ FILE: labelClashes.fir.kt
 
         public final fun R|kotlin/Int|.with(): R|kotlin/Unit| {
             R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=EXACTLY_ONCE>  {
-                this@with#.R|kotlin/toString|()
-                this@with#.<Unresolved name: length>#
-                ^ this@with#.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                this@R|special/anonymous|.R|kotlin/String.toString|()
+                this@R|special/anonymous|.R|kotlin/String.length|
+                ^ this@R|special/anonymous|.<Unresolved name: inc>#()
             }
             )
         }
@@ -71,7 +71,7 @@ FILE: labelClashes.fir.kt
 
         public final fun R|kotlin/Int|.with(): R|kotlin/Unit| {
             R|kotlin/with|<R|kotlin/String|, R|kotlin/String|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                ^ this@with#.R|kotlin/toString|()
+                ^ this@R|special/anonymous|.R|kotlin/String.toString|()
             }
             )
         }
