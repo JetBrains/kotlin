@@ -1025,14 +1025,11 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall
             )
-            is FirArrayLiteral, is FirEqualityOperatorCall -> {
+            is FirArrayLiteral, is FirEqualityOperatorCall, is FirCallableReferenceAccess -> {
                 toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
             }
             is FirComparisonExpression -> {
                 compareToCall.toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
-            }
-            is FirCallableReferenceAccess -> {
-                calleeReference.toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
             }
             is FirResolvedQualifier -> toKtCallCandidateInfos()
             is FirDelegatedConstructorCall -> collectCallCandidatesForDelegatedConstructorCall(psi, resolveFragmentOfCall)

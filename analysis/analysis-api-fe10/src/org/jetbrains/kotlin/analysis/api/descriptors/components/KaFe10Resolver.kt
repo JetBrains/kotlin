@@ -151,9 +151,11 @@ internal class KaFe10Resolver(
 
             // The regular mechanism doesn't work, so at least the resolved call should be returned
             when (psi) {
-                is KtWhenConditionInRange, is KtCollectionLiteralExpression, is KtOperationReferenceExpression -> {
-                    return resolvedKtCallInfo?.toKtCallCandidateInfos().orEmpty()
-                }
+                is KtWhenConditionInRange,
+                is KtCollectionLiteralExpression,
+                is KtOperationReferenceExpression,
+                is KtCallableReferenceExpression,
+                    -> return resolvedKtCallInfo?.toKtCallCandidateInfos().orEmpty()
             }
 
             val resolutionScope = unwrappedPsi.getResolutionScope(this) ?: return emptyList()

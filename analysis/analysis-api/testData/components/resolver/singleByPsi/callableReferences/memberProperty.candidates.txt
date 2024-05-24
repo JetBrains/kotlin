@@ -1,1 +1,15 @@
-NO_CANDIDATES
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val foo: kotlin.String
+        callableId = /Foo.foo
+    simpleAccess = Read:
+      
+    typeArgumentsMapping = {}
+  isInBestCandidates = true
