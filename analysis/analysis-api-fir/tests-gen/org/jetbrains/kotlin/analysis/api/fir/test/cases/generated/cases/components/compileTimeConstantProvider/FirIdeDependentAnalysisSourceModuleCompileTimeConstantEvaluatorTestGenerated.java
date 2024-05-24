@@ -203,6 +203,12 @@ public class FirIdeDependentAnalysisSourceModuleCompileTimeConstantEvaluatorTest
   }
 
   @Test
+  @TestMetadata("recursivePropertyReference.kt")
+  public void testRecursivePropertyReference() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/recursivePropertyReference.kt");
+  }
+
+  @Test
   @TestMetadata("stringLiteral.kt")
   public void testStringLiteral() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/stringLiteral.kt");
