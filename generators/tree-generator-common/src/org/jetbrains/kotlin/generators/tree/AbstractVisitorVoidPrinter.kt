@@ -25,12 +25,14 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
 
     abstract val visitorSuperClass: ClassRef<PositionTypeParameterRef>
 
-    final override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
+    override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
         get() = listOf(visitorSuperClass.withArgs(StandardTypes.unit, visitorDataType))
 
     abstract val useAbstractMethodForRootElement: Boolean
 
     abstract val overriddenVisitMethodsAreFinal: Boolean
+
+    protected open fun shouldOverrideMethodWithNoDataParameter(element: Element): Boolean = false
 
     final override fun printMethodsForElement(element: Element) {
         val parentInVisitor = parentInVisitor(element)
@@ -55,14 +57,16 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
         printer.run {
             printBody(element)
             println()
+            val override = shouldOverrideMethodWithNoDataParameter(element)
             printVisitMethodDeclaration(
                 element,
                 hasDataParameter = false,
                 modality = when {
                     isAbstractVisitRootElementMethod && visitorType.kind == TypeKind.Class -> Modality.ABSTRACT
-                    !isAbstractVisitRootElementMethod && visitorType.kind == TypeKind.Class -> Modality.OPEN
+                    !override && !isAbstractVisitRootElementMethod && visitorType.kind == TypeKind.Class -> Modality.OPEN
                     else -> null
-                }
+                },
+                override = override,
             )
             if (isAbstractVisitRootElementMethod) {
                 println()

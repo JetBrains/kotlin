@@ -36,6 +36,7 @@ fun main(args: Array<String>) {
                 elementTransformerType to ::TransformerPrinter.bind(model.rootElement),
                 elementTransformerVoidType to ::TransformerVoidPrinter,
                 typeTransformerType to ::TypeTransformerPrinter.bind(model.rootElement),
+                typeTransformerVoidType to ::TypeTransformerVoidPrinter.bind(model.rootElement),
             ),
             ImplementationConfigurator,
             createImplementationPrinter = ::ImplementationPrinter,
