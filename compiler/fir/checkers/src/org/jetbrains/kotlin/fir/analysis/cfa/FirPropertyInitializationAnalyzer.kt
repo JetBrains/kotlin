@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
     override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
@@ -70,20 +71,22 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
     override fun filterProperties(
         data: PropertyInitializationInfoData,
         isForInitialization: Boolean
-    ): Set<FirPropertySymbol> {
+    ): Set<FirVariableSymbol<*>> {
         // If a property has an initializer (or does not need one), then any reads are OK while any writes are OK
         // if it's a `var` and bad if it's a `val`. `FirReassignmentAndInvisibleSetterChecker` does this without a CFG.
         return data.properties.filterTo(mutableSetOf()) {
+            require(it is FirPropertySymbol)
             it.requiresInitialization(isForInitialization) || it in data.conditionallyInitializedProperties
         }
     }
 
     override fun PropertyInitializationInfoData.reportCapturedInitialization(
         node: VariableAssignmentNode,
-        symbol: FirPropertySymbol,
+        symbol: FirVariableSymbol<*>,
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
+        require(symbol is FirPropertySymbol)
         val capturedInitializationError = if (receiver != null)
             FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
         else
@@ -101,24 +104,26 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
     override fun reportUninitializedVariable(
         reporter: DiagnosticReporter,
         node: QualifiedAccessNode,
-        symbol: FirPropertySymbol,
+        symbol: FirVariableSymbol<*>,
         context: CheckerContext,
     ) {
+        require(symbol is FirPropertySymbol)
         reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
     }
 
     override fun reportNonInlineMemberValInitialization(
         node: VariableAssignmentNode,
-        symbol: FirPropertySymbol,
+        symbol: FirVariableSymbol<*>,
         reporter: DiagnosticReporter,
         context: CheckerContext,
     ) {
+        require(symbol is FirPropertySymbol)
         reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol, context)
     }
 
     override fun reportValReassignment(
         node: VariableAssignmentNode,
-        symbol: FirPropertySymbol,
+        symbol: FirVariableSymbol<*>,
         reporter: DiagnosticReporter,
         context: CheckerContext,
     ) {

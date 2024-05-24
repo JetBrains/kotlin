@@ -30,10 +30,12 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
     override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
-        val ownData = Data(data.properties)
+        @Suppress("UNCHECKED_CAST")
+        val properties = data.properties as Set<FirPropertySymbol>
+        val ownData = Data(properties)
         data.graph.traverse(AddAllWrites(), ownData)
         if (ownData.unreadWrites.isNotEmpty()) {
-            ownData.writesByNode = data.graph.traverseToFixedPoint(FindVisibleWrites(data.properties))
+            ownData.writesByNode = data.graph.traverseToFixedPoint(FindVisibleWrites(properties))
         }
         data.graph.traverse(RemoveVisibleWrites(), ownData)
 

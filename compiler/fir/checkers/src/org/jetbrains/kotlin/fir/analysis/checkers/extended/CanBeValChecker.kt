@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.util.getChildren
 
 object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
@@ -62,7 +63,9 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
             }
         }
 
-        fun canBeVal(symbol: FirPropertySymbol): Boolean =
-            symbol.isVar && !symbol.hasDelegate && symbol.source?.kind !is KtFakeSourceElementKind? && symbol !in reassigned
+        fun canBeVal(symbol: FirVariableSymbol<*>): Boolean {
+            require(symbol is FirPropertySymbol)
+            return symbol.isVar && !symbol.hasDelegate && symbol.source?.kind !is KtFakeSourceElementKind? && symbol !in reassigned
+        }
     }
 }

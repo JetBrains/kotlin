@@ -18,12 +18,15 @@ import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.calleeReference
+import org.jetbrains.kotlin.fir.expressions.unwrapLValue
+import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph.Kind
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 abstract class VariableInitializationCheckProcessor {
@@ -48,16 +51,16 @@ abstract class VariableInitializationCheckProcessor {
     // TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
     private fun PropertyInitializationInfoData.runCheck(
         graph: ControlFlowGraph,
-        properties: Set<FirPropertySymbol>,
+        properties: Set<FirVariableSymbol<*>>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
         scope: FirDeclaration?,
         isForInitialization: Boolean,
         doNotReportUninitializedVariable: Boolean,
         doNotReportConstantUninitialized: Boolean,
-        scopes: MutableMap<FirPropertySymbol, FirDeclaration?>,
+        scopes: MutableMap<FirVariableSymbol<*>, FirDeclaration?>,
     ) {
-        fun CFGNode<*>.reportErrorsOnInitializationsInInputs(symbol: FirPropertySymbol, path: EdgeLabel) {
+        fun CFGNode<*>.reportErrorsOnInitializationsInInputs(symbol: FirVariableSymbol<*>, path: EdgeLabel) {
             for (previousNode in previousCfgNodes) {
                 if (edgeFrom(previousNode).kind.isBack) continue
                 when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.location) {
@@ -96,7 +99,7 @@ abstract class VariableInitializationCheckProcessor {
                 }
 
                 node is VariableAssignmentNode -> {
-                    val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: continue
+                    val symbol = node.fir.calleeReference?.toResolvedVariableSymbol() ?: continue
                     if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver(this) != true || symbol !in properties) continue
 
                     val info = getValue(node)
@@ -116,7 +119,7 @@ abstract class VariableInitializationCheckProcessor {
                 node is QualifiedAccessNode -> {
                     if (doNotReportUninitializedVariable) continue
                     if (node.fir.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) continue
-                    val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: continue
+                    val symbol = node.fir.calleeReference.toResolvedVariableSymbol() ?: continue
                     if (doNotReportConstantUninitialized && symbol.isConst) continue
                     if (!symbol.isLateInit && !symbol.isExternal && node.fir.hasMatchingReceiver(this) && symbol in properties &&
                         getValue(node).values.any { it[symbol]?.isDefinitelyVisited() != true }
@@ -160,7 +163,7 @@ abstract class VariableInitializationCheckProcessor {
 
     protected abstract fun PropertyInitializationInfoData.reportCapturedInitialization(
         node: VariableAssignmentNode,
-        symbol: FirPropertySymbol,
+        symbol: FirVariableSymbol<*>,
         reporter: DiagnosticReporter,
         context: CheckerContext
     )
@@ -168,20 +171,20 @@ abstract class VariableInitializationCheckProcessor {
     protected abstract fun reportUninitializedVariable(
         reporter: DiagnosticReporter,
         node: QualifiedAccessNode,
-        symbol: FirPropertySymbol,
+        symbol: FirVariableSymbol<*>,
         context: CheckerContext,
     )
 
     protected abstract fun reportNonInlineMemberValInitialization(
         node: VariableAssignmentNode,
-        symbol: FirPropertySymbol,
+        symbol: FirVariableSymbol<*>,
         reporter: DiagnosticReporter,
         context: CheckerContext,
     )
 
     protected abstract fun reportValReassignment(
         node: VariableAssignmentNode,
-        symbol: FirPropertySymbol,
+        symbol: FirVariableSymbol<*>,
         reporter: DiagnosticReporter,
         context: CheckerContext,
     )
@@ -191,7 +194,7 @@ abstract class VariableInitializationCheckProcessor {
     protected abstract fun filterProperties(
         data: PropertyInitializationInfoData,
         isForInitialization: Boolean
-    ): Set<FirPropertySymbol>
+    ): Set<FirVariableSymbol<*>>
 
     protected abstract fun FirQualifiedAccessExpression.hasMatchingReceiver(data: PropertyInitializationInfoData): Boolean
 }
@@ -228,3 +231,9 @@ private fun ControlFlowGraph.isInline(until: FirBasedSymbol<*>?): Boolean {
     if (declaration?.evaluatedInline != true) return false
     return enterNode.previousNodes.all { it.owner.isInline(until) }
 }
+
+private val FirVariableSymbol<*>.isLocal: Boolean
+    get() = when (this) {
+        is FirPropertySymbol -> isLocal
+        else -> false
+    }
