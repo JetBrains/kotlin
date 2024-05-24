@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
 import org.jetbrains.kotlin.konan.test.diagnostics.*
+import org.jetbrains.kotlin.konan.test.inlining.AbstractNativeUnboundIrSerializationTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractClassicNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirLightTreeNativeIrTextTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractFirPsiNativeIrTextTest
@@ -510,6 +511,17 @@ fun main() {
                 annotations = listOf(*frontendFir()),
             ) {
                 model(extension = null, recursive = false)
+            }
+        }
+
+        // New frontend test infrastructure tests
+        testGroup(testsRoot = "native/native.tests/tests-gen", testDataRoot = "compiler/testData") {
+            testClass<AbstractNativeUnboundIrSerializationTest>(
+                suiteTestClassName = "NativeUnboundIrSerializationTestGenerated",
+                annotations = listOf(*frontendFir(), klib())
+            ) {
+                model("codegen/box")
+                model("codegen/boxInline")
             }
         }
 
