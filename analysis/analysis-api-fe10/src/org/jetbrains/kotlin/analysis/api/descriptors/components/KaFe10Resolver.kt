@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -66,12 +67,23 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.checkWithAttachment
 
 internal class KaFe10Resolver(
     override val analysisSession: KaFe10Session,
 ) : KaAbstractResolver(), KaFe10SessionComponent {
     override fun resolveToSymbols(reference: KtReference): Collection<KaSymbol> {
-        require(reference is KtFe10Reference)
+        if (reference is KtDefaultAnnotationArgumentReference) {
+            return resolveDefaultAnnotationArgumentReference(reference)
+        }
+
+        checkWithAttachment(
+            reference is KtFe10Reference,
+            { "${reference::class.simpleName} is not extends ${KtFe10Reference::class.simpleName}" },
+        ) {
+            it.withPsiAttachment("reference", reference.element)
+        }
+
         val bindingContext = analysisContext.analyze(reference.element, AnalysisMode.PARTIAL)
         return reference.getTargetDescriptors(bindingContext).mapNotNull { descriptor ->
             descriptor.toKtSymbol(analysisContext)

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KaSymbolBasedReference
 import org.jetbrains.kotlin.analysis.api.calls.*
@@ -61,6 +63,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
+import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -81,7 +84,17 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbstractResolver(), KaFirSessionComponent {
     override fun resolveToSymbols(reference: KtReference): Collection<KaSymbol> {
-        check(reference is KaSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference" }
+        if (reference is KtDefaultAnnotationArgumentReference) {
+            return resolveDefaultAnnotationArgumentReference(reference)
+        }
+
+        checkWithAttachment(
+            reference is KaSymbolBasedReference,
+            { "${reference::class.simpleName} is not extends ${KaSymbolBasedReference::class.simpleName}" },
+        ) {
+            withPsiEntry("reference", reference.element)
+        }
+
         with(reference) {
             return analysisSession.resolveToSymbols()
         }

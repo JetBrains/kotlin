@@ -59,6 +59,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
   }
 
   @Test
+  @TestMetadata("annotationInAnnotation_arrayOf.kt")
+  public void testAnnotationInAnnotation_arrayOf() {
+    runTest("analysis/analysis-api/testData/referenceResolve/annotationInAnnotation_arrayOf.kt");
+  }
+
+  @Test
   @TestMetadata("AnnotationInsideFunction.kt")
   public void testAnnotationInsideFunction() {
     runTest("analysis/analysis-api/testData/referenceResolve/AnnotationInsideFunction.kt");

@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
+import org.jetbrains.kotlin.references.fe10.base.DummyKtFe10ReferenceResolutionHelper
+import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.services.TestServices
@@ -30,6 +32,7 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
         PluginStructureProvider.registerApplicationServices(application, PLUGIN_RELATIVE_PATH)
+        application.registerService(KtFe10ReferenceResolutionHelper::class.java, DummyKtFe10ReferenceResolutionHelper)
     }
 
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
