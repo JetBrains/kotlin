@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import org.jetbrains.kotlin.utils.withIndent
 
 abstract class AbstractImplementationPrinter<Implementation, Element, ImplementationField>(
@@ -105,21 +104,9 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
                 print(")")
             }
 
-            print(" : ")
             val parentRefs = listOfNotNull(getPureAbstractElementType(implementation).takeIf { implementation.needPureAbstractElement }) +
                     implementation.allParents.map { it.withSelfArgs() }
-            print(
-                buildString {
-                    parentRefs.joinToWithBuffer(this) { parent ->
-                        append(parent.render())
-                        if (parent.typeKind == TypeKind.Class) {
-                            append("(")
-                            parentConstructorArguments(implementation).joinTo(this)
-                            append(")")
-                        }
-                    }
-                }
-            )
+            printInheritanceClause(parentRefs, parentConstructorArguments(implementation))
             val printer = SmartPrinter(StringBuilder())
             withNewPrinter(printer) {
                 val bodyFieldPrinter = makeFieldPrinter(this)

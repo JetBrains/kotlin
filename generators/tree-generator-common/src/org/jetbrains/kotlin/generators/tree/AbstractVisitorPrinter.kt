@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.generators.tree.imports.ImportCollector
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.withIndent
@@ -43,7 +42,7 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
     /**
      * The superclass for this visitor class.
      */
-    abstract val visitorSuperType: ClassRef<PositionTypeParameterRef>?
+    abstract val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
 
     /**
      * If `true`, visitor methods for generic tree elements will be parameterized correspondingly.
@@ -111,11 +110,11 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
             printMethodDeclarationForElement(
                 element,
                 modality = when {
-                    visitorSuperType == null && parentInVisitor == null && visitorType.kind == TypeKind.Class -> Modality.ABSTRACT
-                    visitorSuperType == null && parentInVisitor != null && visitorType.kind == TypeKind.Class -> Modality.OPEN
+                    visitorSuperTypes.isEmpty() && parentInVisitor == null && visitorType.kind == TypeKind.Class -> Modality.ABSTRACT
+                    visitorSuperTypes.isEmpty() && parentInVisitor != null && visitorType.kind == TypeKind.Class -> Modality.OPEN
                     else -> null
                 },
-                override = parentInVisitor != null && visitorSuperType != null,
+                override = parentInVisitor != null && visitorSuperTypes.isNotEmpty(),
             )
             if (parentInVisitor != null) {
                 println(" =")
@@ -139,9 +138,7 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
                 TypeKind.Class -> print("abstract class ")
             }
             print(visitorType.simpleName, visitorTypeParameters.typeParameters())
-            visitorSuperType?.let {
-                print(" : ", it.render(), it.inheritanceClauseParenthesis())
-            }
+            printInheritanceClause(visitorSuperTypes)
             print(visitorTypeParameters.multipleUpperBoundsList())
             printBlock {
                 printAdditionalMethods()

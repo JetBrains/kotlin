@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,17 +10,28 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.imports.ImportCollecting
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.IndentingPrinter
+import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import org.jetbrains.kotlin.utils.withIndent
 
 interface ImportCollectingPrinter : ImportCollecting, IndentingPrinter
 
-/**
- * The braces to print in the inheritance clause if this is a class, or empty string if this is an interface.
- */
-fun ImplementationKind?.braces(): String = when (this) {
-    ImplementationKind.Interface, ImplementationKind.SealedInterface -> ""
-    ImplementationKind.OpenClass, ImplementationKind.AbstractClass, ImplementationKind.SealedClass -> "()"
-    else -> throw IllegalStateException(this.toString())
+fun ImportCollectingPrinter.printInheritanceClause(
+    supertypes: List<ClassOrElementRef>,
+    superclassConstructorArgs: List<String> = emptyList(),
+) {
+    if (supertypes.isEmpty()) return
+    print(
+        buildString {
+            supertypes.sortedBy { it.typeKind }.joinToWithBuffer(this, prefix = " : ") { supertype ->
+                append(supertype.render())
+                if (supertype.typeKind == TypeKind.Class) {
+                    append("(")
+                    superclassConstructorArgs.joinTo(this)
+                    append(")")
+                }
+            }
+        }
+    )
 }
 
 fun IndentingPrinter.printKDoc(kDoc: String?) {

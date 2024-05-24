@@ -25,8 +25,8 @@ internal class TypeTransformerPrinter(
     private val rootElement: Element,
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
 
-    override val visitorSuperType: ClassRef<PositionTypeParameterRef>
-        get() = elementVisitorType.withArgs(resultTypeVariable, dataTypeVariable)
+    override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
+        get() = listOf(elementVisitorType.withArgs(resultTypeVariable, dataTypeVariable))
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = listOf(resultTypeVariable, dataTypeVariable)
