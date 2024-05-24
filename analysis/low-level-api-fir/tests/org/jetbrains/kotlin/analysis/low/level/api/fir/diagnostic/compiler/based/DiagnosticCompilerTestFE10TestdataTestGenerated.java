@@ -41011,6 +41011,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("expansionDnnTypeArgument.kt")
+      public void testExpansionDnnTypeArgument() {
+        runTest("compiler/testData/diagnostics/tests/typealias/expansionDnnTypeArgument.kt");
+      }
+
+      @Test
       @TestMetadata("exposedExpandedType.kt")
       public void testExposedExpandedType() {
         runTest("compiler/testData/diagnostics/tests/typealias/exposedExpandedType.kt");
