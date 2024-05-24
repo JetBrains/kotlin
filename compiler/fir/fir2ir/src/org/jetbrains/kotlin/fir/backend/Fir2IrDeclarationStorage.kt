@@ -118,6 +118,15 @@ class Fir2IrDeclarationStorage(
                 else -> normal[fir]
             }
         }
+
+        fun getOriginal(fir: FirProperty): IrPropertySymbol? {
+            return if (fir.origin == FirDeclarationOrigin.CommonArtefact) {
+                when (fir) {
+                    is FirSyntheticProperty -> synthetic.getCachedIrSymbolByCommonFunction(fir.cacheKey)
+                    else -> normal.getCachedIrSymbolByCommonProperty(fir)
+                }
+            } else null
+        }
     }
 
     private val propertyCache = PropertyCacheStorage(commonMemberStorage.propertyCache, commonMemberStorage.syntheticPropertyCache)
@@ -292,6 +301,7 @@ class Fir2IrDeclarationStorage(
         if (function.visibility == Visibilities.Local) {
             return localStorage.getLocalFunctionSymbol(function)
         }
+
         runIf(function.origin.generatedAnyMethod) {
             val containingClass = function.getContainingClass()!!
             val cache = dataClassGeneratedFunctionsCache.computeIfAbsent(containingClass) { DataClassGeneratedFunctionsStorage() }
@@ -303,11 +313,16 @@ class Fir2IrDeclarationStorage(
             }
             return cachedFunction?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
         }
-        val cachedIrCallable = getCachedIrCallableSymbol(
-            function,
-            fakeOverrideOwnerLookupTag,
-            functionCache::get
-        )
+        val cachedIrCallable =
+            if (function.origin == FirDeclarationOrigin.CommonArtefact) {
+                functionCache.getCachedIrSymbolByCommonFunction(function)
+            } else {
+                getCachedIrCallableSymbol(
+                    function,
+                    fakeOverrideOwnerLookupTag,
+                    functionCache::get
+                )
+            }
         return cachedIrCallable?.let(symbolsMappingForLazyClasses::remapFunctionSymbol)
     }
 
@@ -429,7 +444,9 @@ class Fir2IrDeclarationStorage(
     // ------------------------------------ constructors ------------------------------------
 
     fun getCachedIrConstructorSymbol(constructor: FirConstructor): IrConstructorSymbol? {
-        return constructorCache[constructor]
+        return if (constructor.origin == FirDeclarationOrigin.CommonArtefact) {
+            constructorCache.getCachedIrSymbolByCommonFunction(constructor)
+        } else constructorCache.get(constructor)
     }
 
     fun createAndCacheIrConstructor(
@@ -672,11 +689,12 @@ class Fir2IrDeclarationStorage(
     ): IrPropertySymbol? {
         @Suppress("NAME_SHADOWING")
         val property = prepareProperty(property)
-        val symbol = getCachedIrCallableSymbol(
-            property,
-            fakeOverrideOwnerLookupTag,
-            propertyCache::get
-        ) ?: return null
+        val symbol = propertyCache.getOriginal(property)
+            ?: getCachedIrCallableSymbol(
+                property,
+                fakeOverrideOwnerLookupTag,
+                propertyCache::get
+            ) ?: return null
         return symbolsMappingForLazyClasses.remapPropertySymbol(symbol)
     }
 
@@ -902,7 +920,7 @@ class Fir2IrDeclarationStorage(
             return delegatedProperty?.delegate?.symbol ?: getIrVariableSymbol(fir)
         }
         @OptIn(UnsafeDuringIrConstructionAPI::class)
-        propertyCache[fir]?.ownerIfBound()?.let { return it.backingField!!.symbol }
+        (propertyCache.getOriginal(fir) ?: propertyCache[fir])?.ownerIfBound()?.let { return it.backingField!!.symbol }
         val irParent = findIrParent(fir, fakeOverrideOwnerLookupTag = null)
         val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
         return createAndCacheIrProperty(fir, irParent, predefinedOrigin = parentOrigin).backingField!!.symbol
@@ -1397,6 +1415,38 @@ private fun FirCallableDeclaration.isFakeOverrideImpl(fakeOverrideOwnerLookupTag
     // this condition is true for all places when we are trying to create "fake" fake overrides in IR
     // "fake" fake overrides are f/o which are presented in IR but have no corresponding FIR f/o
     return fakeOverrideOwnerLookupTag != containingClassLookupTag()
+}
+
+private inline fun <reified FC : FirCallableDeclaration, reified IS : IrSymbol> Map<FC, IS>.getCachedIrSymbolByCommonDeclaration(
+    isSame: (FC) -> Boolean
+): IS? {
+    return asIterable().find {
+        isSame(it.key)
+    }?.also {
+        require(it.key.origin != FirDeclarationOrigin.CommonArtefact)
+    }?.value
+}
+
+private inline fun <reified FF : FirFunction, reified IS : IrSymbol> Map<FF, IS>.getCachedIrSymbolByCommonFunction(
+    firFunction: FF
+): IS? {
+    val callableId = firFunction.symbol.callableId
+    val receiver = firFunction.receiverParameter?.typeRef?.coneType
+    val argTypes = firFunction.valueParameters.map { it.returnTypeRef.coneType }
+    return getCachedIrSymbolByCommonDeclaration {
+        it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType == receiver &&
+                it.valueParameters.map { it.returnTypeRef.coneType } == argTypes
+    }
+}
+
+private inline fun <reified FP : FirProperty, reified IS : IrSymbol> Map<FP, IS>.getCachedIrSymbolByCommonProperty(
+    firProperty: FP,
+): IS? {
+    val callableId = firProperty.symbol.callableId
+    val receiver = firProperty.receiverParameter?.typeRef?.coneType
+    return getCachedIrSymbolByCommonDeclaration {
+        it.symbol.callableId == callableId && it.receiverParameter?.typeRef?.coneType == receiver
+    }
 }
 
 private object IsStubPropertyForPureFieldKey : FirDeclarationDataKey()
