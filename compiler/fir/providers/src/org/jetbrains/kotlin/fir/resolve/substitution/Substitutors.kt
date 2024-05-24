@@ -68,10 +68,10 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         return wrapProjection(projection, newType)
     }
 
-    fun ConeKotlinType?.updateNullabilityIfNeeded(originalType: ConeKotlinType): ConeKotlinType? {
+    fun ConeKotlinType.updateNullabilityIfNeeded(originalType: ConeKotlinType): ConeKotlinType {
         return when {
-            originalType is ConeDefinitelyNotNullType -> this?.withNullability(ConeNullability.NOT_NULL, typeContext)
-            originalType.isMarkedNullable -> this?.withNullability(ConeNullability.NULLABLE, typeContext)
+            originalType is ConeDefinitelyNotNullType -> this.withNullability(ConeNullability.NOT_NULL, typeContext)
+            originalType.isMarkedNullable -> this.withNullability(ConeNullability.NULLABLE, typeContext)
             else -> this
         }
     }
@@ -264,7 +264,7 @@ class ConeSubstitutorByMap private constructor(
 
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
-        return substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type)
+        return substitution[type.lookupTag.symbol]?.updateNullabilityIfNeeded(type)
             ?.withCombinedAttributesFrom(type)
             ?: return null
     }
@@ -360,7 +360,7 @@ internal class ConeTypeSubstitutorByTypeConstructor(
         if (type !is ConeLookupTagBasedType && type !is ConeStubType && type !is ConeTypeVariableType) return null
         val new = map[type.typeConstructor(typeContext)] ?: return null
         val approximatedIntegerLiteralType = if (approximateIntegerLiterals) new.approximateIntegerLiteralType() else new
-        return approximatedIntegerLiteralType.updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
+        return approximatedIntegerLiteralType.updateNullabilityIfNeeded(type).withCombinedAttributesFrom(type)
     }
 
     override fun toString(): String {
