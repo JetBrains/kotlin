@@ -44,4 +44,12 @@ object KlibIrInlinerTestDirectives : SimpleDirectivesContainer() {
             it's possible to have just one dump file.
         """.trimIndent()
     )
+
+    val SKIP_UNBOUND_IR_SERIALIZATION by directive(
+        """
+            This is a temporary directive to skip test data files with call sites of local fake overrides inside
+            inline functions. Currently, serialization of such call sites is not supported. It should be supported
+            in KT-72296 along with the removal of this directive.
+        """.trimIndent()
+    )
 }
