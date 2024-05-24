@@ -35,7 +35,10 @@ class JavaCompilerFacade(private val testServices: TestServices) {
             configuration[JVMConfigurationKeys.JVM_TARGET],
             configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
         )
-        val finalJavacOptions = CodegenTestUtil.prepareJavacOptions(javaClasspath, javacOptions, outputDir)
+        val finalJavacOptions = CodegenTestUtil.prepareJavacOptions(
+            javaClasspath, javacOptions, outputDir,
+            /* isJava9Module = */ module.files.any { it.isModuleInfoJavaFile }
+        )
 
         val javaFiles = testServices.sourceFileProvider.getRealJavaFiles(module)
         val ignoreErrors = CodegenTestDirectives.IGNORE_JAVA_ERRORS in module.directives

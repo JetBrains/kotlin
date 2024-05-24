@@ -451,7 +451,8 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                     configuration.get(JVMConfigurationKeys.JVM_TARGET),
                     configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
             );
-            List<String> finalJavacOptions = prepareJavacOptions(javaClasspath, javacOptions, javaClassesOutputDirectory);
+            boolean isJava9Module = false; // No Java modules in legacy tests
+            List<String> finalJavacOptions = prepareJavacOptions(javaClasspath, javacOptions, javaClassesOutputDirectory, isJava9Module);
 
             try {
                 runJavacTask(

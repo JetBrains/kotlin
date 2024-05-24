@@ -79,7 +79,8 @@ public class CodegenTestUtil {
     public static List<String> prepareJavacOptions(
             @NotNull List<String> additionalClasspath,
             @NotNull List<String> additionalOptions,
-            @NotNull File outDirectory
+            @NotNull File outDirectory,
+            boolean isJava9Module
     ) {
         List<String> classpath = new ArrayList<>();
         classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
@@ -87,8 +88,9 @@ public class CodegenTestUtil {
         classpath.add(KtTestUtil.getAnnotationsJar().getPath());
         classpath.addAll(additionalClasspath);
 
+        String classPathOrModulePath = isJava9Module ? "--module-path" : "-classpath";
         List<String> options = new ArrayList<>(Arrays.asList(
-                "-classpath", StringsKt.join(classpath, File.pathSeparator),
+                classPathOrModulePath, StringsKt.join(classpath, File.pathSeparator),
                 "-d", outDirectory.getPath()
         ));
         options.addAll(additionalOptions);
