@@ -95,7 +95,7 @@ internal object FirCompileTimeConstantEvaluator {
     ): FirLiteralExpression? {
         return when {
             mode == KaConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION && !isConst -> null
-            isVal && hasInitializer -> {
+            isVal -> {
                 withTrackingVariableEvaluation(this) { evaluate(resolvedInitializer, mode) }
             }
             else -> null
@@ -107,8 +107,8 @@ internal object FirCompileTimeConstantEvaluator {
     ): FirLiteralExpression? {
         return when {
             mode == KaConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION && !(isStatic && isFinal) -> null
-            isVal && hasInitializer -> {
-                evaluate(fir.initializer, mode)
+            isVal -> {
+                withTrackingVariableEvaluation(this) { evaluate(fir.initializer, mode) }
             }
             else -> null
         }

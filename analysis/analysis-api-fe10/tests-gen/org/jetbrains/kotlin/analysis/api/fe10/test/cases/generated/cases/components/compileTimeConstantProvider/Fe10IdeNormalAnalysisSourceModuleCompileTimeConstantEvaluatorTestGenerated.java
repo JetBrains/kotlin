@@ -203,6 +203,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGe
   }
 
   @Test
+  @TestMetadata("recursiveJavaFieldsReference.kt")
+  public void testRecursiveJavaFieldsReference() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/recursiveJavaFieldsReference.kt");
+  }
+
+  @Test
   @TestMetadata("recursivePropertyReference.kt")
   public void testRecursivePropertyReference() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/recursivePropertyReference.kt");
