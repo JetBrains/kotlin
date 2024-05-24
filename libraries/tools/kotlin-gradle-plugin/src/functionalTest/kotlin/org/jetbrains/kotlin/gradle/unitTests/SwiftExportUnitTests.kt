@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.CopySwiftExportIntermediatesForConsumer
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.MergeStaticLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
@@ -29,7 +30,6 @@ import org.junit.Assume
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 class SwiftExportUnitTests {
     @Test
@@ -78,7 +78,7 @@ class SwiftExportUnitTests {
         val generateSPMPackageTask = project.tasks.getByName("iosSimulatorArm64DebugGenerateSPMPackage")
         val buildSPMPackageTask = project.tasks.getByName("iosSimulatorArm64DebugBuildSPMPackage")
         val linkSwiftExportBinaryTask = project.tasks.getByName("linkSwiftExportBinaryDebugStaticIosSimulatorArm64")
-        val mergeLibrariesTask = project.tasks.getByName("mergeIosSimulatorDebugSwiftExportLibraries")
+        val mergeLibrariesTask = project.tasks.getByName("mergeIosSimulatorDebugEmbedSwiftExportLibraries")
         val copySwiftExportTask = project.tasks.getByName("copyDebugSPMIntermediates")
         val embedAndSignTask = project.tasks.getByName("embedAndSignAppleFrameworkForXcode")
 
@@ -118,20 +118,16 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val embedAndSignTask = project.tasks.getByName("embedAndSignAppleFrameworkForXcode")
-
-        val buildType = embedAndSignTask.inputs.properties["type"] as NativeBuildType
-
-        val arm64SimLib = project.multiplatformExtension.iosSimulatorArm64().binaries.findStaticLib("SwiftExportBinary", buildType)
-        val arm64Lib = project.multiplatformExtension.iosArm64().binaries.findStaticLib("SwiftExportBinary", buildType)
-        val x64Lib = project.multiplatformExtension.iosX64().binaries.findStaticLib("SwiftExportBinary", buildType)
-
-        assertNotNull(arm64SimLib)
-        assertNull(arm64Lib)
-        assertNull(x64Lib)
-
-        val mergeTask = project.tasks.withType(MergeStaticLibrariesTask::class.java).single()
+        val copyTask = embedAndSignTask.taskDependencies.getDependencies(null)
+            .filterIsInstance<CopySwiftExportIntermediatesForConsumer>().single()
+        val mergeTask = copyTask.taskDependencies.getDependencies(null).filterIsInstance<MergeStaticLibrariesTask>().single()
         val linkTask = mergeTask.taskDependencies.getDependencies(null).filterIsInstance<KotlinNativeLink>().single()
 
+        val buildType = embedAndSignTask.inputs.properties["type"] as NativeBuildType
+        val arm64SimLib = project.multiplatformExtension.iosSimulatorArm64().binaries.findStaticLib("SwiftExportBinary", buildType)
+
+        assertNotNull(arm64SimLib)
+        assertEquals(linkTask.binary, arm64SimLib)
         assertEquals(linkTask.konanTarget, arm64SimLib.konanTarget)
     }
 
