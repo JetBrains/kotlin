@@ -1,0 +1,2 @@
+Resolved to:
+0: (in AbstractModule) open fun install(builder: AbstractModule.Builder<*>!)

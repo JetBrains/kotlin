@@ -1,0 +1,17 @@
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = JavaEnum.A
+        isSafeNavigation = false
+        type = JavaEnum
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = name
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val name: kotlin.String
+        callableId = kotlin/Enum.name
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}

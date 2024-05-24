@@ -1,0 +1,33 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtImplicitReceiverValue:
+          symbol = KtReceiverParameterSymbol:
+            annotationsList: []
+            origin: SOURCE
+            owningCallableSymbol: KtAnonymousFunctionSymbol(<local>/<no name provided>)
+            type: KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: Controller
+          type = Controller
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /Controller.suspendHere(<dispatch receiver>: Controller, x: ERROR CLASS: Symbol not found for Continuation): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = x
+              receiverType = null
+              returnType = ERROR CLASS: Symbol not found for Continuation
+              symbol = x: ERROR CLASS: Symbol not found for Continuation
+              callableId = null
+          ]
+          callableId = /Controller.suspendHere
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'.>

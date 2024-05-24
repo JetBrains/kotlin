@@ -1,0 +1,18 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = collection
+        isSafeNavigation = false
+        type = kotlin.collections.Collection<kotlin.String>
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = @EnhancedNullability java.util.stream.Stream<@EnhancedNullability kotlin.String>
+        symbol = kotlin/collections/Collection.stream(<dispatch receiver>: kotlin.collections.Collection<E>): @EnhancedNullability java.util.stream.Stream<@EnhancedNullability E>
+        valueParameters = []
+        callableId = kotlin/collections/Collection.stream
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true

@@ -1,5 +1,5 @@
 // WITH_STDLIB
-<expr>@file:JvmName("Foo")</expr>
+@file:<expr>JvmName</expr>("Foo")
 package some.pkg
 
 val p : Int = 42

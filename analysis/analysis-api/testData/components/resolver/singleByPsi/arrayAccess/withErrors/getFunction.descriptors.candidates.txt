@@ -1,0 +1,33 @@
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: OTHER_ERROR with get>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Int
+        symbol = /get(<extension receiver>: kotlin.Int, index: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableId = null
+        ]
+        callableId = /get
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      2 -> (KtVariableLikeSignature:
+        name = index
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = index: kotlin.Int
+        callableId = null)
+    }
+  isInBestCandidates = true

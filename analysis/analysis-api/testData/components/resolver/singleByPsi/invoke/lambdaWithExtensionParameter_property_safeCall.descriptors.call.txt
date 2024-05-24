@@ -1,0 +1,20 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = foo
+          isSafeNavigation = true
+          type = test.Foo?
+        extensionReceiver = null
+        signature = KtVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.Unit>
+          symbol = val action: kotlin.Function0<kotlin.Unit>
+          callableId = test/Foo.action
+      simpleAccess = Read:
+        
+      typeArgumentsMapping = {}
+  ]
+  diagnostic = ERROR<null: UNSAFE_CALL_ERROR with invoke>

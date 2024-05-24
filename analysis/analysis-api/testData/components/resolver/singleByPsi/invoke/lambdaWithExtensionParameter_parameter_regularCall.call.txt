@@ -1,0 +1,14 @@
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = action
+        receiverType = null
+        returnType = @ExtensionFunctionType kotlin.Function1<test.Foo, kotlin.Unit>
+        symbol = action: @ExtensionFunctionType kotlin.Function1<test.Foo, kotlin.Unit>
+        callableId = null
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}

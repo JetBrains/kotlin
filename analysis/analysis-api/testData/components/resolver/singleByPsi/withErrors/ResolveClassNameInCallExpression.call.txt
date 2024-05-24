@@ -1,0 +1,19 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = Test<T>
+          symbol = <constructor>(): Test<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<null: Inapplicable candidate>

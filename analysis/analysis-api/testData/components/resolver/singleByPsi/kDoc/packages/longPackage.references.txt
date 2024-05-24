@@ -1,0 +1,26 @@
+<caret_1> resolved to:
+0: package one
+
+<caret_2> resolved to:
+0: package one
+
+<caret_3> resolved to:
+0: package one.two
+
+<caret_4> resolved to:
+0: package one
+
+<caret_5> resolved to:
+0: package one.two
+
+<caret_6> resolved to:
+0: package one.two.three
+
+<caret_7> resolved to:
+0: package one
+
+<caret_8> resolved to:
+0: package one.two
+
+<caret_9> resolved to:
+0: package one.two.three

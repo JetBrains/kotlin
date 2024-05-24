@@ -10,6 +10,6 @@ KtApplicableCallCandidateInfo:
         symbol = l: A
         callableId = null
     simpleAccess = Read:
-      
+
     typeArgumentsMapping = {}
   isInBestCandidates = true

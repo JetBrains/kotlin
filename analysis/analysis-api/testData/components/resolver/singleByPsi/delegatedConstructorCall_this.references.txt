@@ -1,0 +1,2 @@
+Resolved to:
+0: (in Sub) constructor(p1: kotlin.Int)

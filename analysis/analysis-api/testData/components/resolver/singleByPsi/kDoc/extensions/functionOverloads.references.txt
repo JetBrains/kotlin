@@ -1,0 +1,16 @@
+<caret_1> resolved to:
+0: (in test) fun kotlin.Any.function()
+1: (in test) fun test.Base.function(i: kotlin.Int)
+
+<caret_2> resolved to:
+0: (in test) fun kotlin.Any.function()
+1: (in test) fun test.Base.function(i: kotlin.Int)
+
+<caret_3> resolved to:
+0: (in test) fun kotlin.Any.function()
+1: (in test) fun test.Base.function(i: kotlin.Int)
+2: (in test.Base) fun function()
+
+<caret_4> resolved to:
+0: (in test) fun kotlin.Any.function()
+1: (in test) fun test.Base.function(i: kotlin.Int)

@@ -13,7 +13,7 @@
         symbol = var something: kotlin.Int
         callableId = /A.something
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 <caret_2>: KtSuccessCallInfo:
@@ -49,7 +49,7 @@
         symbol = var something: kotlin.Int
         callableId = /A.something
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 <caret_4>: KtSuccessCallInfo:
@@ -67,7 +67,7 @@
         symbol = var something: kotlin.Int
         callableId = /A.something
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 <caret_5>: KtSuccessCallInfo:
@@ -85,7 +85,7 @@
         symbol = var something: kotlin.Int
         callableId = /A.something
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 <caret_6>: KtSuccessCallInfo:
@@ -109,7 +109,7 @@
         symbol = var something: kotlin.Int
         callableId = /A.something
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 <caret_7>: KtSuccessCallInfo:
@@ -133,7 +133,7 @@
         symbol = var something: kotlin.Int
         callableId = /A.something
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}
 
 <caret_8>: KtSuccessCallInfo:

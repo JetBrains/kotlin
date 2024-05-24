@@ -47,6 +47,6 @@ KtErrorCallInfo:
       typeArgumentsMapping = {}
       argumentMapping = {}
   ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
   local final operator fun Int.invoke(b: Boolean): Unit defined in call
   local final operator fun Int.invoke(a: String): Unit defined in call>

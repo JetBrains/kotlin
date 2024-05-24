@@ -100,7 +100,7 @@ KtErrorCallInfo:
           callableId = null)
       }
   ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
   public fun <T> function(t: TypeVariable(T), a: Char): Unit defined in root package in file ambiguousWithInferredTypeParameters.kt
   public fun <U> function(u: TypeVariable(U), b: Boolean): Unit defined in root package in file ambiguousWithInferredTypeParameters.kt
   public fun <V> function(v: TypeVariable(V), c: String): Unit defined in root package in file ambiguousWithInferredTypeParameters.kt>

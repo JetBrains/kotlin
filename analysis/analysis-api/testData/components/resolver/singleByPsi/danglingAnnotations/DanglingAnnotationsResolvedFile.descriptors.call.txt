@@ -1,0 +1,27 @@
+KtSuccessCallInfo:
+  call = KtAnnotationCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.jvm.JvmName
+        symbol = <constructor>(name: kotlin.String): kotlin.jvm.JvmName
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = name
+            receiverType = null
+            returnType = kotlin.String
+            symbol = name: kotlin.String
+            callableId = null
+        ]
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "" -> (KtVariableLikeSignature:
+        name = name
+        receiverType = null
+        returnType = kotlin.String
+        symbol = name: kotlin.String
+        callableId = null)
+    }

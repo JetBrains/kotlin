@@ -13,6 +13,6 @@ KtApplicableCallCandidateInfo:
         symbol = val foo: kotlin.Int
         callableId = /JavaClass.foo
     simpleAccess = Read:
-      
+
     typeArgumentsMapping = {}
   isInBestCandidates = true

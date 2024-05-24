@@ -1,0 +1,31 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = variable
+        isSafeNavigation = false
+        type = test.WithOperator
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = test.WithOperator
+        symbol = test/WithOperator.plus(<dispatch receiver>: test.WithOperator, f: test.Foo): test.WithOperator
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = f
+            receiverType = null
+            returnType = test.Foo
+            symbol = f: test.Foo
+            callableId = null
+        ]
+        callableId = test/WithOperator.plus
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      foo -> (KtVariableLikeSignature:
+        name = f
+        receiverType = null
+        returnType = test.Foo
+        symbol = f: test.Foo
+        callableId = null)
+    }

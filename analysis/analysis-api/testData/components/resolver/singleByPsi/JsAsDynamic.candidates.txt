@@ -1,0 +1,18 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = "some"
+        isSafeNavigation = false
+        type = kotlin.String
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.Any?
+        returnType = dynamic
+        symbol = kotlin/js/asDynamic(<extension receiver>: kotlin.Any?): dynamic
+        valueParameters = []
+        callableId = kotlin/js/asDynamic
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true

@@ -1,0 +1,15 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = parameter
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = parameter: kotlin.Any
+        callableId = null
+    simpleAccess = Read:
+      
+    typeArgumentsMapping = {}
+  isInBestCandidates = false

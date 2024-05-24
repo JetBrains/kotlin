@@ -10,5 +10,5 @@ KtSuccessCallInfo:
         symbol = var bar: kotlin.Int
         callableId = /BaseClass.bar
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}

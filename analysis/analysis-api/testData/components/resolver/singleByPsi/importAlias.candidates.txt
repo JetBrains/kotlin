@@ -1,0 +1,16 @@
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<null: Inapplicable candidate>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = test.pkg.R.string
+        symbol = <constructor>(): test.pkg.R.string
+        valueParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = false

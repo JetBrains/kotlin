@@ -1,0 +1,3 @@
+KtErrorCallInfo:
+  candidateCalls = []
+  diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: One type argument expected for class 'CC'.>

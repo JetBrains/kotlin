@@ -1,0 +1,31 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = withOperator
+        isSafeNavigation = false
+        type = test.WithOperator
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/WithOperator.plusAssign(<dispatch receiver>: test.WithOperator, f: test.Foo): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = f
+            receiverType = null
+            returnType = test.Foo
+            symbol = f: test.Foo
+            callableId = null
+        ]
+        callableId = test/WithOperator.plusAssign
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      foo -> (KtVariableLikeSignature:
+        name = f
+        receiverType = null
+        returnType = test.Foo
+        symbol = f: test.Foo
+        callableId = null)
+    }

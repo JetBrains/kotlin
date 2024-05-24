@@ -13,6 +13,6 @@ KtApplicableCallCandidateInfo:
         symbol = val instance: KtSubClass
         callableId = /KtClass.instance
     simpleAccess = Read:
-      
+
     typeArgumentsMapping = {}
   isInBestCandidates = true

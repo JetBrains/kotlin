@@ -1,0 +1,11 @@
+<caret_1> resolved to:
+0: (in foo) fun foo()
+1: (in foo) interface foo
+2: package foo
+
+<caret_2> resolved to:
+0: package foo
+
+<caret_3> resolved to:
+0: (in foo) fun foo()
+1: (in foo) interface foo

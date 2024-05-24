@@ -31,13 +31,13 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
         super.configureTest(builder)
         with(builder) {
             useDirectives(Directives)
-            forTestsMatching("analysis/analysis-api/testData/referenceResolve/kDoc/*") {
+            forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/*") {
                 defaultDirectives {
                     +AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE
                     +AnalysisApiTestDirectives.IGNORE_FE10
                 }
             }
-            forTestsMatching("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/stdlib/*") {
+            forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/stdlib/*") {
                 defaultDirectives {
                     +ConfigurationDirectives.WITH_STDLIB
                 }

@@ -1,0 +1,28 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            callableId = null
+        ]
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "Not implemented yet" -> (KtVariableLikeSignature:
+        name = reason
+        receiverType = null
+        returnType = kotlin.String
+        symbol = reason: kotlin.String
+        callableId = null)
+    }

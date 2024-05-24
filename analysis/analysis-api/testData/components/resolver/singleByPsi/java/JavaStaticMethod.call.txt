@@ -1,0 +1,17 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = pkg/Foo.bar(): kotlin.Unit
+        valueParameters = []
+        callableId = pkg/Foo.bar
+    typeArgumentsMapping = {}
+    argumentMapping = {}

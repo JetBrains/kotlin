@@ -1,0 +1,3 @@
+KtErrorCallInfo:
+  candidateCalls = []
+  diagnostic = ERROR<null: Unresolved name: Ann0>

@@ -1,0 +1,31 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = list
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableId = null
+        ]
+        callableId = kotlin/collections/MutableList.get
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      0 -> (KtVariableLikeSignature:
+        name = index
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = index: kotlin.Int
+        callableId = null)
+    }

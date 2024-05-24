@@ -1,0 +1,17 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = enum
+        isSafeNavigation = false
+        type = JavaEnum
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = /JavaEnum.getName(<dispatch receiver>: JavaEnum): kotlin.String!
+        valueParameters = []
+        callableId = /JavaEnum.getName
+    typeArgumentsMapping = {}
+    argumentMapping = {}

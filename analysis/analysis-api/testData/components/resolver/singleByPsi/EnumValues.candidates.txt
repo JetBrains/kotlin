@@ -1,0 +1,18 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = E
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Array<test.E>
+        symbol = test/E.values(): kotlin.Array<test.E>
+        valueParameters = []
+        callableId = test/E.values
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true

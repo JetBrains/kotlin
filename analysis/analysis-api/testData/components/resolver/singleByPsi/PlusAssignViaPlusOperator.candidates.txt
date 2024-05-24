@@ -1,0 +1,15 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = variable
+        receiverType = null
+        returnType = test.WithOperator
+        symbol = var variable: test.WithOperator
+        callableId = null
+    simpleAccess = Write:
+      value = variable += foo
+    typeArgumentsMapping = {}
+  isInBestCandidates = true

@@ -1,0 +1,18 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = true
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = aa
+        receiverType = null
+        returnType = A?
+        symbol = val aa: A?
+        callableId = /A.aa
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+  isInBestCandidates = true

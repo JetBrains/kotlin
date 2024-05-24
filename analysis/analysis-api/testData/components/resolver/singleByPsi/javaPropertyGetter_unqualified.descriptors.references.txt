@@ -1,0 +1,3 @@
+Resolved to:
+0: (in JavaClass) open fun getFoo(): kotlin.Int
+1: (in JavaClass) val JavaClass.foo: kotlin.Int

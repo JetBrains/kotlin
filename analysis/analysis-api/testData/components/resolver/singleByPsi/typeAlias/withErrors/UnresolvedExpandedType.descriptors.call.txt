@@ -1,0 +1,28 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = main/foo(t: ERROR_TYPE): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = t
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = t: ERROR_TYPE
+            callableId = null
+        ]
+        callableId = main/foo
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      2 -> (KtVariableLikeSignature:
+        name = t
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = t: ERROR_TYPE
+        callableId = null)
+    }

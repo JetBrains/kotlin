@@ -13,6 +13,6 @@ KtApplicableCallCandidateInfo:
         symbol = val sub: JavaSubClass!
         callableId = /JavaClass.sub
     simpleAccess = Read:
-      
+
     typeArgumentsMapping = {}
   isInBestCandidates = true

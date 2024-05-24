@@ -1,0 +1,2 @@
+Resolved to:
+0: (in MyRestrictedApi) constructor(explanation: kotlin.String, allowlistAnnotations: kotlin.Array<kotlin.reflect.KClass<out kotlin.Annotation!>>, allowedInTestonlyTargets: kotlin.Boolean) (psi: ClsClassImpl)

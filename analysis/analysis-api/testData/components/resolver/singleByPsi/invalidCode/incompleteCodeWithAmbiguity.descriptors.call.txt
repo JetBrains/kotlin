@@ -41,6 +41,6 @@ KtErrorCallInfo:
       typeArgumentsMapping = {}
       argumentMapping = {}
   ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
   public constructor Foo<T>(len: Int) defined in Foo
   public constructor Foo<T>(s: String) defined in Foo>

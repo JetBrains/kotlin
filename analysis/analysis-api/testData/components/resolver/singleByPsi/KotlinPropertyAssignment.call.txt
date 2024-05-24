@@ -1,0 +1,17 @@
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Write:
+      value = 1
+    typeArgumentsMapping = {}

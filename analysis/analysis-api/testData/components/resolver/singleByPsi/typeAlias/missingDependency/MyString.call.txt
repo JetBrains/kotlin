@@ -1,0 +1,31 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = library2.MyInterface
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = library2/MyInterface.check(<dispatch receiver>: library2.MyInterface, string: {library1.MyString=} kotlin.String): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = string
+            receiverType = null
+            returnType = {library1.MyString=} kotlin.String
+            symbol = string: {library1.MyString=} kotlin.String
+            callableId = null
+        ]
+        callableId = library2/MyInterface.check
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      "" -> (KtVariableLikeSignature:
+        name = string
+        receiverType = null
+        returnType = {library1.MyString=} kotlin.String
+        symbol = string: {library1.MyString=} kotlin.String
+        callableId = null)
+    }

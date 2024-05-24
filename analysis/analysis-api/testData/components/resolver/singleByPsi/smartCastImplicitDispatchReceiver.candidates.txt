@@ -21,6 +21,6 @@ KtApplicableCallCandidateInfo:
         symbol = val length: kotlin.Int
         callableId = kotlin/String.length
     simpleAccess = Read:
-      
+
     typeArgumentsMapping = {}
   isInBestCandidates = true

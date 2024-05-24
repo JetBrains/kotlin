@@ -13,7 +13,7 @@ KtApplicableCallCandidateInfo:
         symbol = var value: T
         callableId = /value
     simpleAccess = Read:
-      
+
     typeArgumentsMapping = {
       T -> (kotlin.Int)
     }

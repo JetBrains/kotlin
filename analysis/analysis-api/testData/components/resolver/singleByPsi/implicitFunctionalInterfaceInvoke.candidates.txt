@@ -1,0 +1,15 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = a: A
+        callableId = null
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+  isInBestCandidates = true

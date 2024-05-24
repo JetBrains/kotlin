@@ -1,2 +1,0 @@
-Resolved to:
-0: (in one.two.BaseClass) fun foo()

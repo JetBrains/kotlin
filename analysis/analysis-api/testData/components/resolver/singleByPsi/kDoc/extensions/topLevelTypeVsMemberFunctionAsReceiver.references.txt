@@ -1,0 +1,8 @@
+<caret_1> resolved to:
+Nothing (Unresolved reference)
+
+<caret_2> resolved to:
+0: (in test.WithMember) fun Foo()
+
+<caret_3> resolved to:
+0: (in test.WithMember) fun Foo()

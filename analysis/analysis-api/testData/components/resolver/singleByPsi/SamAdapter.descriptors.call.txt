@@ -1,0 +1,28 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = javax/swing/SwingUtilities.invokeLater(doRun: java.lang.Runnable!): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = doRun
+            receiverType = null
+            returnType = java.lang.Runnable!
+            symbol = doRun: java.lang.Runnable!
+            callableId = null
+        ]
+        callableId = javax/swing/SwingUtilities.invokeLater
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      {  } -> (KtVariableLikeSignature:
+        name = doRun
+        receiverType = null
+        returnType = java.lang.Runnable!
+        symbol = doRun: java.lang.Runnable!
+        callableId = null)
+    }

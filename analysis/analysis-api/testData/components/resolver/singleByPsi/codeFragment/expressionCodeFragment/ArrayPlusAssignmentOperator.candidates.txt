@@ -1,0 +1,31 @@
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = list
+        isSafeNavigation = false
+        type = MyList
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /MyList.set(<dispatch receiver>: MyList, index: kotlin.Int, value: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableId = null,
+          KtVariableLikeSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            callableId = null
+        ]
+        callableId = /MyList.set
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true

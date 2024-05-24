@@ -1,0 +1,14 @@
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = x
+        receiverType = null
+        returnType = A
+        symbol = x: A
+        callableId = null
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}

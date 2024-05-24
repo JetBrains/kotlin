@@ -1,0 +1,5 @@
+<caret>: NO_CANDIDATES
+
+<caret_singleIfStatement>: NO_CANDIDATES
+
+<caret_singleWhenStatement>: NO_CANDIDATES

@@ -1,5 +1,0 @@
-<caret_1> resolved to:
-0: (in Storage) open fun getValue(): kotlin.String!
-
-<caret_2> resolved to:
-0: (in Storage) open fun getValue(): kotlin.String!
