@@ -8,13 +8,21 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.isCatchParameter
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
@@ -58,4 +66,62 @@ fun FirPropertySymbol.requiresInitialization(isForInitialization: Boolean): Bool
 }
 
 
-object PropertyInitializationCheckProcessor : VariableInitializationCheckProcessor()
+object PropertyInitializationCheckProcessor : VariableInitializationCheckProcessor() {
+    override fun filterProperties(
+        data: PropertyInitializationInfoData,
+        isForInitialization: Boolean
+    ): Set<FirPropertySymbol> {
+        // If a property has an initializer (or does not need one), then any reads are OK while any writes are OK
+        // if it's a `var` and bad if it's a `val`. `FirReassignmentAndInvisibleSetterChecker` does this without a CFG.
+        return data.properties.filterTo(mutableSetOf()) {
+            it.requiresInitialization(isForInitialization) || it in data.conditionallyInitializedProperties
+        }
+    }
+
+    override fun PropertyInitializationInfoData.reportCapturedInitialization(
+        node: VariableAssignmentNode,
+        symbol: FirPropertySymbol,
+        reporter: DiagnosticReporter,
+        context: CheckerContext
+    ) {
+        val capturedInitializationError = if (receiver != null)
+            FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
+        else
+            FirErrors.CAPTURED_VAL_INITIALIZATION
+
+        reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol, context)
+    }
+
+    override fun FirQualifiedAccessExpression.hasMatchingReceiver(data: PropertyInitializationInfoData): Boolean {
+        val expression = dispatchReceiver?.unwrapSmartcastExpression()
+        return (expression as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == data.receiver ||
+                (expression as? FirResolvedQualifier)?.symbol == data.receiver
+    }
+
+    override fun reportUninitializedVariable(
+        reporter: DiagnosticReporter,
+        node: QualifiedAccessNode,
+        symbol: FirPropertySymbol,
+        context: CheckerContext,
+    ) {
+        reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
+    }
+
+    override fun reportNonInlineMemberValInitialization(
+        node: VariableAssignmentNode,
+        symbol: FirPropertySymbol,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol, context)
+    }
+
+    override fun reportValReassignment(
+        node: VariableAssignmentNode,
+        symbol: FirPropertySymbol,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
+    }
+}

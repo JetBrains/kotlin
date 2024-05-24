@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.hasDiagnosticKind
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
@@ -35,9 +33,7 @@ abstract class VariableInitializationCheckProcessor {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val filtered = data.properties.filterTo(mutableSetOf()) {
-            it.requiresInitialization(isForInitialization) || it in data.conditionallyInitializedProperties
-        }
+        val filtered = filterProperties(data, isForInitialization)
         if (filtered.isEmpty()) return
 
         data.runCheck(
@@ -49,6 +45,7 @@ abstract class VariableInitializationCheckProcessor {
         )
     }
 
+    // TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
     private fun PropertyInitializationInfoData.runCheck(
         graph: ControlFlowGraph,
         properties: Set<FirPropertySymbol>,
@@ -60,25 +57,13 @@ abstract class VariableInitializationCheckProcessor {
         doNotReportConstantUninitialized: Boolean,
         scopes: MutableMap<FirPropertySymbol, FirDeclaration?>,
     ) {
-        val capturedInitializationError = if (receiver != null)
-            FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
-        else
-            FirErrors.CAPTURED_VAL_INITIALIZATION
-
-        // TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
-        fun FirQualifiedAccessExpression.hasMatchingReceiver(): Boolean {
-            val expression = dispatchReceiver?.unwrapSmartcastExpression()
-            return (expression as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver ||
-                    (expression as? FirResolvedQualifier)?.symbol == receiver
-        }
-
         fun CFGNode<*>.reportErrorsOnInitializationsInInputs(symbol: FirPropertySymbol, path: EdgeLabel) {
             for (previousNode in previousCfgNodes) {
                 if (edgeFrom(previousNode).kind.isBack) continue
                 when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.location) {
                     is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
                     is VariableAssignmentNode ->
-                        reporter.reportOn(assignmentNode.fir.lValue.source, capturedInitializationError, symbol, context)
+                        reportCapturedInitialization(assignmentNode, symbol, reporter, context)
                     else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
                         assignmentNode?.reportErrorsOnInitializationsInInputs(symbol, path)
                 }
@@ -112,19 +97,19 @@ abstract class VariableInitializationCheckProcessor {
 
                 node is VariableAssignmentNode -> {
                     val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: continue
-                    if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver() != true || symbol !in properties) continue
+                    if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver(this) != true || symbol !in properties) continue
 
                     val info = getValue(node)
                     if (info.values.any { it[symbol]?.canBeRevisited() == true }) {
-                        reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
+                        reportValReassignment(node, symbol, reporter, context)
                     } else if (scope != scopes[symbol]) {
-                        reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol, context)
+                        reportCapturedInitialization(node, symbol, reporter, context)
                     } else if (!symbol.isLocal && !node.owner.isInline(until = symbol.getContainingSymbol(context.session))) {
                         // If the assignment is inside INVOKE_ONCE lambda and the lambda is not inlined,
                         // backend generates either separate function or separate class for the lambda.
                         // If we try to initialize non-static final field there, we will get exception at
                         // runtime, since we can initialize such fields only inside constructors.
-                        reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol, context)
+                        reportNonInlineMemberValInitialization(node, symbol, reporter, context)
                     }
                 }
 
@@ -133,10 +118,10 @@ abstract class VariableInitializationCheckProcessor {
                     if (node.fir.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) continue
                     val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: continue
                     if (doNotReportConstantUninitialized && symbol.isConst) continue
-                    if (!symbol.isLateInit && !symbol.isExternal && node.fir.hasMatchingReceiver() && symbol in properties &&
+                    if (!symbol.isLateInit && !symbol.isExternal && node.fir.hasMatchingReceiver(this) && symbol in properties &&
                         getValue(node).values.any { it[symbol]?.isDefinitelyVisited() != true }
                     ) {
-                        reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
+                        reportUninitializedVariable(reporter, node, symbol, context)
                     }
                 }
 
@@ -170,6 +155,45 @@ abstract class VariableInitializationCheckProcessor {
             }
         }
     }
+
+    // ------------------------------------ reporting ------------------------------------
+
+    protected abstract fun PropertyInitializationInfoData.reportCapturedInitialization(
+        node: VariableAssignmentNode,
+        symbol: FirPropertySymbol,
+        reporter: DiagnosticReporter,
+        context: CheckerContext
+    )
+
+    protected abstract fun reportUninitializedVariable(
+        reporter: DiagnosticReporter,
+        node: QualifiedAccessNode,
+        symbol: FirPropertySymbol,
+        context: CheckerContext,
+    )
+
+    protected abstract fun reportNonInlineMemberValInitialization(
+        node: VariableAssignmentNode,
+        symbol: FirPropertySymbol,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    )
+
+    protected abstract fun reportValReassignment(
+        node: VariableAssignmentNode,
+        symbol: FirPropertySymbol,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    )
+
+    // ------------------------------------ utilities ------------------------------------
+
+    protected abstract fun filterProperties(
+        data: PropertyInitializationInfoData,
+        isForInitialization: Boolean
+    ): Set<FirPropertySymbol>
+
+    protected abstract fun FirQualifiedAccessExpression.hasMatchingReceiver(data: PropertyInitializationInfoData): Boolean
 }
 
 private val Kind.doNotReportUninitializedVariableForInitialization: Boolean
