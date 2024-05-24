@@ -52,6 +52,24 @@ public class FirStandaloneNormalAnalysisLibraryBinaryDecompiledModulePsiDeclarat
   }
 
   @Test
+  @TestMetadata("jvmNameOnFunction.kt")
+  public void testJvmNameOnFunction() {
+    runTest("analysis/analysis-api/testData/standalone/binary/jvmNameOnFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmNameOnGetter.kt")
+  public void testJvmNameOnGetter() {
+    runTest("analysis/analysis-api/testData/standalone/binary/jvmNameOnGetter.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmNameOnSetter.kt")
+  public void testJvmNameOnSetter() {
+    runTest("analysis/analysis-api/testData/standalone/binary/jvmNameOnSetter.kt");
+  }
+
+  @Test
   @TestMetadata("multifileFacade.kt")
   public void testMultifileFacade() {
     runTest("analysis/analysis-api/testData/standalone/binary/multifileFacade.kt");

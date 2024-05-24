@@ -11,10 +11,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypes
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.receiverType
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 
@@ -43,8 +40,11 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
     private fun typeParametersMatch(psi: PsiMethod, symbol: KaCallableSymbol): Boolean {
         // PsiMethod for constructor won't have type parameters
         if (symbol is KaConstructorSymbol) return psi.isConstructor
-        if (psi.typeParameters.size != symbol.typeParameters.size) return false
-        psi.typeParameters.zip(symbol.typeParameters) { psiTypeParameter, typeParameterSymbol ->
+        val symbolTypeParameters = symbol.typeParameters.takeIf { it.isNotEmpty() }
+            ?: symbol.receiverParameter?.owningCallableSymbol?.typeParameters
+            ?: emptyList()
+        if (psi.typeParameters.size != symbolTypeParameters.size) return false
+        psi.typeParameters.zip(symbolTypeParameters) { psiTypeParameter, typeParameterSymbol ->
             if (psiTypeParameter.name != typeParameterSymbol.name.asString()) return false
             // TODO: type parameter bounds comparison
         }
@@ -52,13 +52,17 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
     }
 
     private fun KaSession.valueParametersMatch(psi: PsiMethod, symbol: KaFunctionLikeSymbol): Boolean {
-        val valueParameterCount = if (symbol.isExtension) symbol.valueParameters.size + 1 else symbol.valueParameters.size
+        val isExtension = when (symbol) {
+            is KaPropertyAccessorSymbol -> symbol.receiverParameter != null
+            else -> symbol.isExtension
+        }
+        val valueParameterCount = if (isExtension) symbol.valueParameters.size + 1 else symbol.valueParameters.size
         if (psi.parameterList.parametersCount != valueParameterCount) return false
-        if (symbol.isExtension) {
+        if (isExtension) {
             val psiParameter = psi.parameterList.parameters[0]
             if (symbol.receiverType?.let { isTheSameTypes(psi, psiParameter.type, it) } != true) return false
         }
-        val offset = if (symbol.isExtension) 1 else 0
+        val offset = if (isExtension) 1 else 0
         symbol.valueParameters.forEachIndexed { index, valueParameterSymbol ->
             val psiParameter = psi.parameterList.parameters[index + offset]
             // The type of `vararg` value param at last v.s. non-last is mapped differently:

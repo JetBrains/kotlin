@@ -10,7 +10,8 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 /**
@@ -24,8 +25,8 @@ abstract class KotlinPsiDeclarationProvider {
      */
     abstract fun getClassesByClassId(classId: ClassId): Collection<PsiClass>
 
-    abstract fun getProperties(callableId: CallableId): Collection<PsiMember>
-    abstract fun getFunctions(callableId: CallableId): Collection<PsiMethod>
+    abstract fun getProperties(variableLikeSymbol: KaVariableLikeSymbol): Collection<PsiMember>
+    abstract fun getFunctions(functionLikeSymbol: KaFunctionLikeSymbol): Collection<PsiMethod>
 }
 
 abstract class KotlinPsiDeclarationProviderFactory {
