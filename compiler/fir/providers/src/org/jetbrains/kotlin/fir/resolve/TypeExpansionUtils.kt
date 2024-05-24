@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.util.WeakPair
 import org.jetbrains.kotlin.util.component1
 import org.jetbrains.kotlin.util.component2
@@ -141,19 +140,13 @@ private fun mapTypeAliasArguments(
                 (type.unwrapFlexibleAndDefinitelyNotNull() as? ConeTypeParameterType)?.lookupTag?.symbol
                     ?: return super.substituteArgument(projection, index)
             val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection, index)
-            var mappedType = (mappedProjection as? ConeKotlinTypeProjection)?.type?.updateNullabilityIfNeeded(type)
-            mappedType = when (mappedType) {
-                is ConeErrorType,
-                is ConeClassLikeTypeImpl,
-                is ConeDefinitelyNotNullType,
-                is ConeTypeParameterTypeImpl,
-                is ConeFlexibleType,
-                -> {
-                    mappedType.withAttributes(type.attributes.add(mappedType.attributes))
-                }
-                null -> return mappedProjection
-                else -> mappedType
-            }
+
+            if (mappedProjection !is ConeKotlinTypeProjection) return mappedProjection
+
+            val mappedType =
+                mappedProjection.type
+                    .updateNullabilityIfNeeded(type)
+                    .let { mappedType -> mappedType.withAttributes(type.attributes.add(mappedType.attributes)) }
 
             fun convertProjectionKindToConeTypeProjection(projectionKind: ProjectionKind): ConeTypeProjection {
                 return when (projectionKind) {
