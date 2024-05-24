@@ -33,7 +33,8 @@ class CinteropLauncher : Launcher() {
             "union" to BenchmarkEntry(::unionBenchmark),
             "enum" to BenchmarkEntry(::enumBenchmark),
             "int" to BenchmarkEntryWithInit.create(::IntBenchmark, { intBenchmark() }),
-            "boxedInt" to BenchmarkEntryWithInit.create(::BoxedIntBenchmark, { boxedIntBenchmark() })
+            "boxedInt" to BenchmarkEntryWithInit.create(::BoxedIntBenchmark, { boxedIntBenchmark() }),
+            "pinnedArray" to BenchmarkEntryWithInit.create(::PinnedArrayBenchmark, { pinnedArrayBenchmark() }),
     )
 
 }
