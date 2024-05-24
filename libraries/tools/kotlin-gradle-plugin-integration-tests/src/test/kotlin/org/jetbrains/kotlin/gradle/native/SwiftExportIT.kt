@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.assertContains
@@ -43,11 +44,11 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:linkSwiftExportBinaryDebugStaticIosArm64")
                 assertTasksExecuted(":shared:iosArm64DebugGenerateSPMPackage")
                 assertTasksExecuted(":shared:iosArm64DebugBuildSPMPackage")
-                assertTasksExecuted(":shared:iosArm64DebugMergeLibraries")
+                assertTasksExecuted(":shared:mergeIosDebugSwiftExportLibraries")
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
                 assertTasksSkipped(":shared:embedAndSignAppleFrameworkForXcode")
 
-                assertDirectoryInProjectExists("shared/build/MergedLibraries/iosArm64/Debug")
+                assertDirectoryInProjectExists("shared/build/MergedLibraries/ios/Debug")
                 assertDirectoryInProjectExists("shared/build/SPMBuild/iosArm64/Debug")
                 assertDirectoryInProjectExists("shared/build/SPMDerivedData")
                 assertDirectoryInProjectExists("shared/build/SPMPackage/iosArm64/Debug")
@@ -163,7 +164,7 @@ class SwiftExportIT : KGPBaseTest() {
             }
 
             val swiftFile = projectPath
-                .resolve("shared/build/SwiftExport/iosArm64/Debug/files/Shared.swift")
+                .resolve("shared/build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
                 .readText()
 
             assert(swiftFile.contains("iosBar()")) { "Swift file doesn't contain iosBar() from iosMain source set" }
@@ -172,6 +173,83 @@ class SwiftExportIT : KGPBaseTest() {
             assert(swiftFile.contains("bar()")) { "Swift file doesn't contain bar() from commonMain source set" }
             assert(swiftFile.contains("foo()")) { "Swift file doesn't contain foo() from commonMain source set" }
             assert(swiftFile.contains("foobar(")) { "Swift file doesn't contain foobar( from commonMain source set" }
+        }
+    }
+
+    @DisplayName("check Swift Export contains symbols for different API surfaces")
+    @GradleTest
+    fun testSwiftExportMultipleAPISurfaces(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        nativeProject(
+            "simpleSwiftExport",
+            gradleVersion,
+        ) {
+            projectPath.enableSwiftExport()
+
+            build(
+                ":shared:embedAndSignAppleFrameworkForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, listOf("arm64", "x86_64"), "iphonesimulator")
+            ) {
+                assertTasksExecuted(":shared:copyDebugSPMIntermediates")
+            }
+
+            val builtProductsDir = projectPath.resolve("shared/build/builtProductsDir").toFile()
+
+            //get x64 slice
+            runProcess(
+                listOf("lipo", "-thin", "x86_64", "libShared.a", "-output", "libShared_x86.a"),
+                builtProductsDir
+            )
+
+            //get arm64 slice
+            runProcess(
+                listOf("lipo", "-thin", "arm64", "libShared.a", "-output", "libShared_arm.a"),
+                builtProductsDir
+            )
+
+            val x64Symbols = runProcess(
+                listOf("nm", "libShared_x86.a"),
+                builtProductsDir
+            )
+
+            val arm64Symbols = runProcess(
+                listOf("nm", "libShared_arm.a"),
+                builtProductsDir
+            )
+
+            assert(x64Symbols.output.contains("iosX64Bar")) {
+                "Doesn't contain iosX64Bar() from iosX64Main API surface"
+            }
+
+            assert(arm64Symbols.output.contains("iosSimulatorArm64Bar")) {
+                "Doesn't contain iosSimulatorArm64Bar() from iosSimulatorArm64Main API surface"
+            }
+
+            val sdkVersion = runProcess(
+                listOf("xcrun", "--sdk", "iphonesimulator", "--show-sdk-version"),
+                projectPath.toFile()
+            )
+
+            assert(sdkVersion.isSuccessful)
+
+            // Check arm64 compilation
+            val arm64Compilation = swiftCompile(
+                projectPath.toFile(),
+                builtProductsDir,
+                "arm64-apple-ios${sdkVersion.output.trim()}-simulator"
+            )
+
+            // Check x86_64 compilation
+            val x64Compilation = swiftCompile(
+                projectPath.toFile(),
+                builtProductsDir,
+                "x86_64-apple-ios${sdkVersion.output.trim()}-simulator"
+            )
+
+            assert(arm64Compilation.isSuccessful)
+            assert(x64Compilation.isSuccessful)
         }
     }
 }
@@ -190,6 +268,16 @@ private fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
     "PLATFORM_NAME" to "iphoneos",
     "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/builtProductsDir").absolutePathString(),
+)
+
+private fun swiftCompile(workingDir: File, libDir: File, target: String) = runProcess(
+    listOf(
+        "xcrun", "--sdk", "iphonesimulator", "swiftc", "./Consumer.swift",
+        "-I", libDir.canonicalPath, "-target", target,
+        "-Xlinker", "-L", "-Xlinker", libDir.canonicalPath, "-Xlinker", "-lShared",
+        "-framework", "Foundation", "-framework", "UIKit"
+    ),
+    workingDir
 )
 
 internal fun Path.enableSwiftExport() {
