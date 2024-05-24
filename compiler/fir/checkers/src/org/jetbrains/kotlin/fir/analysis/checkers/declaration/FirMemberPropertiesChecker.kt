@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.cfa.checkPropertyAccesses
+import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationCheckProcessor
 import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
@@ -59,7 +59,7 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
         if (memberPropertySymbols.isEmpty()) return null
         // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
         val data = PropertyInitializationInfoData(memberPropertySymbols, conditionallyInitializedProperties = emptySet(), symbol, graph)
-        data.checkPropertyAccesses(isForInitialization = true, context, reporter)
+        PropertyInitializationCheckProcessor.check(data, isForInitialization = true, context, reporter)
         return data.getValue(graph.exitNode)[NormalPath]
     }
 }

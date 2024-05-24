@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 
 object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
     override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
-        data.checkPropertyAccesses(isForInitialization = false, context, reporter)
+        PropertyInitializationCheckProcessor.check(data, isForInitialization = false, context, reporter)
     }
 }
 
@@ -70,143 +70,147 @@ fun FirPropertySymbol.requiresInitialization(isForInitialization: Boolean): Bool
     }
 }
 
-fun PropertyInitializationInfoData.checkPropertyAccesses(
-    isForInitialization: Boolean,
-    context: CheckerContext,
-    reporter: DiagnosticReporter
-) {
-    // If a property has an initializer (or does not need one), then any reads are OK while any writes are OK
-    // if it's a `var` and bad if it's a `val`. `FirReassignmentAndInvisibleSetterChecker` does this without a CFG.
-    val filtered = properties.filterTo(mutableSetOf()) {
-        it.requiresInitialization(isForInitialization) || it in conditionallyInitializedProperties
-    }
-    if (filtered.isEmpty()) return
 
-    checkPropertyAccesses(
-        graph, filtered, context, reporter, scope = null,
-        isForInitialization,
-        doNotReportUninitializedVariable = false,
-        doNotReportConstantUninitialized = true,
-        scopes = mutableMapOf(),
-    )
-}
+object PropertyInitializationCheckProcessor : VariableInitializationCheckProcessor()
 
-private fun PropertyInitializationInfoData.checkPropertyAccesses(
-    graph: ControlFlowGraph,
-    properties: Set<FirPropertySymbol>,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
-    scope: FirDeclaration?,
-    isForInitialization: Boolean,
-    doNotReportUninitializedVariable: Boolean,
-    doNotReportConstantUninitialized: Boolean,
-    scopes: MutableMap<FirPropertySymbol, FirDeclaration?>,
-) {
-    val capturedInitializationError = if (receiver != null)
-        FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
-    else
-        FirErrors.CAPTURED_VAL_INITIALIZATION
+abstract class VariableInitializationCheckProcessor {
+    fun check(
+        data: PropertyInitializationInfoData,
+        isForInitialization: Boolean,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        val filtered = data.properties.filterTo(mutableSetOf()) {
+            it.requiresInitialization(isForInitialization) || it in data.conditionallyInitializedProperties
+        }
+        if (filtered.isEmpty()) return
 
-    // TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
-    fun FirQualifiedAccessExpression.hasMatchingReceiver(): Boolean {
-        val expression = dispatchReceiver?.unwrapSmartcastExpression()
-        return (expression as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver ||
-                (expression as? FirResolvedQualifier)?.symbol == receiver
+        data.runCheck(
+            data.graph, filtered, context, reporter, scope = null,
+            isForInitialization,
+            doNotReportUninitializedVariable = false,
+            doNotReportConstantUninitialized = true,
+            scopes = mutableMapOf(),
+        )
     }
 
-    fun CFGNode<*>.reportErrorsOnInitializationsInInputs(symbol: FirPropertySymbol, path: EdgeLabel) {
-        for (previousNode in previousCfgNodes) {
-            if (edgeFrom(previousNode).kind.isBack) continue
-            when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.location) {
-                is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
-                is VariableAssignmentNode ->
-                    reporter.reportOn(assignmentNode.fir.lValue.source, capturedInitializationError, symbol, context)
-                else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
-                    assignmentNode?.reportErrorsOnInitializationsInInputs(symbol, path)
+    private fun PropertyInitializationInfoData.runCheck(
+        graph: ControlFlowGraph,
+        properties: Set<FirPropertySymbol>,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        scope: FirDeclaration?,
+        isForInitialization: Boolean,
+        doNotReportUninitializedVariable: Boolean,
+        doNotReportConstantUninitialized: Boolean,
+        scopes: MutableMap<FirPropertySymbol, FirDeclaration?>,
+    ) {
+        val capturedInitializationError = if (receiver != null)
+            FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
+        else
+            FirErrors.CAPTURED_VAL_INITIALIZATION
+
+        // TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
+        fun FirQualifiedAccessExpression.hasMatchingReceiver(): Boolean {
+            val expression = dispatchReceiver?.unwrapSmartcastExpression()
+            return (expression as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver ||
+                    (expression as? FirResolvedQualifier)?.symbol == receiver
+        }
+
+        fun CFGNode<*>.reportErrorsOnInitializationsInInputs(symbol: FirPropertySymbol, path: EdgeLabel) {
+            for (previousNode in previousCfgNodes) {
+                if (edgeFrom(previousNode).kind.isBack) continue
+                when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.location) {
+                    is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
+                    is VariableAssignmentNode ->
+                        reporter.reportOn(assignmentNode.fir.lValue.source, capturedInitializationError, symbol, context)
+                    else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
+                        assignmentNode?.reportErrorsOnInitializationsInInputs(symbol, path)
+                }
             }
         }
-    }
 
-    for (node in graph.nodes) {
-        if (node.isUnion) {
-            for ((path, data) in getValue(node)) {
-                for ((symbol, range) in data) {
-                    if (!symbol.isVal || !range.canBeRevisited() || symbol !in properties) continue
-                    // This can be something like `f({ x = 1 }, { x = 2 })` where `f` calls both lambdas in-place.
-                    // At each assignment it was only considered in isolation, but now that we're merging their control flows,
-                    // we can see that the assignments clash, so we need to go back and emit errors on these nodes.
-                    if (node.previousCfgNodes.all { getValue(it)[path]?.get(symbol)?.canBeRevisited() != true }) {
-                        node.reportErrorsOnInitializationsInInputs(symbol, path)
+        for (node in graph.nodes) {
+            if (node.isUnion) {
+                for ((path, data) in getValue(node)) {
+                    for ((symbol, range) in data) {
+                        if (!symbol.isVal || !range.canBeRevisited() || symbol !in properties) continue
+                        // This can be something like `f({ x = 1 }, { x = 2 })` where `f` calls both lambdas in-place.
+                        // At each assignment it was only considered in isolation, but now that we're merging their control flows,
+                        // we can see that the assignments clash, so we need to go back and emit errors on these nodes.
+                        if (node.previousCfgNodes.all { getValue(it)[path]?.get(symbol)?.canBeRevisited() != true }) {
+                            node.reportErrorsOnInitializationsInInputs(symbol, path)
+                        }
                     }
                 }
             }
-        }
 
-        when {
-            node is VariableDeclarationNode -> {
-                val symbol = node.fir.symbol
-                if (scope != null && receiver == null && node.fir.isVal && symbol in properties) {
-                    // It's OK to initialize this variable from a nested called-in-place function, but not from
-                    // a non-called-in-place function or a non-anonymous-object class initializer.
-                    scopes[symbol] = scope
+            when {
+                node is VariableDeclarationNode -> {
+                    val symbol = node.fir.symbol
+                    if (scope != null && receiver == null && node.fir.isVal && symbol in properties) {
+                        // It's OK to initialize this variable from a nested called-in-place function, but not from
+                        // a non-called-in-place function or a non-anonymous-object class initializer.
+                        scopes[symbol] = scope
+                    }
                 }
-            }
 
-            node is VariableAssignmentNode -> {
-                val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: continue
-                if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver() != true || symbol !in properties) continue
+                node is VariableAssignmentNode -> {
+                    val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: continue
+                    if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver() != true || symbol !in properties) continue
 
-                val info = getValue(node)
-                if (info.values.any { it[symbol]?.canBeRevisited() == true }) {
-                    reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
-                } else if (scope != scopes[symbol]) {
-                    reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol, context)
-                } else if (!symbol.isLocal && !node.owner.isInline(until = symbol.getContainingSymbol(context.session))) {
-                    // If the assignment is inside INVOKE_ONCE lambda and the lambda is not inlined,
-                    // backend generates either separate function or separate class for the lambda.
-                    // If we try to initialize non-static final field there, we will get exception at
-                    // runtime, since we can initialize such fields only inside constructors.
-                    reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol, context)
+                    val info = getValue(node)
+                    if (info.values.any { it[symbol]?.canBeRevisited() == true }) {
+                        reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
+                    } else if (scope != scopes[symbol]) {
+                        reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol, context)
+                    } else if (!symbol.isLocal && !node.owner.isInline(until = symbol.getContainingSymbol(context.session))) {
+                        // If the assignment is inside INVOKE_ONCE lambda and the lambda is not inlined,
+                        // backend generates either separate function or separate class for the lambda.
+                        // If we try to initialize non-static final field there, we will get exception at
+                        // runtime, since we can initialize such fields only inside constructors.
+                        reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol, context)
+                    }
                 }
-            }
 
-            node is QualifiedAccessNode -> {
-                if (doNotReportUninitializedVariable) continue
-                if (node.fir.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) continue
-                val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: continue
-                if (doNotReportConstantUninitialized && symbol.isConst) continue
-                if (!symbol.isLateInit && !symbol.isExternal && node.fir.hasMatchingReceiver() && symbol in properties &&
-                    getValue(node).values.any { it[symbol]?.isDefinitelyVisited() != true }
-                ) {
-                    reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
+                node is QualifiedAccessNode -> {
+                    if (doNotReportUninitializedVariable) continue
+                    if (node.fir.resolvedType.hasDiagnosticKind(DiagnosticKind.RecursionInImplicitTypes)) continue
+                    val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: continue
+                    if (doNotReportConstantUninitialized && symbol.isConst) continue
+                    if (!symbol.isLateInit && !symbol.isExternal && node.fir.hasMatchingReceiver() && symbol in properties &&
+                        getValue(node).values.any { it[symbol]?.isDefinitelyVisited() != true }
+                    ) {
+                        reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
+                    }
                 }
-            }
 
-            // In the class case, subgraphs of the exit node are member functions, which are considered to not
-            // be part of initialization, so any val is considered to be initialized there and the CFG is not
-            // needed. The errors on reassignments will be emitted by `FirReassignmentAndInvisibleSetterChecker`.
-            node is CFGNodeWithSubgraphs<*> && (receiver == null || node !== graph.exitNode) -> {
-                for (subGraph in node.subGraphs) {
-                    /*
-                     * For class initialization graph we allow to read properties in non-in-place lambdas
-                     *   even if they may be not initialized at this point, because if lambda is not in-place,
-                     *   then it most likely will be called after object will be initialized
-                     */
-                    val doNotReportForSubGraph = isForInitialization && subGraph.kind.doNotReportUninitializedVariableForInitialization
+                // In the class case, subgraphs of the exit node are member functions, which are considered to not
+                // be part of initialization, so any val is considered to be initialized there and the CFG is not
+                // needed. The errors on reassignments will be emitted by `FirReassignmentAndInvisibleSetterChecker`.
+                node is CFGNodeWithSubgraphs<*> && (receiver == null || node !== graph.exitNode) -> {
+                    for (subGraph in node.subGraphs) {
+                        /*
+                         * For class initialization graph we allow to read properties in non-in-place lambdas
+                         *   even if they may be not initialized at this point, because if lambda is not in-place,
+                         *   then it most likely will be called after object will be initialized
+                         */
+                        val doNotReportForSubGraph = isForInitialization && subGraph.kind.doNotReportUninitializedVariableForInitialization
 
-                    // Must report uninitialized variable if we start initializing a constant property. This
-                    // allows "regular" properties to reference constant properties out-of-order, but all other
-                    // property references must be in-order.
-                    val isSubGraphConstProperty = (subGraph.declaration as? FirProperty)?.isConst == true
+                        // Must report uninitialized variable if we start initializing a constant property. This
+                        // allows "regular" properties to reference constant properties out-of-order, but all other
+                        // property references must be in-order.
+                        val isSubGraphConstProperty = (subGraph.declaration as? FirProperty)?.isConst == true
 
-                    val newScope = subGraph.declaration?.takeIf { !it.evaluatedInPlace } ?: scope
-                    checkPropertyAccesses(
-                        subGraph, properties, context, reporter, newScope,
-                        isForInitialization,
-                        doNotReportUninitializedVariable = doNotReportUninitializedVariable || doNotReportForSubGraph,
-                        doNotReportConstantUninitialized = doNotReportConstantUninitialized && !isSubGraphConstProperty,
-                        scopes
-                    )
+                        val newScope = subGraph.declaration?.takeIf { !it.evaluatedInPlace } ?: scope
+                        runCheck(
+                            subGraph, properties, context, reporter, newScope,
+                            isForInitialization,
+                            doNotReportUninitializedVariable = doNotReportUninitializedVariable || doNotReportForSubGraph,
+                            doNotReportConstantUninitialized = doNotReportConstantUninitialized && !isSubGraphConstProperty,
+                            scopes
+                        )
+                    }
                 }
             }
         }
