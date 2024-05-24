@@ -334,7 +334,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiStandaloneTests() {
 }
 
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
-    component("callResolver", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+    component("resolver", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         val init: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = {
             when (it.analysisApiMode) {
                 AnalysisApiMode.Ide ->
