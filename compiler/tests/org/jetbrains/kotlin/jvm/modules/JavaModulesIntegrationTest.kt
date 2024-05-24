@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.jvm.modules
 
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.test.util.KtTestUtil
 
-class Java11ModulesIntegrationTest : AbstractJavaModulesIntegrationTest(11, KtTestUtil.getJdk11Home(), LanguageVersion.KOTLIN_1_9)
+class JavaModulesIntegrationTest : AbstractJavaModulesIntegrationTest(LanguageVersion.KOTLIN_1_9)
 
-class Java17ModulesIntegrationTest : AbstractJavaModulesIntegrationTest(17, KtTestUtil.getJdk17Home(), LanguageVersion.KOTLIN_1_9)
-
-class FirJava11ModulesIntegrationTest : AbstractFirJavaModulesIntegrationTest(11, KtTestUtil.getJdk11Home())
-
-class FirJava17ModulesIntegrationTest : AbstractFirJavaModulesIntegrationTest(17, KtTestUtil.getJdk17Home())
+class FirJavaModulesIntegrationTest : AbstractJavaModulesIntegrationTest(LanguageVersion.LATEST_STABLE)
