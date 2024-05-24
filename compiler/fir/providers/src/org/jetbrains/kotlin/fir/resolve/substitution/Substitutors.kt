@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.substitution
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeTypeVariableTypeIsNotInferred
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
@@ -19,7 +16,6 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -372,58 +368,4 @@ internal class ConeTypeSubstitutorByTypeConstructor(
             "$constructor -> ${type.renderForDebugging()}"
         }
     }
-}
-
-// Note: builder inference uses TypeSubstitutorByTypeConstructor for not fixed type substitution
-class NotFixedTypeToVariableSubstitutorForDelegateInference(
-    val bindings: Map<TypeVariableMarker, ConeKotlinType>,
-    typeContext: ConeTypeContext
-) : AbstractConeSubstitutor(typeContext) {
-    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-        if (type !is ConeStubType) return null
-        if (type.constructor.isTypeVariableInSubtyping) return null
-        return bindings[type.constructor.variable].updateNullabilityIfNeeded(type)
-    }
-
-    override fun toString(): String {
-        return bindings.entries.joinToString(prefix = "{", postfix = "}", separator = " | ") { (variable, type) ->
-            require(variable is ConeTypeVariable)
-            "TV(${variable.typeConstructor.debugName}) -> ${type.renderForDebugging()}"
-        }
-    }
-}
-
-class ConeStubAndTypeVariableToErrorTypeSubstitutor(
-    typeContext: ConeTypeContext,
-    private val stubTypesToReplace: Collection<ConeStubTypeConstructor>
-) : AbstractConeSubstitutor(typeContext) {
-    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-        return when (type) {
-            is ConeTypeVariableType -> ConeErrorType(
-                ConeTypeVariableTypeIsNotInferred(type),
-                isUninferredParameter = true
-            )
-            is ConeStubType -> runIf(type.constructor in stubTypesToReplace) {
-                ConeErrorType(
-                    ConeSimpleDiagnostic(
-                        "Type for stub of ${type.constructor.variable.typeConstructor.debugName} is not inferred",
-                        DiagnosticKind.InferenceError
-                    ),
-                    isUninferredParameter = true
-                )
-            }
-            else -> null
-        }
-    }
-
-    override fun toString(): String {
-        return "{<Stub type> -> <Error type>}"
-    }
-}
-
-fun ConeSubstitutor.replaceStubsAndTypeVariablesToErrors(
-    typeContext: ConeTypeContext,
-    stubTypesToReplace: Collection<ConeStubTypeConstructor>
-): ConeSubstitutor {
-    return ChainedSubstitutor(this, ConeStubAndTypeVariableToErrorTypeSubstitutor(typeContext, stubTypesToReplace))
 }
