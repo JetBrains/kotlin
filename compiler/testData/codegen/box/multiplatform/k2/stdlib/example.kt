@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
-// TODO: KT-67753
 // ISSUE: KT-65841
 // ALLOW_KOTLIN_PACKAGE
 // STDLIB_COMPILATION
@@ -104,7 +103,7 @@ enum class TestEnumInCommon {
 annotation class AnnotationWithInt(val value: Int)
 
 @AnnotationWithInt(Int.MAX_VALUE)
-class TestClassInCommon // Currently it doesn't work with FIR2IR_FAKE_OVERRIDE_GENERATION (KT-67753)
+class TestClassInCommon
 
 fun testStringPlusInCommon() = "asdf" + 42
 fun anyInCommon() = Any()
