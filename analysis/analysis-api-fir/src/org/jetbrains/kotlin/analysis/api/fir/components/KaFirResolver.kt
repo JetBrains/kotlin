@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -52,15 +52,13 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
@@ -1272,26 +1270,14 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
         return when (operation) {
             FirOperation.EQ, FirOperation.NOT_EQ -> {
                 val leftOperand = arguments.firstOrNull() ?: return null
-                val session = analysisSession.useSiteSession
-                val leftOperandType = leftOperand.resolvedType.fullyExpandedType(session).upperBoundIfFlexible()
-                val equalsSymbol = when (leftOperandType) {
-                    is ConeTypeParameterType -> {
-                        leftOperandType.collectUpperBounds().firstNotNullOfOrNull { upperBound ->
-                            val upperBoundClassSymbol = upperBound.toSymbol(session) as? FirClassSymbol<*>
-                            upperBoundClassSymbol?.getEqualsSymbol()
-                        }
-                    }
-                    else -> {
-                        val classSymbol = leftOperandType.toSymbol(session) as? FirClassSymbol<*>
-                        classSymbol?.getEqualsSymbol()
-                    }
-                } ?: equalsSymbolInAny ?: return null
+
+                val equalsSymbol = getEqualsSymbol() ?: return null
                 val ktSignature = equalsSymbol.toKtSignature()
                 KaSuccessCallInfo(
                     KaSimpleFunctionCall(
                         KaPartiallyAppliedSymbol(
                             ktSignature,
-                            KaExplicitReceiverValue(leftPsi, leftOperandType.asKtType(), false, token),
+                            KaExplicitReceiverValue(leftPsi, leftOperand.resolvedType.asKtType(), false, token),
                             null
                         ),
                         LinkedHashMap<KtExpression, KaVariableLikeSignature<KaValueParameterSymbol>>().apply {
@@ -1306,29 +1292,13 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
         }
     }
 
-    private fun FirClassSymbol<*>.getEqualsSymbol(): FirNamedFunctionSymbol? {
-        val scope = unsubstitutedScope(
-            analysisSession.useSiteSession,
-            analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
-            false,
-            memberRequiredPhase = FirResolvePhase.STATUS,
-        )
-
+    private fun FirEqualityOperatorCall.getEqualsSymbol(): FirNamedFunctionSymbol? {
         var equalsSymbol: FirNamedFunctionSymbol? = null
-        scope.processFunctionsByName(EQUALS) { equalsSymbolFromScope ->
-            if (equalsSymbol != null) return@processFunctionsByName
-            if (equalsSymbolFromScope == equalsSymbolInAny) {
-                equalsSymbol = equalsSymbolFromScope
-            }
-            scope.processOverriddenFunctions(equalsSymbolFromScope) {
-                if (it == equalsSymbolInAny) {
-                    equalsSymbol = equalsSymbolFromScope
-                    ProcessorAction.STOP
-                } else {
-                    ProcessorAction.NEXT
-                }
-            }
+        processEqualsFunctions(analysisSession.useSiteSession, analysisSession) {
+            if (equalsSymbol != null) return@processEqualsFunctions
+            equalsSymbol = it
         }
+
         return equalsSymbol ?: equalsSymbolInAny
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.analysis.api.fir.utils
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.components.KaConstantEvaluationMode
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
@@ -19,15 +20,24 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeNullability
+import org.jetbrains.kotlin.fir.types.isNullableAny
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun PsiElement.unwrap(): PsiElement {
     return when (this) {
@@ -94,5 +104,26 @@ internal fun FirExpression.asKaInitializerValue(builder: KaSymbolByFirBuilder, f
             KaNonConstantInitializerValue(ktExpression)
         }
         else -> KaConstantInitializerValue(evaluated, ktExpression)
+    }
+}
+
+internal fun FirEqualityOperatorCall.processEqualsFunctions(
+    session: FirSession,
+    analysisSession: KaFirSession,
+    processor: (FirNamedFunctionSymbol) -> Unit,
+) {
+    val lhs = arguments.firstOrNull() ?: return
+    val scope = lhs.resolvedType.scope(
+        useSiteSession = session,
+        scopeSession = analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
+        callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
+        requiredMembersPhase = FirResolvePhase.STATUS,
+    ) ?: return
+
+    scope.processFunctionsByName(OperatorNameConventions.EQUALS) { functionSymbol ->
+        val parameterSymbol = functionSymbol.valueParameterSymbols.singleOrNull()
+        if (parameterSymbol != null && parameterSymbol.resolvedReturnType.isNullableAny) {
+            processor(functionSymbol)
+        }
     }
 }
