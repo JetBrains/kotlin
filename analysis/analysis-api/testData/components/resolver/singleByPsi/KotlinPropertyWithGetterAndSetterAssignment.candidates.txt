@@ -1,0 +1,188 @@
+<caret_1>: KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+  isInBestCandidates = true
+
+<caret_2>: KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Write:
+      value = 1
+    typeArgumentsMapping = {}
+  isInBestCandidates = true
+
+<caret_3>: KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+  isInBestCandidates = true
+
+<caret_4>: KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+  isInBestCandidates = true
+
+<caret_5>: KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Write:
+      value = --
+    typeArgumentsMapping = {}
+  isInBestCandidates = true
+
+<caret_6>: KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtReceiverParameterSymbol:
+          annotationsList: []
+          origin: SOURCE
+          owningCallableSymbol: KtFunctionSymbol(/foo)
+          type: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: A
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+  isInBestCandidates = true
+
+<caret_7>: KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtReceiverParameterSymbol:
+          annotationsList: []
+          origin: SOURCE
+          owningCallableSymbol: KtFunctionSymbol(/foo)
+          type: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: A
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+  isInBestCandidates = true
+
+<caret_8>: KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtReceiverParameterSymbol:
+          annotationsList: []
+          origin: SOURCE
+          owningCallableSymbol: KtFunctionSymbol(/foo)
+          type: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: A
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Write:
+      value = 1
+    typeArgumentsMapping = {}
+  isInBestCandidates = true
+
+<caret_9>: KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Write:
+      value = 1
+    typeArgumentsMapping = {}
+  isInBestCandidates = true

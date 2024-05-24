@@ -791,6 +791,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
   }
 
   @Test
+  @TestMetadata("KotlinPropertyWithGetterAndSetterAssignment.kt")
+  public void testKotlinPropertyWithGetterAndSetterAssignment() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/KotlinPropertyWithGetterAndSetterAssignment.kt");
+  }
+
+  @Test
   @TestMetadata("labeledLambda.kt")
   public void testLabeledLambda() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/labeledLambda.kt");

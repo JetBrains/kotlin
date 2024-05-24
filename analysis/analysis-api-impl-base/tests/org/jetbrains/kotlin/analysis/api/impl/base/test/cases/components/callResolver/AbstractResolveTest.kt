@@ -33,6 +33,31 @@ abstract class AbstractResolveTest : AbstractAnalysisApiBasedTest() {
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val elementsToProcess = elementsToProcess(mainFile, mainModule, testServices)
+        val actual = if (elementsToProcess.size == 1) {
+            val mainElement = elementsToProcess.single().elementToProcess
+            generateResolveOutput(mainElement, testServices)
+        } else {
+            elementsToProcess.joinToString("\n\n") { (element, marker) ->
+                val output = generateResolveOutput(element, testServices)
+                "$marker: $output"
+            }
+        }
+
+        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "$resolveKind.txt")
+    }
+
+    private data class TestContext(val elementToProcess: KtElement, val marker: String)
+
+    private fun elementsToProcess(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices): List<TestContext> {
+        val carets = testServices.expressionMarkerProvider.getAllCarets(mainFile)
+        if (carets.size > 1) {
+            return carets.map {
+                val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(mainFile, it.tag)
+                TestContext(element, it.fullTag)
+            }
+        }
+
         val expression = testServices.expressionMarkerProvider.getElementOfTypeAtCaretOrNull<KtExpression>(mainFile)
             ?: testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(
                 ktFile = mainFile,
@@ -40,9 +65,7 @@ abstract class AbstractResolveTest : AbstractAnalysisApiBasedTest() {
                 defaultType = KtElement::class,
             ) as KtElement
 
-        val mainElement = expression.elementToResolve
-        val actual = generateResolveOutput(mainElement, testServices)
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "$resolveKind.txt")
+        return listOf(TestContext(expression.elementToResolve, "<caret>"))
     }
 
     abstract fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String

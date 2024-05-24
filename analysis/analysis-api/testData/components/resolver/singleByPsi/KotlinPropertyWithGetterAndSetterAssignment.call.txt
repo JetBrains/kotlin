@@ -1,0 +1,179 @@
+<caret_1>: KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+<caret_2>: KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Write:
+      value = 1
+    typeArgumentsMapping = {}
+
+<caret_3>: KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+<caret_4>: KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+<caret_5>: KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Write:
+      value = --
+    typeArgumentsMapping = {}
+
+<caret_6>: KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtReceiverParameterSymbol:
+          annotationsList: []
+          origin: SOURCE
+          owningCallableSymbol: KtFunctionSymbol(/foo)
+          type: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: A
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+<caret_7>: KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtReceiverParameterSymbol:
+          annotationsList: []
+          origin: SOURCE
+          owningCallableSymbol: KtFunctionSymbol(/foo)
+          type: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: A
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {}
+
+<caret_8>: KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtReceiverParameterSymbol:
+          annotationsList: []
+          origin: SOURCE
+          owningCallableSymbol: KtFunctionSymbol(/foo)
+          type: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: A
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Write:
+      value = 1
+    typeArgumentsMapping = {}
+
+<caret_9>: KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = something
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var something: kotlin.Int
+        callableId = /A.something
+    simpleAccess = Write:
+      value = 1
+    typeArgumentsMapping = {}
