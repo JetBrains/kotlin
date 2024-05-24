@@ -366,10 +366,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
     protected open fun convertDependencyToFileList(dependency: DependencyDescription): List<File> {
         val friendModule = testServices.dependencyProvider.getTestModule(dependency.moduleName)
-        return listOfNotNull(
-            testServices.compiledClassesManager.getCompiledKotlinDirForModule(friendModule),
-            testServices.compiledClassesManager.getCompiledJavaDirForModule(friendModule)
-        )
+        return listOf(testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(friendModule, classFileFactory = null))
     }
 }
 

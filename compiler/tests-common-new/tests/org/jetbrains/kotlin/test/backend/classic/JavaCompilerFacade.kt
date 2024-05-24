@@ -25,22 +25,17 @@ import java.io.File
 class JavaCompilerFacade(private val testServices: TestServices) {
     fun compileJavaFiles(module: TestModule, configuration: CompilerConfiguration, classFileFactory: ClassFileFactory) {
         if (module.javaFiles.isEmpty()) return
-        val javaClasspath =
-            listOf(testServices.compiledClassesManager.getCompiledKotlinDirForModule(module, classFileFactory).path) +
-                    configuration.jvmClasspathRoots.map { it.absolutePath }
 
-        val javaClassesOutputDirectory = testServices.compiledClassesManager.getOrCreateCompiledJavaDirForModule(module)
+        val outputDir = testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(module, classFileFactory)
+        val javaClasspath =
+            listOf(outputDir.path) + configuration.jvmClasspathRoots.map { it.absolutePath }
 
         val javacOptions = extractJavacOptions(
             module,
             configuration[JVMConfigurationKeys.JVM_TARGET],
             configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
         )
-        val finalJavacOptions = CodegenTestUtil.prepareJavacOptions(
-            javaClasspath,
-            javacOptions,
-            javaClassesOutputDirectory
-        )
+        val finalJavacOptions = CodegenTestUtil.prepareJavacOptions(javaClasspath, javacOptions, outputDir)
 
         val javaFiles = testServices.sourceFileProvider.getRealJavaFiles(module)
         val ignoreErrors = CodegenTestDirectives.IGNORE_JAVA_ERRORS in module.directives

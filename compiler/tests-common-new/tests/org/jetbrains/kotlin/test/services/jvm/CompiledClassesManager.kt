@@ -17,13 +17,12 @@ import org.jetbrains.kotlin.test.services.*
 import java.io.File
 
 class CompiledClassesManager(val testServices: TestServices) : TestService {
-    private val compiledKotlinCache = mutableMapOf<TestModule, File>()
-    private val compiledJavaCache = mutableMapOf<TestModule, File>()
+    private val outputDirCache = mutableMapOf<TestModule, File>()
     var specifiedFrontendKind: FrontendKind<*> = FrontendKind.NoFrontend
 
-    fun getCompiledKotlinDirForModule(module: TestModule, classFileFactory: ClassFileFactory? = null): File {
-        return compiledKotlinCache.getOrPut(module) {
-            val outputDir = testServices.getOrCreateTempDirectory("module_${module.name}_kotlin-classes")
+    fun compileKotlinToDiskAndGetOutputDir(module: TestModule, classFileFactory: ClassFileFactory?): File {
+        return outputDirCache.getOrPut(module) {
+            val outputDir = testServices.getOrCreateTempDirectory("module_${module.name}_classes")
 
             @Suppress("NAME_SHADOWING")
             val classFileFactory = classFileFactory ?: if (module.binaryKind == ArtifactKinds.JvmFromK1AndK2) {
@@ -45,15 +44,8 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
         }
     }
 
-    fun getCompiledJavaDirForModule(module: TestModule): File? {
-        return compiledJavaCache[module]
-    }
-
-    fun getOrCreateCompiledJavaDirForModule(module: TestModule): File {
-        return compiledJavaCache.getOrPut(module) {
-            testServices.getOrCreateTempDirectory("module_${module.name}_java-classes")
-        }
-    }
+    fun getOutputDirForModule(module: TestModule): File? =
+        outputDirCache[module]
 }
 
 val TestServices.compiledClassesManager: CompiledClassesManager by TestServices.testServiceAccessor()

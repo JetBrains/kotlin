@@ -266,21 +266,16 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         return proxy.runTest()
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun extractClassPath(
         module: TestModule,
         classLoader: URLClassLoader,
         classFileFactory: ClassFileFactory
     ): List<URL> {
         return buildList {
-            addAll(classLoader.extractUrls())
             if (classLoader is GeneratedClassLoader) {
-                val javaPath = testServices.compiledClassesManager.getCompiledJavaDirForModule(module)?.url
-                if (javaPath != null) {
-                    add(0, javaPath)
-                }
-                add(0, testServices.compiledClassesManager.getCompiledKotlinDirForModule(module, classFileFactory).url)
+                add(testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(module, classFileFactory).url)
             }
+            addAll(classLoader.extractUrls())
         }
     }
 
@@ -358,10 +353,12 @@ private fun computeTestRuntimeClasspath(testServices: TestServices, rootModule: 
     fun computeClasspath(module: TestModule, isRoot: Boolean) {
         if (!visited.add(module)) return
 
-        if (!isRoot) {
-            result.add(testServices.compiledClassesManager.getCompiledKotlinDirForModule(module))
+        if (isRoot) {
+            // Add output dir to the classpath in case there are Java compiled classes in the current module.
+            result.addIfNotNull(testServices.compiledClassesManager.getOutputDirForModule(module))
+        } else {
+            result.add(testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(module, classFileFactory = null))
         }
-        result.addIfNotNull(testServices.compiledClassesManager.getCompiledJavaDirForModule(module))
 
         for (dependency in module.allDependencies) {
             if (dependency.kind == DependencyKind.Binary) {
