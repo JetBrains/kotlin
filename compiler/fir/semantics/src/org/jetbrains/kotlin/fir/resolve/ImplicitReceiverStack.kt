@@ -22,8 +22,10 @@ abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
 inline fun Set<ImplicitReceiverValue<*>>.ifMoreThanOne(
     block: (Boolean) -> ImplicitReceiverValue<*>?,
 ) = when {
-    size > 1 -> block(all { it.boundSymbol is FirAnonymousFunctionSymbol })
-    else -> this.singleOrNull()
+    // KT-69102: we may encounter a bug with duplicated context receivers, and it wasn't
+    // obvious how to fix it
+    distinctBy { if (it.isContextReceiver) it.implicitScope else it }.count() == 1 -> this.firstOrNull()
+    else -> block(all { it.boundSymbol is FirAnonymousFunctionSymbol })
 }
 
 fun clashingLabelDiagnostic(labelName: String?, areOnlyAnonymousFunctions: Boolean): ConeSimpleDiagnostic {
