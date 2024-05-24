@@ -12,4 +12,4 @@ KtApplicableCallCandidateInfo:
     simpleAccess = Read:
       
     typeArgumentsMapping = {}
-  isInBestCandidates = false
+  isInBestCandidates = true

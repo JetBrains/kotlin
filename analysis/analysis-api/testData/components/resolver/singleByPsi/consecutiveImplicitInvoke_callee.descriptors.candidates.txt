@@ -12,7 +12,7 @@ KtApplicableCallCandidateInfo:
     simpleAccess = Read:
       
     typeArgumentsMapping = {}
-  isInBestCandidates = false
+  isInBestCandidates = true
 
 KtInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with invoke>
@@ -29,7 +29,7 @@ KtInapplicableCallCandidateInfo:
     simpleAccess = Read:
       
     typeArgumentsMapping = {}
-  isInBestCandidates = false
+  isInBestCandidates = true
 
 KtInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with invoke>
@@ -46,4 +46,4 @@ KtInapplicableCallCandidateInfo:
     simpleAccess = Read:
       
     typeArgumentsMapping = {}
-  isInBestCandidates = false
+  isInBestCandidates = true
