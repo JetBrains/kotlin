@@ -108,7 +108,7 @@ internal object FirCompileTimeConstantEvaluator {
         return when {
             mode == KaConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION && !(isStatic && isFinal) -> null
             isVal -> {
-                withTrackingVariableEvaluation(this) { evaluate(fir.initializer, mode) }
+                withTrackingVariableEvaluation(this) { evaluate(resolvedInitializer, mode) }
             }
             else -> null
         }
