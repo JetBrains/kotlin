@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.metadataVersion
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.nio.file.Paths
@@ -263,6 +265,7 @@ open class FirFrontendFacade(
         return projectEnvironment
     }
 
+    @OptIn(org.jetbrains.kotlin.fir.SessionConfiguration::class)
     private fun analyze(
         module: TestModule,
         moduleData: FirModuleData,
@@ -316,6 +319,15 @@ open class FirFrontendFacade(
             testServices.lightTreeSyntaxDiagnosticsReporterHolder?.reporter,
         )
         val firFiles = firAnalyzerFacade.runResolution()
+
+        if (moduleData.isCommon) {
+            val fragments = sortedMapOf<String, MutableList<ByteArray>>()
+            ModuleCompilerAnalyzedOutput(firAnalyzerFacade.session, firAnalyzerFacade.scopeSession, firFiles).serializeFragmentsTo(fragments, firAnalyzerFacade.session.languageVersionSettings, compilerConfigurationProvider.getCompilerConfiguration(module).metadataVersion())
+
+            val moduleName = moduleData.name.asString()
+            val serializedMetadata = makeSerializedMetadataFromFragments(fragments, firAnalyzerFacade.session.languageVersionSettings, moduleName)
+            firAnalyzerFacade.session.register(FirSerializedMetadataComponent::class, FirSerializedMetadataComponent(serializedMetadata))
+        }
 
         val usedFilesMap = when (parser) {
             FirParser.LightTree -> lightTreeFiles
