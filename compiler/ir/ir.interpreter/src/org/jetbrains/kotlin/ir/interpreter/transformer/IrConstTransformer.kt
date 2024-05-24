@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -54,9 +53,10 @@ fun IrElement.transformConst(
         interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
 
-    return this.transform(irConstExpressionTransformer, IrConstTransformer.Data())
-        .transform(irConstDeclarationAnnotationTransformer, IrConstTransformer.Data())
-        .transform(irConstTypeAnnotationTransformer, IrConstTransformer.Data())
+    return this.transform(irConstExpressionTransformer, IrConstTransformer.Data()).apply {
+        accept(irConstDeclarationAnnotationTransformer, IrConstTransformer.Data())
+        accept(irConstTypeAnnotationTransformer, IrConstTransformer.Data())
+    }
 }
 
 fun IrFile.runConstOptimizations(
@@ -98,7 +98,7 @@ internal abstract class IrConstTransformer(
     private val onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val suppressExceptions: Boolean,
-) : IrElementTransformer<IrConstTransformer.Data> {
+) {
     internal data class Data(val inConstantExpression: Boolean = false)
 
     private fun IrExpression.warningIfError(original: IrExpression): IrExpression {

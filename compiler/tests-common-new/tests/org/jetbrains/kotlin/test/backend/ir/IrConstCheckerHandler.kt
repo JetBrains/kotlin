@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -31,17 +30,19 @@ class IrConstCheckerHandler(testServices: TestServices) : AbstractIrHandler(test
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
-private class IrConstChecker : IrTypeTransformer<Nothing?> {
-    override fun visitFile(declaration: IrFile, data: Nothing?): IrFile {
-        checkAnnotations(declaration)
-        declaration.transformChildren(this, data)
-        return declaration
+private class IrConstChecker : IrTypeTransformer<Unit, Nothing?> {
+    override fun visitElement(element: IrElement, data: Nothing?) {
+        element.acceptChildren(this, data)
     }
 
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): IrStatement {
+    override fun visitFile(declaration: IrFile, data: Nothing?) {
         checkAnnotations(declaration)
-        declaration.transformChildren(this, data)
-        return declaration
+        declaration.acceptChildren(this, data)
+    }
+
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?) {
+        checkAnnotations(declaration)
+        declaration.acceptChildren(this, data)
     }
 
     override fun <Type : IrType?> transformType(container: IrElement, type: Type, data: Nothing?): Type {
@@ -54,11 +55,11 @@ private class IrConstChecker : IrTypeTransformer<Nothing?> {
         return type
     }
 
-    override fun visitField(declaration: IrField, data: Nothing?): IrStatement {
+    override fun visitField(declaration: IrField, data: Nothing?) {
         if (declaration.correspondingPropertySymbol?.owner?.isConst == true && declaration.initializer?.expression !is IrConst<*>) {
             error("Const field is not containing const expression. Got ${declaration.initializer?.dump()}")
         }
-        return super.visitField(declaration, data)
+        super.visitField(declaration, data)
     }
 
     private fun checkAnnotations(container: IrAnnotationContainer) {

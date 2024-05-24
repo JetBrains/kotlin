@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
 import org.jetbrains.kotlin.ir.generator.IrTree
-import org.jetbrains.kotlin.ir.generator.elementTransformerType
+import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.irTypeType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
@@ -26,15 +26,15 @@ internal class TypeTransformerPrinter(
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorSuperType: ClassRef<PositionTypeParameterRef>
-        get() = elementTransformerType.withArgs(dataTypeVariable)
+        get() = elementVisitorType.withArgs(resultTypeVariable, dataTypeVariable)
 
     override val visitorTypeParameters: List<TypeVariable>
-        get() = listOf(dataTypeVariable)
+        get() = listOf(resultTypeVariable, dataTypeVariable)
 
     override val visitorDataType: TypeRef
         get() = dataTypeVariable
 
-    override fun visitMethodReturnType(element: Element) = element.getTransformExplicitType()
+    override fun visitMethodReturnType(element: Element) = resultTypeVariable
 
     override val allowTypeParametersInVisitorMethods: Boolean
         get() = false
