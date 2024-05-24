@@ -1,5 +1,5 @@
-KtSuccessCallInfo:
-  call = KtSimpleFunctionCall:
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
     isImplicitInvoke = false
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = null
@@ -24,10 +24,11 @@ KtSuccessCallInfo:
       T -> (MyClass)
     }
     argumentMapping = {
-      1 -> (KtVariableLikeSignature:
+      f -> (KtVariableLikeSignature:
         name = int
         receiverType = null
         returnType = kotlin.Int
         symbol = int: kotlin.Int
         callableId = null)
     }
+  isInBestCandidates = true

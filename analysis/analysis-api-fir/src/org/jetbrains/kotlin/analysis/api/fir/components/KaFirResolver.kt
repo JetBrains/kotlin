@@ -171,6 +171,7 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
             ?: containingUnaryExpressionForIncOrDec
             ?: psi.getContainingDotQualifiedExpressionForSelectorExpression()
             ?: psi.getConstructorDelegationCallForDelegationReferenceExpression()
+            ?: psi.getExpressionForOperationReferenceExpression()
             ?: psi
         val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveSession) ?: return emptyList()
         if (fir is FirDiagnosticHolder) {
@@ -181,6 +182,20 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
             psiToResolve == containingCallExpressionForCalleeExpression,
             psiToResolve == containingBinaryExpressionForLhs || psiToResolve == containingUnaryExpressionForIncOrDec
         )
+    }
+
+    /**
+     * When resolving [KtOperationReferenceExpression], we instead resolve the containing [KtWhenConditionInRange] or [KtBinaryExpression].
+     * This way, the corresponding FIR element is a call instead of a reference.
+     */
+    private fun KtElement.getExpressionForOperationReferenceExpression(): KtElement? {
+        if (this !is KtOperationReferenceExpression) return null
+        return when (val parent = parent) {
+            // Augment assignment resolves into KtCompoundVariableAccessCall, but we should resolve into a specific function
+            is KtBinaryExpression -> parent.takeUnless { operationSignTokenType in KtTokens.AUGMENTED_ASSIGNMENTS }
+            is KtWhenConditionInRange -> parent
+            else -> null
+        }
     }
 
     private fun FirElement.toKtCallInfo(

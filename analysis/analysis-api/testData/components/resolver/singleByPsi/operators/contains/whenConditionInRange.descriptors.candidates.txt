@@ -1,16 +1,16 @@
-KtSuccessCallInfo:
-  call = KtSimpleFunctionCall:
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
     isImplicitInvoke = false
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = KtExplicitReceiverValue:
-        expression = m
+        expression = MyClass()
         isSafeNavigation = false
         type = MyClass
       signature = KtFunctionLikeSignature:
         receiverType = MyClass
-        returnType = kotlin.Int
-        symbol = /compareTo(<extension receiver>: T, int: kotlin.Int): kotlin.Int
+        returnType = kotlin.Boolean
+        symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
         valueParameters = [
           KtVariableLikeSignature:
             name = int
@@ -19,7 +19,7 @@ KtSuccessCallInfo:
             symbol = int: kotlin.Int
             callableId = null
         ]
-        callableId = /compareTo
+        callableId = /contains
     typeArgumentsMapping = {
       T -> (MyClass)
     }
@@ -31,3 +31,4 @@ KtSuccessCallInfo:
         symbol = int: kotlin.Int
         callableId = null)
     }
+  isInBestCandidates = true

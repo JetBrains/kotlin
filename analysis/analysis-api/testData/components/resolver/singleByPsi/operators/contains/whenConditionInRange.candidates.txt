@@ -1,1 +1,68 @@
-NO_CANDIDATES
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun contains(str: String): Boolean>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = MyClass()
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MyClass.contains(<dispatch receiver>: MyClass, str: kotlin.String): kotlin.Boolean
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            callableId = null
+        ]
+        callableId = /MyClass.contains
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = str
+        receiverType = null
+        returnType = kotlin.String
+        symbol = str: kotlin.String
+        callableId = null)
+    }
+  isInBestCandidates = false
+
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = MyClass()
+        isSafeNavigation = false
+        type = MyClass
+      signature = KtFunctionLikeSignature:
+        receiverType = MyClass
+        returnType = kotlin.Boolean
+        symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = int
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = int: kotlin.Int
+            callableId = null
+        ]
+        callableId = /contains
+    typeArgumentsMapping = {
+      T -> (MyClass)
+    }
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = int
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = int: kotlin.Int
+        callableId = null)
+    }
+  isInBestCandidates = true
