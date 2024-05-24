@@ -23019,18 +23019,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
       }
 
       @Test
-      @TestMetadata("mangledFunctionsPresentInStackTrace.kt")
-      public void testMangledFunctionsPresentInStackTrace() {
-        runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTrace.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-      }
-
-      @Test
-      @TestMetadata("mangledFunctionsPresentInStackTraceGeneric.kt")
-      public void testMangledFunctionsPresentInStackTraceGeneric() {
-        runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTraceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
-      }
-
-      @Test
       @TestMetadata("mixedSignatureFunctionsDoNotClash.kt")
       public void testMixedSignatureFunctionsDoNotClash() {
         runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -38857,12 +38845,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     @TestMetadata("kt19100.kt")
     public void testKt19100() {
       runTest("compiler/testData/codegen/box/smartCasts/kt19100.kt");
-    }
-
-    @Test
-    @TestMetadata("kt42517.kt")
-    public void testKt42517() {
-      runTest("compiler/testData/codegen/box/smartCasts/kt42517.kt");
     }
 
     @Test
