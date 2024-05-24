@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
-class KonanIrFileSerializer(
+open class KonanIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: KonanDeclarationTable,
 ) : IrFileSerializer(settings, declarationTable) {
