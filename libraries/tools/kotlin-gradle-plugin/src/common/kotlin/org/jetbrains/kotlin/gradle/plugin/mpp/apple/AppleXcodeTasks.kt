@@ -219,7 +219,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
             when (dirAccessible) {
                 DirAccessibility.NOT_ACCESSIBLE -> fireSandboxException(frameworkTaskName, userScriptSandboxingEnabled)
                 DirAccessibility.DOES_NOT_EXIST,
-                DirAccessibility.ACCESSIBLE
+                DirAccessibility.ACCESSIBLE,
                 -> if (userScriptSandboxingEnabled) {
                     fireSandboxException(frameworkTaskName, true)
                 }
@@ -243,7 +243,10 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     }
 
     val swiftExportTask: TaskProvider<*>? =
-        if (project.kotlinPropertiesProvider.swiftExportEnabled && environment.targets.contains(framework.target.konanTarget)) {
+        if (project.kotlinPropertiesProvider.swiftExportEnabled &&
+            environment.targets.contains(framework.konanTarget) &&
+            framework.buildType == envBuildType
+        ) {
             registerSwiftExportTask(framework).apply {
                 dependsOn(checkSandboxAndWriteProtectionTask)
             }

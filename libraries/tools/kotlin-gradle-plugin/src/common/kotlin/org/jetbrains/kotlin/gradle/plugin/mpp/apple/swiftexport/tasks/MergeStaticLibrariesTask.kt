@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.HostManager
+import java.io.File
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
 internal abstract class MergeStaticLibrariesTask : DefaultTask() {
@@ -29,6 +31,10 @@ internal abstract class MergeStaticLibrariesTask : DefaultTask() {
     abstract val library: RegularFileProperty
 
     private val libraryTools by lazy { LibraryTools(logger) }
+
+    fun addLibrary(library: Provider<File>) {
+        libraries.from(library)
+    }
 
     @TaskAction
     fun mergeLibraries() {

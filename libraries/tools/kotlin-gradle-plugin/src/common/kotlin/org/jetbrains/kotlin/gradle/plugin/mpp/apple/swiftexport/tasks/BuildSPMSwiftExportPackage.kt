@@ -9,7 +9,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
@@ -27,7 +26,7 @@ import javax.inject.Inject
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
 internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     providerFactory: ProviderFactory,
-    objectsFactory: ObjectFactory,
+    objectFactory: ObjectFactory,
 ) : DefaultTask() {
     init {
         onlyIf { HostManager.hostIsMac }
@@ -47,7 +46,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
 
     @get:Optional
     @get:Input
-    val targetDeviceIdentifier: Property<String> = objectsFactory.property<String>().convention(
+    val targetDeviceIdentifier: Property<String> = objectFactory.property<String>().convention(
         providerFactory.environmentVariable("TARGET_DEVICE_IDENTIFIER")
     )
 
@@ -62,30 +61,28 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     abstract val packageBuildDir: DirectoryProperty
 
     @get:OutputDirectory
-    val interfacesPath: DirectoryProperty = objectsFactory.directoryProperty().apply {
+    val interfacesPath: DirectoryProperty = objectFactory.directoryProperty().apply {
         set(packageBuildDir.dir("dd-interfaces"))
     }
 
     @get:OutputDirectory
-    val objectFilesPath: DirectoryProperty = objectsFactory.directoryProperty().apply {
+    val objectFilesPath: DirectoryProperty = objectFactory.directoryProperty().apply {
         set(packageBuildDir.dir("dd-o-files"))
     }
 
     @get:OutputDirectory
-    val libraryFilesPath: DirectoryProperty = objectsFactory.directoryProperty().apply {
+    val libraryFilesPath: DirectoryProperty = objectFactory.directoryProperty().apply {
         set(packageBuildDir.dir("dd-a-files"))
     }
 
     @get:OutputFile
-    val packageLibrary: RegularFileProperty = objectsFactory.fileProperty().apply {
+    val packageLibrary: RegularFileProperty = objectFactory.fileProperty().apply {
         set(libraryFilesPath.file(swiftLibraryName.map { "lib${it}.a" }))
     }
 
     private val libraryTools by lazy { LibraryTools(logger) }
 
     private val packageRootPath get() = packageRoot.getFile()
-    private val architecture: Provider<String> by lazy { target.map { it.appleArchitecture() } }
-    private val platform: Provider<String> by lazy { target.map { it.applePlatform() } }
 
     @TaskAction
     fun run() {
@@ -102,7 +99,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         )
 
         val buildArguments = mapOf(
-            "ARCHS" to architecture.get(),
+            "ARCHS" to target.map { it.appleArchitecture }.get(),
             "CONFIGURATION" to configuration.get(),
         )
 
@@ -113,7 +110,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
             "xcodebuild",
             "-derivedDataPath", derivedData.relativeOrAbsolute(packageRootPath),
             "-scheme", scheme,
-            "-destination", destination(),
+            "-destination", destination()
         ) + (intermediatesDestination + buildArguments).map { (k, v) -> "$k=$v" }
 
         // FIXME: This will not work with dynamic libraries
@@ -142,7 +139,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         val deviceId = targetDeviceIdentifier.orNull
         if (deviceId != null) return "id=$deviceId"
 
-        val platformName = platform.orNull ?: error("Missing platform name")
+        val platformName = target.map { it.applePlatform }.get()
         return "generic/platform=$platformName"
     }
 }

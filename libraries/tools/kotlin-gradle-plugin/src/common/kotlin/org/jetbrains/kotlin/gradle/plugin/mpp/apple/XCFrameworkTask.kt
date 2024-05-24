@@ -28,13 +28,14 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.io.Serializable
 import javax.inject.Inject
 
 @Suppress("unused") // used through .values() call
 internal enum class AppleTarget(
     val targetName: String,
     val targets: List<KonanTarget>
-) {
+) : Serializable {
     MACOS_DEVICE("macos", listOf(KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64)),
     IPHONE_DEVICE("ios", listOf(KonanTarget.IOS_ARM64)),
     IPHONE_SIMULATOR("iosSimulator", listOf(KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64)),

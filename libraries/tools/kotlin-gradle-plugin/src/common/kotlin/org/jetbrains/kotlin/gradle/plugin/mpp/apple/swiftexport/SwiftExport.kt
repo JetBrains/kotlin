@@ -13,6 +13,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.maybeCreateSwiftExportClasspathResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
@@ -47,7 +49,7 @@ private fun Project.registerSwiftExportTask(
         buildType.getName(),
     )
     val mainCompilation = target.compilations.getByName("main")
-    val buildConfiguration = buildType.configuration()
+    val buildConfiguration = buildType.configuration
 
     val swiftExportTask = registerSwiftExportRun(
         taskNamePrefix = taskNamePrefix,
@@ -83,8 +85,7 @@ private fun Project.registerSwiftExportTask(
         packageGenerationTask = packageGenerationTask,
     )
     val mergeLibrariesTask = registerMergeLibraryTask(
-        taskNamePrefix = taskNamePrefix,
-        target = target,
+        appleTarget = target.konanTarget.appleTarget,
         configuration = buildConfiguration,
         staticLibrary = staticLibrary,
         swiftApiModuleName = swiftApiModuleName,
@@ -116,13 +117,15 @@ private fun Project.registerSwiftExportRun(
     val compileTask = mainCompilation.compileTaskProvider
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
+        task.description = "Run $taskNamePrefix Swift Export process"
+
         val files = outputs.map { it.dir("files") }
         val serializedModules = outputs.map { it.dir("modules") }
 
         // Input
         task.swiftExportClasspath.from(maybeCreateSwiftExportClasspathResolvableConfiguration())
         task.parameters.swiftApiModuleName.convention(swiftApiModuleName)
-        task.parameters.bridgeModuleName.convention(swiftApiModuleName.map { "${it}Bridge" })
+        task.parameters.bridgeModuleName.convention("SharedBridge")
         task.parameters.konanDistribution.convention(Distribution(konanDistribution.root.absolutePath))
         task.parameters.kotlinLibraryFile.set(
             layout.file(compileTask.map { it.outputFile.get() })
@@ -189,7 +192,7 @@ private fun Project.registerPackageGeneration(
 
     val packageGenerationTask = locateOrRegisterTask<GenerateSPMPackageFromSwiftExport>(spmPackageGenTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
-        task.description = "Generates SPM Package"
+        task.description = "Generates $taskNamePrefix SPM Package"
 
         // Input
         task.kotlinRuntime.set(
@@ -197,7 +200,9 @@ private fun Project.registerPackageGeneration(
         )
 
         task.swiftModulesFile.set(swiftExportTask.map { it.parameters.swiftModulesFile.get() })
-        task.headerBridgeModuleName.set(swiftExportTask.map { it.parameters.bridgeModuleName.get() })
+        task.headerBridgeModuleName.set(swiftExportTask.map {
+            "${it.parameters.bridgeModuleName.get()}_${it.parameters.swiftApiModuleName.get()}"
+        })
         task.swiftLibraryName.set(swiftApiLibraryName)
         task.swiftApiModuleName.set(swiftApiModuleName)
 
@@ -241,8 +246,7 @@ private fun Project.registerSPMPackageBuild(
 }
 
 private fun Project.registerMergeLibraryTask(
-    taskNamePrefix: String,
-    target: KotlinNativeTarget,
+    appleTarget: AppleTarget,
     configuration: String,
     staticLibrary: AbstractNativeLibrary,
     swiftApiModuleName: Provider<String>,
@@ -250,8 +254,10 @@ private fun Project.registerMergeLibraryTask(
 ): TaskProvider<MergeStaticLibrariesTask> {
 
     val mergeTaskName = lowerCamelCaseName(
-        taskNamePrefix,
-        "mergeLibraries"
+        "merge",
+        appleTarget.targetName,
+        configuration,
+        "SwiftExportLibraries"
     )
 
     val libraryName = swiftApiModuleName.map {
@@ -263,22 +269,21 @@ private fun Project.registerMergeLibraryTask(
     }
 
     val mergeTask = locateOrRegisterTask<MergeStaticLibrariesTask>(mergeTaskName) { task ->
-        task.description = "Merges multiple libraries into one"
-
-        // Input
-        task.libraries.setFrom(
-            staticLibrary.linkTaskProvider.map { it.outputFile },
-            packageBuildTask.map { it.packageLibrary }
-        )
+        task.description = "Merges multiple ${configuration.capitalize()} Swift Export libraries into one"
 
         // Output
         task.library.set(
             layout.buildDirectory.file(
                 libraryName.map {
-                    "MergedLibraries/${target.name}/$configuration/$it"
+                    "MergedLibraries/${appleTarget.targetName}/$configuration/$it"
                 }
             )
         )
+    }
+
+    mergeTask.configure { task ->
+        task.addLibrary(staticLibrary.linkTaskProvider.map { it.outputFile.get() })
+        task.addLibrary(packageBuildTask.map { it.packageLibrary.getFile() })
     }
 
     return mergeTask
@@ -306,13 +311,10 @@ private fun Project.registerCopyTask(
         task.includeBridgeDirectory.set(layout.dir(packageGenerationTask.map { it.headerBridgeIncludePath }))
         task.includeKotlinRuntimeDirectory.set(layout.dir(packageGenerationTask.map { it.kotlinRuntimeIncludePath }))
         task.libraryName.set(libraryName)
+        task.library.set(mergeLibrariesTask.map { it.library.get() })
     }
 
     copyTask.configure { task ->
-        task.addLibrary(
-            mergeLibrariesTask.map { it.library.asFile.get() }
-        )
-
         task.addInterface(
             packageBuildTask.map { it.interfacesPath.asFile.get() }
         )

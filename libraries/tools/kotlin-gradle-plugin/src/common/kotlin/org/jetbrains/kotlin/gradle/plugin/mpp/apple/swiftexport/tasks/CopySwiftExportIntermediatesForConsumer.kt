@@ -17,7 +17,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.LibraryTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportConstants
 import java.io.File
 import javax.inject.Inject
@@ -49,9 +48,9 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
         })
     )
 
-    @get:InputFiles
+    @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val libraries: ConfigurableFileCollection = objectFactory.fileCollection()
+    abstract val library: RegularFileProperty
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -67,35 +66,23 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
         builtProductsDirectory.dir(SwiftExportConstants.KOTLIN_RUNTIME)
     )
 
-    fun addLibrary(library: Provider<File>) {
-        libraries.from(library)
-    }
-
     fun addInterface(swiftInterface: Provider<File>) {
         interfaces.from(swiftInterface)
     }
 
-    private val libraryTools by lazy { LibraryTools(logger) }
-
     @TaskAction
     fun copy() {
-        mergeAndCopyLibrary()
+        copyLibrary()
         copyInterfaces()
         copyOtherIncludes()
     }
 
-    private fun mergeAndCopyLibrary() {
-        val libsInput = libraries.files.toList()
-        if (libsInput.count() > 1) {
-            val output = builtProductsDirectory.map { it.asFile.resolve(libraryName.get()) }.get()
-            libraryTools.createFatLibrary(libsInput, output)
-        } else {
-            fileSystem.copy {
-                it.from(libsInput.single())
-                it.into(builtProductsDirectory)
-                it.rename {
-                    libraryName.get()
-                }
+    private fun copyLibrary() {
+        fileSystem.copy {
+            it.from(library)
+            it.into(builtProductsDirectory)
+            it.rename {
+                libraryName.get()
             }
         }
     }
