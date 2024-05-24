@@ -323,6 +323,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.LABEL_NAME_CLASH) { firDiagnostic ->
+        LabelNameClashImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DESERIALIZATION_ERROR) { firDiagnostic ->
         DeserializationErrorImpl(
             firDiagnostic as KtPsiDiagnostic,

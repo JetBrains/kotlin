@@ -270,6 +270,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AmbiguousLabel::class
     }
 
+    interface LabelNameClash : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = LabelNameClash::class
+    }
+
     interface DeserializationError : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = DeserializationError::class
     }

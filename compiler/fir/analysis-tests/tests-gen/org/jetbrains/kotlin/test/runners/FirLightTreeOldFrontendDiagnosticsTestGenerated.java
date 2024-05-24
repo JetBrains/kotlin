@@ -1006,6 +1006,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("labelNameClash.kt")
+    public void testLabelNameClash() {
+      runTest("compiler/testData/diagnostics/tests/labelNameClash.kt");
+    }
+
+    @Test
     @TestMetadata("labeledLambda.kt")
     public void testLabeledLambda() {
       runTest("compiler/testData/diagnostics/tests/labeledLambda.kt");
