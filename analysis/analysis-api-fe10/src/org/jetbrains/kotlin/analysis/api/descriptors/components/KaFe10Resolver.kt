@@ -196,6 +196,8 @@ internal class KaFe10Resolver(
                     candidateTrace.bindingContext.diagnostics
                 )
                 candidateKtCallInfo.toKtCallCandidateInfos(bestCandidateDescriptors)
+            }.ifEmpty {
+                resolvedKtCallInfo?.toKtCallCandidateInfos().orEmpty()
             }
         }
 

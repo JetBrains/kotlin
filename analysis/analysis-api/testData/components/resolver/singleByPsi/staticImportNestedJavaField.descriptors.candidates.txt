@@ -1,1 +1,15 @@
-NO_CANDIDATES
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = bar
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var bar: kotlin.Int
+        callableId = /Dependency.Nested.bar
+    simpleAccess = Read:
+      
+    typeArgumentsMapping = {}
+  isInBestCandidates = true
