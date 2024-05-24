@@ -100,6 +100,7 @@ enum class DiagnosticKind {
     ReturnNotAllowed,
     UnresolvedLabel,
     AmbiguousLabel,
+    LabelNameClash,
     NotAFunctionLabel,
     NoThis,
     IllegalConstExpression,

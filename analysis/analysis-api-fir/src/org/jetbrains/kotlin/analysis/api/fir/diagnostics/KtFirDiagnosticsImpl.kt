@@ -309,6 +309,11 @@ internal class AmbiguousLabelImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AmbiguousLabel
 
+internal class LabelNameClashImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.LabelNameClash
+
 internal class DeserializationErrorImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

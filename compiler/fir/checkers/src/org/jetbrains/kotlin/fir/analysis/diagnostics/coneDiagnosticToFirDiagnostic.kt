@@ -655,6 +655,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
         DiagnosticKind.NotAFunctionLabel -> FirErrors.NOT_A_FUNCTION_LABEL
         DiagnosticKind.UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
         DiagnosticKind.AmbiguousLabel -> FirErrors.AMBIGUOUS_LABEL
+        DiagnosticKind.LabelNameClash -> FirErrors.LABEL_NAME_CLASH
         DiagnosticKind.NoThis -> FirErrors.NO_THIS
         DiagnosticKind.IllegalConstExpression -> FirErrors.ILLEGAL_CONST_EXPRESSION
         DiagnosticKind.IllegalUnderscore -> FirErrors.ILLEGAL_UNDERSCORE

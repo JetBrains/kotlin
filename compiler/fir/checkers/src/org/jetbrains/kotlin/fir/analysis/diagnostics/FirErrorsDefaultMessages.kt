@@ -376,6 +376,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_AMBIGUIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_ON_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LABEL_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_FIELD_IN_VAL_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY
@@ -879,6 +880,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE, "Duplicate parameter name in a function type.")
         map.put(UNRESOLVED_LABEL, "Unresolved label.")
         map.put(AMBIGUOUS_LABEL, "Ambiguous label.")
+        map.put(LABEL_NAME_CLASH, "There is more than one label with such a name in this scope.")
         map.put(DESERIALIZATION_ERROR, "Deserialization error.")
         map.put(ERROR_FROM_JAVA_RESOLUTION, "Java resolution error.")
 //            map.put(UNKNOWN_CALLABLE_KIND, ...) // &
