@@ -138,7 +138,6 @@
 /compiler/testData/codegen/helpers/ "Kotlin JVM"
 /compiler/testData/codegen/innerClassInfo/ "Kotlin JVM"
 /compiler/testData/codegen/kapt/ "Kotlin Compiler Core"
-# UNKNOWN: /compiler/testData/codegen/light-analysis/
 /compiler/testData/codegen/notNullAssertions/ "Kotlin JVM"
 /compiler/testData/codegen/outerClassInfo/ "Kotlin JVM"
 /compiler/testData/codegen/properties/ "Kotlin JVM"
