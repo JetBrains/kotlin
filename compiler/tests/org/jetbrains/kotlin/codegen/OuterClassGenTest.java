@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.Ref;
+import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
@@ -25,15 +26,20 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.JvmCompilationUtils;
 import org.jetbrains.kotlin.test.util.JUnit4Assertions;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class OuterClassGenTest extends CodegenTestCase {
     @NotNull
@@ -156,11 +162,8 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     private void doTest(@NotNull String classFqName, @NotNull String javaClassName, @NotNull String testDataFile) {
-        File javaOut = CodegenTestUtil.compileJava(
-                Collections.singletonList(KtTestUtil.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + testDataFile + ".java"),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                JUnit4Assertions.INSTANCE
+        File javaOut = compileJava(
+                Collections.singletonList(KtTestUtil.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + testDataFile + ".java")
         );
 
         String javaClassPath = javaClassName.replace('.', File.separatorChar) + ".class";
@@ -184,6 +187,22 @@ public class OuterClassGenTest extends CodegenTestCase {
                    kotlinInfo.getOwner().startsWith(expectedInfo.getOwner()));
         assertEquals(message, expectedInfo.getMethodName(), kotlinInfo.getMethodName());
         assertEquals(message, expectedInfo.getMethodDesc(), kotlinInfo.getMethodDesc());
+    }
+
+    @NotNull
+    private static File compileJava(@NotNull List<String> fileNames) {
+        try {
+            File directory = KtTestUtil.tmpDir("java-classes");
+            JvmCompilationUtils.compileJavaFiles(
+                    CollectionsKt.map(fileNames, File::new),
+                    Arrays.asList("-d", directory.getPath()),
+                    JUnit4Assertions.INSTANCE
+            );
+            return directory;
+        }
+        catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
     }
 
     @NotNull

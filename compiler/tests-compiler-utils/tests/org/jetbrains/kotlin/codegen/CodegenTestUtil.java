@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.util.io.FileUtil;
-import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.test.Assertions;
-import org.jetbrains.kotlin.test.JvmCompilationUtils;
 import org.jetbrains.kotlin.test.KtAssert;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -31,7 +28,6 @@ import org.jetbrains.org.objectweb.asm.util.Textifier;
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -77,39 +73,6 @@ public class CodegenTestUtil {
             }
         }
         return null;
-    }
-
-    @NotNull
-    public static File compileJava(
-            @NotNull List<String> fileNames,
-            @NotNull List<String> additionalClasspath,
-            @NotNull List<String> additionalOptions,
-            @NotNull Assertions assertions
-    ) {
-        try {
-            File directory = KtTestUtil.tmpDir("java-classes");
-            compileJava(fileNames, additionalClasspath, additionalOptions, directory, assertions);
-            return directory;
-        }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
-    }
-
-    public static void compileJava(
-            @NotNull List<String> fileNames,
-            @NotNull List<String> additionalClasspath,
-            @NotNull List<String> additionalOptions,
-            @NotNull File outDirectory,
-            @NotNull Assertions assertions
-    ) {
-        try {
-            List<String> options = prepareJavacOptions(additionalClasspath, additionalOptions, outDirectory);
-            JvmCompilationUtils.compileJavaFiles(CollectionsKt.map(fileNames, File::new), options, assertions);
-        }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
     }
 
     @NotNull
