@@ -1170,12 +1170,20 @@ class CallAndReferenceGenerator(
         if (unsubstitutedParameterType != null) {
             with(visitor.implicitCastInserter) {
                 val argumentType = argument.resolvedType.fullyExpandedType(session)
-                if (argument is FirSmartCastExpression) {
-                    val substitutedParameterType = substitutor.substituteOrSelf(unsubstitutedParameterType)
-                    // here we should use a substituted parameter type to properly choose the component of an intersection type
-                    //  to provide a proper cast to the smartcasted type
-                    irArgument = irArgument.insertCastForSmartcastWithIntersection(argumentType, substitutedParameterType)
+
+                fun insertCastToArgument(argument: FirExpression): IrExpression = when (argument) {
+                    is FirSmartCastExpression -> {
+                        val substitutedParameterType = substitutor.substituteOrSelf(unsubstitutedParameterType)
+                        // here we should use a substituted parameter type to properly choose the component of an intersection type
+                        //  to provide a proper cast to the smartcasted type
+                        irArgument.insertCastForSmartcastWithIntersection(argumentType, substitutedParameterType)
+                    }
+                    is FirWhenSubjectExpression -> {
+                        insertCastToArgument(argument.whenRef.value.subject!!)
+                    }
+                    else -> irArgument
                 }
+                irArgument = insertCastToArgument(argument)
                 // here we should pass unsubstituted parameter type to properly infer if the original type accepts null or not
                 // to properly insert nullability check
                 irArgument = irArgument.insertSpecialCast(argument, argumentType, unsubstitutedParameterType)

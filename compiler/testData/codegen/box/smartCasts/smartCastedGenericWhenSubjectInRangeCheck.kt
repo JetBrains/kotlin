@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-68446
 
 fun <T> test_1(arg: T): String {
