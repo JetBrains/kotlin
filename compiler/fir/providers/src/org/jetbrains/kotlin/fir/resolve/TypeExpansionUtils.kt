@@ -136,10 +136,10 @@ private fun mapTypeAliasArguments(
 
         override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
             val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
-            val symbol = (type as? ConeTypeParameterType)?.lookupTag?.symbol ?: return super.substituteArgument(
-                projection,
-                index
-            )
+            // TODO: Consider making code more generic and "ready" to any kind of types (KT-68497)
+            val symbol =
+                (type.unwrapFlexibleAndDefinitelyNotNull() as? ConeTypeParameterType)?.lookupTag?.symbol
+                    ?: return super.substituteArgument(projection, index)
             val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection, index)
             var mappedType = (mappedProjection as? ConeKotlinTypeProjection)?.type.updateNullabilityIfNeeded(type)
             mappedType = when (mappedType) {
@@ -147,7 +147,8 @@ private fun mapTypeAliasArguments(
                 is ConeClassLikeTypeImpl,
                 is ConeDefinitelyNotNullType,
                 is ConeTypeParameterTypeImpl,
-                is ConeFlexibleType -> {
+                is ConeFlexibleType,
+                -> {
                     mappedType.withAttributes(type.attributes.add(mappedType.attributes))
                 }
                 null -> return mappedProjection
