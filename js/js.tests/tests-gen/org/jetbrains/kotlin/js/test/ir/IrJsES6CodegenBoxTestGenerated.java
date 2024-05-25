@@ -1996,6 +1996,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
+    @TestMetadata("kt68449.kt")
+    public void testKt68449() {
+      runTest("compiler/testData/codegen/box/branching/kt68449.kt");
+    }
+
+    @Test
     @TestMetadata("when2.kt")
     public void testWhen2() {
       runTest("compiler/testData/codegen/box/branching/when2.kt");

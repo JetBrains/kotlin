@@ -1244,9 +1244,14 @@ class Fir2IrVisitor(
                 }
                 val isProperlyExhaustive = whenExpression.isDeeplyProperlyExhaustive()
                 val whenExpressionType =
-                    if (isProperlyExhaustive && whenExpression.branches.none {
+                    if ((isProperlyExhaustive && whenExpression.branches.none {
                             it.condition is FirElseIfTrueCondition && it.result.statements.isEmpty()
-                        }) whenExpression.resolvedType else session.builtinTypes.unitType.type
+                        })
+                        /** KT-68449 if `whenExpression` is used as an expression, do not coerce to Unit.
+                         * See [org.jetbrains.kotlin.psi2ir.generators.getExpressionTypeWithCoercionToUnit]
+                         */
+                        || whenExpression.usedAsExpression
+                    ) whenExpression.resolvedType else session.builtinTypes.unitType.type
                 val irBranches = whenExpression.convertWhenBranchesTo(
                     mutableListOf(),
                     whenExpressionType,

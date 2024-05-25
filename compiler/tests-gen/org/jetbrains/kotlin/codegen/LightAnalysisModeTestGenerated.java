@@ -2524,6 +2524,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/branching/if_else.kt");
     }
 
+    @TestMetadata("kt68449.kt")
+    public void testKt68449() {
+      runTest("compiler/testData/codegen/box/branching/kt68449.kt");
+    }
+
     @TestMetadata("when2.kt")
     public void testWhen2() {
       runTest("compiler/testData/codegen/box/branching/when2.kt");
