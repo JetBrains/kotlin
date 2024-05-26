@@ -103,6 +103,9 @@ class UUIDJVMTest {
             assertFailsWith<IndexOutOfBoundsException> {
                 getUUID(1)
             }
+            assertFailsWith<IndexOutOfBoundsException> {
+                getUUID(index = -1) // negative index
+            }
         }
     }
 
@@ -150,6 +153,9 @@ class UUIDJVMTest {
             }
             assertFailsWith<IndexOutOfBoundsException> {
                 putUUID(1, uuid)
+            }
+            assertFailsWith<IndexOutOfBoundsException> {
+                putUUID(-1, uuid) // negative index
             }
         }
     }

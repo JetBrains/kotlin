@@ -48,8 +48,11 @@ public inline fun UUID.toJavaUUID(): java.util.UUID = toLongs { mostSignificantB
 }
 
 /**
- * Reads the next 16 bytes at this buffer's current position, composing them into a UUID value according
- * to the current byte order. The function increments this buffer's position by 16.
+ * Reads a UUID value at this buffer's current position.
+ *
+ * This function reads the next 16 bytes at this buffer's current [position][Buffer.position],
+ * composing them into a UUID value according to the current byte order.
+ * As a result, the buffer's position is incremented by 16.
  *
  * The returned UUID is equivalent to:
  * ```kotlin
@@ -61,6 +64,7 @@ public inline fun UUID.toJavaUUID(): java.util.UUID = toLongs { mostSignificantB
  * return UUID.fromByteArray(bytes)
  * ```
  *
+ * @return The UUID value read at this buffer's current position.
  * @throws BufferUnderflowException If there are fewer than 16 bytes remaining in this buffer.
  *
  * @sample samples.uuid.UUIDs.byteBufferPutAndGetUUID
@@ -69,6 +73,9 @@ public inline fun UUID.toJavaUUID(): java.util.UUID = toLongs { mostSignificantB
 @ExperimentalStdlibApi
 @InlineOnly
 public inline fun ByteBuffer.getUUID(): UUID {
+    if (position() + 15 >= limit()) {
+        throw BufferUnderflowException() // otherwise a partial read could occur
+    }
     val msb: Long
     val lsb: Long
     if (order() == ByteOrder.BIG_ENDIAN) {
@@ -82,8 +89,11 @@ public inline fun ByteBuffer.getUUID(): UUID {
 }
 
 /**
- * Reads the next 16 bytes from this buffer at the specified [index], composing them into a UUID value according
- * to the current byte order. The function doesn't change this buffer's position.
+ * Reads a UUID value at the specified [index].
+ *
+ * This function reads the next 16 bytes from this buffer at the specified [index],
+ * composing them into a UUID value according to the current byte order.
+ * Note that the buffer's [position][ByteBuffer.position] is not updated.
  *
  * The returned UUID is equivalent to:
  * ```kotlin
@@ -96,7 +106,9 @@ public inline fun ByteBuffer.getUUID(): UUID {
  * return UUID.fromByteArray(bytes)
  * ```
  *
- * @throws IndexOutOfBoundsException If [index] is negative or `index + 15` is not smaller than this buffer's limit.
+ * @param index The index to read a UUID at.
+ * @return The UUID value read at the specified [index].
+ * @throws IndexOutOfBoundsException If [index] is negative or `index + 15` is not smaller than this buffer's [limit][Buffer.limit].
  *
  * @sample samples.uuid.UUIDs.byteBufferPutAndGetUUID
  */
@@ -104,6 +116,11 @@ public inline fun ByteBuffer.getUUID(): UUID {
 @ExperimentalStdlibApi
 @InlineOnly
 public inline fun ByteBuffer.getUUID(index: Int): UUID {
+    if (index < 0) {
+        throw IndexOutOfBoundsException("Negative index: $index")
+    } else if (index + 15 >= limit()) {
+        throw IndexOutOfBoundsException("Not enough bytes to read a UUID at index: $index, with limit: ${limit()} ")
+    }
     val msb: Long
     val lsb: Long
     if (order() == ByteOrder.BIG_ENDIAN) {
@@ -117,8 +134,11 @@ public inline fun ByteBuffer.getUUID(index: Int): UUID {
 }
 
 /**
- * Writes 16 bytes containing the given UUID value, in the current byte order, into this buffer at the current position.
- * The function increments this buffer's position by 16.
+ * Writes the specified UUID value at this buffer's current position.
+ *
+ * This function writes 16 bytes containing the given UUID value, in the current byte order,
+ * into this buffer at the current [position][Buffer.position].
+ * As a result, the buffer's position is incremented by 16.
  *
  * This function is equivalent to:
  * ```kotlin
@@ -129,6 +149,8 @@ public inline fun ByteBuffer.getUUID(index: Int): UUID {
  * byteBuffer.put(bytes)
  * ```
  *
+ * @param uuid The UUID value to write.
+ * @return This byte buffer.
  * @throws BufferOverflowException If there is insufficient space in this buffer for 16 bytes.
  * @throws ReadOnlyBufferException If this buffer is read-only.
  *
@@ -138,6 +160,9 @@ public inline fun ByteBuffer.getUUID(index: Int): UUID {
 @ExperimentalStdlibApi
 @InlineOnly
 public inline fun ByteBuffer.putUUID(uuid: UUID): ByteBuffer = uuid.toLongs { msb, lsb ->
+    if (position() + 15 >= limit()) {
+        throw BufferOverflowException() // otherwise a partial write could occur
+    }
     if (order() == ByteOrder.BIG_ENDIAN) {
         putLong(msb)
         putLong(lsb)
@@ -148,8 +173,11 @@ public inline fun ByteBuffer.putUUID(uuid: UUID): ByteBuffer = uuid.toLongs { ms
 }
 
 /**
- * Writes 16 bytes containing the given UUID value, in the current byte order, into this buffer at the specified [index].
- * The function doesn't change this buffer's position.
+ * Writes the specified UUID value at the specified [index].
+ *
+ * This function writes 16 bytes containing the given UUID value, in the current byte order,
+ * into this buffer at the specified [index].
+ * Note that the buffer's [position][ByteBuffer.position] is not updated.
  *
  * This function is equivalent to:
  * ```kotlin
@@ -162,7 +190,10 @@ public inline fun ByteBuffer.putUUID(uuid: UUID): ByteBuffer = uuid.toLongs { ms
  * }
  * ```
  *
- * @throws IndexOutOfBoundsException If [index] is negative or `index + 15` is not smaller than this buffer's limit.
+ * @param index The index to write the specified UUID value at.
+ * @param uuid The UUID value to write.
+ * @return This byte buffer.
+ * @throws IndexOutOfBoundsException If [index] is negative or `index + 15` is not smaller than this buffer's [limit][Buffer.limit].
  * @throws ReadOnlyBufferException If this buffer is read-only.
  *
  * @sample samples.uuid.UUIDs.byteBufferPutAndGetUUID
@@ -171,6 +202,11 @@ public inline fun ByteBuffer.putUUID(uuid: UUID): ByteBuffer = uuid.toLongs { ms
 @ExperimentalStdlibApi
 @InlineOnly
 public inline fun ByteBuffer.putUUID(index: Int, uuid: UUID): ByteBuffer = uuid.toLongs { msb, lsb ->
+    if (index < 0) {
+        throw IndexOutOfBoundsException("Negative index: $index")
+    } else if (index + 15 >= limit()) {
+        throw IndexOutOfBoundsException("Not enough capacity to write a UUID at index: $index, with limit: ${limit()} ")
+    }
     if (order() == ByteOrder.BIG_ENDIAN) {
         putLong(index, msb)
         putLong(index + 8, lsb)

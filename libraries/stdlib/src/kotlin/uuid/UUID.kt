@@ -11,12 +11,14 @@ import kotlin.internal.InlineOnly
 
 /**
  * Represents a Universally Unique Identifier (UUID), also known as a Globally Unique Identifier (GUID).
+ *
  * A UUID is a 128-bit value used to uniquely identify items across the globe. For a deeper understanding
  * of the bits layout and their meaning, refer to [RFC 9562](https://www.rfc-editor.org/rfc/rfc9562).
  *
  * The standard textual representation of a UUID is "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", where each 'x'
  * is a hexadecimal digit, e.g., "550e8400-e29b-41d4-a716-446655440000".
- * This class provides utility functions for the creation, parsing, and operations on UUIDs.
+ *
+ * This class provides utility functions for the creation and parsing of and operations on UUIDs.
  */
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
@@ -26,7 +28,8 @@ public class UUID internal constructor(
 ) : Serializable {
 
     /**
-     * Executes a specified block of code, providing access to the UUID's bits in the form of two [Long] values.
+     * Executes the specified block of code, providing access to the UUID's bits in the form of two [Long] values.
+     *
      * This function is intended for use when one needs to perform bitwise operations with the UUID.
      *
      * The [action] will receive two [Long] arguments:
@@ -59,6 +62,7 @@ public class UUID internal constructor(
 
     /**
      * Executes a specified block of code, providing access to the UUID's bits in the form of two [ULong] values.
+     *
      * This function is intended for use when one needs to perform bitwise operations with the UUID.
      *
      * The [action] will receive two [ULong] arguments:
@@ -90,8 +94,10 @@ public class UUID internal constructor(
     }
 
     /**
-     * Returns the string representation of this UUID in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-     * where 'x' represents a hexadecimal digit. The resulting string is in lowercase and consists of 36 characters.
+     * Returns the string representation of this UUID.
+     *
+     * The resulting string is in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+     * where 'x' represents a hexadecimal digit. It is in lowercase and consists of 36 characters.
      *
      * @see UUID.parse
      * @sample samples.uuid.UUIDs.toStringSample
@@ -112,6 +118,7 @@ public class UUID internal constructor(
 
     /**
      * Returns the hexadecimal string representation of this UUID without hyphens.
+     *
      * The resulting string is in lowercase and consists of 32 characters.
      *
      * @see UUID.parseHex
@@ -144,14 +151,15 @@ public class UUID internal constructor(
     /**
      * Checks whether this UUID is equal to the specified [other] object.
      *
-     * @return `true` if [other] is not `null`, is an instance of UUID, and consists of the same bits in the same order as this UUID;
+     * @param other The object to compare with this UUID.
+     * @return `true` if [other] is an instance of UUID, and consists of the same sequence of bits as this UUID;
      *         `false` otherwise.
      *
      * @sample samples.uuid.UUIDs.uuidEquals
      */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || other !is UUID) return false
+        if (other !is UUID) return false
         return mostSignificantBits == other.mostSignificantBits &&
                 leastSignificantBits == other.leastSignificantBits
     }
@@ -228,7 +236,7 @@ public class UUID internal constructor(
         /**
          * Parses a UUID from a standard UUID string format.
          *
-         * For a valid [uuidString] the following invariant holds true:
+         * For a valid [uuidString] the following property holds:
          * ```kotlin
          * val uuid = UUID.parse(uuidString)
          * assertEquals(uuid.toString(), uuidString.lowercase())
@@ -263,7 +271,7 @@ public class UUID internal constructor(
         /**
          * Parses a UUID from a hexadecimal UUID string without hyphens.
          *
-         * For a valid [hexString] the following invariant holds true:
+         * For a valid [hexString] the following property holds:
          * ```kotlin
          * val uuid = UUID.parseHex(hexString)
          * assertEquals(uuid.toHexString(), hexString.lowercase())
