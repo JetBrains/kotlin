@@ -363,26 +363,26 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     val optimize = context.shouldOptimize()
     module.files.forEach {
         runPhase(ReturnsInsertionPhase, it)
+        // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
+        // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
+        runPhase(PropertyAccessorInlinePhase, it, disable = !optimize)
+        runPhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
     }
     val moduleDFG = runPhase(BuildDFGPhase, module, disable = !optimize)
     val devirtualizationAnalysisResults = runPhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
     val dceResult = runPhase(DCEPhase, DCEInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
     runPhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, devirtualizationAnalysisResults, module), disable = !optimize)
     runPhase(DevirtualizationPhase, DevirtualizationInput(module, devirtualizationAnalysisResults), disable = !optimize)
-    // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
-    // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
+    val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
     module.files.forEach {
-        runPhase(PropertyAccessorInlinePhase, it, disable = !optimize)
-        runPhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
         runPhase(RedundantCoercionsCleaningPhase, it)
         // depends on redundantCoercionsCleaningPhase
         runPhase(UnboxInlinePhase, it, disable = !optimize)
 
     }
-    runPhase(CreateLLVMDeclarationsPhase, module)
     runPhase(GHAPhase, module, disable = !optimize)
+    runPhase(CreateLLVMDeclarationsPhase, module)
     runPhase(RTTIPhase, RTTIInput(module, dceResult))
-    val lifetimes = runPhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG, devirtualizationAnalysisResults), disable = !optimize)
     runPhase(CodegenPhase, CodegenInput(module, lifetimes))
 }
 
