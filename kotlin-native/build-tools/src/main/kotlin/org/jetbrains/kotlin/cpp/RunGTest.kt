@@ -7,14 +7,14 @@
 package org.jetbrains.kotlin.cpp
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.getByType
+import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.native.executors.*
 import org.jetbrains.kotlin.konan.target.*
 import java.time.Duration
 import javax.inject.Inject
@@ -28,26 +28,15 @@ private abstract class RunGTestJob : WorkAction<RunGTestJob.Parameters> {
         val reportFileUnprocessed: RegularFileProperty
         val filter: Property<String>
         val tsanSuppressionsFile: RegularFileProperty
-        val platformManager: Property<PlatformManager>
-        // TODO: Figure out a way to pass KonanTarget, but it is used as a key into PlatformManager,
-        //       so object identity matters, and platform managers are different between project and worker sides.
+        val executorsClasspath: ConfigurableFileCollection
+        val distPath: Property<String>
+        val dataDirPath: Property<String>
         val targetName: Property<String>
         val executionTimeout: Property<Duration>
     }
 
-    // The `Executor` is created for every `RunGTest` task execution. It's okay, testing tasks are few-ish and big.
-    private val executor: Executor by lazy {
-        val platformManager = parameters.platformManager.get()
-        val target = platformManager.targetByName(parameters.targetName.get())
-        val configurables = platformManager.platform(target).configurables
-        val hostTarget = HostManager.host
-        when {
-            target == hostTarget -> HostExecutor()
-            configurables is AppleConfigurables && configurables.targetTriple.isSimulator -> XcodeSimulatorExecutor(configurables)
-            configurables is AppleConfigurables && RosettaExecutor.availableFor(configurables) -> RosettaExecutor(configurables)
-            else -> error("Cannot run for target $target")
-        }
-    }
+    @get:Inject
+    protected abstract val execOperations: ExecOperations
 
     override fun execute() {
         // TODO: Try to make it like other gradle test tasks: report progress in a way gradle understands instead of dumping stdout of gtest.
@@ -55,16 +44,25 @@ private abstract class RunGTestJob : WorkAction<RunGTestJob.Parameters> {
         with(parameters) {
             reportFileUnprocessed.asFile.get().parentFile.mkdirs()
 
-            executor.execute(ExecuteRequest(this@with.executable.asFile.get().absolutePath).apply {
-                this.args.add("--gtest_output=xml:${reportFileUnprocessed.asFile.get().absolutePath}")
-                filter.orNull?.also {
-                    this.args.add("--gtest_filter=${it}")
-                }
+            execOperations.javaexec {
+                classpath(executorsClasspath)
+                mainClass.set("org.jetbrains.kotlin.native.executors.cli.ExecutorsCLI")
                 tsanSuppressionsFile.orNull?.also {
-                    this.environment.put("TSAN_OPTIONS", "suppressions=${it.asFile.absolutePath}")
+                    environment("TSAN_OPTIONS", "suppressions=${it.asFile.absolutePath}")
                 }
-                this.timeout = executionTimeout.get().toKotlinDuration()
-            }).assertSuccess()
+                args("--dist=${distPath.get()}")
+                dataDirPath.orNull?.also {
+                    args("--data-dir=${dataDirPath.get()}")
+                }
+                args("--target=${targetName.get()}")
+                args("--timeout=${executionTimeout.get().toKotlinDuration()}")
+                args("--")
+                args(this@with.executable.asFile.get().absolutePath)
+                args("--gtest_output=xml:${reportFileUnprocessed.asFile.get().absolutePath}")
+                filter.orNull?.also {
+                    args("--gtest_filter=${it}")
+                }
+            }.assertNormalExitValue()
 
             reportFile.asFile.get().parentFile.mkdirs()
 
@@ -146,8 +144,15 @@ abstract class RunGTest : DefaultTask() {
     @get:Input
     abstract val executionTimeout: Property<Duration>
 
+    @get:InputFiles
+    abstract val executorsClasspath: ConfigurableFileCollection
+
     @get:Input
-    val platformManagerExtension: PlatformManager = project.extensions.getByType<PlatformManager>()
+    abstract val distPath: Property<String>
+
+    @get:Input
+    @get:Optional
+    abstract val dataDirPath: Property<String>
 
     @TaskAction
     fun run() {
@@ -160,7 +165,9 @@ abstract class RunGTest : DefaultTask() {
             reportFileUnprocessed.set(this@RunGTest.reportFileUnprocessed)
             filter.set(this@RunGTest.filter)
             tsanSuppressionsFile.set(this@RunGTest.tsanSuppressionsFile)
-            platformManager.set(platformManagerExtension)
+            executorsClasspath.from(this@RunGTest.executorsClasspath)
+            distPath.set(this@RunGTest.distPath)
+            dataDirPath.set(this@RunGTest.dataDirPath)
             targetName.set(this@RunGTest.target.get().name)
             executionTimeout.set(this@RunGTest.executionTimeout)
         }
