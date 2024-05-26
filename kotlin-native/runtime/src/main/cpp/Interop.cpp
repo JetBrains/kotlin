@@ -35,14 +35,22 @@ KNativePtr Kotlin_Interop_createStablePointer(KRef any) {
 }
 
 void Kotlin_Interop_disposeStablePointer(KNativePtr pointer) {
-  KRefSharedHolder* holder = reinterpret_cast<KRefSharedHolder*>(pointer);
-  holder->dispose();
-  delete holder;
+    if (reinterpret_cast<uintptr_t>(pointer) & 1)
+        return;
+    KRefSharedHolder* holder = reinterpret_cast<KRefSharedHolder*>(pointer);
+    holder->dispose();
+    delete holder;
 }
 
 OBJ_GETTER(Kotlin_Interop_derefStablePointer, KNativePtr pointer) {
-  KRefSharedHolder* holder = reinterpret_cast<KRefSharedHolder*>(pointer);
-  RETURN_OBJ(holder->ref<ErrorPolicy::kThrow>());
+    if (reinterpret_cast<uintptr_t>(pointer) & 1)
+        RETURN_OBJ(reinterpret_cast<KRef>(reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(1)));
+    KRefSharedHolder* holder = reinterpret_cast<KRefSharedHolder*>(pointer);
+    RETURN_OBJ(holder->ref<ErrorPolicy::kThrow>());
+}
+
+KNativePtr Kotlin_Interop_createStackStablePointer(KRef any) {
+    return reinterpret_cast<KNativePtr>(reinterpret_cast<uintptr_t>(any) | 1);
 }
 
 OBJ_GETTER(Kotlin_CString_toKStringFromUtf8Impl, const char* cstring) {

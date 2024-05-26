@@ -48,4 +48,6 @@ object KonanFqNames {
     val refinesInSwift = FqName("kotlin.native.RefinesInSwift")
     val shouldRefineInSwift = FqName("kotlin.native.ShouldRefineInSwift")
     val reflectionPackageName = FqName("kotlin.native.internal.ReflectionPackageName")
+    val eaEscapes = FqName("kotlin.native.internal.Escapes")
+    val eaPointsTo = FqName("kotlin.native.internal.PointsTo")
 }

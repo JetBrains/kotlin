@@ -9,12 +9,13 @@ import kotlin.native.*
 import kotlin.native.internal.GCUnsafeCall
 
 @ExperimentalForeignApi
-public data class Pinned<out T : Any> internal constructor(private val stablePtr: COpaquePointer) {
+public data class Pinned<out T : Any> @PublishedApi internal constructor(@PublishedApi internal val stablePtr: COpaquePointer) {
 
     /**
      * Disposes the handle. It must not be [used][get] after that.
      */
-    public fun unpin() {
+    @Suppress("NOTHING_TO_INLINE")
+    public inline fun unpin() {
         disposeStablePointer(this.stablePtr)
     }
 
@@ -26,7 +27,8 @@ public data class Pinned<out T : Any> internal constructor(private val stablePtr
 }
 
 @ExperimentalForeignApi
-public fun <T : Any> T.pin(): Pinned<T> = Pinned<T>(createStablePointer(this))
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <T : Any> T.pin(): Pinned<T> = Pinned<T>(createStablePointer(this))
 
 @ExperimentalForeignApi
 public inline fun <T : Any, R> T.usePinned(block: (Pinned<T>) -> R): R {

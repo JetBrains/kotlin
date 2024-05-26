@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.getAllSuperclasses
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 
 private val DataFlowIR.Node.isAlloc
     get() = this is DataFlowIR.Node.NewObject || this is DataFlowIR.Node.AllocInstance
@@ -829,10 +830,13 @@ internal object EscapeAnalysis {
                 FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
             } else {
                 context.log { "An external call: $callee" }
-                if (callee.name?.startsWith("kfun:kotlin.") == true
-                        // TODO: Is it possible to do it in a more fine-grained fashion?
-                        && !callee.name.startsWith("kfun:kotlin.native.concurrent")
-                        && !callee.name.startsWith("kfun:kotlin.concurrent")) {
+                if ((callee.name?.startsWith("kfun:kotlin.") == true
+                                // TODO: Is it possible to do it in a more fine-grained fashion?
+                                && !callee.name.startsWith("kfun:kotlin.native.concurrent")
+                                && !callee.name.startsWith("kfun:kotlin.concurrent"))
+                        || callee.irFunction?.hasAnnotation(KonanFqNames.eaPointsTo) == true
+                        || callee.irFunction?.hasAnnotation(KonanFqNames.eaEscapes) == true
+                ) {
                     context.log { "A function from K/N runtime - can use annotations" }
                     FunctionEscapeAnalysisResult.fromBits(
                             callee.escapes ?: 0,

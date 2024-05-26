@@ -232,6 +232,11 @@ internal class KonanSymbols(
     val managedTypeConstructor = lookup.findPrimaryConstructor(interopClass(InteropFqNames.managedTypeName))!!
     val structVarPrimaryConstructor = lookup.findPrimaryConstructor(lookup.findNestedClass(cStuctVar, Name.identifier(InteropFqNames.TypeName))!!)!!
 
+    val interopPinned = interopClass("Pinned")
+    val interopStackStableRef = interopClass("StackStableRef")
+    val createStablePointer = interopFunction("createStablePointer")
+    val createStackStablePointer = interopFunction("createStackStablePointer")
+
     val interopGetPtr = findTopLevelPropertyGetter(InteropFqNames.packageName, Name.identifier("ptr")) {
         lookup.isTypeParameterUpperBoundClass(it, 0, interopCPointed)
     }

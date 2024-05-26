@@ -128,10 +128,10 @@ internal data class EscapeAnalysisInput(
         get() = irModule
 }
 
-internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerationState, EscapeAnalysisInput, Map<IrElement, Lifetime>>(
+internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerationState, EscapeAnalysisInput, MutableMap<IrElement, Lifetime>>(
         name = "EscapeAnalysis",
         description = "Escape analysis",
-        outputIfNotEnabled = { _, _, _, _ -> emptyMap() },
+        outputIfNotEnabled = { _, _, _, _ -> mutableMapOf() },
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
         op = { generationState, input ->

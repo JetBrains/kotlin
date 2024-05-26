@@ -9,32 +9,32 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
-import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.phaser.AbstractNamedCompilerPhase
+import org.jetbrains.kotlin.backend.common.phaser.SimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
+import org.jetbrains.kotlin.backend.konan.driver.utilities.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
+import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.backend.konan.lower.ImportCachesAbiTransformer
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
-import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowering
-import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
-import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
-import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
+import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -493,6 +493,22 @@ internal val UnboxInlinePhase = createFileLoweringPhase(
         name = "UnboxInline",
         description = "Unbox functions inline lowering",
         lowering = ::UnboxInlineLowering,
+)
+
+internal class OptimizeStableRefsInput(val file: IrFile, val lifetimes: MutableMap<IrElement, Lifetime>)
+    : KotlinBackendIrHolder {
+    override val kotlinIr: IrElement
+        get() = file
+}
+
+internal val OptimizeStableRefsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, OptimizeStableRefsInput>(
+        name = "OptimizeStableRefs",
+        description = "Stable refs optimization",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
+        op = { generationState, input ->
+            StableRefOptimization(generationState.context, input.lifetimes).lower(input.file)
+        }
 )
 
 private val inventNamesForLocalClasses = createFileLoweringPhase(

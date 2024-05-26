@@ -378,7 +378,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         runPhase(RedundantCoercionsCleaningPhase, it)
         // depends on redundantCoercionsCleaningPhase
         runPhase(UnboxInlinePhase, it, disable = !optimize)
-
+        runPhase(OptimizeStableRefsPhase, OptimizeStableRefsInput(it, lifetimes), disable = !optimize)
     }
     runPhase(GHAPhase, module, disable = !optimize)
     runPhase(CreateLLVMDeclarationsPhase, module)

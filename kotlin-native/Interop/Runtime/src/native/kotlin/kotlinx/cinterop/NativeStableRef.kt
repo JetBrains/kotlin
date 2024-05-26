@@ -8,14 +8,27 @@ package kotlinx.cinterop
 import kotlin.native.*
 import kotlin.native.internal.Escapes
 import kotlin.native.internal.GCUnsafeCall
+import kotlin.native.internal.ExportForCppRuntime
+import kotlin.native.internal.PointsTo
 
+@PublishedApi
 @GCUnsafeCall("Kotlin_Interop_createStablePointer")
-@Escapes(0b01) // any escapes into stable ref.
+@PointsTo(0x00, 0x01) // ret -> any
 internal external fun createStablePointer(any: Any): COpaquePointer
 
+@PublishedApi
 @GCUnsafeCall("Kotlin_Interop_disposeStablePointer")
+@PointsTo(0x00, 0x00)
 internal external fun disposeStablePointer(pointer: COpaquePointer)
 
 @PublishedApi
 @GCUnsafeCall("Kotlin_Interop_derefStablePointer")
+@PointsTo(0x02, 0x00) // pointer -> ret
 internal external fun derefStablePointer(pointer: COpaquePointer): Any
+
+@ExportForCppRuntime
+@GCUnsafeCall("Kotlin_Interop_createStackStablePointer")
+@PointsTo(0x00, 0x01) // ret -> any
+internal external fun createStackStablePointer(any: Any): COpaquePointer
+
+internal class StackStableRef @ExportForCppRuntime constructor(val obj: Any)

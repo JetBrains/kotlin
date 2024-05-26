@@ -27,8 +27,10 @@ import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubclassOf
 
+@PublishedApi
 internal fun createStablePointer(any: Any): COpaquePointer = newGlobalRef(any).toCPointer()!!
 
+@PublishedApi
 internal fun disposeStablePointer(pointer: COpaquePointer) = deleteGlobalRef(pointer.toLong())
 
 @PublishedApi

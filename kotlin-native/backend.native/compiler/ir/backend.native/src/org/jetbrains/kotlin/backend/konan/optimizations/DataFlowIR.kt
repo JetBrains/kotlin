@@ -445,16 +445,7 @@ internal object DataFlowIR {
         val primitiveMap = mutableMapOf<PrimitiveBinaryType, Type>()
         val functionMap = mutableMapOf<IrDeclaration, FunctionSymbol>()
 
-        private val NAME_ESCAPES = Name.identifier("Escapes")
-        private val NAME_POINTS_TO = Name.identifier("PointsTo")
-        private val FQ_NAME_KONAN = FqName.fromSegments(listOf("kotlin", "native", "internal"))
-
-        private val FQ_NAME_ESCAPES = FQ_NAME_KONAN.child(NAME_ESCAPES)
-        private val FQ_NAME_POINTS_TO = FQ_NAME_KONAN.child(NAME_POINTS_TO)
-
-        private val konanPackage = context.builtIns.builtInsModule.getPackage(FQ_NAME_KONAN).memberScope
         private val getContinuationSymbol = context.ir.symbols.getContinuation
-        private val continuationType = getContinuationSymbol.owner.returnType
 
         var privateTypeIndex = 1 // 0 for [Virtual]
         var privateFunIndex = 0
@@ -612,8 +603,8 @@ internal object DataFlowIR {
             }
             val symbol = when {
                 it.isExternal || it.isBuiltInOperator -> {
-                    val escapesAnnotation = it.annotations.findAnnotation(FQ_NAME_ESCAPES)
-                    val pointsToAnnotation = it.annotations.findAnnotation(FQ_NAME_POINTS_TO)
+                    val escapesAnnotation = it.annotations.findAnnotation(KonanFqNames.eaEscapes)
+                    val pointsToAnnotation = it.annotations.findAnnotation(KonanFqNames.eaPointsTo)
                     @Suppress("UNCHECKED_CAST")
                     val escapesBitMask = (escapesAnnotation?.getValueArgument(0) as? IrConst<Int>)?.value
                     @Suppress("UNCHECKED_CAST")
