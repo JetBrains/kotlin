@@ -145,7 +145,7 @@ internal class BackendInliner(
                         }
 //                        //if (irFunction.name.asString() == "foo")
 //                        println("        $isALoop $calleeSize")
-                        val threshold = if (calleeIrFunction is IrSimpleFunction) 66 else 33
+                        val threshold = if (calleeIrFunction is IrSimpleFunction) 33 else 33
                         if (!isALoop && calleeSize <= threshold // TODO: To a function. Also use relative criterion along with the absolute one.
                                 && (calleeIrFunction.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION || options.inlineBoxUnbox)
                                 && !calleeIrFunction.hasAnnotation(noInline)
@@ -337,7 +337,7 @@ internal class BackendInliner(
             }
         }
 
-        println("During BackendInlinerPhase: $maxMemoryUsage")
+//        println("During BackendInlinerPhase: $maxMemoryUsage")
 
     }
 
