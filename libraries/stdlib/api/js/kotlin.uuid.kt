@@ -1,6 +1,6 @@
 @kotlin.SinceKotlin(version = "2.0")
 @kotlin.ExperimentalStdlibApi
-public final class UUID {
+public final class UUID : kotlin.io.Serializable {
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
     public open override fun hashCode(): kotlin.Int
