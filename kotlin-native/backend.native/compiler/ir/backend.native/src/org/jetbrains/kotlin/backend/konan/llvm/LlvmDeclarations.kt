@@ -27,7 +27,7 @@ internal fun createLlvmDeclarations(generationState: NativeGenerationState, irMo
     val generator = DeclarationsGeneratorVisitor(generationState)
     irModule.acceptChildrenVoid(generator)
 
-//    println("During CreateLLVMDeclarationsPhase: ${generator.maxMemoryUsage}")
+    println("During CreateLLVMDeclarationsPhase: ${generator.maxMemoryUsage}")
 
     return LlvmDeclarations(generator.uniques)
 }

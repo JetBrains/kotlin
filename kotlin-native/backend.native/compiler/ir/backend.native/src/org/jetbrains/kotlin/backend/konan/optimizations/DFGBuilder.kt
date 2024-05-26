@@ -901,7 +901,7 @@ internal class ModuleDFGBuilder(val generationState: NativeGenerationState, val 
             }
         }
 
-//        println("During BuildDFGPhase: $maxMemoryUsage")
+        println("During BuildDFGPhase: $maxMemoryUsage")
 
         return ModuleDFG(functions, symbolTable)
     }
