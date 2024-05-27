@@ -1576,6 +1576,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     public void testInsidePlusAssignTarget() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/assignments/insidePlusAssignTarget.kt");
     }
+
+    @Test
+    @TestMetadata("plusEq_overriddenPlus.kt")
+    public void testPlusEq_overriddenPlus() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/assignments/plusEq_overriddenPlus.kt");
+    }
   }
 
   @Nested
