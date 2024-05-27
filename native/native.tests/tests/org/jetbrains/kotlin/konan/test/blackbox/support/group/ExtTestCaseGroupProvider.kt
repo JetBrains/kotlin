@@ -157,7 +157,6 @@ private class ExtTestDataFile(
     val isRelevant: Boolean =
         isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
                 && !settings.isDisabledNative(structure.directives)
-                && testDataFileSettings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
@@ -579,18 +578,6 @@ private class ExtTestDataFile(
         private val INCOMPATIBLE_LANGUAGE_VERSIONS = setOf("1.3", "1.4")
 
         private const val LANGUAGE_DIRECTIVE = "LANGUAGE"
-        private val INCOMPATIBLE_LANGUAGE_SETTINGS = setOf(
-            "-ProperIeee754Comparisons",                            // K/N supports only proper IEEE754 comparisons
-            "-ReleaseCoroutines",                                   // only release coroutines
-            "-DataClassInheritance",                                // old behavior is not supported
-            "-ProhibitAssigningSingleElementsToVarargsInNamedForm", // Prohibit these assignments
-            "-ProhibitDataClassesOverridingCopy",                   // Prohibit as no longer supported
-            "-ProhibitOperatorMod",                                 // Prohibit as no longer supported
-            "-ProhibitIllegalValueParameterUsageInDefaultArguments",  // Allow only legal values
-            "-UseBuilderInferenceOnlyIfNeeded",                     // Run only default one
-            "-UseCorrectExecutionOrderForVarargArguments"           // Run only correct one
-        )
-
         private const val USE_EXPERIMENTAL_DIRECTIVE = "USE_EXPERIMENTAL"
 
         private const val NATIVE_STANDALONE_DIRECTIVE = "NATIVE_STANDALONE"
