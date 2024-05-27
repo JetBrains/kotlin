@@ -1741,7 +1741,22 @@ interface KotlinMultiplatformSourceSetConventions {
     val NamedDomainObjectContainer<KotlinSourceSet>.androidInstrumentedTest: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
-     * Configure Source Set Provider with [configure] code block.
+     * Configure [KotlinSourceSet] provider with [configure] code block.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    iosX64()
+     *    iosArm64()
+     *
+     *    sourceSets {
+     *      nativeMain { /* this: KotlinSourceSet */
+     *          kotlin.srcDir("src/native")
+     *      }
+     *    }
+     * }
+     * ```
      *
      * @since 1.9.20
      */
@@ -1750,7 +1765,23 @@ interface KotlinMultiplatformSourceSetConventions {
     ): Unit = get().run(configure)
 
     /**
-     * Configure Source Set dependencies with [handler] code block.
+     * Configure [KotlinSourceSet] dependencies with [handler] code block.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    jvm()
+     *    iosX64()
+     *    iosArm64()
+     *
+     *    sourceSets {
+     *      commonMain.dependencies {
+     *          api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+     *      }
+     *    }
+     * }
+     * ```
      *
      * @since 1.9.20
      */
@@ -1759,7 +1790,23 @@ interface KotlinMultiplatformSourceSetConventions {
     ): Unit = get().dependencies(handler)
 
     /**
-     * Configure Source Set language settings with [configure] code block.
+     * Configure [KotlinSourceSet] language settings with [configure] code block.
+     *
+     * Sample:
+     *
+     * ```kotlin
+     * kotlin {
+     *    jvm()
+     *    iosX64()
+     *    iosArm64()
+     *
+     *    sourceSets {
+     *      commonMain.languageSettings {
+     *          progressiveMode = true
+     *      }
+     *    }
+     * }
+     * ```
      *
      * @since 1.9.20
      */
