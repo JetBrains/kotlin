@@ -66,25 +66,19 @@ abstract class KotlinNpmInstallTask :
         nodeJs.packageManagerExtension.get().packageManager.preparedFiles(nodsJsEnvironment)
     }
 
-    @Deprecated("Use packageJsonFileList instead", replaceWith = ReplaceWith("packageJsonFileList"))
-    @get:Internal
-    val packageJsonFiles: List<RegularFile>
-        get() = packageJsonFileList.get()
-
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
-    val packageJsonFileList: ListProperty<RegularFile> = project.objects.listProperty<RegularFile>().value(
-        project.objects.providerWithLazyConvention {
-            rootResolver.projectResolvers.values
-                .flatMap { it.compilationResolvers }
-                .map { it.npmProject.name }
-                .map { name ->
-                    packagesDir.map { dir -> dir.dir(name).file(NpmProject.PACKAGE_JSON) }.get()
-                }
-        }
-    )
+    val packageJsonFiles: List<RegularFile> by lazy {
+        rootResolver.projectResolvers.values
+            .flatMap { it.compilationResolvers }
+            .map { it.compilationNpmResolution }
+            .map { resolution ->
+                val name = resolution.npmProjectName
+                packagesDir.map { it.dir(name).file(NpmProject.PACKAGE_JSON) }.get()
+            }
+    }
 
     @get:OutputFiles
     val additionalFiles: FileCollection by lazy {
