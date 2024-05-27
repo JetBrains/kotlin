@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-typealias ReportIrValidationError = (IrFile?, IrElement, String) -> Unit
+typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>) -> Unit
 
 internal data class IrValidatorConfig(
     val checkTypes: Boolean = true,
@@ -35,24 +35,27 @@ private class IrValidator(
 ) : IrElementVisitorVoid {
 
     var currentFile: IrFile? = null
+    private val parentChain = mutableListOf<IrElement>()
 
     override fun visitFile(declaration: IrFile) {
         currentFile = declaration
         super.visitFile(declaration)
         if (config.checkScopes) {
-            ScopeValidator(this::error).check(declaration)
+            ScopeValidator(this::error, parentChain).check(declaration)
         }
     }
 
     private fun error(element: IrElement, message: String) {
-        reportError(currentFile, element, message)
+        reportError(currentFile, element, message, parentChain)
     }
 
     private val elementChecker = CheckIrElementVisitor(irBuiltIns, this::error, config)
 
     override fun visitElement(element: IrElement) {
         element.acceptVoid(elementChecker)
+        parentChain.push(element)
         element.acceptChildrenVoid(this)
+        parentChain.pop()
     }
 }
 
@@ -80,7 +83,8 @@ private fun IrElement.checkDeclarationParents(reportError: ReportIrValidationErr
                 expectedParents.forEach {
                     append(it.dump())
                 }
-            }
+            },
+            emptyList(),
         )
     }
 }
@@ -139,7 +143,13 @@ sealed interface IrValidationContext {
     /**
      * Logs the validation error into the underlying [MessageCollector].
      */
-    fun reportIrValidationError(file: IrFile?, element: IrElement, message: String, phaseName: String)
+    fun reportIrValidationError(
+        file: IrFile?,
+        element: IrElement,
+        message: String,
+        phaseName: String,
+        parentChain: List<IrElement> = emptyList(),
+    )
 
     /**
      * Allows to abort the compilation process if after or during validating the IR there were errors and the verification mode is
@@ -168,8 +178,8 @@ sealed interface IrValidationContext {
             irBuiltIns,
             checkProperties,
             checkTypes,
-        ) { file, element, message ->
-            reportIrValidationError(file, element, message, phaseName)
+        ) { file, element, message, parentChain ->
+            reportIrValidationError(file, element, message, phaseName, parentChain)
         }
     }
 }
@@ -181,7 +191,13 @@ private class IrValidationContextImpl(
 
     private var hasValidationErrors: Boolean = false
 
-    override fun reportIrValidationError(file: IrFile?, element: IrElement, message: String, phaseName: String) {
+    override fun reportIrValidationError(
+        file: IrFile?,
+        element: IrElement,
+        message: String,
+        phaseName: String,
+        parentChain: List<IrElement>,
+    ) {
         val severity = when (mode) {
             IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
             IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
@@ -189,10 +205,20 @@ private class IrValidationContextImpl(
         }
         hasValidationErrors = true
         val phaseMessage = if (phaseName.isNotEmpty()) "$phaseName: " else ""
-        // TODO: render all element's parents.
         messageCollector.report(
             severity,
-            "[IR VALIDATION] ${phaseMessage}${"$message\n" + element.render()}",
+            buildString {
+                append("[IR VALIDATION] ")
+                append(phaseMessage)
+                appendLine(message)
+                append(element.render())
+                for ((i, parent) in parentChain.asReversed().withIndex()) {
+                    appendLine()
+                    append("  ".repeat(i + 1))
+                    append("inside ")
+                    append(parent.render())
+                }
+            },
             file?.let(element::getCompilerMessageLocation),
         )
     }

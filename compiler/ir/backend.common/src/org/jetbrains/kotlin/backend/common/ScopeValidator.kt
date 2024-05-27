@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * Makes sure that all the variable references and type parameter references are within the scope of the corresponding variables and
  * type parameters.
  */
-internal class ScopeValidator(private val reportError: ReportError) {
+internal class ScopeValidator(private val reportError: ReportError, private val parentChain: MutableList<IrElement>) {
 
     fun check(element: IrElement) {
         element.accept(Checker(), Visibles(emptySet(), mutableSetOf()))
@@ -55,7 +55,9 @@ internal class ScopeValidator(private val reportError: ReportError) {
 
     inner class Checker : IrElementVisitor<Unit, Visibles> {
         override fun visitElement(element: IrElement, data: Visibles) {
+            parentChain.push(element)
             element.acceptChildren(this, data)
+            parentChain.pop()
         }
 
         override fun visitClass(declaration: IrClass, data: Visibles) {
