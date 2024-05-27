@@ -13,3 +13,4 @@ fun test(foo: Foo) {
 }
 
 fun consume(f: (Bar, Int) -> Unit) {}
+// COMPILATION_ERRORS

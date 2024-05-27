@@ -6,3 +6,4 @@ fun test() {
 }
 
 fun consume(f: (String) -> Any) {}
+// COMPILATION_ERRORS

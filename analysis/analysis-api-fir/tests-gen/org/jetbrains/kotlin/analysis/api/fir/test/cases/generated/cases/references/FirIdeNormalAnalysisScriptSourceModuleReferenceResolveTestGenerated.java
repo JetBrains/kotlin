@@ -269,16 +269,6 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceResolveTestGenerated
   }
 
   @Nested
-  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode")
-  @TestDataPath("$PROJECT_ROOT")
-  public class InvalidCode {
-    @Test
-    public void testAllFilesPresentInInvalidCode() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
-  }
-
-  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke")
   @TestDataPath("$PROJECT_ROOT")
   public class Invoke {

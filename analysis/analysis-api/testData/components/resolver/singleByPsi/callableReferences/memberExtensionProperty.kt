@@ -14,3 +14,4 @@ fun test(foo: Foo) {
 }
 
 fun consume(f: (Bar) -> String) {}
+// COMPILATION_ERRORS

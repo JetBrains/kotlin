@@ -89,6 +89,44 @@ import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
 internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
+    component(
+        directory = "resolver",
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibrarySource) and
+                analysisSessionModeIs(AnalysisSessionMode.Normal),
+    ) {
+        val init: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
+            val excludeDirs = buildList {
+                if (data.analysisApiMode == AnalysisApiMode.Standalone ||
+                    data.frontend == FrontendKind.Fe10 ||
+                    data.moduleKind == TestModuleKind.LibrarySource
+                ) {
+                    add("withTestCompilerPluginEnabled")
+                }
+
+                when (data.moduleKind) {
+                    TestModuleKind.LibrarySource -> {
+                        // Sources with errors cannot be compiled to a library.
+                        add("withErrors")
+
+                        // Tests which rely on missing dependencies (e.g. the main module missing a dependency to a library module) will not
+                        // work as expected with library source modules, because they use "rest symbol providers" which provide symbols from
+                        // all other libraries (as dependencies between libraries are not usually known). So the "missing" dependencies
+                        // would effectively not be missing.
+                        add("missingDependency")
+                    }
+
+                    else -> {}
+                }
+            }
+
+            model(data, "singleByPsi", excludeDirsRecursively = excludeDirs)
+        }
+
+        test<AbstractResolveCallTest>(init = init)
+        test<AbstractResolveCandidatesTest>(init = init)
+        test<AbstractReferenceResolveTest>(init = init)
+    }
+
     test<AbstractDanglingFileReferenceResolveTest>(
         filter = frontendIs(FrontendKind.Fir)
                 and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)
@@ -304,41 +342,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiStandaloneTests() {
 }
 
 private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
-    component("resolver", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-        val init: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
-            val excludeDirs = buildList {
-                if (data.analysisApiMode == AnalysisApiMode.Standalone || data.frontend == FrontendKind.Fe10) {
-                    add("withTestCompilerPluginEnabled")
-                }
-
-                when (data.moduleKind) {
-                    TestModuleKind.LibrarySource -> {
-                        // Sources with errors cannot be compiled to a library.
-                        add("withErrors")
-
-                        // Tests which rely on missing dependencies (e.g. the main module missing a dependency to a library module) will not
-                        // work as expected with library source modules, because they use "rest symbol providers" which provide symbols from
-                        // all other libraries (as dependencies between libraries are not usually known). So the "missing" dependencies
-                        // would effectively not be missing.
-                        add("missingDependency")
-                    }
-
-                    else -> {}
-                }
-            }
-
-            model(data, "singleByPsi", excludeDirsRecursively = excludeDirs)
-        }
-
-        test<AbstractResolveCallTest>(init = init)
-        test<AbstractResolveCandidatesTest>(init = init)
-        test<AbstractReferenceResolveTest>(
-            filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibrarySource) and
-                    analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone),
-            init = init,
-        )
-    }
-
     component("compileTimeConstantProvider") {
         test<AbstractCompileTimeConstantEvaluatorTest> {
             model(it, "evaluate")

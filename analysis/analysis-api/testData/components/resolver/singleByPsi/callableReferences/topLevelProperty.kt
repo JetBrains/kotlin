@@ -6,3 +6,5 @@ fun test(foo: Foo) {
 }
 
 fun consume(f: () -> String) {}
+
+class Foo

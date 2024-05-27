@@ -47,30 +47,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("ambiguous.kt")
-  public void testAmbiguous() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ambiguous.kt");
-  }
-
-  @Test
-  @TestMetadata("ambiguousImplicitInvoke.kt")
-  public void testAmbiguousImplicitInvoke() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ambiguousImplicitInvoke.kt");
-  }
-
-  @Test
-  @TestMetadata("ambiguousWithExplicitTypeParameters.kt")
-  public void testAmbiguousWithExplicitTypeParameters() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ambiguousWithExplicitTypeParameters.kt");
-  }
-
-  @Test
-  @TestMetadata("ambiguousWithInferredTypeParameters.kt")
-  public void testAmbiguousWithInferredTypeParameters() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ambiguousWithInferredTypeParameters.kt");
-  }
-
-  @Test
   @TestMetadata("annotationEntry.kt")
   public void testAnnotationEntry() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/annotationEntry.kt");
@@ -140,18 +116,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("annotationOnDelegate.kt")
   public void testAnnotationOnDelegate() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/annotationOnDelegate.kt");
-  }
-
-  @Test
-  @TestMetadata("annotationOnExpression_asT.kt")
-  public void testAnnotationOnExpression_asT() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/annotationOnExpression_asT.kt");
-  }
-
-  @Test
-  @TestMetadata("annotationOnExpression_destructuring.kt")
-  public void testAnnotationOnExpression_destructuring() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/annotationOnExpression_destructuring.kt");
   }
 
   @Test
@@ -233,12 +197,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("annotationOnReceiver.kt")
-  public void testAnnotationOnReceiver() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/annotationOnReceiver.kt");
-  }
-
-  @Test
   @TestMetadata("AnnotationTypeParameter.kt")
   public void testAnnotationTypeParameter() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/AnnotationTypeParameter.kt");
@@ -248,18 +206,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("arrayIncWithDotQualifier.kt")
   public void testArrayIncWithDotQualifier() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/arrayIncWithDotQualifier.kt");
-  }
-
-  @Test
-  @TestMetadata("arrayOfInAnnotation.kt")
-  public void testArrayOfInAnnotation() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/arrayOfInAnnotation.kt");
-  }
-
-  @Test
-  @TestMetadata("builderInference.kt")
-  public void testBuilderInference() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/builderInference.kt");
   }
 
   @Test
@@ -350,12 +296,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("comparisonCall.kt")
   public void testComparisonCall() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/comparisonCall.kt");
-  }
-
-  @Test
-  @TestMetadata("compoundAssignOnGenericVar.kt")
-  public void testCompoundAssignOnGenericVar() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/compoundAssignOnGenericVar.kt");
   }
 
   @Test
@@ -473,12 +413,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("defaultValueThatCallsPreviousParameter.kt")
-  public void testDefaultValueThatCallsPreviousParameter() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/defaultValueThatCallsPreviousParameter.kt");
-  }
-
-  @Test
   @TestMetadata("delegatedConstructor.kt")
   public void testDelegatedConstructor() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructor.kt");
@@ -488,42 +422,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("delegatedConstructorApplicable.kt")
   public void testDelegatedConstructorApplicable() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructorApplicable.kt");
-  }
-
-  @Test
-  @TestMetadata("delegatedConstructorCall_super.kt")
-  public void testDelegatedConstructorCall_super() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructorCall_super.kt");
-  }
-
-  @Test
-  @TestMetadata("delegatedConstructorCall_super_unresolved.kt")
-  public void testDelegatedConstructorCall_super_unresolved() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructorCall_super_unresolved.kt");
-  }
-
-  @Test
-  @TestMetadata("delegatedConstructorCall_this.kt")
-  public void testDelegatedConstructorCall_this() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructorCall_this.kt");
-  }
-
-  @Test
-  @TestMetadata("delegatedConstructorCall_this_unresolved.kt")
-  public void testDelegatedConstructorCall_this_unresolved() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructorCall_this_unresolved.kt");
-  }
-
-  @Test
-  @TestMetadata("delegatedConstructorInapplicable.kt")
-  public void testDelegatedConstructorInapplicable() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructorInapplicable.kt");
-  }
-
-  @Test
-  @TestMetadata("delegatedConstructorInapplicableDifferentParametersCount.kt")
-  public void testDelegatedConstructorInapplicableDifferentParametersCount() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedConstructorInapplicableDifferentParametersCount.kt");
   }
 
   @Test
@@ -548,12 +446,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("enumAsAnnotationValue.kt")
   public void testEnumAsAnnotationValue() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/enumAsAnnotationValue.kt");
-  }
-
-  @Test
-  @TestMetadata("enumSuperTypeInterface.kt")
-  public void testEnumSuperTypeInterface() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/enumSuperTypeInterface.kt");
   }
 
   @Test
@@ -614,18 +506,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("EqualsOperatorNoInfix.kt")
   public void testEqualsOperatorNoInfix() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/EqualsOperatorNoInfix.kt");
-  }
-
-  @Test
-  @TestMetadata("ExpectSuperClassConstructorArgument.kt")
-  public void testExpectSuperClassConstructorArgument() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ExpectSuperClassConstructorArgument.kt");
-  }
-
-  @Test
-  @TestMetadata("ExpectSuperClassConstructorCall.kt")
-  public void testExpectSuperClassConstructorCall() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ExpectSuperClassConstructorCall.kt");
   }
 
   @Test
@@ -701,30 +581,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("functionCallWithTooFewTypeArguments.kt")
-  public void testFunctionCallWithTooFewTypeArguments() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/functionCallWithTooFewTypeArguments.kt");
-  }
-
-  @Test
-  @TestMetadata("functionCallWithTooFewTypeArguments2.kt")
-  public void testFunctionCallWithTooFewTypeArguments2() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/functionCallWithTooFewTypeArguments2.kt");
-  }
-
-  @Test
-  @TestMetadata("functionCallWithTooManyTypeArguments.kt")
-  public void testFunctionCallWithTooManyTypeArguments() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/functionCallWithTooManyTypeArguments.kt");
-  }
-
-  @Test
-  @TestMetadata("functionCallWithTooManyTypeArguments2.kt")
-  public void testFunctionCallWithTooManyTypeArguments2() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/functionCallWithTooManyTypeArguments2.kt");
-  }
-
-  @Test
   @TestMetadata("functionCallWithTypeArgument.kt")
   public void testFunctionCallWithTypeArgument() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/functionCallWithTypeArgument.kt");
@@ -740,12 +596,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("functionTypeVariableCall_dispatchReceiver.kt")
   public void testFunctionTypeVariableCall_dispatchReceiver() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/functionTypeVariableCall_dispatchReceiver.kt");
-  }
-
-  @Test
-  @TestMetadata("functionTypeVariableCall_extensionReceiver.kt")
-  public void testFunctionTypeVariableCall_extensionReceiver() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/functionTypeVariableCall_extensionReceiver.kt");
   }
 
   @Test
@@ -821,18 +671,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("hiddenConstructor.kt")
-  public void testHiddenConstructor() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/hiddenConstructor.kt");
-  }
-
-  @Test
-  @TestMetadata("hiddenDeprecated.kt")
-  public void testHiddenDeprecated() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/hiddenDeprecated.kt");
-  }
-
-  @Test
   @TestMetadata("implicitConstructorDelegationCall.kt")
   public void testImplicitConstructorDelegationCall() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/implicitConstructorDelegationCall.kt");
@@ -884,12 +722,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("implicitLambdaParameter.kt")
   public void testImplicitLambdaParameter() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/implicitLambdaParameter.kt");
-  }
-
-  @Test
-  @TestMetadata("implicitTypeSubstituteOverrideFromOtherModule.kt")
-  public void testImplicitTypeSubstituteOverrideFromOtherModule() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/implicitTypeSubstituteOverrideFromOtherModule.kt");
   }
 
   @Test
@@ -971,33 +803,9 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("indexedGetWithNotEnoughArgs.kt")
-  public void testIndexedGetWithNotEnoughArgs() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/indexedGetWithNotEnoughArgs.kt");
-  }
-
-  @Test
-  @TestMetadata("indexedGetWithTooManyArgs.kt")
-  public void testIndexedGetWithTooManyArgs() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/indexedGetWithTooManyArgs.kt");
-  }
-
-  @Test
   @TestMetadata("indexedSet.kt")
   public void testIndexedSet() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/indexedSet.kt");
-  }
-
-  @Test
-  @TestMetadata("indexedSetWithNotEnoughArgs.kt")
-  public void testIndexedSetWithNotEnoughArgs() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/indexedSetWithNotEnoughArgs.kt");
-  }
-
-  @Test
-  @TestMetadata("indexedSetWithTooManyArgs.kt")
-  public void testIndexedSetWithTooManyArgs() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/indexedSetWithTooManyArgs.kt");
   }
 
   @Test
@@ -1025,12 +833,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("javaPropertyGetter_unqualified.kt")
-  public void testJavaPropertyGetter_unqualified() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/javaPropertyGetter_unqualified.kt");
-  }
-
-  @Test
   @TestMetadata("javaPropertyNestedGetter.kt")
   public void testJavaPropertyNestedGetter() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/javaPropertyNestedGetter.kt");
@@ -1040,18 +842,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("javaPropertySetter.kt")
   public void testJavaPropertySetter() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/javaPropertySetter.kt");
-  }
-
-  @Test
-  @TestMetadata("javaPropertySetterIncomplete.kt")
-  public void testJavaPropertySetterIncomplete() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/javaPropertySetterIncomplete.kt");
-  }
-
-  @Test
-  @TestMetadata("javaPropertySetter_unqualified.kt")
-  public void testJavaPropertySetter_unqualified() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/javaPropertySetter_unqualified.kt");
   }
 
   @Test
@@ -1067,12 +857,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("kotlinPropertyGetter.kt")
-  public void testKotlinPropertyGetter() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kotlinPropertyGetter.kt");
-  }
-
-  @Test
   @TestMetadata("kotlinPropertyGetter_unqualified.kt")
   public void testKotlinPropertyGetter_unqualified() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kotlinPropertyGetter_unqualified.kt");
@@ -1082,18 +866,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("kotlinPropertyNestedGetter.kt")
   public void testKotlinPropertyNestedGetter() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kotlinPropertyNestedGetter.kt");
-  }
-
-  @Test
-  @TestMetadata("kotlinPropertySetter.kt")
-  public void testKotlinPropertySetter() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kotlinPropertySetter.kt");
-  }
-
-  @Test
-  @TestMetadata("kotlinPropertySetterGeneric.kt")
-  public void testKotlinPropertySetterGeneric() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kotlinPropertySetterGeneric.kt");
   }
 
   @Test
@@ -1187,21 +959,9 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("PackageFromAnnotationOnFileWithUnresolvedReference.kt")
-  public void testPackageFromAnnotationOnFileWithUnresolvedReference() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/PackageFromAnnotationOnFileWithUnresolvedReference.kt");
-  }
-
-  @Test
   @TestMetadata("PackageFromAnnotationOnFunction.kt")
   public void testPackageFromAnnotationOnFunction() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/PackageFromAnnotationOnFunction.kt");
-  }
-
-  @Test
-  @TestMetadata("PackageFromAnnotationOnFunctionWithUnresolvedReference.kt")
-  public void testPackageFromAnnotationOnFunctionWithUnresolvedReference() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/PackageFromAnnotationOnFunctionWithUnresolvedReference.kt");
   }
 
   @Test
@@ -1277,12 +1037,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("prefixUnaryOperatorOnGenericVar.kt")
-  public void testPrefixUnaryOperatorOnGenericVar() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/prefixUnaryOperatorOnGenericVar.kt");
-  }
-
-  @Test
   @TestMetadata("prefixUnaryOperatorOnVar.kt")
   public void testPrefixUnaryOperatorOnVar() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/prefixUnaryOperatorOnVar.kt");
@@ -1313,21 +1067,9 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("privateMember.kt")
-  public void testPrivateMember() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/privateMember.kt");
-  }
-
-  @Test
   @TestMetadata("qualifiedCalleeExpressionOfImplicitInvoke.kt")
   public void testQualifiedCalleeExpressionOfImplicitInvoke() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/qualifiedCalleeExpressionOfImplicitInvoke.kt");
-  }
-
-  @Test
-  @TestMetadata("recursiveTypeParameter.kt")
-  public void testRecursiveTypeParameter() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/recursiveTypeParameter.kt");
   }
 
   @Test
@@ -1340,12 +1082,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("ReferenceInFunWhereConstraint.kt")
   public void testReferenceInFunWhereConstraint() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/ReferenceInFunWhereConstraint.kt");
-  }
-
-  @Test
-  @TestMetadata("resolveCallInSuperConstructorParam.kt")
-  public void testResolveCallInSuperConstructorParam() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/resolveCallInSuperConstructorParam.kt");
   }
 
   @Test
@@ -1409,18 +1145,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("samFromJava_lambda.kt")
-  public void testSamFromJava_lambda() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/samFromJava_lambda.kt");
-  }
-
-  @Test
-  @TestMetadata("samFromJava_methodReference.kt")
-  public void testSamFromJava_methodReference() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/samFromJava_methodReference.kt");
-  }
-
-  @Test
   @TestMetadata("samLambda.kt")
   public void testSamLambda() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/samLambda.kt");
@@ -1436,12 +1160,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("SeveralOverrides.kt")
   public void testSeveralOverrides() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/SeveralOverrides.kt");
-  }
-
-  @Test
-  @TestMetadata("simpleCallWithNonMatchingArgs.kt")
-  public void testSimpleCallWithNonMatchingArgs() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/simpleCallWithNonMatchingArgs.kt");
   }
 
   @Test
@@ -1559,18 +1277,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("substituteOverrideResolution.kt")
-  public void testSubstituteOverrideResolution() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/substituteOverrideResolution.kt");
-  }
-
-  @Test
-  @TestMetadata("superTypeCallEntryResolveToCallInfo.kt")
-  public void testSuperTypeCallEntryResolveToCallInfo() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/superTypeCallEntryResolveToCallInfo.kt");
-  }
-
-  @Test
   @TestMetadata("SuperTypePrimaryConstructor.kt")
   public void testSuperTypePrimaryConstructor() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/SuperTypePrimaryConstructor.kt");
@@ -1685,18 +1391,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("typecheckerRecursiveError.kt")
-  public void testTypecheckerRecursiveError() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/typecheckerRecursiveError.kt");
-  }
-
-  @Test
-  @TestMetadata("unitTypeFromOtherModule.kt")
-  public void testUnitTypeFromOtherModule() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/unitTypeFromOtherModule.kt");
-  }
-
-  @Test
   @TestMetadata("unresolvableOperator_elvis_1.kt")
   public void testUnresolvableOperator_elvis_1() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/unresolvableOperator_elvis_1.kt");
@@ -1739,18 +1433,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("unresolvedReference.kt")
-  public void testUnresolvedReference() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/unresolvedReference.kt");
-  }
-
-  @Test
-  @TestMetadata("unresolvedSuperReference.kt")
-  public void testUnresolvedSuperReference() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/unresolvedSuperReference.kt");
-  }
-
-  @Test
   @TestMetadata("unsignedArrayOf.kt")
   public void testUnsignedArrayOf() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/unsignedArrayOf.kt");
@@ -1769,12 +1451,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   }
 
   @Test
-  @TestMetadata("variableAsFunctionLikeCall.kt")
-  public void testVariableAsFunctionLikeCall() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/variableAsFunctionLikeCall.kt");
-  }
-
-  @Test
   @TestMetadata("variableAsFunctionWithParameterName.kt")
   public void testVariableAsFunctionWithParameterName() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/variableAsFunctionWithParameterName.kt");
@@ -1790,12 +1466,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("variableAsFunctionWithParameterNameAnnotationConflict.kt")
   public void testVariableAsFunctionWithParameterNameAnnotationConflict() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/variableAsFunctionWithParameterNameAnnotationConflict.kt");
-  }
-
-  @Test
-  @TestMetadata("variableAsFunctionWithParameterNameAnnotationConflict2.kt")
-  public void testVariableAsFunctionWithParameterNameAnnotationConflict2() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/variableAsFunctionWithParameterNameAnnotationConflict2.kt");
   }
 
   @Test
@@ -1826,12 +1496,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
   @TestMetadata("variableWithInvokeFunctionCall_dispatchReceiver.kt")
   public void testVariableWithInvokeFunctionCall_dispatchReceiver() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/variableWithInvokeFunctionCall_dispatchReceiver.kt");
-  }
-
-  @Test
-  @TestMetadata("variableWithInvokeFunctionCall_extensionReceiver.kt")
-  public void testVariableWithInvokeFunctionCall_extensionReceiver() {
-    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/variableWithInvokeFunctionCall_extensionReceiver.kt");
   }
 
   @Test
@@ -2647,76 +2311,6 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     @TestMetadata("staticMethodFromJavaClassJavaClass.kt")
     public void testStaticMethodFromJavaClassJavaClass() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/inImport/staticMethodFromJavaClassJavaClass.kt");
-    }
-  }
-
-  @Nested
-  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode")
-  @TestDataPath("$PROJECT_ROOT")
-  public class InvalidCode {
-    @Test
-    public void testAllFilesPresentInInvalidCode() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("assignementInExpression.kt")
-    public void testAssignementInExpression() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode/assignementInExpression.kt");
-    }
-
-    @Test
-    @TestMetadata("delegatedConstructorWithSubstitutionExtraTypeArgument.kt")
-    public void testDelegatedConstructorWithSubstitutionExtraTypeArgument() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode/delegatedConstructorWithSubstitutionExtraTypeArgument.kt");
-    }
-
-    @Test
-    @TestMetadata("delegatedConstructorWithSubstitutionMissedTypeArgument.kt")
-    public void testDelegatedConstructorWithSubstitutionMissedTypeArgument() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode/delegatedConstructorWithSubstitutionMissedTypeArgument.kt");
-    }
-
-    @Test
-    @TestMetadata("getterAssignment.kt")
-    public void testGetterAssignment() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode/getterAssignment.kt");
-    }
-
-    @Test
-    @TestMetadata("incompleteCodeNoParenthesis.kt")
-    public void testIncompleteCodeNoParenthesis() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode/incompleteCodeNoParenthesis.kt");
-    }
-
-    @Test
-    @TestMetadata("incompleteCodeNoParenthesisDotQualifier.kt")
-    public void testIncompleteCodeNoParenthesisDotQualifier() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode/incompleteCodeNoParenthesisDotQualifier.kt");
-    }
-
-    @Test
-    @TestMetadata("incompleteCodeWithAmbiguity.kt")
-    public void testIncompleteCodeWithAmbiguity() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode/incompleteCodeWithAmbiguity.kt");
-    }
-
-    @Test
-    @TestMetadata("incorrectCodeJavaDeclaration.kt")
-    public void testIncorrectCodeJavaDeclaration() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode/incorrectCodeJavaDeclaration.kt");
-    }
-
-    @Test
-    @TestMetadata("invalidImplicitInvoke.kt")
-    public void testInvalidImplicitInvoke() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode/invalidImplicitInvoke.kt");
-    }
-
-    @Test
-    @TestMetadata("typeParameterAsValue.kt")
-    public void testTypeParameterAsValue() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invalidCode/typeParameterAsValue.kt");
     }
   }
 
@@ -4720,9 +4314,69 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("ambiguous.kt")
+    public void testAmbiguous() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/ambiguous.kt");
+    }
+
+    @Test
+    @TestMetadata("ambiguousImplicitInvoke.kt")
+    public void testAmbiguousImplicitInvoke() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/ambiguousImplicitInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("ambiguousWithExplicitTypeParameters.kt")
+    public void testAmbiguousWithExplicitTypeParameters() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/ambiguousWithExplicitTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("ambiguousWithInferredTypeParameters.kt")
+    public void testAmbiguousWithInferredTypeParameters() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/ambiguousWithInferredTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnExpression_asT.kt")
+    public void testAnnotationOnExpression_asT() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/annotationOnExpression_asT.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnExpression_destructuring.kt")
+    public void testAnnotationOnExpression_destructuring() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/annotationOnExpression_destructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnReceiver.kt")
+    public void testAnnotationOnReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/annotationOnReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("AnnotationParameter.kt")
     public void testAnnotationParameter() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/AnnotationParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfInAnnotation.kt")
+    public void testArrayOfInAnnotation() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/arrayOfInAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("assignementInExpression.kt")
+    public void testAssignementInExpression() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/assignementInExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("builderInference.kt")
+    public void testBuilderInference() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/builderInference.kt");
     }
 
     @Test
@@ -4768,6 +4422,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("compoundAssignOnGenericVar.kt")
+    public void testCompoundAssignOnGenericVar() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/compoundAssignOnGenericVar.kt");
+    }
+
+    @Test
     @TestMetadata("CoroutineSuspensionPoint.kt")
     public void testCoroutineSuspensionPoint() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/CoroutineSuspensionPoint.kt");
@@ -4780,9 +4440,81 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("defaultValueThatCallsPreviousParameter.kt")
+    public void testDefaultValueThatCallsPreviousParameter() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/defaultValueThatCallsPreviousParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCall_super.kt")
+    public void testDelegatedConstructorCall_super() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/delegatedConstructorCall_super.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCall_super_unresolved.kt")
+    public void testDelegatedConstructorCall_super_unresolved() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/delegatedConstructorCall_super_unresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCall_this.kt")
+    public void testDelegatedConstructorCall_this() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/delegatedConstructorCall_this.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCall_this_unresolved.kt")
+    public void testDelegatedConstructorCall_this_unresolved() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/delegatedConstructorCall_this_unresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorInapplicable.kt")
+    public void testDelegatedConstructorInapplicable() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/delegatedConstructorInapplicable.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorInapplicableDifferentParametersCount.kt")
+    public void testDelegatedConstructorInapplicableDifferentParametersCount() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/delegatedConstructorInapplicableDifferentParametersCount.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorWithSubstitutionExtraTypeArgument.kt")
+    public void testDelegatedConstructorWithSubstitutionExtraTypeArgument() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/delegatedConstructorWithSubstitutionExtraTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorWithSubstitutionMissedTypeArgument.kt")
+    public void testDelegatedConstructorWithSubstitutionMissedTypeArgument() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/delegatedConstructorWithSubstitutionMissedTypeArgument.kt");
+    }
+
+    @Test
     @TestMetadata("DeprecatedHidden.kt")
     public void testDeprecatedHidden() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/DeprecatedHidden.kt");
+    }
+
+    @Test
+    @TestMetadata("enumSuperTypeInterface.kt")
+    public void testEnumSuperTypeInterface() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/enumSuperTypeInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("ExpectSuperClassConstructorArgument.kt")
+    public void testExpectSuperClassConstructorArgument() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/ExpectSuperClassConstructorArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("ExpectSuperClassConstructorCall.kt")
+    public void testExpectSuperClassConstructorCall() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/ExpectSuperClassConstructorCall.kt");
     }
 
     @Test
@@ -4810,6 +4542,60 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("functionCallWithTooFewTypeArguments.kt")
+    public void testFunctionCallWithTooFewTypeArguments() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/functionCallWithTooFewTypeArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithTooFewTypeArguments2.kt")
+    public void testFunctionCallWithTooFewTypeArguments2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/functionCallWithTooFewTypeArguments2.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithTooManyTypeArguments.kt")
+    public void testFunctionCallWithTooManyTypeArguments() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/functionCallWithTooManyTypeArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("functionCallWithTooManyTypeArguments2.kt")
+    public void testFunctionCallWithTooManyTypeArguments2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/functionCallWithTooManyTypeArguments2.kt");
+    }
+
+    @Test
+    @TestMetadata("functionTypeVariableCall_extensionReceiver.kt")
+    public void testFunctionTypeVariableCall_extensionReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/functionTypeVariableCall_extensionReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("getterAssignment.kt")
+    public void testGetterAssignment() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/getterAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("hiddenConstructor.kt")
+    public void testHiddenConstructor() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/hiddenConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("hiddenDeprecated.kt")
+    public void testHiddenDeprecated() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/hiddenDeprecated.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitTypeSubstituteOverrideFromOtherModule.kt")
+    public void testImplicitTypeSubstituteOverrideFromOtherModule() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/implicitTypeSubstituteOverrideFromOtherModule.kt");
+    }
+
+    @Test
     @TestMetadata("InObjectClassObject.kt")
     public void testInObjectClassObject() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/InObjectClassObject.kt");
@@ -4822,9 +4608,99 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("incompleteCodeNoParenthesis.kt")
+    public void testIncompleteCodeNoParenthesis() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/incompleteCodeNoParenthesis.kt");
+    }
+
+    @Test
+    @TestMetadata("incompleteCodeNoParenthesisDotQualifier.kt")
+    public void testIncompleteCodeNoParenthesisDotQualifier() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/incompleteCodeNoParenthesisDotQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("incompleteCodeWithAmbiguity.kt")
+    public void testIncompleteCodeWithAmbiguity() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/incompleteCodeWithAmbiguity.kt");
+    }
+
+    @Test
+    @TestMetadata("incorrectCodeJavaDeclaration.kt")
+    public void testIncorrectCodeJavaDeclaration() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/incorrectCodeJavaDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("indexedGetWithNotEnoughArgs.kt")
+    public void testIndexedGetWithNotEnoughArgs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/indexedGetWithNotEnoughArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("indexedGetWithTooManyArgs.kt")
+    public void testIndexedGetWithTooManyArgs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/indexedGetWithTooManyArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("indexedSetWithNotEnoughArgs.kt")
+    public void testIndexedSetWithNotEnoughArgs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/indexedSetWithNotEnoughArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("indexedSetWithTooManyArgs.kt")
+    public void testIndexedSetWithTooManyArgs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/indexedSetWithTooManyArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("invalidImplicitInvoke.kt")
+    public void testInvalidImplicitInvoke() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/invalidImplicitInvoke.kt");
+    }
+
+    @Test
     @TestMetadata("InvisibleMember.kt")
     public void testInvisibleMember() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/InvisibleMember.kt");
+    }
+
+    @Test
+    @TestMetadata("javaPropertyGetter_unqualified.kt")
+    public void testJavaPropertyGetter_unqualified() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/javaPropertyGetter_unqualified.kt");
+    }
+
+    @Test
+    @TestMetadata("javaPropertySetterIncomplete.kt")
+    public void testJavaPropertySetterIncomplete() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/javaPropertySetterIncomplete.kt");
+    }
+
+    @Test
+    @TestMetadata("javaPropertySetter_unqualified.kt")
+    public void testJavaPropertySetter_unqualified() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/javaPropertySetter_unqualified.kt");
+    }
+
+    @Test
+    @TestMetadata("kotlinPropertyGetter.kt")
+    public void testKotlinPropertyGetter() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/kotlinPropertyGetter.kt");
+    }
+
+    @Test
+    @TestMetadata("kotlinPropertySetter.kt")
+    public void testKotlinPropertySetter() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/kotlinPropertySetter.kt");
+    }
+
+    @Test
+    @TestMetadata("kotlinPropertySetterGeneric.kt")
+    public void testKotlinPropertySetterGeneric() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/kotlinPropertySetterGeneric.kt");
     }
 
     @Test
@@ -4846,15 +4722,81 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("PackageFromAnnotationOnFileWithUnresolvedReference.kt")
+    public void testPackageFromAnnotationOnFileWithUnresolvedReference() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/PackageFromAnnotationOnFileWithUnresolvedReference.kt");
+    }
+
+    @Test
+    @TestMetadata("PackageFromAnnotationOnFunctionWithUnresolvedReference.kt")
+    public void testPackageFromAnnotationOnFunctionWithUnresolvedReference() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/PackageFromAnnotationOnFunctionWithUnresolvedReference.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixUnaryOperatorOnGenericVar.kt")
+    public void testPrefixUnaryOperatorOnGenericVar() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/prefixUnaryOperatorOnGenericVar.kt");
+    }
+
+    @Test
+    @TestMetadata("privateMember.kt")
+    public void testPrivateMember() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/privateMember.kt");
+    }
+
+    @Test
     @TestMetadata("PropertyPlaceInClassObjectInObject.kt")
     public void testPropertyPlaceInClassObjectInObject() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/PropertyPlaceInClassObjectInObject.kt");
     }
 
     @Test
+    @TestMetadata("recursiveTypeParameter.kt")
+    public void testRecursiveTypeParameter() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/recursiveTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("resolveCallInSuperConstructorParam.kt")
+    public void testResolveCallInSuperConstructorParam() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/resolveCallInSuperConstructorParam.kt");
+    }
+
+    @Test
     @TestMetadata("ResolveClassNameInCallExpression.kt")
     public void testResolveClassNameInCallExpression() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/ResolveClassNameInCallExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("samFromJava_lambda.kt")
+    public void testSamFromJava_lambda() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/samFromJava_lambda.kt");
+    }
+
+    @Test
+    @TestMetadata("samFromJava_methodReference.kt")
+    public void testSamFromJava_methodReference() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/samFromJava_methodReference.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleCallWithNonMatchingArgs.kt")
+    public void testSimpleCallWithNonMatchingArgs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/simpleCallWithNonMatchingArgs.kt");
+    }
+
+    @Test
+    @TestMetadata("substituteOverrideResolution.kt")
+    public void testSubstituteOverrideResolution() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/substituteOverrideResolution.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeCallEntryResolveToCallInfo.kt")
+    public void testSuperTypeCallEntryResolveToCallInfo() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/superTypeCallEntryResolveToCallInfo.kt");
     }
 
     @Test
@@ -4891,6 +4833,54 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     @TestMetadata("TypeArgumentWrongNumber.kt")
     public void testTypeArgumentWrongNumber() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/TypeArgumentWrongNumber.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterAsValue.kt")
+    public void testTypeParameterAsValue() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/typeParameterAsValue.kt");
+    }
+
+    @Test
+    @TestMetadata("typecheckerRecursiveError.kt")
+    public void testTypecheckerRecursiveError() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/typecheckerRecursiveError.kt");
+    }
+
+    @Test
+    @TestMetadata("unitTypeFromOtherModule.kt")
+    public void testUnitTypeFromOtherModule() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/unitTypeFromOtherModule.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedReference.kt")
+    public void testUnresolvedReference() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/unresolvedReference.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedSuperReference.kt")
+    public void testUnresolvedSuperReference() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/unresolvedSuperReference.kt");
+    }
+
+    @Test
+    @TestMetadata("variableAsFunctionLikeCall.kt")
+    public void testVariableAsFunctionLikeCall() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/variableAsFunctionLikeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("variableAsFunctionWithParameterNameAnnotationConflict2.kt")
+    public void testVariableAsFunctionWithParameterNameAnnotationConflict2() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/variableAsFunctionWithParameterNameAnnotationConflict2.kt");
+    }
+
+    @Test
+    @TestMetadata("variableWithInvokeFunctionCall_extensionReceiver.kt")
+    public void testVariableWithInvokeFunctionCall_extensionReceiver() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/variableWithInvokeFunctionCall_extensionReceiver.kt");
     }
 
     @Test
