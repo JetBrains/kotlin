@@ -199,7 +199,6 @@ private val saveInlineFunctionsBeforeInlining = makeIrModulePhase(
     name = "SaveInlineFunctionsBeforeInlining",
     description = "Save inline function before inlining",
     prerequisite = setOf(
-        replaceSuspendIntrinsicLowering,
         sharedVariablesLoweringPhase,
         localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
         syntheticAccessorLoweringPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering
@@ -794,12 +793,12 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     localClassesExtractionFromInlineFunctionsPhase,
     syntheticAccessorLoweringPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    replaceSuspendIntrinsicLowering,
     saveInlineFunctionsBeforeInlining,
     functionInliningPhase,
     constEvaluationPhase,
     copyInlineFunctionBodyLoweringPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
+    replaceSuspendIntrinsicLowering,
     prepareCollectionsToExportLowering,
     preventExportOfSyntheticDeclarationsLowering,
     jsStaticLowering,

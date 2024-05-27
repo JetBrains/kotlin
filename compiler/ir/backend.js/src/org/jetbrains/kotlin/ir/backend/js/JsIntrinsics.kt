@@ -193,8 +193,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val createCoroutineUnintercepted =
         getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.createCoroutineUnintercepted")
-    val startCoroutineUninterceptedOrReturn =
-        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn")
+    val startCoroutineUninterceptedOrReturnNonGeneratorVersion =
+        getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturnNonGeneratorVersion")
 
     val createCoroutineUninterceptedGeneratorVersion =
         getManyInternalWithoutPackage("kotlin.coroutines.intrinsics.createCoroutineUninterceptedGeneratorVersion")
