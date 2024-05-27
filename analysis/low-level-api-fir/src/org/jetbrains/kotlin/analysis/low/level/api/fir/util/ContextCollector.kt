@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Con
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
@@ -186,7 +186,7 @@ private class DesignationInterceptor(val designation: FirDesignation) : () -> Fi
 }
 
 private class ContextCollectorVisitor(
-    private val holder: SessionHolder,
+    private val bodyHolder: SessionHolder,
     private val shouldCollectBodyContext: Boolean,
     private val filter: (PsiElement) -> FilterResponse,
     private val designationPathInterceptor: DesignationInterceptor?,
@@ -212,19 +212,23 @@ private class ContextCollectorVisitor(
         return result[key]
     }
 
-    private val session: FirSession
-        get() = holder.session
-
     private var isActive = true
 
     private val parents = ArrayList<FirElement>()
 
     private val context = BodyResolveContext(
         returnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
-        dataFlowAnalyzerContext = DataFlowAnalyzerContext(session)
+        dataFlowAnalyzerContext = DataFlowAnalyzerContext(bodyHolder.session)
     )
 
     private val result = HashMap<ContextKey, Context>()
+
+    private fun getSessionHolder(declaration: FirDeclaration): SessionHolder {
+        return when (val session = declaration.moduleData.session) {
+            bodyHolder.session -> bodyHolder
+            else -> SessionHolderImpl(session, bodyHolder.scopeSession)
+        }
+    }
 
     override fun visitElement(element: FirElement) {
         dumpContext(element, ContextKind.SELF)
@@ -292,7 +296,7 @@ private class ContextCollectorVisitor(
                         oldReceiverTypes.add(receiverIndex to implicitReceiverStack.getType(receiverIndex))
 
                         val originalType = implicitReceiverStack.getOriginalType(receiverIndex)
-                        val smartCastedType = typeStatement.smartCastedType(session.typeContext, originalType)
+                        val smartCastedType = typeStatement.smartCastedType(bodyHolder.session.typeContext, originalType)
                         implicitReceiverStack.replaceReceiverType(receiverIndex, smartCastedType)
                     }
                 }
@@ -357,6 +361,8 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(script)
 
         onActiveBody {
+            val holder = getSessionHolder(script)
+
             context.withScript(script, holder) {
                 dumpContext(script, ContextKind.BODY)
 
@@ -370,6 +376,8 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitFile(file: FirFile) = withProcessor(file) {
+        val holder = getSessionHolder(file)
+
         context.withFile(file, holder) {
             dumpContext(file, ContextKind.SELF)
 
@@ -385,6 +393,8 @@ private class ContextCollectorVisitor(
 
     override fun visitCodeFragment(codeFragment: FirCodeFragment) {
         codeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
+        val holder = getSessionHolder(codeFragment)
 
         context.withCodeFragment(codeFragment, holder) {
             super.visitCodeFragment(codeFragment)
@@ -425,7 +435,7 @@ private class ContextCollectorVisitor(
 
         dumpContext(functionCall, ContextKind.SELF)
 
-        context.addReceiversFromExtensions(functionCall, holder)
+        context.addReceiversFromExtensions(functionCall, bodyHolder)
     }
 
     /**
@@ -468,6 +478,8 @@ private class ContextCollectorVisitor(
             context.withContainingClass(regularClass) {
                 processClassHeader(regularClass)
 
+                val holder = getSessionHolder(regularClass)
+
                 context.withRegularClass(regularClass, holder) {
                     dumpContext(regularClass, ContextKind.BODY)
 
@@ -481,7 +493,7 @@ private class ContextCollectorVisitor(
         }
 
         if (regularClass.isLocal) {
-            context.storeClassIfNotNested(regularClass, session)
+            context.storeClassIfNotNested(regularClass, regularClass.moduleData.session)
         }
     }
 
@@ -526,12 +538,14 @@ private class ContextCollectorVisitor(
             constructor.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
             context.withConstructor(constructor) {
-                val owningClass = context.containerIfAny as? FirRegularClass
-                context.forConstructorParameters(constructor, owningClass, holder) {
+                val holder = getSessionHolder(constructor)
+                val containingClass = context.containerIfAny as? FirRegularClass
+
+                context.forConstructorParameters(constructor, containingClass, holder) {
                     processList(constructor.valueParameters)
                 }
 
-                context.forConstructorBody(constructor, session) {
+                context.forConstructorBody(constructor, holder.session) {
                     processList(constructor.valueParameters)
 
                     dumpContext(constructor, ContextKind.BODY)
@@ -578,7 +592,9 @@ private class ContextCollectorVisitor(
         onActiveBody {
             simpleFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-            context.withSimpleFunction(simpleFunction, session) {
+            val holder = getSessionHolder(simpleFunction)
+
+            context.withSimpleFunction(simpleFunction, holder.session) {
                 context.forFunctionBody(simpleFunction, holder) {
                     processList(simpleFunction.valueParameters)
 
@@ -628,7 +644,7 @@ private class ContextCollectorVisitor(
         }
 
         if (property.isLocal) {
-            context.storeVariable(property, session)
+            context.storeVariable(property, property.moduleData.session)
         }
     }
 
@@ -692,6 +708,8 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(propertyAccessor)
 
         onActiveBody {
+            val holder = getSessionHolder(propertyAccessor)
+
             context.withPropertyAccessor(propertyAccessor.propertySymbol.fir, propertyAccessor, holder) {
                 dumpContext(propertyAccessor, ContextKind.BODY)
 
@@ -708,7 +726,7 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(valueParameter)
 
         onActiveBody {
-            context.withValueParameter(valueParameter, session) {
+            context.withValueParameter(valueParameter, valueParameter.moduleData.session) {
                 dumpContext(valueParameter, ContextKind.BODY)
 
                 onActive {
@@ -725,7 +743,7 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(anonymousInitializer)
 
         onActiveBody {
-            context.withAnonymousInitializer(anonymousInitializer, session) {
+            context.withAnonymousInitializer(anonymousInitializer, anonymousInitializer.moduleData.session) {
                 dumpContext(anonymousInitializer, ContextKind.BODY)
 
                 onActive {
@@ -742,10 +760,10 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(anonymousFunction)
 
         onActiveBody {
-            context.withAnonymousFunction(anonymousFunction, holder, ResolutionMode.ContextIndependent) {
+            context.withAnonymousFunction(anonymousFunction, bodyHolder, ResolutionMode.ContextIndependent) {
                 for (parameter in anonymousFunction.valueParameters) {
                     process(parameter)
-                    context.storeVariable(parameter, holder.session)
+                    context.storeVariable(parameter, bodyHolder.session)
                 }
 
                 dumpContext(anonymousFunction, ContextKind.BODY)
@@ -770,7 +788,7 @@ private class ContextCollectorVisitor(
         onActiveBody {
             processAnonymousObjectHeader(anonymousObject)
 
-            context.withAnonymousObject(anonymousObject, holder) {
+            context.withAnonymousObject(anonymousObject, bodyHolder) {
                 dumpContext(anonymousObject, ContextKind.BODY)
 
                 onActive {
@@ -784,7 +802,7 @@ private class ContextCollectorVisitor(
         dumpContext(block, ContextKind.SELF)
 
         onActiveBody {
-            context.forBlock(session) {
+            context.forBlock(bodyHolder.session) {
                 processChildren(block)
 
                 dumpContext(block, ContextKind.BODY)

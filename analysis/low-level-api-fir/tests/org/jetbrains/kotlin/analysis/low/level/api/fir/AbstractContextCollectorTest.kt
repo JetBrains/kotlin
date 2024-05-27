@@ -262,6 +262,14 @@ abstract class AbstractContextCollectorSourceTest : AbstractContextCollectorTest
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 }
 
+abstract class AbstractDependentContextCollectorSourceTest : AbstractContextCollectorTest() {
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = true)
+}
+
 abstract class AbstractContextCollectorScriptTest : AbstractContextCollectorTest() {
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractDependentContextCollectorScriptTest : AbstractContextCollectorTest() {
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = true)
 }
