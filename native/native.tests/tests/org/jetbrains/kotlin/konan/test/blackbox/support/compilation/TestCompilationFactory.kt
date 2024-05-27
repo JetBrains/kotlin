@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.container.topologicalSort
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.muteCInteropTestIfNecessary
 import org.jetbrains.kotlin.konan.test.blackbox.support.CINTEROP_SOURCE_EXTENSIONS
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
@@ -21,8 +23,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.extension
+import kotlin.streams.asSequence
 
 internal class TestCompilationFactory {
     private val cachedKlibCompilations = ThreadSafeCache<KlibCacheKey, KlibCompilations>()
@@ -85,6 +93,15 @@ internal class TestCompilationFactory {
                         )
                     }
         }
+    }
+
+    fun testCaseToKLib(testCase: TestCase, settings: Settings): TestCompilation<KLIB> {
+        return modulesToKlib(
+            sourceModules = testCase.modules,
+            freeCompilerArgs = testCase.freeCompilerArgs,
+            settings = settings,
+            produceStaticCache = ProduceStaticCache.No,
+        ).klib
     }
 
     fun testCaseToBinaryLibrary(testCase: TestCase, settings: Settings, kind: BinaryLibraryKind): BinaryLibraryCompilation {

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.konan.test.blackbox.compileToNativeKLib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.analysis.api.getAllLibraryModules
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -106,22 +105,23 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
 
     @OptIn(KtAnalysisApiInternals::class)
     private fun <T> withKlibScope(sources: Path, block: KlibScope.() -> T): T {
-        val klib = compileToNativeKLib(sources)
-        lateinit var module: KtLibraryModule
-        val session = buildStandaloneAnalysisAPISession {
-            val nativePlatform = NativePlatforms.unspecifiedNativePlatform
-            buildKtModuleProvider {
-                platform = nativePlatform
-                module = addModule(buildKtLibraryModule {
-                    addBinaryRoot(klib)
-                    platform = nativePlatform
-                    libraryName = "testLibrary"
-                })
-            }
-        }
-
-        return analyze(session.getAllLibraryModules().single()) {
-            KlibScope(module, this.analysisSession).block()
-        }
+        TODO()
+//        val klib = compileToNativeKLib(sources)
+//        lateinit var module: KtLibraryModule
+//        val session = buildStandaloneAnalysisAPISession {
+//            val nativePlatform = NativePlatforms.unspecifiedNativePlatform
+//            buildKtModuleProvider {
+//                platform = nativePlatform
+//                module = addModule(buildKtLibraryModule {
+//                    addBinaryRoot(klib)
+//                    platform = nativePlatform
+//                    libraryName = "testLibrary"
+//                })
+//            }
+//        }
+//
+//        return analyze(session.getAllLibraryModules().single()) {
+//            KlibScope(module, this.analysisSession).block()
+//        }
     }
 }

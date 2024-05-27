@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.swiftexport.standalone;
 
 import com.intellij.testFramework.TestDataPath;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/swift/swift-export-standalone/testData")
 @TestDataPath("$PROJECT_ROOT")
+@FirPipeline
 public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunnerTest {
   @Test
   public void testAllFilesPresentInTestData() {

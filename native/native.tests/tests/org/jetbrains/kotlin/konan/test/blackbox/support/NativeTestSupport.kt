@@ -582,7 +582,14 @@ internal object NativeTestSupport {
             parent = testClassSettings,
             listOf(
                 computeSimpleTestInstances(),
-                computeBinariesForSimpleTests(testClassSettings.get(), testClassSettings.get())
+                computeBinariesForSimpleTests(testClassSettings.get(), testClassSettings.get()),
+                computeDisabledTestDataFiles(enclosingTestClass),
+                computeTestRoots(enclosingTestClass),
+                computeGeneratedSourceDirs(
+                    getOrCreateTestProcessSettings().get(),
+                    addCommonTestClassSettingsTo(enclosingTestClass, mutableListOf()),
+                    enclosingTestClass
+                )
             )
         )
     }

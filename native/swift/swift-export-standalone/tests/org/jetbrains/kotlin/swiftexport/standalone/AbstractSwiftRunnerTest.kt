@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.swiftexport.standalone
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSwiftExportTest
-import org.jetbrains.kotlin.konan.test.blackbox.compileToNativeKLib
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -51,13 +50,10 @@ abstract class AbstractSwiftRunnerTest(
         KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText())
     }
 
-    override fun constructSwiftInput(testPathFull: File): InputModule.Binary {
-        val moduleRoot = testPathFull.toPath() / "input_root/"
-        return InputModule.Binary(
-            path = compileToNativeKLib(moduleRoot),
-            name = "main"
-        )
-    }
+    override fun constructSwiftInput(klib: TestCompilationArtifact.KLIB): InputModule.Binary = InputModule.Binary(
+        path = Path(klib.path),
+        name = "main"
+    )
 
     override fun constructSwiftExportConfig(testPathFull: File): SwiftExportConfig {
         val unsupportedTypeStrategy = ErrorTypeStrategy.Fail
@@ -100,8 +96,6 @@ abstract class AbstractSwiftRunnerTest(
         )
     }
 
-    override fun collectKotlinFiles(testPathFull: File): List<File> =
-        (testPathFull.toPath() / "input_root").toFile().walk().filter { it.extension == "kt" }.map { testPathFull.resolve(it) }.toList()
 }
 
 private object KonanHome {

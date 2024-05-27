@@ -33,8 +33,10 @@ class TestFile<M : TestModule> private constructor(
 
     private val uncommittedState: State.Uncommitted
         get() = when (val state = state) {
-            is State.Uncommitted -> state
-            is State.Committed -> fail { "File $location is already committed." }
+            is State.Uncommitted ->
+                state
+            is State.Committed ->
+                fail { "File $location is already committed." }
         }
 
     val text: String

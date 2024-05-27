@@ -6,32 +6,26 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.SwiftCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompilerWithoutOutputInterceptor
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.StandardTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createModuleMap
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.swiftexport.standalone.*
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.junit.jupiter.api.Assumptions
 import java.io.File
-import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.extension
-import kotlin.streams.asSequence
+import kotlin.io.path.div
 
 abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
     private val testCompilationFactory = TestCompilationFactory()
@@ -45,26 +39,37 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
     )
 
     protected abstract fun constructSwiftInput(
-        testPathFull: File,
+        klib: TestCompilationArtifact.KLIB,
     ): InputModule.Binary
 
     protected abstract fun constructSwiftExportConfig(
         testPathFull: File,
     ): SwiftExportConfig
 
-    protected abstract fun collectKotlinFiles(
-        testPathFull: File,
-    ): List<File>
-
     protected fun runTest(@TestDataFile testDir: String) {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         val testPathFull = getAbsoluteFile(testDir)
 
-        val swiftExportOutput = runSwiftExport(testPathFull)
+        val testCaseId = TestCaseId.TestDataFile((testPathFull.toPath() / "input.kt").toFile())
+        val testCaseGroupProvider = StandardTestCaseGroupProvider()
+        val t = testCaseGroupProvider
+            .getTestCaseGroup(testCaseId.testCaseGroupId, testRunSettings)
+            ?.getByName(testCaseId)!!
+
+        val swiftExportInput = constructSwiftInput(
+            testCompilationFactory
+                .testCaseToKLib(t, testRunSettings)
+                .result.assertSuccess().resultingArtifact
+        )
+        val swiftExportConfig = constructSwiftExportConfig(testPathFull)
+        val swiftExportOutput = runSwiftExport(
+            swiftExportInput,
+            swiftExportConfig
+        ).getOrThrow().first()
 
         // compile kotlin into binary
         val additionalKtFiles = swiftExportOutput.collectKotlinBridgeFilesRecursively()
-        val kotlinFiles = collectKotlinFiles(testPathFull)
+        val kotlinFiles = t.modules.first().files.map { it.location }
         val testCase = generateSwiftExportTestCase(testPathFull.name, kotlinFiles + additionalKtFiles.map { it.toFile() })
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
             testCase, testRunSettings,
@@ -143,18 +148,6 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
         ).result.assertSuccess().resultingArtifact
     }
 
-    private fun runSwiftExport(
-        testPathFull: File
-    ): SwiftExportModule {
-        val swiftExportInput = constructSwiftInput(testPathFull)
-        val swiftExportConfig = constructSwiftExportConfig(testPathFull)
-
-        return runSwiftExport(
-            swiftExportInput,
-            swiftExportConfig
-        ).getOrThrow().first()
-    }
-
     private fun generateSwiftExportTestCase(testName: String, sources: List<File>): TestCase {
         val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
@@ -178,26 +171,4 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
             initialize(null, null)
         }
     }
-}
-
-fun AbstractNativeSimpleTest.compileToNativeKLib(kLibSourcesRoot: Path): Path {
-    val ktFiles = Files.walk(kLibSourcesRoot).asSequence().filter { it.extension == "kt" }.toList()
-    val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib").toPath()
-
-    val arguments = buildList {
-        ktFiles.mapTo(this) { it.absolutePathString() }
-        addAll(listOf("-produce", "library"))
-        addAll(listOf("-output", testKlib.absolutePathString()))
-        add("-opt-in=kotlin.native.internal.InternalForKotlinNative")
-    }
-
-    // Avoid creating excessive number of classloaders
-    val classLoader = testRunSettings.get<KotlinNativeClassLoader>().classLoader
-    val compileResult = callCompilerWithoutOutputInterceptor(arguments.toTypedArray(), classLoader)
-
-    check(compileResult.exitCode == ExitCode.OK) {
-        "Compilation error: $compileResult"
-    }
-
-    return testKlib
 }

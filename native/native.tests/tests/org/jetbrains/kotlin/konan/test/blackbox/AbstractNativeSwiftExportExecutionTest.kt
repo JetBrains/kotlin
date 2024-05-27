@@ -38,16 +38,8 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
         runExecutableAndVerify(testCase, testExecutable)
     }
 
-    override fun constructSwiftInput(
-        testPathFull: File,
-    ): InputModule.Binary {
-        val testName = testPathFull.name
-        val swiftModuleName = testName.capitalizeAsciiOnly()
-
-        return InputModule.Binary(
-            name = swiftModuleName,
-            path = compileToNativeKLib(testPathFull.toPath()),
-        )
+    override fun constructSwiftInput(klib: TestCompilationArtifact.KLIB): InputModule.Binary {
+        TODO("Not yet implemented")
     }
 
     override fun constructSwiftExportConfig(
@@ -63,9 +55,6 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
             outputPath = exportResultsPath
         )
     }
-
-    override fun collectKotlinFiles(testPathFull: File): List<File> =
-        testPathFull.walk().filter { it.extension == "kt" }.map { testPathFull.resolve(it) }.toList()
 
     private fun compileTestExecutable(
         testName: String,
