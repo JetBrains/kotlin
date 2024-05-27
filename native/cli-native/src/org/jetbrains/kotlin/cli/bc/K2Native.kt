@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.bc
@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.IrValidationError
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -63,7 +64,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         try {
             runKonanDriver(configuration, environment, rootDisposable)
         } catch (e: Throwable) {
-            if (e is KonanCompilationException || e is CompilationErrorException)
+            if (e is KonanCompilationException || e is CompilationErrorException || e is IrValidationError)
                 return ExitCode.COMPILATION_ERROR
 
             configuration.report(ERROR, """
