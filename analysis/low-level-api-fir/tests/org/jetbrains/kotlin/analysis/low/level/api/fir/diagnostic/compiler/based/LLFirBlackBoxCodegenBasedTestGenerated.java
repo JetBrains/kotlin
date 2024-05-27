@@ -58487,6 +58487,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Test
+    @TestMetadata("outerClassArgumentsThroughTypealias.kt")
+    public void testOuterClassArgumentsThroughTypealias() {
+      runTest("compiler/testData/codegen/box/typealias/outerClassArgumentsThroughTypealias.kt");
+    }
+
+    @Test
     @TestMetadata("privateInKlib.kt")
     public void testPrivateInKlib() {
       runTest("compiler/testData/codegen/box/typealias/privateInKlib.kt");
