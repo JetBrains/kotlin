@@ -57,6 +57,8 @@ public:
 
     void suspendIfRequested() noexcept;
 
+    void requestThreadsSuspension(const char* reason) noexcept;
+
     /**
      * Signals that the thread would not mutate a heap during a relatively long time.
      * For example while waiting for or participating in the GC.
@@ -73,17 +75,20 @@ private:
     mm::ThreadData& threadData_;
 };
 
-bool RequestThreadsSuspension(const char* reason) noexcept;
-void WaitForThreadsSuspension() noexcept;
-
 /**
- * Suspends all threads registered in ThreadRegistry except threads that are in the Native state.
+ * Sends a request to suspend all threads registered in ThreadRegistry except threads that are in the Native state.
  * Blocks until all such threads are suspended. Threads that are in the Native state on the moment
  * of this call will be suspended on exit from the Native state.
- * Returns false if some other thread has suspended the threads.
+ *
+ * Returns false if some other thread tries to suspended the threads at the moment.
  */
+bool TryRequestThreadsSuspension(const char* reason) noexcept;
+void RequestThreadsSuspension(const char* reason) noexcept;
+
+void WaitForThreadsSuspension() noexcept;
+
 inline bool SuspendThreads(internal::SuspensionReason reason) noexcept {
-    if (!RequestThreadsSuspension(reason)) {
+    if (!TryRequestThreadsSuspension(reason)) {
         return false;
     }
     WaitForThreadsSuspension();
