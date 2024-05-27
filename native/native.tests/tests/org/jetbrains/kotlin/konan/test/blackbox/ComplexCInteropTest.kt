@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.isSimulator
@@ -467,6 +468,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @TestMetadata("arc_contract")
     fun arcContract() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        Assumptions.assumeTrue(targets.testTarget.architecture == Architecture.ARM64)
         val root = interopObjCDir.resolve("arc_contract")
         val bcFile = buildDir.resolve("arc_contract.bc")
         runProcess(
