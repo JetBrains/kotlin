@@ -67,7 +67,7 @@ private class InlineCallableReferenceToLambdaVisitor(
             // Already a lambda or similar, just mark it with an origin.
             val reference = statements.last() as IrFunctionReference
             reference.symbol.owner.origin = LoweredDeclarationOrigins.INLINE_LAMBDA
-            statements[statements.lastIndex] = reference.replaceOrigin(LoweredStatementOrigins.INLINE_LAMBDA)
+            reference.origin = LoweredStatementOrigins.INLINE_LAMBDA
         }
 
         this is IrFunctionReference -> {
@@ -169,9 +169,3 @@ private class InlineCallableReferenceToLambdaVisitor(
 
 private val IrStatementOrigin?.isInlinable: Boolean
     get() = isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
-
-private fun IrFunctionReference.replaceOrigin(origin: IrStatementOrigin): IrFunctionReference =
-    IrFunctionReferenceImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, reflectionTarget, origin).also {
-        it.copyAttributes(this)
-        it.copyTypeAndValueArgumentsFrom(this)
-    }
