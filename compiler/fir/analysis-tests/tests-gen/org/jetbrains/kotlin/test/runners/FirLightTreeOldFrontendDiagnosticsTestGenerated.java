@@ -8069,6 +8069,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("enumEntryAssignment.kt")
+      public void testEnumEntryAssignment() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumEntryAssignment.kt");
+      }
+
+      @Test
       @TestMetadata("enumInterdependence.kt")
       public void testEnumInterdependence() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/enumInterdependence.kt");
