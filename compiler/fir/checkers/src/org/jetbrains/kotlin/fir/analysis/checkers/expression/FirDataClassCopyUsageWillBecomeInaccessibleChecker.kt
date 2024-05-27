@@ -7,21 +7,15 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -29,9 +23,12 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 
 object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val dataClass = expression.resolvedType.toRegularClassSymbol(context.session) ?: return
-        val copyFunction = expression.calleeReference.symbol as? FirCallableSymbol ?: return
-        if (copyFunction.isDataClassCopy(dataClass, context.session)) {
+        val copyFunction = expression.calleeReference
+            .takeIf { DataClassResolver.isCopy(it.name) } // Small optimization
+            ?.symbol as? FirCallableSymbol
+            ?: return
+        if (copyFunction.resolvedStatus.isDataClassCopyFun) {
+            val dataClass = expression.resolvedType.toRegularClassSymbol(context.session) ?: return
             val dataClassConstructor = dataClass.primaryConstructorSymbol(context.session) ?: return
 
             @OptIn(SymbolInternals::class)
@@ -61,19 +58,4 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirFunctionCallCheck
             }
         }
     }
-}
-
-private fun FirCallableSymbol<*>.isDataClassCopy(dataClass: FirRegularClassSymbol, session: FirSession): Boolean {
-    if (DataClassResolver.isCopy(name) && this is FirNamedFunctionSymbol && dataClass.isData) {
-        if (origin == FirDeclarationOrigin.Synthetic.DataClassMember) {
-            return true
-        }
-        val constructor = dataClass.primaryConstructorSymbol(session)
-        if (constructor != null && origin == FirDeclarationOrigin.Library && receiverParameter == null &&
-            valueParameterSymbols.map { it.resolvedReturnType.classId } == constructor.valueParameterSymbols.map { it.resolvedReturnType.classId }
-        ) {
-            return true
-        }
-    }
-    return false
 }

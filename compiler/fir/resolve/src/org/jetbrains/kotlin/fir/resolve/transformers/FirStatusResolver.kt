@@ -321,17 +321,13 @@ class FirStatusResolver(
             else -> Visibilities.Public
         }
 
-        if (containingClass?.status?.isData == true &&
-            declaration is FirSimpleFunction &&
-            declaration.origin == FirDeclarationOrigin.Synthetic.DataClassMember &&
-            DataClassResolver.isCopy(declaration.name)
-        ) {
+        if (declaration is FirSimpleFunction && declaration.status.isDataClassCopyFun) {
             return when {
-                containingClass.hasAnnotation(StandardClassIds.Annotations.ExposedCopyVisibility, session) ->
+                containingClass?.hasAnnotation(StandardClassIds.Annotations.ExposedCopyVisibility, session) == true ->
                     Visibilities.Public
                 session.languageVersionSettings.doesDataClassCopyRespectConstructorVisibility() ||
-                        containingClass.hasAnnotation(StandardClassIds.Annotations.ConsistentCopyVisibility, session) ->
-                    containingClass.primaryConstructorIfAny(session)?.fir?.visibility ?: fallbackVisibility
+                        containingClass?.hasAnnotation(StandardClassIds.Annotations.ConsistentCopyVisibility, session) == true ->
+                    containingClass?.primaryConstructorIfAny(session)?.fir?.visibility ?: fallbackVisibility
                 else -> fallbackVisibility
             }
         }

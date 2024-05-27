@@ -27,3 +27,9 @@ fun local() {
         copy()
     }
 }
+
+data class GenericData<T> private constructor(val value: T)
+
+fun topLevel(data: GenericData<Int>) {
+    data.copy()
+}

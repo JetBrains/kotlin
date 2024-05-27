@@ -27,3 +27,9 @@ fun local() {
         <!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
     }
 }
+
+data class GenericData<T> <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val value: T)
+
+fun topLevel(data: GenericData<Int>) {
+    data.<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
+}
