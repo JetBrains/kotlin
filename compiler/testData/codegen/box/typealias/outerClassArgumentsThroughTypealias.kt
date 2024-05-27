@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: ANY
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
@@ -12,6 +11,6 @@ typealias EID = EntityID<Long>
 // MODULE: main(lib)
 // FILE: Main.kt
 
-abstract class ChatHistoryWithDateResponse() : List<<!OUTER_CLASS_ARGUMENTS_REQUIRED!>EID<!>>
+abstract class ChatHistoryWithDateResponse() : List<EID>
 
 fun box() = "OK"
