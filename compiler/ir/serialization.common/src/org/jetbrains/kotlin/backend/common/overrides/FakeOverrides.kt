@@ -293,7 +293,7 @@ class IrLinkerFakeOverrideProvider(
 
         if (!platformSpecificClassFilter.needToConstructFakeOverrides(clazz)) return false
 
-        irFakeOverrideBuilder.buildFakeOverridesForClass(clazz, compatibilityMode.oldSignatures)
+        irFakeOverrideBuilder.buildFakeOverridesForClass(clazz, compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations)
 
         return true
     }

@@ -206,7 +206,7 @@ open class IrFileSerializer(
     /* ------- IdSignature ------------------------------------------------------ */
 
     private fun protoIdSignature(declaration: IrDeclaration, recordInSignatureClashDetector: Boolean): Int {
-        val idSig = declarationTable.signatureByDeclaration(declaration, compatibilityMode.oldSignatures, recordInSignatureClashDetector)
+        val idSig = declarationTable.signatureByDeclaration(declaration, compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations, recordInSignatureClashDetector)
         return idSignatureSerializer.protoIdSignature(idSig)
     }
 
@@ -1367,7 +1367,7 @@ open class IrFileSerializer(
             }
 
             val byteArray = serializeDeclaration(it).toByteArray()
-            val idSig = declarationTable.signatureByDeclaration(it, compatibilityMode.oldSignatures, recordInSignatureClashDetector = false)
+            val idSig = declarationTable.signatureByDeclaration(it, compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations, recordInSignatureClashDetector = false)
             require(idSig == idSig.topLevelSignature()) { "IdSig: $idSig\ntopLevel: ${idSig.topLevelSignature()}" }
             require(!idSig.isPackageSignature()) { "IsSig: $idSig\nDeclaration: ${it.render()}" }
 
