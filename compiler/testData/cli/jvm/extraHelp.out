@@ -175,8 +175,6 @@ where advanced options include:
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file.
   -Xenable-builder-inference Use builder inference by default for all calls with lambdas that can't be resolved without it.
                              The corresponding calls' declarations may not be marked with @BuilderInference.
-  -Xklib-enable-signature-clash-checks
-                             Enable signature uniqueness checks.
   -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
                              Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
   -Xexplicit-api={strict|warning|disable}
@@ -205,7 +203,6 @@ where advanced options include:
   -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xno-inline                Disable method inlining.
-  -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
   -Xphases-to-dump           Dump the backend's state both before and after these phases.
   -Xphases-to-dump-after     Dump the backend's state after these phases.
   -Xphases-to-dump-before    Dump the backend's state before these phases.
@@ -216,7 +213,6 @@ where advanced options include:
   -Xcompiler-plugin=<path1>,<path2>:<optionName>=<value>,<optionName>=<value>
                              Register a compiler plugin.
   -Xprofile-phases           Profile backend phases.
-  -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
   -Xreport-all-warnings      Report all warnings even if errors are found.

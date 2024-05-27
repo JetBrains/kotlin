@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 @OptIn(org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI::class)
 fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArguments): K2JSCompilerArguments {
-    copyCommonCompilerArguments(from, to)
+    copyCommonKlibBasedCompilerArguments(from, to)
 
     to.cacheDirectory = from.cacheDirectory
     to.enableJsScripting = from.enableJsScripting
@@ -53,8 +53,6 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.outputDir = from.outputDir
     @Suppress("DEPRECATION")
     to.outputFile = from.outputFile
-    to.partialLinkageLogLevel = from.partialLinkageLogLevel
-    to.partialLinkageMode = from.partialLinkageMode
     to.platformArgumentsProviderJsExpression = from.platformArgumentsProviderJsExpression
     to.sourceMap = from.sourceMap
     to.sourceMapBaseDirs = from.sourceMapBaseDirs

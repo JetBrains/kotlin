@@ -72,18 +72,6 @@ object CommonConfigurationKeys {
         CompilerConfigurationKey.create<Int>("When using the IR backend, run lowerings by file in N parallel threads")
 
     @JvmField
-    val KLIB_RELATIVE_PATH_BASES =
-        CompilerConfigurationKey.create<Collection<String>>("Provides a path from which relative paths in klib are being computed")
-
-    @JvmField
-    val KLIB_NORMALIZE_ABSOLUTE_PATH =
-        CompilerConfigurationKey.create<Boolean>("Normalize absolute paths in klib (replace file separator with '/')")
-
-    @JvmField
-    val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS =
-        CompilerConfigurationKey.create<Boolean>("Turn on the checks on uniqueness of signatures")
-
-    @JvmField
     val INCREMENTAL_COMPILATION =
         CompilerConfigurationKey.create<Boolean>("Enable incremental compilation")
 

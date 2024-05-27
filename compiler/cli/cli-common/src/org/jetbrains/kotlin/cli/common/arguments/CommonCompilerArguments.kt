@@ -678,36 +678,6 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             field = value
         }
 
-    @Argument(
-        value = "-Xklib-relative-path-base",
-        description = "Provide a base path to compute the source's relative paths in klib (default is empty)."
-    )
-    var relativePathBases: Array<String>? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xklib-normalize-absolute-path",
-        description = "Normalize absolute paths in klibs."
-    )
-    var normalizeAbsolutePath = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xklib-enable-signature-clash-checks",
-        description = "Enable signature uniqueness checks."
-    )
-    var enableSignatureClashChecks = true
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(value = "-Xenable-incremental-compilation", description = "Enable incremental compilation.")
     var incrementalCompilation: Boolean? = null
         set(value) {

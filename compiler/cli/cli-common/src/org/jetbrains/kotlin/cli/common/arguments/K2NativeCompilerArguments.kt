@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 
-class K2NativeCompilerArguments : CommonCompilerArguments() {
+class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
     // First go the options interesting to the general public.
     // Prepend them with a single dash.
     // Keep the list lexically sorted.
@@ -429,20 +429,6 @@ The default value is 1."""
 
     @Argument(value = "-Xlazy-ir-for-caches", valueDescription = "{disable|enable}", description = "Use lazy IR for cached libraries.")
     var lazyIrForCaches: String? = null
-
-    @Argument(value = "-Xpartial-linkage", valueDescription = "{enable|disable}", description = "Use partial linkage mode.")
-    var partialLinkageMode: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(value = "-Xpartial-linkage-loglevel", valueDescription = "{info|warning|error}", description = "Define the compile-time log level for partial linkage.")
-    var partialLinkageLogLevel: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
 
     @Argument(value = "-Xomit-framework-binary", description = "Omit binary when compiling the framework.")
     var omitFrameworkBinary: Boolean = false

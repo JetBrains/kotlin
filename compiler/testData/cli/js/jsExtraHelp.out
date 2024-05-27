@@ -42,10 +42,6 @@ where advanced options include:
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when accessing external 'Boolean' properties.
   -Xoptimize-generated-js    Perform additional optimizations on the generated JS code.
-  -Xpartial-linkage-loglevel={info|warning|error}
-                             Define the compile-time log level for partial linkage.
-  -Xpartial-linkage={enable|disable}
-                             Use partial linkage mode.
   -Xplatform-arguments-in-main-function
                              JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. This is available in the IR backend only.
@@ -116,6 +112,10 @@ where advanced options include:
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xno-inline                Disable method inlining.
   -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
+  -Xpartial-linkage-loglevel={info|warning|error}
+                             Define the compile-time log level for partial linkage.
+  -Xpartial-linkage={enable|disable}
+                             Use partial linkage mode.
   -Xphases-to-dump           Dump the backend's state both before and after these phases.
   -Xphases-to-dump-after     Dump the backend's state after these phases.
   -Xphases-to-dump-before    Dump the backend's state before these phases.
