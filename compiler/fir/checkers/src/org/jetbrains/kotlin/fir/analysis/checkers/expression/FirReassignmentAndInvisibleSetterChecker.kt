@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 
 object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
         checkValReassignmentViaBackingField(expression, context, reporter)
-        checkValReassignmentOnValueParameter(expression, context, reporter)
+        checkValReassignmentOnValueParameterOrEnumEntry(expression, context, reporter)
         checkVariableExpected(expression, context, reporter)
         checkValReassignment(expression, context, reporter)
     }
@@ -46,13 +48,18 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker(M
         reporter.reportOn(backingFieldReference.source, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD, propertySymbol, context)
     }
 
-    private fun checkValReassignmentOnValueParameter(
+    private fun checkValReassignmentOnValueParameterOrEnumEntry(
         expression: FirVariableAssignment,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val valueParameter = expression.calleeReference?.toResolvedValueParameterSymbol() ?: return
-        reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, valueParameter, context)
+        when (val symbol = expression.calleeReference?.toResolvedVariableSymbol()) {
+            is FirValueParameterSymbol,
+            is FirEnumEntrySymbol -> {
+                reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
+            }
+            else -> {}
+        }
     }
 
     private fun checkVariableExpected(

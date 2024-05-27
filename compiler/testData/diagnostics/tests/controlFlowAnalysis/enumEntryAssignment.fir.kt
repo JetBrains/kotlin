@@ -2,24 +2,24 @@
 enum class Some {
     A {
         init {
-            A = null!!
-            B = null!!
+            <!VAL_REASSIGNMENT!>A<!> = null!!
+            <!UNINITIALIZED_ENUM_ENTRY, VAL_REASSIGNMENT!>B<!> = null!!
         }
     },
     B {
         init {
-            A = null!!
-            B = null!!
+            <!VAL_REASSIGNMENT!>A<!> = null!!
+            <!VAL_REASSIGNMENT!>B<!> = null!!
         }
     };
 
     init {
-        A = null!!
-        B = null!!
+        <!UNINITIALIZED_ENUM_ENTRY, VAL_REASSIGNMENT!>A<!> = null!!
+        <!UNINITIALIZED_ENUM_ENTRY, VAL_REASSIGNMENT!>B<!> = null!!
     }
 }
 
 fun test() {
-    Some.A = null!!
-    Some.B = null!!
+    Some.<!VAL_REASSIGNMENT!>A<!> = null!!
+    Some.<!VAL_REASSIGNMENT!>B<!> = null!!
 }
