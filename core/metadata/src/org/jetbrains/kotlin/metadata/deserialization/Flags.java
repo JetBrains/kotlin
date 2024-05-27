@@ -53,6 +53,7 @@ public class Flags {
     public static final BooleanFlagField IS_SUSPEND = FlagField.booleanAfter(IS_EXTERNAL_FUNCTION);
     public static final BooleanFlagField IS_EXPECT_FUNCTION = FlagField.booleanAfter(IS_SUSPEND);
     public static final BooleanFlagField IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES = FlagField.booleanAfter(IS_EXPECT_FUNCTION);
+    public static final BooleanFlagField IS_DATA_CLASS_COPY_FUN = FlagField.booleanAfter(IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES);
 
     // Properties
 
@@ -143,7 +144,8 @@ public class Flags {
             boolean isExternal,
             boolean isSuspend,
             boolean isExpect,
-            boolean hasStableParameterNames
+            boolean hasStableParameterNames,
+            boolean isDataClassCopyFun
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility)
@@ -157,6 +159,7 @@ public class Flags {
                | IS_SUSPEND.toFlags(isSuspend)
                | IS_EXPECT_FUNCTION.toFlags(isExpect)
                | IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.toFlags(!hasStableParameterNames)
+               | IS_DATA_CLASS_COPY_FUN.toFlags(isDataClassCopyFun)
                 ;
     }
 

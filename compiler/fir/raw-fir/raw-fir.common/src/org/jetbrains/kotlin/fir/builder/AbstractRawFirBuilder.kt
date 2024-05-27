@@ -1218,12 +1218,14 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         symbol = FirNamedFunctionSymbol(CallableId(classId.packageFqName, classId.relativeClassName, StandardNames.DATA_CLASS_COPY))
         dispatchReceiverType = dispatchReceiver
         resolvePhase = this@createDataClassCopyFunction.resolvePhase
-        // We need to resolve annotations on the data class. It's not possible to do it on RAW_FIR phase.
+        // We need to resolve annotations on the data class before we can resolve the visibility.
+        // It's not possible to resolve annotations on RAW_FIR phase.
         // We will resolve the visibility later in the STATUS phase
-        status = if (isFromLibrary) {
-            FirResolvedDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL, EffectiveVisibility.Unknown)
-        } else {
-            FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
+        status = when (isFromLibrary) {
+            true -> FirResolvedDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL, EffectiveVisibility.Unknown)
+            false -> FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
+        }.apply {
+            isDataClassCopyFun = true
         }
         for ((ktParameter, firProperty) in zippedParameters) {
             val propertyName = firProperty.name

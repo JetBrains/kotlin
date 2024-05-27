@@ -151,6 +151,12 @@ open class FirDeclarationStatusImpl(
             this[HAS_STABLE_PARAMETER_NAMES] = value
         }
 
+    override var isDataClassCopyFun: Boolean
+        get() = this[IS_DATA_CLASS_COPY_FUN]
+        set(value) {
+            this[IS_DATA_CLASS_COPY_FUN] = value
+        }
+
     enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
@@ -171,6 +177,7 @@ open class FirDeclarationStatusImpl(
         FROM_ENUM(0x10000),
         FUN(0x20000),
         HAS_STABLE_PARAMETER_NAMES(0x40000),
+        IS_DATA_CLASS_COPY_FUN(0x80000),
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

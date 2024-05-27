@@ -618,6 +618,7 @@ class FirElementSerializer private constructor(
             function.isSuspend,
             simpleFunction?.isExpect == true,
             shouldSetStableParameterNames(function),
+            simpleFunction?.isDataClassCopyFun == true,
         )
 
         if (flags != builder.flags) {

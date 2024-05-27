@@ -116,6 +116,7 @@ fun FirDeclarationStatus.copy(
     isFromEnumClass: Boolean = this.isFromEnumClass,
     isFun: Boolean = this.isFun,
     hasStableParameterNames: Boolean = this.hasStableParameterNames,
+    isDataClassCopyFun: Boolean = this.isDataClassCopyFun,
 ): FirDeclarationStatus {
     val newVisibility = visibility ?: this.visibility
     val newModality = modality ?: this.modality
@@ -146,6 +147,7 @@ fun FirDeclarationStatus.copy(
         isFromEnumClass = isFromEnumClass,
         isFun = isFun,
         hasStableParameterNames = hasStableParameterNames,
+        isDataClassCopyFun = isDataClassCopyFun
     )
     return newStatus
 }
@@ -195,6 +197,7 @@ private fun copyStatusAttributes(
     isFromEnumClass: Boolean = from.isFromEnumClass,
     isFun: Boolean = from.isFun,
     hasStableParameterNames: Boolean = from.hasStableParameterNames,
+    isDataClassCopyFun: Boolean = from.isDataClassCopyFun,
 ) {
     to.isExpect = isExpect
     to.isActual = isActual
@@ -215,6 +218,7 @@ private fun copyStatusAttributes(
     to.isFromEnumClass = isFromEnumClass
     to.isFun = isFun
     to.hasStableParameterNames = hasStableParameterNames
+    to.isDataClassCopyFun = isDataClassCopyFun
 }
 
 inline fun <R> whileAnalysing(session: FirSession, element: FirElement, block: () -> R): R {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.serialization.deserialization.memberKind
@@ -87,7 +88,8 @@ value class FunctionFlags(val flags: Long) {
                 val flags = IrFlags.getFunctionFlags(
                     hasAnnotation, visibility, modality, kind,
                     isOperator, isInfix, isInline, isTailrec, isExternal, isSuspend, isExpect,
-                    true // hasStableParameterNames does not make sense for Ir, just pass the default value
+                    true, // hasStableParameterNames does not make sense for Ir, just pass the default value
+                    function.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER && DataClassResolver.isCopy(function.name)
                 )
 
                 return flags.toLong()
