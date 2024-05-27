@@ -50,6 +50,7 @@ inline val FirMemberDeclaration.isFromSealedClass: Boolean get() = status.isFrom
 inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEnumClass
 inline val FirMemberDeclaration.isFun: Boolean get() = status.isFun
 inline val FirMemberDeclaration.hasStableParameterNames: Boolean get() = status.hasStableParameterNames
+inline val FirMemberDeclaration.isDataClassCopyFun: Boolean get() = status.isDataClassCopyFun
 
 inline val FirClassLikeDeclaration.isLocal: Boolean get() = symbol.classId.isLocal
 

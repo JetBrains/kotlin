@@ -314,6 +314,7 @@ message Function {
     isSuspend
     isExpect
     hasNonStableParameterNames
+    isDataClassCopyFun
   */
   optional int32 flags = 9 [default = 6 /* public final function, no annotations */];
   optional int32 old_flags = 1 [default = 6];

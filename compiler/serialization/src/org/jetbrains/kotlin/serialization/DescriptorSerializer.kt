@@ -332,7 +332,9 @@ class DescriptorSerializer private constructor(
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isOperator, descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal,
-            descriptor.isSuspend, descriptor.isExpect, shouldSerializeHasStableParameterNames(descriptor)
+            descriptor.isSuspend, descriptor.isExpect, shouldSerializeHasStableParameterNames(descriptor),
+            /*isDataClassCopyFun =*/ false /* 2.0 compiler with `-language-version 1.9` flag.
+                                              K1 never had isDataClassCopyFun in metadata, so here 2.0 compiler puts the default value */
         )
         if (flags != builder.flags) {
             builder.flags = flags

@@ -41,6 +41,7 @@ interface FirDeclarationStatus : FirElement {
     val isFromEnumClass: Boolean
     val isFun: Boolean
     val hasStableParameterNames: Boolean
+    val isDataClassCopyFun: Boolean
     val defaultVisibility: Visibility
     val defaultModality: Modality
 

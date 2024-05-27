@@ -544,6 +544,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isExternal = Flags.IS_EXTERNAL_FUNCTION.get(flags)
                 isSuspend = Flags.IS_SUSPEND.get(flags)
                 hasStableParameterNames = !Flags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
+                isDataClassCopyFun = Flags.IS_DATA_CLASS_COPY_FUN.get(flags)
             }
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
