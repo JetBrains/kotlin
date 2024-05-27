@@ -19,13 +19,12 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
-import org.jetbrains.kotlin.name.Name
 
 internal class FirScriptReceiverParameterImpl(
     override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var typeRef: FirTypeRef,
-    override val labelName: Name?,
+    override val isBaseClassReceiver: Boolean,
 ) : FirScriptReceiverParameter() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

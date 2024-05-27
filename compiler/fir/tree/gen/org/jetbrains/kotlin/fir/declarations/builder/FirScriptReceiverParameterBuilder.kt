@@ -19,21 +19,20 @@ import org.jetbrains.kotlin.fir.declarations.FirScriptReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirScriptReceiverParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirScriptReceiverParameterBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var typeRef: FirTypeRef
-    var labelName: Name? = null
+    var isBaseClassReceiver: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     override fun build(): FirScriptReceiverParameter {
         return FirScriptReceiverParameterImpl(
             source,
             annotations.toMutableOrEmpty(),
             typeRef,
-            labelName,
+            isBaseClassReceiver,
         )
     }
 

@@ -458,7 +458,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         scriptReceiverParameter.configure {
             +typeRefField.withTransform()
-            +field("labelName", nameType, nullable = true)
+            +booleanField("isBaseClassReceiver") // means coming from ScriptCompilationConfigurationKeys.baseClass (could be deprecated soon, see KT-68540)
         }
 
         variable.configure {

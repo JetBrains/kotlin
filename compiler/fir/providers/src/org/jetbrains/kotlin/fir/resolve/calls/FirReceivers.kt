@@ -299,7 +299,6 @@ class ContextReceiverValueForClass(
 class ImplicitReceiverValueForScript(
     boundSymbol: FirScriptSymbol,
     type: ConeKotlinType,
-    val labelName: Name?,
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean = true,
@@ -310,5 +309,5 @@ class ImplicitReceiverValueForScript(
         get() = false
 
     override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirScriptSymbol> =
-        ImplicitReceiverValueForScript(boundSymbol, type, labelName, useSiteSession, scopeSession, keepMutable, contextReceiverNumber)
+        ImplicitReceiverValueForScript(boundSymbol, type, useSiteSession, scopeSession, keepMutable, contextReceiverNumber)
 }

@@ -24,6 +24,7 @@ import java.util.jar.JarFile
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.BasicScriptingHost
 import kotlin.script.experimental.host.FileBasedScriptSource
+import kotlin.script.experimental.host.ScriptDefinition
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
@@ -283,18 +284,10 @@ class ScriptingHostTest : TestCase() {
                 )
             }
         )
-        val output = captureOut {
-            val retVal = BasicJvmScriptingHost().eval(
-                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
-            ).valueOrThrow().returnValue
-            if (retVal is ResultValue.Error) throw retVal.error
-        }.lines()
-        Assert.assertEquals(result, output)
+        definition.evalScriptAndCheckOutput(script, result)
     }
 
     fun testScriptWithImplicitReceiversWithSameNamedProperty() {
-        val result = listOf("first")
-        val script = "println(v)"
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
                 updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.TestClass1>())
@@ -310,13 +303,9 @@ class ScriptingHostTest : TestCase() {
                 )
             }
         )
-        val output = captureOut {
-            val retVal = BasicJvmScriptingHost().eval(
-                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
-            ).valueOrThrow().returnValue
-            if (retVal is ResultValue.Error) throw retVal.error
-        }.lines()
-        Assert.assertEquals(result, output)
+        definition.evalScriptAndCheckOutput("println(v)", listOf("first"))
+        // TODO: uncomment after fixing KT-68545
+//        definition.evalScriptAndCheckOutput("println(this@TestClass2.v)", listOf("first"))
     }
 
     fun testScriptWithImplicitReceiverAndBaseClassWithSameNamedProperty() {
@@ -338,13 +327,7 @@ class ScriptingHostTest : TestCase() {
                 )
             }
         )
-        val output = captureOut {
-            val retVal = BasicJvmScriptingHost().eval(
-                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
-            ).valueOrThrow().returnValue
-            if (retVal is ResultValue.Error) throw retVal.error
-        }.lines()
-        Assert.assertEquals(result, output)
+        definition.evalScriptAndCheckOutput(script, result)
     }
 
     fun testScriptImplicitReceiversTransitiveVisibility() {
@@ -374,14 +357,7 @@ class ScriptingHostTest : TestCase() {
                 )
             }
         )
-        val output = captureOut {
-            val evalRes = BasicJvmScriptingHost().eval(
-                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
-            )
-            val retVal = evalRes.valueOrThrow().returnValue
-            if (retVal is ResultValue.Error) throw retVal.error
-        }.lines()
-        Assert.assertEquals(result, output)
+        definition.evalScriptAndCheckOutput(script, result)
     }
 
     @Test
@@ -762,6 +738,16 @@ internal fun evalScriptWithConfiguration(
 ): ResultWithDiagnostics<EvaluationResult> {
     val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = body)
     return host.eval(script.toScriptSource(), compilationConfiguration, null)
+}
+
+private fun ScriptDefinition.evalScriptAndCheckOutput(script: String, expectedOutput: List<String>) {
+    val output = captureOut {
+        val retVal = BasicJvmScriptingHost().eval(
+            script.toScriptSource(), compilationConfiguration, evaluationConfiguration
+        ).valueOrThrow().returnValue
+        if (retVal is ResultValue.Error) throw retVal.error
+    }.lines()
+    Assert.assertEquals(expectedOutput, output)
 }
 
 internal fun ScriptCompilationConfiguration.Builder.makeSimpleConfigurationWithTestImport() {

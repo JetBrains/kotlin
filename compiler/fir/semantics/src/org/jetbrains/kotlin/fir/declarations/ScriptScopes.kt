@@ -20,10 +20,8 @@ class TowerElementsForScript(
 fun SessionHolder.collectTowerDataElementsForScript(owner: FirScript): TowerElementsForScript {
     owner.lazyResolveToPhase(FirResolvePhase.TYPES)
 
-    val contextReceivers = owner.receivers.mapIndexed() { index, receiver ->
-        ImplicitReceiverValueForScript(
-            owner.symbol, receiver.typeRef.coneType, receiver.labelName, session, scopeSession, receiverNumber = index
-        )
+    val contextReceivers = owner.receivers.mapIndexed { index, receiver ->
+        ImplicitReceiverValueForScript(owner.symbol, receiver.typeRef.coneType, session, scopeSession, receiverNumber = index)
     }.asReversed()
 
     return TowerElementsForScript(

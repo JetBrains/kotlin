@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension.Factory
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.fir.declarations.builder.buildScriptReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
-import org.jetbrains.kotlin.fir.declarations.utils.SCRIPT_SPECIAL_NAME_STRING
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.moduleData
@@ -66,7 +68,7 @@ class FirScriptConfiguratorExtensionImpl(
         // TODO: rewrite/extract decision logic for clarity
         configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
             val baseClassFqn = FqName.fromSegments(baseClass.typeName.split("."))
-            receivers.add(buildImplicitReceiverWithFqName(baseClassFqn, Name.special(SCRIPT_SPECIAL_NAME_STRING)))
+            receivers.add(buildImplicitReceiverWithFqName(baseClassFqn, isBaseClassReceiver = true))
 
             val baseClassSymbol =
                 session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(ClassId(baseClassFqn.parent(), baseClassFqn.shortName()))
@@ -93,7 +95,12 @@ class FirScriptConfiguratorExtensionImpl(
         }
 
         configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
-            receivers.add(buildImplicitReceiverWithFqName(FqName.fromSegments(implicitReceiver.typeName.split("."))))
+            receivers.add(
+                buildImplicitReceiverWithFqName(
+                    FqName.fromSegments(implicitReceiver.typeName.split(".")),
+                    isBaseClassReceiver = false
+                )
+            )
         }
 
         configuration[ScriptCompilationConfiguration.providedProperties]?.forEach { (propertyName, propertyType) ->
@@ -179,7 +186,7 @@ class FirScriptConfiguratorExtensionImpl(
         return configuration
     }
 
-    private fun buildImplicitReceiverWithFqName(classFqn: FqName, customName: Name? = null) =
+    private fun buildImplicitReceiverWithFqName(classFqn: FqName, isBaseClassReceiver: Boolean) =
         buildScriptReceiverParameter {
             val userTypeRef = buildUserTypeRef {
                 isMarkedNullable = false
@@ -190,7 +197,7 @@ class FirScriptConfiguratorExtensionImpl(
                 )
             }
             typeRef = userTypeRef
-            labelName = customName ?: userTypeRef.qualifier.lastOrNull()?.name
+            this.isBaseClassReceiver = isBaseClassReceiver
         }
 
     private val _knownAnnotationsForSamWithReceiver = hashSetOf<String>()

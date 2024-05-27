@@ -224,10 +224,10 @@ class Fir2IrVisitor(
 
             // NOTE: index should correspond to one generated in the collectTowerDataElementsForScript
             irScript.implicitReceiversParameters = script.receivers.mapIndexedNotNull { index, receiver ->
-                val isSelf = receiver.labelName?.asString() == SCRIPT_SPECIAL_NAME_STRING
+                val isSelf = receiver.isBaseClassReceiver
                 val name =
                     if (isSelf) SpecialNames.THIS
-                    else Name.identifier("${receiver.labelName?.asStringStripSpecialMarkers() ?: SCRIPT_RECEIVER_NAME_PREFIX}_$index")
+                    else Name.identifier("${SCRIPT_RECEIVER_NAME_PREFIX}_$index")
                 val origin = if (isSelf) IrDeclarationOrigin.INSTANCE_RECEIVER else IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER
                 val irReceiver =
                     receiver.convertWithOffsets { startOffset, endOffset ->

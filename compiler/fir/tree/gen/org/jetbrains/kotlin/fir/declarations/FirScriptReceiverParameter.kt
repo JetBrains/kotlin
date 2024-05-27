@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.name.Name
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.scriptReceiverParameter]
@@ -23,7 +22,7 @@ abstract class FirScriptReceiverParameter : FirReceiverParameter() {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract override val typeRef: FirTypeRef
-    abstract val labelName: Name?
+    abstract val isBaseClassReceiver: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitScriptReceiverParameter(this, data)

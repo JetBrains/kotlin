@@ -562,7 +562,7 @@ class BodyResolveContext(
                 // TODO: temporary solution for avoiding problem described in KT-62712, flatten back after fix
                 .let { baseCtx ->
                     towerElementsForScript.implicitReceivers.fold(baseCtx) { ctx, it ->
-                        ctx.addReceiver(null, it)
+                        ctx.addReceiver(it.type.classId?.shortClassName, it)
                     }
                 }
 
