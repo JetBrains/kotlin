@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
+import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
@@ -129,11 +130,16 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
         //     }
         //   }
         val containingDeclarationForAccess = context.containingDeclarations.lastOrNull {
-            !(it is FirAnonymousFunction && it.invocationKind != null)
+            when (it) {
+                // for members of local classes `isNonLocal` returns `false`
+                is FirCallableDeclaration -> it.isNonLocal || it.dispatchReceiverType != null
+                else -> false
+            }
         }
+
         if (accessedContext in enumMemberProperties) {
             val lazyDelegation = (accessedContext as FirPropertySymbol).lazyDelegation
-            if (lazyDelegation != null && lazyDelegation == containingDeclarationForAccess) {
+            if (lazyDelegation != null) {
                 return
             }
         }
