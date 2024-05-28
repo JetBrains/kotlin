@@ -6,6 +6,8 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
+import org.jetbrains.kotlin.buildtools.internal.getJdkClassesClassLoader
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -32,7 +34,7 @@ internal fun <T : Any> loadImplementation(cls: KClass<T>, classLoader: ClassLoad
 private class SharedApiClassesClassLoaderImpl(
     private val parent: ClassLoader,
     private val allowedPackage: String,
-) : ClassLoader(null) { // `null` parent means that the parent is the bootstrap classloader
+) : ClassLoader(@OptIn(KotlinBuildToolsInternalJdkUtils::class) getJdkClassesClassLoader()) {
     override fun loadClass(name: String, resolve: Boolean): Class<*> {
         return if (name.startsWith(allowedPackage)) {
             parent.loadClass(name)
