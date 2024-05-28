@@ -99,6 +99,13 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun testDataClassNonPublicConstructorIrrelevantCopyFunctions(gradleVersion: GradleVersion) {
+        project("dataClassNonPublicConstructorIrrelevantCopyFunctions", gradleVersion) {
+            build("assemble")
+        }
+    }
+
+    @GradleTest
     @DisplayName("Should produce '.kotlin_module' file with specified name")
     fun testModuleName(gradleVersion: GradleVersion) {
         project("moduleName", gradleVersion) {
