@@ -50,3 +50,25 @@ fun topLevel(data: GenericData<Int, String>) {
     data.copy()
     data.copy("", 1) // fake copy
 }
+
+data class GenericDataForRef<A> private constructor(val a: A) {
+    fun member() {
+        copy()
+        this.copy()
+        ::copy
+        this::copy
+        GenericDataForRef<Int>::copy
+        GenericDataForRef<*>::copy
+        GenericDataForRef<in Int>::copy
+        GenericDataForRef<out Int>::copy
+    }
+}
+
+fun topLevel(data: GenericDataForRef<Int>) {
+    data.copy()
+    data::copy
+    GenericDataForRef<Int>::copy
+    GenericDataForRef<*>::copy
+    GenericDataForRef<in Int>::copy
+    GenericDataForRef<out Int>::copy
+}
