@@ -21,6 +21,7 @@ class Project(
     val projectDirectory: Path,
 ) {
     val projectId = ProjectId.ProjectUUID(UUID.randomUUID())
+    private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
 
     fun module(
         moduleName: String,
@@ -28,7 +29,8 @@ class Project(
         additionalCompilationArguments: List<String> = emptyList(),
     ): Module {
         val moduleDirectory = projectDirectory.resolve(moduleName)
-        val module = JvmModule(this, moduleName, moduleDirectory, dependencies, defaultStrategyConfig, additionalCompilationArguments)
+        val sanitizedModuleName = moduleName.replace(invalidModuleNameCharactersRegex, "_")
+        val module = JvmModule(this, sanitizedModuleName, moduleDirectory, dependencies, defaultStrategyConfig, additionalCompilationArguments)
         module.sourcesDirectory.createDirectories()
         val templatePath = Paths.get("src/main/resources/modules/$moduleName")
         assert(templatePath.isDirectory()) {
