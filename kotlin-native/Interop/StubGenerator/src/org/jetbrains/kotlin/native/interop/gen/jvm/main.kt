@@ -29,15 +29,12 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DefFile
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_IR_PROVIDER
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinLibraryResolverImpl
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
-import org.jetbrains.kotlin.library.packageFqName
-import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.native.interop.gen.*
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
@@ -375,7 +372,7 @@ private fun processCLib(
         _, oldValue, newValue ->
             warn("The package value `$oldValue` specified in .def file is overridden with explicit $newValue")
     }
-    def.manifestAddendProperties["interop"] = "true"
+    def.manifestAddendProperties[KLIB_PROPERTY_INTEROP] = "true"
     if (stubIrOutput is StubIrDriver.Result.Metadata) {
         def.manifestAddendProperties[KLIB_PROPERTY_IR_PROVIDER] = KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
     }
