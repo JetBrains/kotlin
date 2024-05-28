@@ -44861,6 +44861,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       }
 
       @Test
+      @TestMetadata("oneUnitBranch.kt")
+      public void testOneUnitBranch() {
+        runTest("compiler/testData/codegen/box/when/oneUnitBranch.kt");
+      }
+
+      @Test
       @TestMetadata("range.kt")
       public void testRange() {
         runTest("compiler/testData/codegen/box/when/range.kt");
