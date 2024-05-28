@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
+// ISSUE: KT-68538: The type of the outer if should not be Nothing because the inner ifs are not exhaustive.
 // WITH_STDLIB
-// ISSUE: KT-68538
+import kotlin.test.*
 
 fun box(): String {
     val result = buildList {
@@ -15,5 +15,6 @@ fun box(): String {
             index++
         }
     }
+    assertEquals(listOf(0, 1, 2), result)
     return "OK"
 }

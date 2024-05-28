@@ -24355,6 +24355,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("nestedNonExhaustiveIf.kt")
+      public void testNestedNonExhaustiveIf() {
+        runTest("compiler/testData/codegen/box/inference/builderInference/nestedNonExhaustiveIf.kt");
+      }
+
+      @Test
       @TestMetadata("nullability.kt")
       public void testNullability() {
         runTest("compiler/testData/codegen/box/inference/builderInference/nullability.kt");

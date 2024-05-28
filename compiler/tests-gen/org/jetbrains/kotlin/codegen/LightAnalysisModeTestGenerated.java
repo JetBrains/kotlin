@@ -20408,6 +20408,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         runTest("compiler/testData/codegen/box/inference/builderInference/memberScope.kt");
       }
 
+      @TestMetadata("nestedNonExhaustiveIf.kt")
+      public void testNestedNonExhaustiveIf() {
+        runTest("compiler/testData/codegen/box/inference/builderInference/nestedNonExhaustiveIf.kt");
+      }
+
       @TestMetadata("nullability.kt")
       public void testNullability() {
         runTest("compiler/testData/codegen/box/inference/builderInference/nullability.kt");
