@@ -19887,6 +19887,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("nestedNonExhaustiveIf.kt")
+        public void testNestedNonExhaustiveIf() {
+          runTest("compiler/testData/codegen/box/inference/builderInference/nestedNonExhaustiveIf.kt");
+        }
+
+        @Test
         @TestMetadata("nullability.kt")
         public void testNullability() {
           runTest("compiler/testData/codegen/box/inference/builderInference/nullability.kt");

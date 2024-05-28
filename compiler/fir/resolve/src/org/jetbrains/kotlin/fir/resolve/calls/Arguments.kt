@@ -53,15 +53,6 @@ fun Candidate.resolveArgumentExpression(
     isDispatch: Boolean
 ) {
     when (argument) {
-        is FirFunctionCall, is FirWhenExpression, is FirTryExpression, is FirCheckNotNullCall, is FirElvisExpression -> resolveSubCallArgument(
-            csBuilder,
-            argument as FirResolvable,
-            expectedType,
-            sink,
-            context,
-            isReceiver,
-            isDispatch
-        )
         // x?.bar() is desugared to `x SAFE-CALL-OPERATOR { $not-null-receiver$.bar() }`
         //
         // If we have a safe-call as argument like in a call "foo(x SAFE-CALL-OPERATOR { $not-null-receiver$.bar() })"
@@ -71,7 +62,7 @@ fun Candidate.resolveArgumentExpression(
         is FirSafeCallExpression -> {
             val nestedQualifier = (argument.selector as? FirExpression)?.unwrapSmartcastExpression()
             if (nestedQualifier is FirQualifiedAccessExpression) {
-                resolveSubCallArgument(
+                resolvePlainExpressionArgument(
                     csBuilder,
                     nestedQualifier,
                     expectedType,
@@ -175,66 +166,6 @@ private fun Candidate.resolveBlockArgument(
             isDispatch
         )
     }
-}
-
-fun Candidate.resolveSubCallArgument(
-    csBuilder: ConstraintSystemBuilder,
-    argument: FirResolvable,
-    expectedType: ConeKotlinType?,
-    sink: CheckerSink,
-    context: ResolutionContext,
-    isReceiver: Boolean,
-    isDispatch: Boolean,
-    useNullableArgumentType: Boolean = false
-) {
-    require(argument is FirExpression)
-    val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(
-        csBuilder,
-        argument,
-        expectedType,
-        sink,
-        context,
-        isReceiver,
-        isDispatch,
-        useNullableArgumentType
-    )
-    /*
-     * It's important to extract type from argument neither from symbol, because of symbol contains
-     *   placeholder type with value 0, but argument contains type with proper literal value
-     */
-    val type: ConeKotlinType = context.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.fir as FirCallableDeclaration).type
-    val argumentType = candidate.substitutor.substituteOrSelf(type).prepareTypeForPartiallyCompletedPCLACall(candidate, csBuilder)
-    resolvePlainArgumentType(
-        csBuilder,
-        argument,
-        argumentType,
-        expectedType,
-        sink,
-        context,
-        isReceiver,
-        isDispatch,
-        useNullableArgumentType
-    )
-}
-
-// For PCLA/Delegate inference partially completed calls, there might be a situation when
-// - There are already fixed variables (because we need them for lambda analysis)
-// - They are used in return types
-//
-// In this case, we substitute them explicitly because otherwise
-// TypeCheckerStateForConstraintInjector.fixedTypeVariable throws an exception.
-//
-// Note that this is not relevant outside PCLA context because
-// - For partial completion, we avoid fixing TVs that are used inside return types
-// - For FULL completion, we would run completion results writing, so there would be no candidates and type variables inside return types.
-//
-// See singleBranchConditionLastStatementInLambda.kt and assignmentUsingIncompletePCLACall.kt tests
-private fun ConeKotlinType.prepareTypeForPartiallyCompletedPCLACall(
-    candidate: Candidate, outerCSBuilder: ConstraintSystemBuilder
-): ConeKotlinType {
-    if (!candidate.system.usesOuterCs) return this
-
-    return outerCSBuilder.buildCurrentSubstitutor().safeSubstitute(candidate.callInfo.session.typeContext, this) as ConeKotlinType
 }
 
 fun Candidate.resolvePlainExpressionArgument(
