@@ -163,12 +163,6 @@ class IncrementalCompilationK1JsMultiProject : IncrementalCompilationJsMultiProj
 
 class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-
-    @Disabled("KT-61153")
-    @GradleTest
-    override fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
-        super.testRemoveLibFromClasspath(gradleVersion)
-    }
 }
 
 class IncrementalCompilationK1JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
