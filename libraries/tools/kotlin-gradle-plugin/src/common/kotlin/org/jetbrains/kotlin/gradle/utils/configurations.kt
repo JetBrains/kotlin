@@ -107,7 +107,8 @@ internal fun ConfigurationContainer.maybeCreateDependencyScope(
 
 internal fun Configuration.addSecondaryOutgoingJvmClassesVariant(
     project: Project,
-    kotlinCompilation: KotlinCompilation<*>
+    kotlinCompilation: KotlinCompilation<*>,
+    addArtifactsToVariantCreatedByJavaLibraryPlugin: Boolean = false,
 ) {
     val apiClassesVariant = outgoing.variants.maybeCreate(CLASSES_SECONDARY_VARIANT_NAME)
     apiClassesVariant.attributes.attribute(
@@ -117,7 +118,7 @@ internal fun Configuration.addSecondaryOutgoingJvmClassesVariant(
 
     project.whenEvaluated {
         // Java-library plugin already has done all required work here
-        if (project.plugins.hasPlugin("java-library")) return@whenEvaluated
+        if (!addArtifactsToVariantCreatedByJavaLibraryPlugin && project.plugins.hasPlugin("java-library")) return@whenEvaluated
 
         kotlinCompilation.output.classesDirs.files.forEach { classesDir ->
             apiClassesVariant.artifact(classesDir) {
