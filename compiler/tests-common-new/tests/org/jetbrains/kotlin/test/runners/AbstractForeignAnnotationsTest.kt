@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.builders.classicFrontendStep
 import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.SKIP_TXT
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ANNOTATIONS_PATH
+import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.PROVIDE_JAVA_AS_BINARIES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.COMPILE_JAVA_TO_BINARIES_USING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
@@ -54,6 +55,7 @@ abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnot
             if (kind.psiClassLoading) {
                 +USE_PSI_CLASS_FILES_READING
             }
+            +ENABLE_FOREIGN_ANNOTATIONS
         }
 
         enableMetaInfoHandler()

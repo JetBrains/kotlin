@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmFromK1AndK2ArtifactHandlerStep
 import org.jetbrains.kotlin.test.builders.jvmFromK1AndK2ArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.*
+import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.frontend.K1AndK2ToIrConverter
 import org.jetbrains.kotlin.test.frontend.K1AndK2FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -73,9 +74,9 @@ open class AbstractJvmAbiConsistencyTest :
 
         forTestsMatching("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests/*") {
             defaultDirectives {
+                +ENABLE_FOREIGN_ANNOTATIONS
                 ForeignAnnotationsDirectives.ANNOTATIONS_PATH with JavaForeignAnnotationType.Annotations
             }
-            useConfigurators(::JvmForeignAnnotationsConfigurator)
         }
 
         useAfterAnalysisCheckers(
