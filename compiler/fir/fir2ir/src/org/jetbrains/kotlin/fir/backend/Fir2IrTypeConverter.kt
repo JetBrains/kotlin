@@ -109,7 +109,7 @@ class Fir2IrTypeConverter(
                         ?: lookupTag.toSymbol(session)?.toIrSymbol(c, typeOrigin) {
                             typeAnnotations += with(annotationGenerator) { it.toIrAnnotations() }
                         }
-                        ?: (lookupTag as? ConeClassLikeLookupTag)?.let(classifiersGenerator::createIrClassForNotFoundClass)?.symbol
+                        ?: (lookupTag as? ConeClassLikeLookupTag)?.let(classifierStorage::getIrClassForNotFoundClass)?.symbol
                         ?: return createErrorType()
 
                 if (specialAnnotationsProvider != null) {

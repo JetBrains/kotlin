@@ -1,5 +1,4 @@
 // ISSUE: KT-68568
-// IGNORE_BACKEND_K2: JVM_IR
 
 // MODULE: rootLib
 // FILE: Some.kt

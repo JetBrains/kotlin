@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import java.util.concurrent.ConcurrentHashMap
 
 class Fir2IrClassifierStorage(
     private val c: Fir2IrComponents,
@@ -33,6 +34,7 @@ class Fir2IrClassifierStorage(
     private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by c {
     private val classCache: MutableMap<FirRegularClass, IrClassSymbol> = commonMemberStorage.classCache
+    private val notFoundClassCache: ConcurrentHashMap<ConeClassLikeLookupTag, IrClass> = commonMemberStorage.notFoundClassCache
 
     private val typeAliasCache: MutableMap<FirTypeAlias, IrTypeAliasSymbol> = mutableMapOf()
 
@@ -264,6 +266,12 @@ class Fir2IrClassifierStorage(
                     it.parent = irClass
                 }
             }
+        }
+    }
+
+    fun getIrClassForNotFoundClass(classLikeLookupTag: ConeClassLikeLookupTag): IrClass {
+        return notFoundClassCache.getOrPut(classLikeLookupTag) {
+            classifiersGenerator.createIrClassForNotFoundClass(classLikeLookupTag)
         }
     }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -25,6 +26,7 @@ class Fir2IrCommonMemberStorage(val mangler: FirMangler) {
     val lock: IrLock = IrLock()
 
     val classCache: MutableMap<FirRegularClass, IrClassSymbol> = mutableMapOf()
+    val notFoundClassCache: ConcurrentHashMap<ConeClassLikeLookupTag, IrClass> = ConcurrentHashMap()
 
     val typeParameterCache: MutableMap<FirTypeParameter, IrTypeParameter> = mutableMapOf()
 
