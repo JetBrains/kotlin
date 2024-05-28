@@ -34133,6 +34133,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         public void testKt53041() {
           runTest("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests/kt53041.kt");
         }
+
+        @Test
+        @TestMetadata("primitiveSubstitutionToDnnParameter.kt")
+        public void testPrimitiveSubstitutionToDnnParameter() {
+          runTest("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests/primitiveSubstitutionToDnnParameter.kt");
+        }
       }
     }
 
