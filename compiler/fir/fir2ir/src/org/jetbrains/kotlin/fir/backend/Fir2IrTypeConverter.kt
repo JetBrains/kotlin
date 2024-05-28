@@ -7,13 +7,17 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.toIrSymbol
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.unexpandedConeClassLikeType
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -115,8 +119,11 @@ class Fir2IrTypeConverter(
 
                 val irSymbol =
                     getBuiltInClassSymbol(classId)
-                        ?: lookupTag.toSymbol(session)?.toIrSymbol(c, typeOrigin) {
-                            typeAnnotations += with(annotationGenerator) { it.toIrAnnotations() }
+                        ?: lookupTag.toSymbol(session)?.let { firSymbol ->
+                            approximateTypeForLocalClassIfNeeded(firSymbol)?.let { return it }
+                            firSymbol.toIrSymbol(c, typeOrigin) {
+                                typeAnnotations += with(annotationGenerator) { it.toIrAnnotations() }
+                            }
                         }
                         ?: (lookupTag as? ConeClassLikeLookupTag)?.let(classifierStorage::getIrClassForNotFoundClass)?.symbol
                         ?: return createErrorType()
@@ -340,6 +347,20 @@ class Fir2IrTypeConverter(
     // TODO: candidate for removal
     private fun getBuiltInClassSymbol(classId: ClassId?): IrClassSymbol? {
         return classIdToSymbolMap[classId] ?: getArrayClassSymbol(classId)
+    }
+
+    private fun approximateTypeForLocalClassIfNeeded(symbol: FirClassifierSymbol<*>): IrType? {
+        // Should only be run in the skipBodies (i.e. kapt) mode.
+        if (!configuration.skipBodies) return null
+
+        if (symbol !is FirClassSymbol) return null
+        val firClass = symbol.fir as? FirClass ?: return null
+        if (!firClass.isLocalClassOrAnonymousObject()) return null
+        return firClass.superTypeRefs.firstOrNull {
+            // Skip Enum supertype because otherwise, translating local enums will lead to stack overflow error
+            // (since a local enum `L` has `kotlin/Enum<L>` as a supertype).
+            (it.coneType.lookupTagIfAny as? ConeClassLikeLookupTag)?.classId != StandardClassIds.Enum
+        }?.toIrType() ?: builtins.anyType
     }
 }
 

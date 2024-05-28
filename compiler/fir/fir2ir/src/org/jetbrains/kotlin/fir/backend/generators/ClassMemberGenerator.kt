@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableDeclarationC
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isFromEnumClass
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
@@ -263,28 +260,31 @@ internal class ClassMemberGenerator(
         initializerExpression: FirExpression?
     ) {
         val irField = backingField ?: return
-        conversionScope.withParent(irField) {
-            declarationStorage.enterScope(this@initializeBackingField.symbol)
-            // NB: initializer can be already converted
-            if (initializer == null && initializerExpression != null) {
-                initializer = irFactory.createExpressionBody(
-                    run {
-                        val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
-                        if (property.delegate == null) {
-                            with(visitor.implicitCastInserter) {
-                                irExpression.insertSpecialCast(
-                                    initializerExpression,
-                                    initializerExpression.resolvedType,
-                                    property.returnTypeRef.coneType
-                                )
+        val isAnnotationParameter = (irField.parent as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS
+        if (!configuration.skipBodies || isAnnotationParameter || property.isConst) {
+            conversionScope.withParent(irField) {
+                declarationStorage.enterScope(this@initializeBackingField.symbol)
+                // NB: initializer can be already converted
+                if (initializer == null && initializerExpression != null) {
+                    initializer = irFactory.createExpressionBody(
+                        run {
+                            val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
+                            if (property.delegate == null) {
+                                with(visitor.implicitCastInserter) {
+                                    irExpression.insertSpecialCast(
+                                        initializerExpression,
+                                        initializerExpression.resolvedType,
+                                        property.returnTypeRef.coneType
+                                    )
+                                }
+                            } else {
+                                irExpression
                             }
-                        } else {
-                            irExpression
                         }
-                    }
-                )
+                    )
+                }
+                declarationStorage.leaveScope(this@initializeBackingField.symbol)
             }
-            declarationStorage.leaveScope(this@initializeBackingField.symbol)
         }
         property.backingField?.let { annotationGenerator.generate(irField, it) }
     }
