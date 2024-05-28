@@ -10,6 +10,8 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
+import org.jetbrains.kotlin.buildtools.internal.getJdkClassesClassLoader
 import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
@@ -51,7 +53,7 @@ abstract class KotlinToolRunner @Inject constructor(
 
     private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaders.computeIfAbsent(isolatedClassLoaderCacheKey) {
         val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
-        URLClassLoader(arrayOfURLs).apply {
+        URLClassLoader(arrayOfURLs, @OptIn(KotlinBuildToolsInternalJdkUtils::class) getJdkClassesClassLoader()).apply {
             setDefaultAssertionStatus(enableAssertions)
         }
     }
