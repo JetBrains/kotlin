@@ -628,6 +628,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("incrementOnErrorCallable.kt")
+    public void testIncrementOnErrorCallable() {
+      runTest("compiler/testData/diagnostics/tests/incrementOnErrorCallable.kt");
+    }
+
+    @Test
     @TestMetadata("InferNullabilityInThenBlock.kt")
     public void testInferNullabilityInThenBlock() {
       runTest("compiler/testData/diagnostics/tests/InferNullabilityInThenBlock.kt");

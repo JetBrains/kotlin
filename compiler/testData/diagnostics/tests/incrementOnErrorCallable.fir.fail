@@ -1,0 +1,5 @@
+Instead use FirErrorTypeRef for ERROR CLASS: Unresolved name: shrek
+java.lang.AssertionError: Instead use FirErrorTypeRef for ERROR CLASS: Unresolved name: shrek
+	at org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnosticCollectorComponent.visitResolvedTypeRef(ErrorNodeDiagnosticCollectorComponent.kt:43)
+	at org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnosticCollectorComponent.visitResolvedTypeRef(ErrorNodeDiagnosticCollectorComponent.kt:28)
+	at org.jetbrains.kotlin.fir.types.FirResolvedTypeRef.accept(FirResolvedTypeRef.kt:28)
