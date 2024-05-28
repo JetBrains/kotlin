@@ -1,5 +1,5 @@
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ KT-68617
+// ISSUE: KT-68617
+// FIR_IDENTICAL
 
 sealed class UnspecifiedPrimary()
 sealed class PrivatePrimary private constructor()

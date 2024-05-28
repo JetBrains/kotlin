@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall3.kt
             )
         }
 
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>()
         }
 

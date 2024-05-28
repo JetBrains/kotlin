@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -162,6 +161,16 @@ open class PsiRawFirBuilder(
                 else -> null
             } ?: if (publicByDefault) Visibilities.Public else Visibilities.Unknown
         }
+
+    private val KtConstructor<*>.constructorExplicitVisibility: Visibility?
+        get() = getVisibility().takeUnless { it == Visibilities.Unknown }
+
+    // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
+    private fun constructorDefaultVisibility(owner: KtClassOrObject): Visibility = when {
+        owner is KtObjectDeclaration || owner.hasModifier(ENUM_KEYWORD) || owner is KtEnumEntry -> Visibilities.Private
+        owner.hasModifier(SEALED_KEYWORD) -> Visibilities.Protected
+        else -> Visibilities.Unknown
+    }
 
     private val KtDeclaration.modality: Modality?
         get() = with(modifierList) {
@@ -1149,15 +1158,8 @@ open class PsiRawFirBuilder(
                     }
                 }
 
-                // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors
-                fun defaultVisibility() = when {
-                    owner is KtObjectDeclaration || owner.hasModifier(ENUM_KEYWORD) || owner is KtEnumEntry -> Visibilities.Private
-                    owner.hasModifier(SEALED_KEYWORD) -> Visibilities.Protected
-                    else -> Visibilities.Unknown
-                }
-
-                val explicitVisibility = this?.getVisibility()?.takeUnless { it == Visibilities.Unknown }
-                val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility(), Modality.FINAL).apply {
+                val explicitVisibility = this?.constructorExplicitVisibility
+                val status = FirDeclarationStatusImpl(explicitVisibility ?: constructorDefaultVisibility(owner), Modality.FINAL).apply {
                     isExpect = this@toFirConstructor?.hasExpectModifier() == true || this@PsiRawFirBuilder.context.containerIsExpect
                     isActual = this@toFirConstructor?.hasActualModifier() == true || isImplicitlyActual
 
@@ -1989,8 +1991,8 @@ open class PsiRawFirBuilder(
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = selfTypeRef
-                    val explicitVisibility = getVisibility()
-                    status = FirDeclarationStatusImpl(explicitVisibility, Modality.FINAL).apply {
+                    val explicitVisibility = constructorExplicitVisibility
+                    status = FirDeclarationStatusImpl(explicitVisibility ?: constructorDefaultVisibility(owner), Modality.FINAL).apply {
                         isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                         isActual = hasActualModifier()
                         isInner = owner.hasModifier(INNER_KEYWORD)

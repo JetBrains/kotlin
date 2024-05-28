@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class LightTreeRawFirDeclarationBuilder(
@@ -948,8 +947,6 @@ class LightTreeRawFirDeclarationBuilder(
 
             val modifiers = modifiersIfPresent ?: Modifier()
 
-            val defaultVisibility = classWrapper.defaultConstructorVisibility()
-
             val generateDelegatedSuperCall = shouldGenerateDelegatedSuperCall(
                 isAnySuperCall = isKotlinAny,
                 isExpectClass = containingClassIsExpectClass,
@@ -1005,7 +1002,7 @@ class LightTreeRawFirDeclarationBuilder(
             val explicitVisibility = runIf(primaryConstructor != null) {
                 modifiers.getVisibility().takeUnless { it == Visibilities.Unknown }
             }
-            val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility, Modality.FINAL).apply {
+            val status = FirDeclarationStatusImpl(explicitVisibility ?: classWrapper.defaultConstructorVisibility(), Modality.FINAL).apply {
                 isExpect = modifiers.hasExpect() || context.containerIsExpect
                 isActual = modifiers.hasActual() || isImplicitlyActual
                 isInner = classWrapper.isInner()
@@ -1107,8 +1104,8 @@ class LightTreeRawFirDeclarationBuilder(
             val delegatedSelfTypeRef = classWrapper.delegatedSelfTypeRef
             val calculatedModifiers = modifiers ?: Modifier()
 
-            val explicitVisibility = calculatedModifiers.getVisibility()
-            val status = FirDeclarationStatusImpl(explicitVisibility, Modality.FINAL).apply {
+            val explicitVisibility = calculatedModifiers.getVisibility().takeUnless { it == Visibilities.Unknown }
+            val status = FirDeclarationStatusImpl(explicitVisibility ?: classWrapper.defaultConstructorVisibility(), Modality.FINAL).apply {
                 isExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
                 isActual = calculatedModifiers.hasActual()
                 isInner = classWrapper.isInner()

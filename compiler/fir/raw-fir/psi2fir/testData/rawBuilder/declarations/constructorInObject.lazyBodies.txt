@@ -1,6 +1,6 @@
 FILE: constructorInObject.kt
     public final? object A : R|kotlin/Any| {
-        public? constructor(): R|A| {
+        private constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -29,7 +29,7 @@ FILE: constructorInObject.kt
         }
 
         public final? companion object Companion : R|kotlin/Any| {
-            public? constructor(): R|C.Companion| {
+            private constructor(): R|C.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 

@@ -1,5 +1,4 @@
 // LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
-// JVM_ABI_K1_K2_DIFF: KT-63920
 
 sealed class TestNoSubclasses(val x: Int)
 
