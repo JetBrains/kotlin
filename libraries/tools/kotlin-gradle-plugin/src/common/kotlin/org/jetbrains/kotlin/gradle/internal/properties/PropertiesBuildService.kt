@@ -14,6 +14,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.getOrNull
 import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAccessor
@@ -208,3 +210,21 @@ internal abstract class PropertiesBuildService @Inject constructor(
 
 internal val Project.propertiesService: Provider<PropertiesBuildService>
     get() = PropertiesBuildService.registerIfAbsent(this)
+
+internal fun <T> PropertiesBuildService.propertyWithDeprecatedName(
+    nonDeprecatedProperty: PropertiesBuildService.GradleProperty<T>,
+    deprecatedProperty: PropertiesBuildService.GradleProperty<T>,
+    project: Project,
+): Provider<T> = property(nonDeprecatedProperty, project)
+    .orElse(
+        property(deprecatedProperty, project)
+            .map {
+                project.reportDiagnosticOncePerBuild(
+                    KotlinToolingDiagnostics.DeprecatedPropertyWithReplacement(
+                        deprecatedProperty.name,
+                        nonDeprecatedProperty.name
+                    )
+                )
+                it!!
+            }
+    )
