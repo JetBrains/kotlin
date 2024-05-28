@@ -21357,6 +21357,76 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue")
+      @TestDataPath("$PROJECT_ROOT")
+      public class NonLocalBreakContinue {
+        @Test
+        public void testAllFilesPresentInNonLocalBreakContinue() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("baseFeatureInteractions.kt")
+        public void testBaseFeatureInteractions() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue/baseFeatureInteractions.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultLambdaInline.kt")
+        public void testDefaultLambdaInline() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue/defaultLambdaInline.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineExtensionFunction.kt")
+        public void testInlineExtensionFunction() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue/inlineExtensionFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaAsGeneric.kt")
+        public void testLambdaAsGeneric() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue/lambdaAsGeneric.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaAsNonFunction.kt")
+        public void testLambdaAsNonFunction() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue/lambdaAsNonFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaCallWithSuper.kt")
+        public void testLambdaCallWithSuper() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue/lambdaCallWithSuper.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaWithReceiver.kt")
+        public void testLambdaWithReceiver() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue/lambdaWithReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedLambdas.kt")
+        public void testNestedLambdas() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue/nestedLambdas.kt");
+        }
+
+        @Test
+        @TestMetadata("withGuards.kt")
+        public void testWithGuards() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue/withGuards.kt");
+        }
+
+        @Test
+        @TestMetadata("withOverrideByInline.kt")
+        public void testWithOverrideByInline() {
+          runTest("compiler/testData/diagnostics/tests/inline/nonLocalBreakContinue/withOverrideByInline.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/inline/nonLocalReturns")
       @TestDataPath("$PROJECT_ROOT")
       public class NonLocalReturns {
