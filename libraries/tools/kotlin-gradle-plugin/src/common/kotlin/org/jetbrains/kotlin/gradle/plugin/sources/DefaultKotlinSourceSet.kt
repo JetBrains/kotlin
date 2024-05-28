@@ -11,7 +11,6 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -42,10 +41,6 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     override val runtimeOnlyConfigurationName: String
         get() = disambiguateName(RUNTIME_ONLY)
-
-    @ExperimentalKotlinGradlePluginApi
-    override val dependencySourcesConfigurationName: String
-        get() = disambiguateName("dependencySources")
 
     @Deprecated("KT-55312")
     override val apiMetadataConfigurationName: String

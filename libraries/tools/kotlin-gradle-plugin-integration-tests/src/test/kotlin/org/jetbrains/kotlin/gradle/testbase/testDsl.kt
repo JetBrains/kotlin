@@ -941,40 +941,6 @@ internal fun TestProject.enableStableConfigurationCachePreview() {
 }
 
 /**
- * Kotlin Multiplatform Projects have dedicated configurations for source files resolution of all source set dependencies
- * This helper can be useful for cases when you want to resolve a bunch of configurations and don't want to see any unexpected failures
- * coming from *DependencySources configurations. Because by nature not every published library has sources variants that can be resolved
- * via gradle Configurations.
- */
-internal fun TestProject.suppressDependencySourcesConfigurations() {
-    if (buildGradleKts.exists()) {
-        buildGradleKts.appendText(
-            """
-                allprojects {
-                    configurations.configureEach {
-                        if (name.endsWith("DependencySources") || name.endsWith("dependencySources")) {
-                            incoming.beforeResolve { setExtendsFrom(emptySet()) }                            
-                        }
-                    }            
-                }
-            """.trimIndent()
-        )
-    } else if (buildGradle.exists()) {
-        """
-            allprojects {
-                configurations {
-                    configureEach {
-                        if (name.endsWith("DependencySources") || name.endsWith("dependencySources")) {
-                            incoming.beforeResolve { setExtendsFrom([]) }
-                        }
-                    }
-                }
-            }
-        """.trimIndent()
-    }
-}
-
-/**
  * Represents different types of dependency management provided to tests.
  */
 sealed interface DependencyManagement {

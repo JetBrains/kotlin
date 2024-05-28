@@ -449,6 +449,40 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun `test resolve sources for transitive dependencies through dependency without sources variant`(gradleVersion: GradleVersion) {
+        project(
+            "transitive-sources-dependencies",
+            gradleVersion,
+            localRepoDir = workingDir.resolve(gradleVersion.version),
+        ) {
+            // lib_without_sources dependsOn lib_with_sources
+            build(":lib_with_sources:publish", ":lib_without_sources:publish")
+
+            settingsGradleKts.replaceText("val isConsumer = false", "val isConsumer = true")
+
+            resolveIdeDependencies(":consumer") { dependencies ->
+                dependencies["jvmMain"].getOrFail(
+                    binaryCoordinates("test:lib_with_sources-jvm:1.0")
+                        .withResolvedSourcesFile("lib_with_sources-jvm-1.0-sources.jar"),
+                )
+
+                dependencies["jvmMain"].getOrFail(
+                    binaryCoordinates("test:lib_without_sources-jvm:1.0")
+                ).assertNoSourcesResolved()
+
+                dependencies["linuxX64Main"].getOrFail(
+                    binaryCoordinates("test:lib_with_sources-linuxx64:1.0")
+                        .withResolvedSourcesFile("lib_with_sources-linuxx64-1.0-sources.jar"),
+                )
+
+                dependencies["linuxX64Main"].getOrFail(
+                    binaryCoordinates("test:lib_without_sources-linuxx64:1.0")
+                ).assertNoSourcesResolved()
+            }
+        }
+    }
+
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
         this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
             it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
