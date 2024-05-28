@@ -299,6 +299,33 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Validate build with project isolation")
+    @GradleTest
+    @JvmGradlePluginTests
+    fun testProjectIsolation(gradleVersion: GradleVersion) {
+        runWithKtorService { port ->
+
+            val buildOptions = defaultBuildOptions.copy(projectIsolation = true, configurationCache = null)
+            project("incrementalMultiproject", gradleVersion) {
+                setProjectForTest(port)
+                build("assemble", "--stacktrace", buildOptions = buildOptions) {
+                    assertOutputDoesNotContain("Failed to send statistic to")
+                }
+            }
+            validateTaskData(port) { taskData ->
+                assertEquals(":lib:compileKotlin", taskData.getTaskName())
+            }
+            validateTaskData(port) { taskData ->
+                assertEquals(":app:compileKotlin", taskData.getTaskName())
+            }
+
+            validateBuildData(port) { buildData ->
+                assertContains(buildData.startParameters.tasks, "assemble")
+                assertNotEquals(buildData.gitBranch, "Unset")
+            }
+        }
+    }
+
     @DisplayName("Build reports for native")
     @GradleTest
     @NativeGradlePluginTests

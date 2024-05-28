@@ -6,3 +6,8 @@ plugins {
 dependencies {
     implementation project(':lib')
 }
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}

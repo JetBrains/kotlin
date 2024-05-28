@@ -1011,6 +1011,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     private fun breakCachesAfterKotlinCompile(gradleProject: GradleProject, lookupFile: Path) {
         gradleProject.buildGradle.appendText(
             """
+                
             $compileKotlinTaskName {
                 doLast {
                     new File("${lookupFile.toFile().invariantSeparatorsPath}").write("Invalid contents")

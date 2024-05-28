@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.util.readJsonReport
 import java.nio.file.Files
 import kotlin.streams.asSequence
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 @DisplayName("Build reports")
 @JvmGradlePluginTests
@@ -231,10 +232,11 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     fun testSingleBuildMetricsFileValidation(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
-            buildAndFail(
-                "compileKotlin", "-Pkotlin.build.report.output=SINGLE_FILE",
-            ) {
+        project(
+            "simpleProject", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.SINGLE_FILE))
+        ) {
+            buildAndFail("compileKotlin") {
                 assertOutputContains("Can't configure single file report: 'kotlin.build.report.single_file' property is mandatory")
             }
         }
@@ -246,11 +248,13 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     fun testSingleBuildMetricsFile(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project(
+            "simpleProject", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.SINGLE_FILE))
+        ) {
             val newMetricsPath = projectPath.resolve("metrics.bin")
             build(
                 "compileKotlin", "-Pkotlin.build.report.single_file=${newMetricsPath.pathString}",
-                "-Pkotlin.build.report.output=single_file"
             )
             assertTrue { newMetricsPath.exists() }
         }
@@ -280,11 +284,13 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     fun testSingleBuildMetricsFileSmoke(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project(
+            "simpleProject", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.SINGLE_FILE))
+        ) {
             val metricsFile = projectPath.resolve("metrics.bin").toFile()
             build(
                 "compileKotlin",
-                "-Pkotlin.build.report.output=SINGLE_FILE",
                 "-Pkotlin.build.report.single_file=${metricsFile.absolutePath}"
             )
 
@@ -302,10 +308,13 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     fun testCustomValueLimitForBuildScan(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+        project(
+            "simpleProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, buildReport = listOf(BuildReportType.BUILD_SCAN))
+        ) {
             build(
                 "compileKotlin",
-                "-Pkotlin.build.report.output=BUILD_SCAN",
                 "-Pkotlin.build.report.build_scan.custom_values_limit=0",
                 "--scan"
             ) {
@@ -320,13 +329,42 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     fun testBuildScanListenerLazyInitialisation(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+        project(
+            "simpleProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, buildReport = listOf(BuildReportType.BUILD_SCAN))
+        ) {
             build(
                 "compileKotlin",
-                "-Pkotlin.build.report.output=BUILD_SCAN",
                 "-Pkotlin.build.report.build_scan.custom_values_limit=0",
             ) {
                 assertOutputDoesNotContain("Can't add any more custom values into build scan")
+            }
+        }
+    }
+
+    @DisplayName("build scan with project isolation")
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+    )
+    @GradleTest
+    fun testBuildReportWithProjectIsolation(gradleVersion: GradleVersion) {
+        project(
+            "simpleProject", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                logLevel = LogLevel.DEBUG,
+                projectIsolation = true,
+                configurationCache = null,
+                buildReport = listOf(BuildReportType.FILE, BuildReportType.JSON)
+            )
+        ) {
+            build(
+                "compileKotlin", "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}"
+            ) {
+                val jsonReportFile = projectPath.getSingleFileInDir("report")
+                assertTrue { jsonReportFile.exists() }
+                val jsonReport = readJsonReport(jsonReportFile)
+                assertNotNull(jsonReport)
             }
         }
     }
@@ -476,9 +514,12 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     fun testBuildScanMetricsValidation(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
+        project(
+            "simpleProject", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.BUILD_SCAN))
+        ) {
             buildAndFail(
-                "compileKotlin", "-Pkotlin.build.report.output=BUILD_SCAN", "-Pkotlin.build.report.build_scan.metrics=unknown_prop"
+                "compileKotlin", "-Pkotlin.build.report.build_scan.metrics=unknown_prop"
             ) {
                 assertOutputContains("Unknown metric: 'unknown_prop', list of available metrics")
             }
@@ -560,7 +601,8 @@ class BuildReportsIT : KGPBaseTest() {
             ) {
                 val jsonReport = projectPath.getSingleFileInDir("report")
                 val buildExecutionData = readJsonReport(jsonReport)
-                val buildOperationRecords = buildExecutionData.buildOperationRecord.first { it.path == ":compileKotlin" } as BuildOperationRecordImpl
+                val buildOperationRecords =
+                    buildExecutionData.buildOperationRecord.first { it.path == ":compileKotlin" } as BuildOperationRecordImpl
                 assertEquals(KotlinVersion.DEFAULT, buildOperationRecords.kotlinLanguageVersion)
                 jsonReport.deleteExisting()
             }
@@ -580,7 +622,8 @@ class BuildReportsIT : KGPBaseTest() {
             ) {
                 val jsonReport = projectPath.getSingleFileInDir("report")
                 val buildExecutionData = readJsonReport(jsonReport)
-                val buildOperationRecords = buildExecutionData.buildOperationRecord.first { it.path == ":compileKotlin" } as BuildOperationRecordImpl
+                val buildOperationRecords =
+                    buildExecutionData.buildOperationRecord.first { it.path == ":compileKotlin" } as BuildOperationRecordImpl
                 assertEquals(KotlinVersion.DEFAULT, buildOperationRecords.kotlinLanguageVersion)
             }
         }
