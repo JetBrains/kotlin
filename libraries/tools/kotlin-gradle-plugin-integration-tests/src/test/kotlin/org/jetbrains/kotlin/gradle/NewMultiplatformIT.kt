@@ -7,20 +7,15 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.testbase.MPPNativeTargets
-import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
-import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.gradle.util.replaceText
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assert
 import org.junit.Test
 import java.util.*
 import java.util.zip.ZipFile
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 open class NewMultiplatformIT : BaseGradleIT() {
     private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
@@ -202,33 +197,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
             }
         }
-
-    private val targetName = when (HostManager.host) {
-        KonanTarget.LINUX_X64 -> "linux64"
-        KonanTarget.MACOS_X64 -> "macos64"
-        KonanTarget.MACOS_ARM64 -> "macosArm64"
-        KonanTarget.MINGW_X64 -> "mingw64"
-        else -> fail("Unsupported host")
-    }
-
-    @Test
-    fun testConsumeMppLibraryFromNonKotlinProject() {
-        val libRepo = with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
-            build("publish") { assertSuccessful() }
-            projectDir.resolve("repo")
-        }
-
-        with(transformNativeTestProject("sample-app-without-kotlin", gradleVersion, "new-mpp-lib-and-app")) {
-            setupWorkingDir()
-            gradleBuildScript().appendText("\nrepositories { maven { url '${libRepo.toURI()}' } }")
-
-            build("assemble") {
-                assertSuccessful()
-                assertTasksExecuted(":compileJava")
-                assertFileExists("build/classes/java/main/A.class")
-            }
-        }
-    }
 
     @Test
     fun testMppBuildWithCompilerPlugins() = with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
