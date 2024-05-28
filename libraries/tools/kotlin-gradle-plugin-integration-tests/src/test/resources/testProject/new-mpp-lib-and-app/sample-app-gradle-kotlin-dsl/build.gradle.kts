@@ -1,6 +1,6 @@
 plugins {
-	id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
-	id("maven-publish")
+    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+    id("maven-publish")
 }
 
 group = "com.example"
@@ -12,17 +12,17 @@ repositories {
 }
 
 kotlin {
-	val jvm6 = jvm("jvm6") {
+    val jvm6 = jvm("jvm6") {
         attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 6)
     }
-	val jvm8 = jvm("jvm8") {
+    val jvm8 = jvm("jvm8") {
         attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
-		compilations["main"].kotlinOptions.jvmTarget = "1.8"
-	}
-	val nodeJs = js("nodeJs") {
+        compilations["main"].kotlinOptions.jvmTarget = "1.8"
+    }
+    val nodeJs = js("nodeJs") {
         nodejs()
     }
-	val linux64 = linuxX64("linux64")
+    val linux64 = linuxX64("linux64")
 
     wasmJs {
     }
@@ -68,7 +68,7 @@ kotlin {
 }
 
 tasks.create("resolveRuntimeDependencies", DefaultTask::class.java) {
-    doFirst { 
+    doFirst {
         // KT-26301
         val configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
         configurations[configName].resolve()

@@ -4,12 +4,11 @@
  */
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.testbase.TestVersions
+import org.jetbrains.kotlin.gradle.testbase.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.util.isWindows
@@ -195,205 +194,12 @@ open class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    @Ignore // KT-60745
-    fun testJvmWithJavaEquivalence() = doTestJvmWithJava(testJavaSupportInJvmTargets = false)
+    fun testMavenPublishAppliedBeforeMultiplatformPlugin() =
+        with(transformNativeTestProject("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
+            gradleBuildScript().modify { "apply plugin: 'maven-publish'\n$it" }
 
-    @Test
-    fun testJavaSupportInJvmTargets() = doTestJvmWithJava(testJavaSupportInJvmTargets = true)
-
-    private fun doTestJvmWithJava(testJavaSupportInJvmTargets: Boolean) =
-        with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
-            val embeddedProject = Project("sample-lib-gradle-kotlin-dsl", directoryPrefix = "new-mpp-lib-and-app")
-            embedProject(embeddedProject)
-            gradleProperties().apply {
-                configureJvmMemory()
-            }
-
-            lateinit var classesWithoutJava: Set<String>
-
-            fun getFilePathsSet(inDirectory: String): Set<String> {
-                val dir = projectDir.resolve(inDirectory)
-                return dir.walk().filter { it.isFile }.map { it.relativeTo(dir).invariantSeparatorsPath }.toSet()
-            }
-
-            gradleBuildScript(embeddedProject.projectName).modify {
-                it.replace("val shouldBeJs = true", "val shouldBeJs = false")
-            }
-
-            gradleBuildScript().modify {
-                it.replace("def shouldBeJs = true", "def shouldBeJs = false")
-            }
-
-            build("assemble") {
+            build {
                 assertSuccessful()
-                classesWithoutJava = getFilePathsSet("build/classes")
-            }
-
-            gradleBuildScript().modify { script ->
-                buildString {
-                    appendLine(
-                        """
-                        |apply plugin: 'com.github.johnrengelman.shadow'
-                        |apply plugin: 'application'
-                        |apply plugin: 'kotlin-kapt' // Check that Kapt works, generates and compiles sources
-                        """.trimMargin()
-                    )
-
-                    if (testJavaSupportInJvmTargets) {
-                        appendLine(script)
-                        appendLine(
-                            """
-                            |kotlin.jvm("jvm6") {
-                            |  withJava()
-                            |  withJava() // also check that the function is idempotent
-                            |}
-                            """.trimMargin()
-                        )
-                    } else {
-                        appendLine(
-                            script
-                                .replace("presets.jvm", "presets.jvmWithJava")
-                                .replace("jvm(", "targetFromPreset(presets.jvmWithJava, ")
-                        )
-                    }
-
-                    appendLine(
-                        """
-                        |buildscript {
-                        |    repositories {
-                        |        maven { url 'https://plugins.gradle.org/m2/' }
-                        |    }
-                        |    dependencies {
-                        |        classpath 'com.github.johnrengelman:shadow:${TestVersions.ThirdPartyDependencies.SHADOW_PLUGIN_VERSION}'
-                        |    }
-                        |}
-                        |
-                        |application {
-                        |    mainClass = 'com.example.lib.CommonKt'
-                        |}
-                        |
-                        |dependencies {
-                        |    jvm6MainImplementation("com.google.dagger:dagger:2.24")
-                        |    kapt("com.google.dagger:dagger-compiler:2.24")
-                        |    kapt(project(":sample-lib-gradle-kotlin-dsl"))
-                        |    
-                        |    // also check incremental Kapt class structure configurations, KT-33105
-                        |    jvm6MainImplementation(project(":sample-lib-gradle-kotlin-dsl")) 
-                        |}
-                        """.trimMargin()
-                    )
-                }
-            }
-            // also check incremental Kapt class structure configurations, KT-33105
-            projectDir.resolve("gradle.properties").appendText("\nkapt.incremental.apt=true")
-
-            // Check Kapt:
-            projectDir.resolve("src/jvm6Main/kotlin/Main.kt").appendText(
-                "\n" + """
-                interface Iface
-                
-                @dagger.Module
-                object Module {
-                    @JvmStatic @dagger.Provides
-                    fun provideHeater(): Iface = object : Iface { }
-                }
-            """.trimIndent()
-            )
-
-            fun javaSourceRootForCompilation(compilationName: String) =
-                if (testJavaSupportInJvmTargets) "src/jvm6${compilationName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}/java" else "src/$compilationName/java"
-
-            val javaMainSrcDir = javaSourceRootForCompilation("main")
-            val javaTestSrcDir = javaSourceRootForCompilation("test")
-
-            projectDir.resolve(javaMainSrcDir).apply {
-                mkdirs()
-                // Check that Java can access the dependencies (kotlin-stdlib):
-                resolve("JavaClassInJava.java").writeText(
-                    """
-                    package com.example.lib;
-                    import kotlin.sequences.Sequence;
-                    class JavaClassInJava {
-                        Sequence<String> makeSequence() { throw new UnsupportedOperationException(); }
-                    }
-                    """.trimIndent()
-                )
-
-                // Add a Kotlin source file in the Java source root and check that it is compiled:
-                resolve("KotlinClassInJava.kt").writeText(
-                    """
-                    package com.example.lib
-                    class KotlinClassInJava
-                    """.trimIndent()
-                )
-            }
-
-            projectDir.resolve(javaTestSrcDir).apply {
-                mkdirs()
-                resolve("JavaTest.java").writeText(
-                    """
-                    package com.example.lib;
-                    import org.junit.*;
-                    public class JavaTest {
-                        @Test
-                        public void testAccessKotlin() {
-                            MainKt.expectedFun();
-                            MainKt.x();
-                            new KotlinClassInJava();
-                            new JavaClassInJava();
-                        }
-                    }
-                    """.trimIndent()
-                )
-            }
-
-            build(
-                "clean", "build", "run", "shadowJar",
-                options = defaultBuildOptions().suppressDeprecationWarningsOn("KT-66542: withJava() produces deprecation warning") {
-                    GradleVersion.version(chooseWrapperVersionOrFinishTest()) >= GradleVersion.version(TestVersions.Gradle.G_8_7)
-                }
-            ) {
-                assertSuccessful()
-                val expectedMainClasses =
-                    classesWithoutJava + setOf(
-                        // classes for Kapt test:
-                        "java/main/com/example/lib/Module_ProvideHeaterFactory.class",
-                        "kotlin/jvm6/main/com/example/lib/Module\$provideHeater\$1.class",
-                        "kotlin/jvm6/main/com/example/lib/Iface.class",
-                        "kotlin/jvm6/main/com/example/lib/Module.class",
-                        // other added classes:
-                        "kotlin/jvm6/main/com/example/lib/KotlinClassInJava.class",
-                        "java/main/com/example/lib/JavaClassInJava.class",
-                        "java/test/com/example/lib/JavaTest.class"
-                    )
-                val actualClasses = getFilePathsSet("build/classes")
-                Assert.assertEquals(expectedMainClasses, actualClasses)
-
-                val jvmTestTaskName = if (testJavaSupportInJvmTargets) "jvm6Test" else "test"
-                assertTasksExecuted(":$jvmTestTaskName")
-
-                if (testJavaSupportInJvmTargets) {
-                    assertFileExists("build/reports/tests/allTests/classes/com.example.lib.JavaTest.html")
-                }
-
-                if (testJavaSupportInJvmTargets) {
-                    assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedJvmWithJavaPresetDiagnostic)
-                } else {
-                    assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedJvmWithJavaPresetDiagnostic)
-                }
-
-                assertTasksExecuted(":run")
-                assertContains(">>> Common.kt >>> main()")
-
-                assertTasksExecuted(":shadowJar")
-                val entries = ZipFile(projectDir.resolve("build/libs/sample-lib-1.0-all.jar")).use { zip ->
-                    zip.entries().asSequence().map { it.name }.toSet()
-                }
-                assertTrue { "kotlin/Pair.class" in entries }
-                assertTrue { "com/example/lib/CommonKt.class" in entries }
-                assertTrue { "com/example/lib/MainKt.class" in entries }
-                assertTrue { "com/example/lib/JavaClassInJava.class" in entries }
-                assertTrue { "com/example/lib/KotlinClassInJava.class" in entries }
             }
         }
 
