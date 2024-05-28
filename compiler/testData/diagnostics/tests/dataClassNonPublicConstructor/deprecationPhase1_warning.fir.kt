@@ -27,3 +27,16 @@ fun local() {
         <!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
     }
 }
+
+data class GenericData<A, B: CharSequence> <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val a: A, val b: B) {
+    fun copy(a: B, b: A) {}
+    fun member() {
+        copy()
+        this.copy()
+    }
+}
+
+fun topLevel(data: GenericData<Int, String>) {
+    data.<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
+    data.copy("", 1) // fake copy
+}

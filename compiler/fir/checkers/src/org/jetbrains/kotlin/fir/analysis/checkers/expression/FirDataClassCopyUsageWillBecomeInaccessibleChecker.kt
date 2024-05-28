@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.resolve.DataClassResolver
 
 object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val dataClass = expression.resolvedType.toRegularClassSymbol(context.session) ?: return
-        val copyFunction = expression.calleeReference.symbol as? FirCallableSymbol ?: return
+        val copyFunction = (expression.calleeReference.symbol as? FirCallableSymbol)?.unwrapSubstitutionOverrides() ?: return
+        val dataClass = copyFunction.dispatchReceiverType?.toRegularClassSymbol(context.session) ?: return
         if (copyFunction.isDataClassCopy(dataClass, context.session)) {
             val dataClassConstructor = dataClass.primaryConstructorSymbol(context.session) ?: return
 
@@ -64,16 +64,13 @@ object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirFunctionCallCheck
 }
 
 private fun FirCallableSymbol<*>.isDataClassCopy(dataClass: FirRegularClassSymbol, session: FirSession): Boolean {
-    if (DataClassResolver.isCopy(name) && this is FirNamedFunctionSymbol && dataClass.isData) {
-        if (origin == FirDeclarationOrigin.Synthetic.DataClassMember) {
-            return true
-        }
-        val constructor = dataClass.primaryConstructorSymbol(session)
-        if (constructor != null && origin == FirDeclarationOrigin.Library && receiverParameter == null &&
-            valueParameterSymbols.map { it.resolvedReturnType.classId } == constructor.valueParameterSymbols.map { it.resolvedReturnType.classId }
-        ) {
-            return true
-        }
-    }
-    return false
+    if (!DataClassResolver.isCopy(name)) return false
+    val constructor = dataClass.primaryConstructorSymbol(session)
+    return this is FirNamedFunctionSymbol &&
+            dataClass.isData &&
+            constructor != null &&
+            resolvedContextReceivers.isEmpty() &&
+            typeParameterSymbols.isEmpty() &&
+            receiverParameter == null &&
+            valueParameterSymbols.map { it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.resolvedReturnType }
 }
