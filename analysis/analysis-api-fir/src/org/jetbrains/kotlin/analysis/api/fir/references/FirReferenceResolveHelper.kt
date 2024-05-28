@@ -265,6 +265,8 @@ internal object FirReferenceResolveHelper {
         symbolBuilder: KaSymbolByFirBuilder,
     ): Collection<KaSymbol> {
         when (expression.operation) {
+            // Only 'equals' calls should be resolved into 'equals' functions.
+            // Identity equals are not supposed to be resolved the same way.
             FirOperation.EQ, FirOperation.NOT_EQ -> {}
             else -> return emptyList()
         }
