@@ -13,7 +13,7 @@ package kotlin
 // See [org.jetbrains.kotlin.ir.backend.js.utils.JsInlineClassesUtils.isClassInlineLike] for explanation.
 
 /** Represents a 16-bit Unicode character. */
-public class Char 
+public class Char
 @kotlin.internal.LowPriorityInOverloadResolution
 internal constructor(private val value: Int) : Comparable<Char> {
     @SinceKotlin("1.5")
