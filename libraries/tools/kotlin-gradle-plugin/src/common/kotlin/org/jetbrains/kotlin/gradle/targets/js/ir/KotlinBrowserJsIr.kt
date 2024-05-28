@@ -104,9 +104,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureRun(
         compilation: KotlinJsIrCompilation,
     ) {
-        val commonRunTaskName = disambiguateCamelCased(RUN_TASK_NAME)
-        val commonRunTask = project.locateTask<Task>(commonRunTaskName) ?: registerSubTargetTask<Task>(commonRunTaskName) {}
-
         compilation.binaries
             .matching { it is Executable }
             .all { binary ->
@@ -115,7 +112,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 val mode = binary.mode
                 val archivesName = project.archivesName
 
-                val runTask = registerSubTargetTask<KotlinWebpack>(
+                registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
                         binary.executeTaskBaseName,
                         RUN_TASK_NAME
@@ -167,11 +164,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         nodeJs = nodeJs,
                         defaultArchivesName = archivesName,
                     )
-                }
-
-                if (mode == KotlinJsBinaryMode.DEVELOPMENT && compilation.isMain()) {
-                    target.runTask.dependsOn(runTask)
-                    commonRunTask.dependsOn(runTask)
                 }
             }
     }

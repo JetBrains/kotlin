@@ -29,5 +29,5 @@ interface KotlinWasmJsTargetDsl : KotlinWasmTargetDsl, KotlinJsTargetDsl {
 }
 
 interface KotlinWasmD8Dsl : KotlinJsSubTargetDsl {
-    fun runTask(body: D8Exec.() -> Unit)
+    fun runTask(body: Action<D8Exec>)
 }

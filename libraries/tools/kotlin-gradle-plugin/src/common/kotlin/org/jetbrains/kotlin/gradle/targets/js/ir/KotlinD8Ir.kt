@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8Exec
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmD8
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import javax.inject.Inject
 
 abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
@@ -21,24 +24,28 @@ abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
 
     private val d8 = D8RootPlugin.apply(project.rootProject)
 
+    private val runTaskConfigurations = project.objects.domainObjectSet<Action<D8Exec>>()
+
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside d8 using the builtin test framework"
 
-    override fun runTask(body: D8Exec.() -> Unit) {
-        project.tasks.withType<D8Exec>().named(runTaskName).configure(body)
+    override fun runTask(body: Action<D8Exec>) {
+        runTaskConfigurations.add(body)
     }
 
     override fun locateOrRegisterRunTask(binary: JsIrBinary, name: String) {
         if (project.locateTask<D8Exec>(name) != null) return
 
-        val runTaskHolder = D8Exec.create(binary.compilation, name) {
+        D8Exec.create(binary.compilation, name) {
             group = taskGroupName
             dependsOn(binary.linkSyncTask)
             inputFileProperty.set(
                 binary.mainFileSyncPath
             )
+            runTaskConfigurations.all {
+                it.execute(this)
+            }
         }
-        target.runTask.dependsOn(runTaskHolder)
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {

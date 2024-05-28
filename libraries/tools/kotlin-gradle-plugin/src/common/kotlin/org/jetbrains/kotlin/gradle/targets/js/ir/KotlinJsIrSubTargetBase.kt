@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: String) :
     KotlinJsIrSubTarget(target, classifier) {
 
-    protected val runTaskName = disambiguateCamelCased("run")
-
     override fun configureRun(compilation: KotlinJsIrCompilation) {
         compilation.binaries
             .withType(JsIrBinary::class.java)
@@ -31,11 +29,6 @@ abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: Str
         )
 
         locateOrRegisterRunTask(binary, binaryRunName)
-
-        if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT) {
-            val runName = disambiguateCamelCased(RUN_TASK_NAME)
-            locateOrRegisterRunTask(binary, runName)
-        }
     }
 
     protected abstract fun locateOrRegisterRunTask(binary: JsIrBinary, name: String)

@@ -15,9 +15,8 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinWasmNode
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import javax.inject.Inject
 
 abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
@@ -27,11 +26,13 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     private val nodeJs = project.rootProject.kotlinNodeJsExtension
     private val nodeJsTaskProviders = project.rootProject.kotlinNodeJsExtension
 
+    private val runTaskConfigurations = project.objects.domainObjectSet<Action<NodeJsExec>>()
+
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
 
     override fun runTask(body: Action<NodeJsExec>) {
-        project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
+        runTaskConfigurations.add(body)
     }
 
     @ExperimentalMainFunctionArgumentsDsl
@@ -43,7 +44,7 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         if (project.locateTask<NodeJsExec>(name) != null) return
 
         val compilation = binary.compilation
-        val runTaskHolder = NodeJsExec.create(compilation, name) {
+        NodeJsExec.create(compilation, name) {
             group = taskGroupName
             val inputFile = if ((compilation.target as KotlinJsIrTarget).wasmTargetType == KotlinWasmTargetType.WASI) {
                 sourceMapStackTraces = false
@@ -61,8 +62,10 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
             inputFileProperty.set(
                 inputFile
             )
+            runTaskConfigurations.all {
+                it.execute(this)
+            }
         }
-        target.runTask.dependsOn(runTaskHolder)
     }
 
     override fun configureTestDependencies(test: KotlinJsTest) {

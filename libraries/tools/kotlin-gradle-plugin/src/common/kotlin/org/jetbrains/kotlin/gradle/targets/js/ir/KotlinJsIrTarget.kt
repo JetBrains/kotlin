@@ -138,12 +138,6 @@ constructor(
             .map { it.binaries }
             .get()
 
-    private val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
-    val runTask: TaskProvider<Task>
-        get() = project.locateOrRegisterTask(runTaskName) {
-            it.description = "Run js on all configured platforms"
-        }
-
     private val configureTestSideEffect: Unit by lazy {
         val mainCompilation = compilations.matching { it.isMain() }
 
