@@ -7812,6 +7812,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     @TestDataPath("$PROJECT_ROOT")
     public class ControlFlowAnalysis {
       @Test
+      @TestMetadata("accessEnumEntryInLazy.kt")
+      public void testAccessEnumEntryInLazy() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/accessEnumEntryInLazy.kt");
+      }
+
+      @Test
       @TestMetadata("accessToCompanionInBaseEnumInitSection_function.kt")
       public void testAccessToCompanionInBaseEnumInitSection_function() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/accessToCompanionInBaseEnumInitSection_function.kt");
