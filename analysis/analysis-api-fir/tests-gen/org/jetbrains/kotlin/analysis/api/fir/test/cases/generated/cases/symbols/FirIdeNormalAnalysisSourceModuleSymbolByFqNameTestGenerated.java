@@ -113,6 +113,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends
   }
 
   @Test
+  @TestMetadata("samConstructorFromTypeAlias.kt")
+  public void testSamConstructorFromTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/samConstructorFromTypeAlias.kt");
+  }
+
+  @Test
   @TestMetadata("typealias.kt")
   public void testTypealias() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/typealias.kt");

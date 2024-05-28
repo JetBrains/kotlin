@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 
 public abstract class KaSamResolver : KaSessionComponent() {
-    public abstract fun getSamConstructor(ktClassLikeSymbol: KaClassLikeSymbol): KaSamConstructorSymbol?
+    public abstract fun getSamConstructor(symbol: KaClassLikeSymbol): KaSamConstructorSymbol?
 }
 
 public typealias KtSamResolver = KaSamResolver

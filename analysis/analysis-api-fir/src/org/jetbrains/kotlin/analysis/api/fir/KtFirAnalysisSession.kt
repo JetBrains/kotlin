@@ -66,7 +66,7 @@ private constructor(
 
     override val resolverImpl = KaFirResolver(this)
 
-    override val samResolverImpl = KaFirSamResolver(this, token)
+    override val samResolverImpl = KaFirSamResolver(this)
 
     override val scopeProviderImpl = KaFirScopeProvider(this, firSymbolBuilder, firResolveSession)
 
