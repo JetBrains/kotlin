@@ -1,0 +1,15 @@
+Restored type is the same as the original one
+
+KtUsualClassType:
+  abbreviatedType: null
+  annotationsList: []
+  classId: Foo
+  nullability: NULLABLE
+  qualifiers: [
+    qualifier:
+      name: Foo
+      symbol: KtNamedClassOrObjectSymbol(Foo)
+      typeArguments: []
+  ]
+  symbol: KtNamedClassOrObjectSymbol(Foo)
+  typeArguments: []

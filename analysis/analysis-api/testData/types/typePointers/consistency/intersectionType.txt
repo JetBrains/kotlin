@@ -1,0 +1,47 @@
+Restored type is the same as the original one
+
+KtIntersectionType:
+  abbreviatedType: null
+  annotationsList: []
+  conjuncts: [
+    KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: Bound1
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Bound1
+          symbol: KtNamedClassOrObjectSymbol(Bound1)
+          typeArguments: []
+      ]
+      symbol: KtNamedClassOrObjectSymbol(Bound1)
+      typeArguments: []
+    KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: Bound2
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Bound2
+          symbol: KtNamedClassOrObjectSymbol(Bound2)
+          typeArguments: []
+      ]
+      symbol: KtNamedClassOrObjectSymbol(Bound2)
+      typeArguments: []
+    KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: Bound3
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Bound3
+          symbol: KtNamedClassOrObjectSymbol(Bound3)
+          typeArguments: []
+      ]
+      symbol: KtNamedClassOrObjectSymbol(Bound3)
+      typeArguments: []
+  ]
+  nullability: NON_NULLABLE

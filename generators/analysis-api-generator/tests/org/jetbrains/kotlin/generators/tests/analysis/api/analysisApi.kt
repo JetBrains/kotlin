@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAbbr
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypePointerConsistencyTest
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
@@ -278,6 +279,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
             test<AbstractBuiltInTypeTest> {
                 model(it, "builtins")
+            }
+
+            group("typePointers", filter = frontendIs(FrontendKind.Fir)) {
+                test<AbstractTypePointerConsistencyTest> {
+                    model(it, "consistency")
+                }
             }
         }
 

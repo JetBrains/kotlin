@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ProjectionKind
 import org.jetbrains.kotlin.fir.types.abbreviatedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.types.Variance
 
 /**
  * Returns whether [subClass] is a strict subtype of [superClass]. Resolves [subClass] to [FirResolvePhase.SUPER_TYPES].
@@ -41,4 +43,11 @@ internal fun KaSymbolByFirBuilder.buildAbbreviatedType(coneType: ConeClassLikeTy
         // `KaType.abbreviatedType`, we should return `null` in such cases. The user can then fall back to the expanded type.
         typeBuilder.buildKtType(abbreviatedConeType) as? KaUsualClassType
     }
+}
+
+internal fun ProjectionKind.toVariance(): Variance = when (this) {
+    ProjectionKind.OUT -> Variance.OUT_VARIANCE
+    ProjectionKind.IN -> Variance.IN_VARIANCE
+    ProjectionKind.INVARIANT -> Variance.INVARIANT
+    ProjectionKind.STAR -> error("KtStarProjectionTypeArgument should not be directly created")
 }

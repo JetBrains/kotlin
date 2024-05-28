@@ -1,0 +1,95 @@
+Restored type is the same as the original one
+
+KtUsualClassType:
+  abbreviatedType: null
+  annotationsList: []
+  classId: Foo
+  nullability: NON_NULLABLE
+  qualifiers: [
+    qualifier:
+      name: Foo
+      symbol: KtNamedClassOrObjectSymbol(Foo)
+      typeArguments: [
+        KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: First
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: First
+              symbol: KtNamedClassOrObjectSymbol(First)
+              typeArguments: []
+          ]
+          symbol: KtNamedClassOrObjectSymbol(First)
+          typeArguments: []
+        in KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: Second
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: Second
+              symbol: KtNamedClassOrObjectSymbol(Second)
+              typeArguments: []
+          ]
+          symbol: KtNamedClassOrObjectSymbol(Second)
+          typeArguments: []
+        out KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: Third
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: Third
+              symbol: KtNamedClassOrObjectSymbol(Third)
+              typeArguments: []
+          ]
+          symbol: KtNamedClassOrObjectSymbol(Third)
+          typeArguments: []
+      ]
+  ]
+  symbol: KtNamedClassOrObjectSymbol(Foo)
+  typeArguments: [
+    KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: First
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: First
+          symbol: KtNamedClassOrObjectSymbol(First)
+          typeArguments: []
+      ]
+      symbol: KtNamedClassOrObjectSymbol(First)
+      typeArguments: []
+    in KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: Second
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Second
+          symbol: KtNamedClassOrObjectSymbol(Second)
+          typeArguments: []
+      ]
+      symbol: KtNamedClassOrObjectSymbol(Second)
+      typeArguments: []
+    out KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: Third
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Third
+          symbol: KtNamedClassOrObjectSymbol(Third)
+          typeArguments: []
+      ]
+      symbol: KtNamedClassOrObjectSymbol(Third)
+      typeArguments: []
+  ]

@@ -1,0 +1,31 @@
+Restored type is the same as the original one
+
+KtClassErrorType:
+  abbreviatedType: null
+  annotationsList: []
+  candidateSymbols: []
+  errorMessage: Symbol not found for Foo.Bar
+  nullability: NON_NULLABLE
+  presentableText: Foo.Bar
+  qualifiers: [
+    qualifier:
+      name: Foo
+      typeArguments: [
+        KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
+      ]
+    qualifier:
+      name: Bar
+      typeArguments: []
+  ]

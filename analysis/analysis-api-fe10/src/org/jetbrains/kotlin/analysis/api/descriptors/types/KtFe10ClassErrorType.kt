@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.error.ErrorType
@@ -57,5 +58,10 @@ internal class KaFe10ClassErrorType(
 
     override fun toString(): String {
         return fe10Type.renderForDebugging(analysisContext)
+    }
+
+    @KaAnalysisNonPublicApi
+    override fun createPointer(): KaTypePointer<KaClassErrorType> = withValidityAssertion {
+        throw NotImplementedError("Type pointers are not implemented for FE 1.0")
     }
 }

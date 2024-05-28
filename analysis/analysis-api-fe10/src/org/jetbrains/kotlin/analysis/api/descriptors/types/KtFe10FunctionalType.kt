@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
@@ -122,5 +124,10 @@ internal class KaFe10FunctionalType(
 
     override fun toString(): String {
         return fe10Type.renderForDebugging(analysisContext)
+    }
+
+    @KaAnalysisNonPublicApi
+    override fun createPointer(): KaTypePointer<KaFunctionalType> = withValidityAssertion {
+        throw NotImplementedError("Type pointers are not implemented for FE 1.0")
     }
 }

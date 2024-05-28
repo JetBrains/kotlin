@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirFunctionLikeSubstit
 import org.jetbrains.kotlin.analysis.api.fir.signatures.KaFirVariableLikeSubstitutorBasedSignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
+import org.jetbrains.kotlin.analysis.api.fir.utils.toVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
@@ -451,7 +452,12 @@ internal class KaSymbolByFirBuilder(
                 is ConeClassLikeTypeImpl -> {
                     when {
                         coneType.lookupTag.toSymbol(rootSession) == null -> {
-                            KaFirClassErrorType(coneType, ConeUnresolvedSymbolError(coneType.lookupTag.classId), this@KaSymbolByFirBuilder)
+                            KaFirClassErrorType(
+                                coneType = coneType,
+                                coneNullability = coneType.nullability,
+                                coneDiagnostic = ConeUnresolvedSymbolError(coneType.lookupTag.classId),
+                                builder = this@KaSymbolByFirBuilder
+                            )
                         }
                         hasFunctionalClassId(coneType) -> KaFirFunctionalType(coneType, this@KaSymbolByFirBuilder)
                         else -> KaFirUsualClassType(coneType, this@KaSymbolByFirBuilder)
@@ -460,10 +466,10 @@ internal class KaSymbolByFirBuilder(
                 is ConeTypeParameterType -> KaFirTypeParameterType(coneType, this@KaSymbolByFirBuilder)
                 is ConeErrorType -> when (val diagnostic = coneType.diagnostic) {
                     is ConeUnresolvedError, is ConeUnmatchedTypeArgumentsError -> {
-                        KaFirClassErrorType(coneType, diagnostic, this@KaSymbolByFirBuilder)
+                        KaFirClassErrorType(coneType, coneType.nullability, diagnostic, this@KaSymbolByFirBuilder)
                     }
                     else -> {
-                        KaFirErrorType(coneType, this@KaSymbolByFirBuilder)
+                        KaFirErrorType(coneType, coneType.nullability, this@KaSymbolByFirBuilder)
                     }
                 }
                 is ConeDynamicType -> KaFirDynamicType(coneType, this@KaSymbolByFirBuilder)
@@ -499,13 +505,6 @@ internal class KaSymbolByFirBuilder(
                 coneType.kind.toVariance(),
                 token,
             )
-        }
-
-        private fun ProjectionKind.toVariance(): Variance = when (this) {
-            ProjectionKind.OUT -> Variance.OUT_VARIANCE
-            ProjectionKind.IN -> Variance.IN_VARIANCE
-            ProjectionKind.INVARIANT -> Variance.INVARIANT
-            ProjectionKind.STAR -> error("KtStarProjectionTypeArgument should not be directly created")
         }
 
         fun buildSubstitutor(substitutor: ConeSubstitutor): KaSubstitutor {

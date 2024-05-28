@@ -1,0 +1,43 @@
+Restored type is the same as the original one
+
+KtUsualClassType:
+  abbreviatedType: null
+  annotationsList: []
+  classId: MyList
+  nullability: NON_NULLABLE
+  qualifiers: [
+    qualifier:
+      name: MyList
+      symbol: KtTypeAliasSymbol(MyList)
+      typeArguments: [
+        KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: MyString
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: MyString
+              symbol: KtTypeAliasSymbol(MyString)
+              typeArguments: []
+          ]
+          symbol: KtTypeAliasSymbol(MyString)
+          typeArguments: []
+      ]
+  ]
+  symbol: KtTypeAliasSymbol(MyList)
+  typeArguments: [
+    KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: MyString
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: MyString
+          symbol: KtTypeAliasSymbol(MyString)
+          typeArguments: []
+      ]
+      symbol: KtTypeAliasSymbol(MyString)
+      typeArguments: []
+  ]

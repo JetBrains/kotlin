@@ -1,0 +1,156 @@
+Restored type is the same as the original one
+
+KtFlexibleType:
+  abbreviatedType: null
+  annotationsList: []
+  lowerBound: KtUsualClassType:
+    abbreviatedType: null
+    annotationsList: []
+    classId: kotlin/collections/MutableList
+    nullability: NON_NULLABLE
+    qualifiers: [
+      qualifier:
+        name: MutableList
+        symbol: KtNamedClassOrObjectSymbol(kotlin/collections/MutableList)
+        typeArguments: [
+          KtFlexibleType:
+            abbreviatedType: null
+            annotationsList: []
+            lowerBound: KtUsualClassType:
+              abbreviatedType: null
+              annotationsList: []
+              classId: kotlin/String
+              nullability: NON_NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              typeArguments: []
+            nullability: UNKNOWN
+            upperBound: KtUsualClassType:
+              abbreviatedType: null
+              annotationsList: []
+              classId: kotlin/String
+              nullability: NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              typeArguments: []
+        ]
+    ]
+    symbol: KtNamedClassOrObjectSymbol(kotlin/collections/MutableList)
+    typeArguments: [
+      KtFlexibleType:
+        abbreviatedType: null
+        annotationsList: []
+        lowerBound: KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
+        nullability: UNKNOWN
+        upperBound: KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: kotlin/String
+          nullability: NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
+    ]
+  nullability: UNKNOWN
+  upperBound: KtUsualClassType:
+    abbreviatedType: null
+    annotationsList: []
+    classId: kotlin/collections/List
+    nullability: NULLABLE
+    qualifiers: [
+      qualifier:
+        name: List
+        symbol: KtNamedClassOrObjectSymbol(kotlin/collections/List)
+        typeArguments: [
+          KtFlexibleType:
+            abbreviatedType: null
+            annotationsList: []
+            lowerBound: KtUsualClassType:
+              abbreviatedType: null
+              annotationsList: []
+              classId: kotlin/String
+              nullability: NON_NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              typeArguments: []
+            nullability: UNKNOWN
+            upperBound: KtUsualClassType:
+              abbreviatedType: null
+              annotationsList: []
+              classId: kotlin/String
+              nullability: NULLABLE
+              qualifiers: [
+                qualifier:
+                  name: String
+                  symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+                  typeArguments: []
+              ]
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              typeArguments: []
+        ]
+    ]
+    symbol: KtNamedClassOrObjectSymbol(kotlin/collections/List)
+    typeArguments: [
+      KtFlexibleType:
+        abbreviatedType: null
+        annotationsList: []
+        lowerBound: KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: kotlin/String
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
+        nullability: UNKNOWN
+        upperBound: KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: kotlin/String
+          nullability: NULLABLE
+          qualifiers: [
+            qualifier:
+              name: String
+              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          typeArguments: []
+    ]

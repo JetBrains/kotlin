@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.renderForDebuggi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
@@ -48,5 +49,10 @@ internal class KaFe10ErrorType(
 
     override fun toString(): String {
         return fe10Type.renderForDebugging(analysisContext)
+    }
+
+    @KaAnalysisNonPublicApi
+    override fun createPointer(): KaTypePointer<KaErrorType> = withValidityAssertion {
+        throw NotImplementedError("Type pointers are not implemented for FE 1.0")
     }
 }

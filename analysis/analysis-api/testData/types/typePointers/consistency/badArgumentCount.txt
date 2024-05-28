@@ -1,0 +1,17 @@
+Restored type is the same as the original one
+
+KtClassErrorType:
+  abbreviatedType: null
+  annotationsList: []
+  candidateSymbols: [
+    KtNamedClassOrObjectSymbol(Either)
+  ]
+  errorMessage: Wrong number of type arguments
+  nullability: UNKNOWN
+  presentableText: Either
+  qualifiers: [
+    qualifier:
+      name: Either
+      symbol: KtNamedClassOrObjectSymbol(Either)
+      typeArguments: []
+  ]

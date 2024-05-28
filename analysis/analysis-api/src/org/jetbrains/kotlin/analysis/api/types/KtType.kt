@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.types
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiversOwner
@@ -15,6 +16,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+
+@KaAnalysisNonPublicApi
+public interface KaTypePointer<out T : KaType> {
+    public fun restore(session: KaSession): T?
+}
 
 public sealed interface KaType : KaLifetimeOwner, KaAnnotated {
     public val nullability: KaTypeNullability
@@ -85,6 +91,9 @@ public sealed interface KaType : KaLifetimeOwner, KaAnnotated {
     public fun asStringForDebugging(): String {
         return withValidityAssertion { toString() }
     }
+
+    @OptIn(KaAnalysisNonPublicApi::class)
+    public fun createPointer(): KaTypePointer<KaType>
 }
 
 public typealias KtType = KaType
@@ -111,6 +120,9 @@ public interface KaErrorType : KaType {
     @KaAnalysisNonPublicApi
     @Deprecated("Use 'presentableText' instead.")
     public fun tryRenderAsNonErrorType(): String? = presentableText
+
+    @OptIn(KaAnalysisNonPublicApi::class)
+    public override fun createPointer(): KaTypePointer<KaErrorType>
 }
 
 public typealias KtErrorType = KaErrorType
@@ -133,6 +145,9 @@ public sealed class KaNonErrorClassType : KaType {
     @Deprecated("Use 'typeArguments' instead.", ReplaceWith("typeArguments"))
     public val ownTypeArguments: List<KaTypeProjection>
         get() = typeArguments
+
+    @OptIn(KaAnalysisNonPublicApi::class)
+    public abstract override fun createPointer(): KaTypePointer<KaNonErrorClassType>
 }
 
 public typealias KtNonErrorClassType = KaNonErrorClassType
@@ -146,6 +161,9 @@ public abstract class KaFunctionalType : KaNonErrorClassType(), KaContextReceive
     public abstract val hasReceiver: Boolean
     public abstract val parameterTypes: List<KaType>
     public abstract val returnType: KaType
+
+    @OptIn(KaAnalysisNonPublicApi::class)
+    public abstract override fun createPointer(): KaTypePointer<KaFunctionalType>
 }
 
 public typealias KtFunctionalType = KaFunctionalType
@@ -162,6 +180,9 @@ public abstract class KaClassErrorType : KaErrorType {
     @Deprecated("Use 'candidateSymbols' instead.", ReplaceWith("candidateSymbols"))
     public val candidateClassSymbols: Collection<KaClassLikeSymbol>
         get() = candidateSymbols
+
+    @OptIn(KaAnalysisNonPublicApi::class)
+    public abstract override fun createPointer(): KaTypePointer<KaClassErrorType>
 }
 
 public typealias KtClassErrorType = KaClassErrorType
@@ -169,12 +190,18 @@ public typealias KtClassErrorType = KaClassErrorType
 public abstract class KaTypeParameterType : KaType {
     public abstract val name: Name
     public abstract val symbol: KaTypeParameterSymbol
+
+    @OptIn(KaAnalysisNonPublicApi::class)
+    public abstract override fun createPointer(): KaTypePointer<KaTypeParameterType>
 }
 
 public typealias KtTypeParameterType = KaTypeParameterType
 
 public abstract class KaCapturedType : KaType {
     public abstract val projection: KaTypeProjection
+
+    @OptIn(KaAnalysisNonPublicApi::class)
+    public abstract override fun createPointer(): KaTypePointer<KaCapturedType>
 }
 
 public typealias KtCapturedType = KaCapturedType
@@ -183,6 +210,9 @@ public abstract class KaDefinitelyNotNullType : KaType {
     public abstract val original: KaType
 
     final override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.NON_NULLABLE }
+
+    @OptIn(KaAnalysisNonPublicApi::class)
+    public abstract override fun createPointer(): KaTypePointer<KaDefinitelyNotNullType>
 }
 
 public typealias KtDefinitelyNotNullType = KaDefinitelyNotNullType
@@ -193,12 +223,18 @@ public typealias KtDefinitelyNotNullType = KaDefinitelyNotNullType
 public abstract class KaFlexibleType : KaType {
     public abstract val lowerBound: KaType
     public abstract val upperBound: KaType
+
+    @OptIn(KaAnalysisNonPublicApi::class)
+    public abstract override fun createPointer(): KaTypePointer<KaFlexibleType>
 }
 
 public typealias KtFlexibleType = KaFlexibleType
 
 public abstract class KaIntersectionType : KaType {
     public abstract val conjuncts: List<KaType>
+
+    @OptIn(KaAnalysisNonPublicApi::class)
+    public abstract override fun createPointer(): KaTypePointer<KaIntersectionType>
 }
 
 public typealias KtIntersectionType = KaIntersectionType
@@ -209,6 +245,9 @@ public typealias KtIntersectionType = KaIntersectionType
  * Although this can be viewed as a flexible type (kotlin.Nothing..kotlin.Any?), a platform may assign special meaning to the
  * values of dynamic type, and handle differently from the regular flexible type.
  */
-public abstract class KaDynamicType : KaType
+public abstract class KaDynamicType : KaType {
+    @OptIn(KaAnalysisNonPublicApi::class)
+    public abstract override fun createPointer(): KaTypePointer<KaDynamicType>
+}
 
 public typealias KtDynamicType = KaDynamicType

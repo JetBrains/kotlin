@@ -1,0 +1,43 @@
+Restored type is the same as the original one
+
+KtUsualClassType:
+  abbreviatedType: null
+  annotationsList: []
+  classId: kotlin/collections/List
+  nullability: NON_NULLABLE
+  qualifiers: [
+    qualifier:
+      name: List
+      symbol: KtNamedClassOrObjectSymbol(kotlin/collections/List)
+      typeArguments: [
+        KtUsualClassType:
+          abbreviatedType: null
+          annotationsList: []
+          classId: Foo
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: Foo
+              symbol: KtNamedClassOrObjectSymbol(Foo)
+              typeArguments: []
+          ]
+          symbol: KtNamedClassOrObjectSymbol(Foo)
+          typeArguments: []
+      ]
+  ]
+  symbol: KtNamedClassOrObjectSymbol(kotlin/collections/List)
+  typeArguments: [
+    KtUsualClassType:
+      abbreviatedType: null
+      annotationsList: []
+      classId: Foo
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Foo
+          symbol: KtNamedClassOrObjectSymbol(Foo)
+          typeArguments: []
+      ]
+      symbol: KtNamedClassOrObjectSymbol(Foo)
+      typeArguments: []
+  ]
