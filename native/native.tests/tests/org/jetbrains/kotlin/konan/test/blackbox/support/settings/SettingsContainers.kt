@@ -80,8 +80,10 @@ internal fun Settings.withCustomCompiler(compiler: ReleasedCompiler): Settings {
         parent = this,
         settings = listOf(
             compiler.nativeHome,
+            LLDB(compiler.nativeHome),
             KotlinNativeClassLoader(lazyClassLoader = compiler.lazyClassloader),
-            PipelineType.DEFAULT
+            PipelineType.DEFAULT,
+            GCType.UNSPECIFIED,
         )
     ) {}
 }

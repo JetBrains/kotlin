@@ -63,6 +63,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
     }
 
     private fun ArgsBuilder.applyCommonArgs() {
+        add("-kotlin-home", home.dir.absolutePath)
         add("-target", targets.testTarget.name)
         optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         if (freeCompilerArgs.assertionsMode.assertionsEnabledWith(optimizationMode))
