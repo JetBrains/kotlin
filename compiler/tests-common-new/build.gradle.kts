@@ -42,6 +42,7 @@ dependencies {
     testApi(libs.junit4) // for ComparisonFailure
 
     testApi(toolsJarApi())
+    testRuntimeOnly(toolsJar())
 }
 
 optInToExperimentalCompilerApi()
