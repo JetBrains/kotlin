@@ -39,21 +39,35 @@ fun Test(%composer: Composer?, %changed: Int) {
 }
 internal object ComposableSingletons%TestKt {
   val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C<effect>:Test.kt")
+    sourceInformation(%composer, "C<{>,<effect>:Test.kt")
     if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
       %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "*<effect>")
+      sourceInformation(%composer, "*<{>,<effect>")
       repeat(number) { it: Int ->
-        effects[it] = effect({
-          0
+        effects[it] = effect(<block>{
+          sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+          val tmp0_group = %composer.cache(false) {
+            {
+              0
+            }
+          }
+          sourceInformationMarkerEnd(%composer)
+          tmp0_group
         }, %composer, 0b0110)
       }
       %composer.endReplaceGroup()
-      outside = effect({
-        "0"
+      outside = effect(<block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          {
+            "0"
+          }
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
       }, %composer, 0b0110)
       if (isTraceInProgress()) {
         traceEventEnd()

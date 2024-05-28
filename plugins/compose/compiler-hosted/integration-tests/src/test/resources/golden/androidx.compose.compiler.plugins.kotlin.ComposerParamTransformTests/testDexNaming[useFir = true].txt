@@ -24,11 +24,18 @@ val myProperty: () -> Unit @Composable get() {
 val myProperty: Function0<Unit>
   @Composable @JvmName(name = "getMyProperty")
   get() {
-    sourceInformationMarkerStart(%composer, <>, "C:Test.kt#2487m")
+    sourceInformationMarkerStart(%composer, <>, "C<{>:Test.kt#2487m")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    val tmp0 = {
+    val tmp0 = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp1_group = %composer.cache(false) {
+        {
+        }
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp1_group
     }
     if (isTraceInProgress()) {
       traceEventEnd()

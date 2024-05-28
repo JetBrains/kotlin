@@ -46,13 +46,20 @@ fun TestLambda(content: Function0<Unit>, %composer: Composer?, %changed: Int) {
 @Composable
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<TestLa...>:Test.kt")
+  sourceInformation(%composer, "C(Test)<{>,<TestLa...>:Test.kt")
   if (%changed != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    TestLambda({
-      println("Doesn't capture")
+    TestLambda(<block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        {
+          println("Doesn't capture")
+        }
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
     }, %composer, 0b0110)
     if (isTraceInProgress()) {
       traceEventEnd()

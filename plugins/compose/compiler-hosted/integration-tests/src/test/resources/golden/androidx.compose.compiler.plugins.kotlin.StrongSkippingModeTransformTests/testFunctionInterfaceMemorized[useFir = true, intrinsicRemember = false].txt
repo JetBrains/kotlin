@@ -49,9 +49,11 @@ fun Test(%composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     val capture = 0
-    TestMemoizedFun(TestFunInterface { it: Int ->
-      use(it)
-    }, %composer, 0b0110)
+    TestMemoizedFun(%composer.cache(false) {
+      TestFunInterface { it: Int ->
+        use(it)
+      }
+    }, %composer, 0)
     TestMemoizedFun(%composer.cache(%composer.changed(capture)) {
       TestFunInterface { it: Int ->
         use(capture)

@@ -18,12 +18,17 @@ fun Problem() {
 fun Problem() {
   fun foo() { }
   val lambda = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-    sourceInformation(%composer, "C:Test.kt")
+    sourceInformation(%composer, "C<::foo>:Test.kt")
     if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      ::foo
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        ::foo
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
       if (isTraceInProgress()) {
         traceEventEnd()
       }

@@ -29,7 +29,7 @@ fun BasicText(
 @Composable
 fun BasicText(style: TextStyle?, onTextLayout: Function1<TextLayoutResult, Unit>?, overflow: TextOverflow, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(BasicText)P(2!,1:c#ui.text.style.TextOverflow):Test.kt")
+  sourceInformation(%composer, "C(BasicText)P(2!,1:c#ui.text.style.TextOverflow)<{}>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
@@ -51,7 +51,14 @@ fun BasicText(style: TextStyle?, onTextLayout: Function1<TextLayoutResult, Unit>
       style = Companion.Default
     }
     if (%default and 0b0010 != 0) {
-      onTextLayout = { it: TextLayoutResult ->
+      onTextLayout = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          { it: TextLayoutResult ->
+          }
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
       }
     }
     if (%default and 0b0100 != 0) {

@@ -40,14 +40,21 @@ import androidx.compose.runtime.ReadOnlyComposable
 @Composable
 fun A(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A)<D>,<C({})>,<C(stab...>,<C(16.d...>,<C(Dp(1...>,<C(16.d...>,<C(norm...>,<C(Int....>,<C(stab...>,<C(Modi...>,<C(Foo....>,<C(cons...>,<C(123)>,<C(123>,<C(x)>,<C(x>:Test.kt")
+  sourceInformation(%composer, "C(A)<D>,<{}>,<C({})>,<C(stab...>,<C(16.d...>,<C(Dp(1...>,<C(16.d...>,<C(norm...>,<C(Int....>,<C(stab...>,<C(Modi...>,<C(Foo....>,<C(cons...>,<C(123)>,<C(123>,<C(x)>,<C(x>:Test.kt")
   if (%changed != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
     val x = 123
     D(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
-    C({
+    C(<block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        {
+        }
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
     }, %composer, 0b0110)
     C(stableFun(123), %composer, 0b0110)
     C(16.dp + 10.dp, %composer, 0b0110)
