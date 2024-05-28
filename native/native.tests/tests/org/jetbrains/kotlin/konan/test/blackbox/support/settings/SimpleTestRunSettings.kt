@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
-import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
+import org.jetbrains.kotlin.konan.test.blackbox.BaseAbstractNativeSimpleTest
 
 /**
  * All instances of test classes.
@@ -14,6 +14,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
  * [enclosingTestInstance] - the outermost test instance
  */
 internal class SimpleTestInstances(val allInstances: List<Any>) {
-    val enclosingTestInstance: AbstractNativeSimpleTest
-        get() = allInstances.firstOrNull() as AbstractNativeSimpleTest
+    val enclosingTestInstance: BaseAbstractNativeSimpleTest
+        get() = allInstances.firstOrNull() as BaseAbstractNativeSimpleTest
 }

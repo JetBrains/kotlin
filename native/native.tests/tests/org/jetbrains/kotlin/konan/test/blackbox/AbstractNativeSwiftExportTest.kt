@@ -28,7 +28,7 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.div
 
-abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
+abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest_WithDirectives() {
     private val testCompilationFactory = TestCompilationFactory()
     private val compiledSwiftCache = ThreadSafeCache<SwiftExportModule, TestCompilationArtifact.Swift.Module>()
 

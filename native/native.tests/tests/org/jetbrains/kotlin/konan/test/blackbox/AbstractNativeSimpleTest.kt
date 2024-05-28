@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeSimpleTestSupport
+import org.jetbrains.kotlin.konan.test.blackbox.support.NativeSimpleTestSupport_WithDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
@@ -15,7 +16,12 @@ import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.fail
 
 @ExtendWith(NativeSimpleTestSupport::class)
-abstract class AbstractNativeSimpleTest {
+abstract class AbstractNativeSimpleTest : BaseAbstractNativeSimpleTest()
+
+@ExtendWith(NativeSimpleTestSupport_WithDirectives::class)
+abstract class AbstractNativeSimpleTest_WithDirectives : BaseAbstractNativeSimpleTest()
+
+abstract class BaseAbstractNativeSimpleTest {
     lateinit var testRunSettings: SimpleTestRunSettings
     internal lateinit var testRunProvider: SimpleTestRunProvider
 

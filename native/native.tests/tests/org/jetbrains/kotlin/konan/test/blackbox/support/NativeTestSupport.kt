@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings
+import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings_WithDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.getOrCreateSimpleTestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.getOrCreateTestRunProvider
@@ -64,6 +65,19 @@ class NativeSimpleTestSupport : BeforeEachCallback {
         }
     }
 }
+
+class NativeSimpleTestSupport_WithDirectives : BeforeEachCallback {
+    override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
+        val settings = createSimpleTestRunSettings_WithDirectives()
+
+        // Inject the required properties to test instance.
+        with(settings.get<SimpleTestInstances>().enclosingTestInstance) {
+            testRunSettings = settings
+            testRunProvider = getOrCreateSimpleTestRunProvider()
+        }
+    }
+}
+
 
 internal object CastCompatibleKotlinNativeClassLoader {
     val kotlinNativeClassLoader = NativeTestSupport.computeNativeClassLoader(this::class.java.classLoader)
@@ -576,6 +590,19 @@ object NativeTestSupport {
 
     // Note: SimpleTestRunSettings is not cached!
     fun ExtensionContext.createSimpleTestRunSettings(): SimpleTestRunSettings {
+        val testClassSettings = getOrCreateSimpleTestClassSettings()
+
+        return SimpleTestRunSettings(
+            parent = testClassSettings,
+            listOf(
+                computeSimpleTestInstances(),
+                computeBinariesForSimpleTests(testClassSettings.get(), testClassSettings.get()),
+            )
+        )
+    }
+
+    // Note: SimpleTestRunSettings is not cached!
+    fun ExtensionContext.createSimpleTestRunSettings_WithDirectives(): SimpleTestRunSettings {
         val testClassSettings = getOrCreateSimpleTestClassSettings()
 
         return SimpleTestRunSettings(
