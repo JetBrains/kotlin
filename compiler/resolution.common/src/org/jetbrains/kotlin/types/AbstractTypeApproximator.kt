@@ -305,7 +305,12 @@ abstract class AbstractTypeApproximator(
          * For other case -- it's impossible to find some type except Nothing as subType for intersection type.
          */
         val baseResult = when (conf.intersection) {
-            TypeApproximatorConfiguration.IntersectionStrategy.ALLOWED -> if (!thereIsApproximation) return null else intersectTypes(newTypes)
+            TypeApproximatorConfiguration.IntersectionStrategy.ALLOWED -> if (!thereIsApproximation) {
+                return null
+            } else {
+                val upperBoundForApproximation = type.getUpperBoundForApproximationOfIntersectionType()
+                intersectTypes(newTypes, upperBoundForApproximation, toSuper, conf, depth)
+            }
             TypeApproximatorConfiguration.IntersectionStrategy.TO_FIRST -> if (toSuper) newTypes.first() else return type.defaultResult(toSuper = false)
             // commonSupertypeCalculator should handle flexible types correctly
             TypeApproximatorConfiguration.IntersectionStrategy.TO_COMMON_SUPERTYPE,
@@ -319,11 +324,33 @@ abstract class AbstractTypeApproximator(
         return if (type.isMarkedNullable()) baseResult.withNullability(true) else baseResult
     }
 
+    private fun intersectTypes(
+        newTypes: List<KotlinTypeMarker>,
+        upperBoundForApproximation: KotlinTypeMarker?,
+        toSuper: Boolean,
+        conf: TypeApproximatorConfiguration,
+        depth: Int,
+    ): KotlinTypeMarker {
+        val intersectionType = intersectTypes(newTypes)
+
+        if (upperBoundForApproximation == null) {
+            return intersectionType
+        }
+
+        val alternativeTypeApproximated = if (toSuper) {
+            approximateToSuperType(upperBoundForApproximation, conf, depth)
+        } else {
+            approximateToSubType(upperBoundForApproximation, conf, depth)
+        } ?: upperBoundForApproximation
+
+        return createTypeWithUpperBoundForIntersectionResult(intersectionType, alternativeTypeApproximated)
+    }
+
     private fun approximateCapturedType(
         capturedType: CapturedTypeMarker,
         conf: TypeApproximatorConfiguration,
         toSuper: Boolean,
-        depth: Int
+        depth: Int,
     ): KotlinTypeMarker? {
         fun KotlinTypeMarker.replaceRecursionWithStarProjection(capturedType: CapturedTypeMarker): KotlinTypeMarker {
             // This replacement is important for resolving the code like below in K2.

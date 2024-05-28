@@ -591,6 +591,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return intersectionType.withUpperBound(secondCandidate)
     }
 
+    override fun KotlinTypeMarker.getUpperBoundForApproximationOfIntersectionType(): KotlinTypeMarker? {
+        return (this as? ConeIntersectionType)?.upperBoundForApproximation
+    }
+
     override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = session.languageVersionSettings.supportsFeature(
         LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
     )

@@ -241,6 +241,11 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         secondCandidate: KotlinTypeMarker
     ): KotlinTypeMarker
 
+    /**
+     * Only for K2
+     */
+    fun KotlinTypeMarker.getUpperBoundForApproximationOfIntersectionType() : KotlinTypeMarker? = null
+
     fun KotlinTypeMarker.isSpecial(): Boolean
 
     fun TypeConstructorMarker.isTypeVariable(): Boolean
