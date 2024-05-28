@@ -12,23 +12,26 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.resolve.DataClassResolver
 
-object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirDataClassCopyUsageWillBecomeInaccessibleChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (expression !is FirFunctionCall && expression !is FirCallableReferenceAccess) return
         val copyFunction = expression.calleeReference
-            .takeIf { DataClassResolver.isCopy(it.name) } // Small optimization
+            .takeIf { it is FirNamedReference && DataClassResolver.isCopy(it.name) } // Small optimization
             ?.symbol as? FirCallableSymbol
             ?: return
         if (copyFunction.resolvedStatus.isDataClassCopyFun) {
-            val dataClass = expression.resolvedType.toRegularClassSymbol(context.session) ?: return
+            val dataClass = copyFunction.dispatchReceiverType?.toRegularClassSymbol(context.session) ?: return
             val dataClassConstructor = dataClass.primaryConstructorSymbol(context.session) ?: return
 
             @OptIn(SymbolInternals::class)
