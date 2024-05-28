@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver
 
+import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
  * * On the other hand, middle- and bitcode phases are hard to decouple due to the way the code was written many years ago.
  * It will take some time to rewrite it properly.
  */
-internal interface PhaseContext : LoggingContext, ConfigChecks {
+internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext {
 
     /**
      * Called by [PhaseEngine.useContext] after action completion to cleanup resources.
