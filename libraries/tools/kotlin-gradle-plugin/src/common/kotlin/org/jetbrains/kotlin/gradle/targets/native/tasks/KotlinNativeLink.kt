@@ -20,6 +20,7 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
@@ -114,7 +115,7 @@ constructor(
 
     @Suppress("unused")
     @get:Input
-    internal val useEmbeddableCompilerJar: Boolean = project.nativeUseEmbeddableCompilerJar
+    internal val useEmbeddableCompilerJar: Provider<Boolean> = project.nativeProperties.isUseEmbeddableCompilerJar
 
     @Suppress("unused", "UNCHECKED_CAST")
     @Deprecated(

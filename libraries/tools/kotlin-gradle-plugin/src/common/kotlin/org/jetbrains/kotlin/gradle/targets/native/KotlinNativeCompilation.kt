@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
@@ -49,7 +49,7 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
         get() = compilation.compilerOptions as DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
 
     internal val useGenericPluginArtifact: Boolean
-        get() = project.nativeUseEmbeddableCompilerJar
+        get() = project.nativeProperties.isUseEmbeddableCompilerJar.get()
 }
 
 open class KotlinNativeCompilation @Inject internal constructor(
@@ -91,6 +91,3 @@ open class KotlinSharedNativeCompilation @Inject internal constructor(
     KotlinMetadataCompilation<KotlinCommonOptions> {
     override val target: KotlinMetadataTarget = compilation.target as KotlinMetadataTarget
 }
-
-internal val Project.nativeUseEmbeddableCompilerJar: Boolean
-    get() = PropertiesProvider(this).nativeUseEmbeddableCompilerJar

@@ -303,14 +303,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property("kotlin.native.linkArgs").orNull.orEmpty().split(' ').filterNot { it.isBlank() }
 
     /**
-     * Switches Kotlin/Native tasks to using embeddable compiler jar,
-     * allowing to apply backend-agnostic compiler plugin artifacts.
-     * Will be default after proper migration.
-     */
-    val nativeUseEmbeddableCompilerJar: Boolean
-        get() = booleanProperty("kotlin.native.useEmbeddableCompilerJar") ?: true
-
-    /**
      * Allows a user to set project-wide options that will be passed to the K/N compiler via -Xbinary flag.
      * E.g. setting kotlin.native.binary.memoryModel=experimental results in passing -Xbinary=memoryModel=experimental to the compiler.
      * @return a map: property name without `kotlin.native.binary.` prefix -> property value

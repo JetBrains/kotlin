@@ -21,6 +21,7 @@ internal interface NativeProperties {
     val konanDataDir: Provider<File?>
     val downloadFromMaven: Provider<Boolean>
     val isToolchainEnabled: Provider<Boolean>
+    val isUseEmbeddableCompilerJar: Provider<Boolean>
 
     /**
      * Value of 'kotlin.native.home' property.
@@ -104,6 +105,10 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
                 )
         )
 
+    override val isUseEmbeddableCompilerJar: Provider<Boolean> = propertiesService.flatMap {
+        it.property(NATIVE_USE_EMBEDDABLE_COMPILER_JAR, project)
+    }
+
     companion object {
         private const val PROPERTIES_PREFIX = "kotlin.native"
 
@@ -168,6 +173,16 @@ private class NativePropertiesLoader(project: Project) : NativeProperties {
          */
         private val NATIVE_TOOLCHAIN_ENABLED = PropertiesBuildService.BooleanGradleProperty(
             name = "$PROPERTIES_PREFIX.toolchain.enabled",
+            defaultValue = true
+        )
+
+        /**
+         * Switches Kotlin/Native tasks to using embeddable compiler jar,
+         * allowing to apply backend-agnostic compiler plugin artifacts.
+         * Will be default after proper migration.
+         */
+        private val NATIVE_USE_EMBEDDABLE_COMPILER_JAR = PropertiesBuildService.BooleanGradleProperty(
+            name = "$PROPERTIES_PREFIX.useEmbeddableCompilerJar",
             defaultValue = true
         )
     }

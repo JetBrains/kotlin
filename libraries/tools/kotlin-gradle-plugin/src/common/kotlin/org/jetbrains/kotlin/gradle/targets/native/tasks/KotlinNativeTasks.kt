@@ -226,7 +226,7 @@ abstract class AbstractKotlinNativeCompile<
     val artifactVersion = project.version.toString()
 
     @get:Input
-    internal val useEmbeddableCompilerJar: Boolean = project.nativeUseEmbeddableCompilerJar
+    internal val useEmbeddableCompilerJar: Provider<Boolean> = project.nativeProperties.isUseEmbeddableCompilerJar
 
     @get:Internal
     open val outputFile: Provider<File>

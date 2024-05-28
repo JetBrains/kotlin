@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
-import org.jetbrains.kotlin.gradle.plugin.mpp.nativeUseEmbeddableCompilerJar
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -63,11 +62,14 @@ internal fun Project.getKonanParallelThreads(): Int {
 }
 
 private val Project.kotlinNativeCompilerJar: Provider<File>
-    get() = if (nativeUseEmbeddableCompilerJar) {
-        nativeProperties.actualNativeHomeDirectory.map { it.resolve("konan/lib/kotlin-native-compiler-embeddable.jar") }
-    } else {
-        nativeProperties.actualNativeHomeDirectory.map { it.resolve("konan/lib/kotlin-native.jar") }
-    }
+    get() = nativeProperties.isUseEmbeddableCompilerJar
+        .zip(nativeProperties.actualNativeHomeDirectory) { useJar, nativeHomeDir ->
+            if (useJar) {
+                nativeHomeDir.resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
+            } else {
+                nativeHomeDir.resolve("konan/lib/kotlin-native.jar")
+            }
+        }
 
 internal abstract class KotlinNativeToolRunner(
     protected val toolName: String,
