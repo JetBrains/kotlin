@@ -84,11 +84,7 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
         if (classFromSources != null) {
             // Get inner class node pointing to the outer class
             val innerClassNode = classFromSources.innerClasses.firstOrNull { it.name == classFromSources.name }
-            return if (innerClassNode?.outerName != null) {
-                innerClassNode.let { getQualifiedName(it.outerName) + "." + it.innerName }
-            } else {
-                nameWithDots
-            }
+            return innerClassNode?.let { getQualifiedName(it.outerName) + "." + it.innerName } ?: nameWithDots
         }
 
         // Search in the classpath

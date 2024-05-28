@@ -259,28 +259,34 @@ internal class ClassMemberGenerator(
         initializerExpression: FirExpression?
     ) {
         val irField = backingField ?: return
-        conversionScope.withParent(irField) {
-            declarationStorage.enterScope(this@initializeBackingField.symbol)
-            // NB: initializer can be already converted
-            if (initializer == null && initializerExpression != null) {
-                initializer = irFactory.createExpressionBody(
-                    run {
-                        val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
-                        if (property.delegate == null) {
-                            with(visitor.implicitCastInserter) {
-                                irExpression.insertSpecialCast(
-                                    initializerExpression,
-                                    initializerExpression.resolvedType,
-                                    property.returnTypeRef.coneType
-                                )
+        if (configuration.skipBodies) {
+            irField.initializer = irFactory.createExpressionBody(
+                startOffset, endOffset, IrConstImpl.defaultValueForType(startOffset, endOffset, irField.type)
+            )
+        } else {
+            conversionScope.withParent(irField) {
+                declarationStorage.enterScope(this@initializeBackingField.symbol)
+                // NB: initializer can be already converted
+                if (initializer == null && initializerExpression != null) {
+                    initializer = irFactory.createExpressionBody(
+                        run {
+                            val irExpression = visitor.convertToIrExpression(initializerExpression, isDelegate = property.delegate != null)
+                            if (property.delegate == null) {
+                                with(visitor.implicitCastInserter) {
+                                    irExpression.insertSpecialCast(
+                                        initializerExpression,
+                                        initializerExpression.resolvedType,
+                                        property.returnTypeRef.coneType
+                                    )
+                                }
+                            } else {
+                                irExpression
                             }
-                        } else {
-                            irExpression
                         }
-                    }
-                )
+                    )
+                }
+                declarationStorage.leaveScope(this@initializeBackingField.symbol)
             }
-            declarationStorage.leaveScope(this@initializeBackingField.symbol)
         }
         property.backingField?.let { annotationGenerator.generate(irField, it) }
     }
