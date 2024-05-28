@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationCheckProcessor
 import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfo
 import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -58,7 +59,7 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
         }
         if (memberPropertySymbols.isEmpty()) return null
         // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
-        val data = VariableInitializationInfoData(memberPropertySymbols, conditionallyInitializedProperties = emptySet(), symbol, graph)
+        val data = PropertyInitializationInfoData(memberPropertySymbols, conditionallyInitializedProperties = emptySet(), symbol, graph)
         PropertyInitializationCheckProcessor.check(data, isForInitialization = true, context, reporter)
         return data.getValue(graph.exitNode)[NormalPath]
     }

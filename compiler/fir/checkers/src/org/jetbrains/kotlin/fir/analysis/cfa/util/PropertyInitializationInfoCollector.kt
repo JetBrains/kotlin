@@ -18,16 +18,12 @@ import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-typealias VariableInitializationEvent = FirVariableSymbol<*>
-typealias VariableInitializationInfo = EventOccurrencesRangeInfo<VariableInitializationEvent>
-typealias PathAwarePropertyInitializationInfo = PathAwareEventOccurrencesRangeInfo<VariableInitializationEvent>
-
-class VariableInitializationInfoData(
-    val properties: Set<FirVariableSymbol<*>>,
-    val conditionallyInitializedProperties: Set<FirVariableSymbol<*>>,
-    val receiver: FirBasedSymbol<*>?,
-    val graph: ControlFlowGraph,
-) {
+class PropertyInitializationInfoData(
+    override val properties: Set<FirVariableSymbol<*>>,
+    override val conditionallyInitializedProperties: Set<FirVariableSymbol<*>>,
+    override val receiver: FirBasedSymbol<*>?,
+    override val graph: ControlFlowGraph,
+) : VariableInitializationInfoData() {
     private val data by lazy(LazyThreadSafetyMode.NONE) {
         val declaredVariablesInLoop = setMultimapOf<FirStatement, FirVariableSymbol<*>>().apply {
             graph.declaration?.accept(PropertyDeclarationCollector(this), null)
@@ -35,7 +31,7 @@ class VariableInitializationInfoData(
         graph.traverseToFixedPoint(PropertyInitializationInfoCollector(properties, receiver, declaredVariablesInLoop))
     }
 
-    fun getValue(node: CFGNode<*>): PathAwarePropertyInitializationInfo {
+    override fun getValue(node: CFGNode<*>): PathAwarePropertyInitializationInfo {
         return data.getValue(node)
     }
 }

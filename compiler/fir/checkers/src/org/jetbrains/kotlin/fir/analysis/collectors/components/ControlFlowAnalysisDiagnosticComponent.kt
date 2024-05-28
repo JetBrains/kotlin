@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.collectors.components
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -48,7 +49,7 @@ class ControlFlowAnalysisDiagnosticComponent(
         val collector = LocalPropertyCollector().apply { declaration.acceptChildren(this, graph.subGraphs.toSet()) }
         val properties = collector.properties
         if (properties.isNotEmpty()) {
-            val data = VariableInitializationInfoData(properties, collector.conditionallyInitializedProperties, receiver = null, graph)
+            val data = PropertyInitializationInfoData(properties, collector.conditionallyInitializedProperties, receiver = null, graph)
             variableAssignmentCheckers.forEach { it.analyze(data, reporter, context) }
         }
     }
