@@ -17677,6 +17677,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideOfPrivateSetter.kt");
     }
 
+    @TestMetadata("fakeOverrideWithMissingClassInSignature.kt")
+    public void testFakeOverrideWithMissingClassInSignature() {
+      runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideWithMissingClassInSignature.kt");
+    }
+
     @TestMetadata("fieldInJKJKHierarchy.kt")
     public void testFieldInJKJKHierarchy() {
       runTest("compiler/testData/codegen/box/fakeOverride/fieldInJKJKHierarchy.kt");

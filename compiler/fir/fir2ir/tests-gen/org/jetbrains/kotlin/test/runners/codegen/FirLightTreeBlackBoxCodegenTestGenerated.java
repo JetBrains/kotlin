@@ -21196,6 +21196,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("fakeOverrideWithMissingClassInSignature.kt")
+    public void testFakeOverrideWithMissingClassInSignature() {
+      runTest("compiler/testData/codegen/box/fakeOverride/fakeOverrideWithMissingClassInSignature.kt");
+    }
+
+    @Test
     @TestMetadata("fieldInJKJKHierarchy.kt")
     public void testFieldInJKJKHierarchy() {
       runTest("compiler/testData/codegen/box/fakeOverride/fieldInJKJKHierarchy.kt");
