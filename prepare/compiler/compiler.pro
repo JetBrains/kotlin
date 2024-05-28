@@ -359,3 +359,5 @@
 -keepclassmembers class com.intellij.util.containers.ContainerUtil {
     public static java.util.concurrent.ConcurrentMap createConcurrentSoftMap();
 }
+# Uses a ClassLoader method from JDK 9+
+-dontwarn org.jetbrains.kotlin.buildtools.internal.ClassLoaderUtilsKt
