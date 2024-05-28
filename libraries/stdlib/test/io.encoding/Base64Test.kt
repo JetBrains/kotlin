@@ -273,3 +273,28 @@ class Base64Test {
         testEncode(Base64.Mime, "foobar".repeat(76).encodeToByteArray(), expected)
     }
 }
+
+private fun f() {
+    val binary = "foobar".encodeToByteArray()
+    val text = "Zm9vYmFy".encodeToByteArray()
+
+    // Encode with padding
+    Base64.encode(binary)
+    Base64.Mime.encode(binary)
+
+    // Encode without padding
+    Base64.withEncodeOption(Base64.EncodeOption.NO_PADDING).encode(binary)
+    Base64.UrlSafe.withEncodeOption(Base64.EncodeOption.NO_PADDING).encode(binary)
+
+    // Decode with required padding
+    Base64.decode(text)
+    Base64.Mime.decode(text)
+
+    // Decode with required no padding
+    Base64.withDecodeOption(Base64.DecodeOption.REQUIRE_NO_PADDING).decode(text)
+    Base64.Mime.withDecodeOption(Base64.DecodeOption.REQUIRE_NO_PADDING).decode(text)
+
+    // Decode with required padding or no padding
+    Base64.withDecodeOption(Base64.DecodeOption.REQUIRE_PADDING_OR_NO_PADDING).decode(text)
+    Base64.Mime.withDecodeOption(Base64.DecodeOption.REQUIRE_PADDING_OR_NO_PADDING).decode(text)
+}

@@ -19,10 +19,39 @@ package kotlin.io.encoding
 @ExperimentalEncodingApi
 public open class Base64 private constructor(
     internal val isUrlSafe: Boolean,
-    internal val isMimeScheme: Boolean
+    internal val isMimeScheme: Boolean,
+    private val encodePadding: EncodeOption = EncodeOption.PADDING,
+    private val decodePadding: DecodeOption = DecodeOption.REQUIRE_PADDING
 ) {
     init {
         require(!isUrlSafe || !isMimeScheme)
+    }
+
+    public enum class EncodeOption {
+        PADDING,
+        NO_PADDING
+    }
+
+    public enum class DecodeOption {
+        REQUIRE_PADDING,
+        REQUIRE_NO_PADDING,
+        REQUIRE_PADDING_OR_NO_PADDING
+    }
+
+    public fun withEncodeOption(option: EncodeOption): Base64 {
+        return if (option != encodePadding) {
+            Base64(isUrlSafe, isMimeScheme, option, decodePadding)
+        } else {
+            this
+        }
+    }
+
+    public fun withDecodeOption(option: DecodeOption): Base64 {
+        return if (option != decodePadding) {
+            Base64(isUrlSafe, isMimeScheme, encodePadding, option)
+        } else {
+            this
+        }
     }
 
     /**
