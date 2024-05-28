@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
-    override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
+    override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
         PropertyInitializationCheckProcessor.check(data, isForInitialization = false, context, reporter)
     }
 }
@@ -69,7 +69,7 @@ fun FirPropertySymbol.requiresInitialization(isForInitialization: Boolean): Bool
 
 object PropertyInitializationCheckProcessor : VariableInitializationCheckProcessor() {
     override fun filterProperties(
-        data: PropertyInitializationInfoData,
+        data: VariableInitializationInfoData,
         isForInitialization: Boolean
     ): Set<FirVariableSymbol<*>> {
         // If a property has an initializer (or does not need one), then any reads are OK while any writes are OK
@@ -80,7 +80,7 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
         }
     }
 
-    override fun PropertyInitializationInfoData.reportCapturedInitialization(
+    override fun VariableInitializationInfoData.reportCapturedInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
         reporter: DiagnosticReporter,
@@ -95,7 +95,7 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
         reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol, context)
     }
 
-    override fun FirQualifiedAccessExpression.hasMatchingReceiver(data: PropertyInitializationInfoData): Boolean {
+    override fun FirQualifiedAccessExpression.hasMatchingReceiver(data: VariableInitializationInfoData): Boolean {
         val expression = dispatchReceiver?.unwrapSmartcastExpression()
         return (expression as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == data.receiver ||
                 (expression as? FirResolvedQualifier)?.symbol == data.receiver

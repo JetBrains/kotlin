@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-typealias PropertyInitializationEvent = FirVariableSymbol<*>
-typealias PropertyInitializationInfo = EventOccurrencesRangeInfo<PropertyInitializationEvent>
-typealias PathAwarePropertyInitializationInfo = PathAwareEventOccurrencesRangeInfo<PropertyInitializationEvent>
+typealias VariableInitializationEvent = FirVariableSymbol<*>
+typealias VariableInitializationInfo = EventOccurrencesRangeInfo<VariableInitializationEvent>
+typealias PathAwarePropertyInitializationInfo = PathAwareEventOccurrencesRangeInfo<VariableInitializationEvent>
 
-class PropertyInitializationInfoData(
+class VariableInitializationInfoData(
     val properties: Set<FirVariableSymbol<*>>,
     val conditionallyInitializedProperties: Set<FirVariableSymbol<*>>,
     val receiver: FirBasedSymbol<*>?,
@@ -44,7 +44,7 @@ class PropertyInitializationInfoCollector(
     private val localProperties: Set<FirVariableSymbol<*>>,
     private val expectedReceiver: FirBasedSymbol<*>? = null,
     private val declaredVariablesInLoop: SetMultimap<FirStatement, FirVariableSymbol<*>>,
-) : EventCollectingControlFlowGraphVisitor<PropertyInitializationEvent>() {
+) : EventCollectingControlFlowGraphVisitor<VariableInitializationEvent>() {
     // When looking for initializations of member properties, skip subgraphs of member functions;
     // all properties are assumed to be initialized there.
     override fun visitSubGraph(node: CFGNodeWithSubgraphs<*>, graph: ControlFlowGraph): Boolean =

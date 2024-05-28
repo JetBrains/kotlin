@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 
 abstract class VariableInitializationCheckProcessor {
     fun check(
-        data: PropertyInitializationInfoData,
+        data: VariableInitializationInfoData,
         isForInitialization: Boolean,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -49,7 +49,7 @@ abstract class VariableInitializationCheckProcessor {
     }
 
     // TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
-    private fun PropertyInitializationInfoData.runCheck(
+    private fun VariableInitializationInfoData.runCheck(
         graph: ControlFlowGraph,
         properties: Set<FirVariableSymbol<*>>,
         context: CheckerContext,
@@ -161,7 +161,7 @@ abstract class VariableInitializationCheckProcessor {
 
     // ------------------------------------ reporting ------------------------------------
 
-    protected abstract fun PropertyInitializationInfoData.reportCapturedInitialization(
+    protected abstract fun VariableInitializationInfoData.reportCapturedInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
         reporter: DiagnosticReporter,
@@ -192,11 +192,11 @@ abstract class VariableInitializationCheckProcessor {
     // ------------------------------------ utilities ------------------------------------
 
     protected abstract fun filterProperties(
-        data: PropertyInitializationInfoData,
+        data: VariableInitializationInfoData,
         isForInitialization: Boolean
     ): Set<FirVariableSymbol<*>>
 
-    protected abstract fun FirQualifiedAccessExpression.hasMatchingReceiver(data: PropertyInitializationInfoData): Boolean
+    protected abstract fun FirQualifiedAccessExpression.hasMatchingReceiver(data: VariableInitializationInfoData): Boolean
 }
 
 private val Kind.doNotReportUninitializedVariableForInitialization: Boolean

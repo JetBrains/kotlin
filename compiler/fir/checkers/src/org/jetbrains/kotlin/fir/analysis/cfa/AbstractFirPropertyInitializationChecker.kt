@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.cfa
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
+import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 
 abstract class AbstractFirPropertyInitializationChecker(final override val mppKind: MppCheckerKind) : FirCheckerWithMppKind {
-    abstract fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext)
+    abstract fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext)
 }
