@@ -178,6 +178,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("callingSuspensionFunctionFromSuspendLambdas.kt")
+    public void testCallingSuspensionFunctionFromSuspendLambdas() {
+      runTest("compiler/testData/diagnostics/tests/callingSuspensionFunctionFromSuspendLambdas.kt");
+    }
+
+    @Test
     @TestMetadata("capturedTypesSubtyping.kt")
     public void testCapturedTypesSubtyping() {
       runTest("compiler/testData/diagnostics/tests/capturedTypesSubtyping.kt");
