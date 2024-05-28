@@ -61,6 +61,7 @@ dependencies {
     commonCompileOnly(project(":kotlin-compiler-runner-unshaded"))
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
+    commonCompileOnly(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
     commonCompileOnly(libs.android.gradle.plugin.gradle.api) { isTransitive = false }
     commonCompileOnly(libs.android.gradle.plugin.gradle) { isTransitive = false }
     commonCompileOnly(libs.android.gradle.plugin.builder) { isTransitive = false }
