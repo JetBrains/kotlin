@@ -1,5 +1,5 @@
 // KIND: STANDALONE
-// FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative -language-version 2.0
+// FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative
 // MODULE: main
 // FILE: class_with_deeper_package.kt
 package namespace.deeper

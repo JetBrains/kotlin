@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests.native.swift.sir
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.tests.frontendFir
 import org.jetbrains.kotlin.sir.bridge.AbstractKotlinSirBridgeTest
 import org.jetbrains.kotlin.swiftexport.standalone.AbstractKlibBasedSwiftRunnerTest
 
@@ -28,7 +29,10 @@ fun main() {
             "native/swift/swift-export-standalone/testData"
         ) {
             testClass<AbstractKlibBasedSwiftRunnerTest>(
-                suiteTestClassName = "KlibBasedSwiftExportRunnerTest"
+                suiteTestClassName = "KlibBasedSwiftExportRunnerTest",
+                annotations = listOf(
+                    *frontendFir()
+                ),
             ) {
                 model("", extension = null, recursive = false)
             }

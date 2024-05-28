@@ -50,11 +50,6 @@ abstract class AbstractSwiftRunnerTest(
         KotlinTestUtils.assertEqualsToFile(expectedKotlinBridge, files.kotlinBridges.readText())
     }
 
-    override fun constructSwiftInput(klib: TestCompilationArtifact.KLIB): InputModule.Binary = InputModule.Binary(
-        path = Path(klib.path),
-        name = "main"
-    )
-
     override fun constructSwiftExportConfig(testPathFull: File): SwiftExportConfig {
         val unsupportedTypeStrategy = ErrorTypeStrategy.Fail
         val errorTypeStrategy = ErrorTypeStrategy.Fail

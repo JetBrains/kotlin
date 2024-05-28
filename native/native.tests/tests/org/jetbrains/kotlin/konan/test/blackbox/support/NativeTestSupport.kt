@@ -69,7 +69,7 @@ internal object CastCompatibleKotlinNativeClassLoader {
     val kotlinNativeClassLoader = NativeTestSupport.computeNativeClassLoader(this::class.java.classLoader)
 }
 
-internal object NativeTestSupport {
+object NativeTestSupport {
     private val NAMESPACE = ExtensionContext.Namespace.create(NativeTestSupport::class.java.simpleName)
 
     /*************** Test process settings ***************/
@@ -585,11 +585,13 @@ internal object NativeTestSupport {
                 computeBinariesForSimpleTests(testClassSettings.get(), testClassSettings.get()),
                 computeDisabledTestDataFiles(enclosingTestClass),
                 computeTestRoots(enclosingTestClass),
-                computeGeneratedSourceDirs(
-                    getOrCreateTestProcessSettings().get(),
-                    addCommonTestClassSettingsTo(enclosingTestClass, mutableListOf()),
-                    enclosingTestClass
-                )
+                root.getStore(NAMESPACE).getOrComputeIfAbsent(testClassKeyFor<GeneratedSources>()) {
+                    computeGeneratedSourceDirs(
+                        getOrCreateTestProcessSettings().get(),
+                        addCommonTestClassSettingsTo(enclosingTestClass, mutableListOf()),
+                        enclosingTestClass
+                    )
+                }
             )
         )
     }

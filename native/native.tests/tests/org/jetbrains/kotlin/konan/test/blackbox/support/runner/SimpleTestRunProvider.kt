@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 /**
  * Simplified [TestRun] provider. Used in Native KLIB tests.
  */
-internal object SimpleTestRunProvider : BaseTestRunProvider() {
+object SimpleTestRunProvider : BaseTestRunProvider() {
     fun getTestRun(testCase: TestCase, executable: TestExecutable): TestRun {
         assertTrue(testCase.kind != TestKind.REGULAR) { "Regular tests are not supported in ${SimpleTestRunProvider::class.java}" }
         return super.createSingleTestRun(testCase, executable)

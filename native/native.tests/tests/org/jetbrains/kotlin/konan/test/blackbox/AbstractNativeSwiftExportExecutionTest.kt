@@ -38,10 +38,6 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
         runExecutableAndVerify(testCase, testExecutable)
     }
 
-    override fun constructSwiftInput(klib: TestCompilationArtifact.KLIB): InputModule.Binary {
-        TODO("Not yet implemented")
-    }
-
     override fun constructSwiftExportConfig(
         testPathFull: File,
     ): SwiftExportConfig {

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 
-internal interface TreeNode<T> {
+interface TreeNode<T> {
     val packageSegment: PackageName
     val items: Collection<T>
     val children: Collection<TreeNode<T>>

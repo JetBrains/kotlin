@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.junit.jupiter.api.Assumptions
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.div
 
 abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
@@ -38,10 +39,6 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
         swiftModule: TestCompilationArtifact.Swift.Module,
     )
 
-    protected abstract fun constructSwiftInput(
-        klib: TestCompilationArtifact.KLIB,
-    ): InputModule.Binary
-
     protected abstract fun constructSwiftExportConfig(
         testPathFull: File,
     ): SwiftExportConfig
@@ -51,28 +48,22 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
         val testPathFull = getAbsoluteFile(testDir)
 
         val testCaseId = TestCaseId.TestDataFile((testPathFull.toPath() / "input.kt").toFile())
-        val testCaseGroupProvider = StandardTestCaseGroupProvider()
-        val t = testCaseGroupProvider
+        val originalTestCase = StandardTestCaseGroupProvider()
             .getTestCaseGroup(testCaseId.testCaseGroupId, testRunSettings)
             ?.getByName(testCaseId)!!
 
-        val swiftExportInput = constructSwiftInput(
-            testCompilationFactory
-                .testCaseToKLib(t, testRunSettings)
-                .result.assertSuccess().resultingArtifact
-        )
-        val swiftExportConfig = constructSwiftExportConfig(testPathFull)
+        // run swift export
         val swiftExportOutput = runSwiftExport(
-            swiftExportInput,
-            swiftExportConfig
+            originalTestCase.constructSwiftInput(),
+            constructSwiftExportConfig(testPathFull)
         ).getOrThrow().first()
 
         // compile kotlin into binary
         val additionalKtFiles = swiftExportOutput.collectKotlinBridgeFilesRecursively()
-        val kotlinFiles = t.modules.first().files.map { it.location }
-        val testCase = generateSwiftExportTestCase(testPathFull.name, kotlinFiles + additionalKtFiles.map { it.toFile() })
+        val kotlinFiles = originalTestCase.modules.first().files.map { it.location }
+        val resultingTestCase = generateSwiftExportTestCase(testPathFull.name, kotlinFiles + additionalKtFiles.map { it.toFile() })
         val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
-            testCase, testRunSettings,
+            resultingTestCase, testRunSettings,
             kind = BinaryLibraryKind.DYNAMIC,
         ).result.assertSuccess().resultingArtifact
 
@@ -85,9 +76,19 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
         // and we are ready to perform other checks
         runCompiledTest(
             testPathFull,
-            testCase,
+            resultingTestCase,
             swiftExportOutput,
             swiftModule
+        )
+    }
+
+    private fun TestCase.constructSwiftInput(): InputModule.Binary {
+        val klib = testCompilationFactory
+            .testCaseToKLib(this, testRunSettings)
+            .result.assertSuccess().resultingArtifact
+        return InputModule.Binary(
+            path = Path(klib.path),
+            name = modules.first().name
         )
     }
 
