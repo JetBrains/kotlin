@@ -4,9 +4,8 @@
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.layout.*
-import androidx.compose.foundation.text.*
 import androidx.compose.ui.text.*
-import androidx.compose.ui.text.style.*
+import androidx.compose.foundation.text.*
 
 @Composable
 fun Test1() {
@@ -57,7 +56,7 @@ fun T(value: String) { }
 @ComposableTarget(applier = "androidx.compose.ui.UiComposable")
 fun Test1(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test1)<Layout...>:Test.kt")
+  sourceInformation(%composer, "C(Test1)<{>,<Layout...>:Test.kt")
   if (%changed != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
@@ -66,8 +65,15 @@ fun Test1(%composer: Composer?, %changed: Int) {
       sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
       Unit
       sourceInformationMarkerEnd(%composer)
-    }, null, MeasurePolicy { <unused var>: List<Measurable>, <unused var>: Constraints ->
-      error("")
+    }, null, <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        MeasurePolicy { <unused var>: List<Measurable>, <unused var>: Constraints ->
+          error("")
+        }
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
     }, %composer, 0b000110000000, 0b0010)
     if (isTraceInProgress()) {
       traceEventEnd()
@@ -83,7 +89,7 @@ fun Test1(%composer: Composer?, %changed: Int) {
 @ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
 fun Test2(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test2)<Layout...>:Test.kt")
+  sourceInformation(%composer, "C(Test2)<{>,<Layout...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
@@ -92,8 +98,15 @@ fun Test2(content: Function2<Composer, Int, Unit>, %composer: Composer?, %change
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    Layout(content, null, MeasurePolicy { <unused var>: List<Measurable>, <unused var>: Constraints ->
-      error("")
+    Layout(content, null, <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        MeasurePolicy { <unused var>: List<Measurable>, <unused var>: Constraints ->
+          error("")
+        }
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
     }, %composer, 0b000110000000 or 0b1110 and %dirty, 0b0010)
     if (isTraceInProgress()) {
       traceEventEnd()

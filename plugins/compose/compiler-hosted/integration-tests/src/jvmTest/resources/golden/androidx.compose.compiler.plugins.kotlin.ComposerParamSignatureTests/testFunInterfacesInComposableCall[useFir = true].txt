@@ -27,5 +27,5 @@ public abstract interface MeasurePolicy {
 public final class TestKt {
   public final static Text(Landroidx/compose/runtime/Composer;I)V
   public final static Layout(LMeasurePolicy;Landroidx/compose/runtime/Composer;I)V
-  private final static Text%lambda%0(I)V
+  private final static Text%lambda%1%lambda%0(I)V
 }

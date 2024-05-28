@@ -949,12 +949,19 @@ class ComposerLambdaMemoization(
         expression: IrExpression,
         captures: List<IrValueDeclaration>
     ): IrExpression {
-        // Kotlin/JS doesn't have an optimization for non-capturing lambdas
-        // https://youtrack.jetbrains.com/issue/KT-49923
-        val skipNonCapturingLambdas = !context.platform.isJs() && !context.platform.isWasm()
+        val memoizeLambdasWithoutCaptures =
+            // Kotlin/JS doesn't have an optimization for non-capturing lambdas
+            // https://youtrack.jetbrains.com/issue/KT-49923
+            context.platform.isJs() || context.platform.isWasm() ||
+                (
+                    // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization
+                    // on Android.
+                    context.platform.isJvm() &&
+                        context.languageVersionSettings.languageVersion.usesK2
+                )
 
         // If the function doesn't capture, Kotlin's default optimization is sufficient
-        if (captures.isEmpty() && skipNonCapturingLambdas) {
+        if (!memoizeLambdasWithoutCaptures && captures.isEmpty()) {
             metrics.recordLambda(
                 composable = false,
                 memoized = true,

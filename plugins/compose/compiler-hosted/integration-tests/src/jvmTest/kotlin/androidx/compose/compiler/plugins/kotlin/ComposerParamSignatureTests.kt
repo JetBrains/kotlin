@@ -18,8 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
-import org.junit.Rule
 import org.junit.Test
 
 /* ktlint-disable max-line-length */

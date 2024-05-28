@@ -12,5 +12,5 @@ val myProperty: () -> Unit @Composable get() {
 
 public final class TestKt {
   public final static getMyProperty(Landroidx/compose/runtime/Composer;I)Lkotlin/jvm/functions/Function0;
-  private final static _get_myProperty_%lambda%0()Lkotlin/Unit;
+  private final static _get_myProperty_%lambda%1%lambda%0()Lkotlin/Unit;
 }

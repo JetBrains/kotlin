@@ -4,9 +4,8 @@
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.layout.*
-import androidx.compose.foundation.text.*
 import androidx.compose.ui.text.*
-import androidx.compose.ui.text.style.*
+import androidx.compose.foundation.text.*
 
 @Composable
 fun Test1() {

@@ -33,11 +33,18 @@ fun test() {
       }
       @Composable
       fun B(%composer: Composer?, %changed: Int) {
-        sourceInformationMarkerStart(%composer, <>, "C(B)<Button...>:Test.kt")
+        sourceInformationMarkerStart(%composer, <>, "C(B)<{}>,<Button...>:Test.kt")
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
-        Button({
+        Button(<block>{
+          sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+          val tmp0_group = %composer.cache(false) {
+            {
+            }
+          }
+          sourceInformationMarkerEnd(%composer)
+          tmp0_group
         }, ComposableSingletons%TestKt.lambda-1, %composer, 0b00110110)
         if (isTraceInProgress()) {
           traceEventEnd()
