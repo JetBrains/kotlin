@@ -12,8 +12,7 @@ KtApplicableCallCandidateInfo:
         returnType = kotlin.Int
         symbol = var value: T
         callableId = /value
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {
       T -> (kotlin.Int)
     }

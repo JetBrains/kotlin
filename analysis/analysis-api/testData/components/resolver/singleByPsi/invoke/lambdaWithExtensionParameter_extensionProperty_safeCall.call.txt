@@ -12,6 +12,5 @@ KtSuccessCallInfo:
         returnType = kotlin.Function0<kotlin.Unit>
         symbol = val action: kotlin.Function0<kotlin.Unit>
         callableId = test/action
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {}

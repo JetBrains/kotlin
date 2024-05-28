@@ -9,6 +9,5 @@ KtSuccessCallInfo:
         returnType = kotlin.Int
         symbol = val TOP_LEVEL: kotlin.Int
         callableId = test/TOP_LEVEL
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {}

@@ -3,31 +3,7 @@ KtApplicableCallCandidateInfo:
     isImplicitInvoke = false
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtNamedClassOrObjectSymbol:
-          annotationsList: []
-          classId: RunnerModule
-          classKind: CLASS
-          companionObject: null
-          contextReceivers: []
-          isActual: false
-          isData: false
-          isExpect: false
-          isExternal: false
-          isFun: false
-          isInline: false
-          isInner: false
-          modality: FINAL
-          name: RunnerModule
-          origin: SOURCE
-          superTypes: [
-            KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
-              type: AbstractModule
-          ]
-          symbolKind: TOP_LEVEL
-          typeParameters: []
-          visibility: Public
+        symbol = /RunnerModule
         type = RunnerModule
       extensionReceiver = null
       signature = KtFunctionLikeSignature:

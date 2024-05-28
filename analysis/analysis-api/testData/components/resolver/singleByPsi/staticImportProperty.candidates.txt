@@ -2,31 +2,7 @@ KtApplicableCallCandidateInfo:
   candidate = KtSimpleVariableAccessCall:
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtNamedClassOrObjectSymbol:
-          annotationsList: []
-          classId: one/two/TopLevelObject
-          classKind: OBJECT
-          companionObject: null
-          contextReceivers: []
-          isActual: false
-          isData: false
-          isExpect: false
-          isExternal: false
-          isFun: false
-          isInline: false
-          isInner: false
-          modality: FINAL
-          name: TopLevelObject
-          origin: SOURCE
-          superTypes: [
-            KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
-              type: kotlin/Any
-          ]
-          symbolKind: TOP_LEVEL
-          typeParameters: []
-          visibility: Public
+        symbol = one/two/TopLevelObject
         type = one.two.TopLevelObject
       extensionReceiver = null
       signature = KtVariableLikeSignature:
@@ -35,7 +11,6 @@ KtApplicableCallCandidateInfo:
         returnType = kotlin.Int
         symbol = val bar: kotlin.Int
         callableId = one/two/TopLevelObject.bar
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {}
   isInBestCandidates = true

@@ -12,8 +12,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
 
 <caret_2>: KtSuccessCallInfo:
@@ -48,8 +47,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
 
 <caret_4>: KtSuccessCallInfo:
@@ -66,8 +64,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
 
 <caret_5>: KtSuccessCallInfo:
@@ -84,8 +81,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
 
 <caret_6>: KtSuccessCallInfo:
@@ -108,8 +104,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
 
 <caret_7>: KtSuccessCallInfo:
@@ -132,8 +127,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
 
 <caret_8>: KtSuccessCallInfo:

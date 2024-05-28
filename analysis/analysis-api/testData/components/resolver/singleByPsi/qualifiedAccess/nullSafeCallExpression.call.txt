@@ -12,6 +12,5 @@ KtSuccessCallInfo:
         returnType = A?
         symbol = val aa: A?
         callableId = /A.aa
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {}

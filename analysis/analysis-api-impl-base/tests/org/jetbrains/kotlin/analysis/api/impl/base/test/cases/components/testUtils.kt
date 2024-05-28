@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
@@ -55,6 +56,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
                     is KaConstructorSymbol -> "<constructor>"
                     is KaPropertyGetterSymbol -> callableId ?: "<getter>"
                     is KaPropertySetterSymbol -> callableId ?: "<setter>"
+                    is KaAnonymousFunctionSymbol -> "<anonymous function>"
                     else -> error("unexpected symbol kind in KaCall: ${this@with::class}")
                 }
             )
@@ -76,6 +78,9 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
         is KaValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
         is KaTypeParameterSymbol -> this.nameOrAnonymous.asString()
         is KaVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
+        is KaClassLikeSymbol -> classId?.toString() ?: nameOrAnonymous.asString()
+        is KaPackageSymbol -> fqName.toString()
+        is KaEnumEntrySymbol -> callableId?.toString() ?: name.asString()
         is KaSymbol -> DebugSymbolRenderer().render(analysisSession, this)
         is Boolean -> toString()
         is Map<*, *> -> if (isEmpty()) "{}" else entries.joinToString(
@@ -109,10 +114,8 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
             val clazz = this@with::class
             val className = DebugSymbolRenderer.computeApiEntityName(clazz)
             append(className)
-            appendLine(":")
-            clazz.memberProperties
-                .filter { it.name != "token" && it.visibility == KVisibility.PUBLIC }
-                .joinTo(this, separator = "\n  ", prefix = "  ") { property ->
+            clazz.memberProperties.filter { it.name != "token" && it.visibility == KVisibility.PUBLIC }.ifNotEmpty {
+                joinTo(this@buildString, separator = "\n  ", prefix = ":\n  ") { property ->
                     val name = property.name
 
                     @Suppress("UNCHECKED_CAST")
@@ -124,6 +127,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
                     val valueAsString = value?.let { stringRepresentation(it).indented() }
                     "$name = $valueAsString"
                 }
+            }
         }
     }
 }
@@ -133,7 +137,7 @@ private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): S
         is KaFunctionLikeSignature<*> -> append(DebugSymbolRenderer.computeApiEntityName(KaFunctionLikeSignature::class))
         is KaVariableLikeSignature<*> -> append(DebugSymbolRenderer.computeApiEntityName(KaVariableLikeSignature::class))
     }
-    appendLine(":")
+
     val memberProperties = listOfNotNull(
         KaVariableLikeSignature<*>::name.takeIf { signature is KaVariableLikeSignature<*> },
         KaCallableSignature<*>::receiverType,
@@ -142,7 +146,8 @@ private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): S
         KaFunctionLikeSignature<*>::valueParameters.takeIf { signature is KaFunctionLikeSignature<*> },
         KaCallableSignature<*>::callableId
     )
-    memberProperties.joinTo(this, separator = "\n  ", prefix = "  ") { property ->
+
+    memberProperties.joinTo(this, separator = "\n  ", prefix = ":\n  ") { property ->
         @Suppress("UNCHECKED_CAST")
         val value = (property as KProperty1<Any, *>).get(signature)
         val valueAsString = value?.let { stringRepresentation(it).indented() }

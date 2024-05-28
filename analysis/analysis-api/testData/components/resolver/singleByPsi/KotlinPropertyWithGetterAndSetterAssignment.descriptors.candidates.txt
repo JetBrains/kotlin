@@ -12,8 +12,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
@@ -50,8 +49,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
@@ -69,8 +67,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
@@ -88,8 +85,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
@@ -113,8 +109,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
@@ -138,8 +133,7 @@
         returnType = kotlin.Int
         symbol = var something: kotlin.Int
         callableId = /A.something
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
   isInBestCandidates = true
 

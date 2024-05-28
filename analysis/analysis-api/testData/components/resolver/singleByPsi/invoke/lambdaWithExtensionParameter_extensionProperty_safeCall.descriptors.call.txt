@@ -13,8 +13,7 @@ KtErrorCallInfo:
           returnType = kotlin.Function0<kotlin.Unit>
           symbol = val action: kotlin.Function0<kotlin.Unit>
           callableId = test/action
-      simpleAccess = Read:
-        
+      simpleAccess = Read
       typeArgumentsMapping = {}
   ]
   diagnostic = ERROR<null: UNSAFE_CALL_ERROR with invoke>

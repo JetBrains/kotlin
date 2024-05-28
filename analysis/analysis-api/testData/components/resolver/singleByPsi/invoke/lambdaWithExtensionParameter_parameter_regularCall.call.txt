@@ -9,6 +9,5 @@ KtSuccessCallInfo:
         returnType = @ExtensionFunctionType kotlin.Function1<test.Foo, kotlin.Unit>
         symbol = action: @ExtensionFunctionType kotlin.Function1<test.Foo, kotlin.Unit>
         callableId = null
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {}

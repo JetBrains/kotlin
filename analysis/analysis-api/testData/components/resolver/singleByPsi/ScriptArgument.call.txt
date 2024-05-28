@@ -9,6 +9,5 @@ KtSuccessCallInfo:
         returnType = kotlin.Array<kotlin.String>
         symbol = val args: kotlin.Array<kotlin.String>
         callableId = kotlin/script/templates/standard/ScriptTemplateWithArgs.args
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {}

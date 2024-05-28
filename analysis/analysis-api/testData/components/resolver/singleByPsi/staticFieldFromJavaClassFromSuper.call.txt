@@ -2,31 +2,7 @@ KtSuccessCallInfo:
   call = KtSimpleVariableAccessCall:
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtNamedClassOrObjectSymbol:
-          annotationsList: []
-          classId: Child
-          classKind: CLASS
-          companionObject: null
-          contextReceivers: []
-          isActual: false
-          isData: false
-          isExpect: false
-          isExternal: false
-          isFun: false
-          isInline: false
-          isInner: false
-          modality: OPEN
-          name: Child
-          origin: JAVA
-          superTypes: [
-            KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
-              type: BaseClass
-          ]
-          symbolKind: TOP_LEVEL
-          typeParameters: []
-          visibility: Public
+        symbol = /Child
         type = kotlin.Unit
       extensionReceiver = null
       signature = KtVariableLikeSignature:
@@ -35,6 +11,5 @@ KtSuccessCallInfo:
         returnType = kotlin.Int
         symbol = var bar: kotlin.Int
         callableId = /BaseClass.bar
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {}

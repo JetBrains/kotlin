@@ -9,7 +9,6 @@ KtApplicableCallCandidateInfo:
         returnType = kotlin.Int
         symbol = var bar: kotlin.Int
         callableId = /Dependency.Nested.bar
-    simpleAccess = Read:
-      
+    simpleAccess = Read
     typeArgumentsMapping = {}
   isInBestCandidates = true

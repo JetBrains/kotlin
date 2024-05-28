@@ -10,22 +10,7 @@ KtSuccessCallInfo:
         name = SOURCE
         receiverType = null
         returnType = kotlin.annotation.AnnotationRetention
-        symbol = KtEnumEntrySymbol:
-          annotationsList: []
-          callableId: kotlin/annotation/AnnotationRetention.SOURCE
-          contextReceivers: []
-          enumEntryInitializer: null
-          isExtension: false
-          name: SOURCE
-          origin: LIBRARY
-          receiverParameter: null
-          returnType: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
-            type: kotlin/annotation/AnnotationRetention
-          symbolKind: CLASS_MEMBER
-          typeParameters: []
+        symbol = kotlin/annotation/AnnotationRetention.SOURCE
         callableId = kotlin/annotation/AnnotationRetention.SOURCE
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {}

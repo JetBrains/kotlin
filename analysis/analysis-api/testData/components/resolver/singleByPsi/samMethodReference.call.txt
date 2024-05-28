@@ -3,31 +3,7 @@ KtSuccessCallInfo:
     isImplicitInvoke = false
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtNamedClassOrObjectSymbol:
-          annotationsList: []
-          classId: Test
-          classKind: CLASS
-          companionObject: null
-          contextReceivers: []
-          isActual: false
-          isData: false
-          isExpect: false
-          isExternal: false
-          isFun: false
-          isInline: false
-          isInner: false
-          modality: FINAL
-          name: Test
-          origin: SOURCE
-          superTypes: [
-            KtUsualClassType:
-              annotationsList: []
-              ownTypeArguments: []
-              type: kotlin/Any
-          ]
-          symbolKind: TOP_LEVEL
-          typeParameters: []
-          visibility: Public
+        symbol = /Test
         type = Test
       extensionReceiver = null
       signature = KtFunctionLikeSignature:

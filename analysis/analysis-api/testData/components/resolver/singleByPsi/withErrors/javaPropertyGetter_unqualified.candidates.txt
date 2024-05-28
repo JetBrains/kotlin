@@ -18,7 +18,6 @@ KtApplicableCallCandidateInfo:
         returnType = kotlin.Int
         symbol = val foo: kotlin.Int
         callableId = /JavaClass.foo
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {}
   isInBestCandidates = true

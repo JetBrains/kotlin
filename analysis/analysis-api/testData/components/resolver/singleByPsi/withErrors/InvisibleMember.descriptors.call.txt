@@ -13,8 +13,7 @@ KtErrorCallInfo:
           returnType = kotlin.Int
           symbol = val i: kotlin.Int
           callableId = /A.i
-      simpleAccess = Read:
-        
+      simpleAccess = Read
       typeArgumentsMapping = {}
   ]
   diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'i': it is private in 'A'>

@@ -9,6 +9,5 @@ KtSuccessCallInfo:
         returnType = kotlin.Int
         symbol = val $$result: kotlin.Int
         callableId = /$$result
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {}

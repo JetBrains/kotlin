@@ -10,22 +10,7 @@ KtSuccessCallInfo:
         name = RUNTIME
         receiverType = null
         returnType = java.lang.annotation.RetentionPolicy
-        symbol = KtEnumEntrySymbol:
-          annotationsList: []
-          callableId: java/lang/annotation/RetentionPolicy.RUNTIME
-          contextReceivers: []
-          enumEntryInitializer: null
-          isExtension: false
-          name: RUNTIME
-          origin: JAVA
-          receiverParameter: null
-          returnType: KtUsualClassType:
-            annotationsList: []
-            ownTypeArguments: []
-            type: java/lang/annotation/RetentionPolicy
-          symbolKind: CLASS_MEMBER
-          typeParameters: []
+        symbol = java/lang/annotation/RetentionPolicy.RUNTIME
         callableId = java/lang/annotation/RetentionPolicy.RUNTIME
-    simpleAccess = Read:
-
+    simpleAccess = Read
     typeArgumentsMapping = {}
