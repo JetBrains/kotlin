@@ -326,3 +326,5 @@
 -keepclassmembers class com.intellij.lang.jvm.JvmParameter {
     com.intellij.lang.jvm.types.JvmType getType();
 }
+# Uses a ClassLoader method from JDK 9+
+-dontwarn org.jetbrains.kotlin.buildtools.internal.ClassLoaderUtilsKt
