@@ -202,6 +202,10 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
         if (settings.isDisabledNative(registeredDirectives))
             return null
 
+        if (testModules.values.any {
+                it.files.any { it.location.extension == "def" && !it.text.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
+            }) return null
+
         val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location)
         val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives)
 

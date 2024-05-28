@@ -166,6 +166,7 @@ private class ExtTestDataFile(
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
                      && pipelineType == PipelineType.K2
                      && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
+                && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
 
     private fun assembleFreeCompilerArgs(): TestCompilerArgs {
         val args = mutableListOf<String>()
@@ -625,6 +626,11 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         private val filesAndModules = FilesAndModules(originalTestDataFile, sourceTransformers)
 
         val directives: Directives get() = filesAndModules.directives
+
+        val defFilesContents: List<String>
+            get() = filesAndModules.parsedFiles.filterKeys { it.name.endsWith(".def") }.map {
+                it.value.text
+            }
 
         val filesToTransform: Iterable<CurrentFileHandler>
             get() = filesAndModules.parsedFiles.filter { it.key.name.endsWith(".kt") || it.key.name.endsWith(".def") }
