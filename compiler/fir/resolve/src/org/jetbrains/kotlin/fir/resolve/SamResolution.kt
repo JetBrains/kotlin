@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 private val SAM_PARAMETER_NAME = Name.identifier("function")
 
@@ -124,10 +124,11 @@ class FirSamResolver(
     fun getSamConstructor(firClassOrTypeAlias: FirClassLikeDeclaration): FirSimpleFunction? {
         if (firClassOrTypeAlias is FirTypeAlias) {
             // Precompute the constructor for the base type to avoid deadlocks in the IDE.
-            firClassOrTypeAlias.expandedTypeRef.coneTypeSafe<ConeClassLikeType>()
+            firClassOrTypeAlias.symbol.resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()
                 ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session)
                 ?.let { samConstructorsCache.getValue(it, this) }
         }
+
         return samConstructorsCache.getValue(firClassOrTypeAlias.symbol, this)?.fir
     }
 

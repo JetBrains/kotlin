@@ -311,6 +311,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("samConstructorForTypeAlias.kt")
+  public void testSamConstructorForTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/samConstructorForTypeAlias.kt");
+  }
+
+  @Test
   @TestMetadata("setterValueParameter.kt")
   public void testSetterValueParameter() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/setterValueParameter.kt");

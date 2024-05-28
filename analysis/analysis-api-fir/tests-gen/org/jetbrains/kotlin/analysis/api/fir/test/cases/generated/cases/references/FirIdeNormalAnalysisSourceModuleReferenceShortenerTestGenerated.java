@@ -497,6 +497,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
   }
 
   @Test
+  @TestMetadata("samConstructorWithTypeAliasNameClash.kt")
+  public void testSamConstructorWithTypeAliasNameClash() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/samConstructorWithTypeAliasNameClash.kt");
+  }
+
+  @Test
   @TestMetadata("samInterface_constructorCall.kt")
   public void testSamInterface_constructorCall() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/samInterface_constructorCall.kt");

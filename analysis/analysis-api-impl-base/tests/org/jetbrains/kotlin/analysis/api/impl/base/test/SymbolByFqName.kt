@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -131,27 +131,48 @@ sealed class SymbolData {
         }
     }
 
-    companion object {
-        val identifiers = arrayOf("package:", "callable:", "class:", "typealias:", "enum_entry_initializer:", "script")
+    data class SamConstructorData(val classId: ClassId) : SymbolData() {
+        override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
+            val symbol = getClassOrObjectSymbolByClassId(classId)
+                ?: getTypeAliasByClassId(classId)
+                ?: error("Class-like symbol is not found by '$classId'")
 
-        fun create(data: String): SymbolData = when {
-            data == "script" -> ScriptData
-            data.startsWith("package:") -> PackageData(extractPackageFqName(data))
-            data.startsWith("class:") -> ClassData(ClassId.fromString(data.removePrefix("class:").trim()))
-            data.startsWith("typealias:") -> TypeAliasData(ClassId.fromString(data.removePrefix("typealias:").trim()))
-            data.startsWith("callable:") -> CallableData(extractCallableId(data, "callable:"))
-            data.startsWith("enum_entry_initializer") -> EnumEntryInitializerData(extractCallableId(data, "enum_entry_initializer:"))
-            else -> error("Invalid symbol kind, expected one of: $identifiers")
+            val samConstructor = symbol.getSamConstructor() ?: error("SAM constructor is not found for symbol '$symbol'")
+            return listOf(samConstructor)
+        }
+    }
+
+    companion object {
+        val identifiers = arrayOf(
+            "package:",
+            "callable:",
+            "class:",
+            "typealias:",
+            "enum_entry_initializer:",
+            "script",
+            "sam_constructor:"
+        )
+
+        fun create(data: String): SymbolData {
+            val key = data.substringBefore(":")
+            val value = data.substringAfter(":").trim()
+            return when (key) {
+                "script" -> ScriptData
+                "package" -> PackageData(extractPackageFqName(value))
+                "class" -> ClassData(ClassId.fromString(value))
+                "typealias" -> TypeAliasData(ClassId.fromString(value))
+                "callable" -> CallableData(extractCallableId(value))
+                "enum_entry_initializer" -> EnumEntryInitializerData(extractCallableId(value))
+                "sam_constructor" -> SamConstructorData(ClassId.fromString(value))
+                else -> error("Invalid symbol kind, expected one of: $identifiers")
+            }
         }
     }
 }
 
-private fun extractPackageFqName(data: String): FqName {
-    return FqName.fromSegments(data.removePrefix("package:").trim().split('.'))
-}
+private fun extractPackageFqName(data: String): FqName = FqName.fromSegments(data.split('.'))
 
-private fun extractCallableId(data: String, prefix: String): CallableId {
-    val fullName = data.removePrefix(prefix).trim()
+private fun extractCallableId(fullName: String): CallableId {
     val name = if ('.' in fullName) fullName.substringAfterLast(".") else fullName.substringAfterLast('/')
     val (packageName, className) = run {
         val packageNameWithClassName = fullName.dropLast(name.length + 1)
