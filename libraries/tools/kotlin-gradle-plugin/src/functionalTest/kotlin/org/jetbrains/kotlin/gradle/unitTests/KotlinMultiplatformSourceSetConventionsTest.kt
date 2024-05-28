@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConv
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.jvmTest
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.assertContainsDependencies
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
@@ -183,6 +183,7 @@ class KotlinMultiplatformSourceSetConventionsTest {
                     add(SourceSetDetails(target, "test", "${target}Test"))
                 }
             }
+
         assertEquals(
             expectedDetailsBeforeEvaluate.sorted(),
             actualDetailsBeforeEvaluate.sorted(),
