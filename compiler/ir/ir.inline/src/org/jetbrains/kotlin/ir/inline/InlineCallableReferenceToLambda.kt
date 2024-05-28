@@ -107,7 +107,10 @@ private class InlineCallableReferenceToLambdaVisitor(
                     boundReceiver != null -> irGet(addExtensionReceiver(boundReceiver.type))
                     else -> irGet(addValueParameter("receiver", field.parentAsClass.defaultType))
                 }
-                irExprBody(irGetField(fieldReceiver, field))
+                irBlockBody {
+                    val exprToReturn = irGetField(fieldReceiver, field)
+                    +irReturn(exprToReturn)
+                }
             }
         }
 
@@ -129,21 +132,24 @@ private class InlineCallableReferenceToLambdaVisitor(
                     extensionReceiver != null -> referencedFunction.extensionReceiverParameter
                     else -> null
                 }
-                irExprBody(irCall(referencedFunction.symbol, returnType).apply {
-                    copyTypeArgumentsFrom(this@wrapFunction)
-                    for (parameter in referencedFunction.explicitParameters) {
-                        val next = valueParameters.size
-                        when {
-                            boundReceiverParameter == parameter -> irGet(addExtensionReceiver(boundReceiver!!.type))
-                            parameter.isVararg && next < argumentTypes.size && parameter.type == argumentTypes[next] ->
-                                irGet(addValueParameter("p$next", argumentTypes[next]))
-                            parameter.isVararg && (next < argumentTypes.size || !parameter.hasDefaultValue()) ->
-                                error("Callable reference with vararg should not appear at this stage.\n${this@wrapFunction.render()}")
-                            next >= argumentTypes.size -> null
-                            else -> irGet(addValueParameter("p$next", argumentTypes[next]))
-                        }?.let { putArgument(referencedFunction, parameter, it) }
+                irBlockBody {
+                    val exprToReturn = irCall(referencedFunction.symbol, returnType).apply {
+                        copyTypeArgumentsFrom(this@wrapFunction)
+                        for (parameter in referencedFunction.explicitParameters) {
+                            val next = valueParameters.size
+                            when {
+                                boundReceiverParameter == parameter -> irGet(addExtensionReceiver(boundReceiver!!.type))
+                                parameter.isVararg && next < argumentTypes.size && parameter.type == argumentTypes[next] ->
+                                    irGet(addValueParameter("p$next", argumentTypes[next]))
+                                parameter.isVararg && (next < argumentTypes.size || !parameter.hasDefaultValue()) ->
+                                    error("Callable reference with vararg should not appear at this stage.\n${this@wrapFunction.render()}")
+                                next >= argumentTypes.size -> null
+                                else -> irGet(addValueParameter("p$next", argumentTypes[next]))
+                            }?.let { putArgument(referencedFunction, parameter, it) }
+                        }
                     }
-                })
+                    +irReturn(exprToReturn)
+                }
             }
         }
 
