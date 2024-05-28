@@ -21,6 +21,14 @@ class TestComponentRegistrar : CompilerPluginRegistrar() {
         } catch (ex: SQLException) {
             // no-op
         }
+        try {
+            Class.forName("org.gradle.launcher.bootstrap.EntryPoint")
+            throw Exception("Gradle classes are accessible within the isolated classpath")
+        } catch (e: ClassNotFoundException) {
+            // no-op
+        } catch (t: Throwable) {
+            throw Exception("Gradle classes are accessible within the isolated classpath")
+        }
     }
 
     override val supportsK2: Boolean = true
