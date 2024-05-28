@@ -37,15 +37,17 @@ const val STUB_FOR_INLINING = "stub_for_inlining"
 //
 abstract class InlineCallableReferenceToLambdaPhase(
     val context: CommonBackendContext,
-    private val inlineFunctionResolver: InlineFunctionResolver,
-) : FileLoweringPass, IrElementVisitor<Unit, IrDeclaration?> {
-    override fun lower(irFile: IrFile) =
-        irFile.accept(this, null)
+    protected val inlineFunctionResolver: InlineFunctionResolver,
+) : FileLoweringPass, IrElementVisitor<Unit, IrDeclarationParent?> {
+    override fun lower(irFile: IrFile) = irFile.accept(this, null)
 
-    override fun visitElement(element: IrElement, data: IrDeclaration?) =
-        element.acceptChildren(this, element as? IrDeclaration ?: data)
+    override fun visitElement(element: IrElement, data: IrDeclarationParent?) =
+        element.acceptChildren(this, data)
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration?) {
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
+        super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclarationParent?) {
         expression.acceptChildren(this, data)
         val function = expression.symbol.owner
         if (inlineFunctionResolver.needsInlining(function)) {
@@ -57,7 +59,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
         }
     }
 
-    private fun IrExpression.transform(scope: IrDeclaration?) = when {
+    protected fun IrExpression.transform(scope: IrDeclarationParent?) = when {
         this is IrBlock && origin.isInlinable -> apply {
             // Already a lambda or similar, just mark it with an origin.
             val reference = statements.last() as IrFunctionReference
@@ -148,9 +150,9 @@ abstract class InlineCallableReferenceToLambdaPhase(
             }
         }
 
-    private fun IrSimpleFunction.toLambda(original: IrCallableReference<*>, scope: IrDeclaration) =
-        context.createIrBuilder(scope.symbol).irBlock(startOffset, endOffset, IrStatementOrigin.LAMBDA) {
-            this@toLambda.parent = parent
+    private fun IrSimpleFunction.toLambda(original: IrCallableReference<*>, scope: IrDeclarationParent) =
+        context.createIrBuilder(symbol).irBlock(startOffset, endOffset, IrStatementOrigin.LAMBDA) {
+            this@toLambda.parent = scope
             +this@toLambda
             +IrFunctionReferenceImpl.fromSymbolOwner(
                 startOffset, endOffset, original.type, symbol, typeArgumentsCount = 0, reflectionTarget = null,
