@@ -40,16 +40,16 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  * and the argument, are compile-time constant as well.
  */
 internal object FirCompileTimeConstantEvaluator {
-    private val variablesInProcessOfEvaluation = mutableSetOf<FirVariableSymbol<*>>()
+    private val variablesInProcessOfEvaluation = ThreadLocal.withInitial { mutableSetOf<FirVariableSymbol<*>>() }
 
     private inline fun <R> withTrackingVariableEvaluation(variableSymbol: FirVariableSymbol<*>, f: () -> R): R? {
-        if (!variablesInProcessOfEvaluation.add(variableSymbol)) {
+        if (!variablesInProcessOfEvaluation.get().add(variableSymbol)) {
             return null
         }
         return try {
             f()
         } finally {
-            variablesInProcessOfEvaluation.remove(variableSymbol)
+            variablesInProcessOfEvaluation.get().remove(variableSymbol)
         }
     }
 
