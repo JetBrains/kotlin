@@ -39,7 +39,7 @@ internal interface PrimitiveBuilder {
 }
 
 internal abstract class AnnotatedAndDocumented {
-    private var doc: String? = null
+    protected var doc: String? = null
     val annotations: MutableList<String> = mutableListOf()
     var additionalComments: String? = null
 
@@ -180,11 +180,10 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
             append("public ")
             expectActual.modifier?.let { append(it).append(' ') }
             append("class $name")
-            append(' ')
             if (primaryConstructor.visibility != MethodVisibility.PRIVATE || !expectActual.isExpect) {
-                append(primaryConstructor.build()).append(' ')
+                append(primaryConstructor.build())
             }
-            appendLine(": ${filterSupertypeConstructors().joinToString()} {")
+            appendLine(" : ${filterSupertypeConstructors().joinToString()} {")
 
             secondaryConstructor?.let {
                 appendLine(it.build().shift())
@@ -233,7 +232,7 @@ internal class PrimaryConstructorBuilder : AnnotatedAndDocumented(), PrimitiveBu
 
     override fun build(): String {
         return buildString {
-            if (annotations.isNotEmpty()) appendLine()
+            if (annotations.isNotEmpty() || doc != null) appendLine() else append(' ')
             printDocumentationAndAnnotations()
 
             visibility?.let { append("${it.name.lowercase()} ") }
