@@ -1251,9 +1251,7 @@ class Fir2IrVisitor(
                 }
                 val isProperlyExhaustive = whenExpression.isDeeplyProperlyExhaustive()
                 val whenExpressionType =
-                    if (isProperlyExhaustive && whenExpression.branches.none {
-                            it.condition is FirElseIfTrueCondition && it.result.statements.isEmpty()
-                        }) whenExpression.resolvedType else session.builtinTypes.unitType.type
+                    if (isProperlyExhaustive) whenExpression.resolvedType else session.builtinTypes.unitType.type
                 val irBranches = whenExpression.convertWhenBranchesTo(
                     mutableListOf(),
                     whenExpressionType,
