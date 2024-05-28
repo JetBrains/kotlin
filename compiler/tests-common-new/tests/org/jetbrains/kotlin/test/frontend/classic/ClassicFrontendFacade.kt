@@ -404,7 +404,7 @@ class ClassicFrontendFacade(
             friendsDescriptors = friendsDescriptors,
             dependsOnDescriptors = dependsOnDescriptors,
             capabilities = mapOf(
-                // provides `klibModuleOrigin` capability needed in `ModuleDescriptor.isFromInteropLibrary()`
+                // provides `klibModuleOrigin` capability needed in `ModuleDescriptor.isFromCInteropLibrary()`
                 KlibModuleOrigin.CAPABILITY to CurrentKlibModuleOrigin,
             ),
         ) {

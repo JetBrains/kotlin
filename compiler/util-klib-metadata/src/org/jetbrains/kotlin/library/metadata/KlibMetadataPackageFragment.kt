@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -28,7 +29,7 @@ open class KlibMetadataDeserializedPackageFragment(
     storageManager: StorageManager,
     module: ModuleDescriptor,
     private val partName: String,
-    containerSource: DeserializedContainerSource
+    containerSource: KlibDeserializedContainerSource
 ) : KlibMetadataPackageFragment(fqName, storageManager, module, containerSource) {
 
     // The proto field is lazy so that we can load only needed
@@ -60,7 +61,7 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
     storageManager: StorageManager,
     module: ModuleDescriptor,
     partName: String,
-    containerSource: DeserializedContainerSource
+    containerSource: KlibDeserializedContainerSource
 ) : KlibMetadataDeserializedPackageFragment(fqName, library, packageAccessHandler, storageManager, module, partName, containerSource),
     BuiltInsPackageFragment {
 
@@ -80,7 +81,7 @@ abstract class KlibMetadataPackageFragment(
     fqName: FqName,
     storageManager: StorageManager,
     module: ModuleDescriptor,
-    containerSource: DeserializedContainerSource?
+    protected val containerSource: KlibDeserializedContainerSource?
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
 
     lateinit var components: DeserializationComponents
@@ -103,6 +104,8 @@ abstract class KlibMetadataPackageFragment(
     override val classDataFinder by lazy {
         KlibMetadataClassDataFinder(protoForNames, nameResolver, containerSource)
     }
+
+    override fun getSource(): SourceElement = containerSource ?: super.source
 
     private val _memberScope by lazy {
         /* TODO: we fake proto binary versioning for now. */

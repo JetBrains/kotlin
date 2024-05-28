@@ -128,9 +128,15 @@ val BaseKotlinLibrary.hasDependencies: Boolean
 
 interface KotlinLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
 
-// TODO: should we move the below ones to Native?
-val KotlinLibrary.isInterop: Boolean
-    get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP) == "true"
+@Deprecated(
+    "Use BaseKotlinLibrary.isCInteropLibrary() for more precise check",
+    ReplaceWith("isCInteropLibrary()", "org.jetbrains.kotlin.library.metadata.isCInteropLibrary"),
+    DeprecationLevel.WARNING
+)
+val KotlinLibrary.isInterop: Boolean get() = interopFlag == "true"
+
+val BaseKotlinLibrary.interopFlag: String?
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP)
 
 val KotlinLibrary.isHeader: Boolean
     get() = manifestProperties.getProperty(KLIB_PROPERTY_HEADER) == "true"
@@ -156,7 +162,11 @@ val BaseKotlinLibrary.wasmTargets: List<String>
 val KotlinLibrary.containsErrorCode: Boolean
     get() = manifestProperties.getProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE) == "true"
 
+@Deprecated("Use BaseKotlinLibrary.commonizerTarget instead", level = DeprecationLevel.HIDDEN)
 val KotlinLibrary.commonizerTarget: String?
+    get() = commonizerTarget
+
+val BaseKotlinLibrary.commonizerTarget: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_COMMONIZER_TARGET)
 
 @Deprecated("Use BaseKotlinLibrary.builtInsPlatform instead", level = DeprecationLevel.HIDDEN)

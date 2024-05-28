@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
-import org.jetbrains.kotlin.library.metadata.isInteropLibrary
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
     val allDependencies = mutableSetOf<KotlinLibrary>()
@@ -119,7 +119,7 @@ class CacheBuilder(
             if (library in needFullRebuild) continue
             val cache = caches[library] ?: continue
             if (cache !is CachedLibraries.Cache.PerFile) {
-                require(library.isInteropLibrary())
+                require(library.isCInteropLibrary())
                 continue
             }
 
@@ -234,7 +234,7 @@ class CacheBuilder(
         filesToCache.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "    $it") }
 
         // Produce monolithic caches for external libraries for now.
-        val makePerFileCache = !isExternal && !library.isInteropLibrary()
+        val makePerFileCache = !isExternal && !library.isCInteropLibrary()
 
         val libraryCacheDirectory = when {
             library.isDefault -> konanConfig.systemCacheDirectory

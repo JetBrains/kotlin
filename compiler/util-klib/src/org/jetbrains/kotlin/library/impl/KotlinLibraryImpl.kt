@@ -318,11 +318,9 @@ class KotlinLibraryImpl(
         append(", ")
         append("version: ")
         append(base.versions)
-        if (isInterop) {
-            append(", interop: true, ")
-            append("native targets: ")
-            nativeTargets.joinTo(this, ", ", "{", "}")
-        }
+        interopFlag?.let { append(", interop: $it") }
+        irProviderName?.let { append(", IR provider: $it") }
+        nativeTargets.takeIf { it.isNotEmpty() }?.joinTo(this, ", ", ", native targets: {", "}")
         append(')')
     }
 }

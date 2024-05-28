@@ -41,8 +41,7 @@ import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
-import org.jetbrains.kotlin.library.metadata.isFromInteropLibrary
-import org.jetbrains.kotlin.library.metadata.isInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 
@@ -303,7 +302,7 @@ internal class KonanIrLinker(
         val klib = packageFragment.konanLibrary
         val declarationBeingCached = packageFragment is IrFile && klib != null && libraryBeingCached?.klib == klib
                 && libraryBeingCached.strategy.contains(packageFragment.path)
-        return if (klib != null && !moduleDescriptor.isFromInteropLibrary()
+        return if (klib != null && !moduleDescriptor.isFromCInteropLibrary()
                 && cachedLibraries.isLibraryCached(klib) && !declarationBeingCached)
             moduleDeserializers[moduleDescriptor] ?: error("No module deserializer for ${declaration.render()}")
         else null
@@ -317,7 +316,7 @@ internal class KonanIrLinker(
                 klib == null -> {
                     error("Expecting kotlin library for $moduleDescriptor")
                 }
-                klib.isInteropLibrary() -> {
+                klib.isCInteropLibrary() -> {
                     KonanInteropModuleDeserializer(
                             moduleDescriptor,
                             klib,

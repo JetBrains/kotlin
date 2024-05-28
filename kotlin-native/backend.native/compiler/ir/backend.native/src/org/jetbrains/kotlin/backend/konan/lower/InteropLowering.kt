@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
+import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -1024,7 +1025,7 @@ private class InteropTransformer(
     private fun tryGenerateInteropConstantRead(expression: IrCall): IrExpression? {
         val function = expression.symbol.owner
 
-        if (!function.isFromInteropLibrary()) return null
+        if (!function.isFromCInteropLibrary()) return null
         if (!function.isGetter) return null
 
         val constantProperty = function.correspondingPropertySymbol?.owner?.takeIf { it.isConst } ?: return null

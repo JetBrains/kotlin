@@ -9,6 +9,7 @@ import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.objcinterop.*
@@ -444,7 +445,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (declaration.isTypedIntrinsic || declaration.isObjCBridgeBased()
                     // All call-sites to external accessors to interop properties
                     // are lowered by InteropLowering.
-                    || (declaration.isAccessor && declaration.isFromInteropLibrary())
+                    || (declaration.isAccessor && declaration.isFromCInteropLibrary())
                     || declaration.annotations.hasAnnotation(RuntimeNames.cCall)) return
 
             val proto = LlvmFunctionProto(declaration, declaration.computeSymbolName(), this, LLVMLinkage.LLVMExternalLinkage)

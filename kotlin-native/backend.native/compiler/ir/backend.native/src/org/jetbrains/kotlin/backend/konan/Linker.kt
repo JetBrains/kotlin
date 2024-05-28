@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.konan.target.presetName
-import org.jetbrains.kotlin.library.isInterop
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 
 internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
@@ -169,7 +169,7 @@ internal fun runLinkerCommands(context: PhaseContext, commands: List<Command>, c
 
     val extraUserSetupInfo = run {
         context.config.resolvedLibraries.getFullResolvedList()
-                .filter { it.library.isInterop }
+                .filter { it.library.isCInteropLibrary() }
                 .mapNotNull { library ->
                     library.library.manifestProperties["userSetupHint"]?.let {
                         "From ${library.library.uniqueName}:\n$it".takeIf { it.isNotEmpty() }
