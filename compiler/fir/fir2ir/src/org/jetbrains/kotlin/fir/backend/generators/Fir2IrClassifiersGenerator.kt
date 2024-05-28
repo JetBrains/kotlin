@@ -402,7 +402,7 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
     fun createIrClassForNotFoundClass(classLikeLookupTag: ConeClassLikeLookupTag): IrClass {
         val classId = classLikeLookupTag.classId
         val parentId = classId.outerClassId
-        val parentClass = parentId?.let { createIrClassForNotFoundClass(it.toLookupTag()) }
+        val parentClass = parentId?.let { classifierStorage.getIrClassForNotFoundClass(it.toLookupTag()) }
         val irParent = parentClass ?: declarationStorage.getIrExternalPackageFragment(
             classId.packageFqName, session.moduleData.dependencies.first()
         )
