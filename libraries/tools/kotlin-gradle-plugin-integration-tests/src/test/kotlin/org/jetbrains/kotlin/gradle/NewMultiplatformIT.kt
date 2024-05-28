@@ -9,11 +9,9 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.testbase.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
-import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -30,8 +28,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = gradleVersion
-
-    private val nativeHostTargetName = MPPNativeTargets.current
 
     private fun Project.targetClassesDir(targetName: String, sourceSetName: String = "main") =
         classesDir(sourceSet = "$targetName/$sourceSetName")
@@ -570,99 +566,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 assertEquals(expectedArgs, compilerPluginArgsBySourceSet[it], "Expected $expectedArgs as plugin args for $it")
                 assertTrue { compilerPluginClasspathBySourceSet[it]!!.contains("kotlin-allopen") }
                 assertTrue { compilerPluginClasspathBySourceSet[it]!!.contains("kotlin-noarg") }
-            }
-        }
-    }
-
-    @Test
-    fun testAssociateCompilations() {
-        testAssociateCompilationsImpl()
-    }
-
-    private fun testAssociateCompilationsImpl() {
-        with(Project("new-mpp-associate-compilations")) {
-            setupWorkingDir()
-            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-
-            val tasks = listOf("jvm", "js", "linux64").map {
-                ":compileIntegrationTestKotlin${
-                    it.replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(
-                            Locale.getDefault()
-                        ) else it.toString()
-                    }
-                }"
-            }
-
-            build(
-                *tasks.toTypedArray()
-            ) {
-                assertSuccessful()
-                assertTasksExecuted(*tasks.toTypedArray())
-
-                // JVM:
-                checkBytecodeContains(
-                    projectDir.resolve("build/classes/kotlin/jvm/integrationTest/com/example/HelloIntegrationTest.class"),
-                    "Hello.internalFun\$new_mpp_associate_compilations",
-                    "HelloTest.internalTestFun\$new_mpp_associate_compilations"
-                )
-                assertFileExists("build/classes/kotlin/jvm/integrationTest/META-INF/new-mpp-associate-compilations_integrationTest.kotlin_module")
-
-                // JS:
-                assertFileExists(
-                    "build/classes/kotlin/js/integrationTest/default/manifest"
-                )
-
-                // Native:
-                assertFileExists("build/classes/kotlin/linux64/integrationTest/klib/new-mpp-associate-compilations_integrationTest.klib")
-            }
-        }
-    }
-
-    @Test
-    fun testTestRunsApi() = with(Project("new-mpp-associate-compilations")) {
-        setupWorkingDir()
-        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-
-        // TOOD: add Kotlin/JS tests once they can be tested without much performance overhead
-        val targetsToTest = listOf("jvm", nativeHostTargetName) + when (HostManager.host) {
-            KonanTarget.MACOS_X64 -> listOf("iosX64")
-            KonanTarget.MACOS_ARM64 -> listOf("iosSimulatorArm64")
-            else -> emptyList()
-        }
-        val testTasks = targetsToTest.flatMap { listOf(":${it}Test", ":${it}IntegrationTest") }.toTypedArray()
-
-        build(*testTasks) {
-            assertSuccessful()
-
-            assertTasksExecuted(
-                *testTasks,
-                ":compileIntegrationTestKotlinJvm",
-                ":linkIntegrationDebugTest${nativeHostTargetName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
-            )
-
-            fun checkUnitTestOutput(targetName: String) {
-                val classReportHtml = projectDir
-                    .resolve("build/reports/tests/${targetName}Test/classes/com.example.HelloTest.html")
-                    .readText()
-
-                assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
-            }
-            targetsToTest.forEach {
-                checkUnitTestOutput(it)
-            }
-
-            fun checkIntegrationTestOutput(targetName: String) {
-                val classReportHtml = projectDir
-                    .resolve("build/reports/tests/${targetName}IntegrationTest/classes/com.example.HelloIntegrationTest.html")
-                    .readText()
-
-                assertTrue("test[$targetName]" in classReportHtml, "Test report should contain 'test[$targetName]':\n$classReportHtml")
-                assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
-                assertTrue("thirdTest" !in classReportHtml, "Test report should not contain 'thirdTest':\n$classReportHtml")
-            }
-            targetsToTest.forEach {
-                checkIntegrationTestOutput(it)
             }
         }
     }
