@@ -57,7 +57,7 @@ private val sourceName: Name = Name.identifier("SOURCE")
 fun List<FirAnnotation>.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
     this.filter { annotation ->
         val firAnnotationClass = annotation.toAnnotationClass(session)
-        firAnnotationClass != null && firAnnotationClass.annotations.none { meta ->
+        firAnnotationClass != null && firAnnotationClass.symbol.resolvedAnnotationsWithClassIds.none { meta ->
             meta.toAnnotationClassId(session) == StandardClassIds.Annotations.Retention &&
                     meta.findArgumentByName(StandardClassIds.Annotations.ParameterNames.retentionValue)
                         ?.extractEnumValueArgumentInfo()?.enumEntryName == sourceName

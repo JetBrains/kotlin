@@ -532,10 +532,9 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val hasConstant = (!property.isVar
+        val hasConstant = property.isConst || (!property.isVar
                 && property.returnTypeRef.coneType.fullyExpandedType(session).canBeUsedForConstVal()
-                && property.initializer.hasConstantValue(session))
-                || property.isConst
+                && property.symbol.resolvedInitializer.hasConstantValue(session))
         val flags = Flags.getPropertyFlags(
             hasAnnotations,
             ProtoEnumFlags.visibility(normalizeVisibility(property)),
