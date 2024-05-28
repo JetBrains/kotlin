@@ -7,18 +7,14 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.dsl.metadataTarget
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.configureSourcesPublicationAttributes
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.setAttribute
@@ -111,31 +107,6 @@ internal class DefaultKotlinSourceSetFactory(
                 if (project.isKotlinGranularMetadataEnabled) {
                     attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
                 }
-            }
-        }
-
-        setupDependencySourcesConfiguration(sourceSet)
-    }
-
-    private fun setupDependencySourcesConfiguration(sourceSet: DefaultKotlinSourceSet) {
-        project.launch {
-            val platformCompilation = sourceSet.awaitPlatformCompilations().singleOrNull()
-
-            // Shared source sets and platform source sets has different configurations for compile dependencies
-            val configuration: Configuration
-            val target: KotlinTarget
-            if (platformCompilation == null) {
-                target = project.multiplatformExtensionOrNull?.metadataTarget ?: return@launch // source set configured incorrectly, can't resolve artifact for that
-                configuration = sourceSet.internal.resolvableMetadataConfiguration
-            } else {
-                target = platformCompilation.target
-                configuration = platformCompilation.internal.configurations.compileDependencyConfiguration
-            }
-
-            val sourcesConfig = project.configurations.createResolvable(sourceSet.dependencySourcesConfigurationName)
-            sourcesConfig.apply {
-                configureSourcesPublicationAttributes(target)
-                extendsFrom(configuration)
             }
         }
     }
