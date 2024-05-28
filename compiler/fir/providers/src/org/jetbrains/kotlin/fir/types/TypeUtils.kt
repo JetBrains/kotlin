@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -268,26 +267,6 @@ fun ConeKotlinType.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
 
 fun ConeClassLikeType.toSymbol(session: FirSession): FirClassLikeSymbol<*>? {
     return lookupTag.toSymbol(session)
-}
-
-fun ConeKotlinType.toFirResolvedTypeRef(
-    source: KtSourceElement? = null,
-    delegatedTypeRef: FirTypeRef? = null
-): FirResolvedTypeRef {
-    return if (this is ConeErrorType) {
-        buildErrorTypeRef {
-            this.source = source
-            diagnostic = this@toFirResolvedTypeRef.diagnostic
-            type = this@toFirResolvedTypeRef
-            this.delegatedTypeRef = delegatedTypeRef
-        }
-    } else {
-        buildResolvedTypeRef {
-            this.source = source
-            type = this@toFirResolvedTypeRef
-            this.delegatedTypeRef = delegatedTypeRef
-        }
-    }
 }
 
 fun FirTypeRef.hasEnhancedNullability(): Boolean =

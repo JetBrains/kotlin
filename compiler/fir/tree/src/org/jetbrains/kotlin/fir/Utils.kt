@@ -368,3 +368,23 @@ fun FirOperation.toAugmentedAssignSourceKind() = when (this) {
     FirOperation.REM_ASSIGN -> KtFakeSourceElementKind.DesugaredRemAssign
     else -> error("Unexpected operator: $name")
 }
+
+fun ConeKotlinType.toFirResolvedTypeRef(
+    source: KtSourceElement? = null,
+    delegatedTypeRef: FirTypeRef? = null
+): FirResolvedTypeRef {
+    return if (this is ConeErrorType) {
+        buildErrorTypeRef {
+            this.source = source
+            diagnostic = this@toFirResolvedTypeRef.diagnostic
+            type = this@toFirResolvedTypeRef
+            this.delegatedTypeRef = delegatedTypeRef
+        }
+    } else {
+        buildResolvedTypeRef {
+            this.source = source
+            type = this@toFirResolvedTypeRef
+            this.delegatedTypeRef = delegatedTypeRef
+        }
+    }
+}
