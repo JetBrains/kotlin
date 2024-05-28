@@ -212,61 +212,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testLibWithTests() = doTestLibWithTests(transformNativeTestProject("new-mpp-lib-with-tests", gradleVersion))
-
-    @Test
-    fun testLibWithTestsKotlinDsl() = with(transformNativeTestProject("new-mpp-lib-with-tests", gradleVersion)) {
-        gradleBuildScript().delete()
-        projectDir.resolve("build.gradle.kts.alternative").renameTo(projectDir.resolve("build.gradle.kts"))
-        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-        doTestLibWithTests(this)
-    }
-
-    private fun doTestLibWithTests(project: Project) = with(project) {
-        build("check") {
-            assertSuccessful()
-            assertTasksExecuted(
-                // compilation tasks:
-                ":compileKotlinJs",
-                ":compileTestKotlinJs",
-                ":compileKotlinJvmWithoutJava",
-                ":compileTestKotlinJvmWithoutJava",
-                // test tasks:
-                ":jsTest", // does not run any actual tests for now
-                ":jvmWithoutJavaTest",
-            )
-
-            val expectedKotlinOutputFiles = listOf(
-                *kotlinClassesDir(sourceSet = "jvmWithoutJava/main").let {
-                    arrayOf(
-                        it + "com/example/lib/CommonKt.class",
-                        it + "com/example/lib/MainKt.class",
-                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module"
-                    )
-                },
-                *kotlinClassesDir(sourceSet = "jvmWithoutJava/test").let {
-                    arrayOf(
-                        it + "com/example/lib/TestCommonCode.class",
-                        it + "com/example/lib/TestWithoutJava.class",
-                        it + "META-INF/new-mpp-lib-with-tests_test.kotlin_module"
-                    )
-                }
-            )
-
-            expectedKotlinOutputFiles.forEach { assertFileExists(it) }
-            val expectedTestResults = projectDir.resolve("TEST-all.xml")
-
-            expectedTestResults.replaceText("<target>", targetName)
-
-            assertTestResults(
-                expectedTestResults,
-                "jsNodeTest",
-                "${targetName}Test"
-            )
-        }
-    }
-
-    @Test
     fun testConsumeMppLibraryFromNonKotlinProject() {
         val libRepo = with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
             build("publish") { assertSuccessful() }

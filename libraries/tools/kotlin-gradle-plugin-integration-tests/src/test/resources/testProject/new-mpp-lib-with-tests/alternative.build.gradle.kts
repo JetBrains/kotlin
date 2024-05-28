@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 repositories {
@@ -20,36 +20,36 @@ kotlin {
     sourceSets {
         val commonMain by getting
         val commonTest by getting {
-        	dependencies {
-        		implementation(kotlin("test-common"))
-        		implementation(kotlin("test-annotations-common"))
-        	}
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
         }
 
         jvmWithoutJava.compilations["main"].defaultSourceSet {
-        	dependencies {
-        		implementation(kotlin("stdlib"))
-        		implementation(kotlin("script-runtime"))
-        	}
+            dependencies {
+                implementation(kotlin("stdlib"))
+                implementation(kotlin("script-runtime"))
+            }
         }
 
         jvmWithoutJava.compilations["test"].defaultSourceSet {
-        	dependencies {
-        		implementation(kotlin("test-junit"))
-        	}
+            dependencies {
+                implementation(kotlin("test-junit"))
+            }
         }
 
         js.compilations["test"].defaultSourceSet {
-        	dependencies {
-        		implementation(kotlin("test-js"))
-        	}
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
         }
 
-		val nativeMain by creating {
-		    dependsOn(commonMain)
-		}
-		configure(listOf(macos64, macosArm64, linux64, mingw64)) {
+        val nativeMain by creating {
+            dependsOn(commonMain)
+        }
+        configure(listOf(macos64, macosArm64, linux64, mingw64)) {
             compilations["main"].defaultSourceSet.dependsOn(nativeMain)
-		}
+        }
     }
 }
