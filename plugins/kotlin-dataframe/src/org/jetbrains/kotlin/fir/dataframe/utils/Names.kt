@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.dataframe.annotations.Interpretable
+import org.jetbrains.kotlinx.dataframe.annotations.Order
 import kotlin.reflect.KClass
 
 object Names {
@@ -32,6 +33,8 @@ object Names {
         get() = Name.identifier("org.jetbrains.kotlinx.dataframe.annotations")
     val INTERPRETABLE_FQNAME: FqName
         get() = FqName(Interpretable::class.qualifiedName!!)
+    val ORDER_ANNOTATION = ClassId(FqName("org.jetbrains.kotlinx.dataframe.annotations"), Name.identifier(Order::class.simpleName!!))
+    val ORDER_ARGUMENT = Name.identifier(Order::order.name)
 
     val DATA_SCHEMA_CLASS_ID = ClassId(FqName("org.jetbrains.kotlinx.dataframe.annotations"), Name.identifier("DataSchema"))
     val LIST = ClassId(FqName("kotlin.collections"), Name.identifier("List"))

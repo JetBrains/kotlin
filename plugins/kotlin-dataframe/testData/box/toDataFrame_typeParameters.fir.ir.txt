@@ -238,6 +238,8 @@ FILE fqName:<root> fileName:/toDataFrame_typeParameters.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:v visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I) returnType:kotlin.Any?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:v visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I
@@ -308,6 +310,8 @@ FILE fqName:<root> fileName:/toDataFrame_typeParameters.kt
                       public open fun toString (): kotlin.String declared in <root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:v visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract v: kotlin.Any? declared in <root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I
                     FUN FAKE_OVERRIDE name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f.<anonymous>.ClassWithNullableAnyTypeArg_48I) returnType:kotlin.Any? [fake_override]
@@ -368,6 +372,8 @@ FILE fqName:<root> fileName:/toDataFrame_typeParameters.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:v visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I) returnType:kotlin.Any
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:v visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I
@@ -438,6 +444,8 @@ FILE fqName:<root> fileName:/toDataFrame_typeParameters.kt
                       public open fun toString (): kotlin.String declared in <root>.f1.<anonymous>.ClassWithAnyTypeArg_48I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:v visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract v: kotlin.Any declared in <root>.f1.<anonymous>.ClassWithAnyTypeArg_48I
                     FUN FAKE_OVERRIDE name:<get-v> visibility:public modality:ABSTRACT <> ($this:<root>.f1.<anonymous>.ClassWithAnyTypeArg_48I) returnType:kotlin.Any [fake_override]

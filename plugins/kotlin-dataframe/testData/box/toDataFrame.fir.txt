@@ -82,43 +82,43 @@ FILE: toDataFrame.kt
     public final fun box(): R|kotlin/String| {
         lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>| = R|kotlin/collections/listOf|<R|S|>(R|/S.S|(String(123), Int(321), R|/Ss.Ss|(Int(12)), Q|Switch|.R|/Switch.ON|, Q|java/time/Year|.R|java/time/Year.now*s|(), Boolean(true), Q|kotlinx/datetime/Clock.System|.R|kotlinx/datetime/Clock.System.now|(), Int(12), Int(12), Float(12.0), R|kotlin/collections/listOf|<R|kotlin/String|>(String(dd)), R|kotlin/collections/listOf|<R|Record|>(R|/Record.Record|(String(ff))), Null(null))).R|kotlin/let|<R|kotlin/collections/List<S>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<S>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class S_43I : R|kotlin/Any| {
-                public abstract val s2: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/S2_291>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val s2: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/S2_291>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/S2_291>|
 
-                public abstract val ll: R|kotlin/collections/List<kotlin/String>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(10)) public abstract val ll: R|kotlin/collections/List<kotlin/String>|
                     public get(): R|kotlin/collections/List<kotlin/String>|
 
-                public abstract val s1: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val s1: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val numberFloat: R|kotlin/Float|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(9)) public abstract val numberFloat: R|kotlin/Float|
                     public get(): R|kotlin/Float|
 
-                public abstract val nullableNumber: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(12)) public abstract val nullableNumber: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val instant: R|kotlinx/datetime/Instant|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(6)) public abstract val instant: R|kotlinx/datetime/Instant|
                     public get(): R|kotlinx/datetime/Instant|
 
-                public abstract val boolean: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val boolean: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val temporal: R|java/time/Year|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val temporal: R|java/time/Year|
                     public get(): R|java/time/Year|
 
-                public abstract val lld: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Lld_291>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(11)) public abstract val lld: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Lld_291>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Lld_291>|
 
-                public abstract val numberI: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(7)) public abstract val numberI: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val number: R|kotlin/Number|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(8)) public abstract val number: R|kotlin/Number|
                     public get(): R|kotlin/Number|
 
-                public abstract val switch: R|Switch|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val switch: R|Switch|
                     public get(): R|Switch|
 
-                public abstract val str: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val str: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/S_43I|
@@ -209,7 +209,7 @@ FILE: toDataFrame.kt
             }
 
             local abstract class Lld_291 : R|kotlin/Any| {
-                public abstract val r: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val r: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/Lld_291|
@@ -228,7 +228,7 @@ FILE: toDataFrame.kt
             }
 
             local abstract class S2_291 : R|kotlin/Any| {
-                public abstract val s3: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val s3: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/S2_291|

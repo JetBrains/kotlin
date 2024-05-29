@@ -2,10 +2,10 @@ FILE: injectAccessorsDsl.kt
     public final fun Dsl is evaluated to (df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|kotlin/Unit| {
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Add_71>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Add_71>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Add_71>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Add_71I : R|kotlin/Any| {
-                public abstract val col1: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val col1: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val col2: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val col2: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Add_71I|

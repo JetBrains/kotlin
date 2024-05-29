@@ -9,10 +9,10 @@ FILE: parametrizedDataFrame.kt
     public final fun box(): R|kotlin/String| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Schema_28>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(i))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(123), Int(321))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/Schema|>().R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Schema_28>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Schema_28>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Schema_28I : R|kotlin/Any| {
-                public abstract val new: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val new: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val i: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val i: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Schema_28I|

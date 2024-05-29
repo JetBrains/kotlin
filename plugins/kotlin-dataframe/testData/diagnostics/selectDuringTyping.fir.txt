@@ -9,7 +9,7 @@ FILE: selectDuringTyping.kt
     public final fun explode(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|kotlin/Unit| {
         R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ExplodeSchema_94>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ExplodeSchema_94>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class ExplodeSchema_94I : R|kotlin/Any| {
-                public abstract val timestamps: R|kotlin/collections/List<kotlin/Int>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val timestamps: R|kotlin/collections/List<kotlin/Int>|
                     public get(): R|kotlin/collections/List<kotlin/Int>|
 
                 public constructor(): R|<local>/ExplodeSchema_94I|

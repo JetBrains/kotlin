@@ -410,42 +410,62 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:boolean visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 3)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-boolean> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.Boolean
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:boolean visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:ll visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 6)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ll> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.collections.List<kotlin.String>
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:ll visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:lld visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 7)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lld> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.Lld_811>
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:lld visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:nullableNumber visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 8)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nullableNumber> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:nullableNumber visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:number visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 4)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-number> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.Number
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:number visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:numberFloat visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 5)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-numberFloat> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.Float
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:numberFloat visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preservedRecord visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 9)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-preservedRecord> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:<root>.PreservedRecord
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preservedRecord visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:s2 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s2> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S2_811>
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:s2 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:str visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-str> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:str visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:switch visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 2)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-switch> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:<root>.Switch
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:switch visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
@@ -806,6 +826,8 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preservedProperty visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-preservedProperty> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S2_811) returnType:<root>.AnotherRecord
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preservedProperty visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S2_811
@@ -876,6 +898,8 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                       public open fun toString (): kotlin.String declared in <root>.box.<anonymous>.S_28I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:boolean visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 3)
                     overridden:
                       public abstract boolean: kotlin.Boolean declared in <root>.box.<anonymous>.S_28I
                     FUN FAKE_OVERRIDE name:<get-boolean> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.Boolean [fake_override]
@@ -884,6 +908,8 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                         public abstract fun <get-boolean> (): kotlin.Boolean declared in <root>.box.<anonymous>.S_28I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY FAKE_OVERRIDE name:ll visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 6)
                     overridden:
                       public abstract ll: kotlin.collections.List<kotlin.String> declared in <root>.box.<anonymous>.S_28I
                     FUN FAKE_OVERRIDE name:<get-ll> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.collections.List<kotlin.String> [fake_override]
@@ -892,6 +918,8 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                         public abstract fun <get-ll> (): kotlin.collections.List<kotlin.String> declared in <root>.box.<anonymous>.S_28I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY FAKE_OVERRIDE name:lld visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 7)
                     overridden:
                       public abstract lld: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.Lld_811> declared in <root>.box.<anonymous>.S_28I
                     FUN FAKE_OVERRIDE name:<get-lld> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.Lld_811> [fake_override]
@@ -900,6 +928,8 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                         public abstract fun <get-lld> (): org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.Lld_811> declared in <root>.box.<anonymous>.S_28I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY FAKE_OVERRIDE name:nullableNumber visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 8)
                     overridden:
                       public abstract nullableNumber: kotlin.Int? declared in <root>.box.<anonymous>.S_28I
                     FUN FAKE_OVERRIDE name:<get-nullableNumber> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.Int? [fake_override]
@@ -908,6 +938,8 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                         public abstract fun <get-nullableNumber> (): kotlin.Int? declared in <root>.box.<anonymous>.S_28I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY FAKE_OVERRIDE name:number visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 4)
                     overridden:
                       public abstract number: kotlin.Number declared in <root>.box.<anonymous>.S_28I
                     FUN FAKE_OVERRIDE name:<get-number> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.Number [fake_override]
@@ -916,6 +948,8 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                         public abstract fun <get-number> (): kotlin.Number declared in <root>.box.<anonymous>.S_28I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY FAKE_OVERRIDE name:numberFloat visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 5)
                     overridden:
                       public abstract numberFloat: kotlin.Float declared in <root>.box.<anonymous>.S_28I
                     FUN FAKE_OVERRIDE name:<get-numberFloat> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.Float [fake_override]
@@ -924,6 +958,8 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                         public abstract fun <get-numberFloat> (): kotlin.Float declared in <root>.box.<anonymous>.S_28I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY FAKE_OVERRIDE name:preservedRecord visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 9)
                     overridden:
                       public abstract preservedRecord: <root>.PreservedRecord declared in <root>.box.<anonymous>.S_28I
                     FUN FAKE_OVERRIDE name:<get-preservedRecord> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:<root>.PreservedRecord [fake_override]
@@ -932,6 +968,8 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                         public abstract fun <get-preservedRecord> (): <root>.PreservedRecord declared in <root>.box.<anonymous>.S_28I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY FAKE_OVERRIDE name:s2 visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 1)
                     overridden:
                       public abstract s2: org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S2_811> declared in <root>.box.<anonymous>.S_28I
                     FUN FAKE_OVERRIDE name:<get-s2> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S2_811> [fake_override]
@@ -940,6 +978,8 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                         public abstract fun <get-s2> (): org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.S2_811> declared in <root>.box.<anonymous>.S_28I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY FAKE_OVERRIDE name:str visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract str: kotlin.String declared in <root>.box.<anonymous>.S_28I
                     FUN FAKE_OVERRIDE name:<get-str> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:kotlin.String [fake_override]
@@ -948,6 +988,8 @@ FILE fqName:<root> fileName:/toDataFrame_dsl.kt
                         public abstract fun <get-str> (): kotlin.String declared in <root>.box.<anonymous>.S_28I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.S_28I
                   PROPERTY FAKE_OVERRIDE name:switch visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 2)
                     overridden:
                       public abstract switch: <root>.Switch declared in <root>.box.<anonymous>.S_28I
                     FUN FAKE_OVERRIDE name:<get-switch> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.S_28I) returnType:<root>.Switch [fake_override]

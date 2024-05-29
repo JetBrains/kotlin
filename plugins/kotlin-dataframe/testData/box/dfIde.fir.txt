@@ -14,13 +14,13 @@ FILE: dfIde.kt
         R|kotlin/io/println|(R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/i|)
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Schema_83>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Schema_83>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Schema_83>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Schema_83I : R|kotlin/Any| {
-                public abstract val ca: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val ca: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val fff: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val fff: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val i: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val i: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Schema_83I|
@@ -77,7 +77,7 @@ FILE: dfIde.kt
     public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Cars>|): R|kotlin/Unit| {
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_26>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_26>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_26>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Cars_26I : R|kotlin/Any| {
-                public abstract val age: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Cars_26I|

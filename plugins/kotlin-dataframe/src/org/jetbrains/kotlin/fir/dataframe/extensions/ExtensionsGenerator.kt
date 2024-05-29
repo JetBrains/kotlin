@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.fir.dataframe.utils.Names
 import org.jetbrains.kotlin.fir.dataframe.utils.generateExtensionProperty
 import org.jetbrains.kotlin.fir.dataframe.utils.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
@@ -47,6 +48,7 @@ class ExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtensi
 
     private val fields by lazy {
         matchedClasses.flatMap { classSymbol ->
+            classSymbol.isLocal
             classSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>().map { propertySymbol ->
                 val callableId = propertySymbol.callableId
                 DataSchemaField(

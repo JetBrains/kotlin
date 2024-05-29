@@ -28,7 +28,7 @@ FILE: toDataFrame_typeParameters.kt
     public final fun f(l: R|kotlin/collections/List<ClassWithNullableAnyTypeArg<kotlin/Int>>|): R|kotlin/Unit| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ClassWithNullableAnyTypeArg_48>| = R|<local>/l|.R|kotlin/let|<R|kotlin/collections/List<ClassWithNullableAnyTypeArg<kotlin/Int>>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ClassWithNullableAnyTypeArg_48>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<ClassWithNullableAnyTypeArg<kotlin/Int>>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ClassWithNullableAnyTypeArg_48>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class ClassWithNullableAnyTypeArg_48I : R|kotlin/Any| {
-                public abstract val v: R|kotlin/Any?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val v: R|kotlin/Any?|
                     public get(): R|kotlin/Any?|
 
                 public constructor(): R|<local>/ClassWithNullableAnyTypeArg_48I|
@@ -64,7 +64,7 @@ FILE: toDataFrame_typeParameters.kt
     public final fun f1(l: R|kotlin/collections/List<ClassWithAnyTypeArg<kotlin/Int>>|): R|kotlin/Unit| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ClassWithAnyTypeArg_48>| = R|<local>/l|.R|kotlin/let|<R|kotlin/collections/List<ClassWithAnyTypeArg<kotlin/Int>>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ClassWithAnyTypeArg_48>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<ClassWithAnyTypeArg<kotlin/Int>>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ClassWithAnyTypeArg_48>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class ClassWithAnyTypeArg_48I : R|kotlin/Any| {
-                public abstract val v: R|kotlin/Any|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val v: R|kotlin/Any|
                     public get(): R|kotlin/Any|
 
                 public constructor(): R|<local>/ClassWithAnyTypeArg_48I|

@@ -17,10 +17,10 @@ FILE: Test.kt
     public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
         lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Schema_09>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/Schema|>().R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Schema_09>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Schema>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Schema_09>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Schema_09I : R|kotlin/Any| {
-                public abstract val ba: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val ba: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val a: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Schema_09I|
@@ -66,10 +66,10 @@ FILE: Test.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<<local>/Schema_09, kotlin/Int>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_65>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<<local>/Schema_09, kotlin/Int>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_65>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class With_65I : R|kotlin/Any| {
-                public abstract val ba: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val ba: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val a: R|kotlin/Char|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/Char|
                     public get(): R|kotlin/Char|
 
                 public constructor(): R|<local>/With_65I|
@@ -145,25 +145,25 @@ FILE: duplicatedSignature.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_63>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_63>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class With_63I : R|kotlin/Any| {
-                public abstract val timestamp: R|java/time/LocalDateTime|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(6)) public abstract val timestamp: R|java/time/LocalDateTime|
                     public get(): R|java/time/LocalDateTime|
 
-                public abstract val charclass: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val charclass: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val guild: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val guild: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val char: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val char: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val race: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val race: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val level: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val level: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val zone: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val zone: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/With_63I|

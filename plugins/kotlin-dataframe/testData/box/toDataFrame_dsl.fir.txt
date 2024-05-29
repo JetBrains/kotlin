@@ -100,34 +100,34 @@ FILE: toDataFrame_dsl.kt
     public final fun box(): R|kotlin/String| {
         lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_28>| = R|kotlin/collections/listOf|<R|S|>(R|/S.S|(String(123), Int(321), R|/Ss.Ss|(Int(12), R|/AnotherRecord.AnotherRecord|(Double(3.0))), Q|Switch|.R|/Switch.ON|, Boolean(true), Int(12), Int(12), Float(12.0), R|kotlin/collections/listOf|<R|kotlin/String|>(String(dd)), R|kotlin/collections/listOf|<R|Record|>(R|/Record.Record|(String(ff))), Null(null), R|/PreservedRecord.PreservedRecord|(Int(3)))).R|kotlin/let|<R|kotlin/collections/List<S>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_28>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<S>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_28>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class S_28I : R|kotlin/Any| {
-                public abstract val s2: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/S2_811>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val s2: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/S2_811>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/S2_811>|
 
-                public abstract val ll: R|kotlin/collections/List<kotlin/String>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(6)) public abstract val ll: R|kotlin/collections/List<kotlin/String>|
                     public get(): R|kotlin/collections/List<kotlin/String>|
 
-                public abstract val number: R|kotlin/Number|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val number: R|kotlin/Number|
                     public get(): R|kotlin/Number|
 
-                public abstract val numberFloat: R|kotlin/Float|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val numberFloat: R|kotlin/Float|
                     public get(): R|kotlin/Float|
 
-                public abstract val nullableNumber: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(8)) public abstract val nullableNumber: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val switch: R|Switch|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val switch: R|Switch|
                     public get(): R|Switch|
 
-                public abstract val preservedRecord: R|PreservedRecord|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(9)) public abstract val preservedRecord: R|PreservedRecord|
                     public get(): R|PreservedRecord|
 
-                public abstract val str: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val str: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val boolean: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val boolean: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val lld: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Lld_811>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(7)) public abstract val lld: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Lld_811>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Lld_811>|
 
                 public constructor(): R|<local>/S_28I|
@@ -210,7 +210,7 @@ FILE: toDataFrame_dsl.kt
             }
 
             local abstract class S2_811 : R|kotlin/Any| {
-                public abstract val preservedProperty: R|AnotherRecord|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val preservedProperty: R|AnotherRecord|
                     public get(): R|AnotherRecord|
 
                 public constructor(): R|<local>/S2_811|

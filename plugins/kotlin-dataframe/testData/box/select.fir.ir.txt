@@ -306,14 +306,20 @@ FILE fqName:<root> fileName:/select.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_33I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Record_33I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:b visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_33I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:b visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Record_33I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:nested visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 2)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-nested> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_33I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.Nested_101>
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:nested visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Record_33I
@@ -440,6 +446,8 @@ FILE fqName:<root> fileName:/select.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:d visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Nested_101) returnType:kotlin.Double
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:d visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Nested_101
@@ -510,6 +518,8 @@ FILE fqName:<root> fileName:/select.kt
                       public open fun toString (): kotlin.String declared in <root>.box.<anonymous>.Record_33I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract a: kotlin.String declared in <root>.box.<anonymous>.Record_33I
                     FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_33I) returnType:kotlin.String [fake_override]
@@ -518,6 +528,8 @@ FILE fqName:<root> fileName:/select.kt
                         public abstract fun <get-a> (): kotlin.String declared in <root>.box.<anonymous>.Record_33I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Record_33I
                   PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 1)
                     overridden:
                       public abstract b: kotlin.Int declared in <root>.box.<anonymous>.Record_33I
                     FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_33I) returnType:kotlin.Int [fake_override]
@@ -526,6 +538,8 @@ FILE fqName:<root> fileName:/select.kt
                         public abstract fun <get-b> (): kotlin.Int declared in <root>.box.<anonymous>.Record_33I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Record_33I
                   PROPERTY FAKE_OVERRIDE name:nested visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 2)
                     overridden:
                       public abstract nested: org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.Nested_101> declared in <root>.box.<anonymous>.Record_33I
                     FUN FAKE_OVERRIDE name:<get-nested> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_33I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<<root>.box.<anonymous>.Nested_101> [fake_override]
@@ -583,14 +597,20 @@ FILE fqName:<root> fileName:/select.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_71I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Record_71I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:d visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_71I) returnType:kotlin.Double
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:d visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Record_71I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:untitled visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 2)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-untitled> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_71I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:untitled visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Record_71I
@@ -717,6 +737,8 @@ FILE fqName:<root> fileName:/select.kt
                       public open fun toString (): kotlin.String declared in <root>.box.<anonymous>.Record_71I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract a: kotlin.String declared in <root>.box.<anonymous>.Record_71I
                     FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_71I) returnType:kotlin.String [fake_override]
@@ -725,6 +747,8 @@ FILE fqName:<root> fileName:/select.kt
                         public abstract fun <get-a> (): kotlin.String declared in <root>.box.<anonymous>.Record_71I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Record_71I
                   PROPERTY FAKE_OVERRIDE name:d visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 1)
                     overridden:
                       public abstract d: kotlin.Double declared in <root>.box.<anonymous>.Record_71I
                     FUN FAKE_OVERRIDE name:<get-d> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_71I) returnType:kotlin.Double [fake_override]
@@ -733,6 +757,8 @@ FILE fqName:<root> fileName:/select.kt
                         public abstract fun <get-d> (): kotlin.Double declared in <root>.box.<anonymous>.Record_71I
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.Record_71I
                   PROPERTY FAKE_OVERRIDE name:untitled visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 2)
                     overridden:
                       public abstract untitled: kotlin.Int declared in <root>.box.<anonymous>.Record_71I
                     FUN FAKE_OVERRIDE name:<get-untitled> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.Record_71I) returnType:kotlin.Int [fake_override]

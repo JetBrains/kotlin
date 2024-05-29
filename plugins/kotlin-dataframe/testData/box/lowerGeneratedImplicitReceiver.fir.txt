@@ -7,7 +7,7 @@ FILE: lowerGeneratedImplicitReceiver.kt
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/Cars>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/api/Cars|>()
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_26>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_26>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_26>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Cars_26I : R|kotlin/Any| {
-                public abstract val age: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Cars_26I|

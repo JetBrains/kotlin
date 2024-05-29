@@ -11,7 +11,7 @@ FILE: test.kt
     public final fun box(): R|kotlin/String| {
         lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>| = R|kotlin/collections/listOf|<R|S|>(R|/S.S|(R|/JavaRecord.JavaRecord|())).R|kotlin/let|<R|kotlin/collections/List<S>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<S>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/S_43>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class S_43I : R|kotlin/Any| {
-                public abstract val javaRecord: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val javaRecord: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/JavaRecord_771>|
 
                 public constructor(): R|<local>/S_43I|
@@ -30,13 +30,13 @@ FILE: test.kt
             }
 
             local abstract class JavaRecord_771 : R|kotlin/Any| {
-                public abstract val aaa: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val aaa: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Aaa_771>|
 
-                public abstract val bean: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val bean: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Bean_771>|
 
-                public abstract val i: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val i: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/JavaRecord_771|

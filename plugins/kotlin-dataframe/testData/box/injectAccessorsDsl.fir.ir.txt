@@ -31,10 +31,14 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:col1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-col1> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.Add_71I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:col1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Add_71I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:col2 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-col2> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.Add_71I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:col2 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Add_71I
@@ -133,6 +137,8 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                       public open fun toString (): kotlin.String declared in <root>.Dsl is evaluated to .<anonymous>.Add_71I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:col1 visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract col1: kotlin.Int declared in <root>.Dsl is evaluated to .<anonymous>.Add_71I
                     FUN FAKE_OVERRIDE name:<get-col1> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.Add_71I) returnType:kotlin.Int [fake_override]
@@ -141,6 +147,8 @@ FILE fqName:<root> fileName:/injectAccessorsDsl.kt
                         public abstract fun <get-col1> (): kotlin.Int declared in <root>.Dsl is evaluated to .<anonymous>.Add_71I
                       $this: VALUE_PARAMETER name:<this> type:<root>.Dsl is evaluated to .<anonymous>.Add_71I
                   PROPERTY FAKE_OVERRIDE name:col2 visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 1)
                     overridden:
                       public abstract col2: kotlin.Int declared in <root>.Dsl is evaluated to .<anonymous>.Add_71I
                     FUN FAKE_OVERRIDE name:<get-col2> visibility:public modality:ABSTRACT <> ($this:<root>.Dsl is evaluated to .<anonymous>.Add_71I) returnType:kotlin.Int [fake_override]

@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.dataframe.callShapeData
 import org.jetbrains.kotlin.fir.dataframe.utils.Names
 import org.jetbrains.kotlin.fir.dataframe.utils.generateExtensionProperty
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.plugin.createConstructor
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     object Key : GeneratedDeclarationKey()
@@ -40,16 +44,17 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
         session.firCachesFactory.createCache { k ->
             val callShapeData = k.fir.callShapeData ?: return@createCache null
             when (callShapeData) {
-                is CallShapeData.Schema -> callShapeData.columns.associate { property ->
+                is CallShapeData.Schema -> callShapeData.columns.withIndex().associate { (index, property) ->
                     val resolvedTypeRef = buildResolvedTypeRef {
                         type = property.dataRowReturnType
                     }
                     val propertyName = Name.identifier(property.name)
-                    propertyName to listOf(buildProperty(resolvedTypeRef, propertyName, k))
+                    propertyName to listOf(buildProperty(resolvedTypeRef, propertyName, k, order = index))
                 }
                 is CallShapeData.RefinedType -> callShapeData.scopes.associate {
                     val propertyName = Name.identifier(it.name.identifier.replaceFirstChar { it.lowercaseChar() })
-                    propertyName to listOf(buildProperty(it.defaultType().toFirResolvedTypeRef(), propertyName, k, false))
+                    // making them var appeared to be the easiest way to filter
+                    propertyName to listOf(buildProperty(it.defaultType().toFirResolvedTypeRef(), propertyName, k, isVal = false))
                 }
                 is CallShapeData.Scope -> callShapeData.columns.associate { schemaProperty ->
                     val propertyName = Name.identifier(schemaProperty.name)
@@ -107,11 +112,28 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
         resolvedTypeRef: FirResolvedTypeRef,
         propertyName: Name,
         k: FirClassSymbol<*>,
-        isVal: Boolean = true
+        isVal: Boolean = true,
+        order: Int? = null,
     ): FirProperty {
         return createMemberProperty(k, Key, propertyName, resolvedTypeRef.type, isVal) {
             modality = Modality.ABSTRACT
             visibility = Visibilities.Public
+        }.apply {
+            if (order != null) {
+                val orderAnnotation = buildAnnotation {
+                    annotationTypeRef = buildResolvedTypeRef {
+                        type = ConeClassLikeTypeImpl(
+                            ConeClassLikeLookupTagImpl(Names.ORDER_ANNOTATION),
+                            arrayOf(),
+                            isNullable = false
+                        )
+                    }
+                    argumentMapping = buildAnnotationArgumentMapping {
+                        mapping[Names.ORDER_ARGUMENT] = buildLiteralExpression(null, ConstantValueKind.Int, order, setType = true)
+                    }
+                }
+                replaceAnnotations(listOf(orderAnnotation))
+            }
         }
     }
 
