@@ -250,8 +250,8 @@ class ModuleMetricsImpl(
 
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         fun print(out: Appendable, src: IrSourcePrinterVisitor) = with(out) {
-            append("${stability.simpleHumanReadable()} ")
-            append("class ")
+            append(stability.simpleHumanReadable())
+            append(" class ")
             append(declaration.name.asString())
             appendLine(" {")
             for (decl in declaration.declarations) {
@@ -268,8 +268,8 @@ class ModuleMetricsImpl(
                 if (field.name == ComposeNames.STABILITY_FLAG) continue
                 append("  ")
                 val fieldStability = stabilityOf(field.type)
-                append("${fieldStability.simpleHumanReadable()} ")
-                append(if (isVar) "var " else "val ")
+                append(fieldStability.simpleHumanReadable())
+                append(if (isVar) " var " else " val ")
                 append(field.name.asString())
                 append(": ")
                 append(src.printType(field.type))
