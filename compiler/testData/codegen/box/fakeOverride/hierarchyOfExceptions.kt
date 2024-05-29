@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
 // ISSUE: KT-68571
 
 // FILE: MyInterface.java
