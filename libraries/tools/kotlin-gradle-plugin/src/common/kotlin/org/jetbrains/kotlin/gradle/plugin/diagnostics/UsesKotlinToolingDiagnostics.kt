@@ -70,4 +70,5 @@ internal interface BuildServiceUsingKotlinToolingDiagnostics<P : BuildServiceUsi
 internal fun UsesKotlinToolingDiagnosticsParameters.setupKotlinToolingDiagnosticsParameters(project: Project) {
     toolingDiagnosticsCollector.set(project.kotlinToolingDiagnosticsCollectorProvider)
     diagnosticRenderingOptions.set(ToolingDiagnosticRenderingOptions.forProject(project))
+    projectPath.set(project.path)
 }
