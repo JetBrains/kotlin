@@ -299,6 +299,8 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":plugins:parcelize:parcelize-compiler:parcelize.k2",
                 ":plugins:parcelize:parcelize-runtime",
 
+                ":plugins:compose-compiler-plugin:compiler-hosted",
+
                 ":kotlin-sam-with-receiver-compiler-plugin.cli",
                 ":kotlin-sam-with-receiver-compiler-plugin.common",
                 ":kotlin-sam-with-receiver-compiler-plugin.k1",
@@ -400,6 +402,7 @@ extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"] = listOf(
 extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
+    ":prepare:ide-plugin-dependencies:compose-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:scripting-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
     ":prepare:ide-plugin-dependencies:js-ir-runtime-for-ide",
