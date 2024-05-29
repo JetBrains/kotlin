@@ -21105,6 +21105,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     }
 
     @Test
+    @TestMetadata("hierarchyOfExceptions.kt")
+    public void testHierarchyOfExceptions() {
+      runTest("compiler/testData/codegen/box/fakeOverride/hierarchyOfExceptions.kt");
+    }
+
+    @Test
     @TestMetadata("internalFromFriendModule.kt")
     public void testInternalFromFriendModule() {
       runTest("compiler/testData/codegen/box/fakeOverride/internalFromFriendModule.kt");

@@ -17547,6 +17547,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/fakeOverride/function.kt");
     }
 
+    @TestMetadata("hierarchyOfExceptions.kt")
+    public void testHierarchyOfExceptions() {
+      runTest("compiler/testData/codegen/box/fakeOverride/hierarchyOfExceptions.kt");
+    }
+
     @TestMetadata("internalFromFriendModule.kt")
     public void testInternalFromFriendModule() {
       runTest("compiler/testData/codegen/box/fakeOverride/internalFromFriendModule.kt");
