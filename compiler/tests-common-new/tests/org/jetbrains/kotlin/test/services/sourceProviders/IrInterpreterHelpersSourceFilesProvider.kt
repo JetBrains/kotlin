@@ -42,7 +42,6 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         private const val REFLECT_PATH = "./libraries/stdlib/jvm/src/kotlin/reflect"
         private val EXCLUDES = listOf(
             "src/kotlin/UStrings.kt", "src/kotlin/UMath.kt", "src/kotlin/UNumbers.kt", "src/kotlin/reflect/TypesJVM.kt",
-            "core/builtins/src/kotlin/CompileTimeAnnotations.kt"
         ).map(::File)
     }
 

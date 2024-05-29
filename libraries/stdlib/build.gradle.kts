@@ -57,8 +57,9 @@ dependencies {
     configurationBuiltins(project(":core:builtins"))
 }
 
-val builtinsDir = "${rootDir}/core/builtins"
 val builtinsSrcDir = "${layout.buildDirectory.get().asFile}/src/builtin-sources"
+val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
+val jvmBuiltinsDir = "${rootDir}/${jvmBuiltinsRelativeDir}"
 
 val jsDir = "${projectDir}/js"
 val jsBuiltinsSrcDir = "${layout.buildDirectory.get().asFile}/src/js-builtin-sources"
@@ -353,13 +354,6 @@ kotlin {
                 srcDir("common/src")
                 srcDir(files("src").builtBy(prepareCommonSources))
                 srcDir("unsigned/src")
-                if (!kotlinBuildProperties.isInIdeaSync) {
-                    srcDir("$builtinsDir/src/kotlin/internal")
-                }
-                if (kotlinBuildProperties.isInIdeaSync) {
-                    // required for correct resolution of builtin classes in common code in K2 IDE
-                    srcDir("$builtinsDir/src")
-                }
             }
         }
         commonTest {
@@ -382,7 +376,6 @@ kotlin {
             val jvmSrcDirs = listOfNotNull(
                 "jvm/src",
                 "jvm/runtime",
-                "$builtinsDir/src".takeUnless { kotlinBuildProperties.isInIdeaSync }
             )
             project.sourceSets["main"].java.srcDirs(*jvmSrcDirs.toTypedArray())
             kotlin.setSrcDirs(jvmSrcDirs)
@@ -431,27 +424,15 @@ kotlin {
 
             prepareJsIrMainSources.configure {
                 val unimplementedNativeBuiltIns =
-                    (file("$builtinsDir/native/kotlin/").list()!!.toSortedSet() - file("$jsDir/builtins/").list()!!)
-                        .map { "core/builtins/native/kotlin/$it" }
+                    (file(jvmBuiltinsDir).list()!!.toSortedSet() - file("$jsDir/builtins/").list()!!)
+                        .map { "$jvmBuiltinsRelativeDir/$it" }
 
                 // TODO: try to reuse absolute paths defined in the beginning
-                val sources = listOf(
-                    "core/builtins/src/kotlin/",
-                ) + unimplementedNativeBuiltIns
-
-                val excluded = listOf(
-                    // JS-specific optimized version of emptyArray() already defined
-                    "core/builtins/src/kotlin/ArrayIntrinsics.kt",
-                    // included in common
-                    "core/builtins/src/kotlin/internal/**",
-                )
+                val sources = unimplementedNativeBuiltIns
 
                 sources.forEach { path ->
                     from("$rootDir/$path") {
                         into(path.dropLastWhile { it != '/' })
-                        excluded.filter { it.startsWith(path) }.forEach {
-                            exclude(it.substring(path.length))
-                        }
                     }
                 }
 
@@ -503,20 +484,12 @@ kotlin {
             }
             prepareWasmBuiltinSources.configure {
                 val unimplementedNativeBuiltIns =
-                    (file("$rootDir/core/builtins/native/kotlin/").list().toSortedSet() - file("wasm/builtins/kotlin/").list())
-                        .map { "core/builtins/native/kotlin/$it" }
+                    (file(jvmBuiltinsDir).list().toSortedSet() - file("wasm/builtins/kotlin/").list())
+                        .map { "$jvmBuiltinsRelativeDir/$it" }
 
-                val sources = listOf(
-                    "core/builtins/src/kotlin/"
-                ) + unimplementedNativeBuiltIns
-
-
+                val sources = unimplementedNativeBuiltIns
 
                 val excluded = listOf(
-                    // included in commonMain
-                    "internal/InternalAnnotations.kt",
-                    // JS-specific optimized version of emptyArray() already defined
-                    "ArrayIntrinsics.kt",
                     // Included with K/N collections
                     "Collections.kt", "Iterator.kt", "Iterators.kt"
                 )
@@ -669,7 +642,9 @@ tasks {
         duplicatesStrategy = DuplicatesStrategy.FAIL
         archiveAppendix.set(null as String?)
         into("jvmMain") {
-            from("${rootDir}/core/builtins/native")
+            from(jvmBuiltinsDir) {
+                into("kotlin")
+            }
             from(kotlin.sourceSets["jvmMainJdk7"].kotlin) {
                 into("jdk7")
             }
@@ -712,15 +687,14 @@ tasks {
                 // just to depend on source-generating tasks
                 exclude("**")
             }
-            from("${rootDir}/core/builtins/native/kotlin") {
+            from(jvmBuiltinsDir) {
                 into("kotlin")
                 include("Comparable.kt")
                 include("Enum.kt")
             }
-            from("$jsBuiltinsSrcDir/core/builtins/native") {
-                exclude("kotlin/Comparable.kt")
+            from("$jsBuiltinsSrcDir/libraries/stdlib/jvm") {
+                exclude("builtins/Comparable.kt")
             }
-            from("$jsBuiltinsSrcDir/core/builtins/src")
             from("$jsBuiltinsSrcDir/libraries/stdlib/js/src")
             from("$jsDir/builtins") {
                 into("kotlin")
