@@ -3,16 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.checkers.expression
+package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeRefForConflictingProjections
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-object FirProjectionRelationExpressionChecker : FirTypeOperatorCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirTypeOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        checkTypeRefForConflictingProjections(expression.conversionTypeRef, context, reporter)
+object FirProjectionRelationChecker : FirTypeRefChecker(MppCheckerKind.Common) {
+    override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
+        checkTypeRefForConflictingProjections(typeRef, context, reporter)
     }
 }

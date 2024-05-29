@@ -17,7 +17,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirModifierChecker,
             FirConflictsDeclarationChecker,
-            FirProjectionRelationDeclarationsChecker,
             FirTypeConstraintsChecker,
             FirReservedUnderscoreDeclarationChecker,
             FirUpperBoundViolatedDeclarationChecker,

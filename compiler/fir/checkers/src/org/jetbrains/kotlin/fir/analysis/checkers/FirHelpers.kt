@@ -865,12 +865,11 @@ private data class TypeArgumentData(
     val source: FirTypeRefSource,
 )
 
-private fun extractTypeArgumentDataRecursively(typeRef: FirTypeRef): List<TypeArgumentData> =
+private fun extractImmediateTypeArgumentData(typeRef: FirTypeRef): List<TypeArgumentData> =
     extractArgumentsTypeRefAndSource(typeRef)
         ?.let { typeRef.coneType.typeArguments.zip(it) }
-        ?.flatMapIndexed { index, it ->
-            val ownItem = listOf(TypeArgumentData(typeRef.coneType, index, it.first, it.second))
-            ownItem + it.second.typeRef?.let(::extractTypeArgumentDataRecursively).orEmpty()
+        ?.mapIndexed { index, it ->
+            TypeArgumentData(typeRef.coneType, index, it.first, it.second)
         }
         .orEmpty()
 
@@ -880,8 +879,11 @@ private fun extractTypeArgumentDataRecursively(typeRef: FirTypeRef): List<TypeAr
  * 1. Traversing arguments of arguments like `in Number` in `GenericA<GenericB<in Number>>`
  * 2. Expanding typealiases like `TA<in Number>` for `TA<T> == GenericC<String, GenericB<T>>`
  *
- * This function first does (1) for the non-expanded type and starts (2) for it, which will
- * also do (1) at every step.
+ * This function starts (2) for the non-expanded type, which then also does (1) at every step of (2).
+ * Note that it does not do (1) for the non-expanded type: this work is done by the checker
+ * runner, so [org.jetbrains.kotlin.fir.analysis.checkers.type.FirProjectionRelationChecker]
+ * will be called for all nested typerefs within the non-expanded typeref.
+ *
  * The logic for (1) is separated into two places for the following reason: we have different
  * conditions that signify if an argument is potentially problematic.
  * For the original non-expanded type, an argument is suspicious if [canBeProblematic].
@@ -900,7 +902,7 @@ private fun extractTypeArgumentDataRecursively(typeRef: FirTypeRef): List<TypeAr
  * reported at typealias declaration sites, so we can skip them.
  */
 private fun collectPotentiallyProblematicArguments(typeRef: FirTypeRef, session: FirSession): List<TypeArgumentData> {
-    val shallowArgumentsData = extractTypeArgumentDataRecursively(typeRef).filter { it.projection.kind.canBeProblematic }
+    val shallowArgumentsData = extractImmediateTypeArgumentData(typeRef).filter { it.projection.kind.canBeProblematic }
     val symbol = typeRef.coneType.toSymbol(session)
 
     if (symbol !is FirTypeAliasSymbol) {
@@ -970,11 +972,7 @@ private inline fun collectPotentiallyProblematicArgumentsFromTypeAliasExpansion(
     val typeAliasMap = alias.mapParametersToArgumentsOf(type)
     val indices = typeAliasMap.indices
     val sources = indices.map(argumentIndexToSource)
-    val interestingIndices = indices.filter { sources[it] != null }
-
-    if (interestingIndices.isEmpty()) {
-        return
-    }
+    val interestingIndices = indices.filter { sources[it] != null }.takeIf { it.isNotEmpty() } ?: return
 
     val typeAliasMapOfPotentiallyProblematicParameters = interestingIndices.associateBy(
         keySelector = { typeAliasMap[it].first },
