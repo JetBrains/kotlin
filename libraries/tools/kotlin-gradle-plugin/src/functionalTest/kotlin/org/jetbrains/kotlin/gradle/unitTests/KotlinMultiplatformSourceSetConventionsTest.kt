@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConv
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.jvmTest
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.assertContainsDependencies
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
@@ -83,7 +84,6 @@ class KotlinMultiplatformSourceSetConventionsTest {
                 sourceSets.jvmTest.languageSettings {
                     this.optIn("jvmTest.optIn")
                 }
-
             }
         }
 
@@ -120,6 +120,92 @@ class KotlinMultiplatformSourceSetConventionsTest {
                 "my:jvmTest:library"
             )
         }
+    }
+
+    @Test
+    fun `test - KMP default SourceSets dsl`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                jvm("jvm6")
+
+                js("nodeJs") {
+                    nodejs()
+                }
+                @OptIn(ExperimentalWasmDsl::class)
+                wasmJs {
+                    nodejs()
+                }
+
+                linuxX64("linux64")
+                mingwX64("mingw64")
+                macosX64("macos64")
+                macosArm64("macosArm64")
+
+                applyDefaultHierarchyTemplate()
+            }
+        }
+
+        data class SourceSetDetails(
+            val target: String,
+            val compilation: String,
+            val sourceSet: String,
+        ) : Comparable<SourceSetDetails> {
+            override fun toString(): String =
+                """
+                target      : $target
+                compilation : $compilation
+                sourceSet   : $sourceSet
+                """.trimIndent()
+
+            override fun compareTo(other: SourceSetDetails): Int = toString().compareTo(other.toString())
+        }
+
+        fun getCompilationDetails(): List<SourceSetDetails> =
+            project.multiplatformExtension.targets
+                .flatMap { target ->
+                    target.compilations.map { compilation ->
+                        SourceSetDetails(
+                            target = compilation.target.name,
+                            compilation = compilation.name,
+                            sourceSet = compilation.defaultSourceSet.name,
+                        )
+                    }
+                }
+
+        val actualDetailsBeforeEvaluate = getCompilationDetails()
+        val expectedDetailsBeforeEvaluate: List<SourceSetDetails> =
+            mutableListOf<SourceSetDetails>().apply {
+                add(SourceSetDetails("metadata", "main", "commonMain"))
+                listOf(
+                    "jvm6", "nodeJs", "mingw64", "linux64", "macos64", "macosArm64", "wasmJs"
+                ).forEach { target ->
+                    add(SourceSetDetails(target, "main", "${target}Main"))
+                    add(SourceSetDetails(target, "test", "${target}Test"))
+                }
+            }
+
+        assertEquals(
+            expectedDetailsBeforeEvaluate.sorted(),
+            actualDetailsBeforeEvaluate.sorted(),
+        )
+
+        project.evaluate()
+
+        val compilationDetailsAfterEvaluate = getCompilationDetails()
+        val expectedDetailsAfterEvaluate: List<SourceSetDetails> =
+            mutableListOf<SourceSetDetails>().apply {
+                addAll(expectedDetailsBeforeEvaluate)
+                listOf(
+                    "commonMain", "appleMain", "macosMain", "nativeMain"
+                ).forEach { target ->
+                    add(SourceSetDetails("metadata", target, target))
+                }
+            }
+
+        assertEquals(
+            compilationDetailsAfterEvaluate.sorted(),
+            expectedDetailsAfterEvaluate.sorted(),
+        )
     }
 
     @Test

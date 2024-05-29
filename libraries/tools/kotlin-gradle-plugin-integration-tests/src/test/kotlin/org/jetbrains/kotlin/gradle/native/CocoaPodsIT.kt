@@ -28,7 +28,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsSource
 import java.nio.file.Path
 import java.util.stream.Stream
-import java.util.zip.ZipFile
 import kotlin.io.path.*
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -736,12 +735,13 @@ class CocoaPodsIT : KGPBaseTest() {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
             buildGradleKts.addPod("AFNetworking")
             buildWithCocoapodsWrapper("cinteropAFNetworkingIOS") {
-                val cinteropKlib = projectPath.resolve("build/classes/kotlin/iOS/main/cinterop/cocoapods-cinterop-AFNetworking.klib")
-                val manifestLines = ZipFile(cinteropKlib.toFile()).use { zip ->
-                    zip.getInputStream(zip.getEntry("default/manifest")).bufferedReader().use { it.readLines() }
-                }
+                val cinteropManifest = projectPath.resolve("build/classes/kotlin/iOS/main/cinterop/cocoapods-cinterop-AFNetworking.klib")
+                    .useAsZipFile { zipFile ->
+                        zipFile.readKLibManifest()
+                    }
 
-                assertContains(manifestLines, "linkerOpts=-framework AFNetworking")
+                assertContains(cinteropManifest, "linterOpts")
+                assertEquals(cinteropManifest["linterOpts"], "-framework AFNetworking")
             }
         }
     }
@@ -1091,7 +1091,8 @@ class CocoaPodsIT : KGPBaseTest() {
             )
         ) {
 
-            buildGradleKts.addKotlinBlock("""
+            buildGradleKts.addKotlinBlock(
+                """
                 iosArm64()
                 
                 targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().configureEach {
@@ -1099,7 +1100,8 @@ class CocoaPodsIT : KGPBaseTest() {
                        isStatic = $isStatic
                    }
                }
-            """.trimIndent())
+            """.trimIndent()
+            )
 
             buildGradleKts.addCocoapodsBlock("""pod("Base64", version="1.1.2")""")
 

@@ -2,7 +2,6 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
 package org.jetbrains.kotlin.gradle
 
 import com.google.gson.Gson
@@ -20,10 +19,8 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_6
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
-import java.nio.file.Files
 import java.util.zip.ZipFile
 import kotlin.io.path.*
-import kotlin.streams.toList
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -932,10 +929,13 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
                 val moduleDir = projectPath.resolve("build/repo/com/example/kotlin-js-plugin/1.0/")
 
-                val publishedJar = moduleDir.resolve("kotlin-js-plugin-1.0.klib")
-                ZipFile(publishedJar.toFile()).use { zip ->
-                    val entries = zip.entries().asSequence().map { it.name }
-                    assertTrue { "default/manifest" in entries }
+                val kjsManifest = moduleDir.resolve("kotlin-js-plugin-1.0.klib")
+                    .useAsZipFile { zipFile ->
+                        zipFile.readKLibManifest()
+                    }
+
+                assertTrue("expect klib contains a non-empty manifest (all entries: ${kjsManifest})") {
+                    kjsManifest.isNotEmpty()
                 }
 
                 val publishedPom = moduleDir.resolve("kotlin-js-plugin-1.0.pom")
@@ -1077,22 +1077,18 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             }
 
             build("jsJar") {
-                val archive = Files.list(projectPath.resolve("build").resolve("libs")).use { files ->
-                    files
-                        .filter { it.extension == KLIB_TYPE }
-                        .toList()
-                        .single()
-                }
+                val klib = projectPath.resolve("build/libs").walk()
+                    .single { it.extension == KLIB_TYPE }
 
-                ZipFile(archive.toFile()).use { zipFile ->
-                    val packageJsonCandidates = zipFile.entries()
+                val packageJsonCandidates = klib.useAsZipFile { zipFile ->
+                    zipFile.entries()
                         .asSequence()
                         .filter { it.name == NpmProject.PACKAGE_JSON }
                         .toList()
+                }
 
-                    assertTrue("Expected absence of package.json in ${archive.name}") {
-                        packageJsonCandidates.isEmpty()
-                    }
+                assertTrue("Expected absence of package.json in ${klib.name}. Actual:${packageJsonCandidates}") {
+                    packageJsonCandidates.isEmpty()
                 }
             }
         }
