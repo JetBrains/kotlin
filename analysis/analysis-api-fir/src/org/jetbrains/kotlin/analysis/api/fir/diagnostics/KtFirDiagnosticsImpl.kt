@@ -4107,6 +4107,13 @@ internal class NonPublicCallFromPublicInlineImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonPublicCallFromPublicInline
 
+internal class NonPublicInlineCallFromPublicInlineImpl(
+    override val inlineDeclaration: KaSymbol,
+    override val referencedDeclaration: KaSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonPublicInlineCallFromPublicInline
+
 internal class NonPublicCallFromPublicInlineDeprecationImpl(
     override val inlineDeclaration: KaSymbol,
     override val referencedDeclaration: KaSymbol,
