@@ -23,8 +23,6 @@ import androidx.compose.compiler.plugins.kotlin.k1.*
 import androidx.compose.compiler.plugins.kotlin.k2.ComposeFirExtensionRegistrar
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityFieldSerializationPlugin
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCSerializationPlugin
-import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compiler.plugin.*
@@ -526,27 +524,21 @@ fun validateFeatureFlag(
     }
 }
 
-@Suppress("DEPRECATION") // CompilerPluginRegistrar does not expose project (or disposable) causing
-                         // memory leaks, see: https://youtrack.jetbrains.com/issue/KT-60952
 @OptIn(ExperimentalCompilerApi::class)
-class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar {
+class ComposePluginRegistrar : CompilerPluginRegistrar() {
     override val supportsK2: Boolean
         get() = true
 
-    override fun registerProjectComponents(
-        project: MockProject,
-        configuration: CompilerConfiguration
-    ) {
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         if (checkCompilerVersion(configuration)) {
             val usesK2 = configuration.languageVersionSettings.languageVersion.usesK2
             val descriptorSerializerContext =
                 if (usesK2) null
                 else ComposeDescriptorSerializerContext()
 
-            registerCommonExtensions(project, descriptorSerializerContext)
+            registerCommonExtensions(descriptorSerializerContext)
 
             IrGenerationExtension.registerExtension(
-                project,
                 createComposeIrExtension(
                     configuration,
                     descriptorSerializerContext
@@ -554,7 +546,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
             )
 
             if (!usesK2) {
-                registerNativeExtensions(project, descriptorSerializerContext!!)
+                registerNativeExtensions(descriptorSerializerContext!!)
             }
         }
     }
@@ -582,43 +574,35 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
             return true
         }
 
-        fun registerCommonExtensions(
-            project: Project,
+        fun ExtensionStorage.registerCommonExtensions(
             composeDescriptorSerializerContext: ComposeDescriptorSerializerContext? = null
         ) {
             StorageComponentContainerContributor.registerExtension(
-                project,
                 ComposableCallChecker()
             )
             StorageComponentContainerContributor.registerExtension(
-                project,
                 ComposableDeclarationChecker()
             )
             StorageComponentContainerContributor.registerExtension(
-                project,
                 ComposableTargetChecker()
             )
-            DiagnosticSuppressor.registerExtension(project, ComposeDiagnosticSuppressor())
+            DiagnosticSuppressor.registerExtension(ComposeDiagnosticSuppressor())
             @Suppress("OPT_IN_USAGE_ERROR")
             TypeResolutionInterceptor.registerExtension(
-                project,
                 ComposeTypeResolutionInterceptorExtension()
             )
             DescriptorSerializerPlugin.registerExtension(
-                project,
                 ClassStabilityFieldSerializationPlugin(
                     composeDescriptorSerializerContext?.classStabilityInferredCollection
                 )
             )
-            FirExtensionRegistrarAdapter.registerExtension(project, ComposeFirExtensionRegistrar())
+            FirExtensionRegistrarAdapter.registerExtension(ComposeFirExtensionRegistrar())
         }
 
-        fun registerNativeExtensions(
-            project: Project,
+        fun ExtensionStorage.registerNativeExtensions(
             composeDescriptorSerializerContext: ComposeDescriptorSerializerContext
         ) {
             DescriptorSerializerPlugin.registerExtension(
-                project,
                 AddHiddenFromObjCSerializationPlugin(
                     composeDescriptorSerializerContext.hideFromObjCDeclarationsSet
                 )
