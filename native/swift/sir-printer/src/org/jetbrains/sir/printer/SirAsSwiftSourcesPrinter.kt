@@ -7,6 +7,8 @@ package org.jetbrains.sir.printer
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.util.Comparators
+import org.jetbrains.kotlin.sir.util.swiftFqName
+import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.utils.IndentingPrinter
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -74,7 +76,7 @@ public class SirAsSwiftSourcesPrinter(
         print("typealias ")
         printName()
         print(" = ")
-        println(type.swift)
+        println(type.swiftName)
     }
 
     private fun SirDeclarationContainer.print() {
@@ -134,7 +136,7 @@ public class SirAsSwiftSourcesPrinter(
             "var ",
             name.swiftIdentifier,
             ": ",
-            type.swift,
+            type.swiftName,
         )
         println(" {")
         withIndent {
@@ -190,13 +192,13 @@ public class SirAsSwiftSourcesPrinter(
     )
 
     private fun SirClass.printSuperClass() = print(
-        superClass?.let { ": ${it.swift} " } ?: ""
+        superClass?.let { ": ${it.swiftName} " } ?: ""
     )
 
     private fun SirElement.printName() = print(
         when (this@printName) {
             is SirNamed -> name
-            is SirExtension -> extendedType.swift
+            is SirExtension -> extendedType.swiftName
             else -> error("There is no printable name for SirElement: ${this@printName}")
         }
     )
@@ -243,7 +245,7 @@ public class SirAsSwiftSourcesPrinter(
 
     private fun SirCallable.printReturnType() = print(
         when (this) {
-            is SirFunction -> " -> ${returnType.swift}"
+            is SirFunction -> " -> ${returnType.swiftName}"
             is SirInit,
             is SirGetter,
             is SirSetter,
@@ -265,7 +267,7 @@ public class SirAsSwiftSourcesPrinter(
                 println()
                 withIndent {
                     this.forEachIndexed { index, sirParameter ->
-                        print(sirParameter.swift)
+                        print(sirParameter.swiftName)
                         if (index != lastIndex) {
                             println(",")
                         } else {
@@ -300,8 +302,13 @@ private val SirVisibility.swift
         SirVisibility.PACKAGE -> "package"
     }
 
-private val SirParameter.swift get(): String = (argumentName ?: "_") + (parameterName?.let { " $it" } ?: "") + ": " + type.swift
+private val SirParameter.swift get(): String = (argumentName ?: "_") + (parameterName?.let { " $it" } ?: "") + ": " + type.swiftName
 
 private val simpleIdentifierRegex = Regex("[_a-zA-Z][_a-zA-Z0-9]*")
 
 private val String.swiftIdentifier get() = if (simpleIdentifierRegex.matches(this)) this else "`$this`"
+
+private val SirParameter.swiftName
+    get(): String = (argumentName ?: "_") +
+            (parameterName?.let { " $it" } ?: "") + ": " +
+            type.swiftName

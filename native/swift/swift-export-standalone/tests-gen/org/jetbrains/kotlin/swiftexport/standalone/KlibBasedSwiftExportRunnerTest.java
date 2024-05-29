@@ -60,6 +60,18 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
+  @TestMetadata("package_flattening_invalid_target")
+  public void testPackage_flattening_invalid_target() {
+    runTest("native/swift/swift-export-standalone/testData/package_flattening_invalid_target/");
+  }
+
+  @Test
+  @TestMetadata("package_flattening_missing_target")
+  public void testPackage_flattening_missing_target() {
+    runTest("native/swift/swift-export-standalone/testData/package_flattening_missing_target/");
+  }
+
+  @Test
   @TestMetadata("type_reference")
   public void testType_reference() {
     runTest("native/swift/swift-export-standalone/testData/type_reference/");

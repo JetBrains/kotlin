@@ -27,6 +27,7 @@ public interface SirSession :
     SirDeclarationNamer,
     SirDeclarationProvider,
     SirParentProvider,
+    SirTrampolineDeclarationsProvider,
     SirModuleProvider,
     SirTypeProvider,
     SirVisibilityChecker,
@@ -38,6 +39,7 @@ public interface SirSession :
     public val declarationNamer: SirDeclarationNamer
     public val declarationProvider: SirDeclarationProvider
     public val parentProvider: SirParentProvider
+    public val trampolineDeclarationsProvider: SirTrampolineDeclarationsProvider
     public val moduleProvider: SirModuleProvider
     public val typeProvider: SirTypeProvider
     public val visibilityChecker: SirVisibilityChecker
@@ -54,6 +56,10 @@ public interface SirSession :
 
     override fun KtDeclarationSymbol.getSirParent(ktAnalysisSession: KtAnalysisSession): SirDeclarationParent =
         with(parentProvider) { this@getSirParent.getSirParent(ktAnalysisSession) }
+
+    override fun SirDeclaration.trampolineDeclarations(): List<SirDeclaration> = with (trampolineDeclarationsProvider) {
+        this@trampolineDeclarations.trampolineDeclarations()
+    }
 
     override fun KtModule.sirModule(): SirModule = with(moduleProvider) { this@sirModule.sirModule() }
 
@@ -103,6 +109,13 @@ public interface SirDeclarationProvider {
  */
 public interface SirParentProvider {
     public fun KtDeclarationSymbol.getSirParent(ktAnalysisSession: KtAnalysisSession): SirDeclarationParent
+}
+
+/**
+ *  Provides trampoline declarations for a given [SirDeclaration], if any.
+ */
+public interface SirTrampolineDeclarationsProvider {
+    public fun SirDeclaration.trampolineDeclarations(): List<SirDeclaration>
 }
 
 /**

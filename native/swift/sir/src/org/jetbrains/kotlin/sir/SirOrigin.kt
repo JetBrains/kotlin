@@ -14,6 +14,7 @@ sealed interface SirOrigin {
     data class KotlinBaseInitOverride(val `for`: Foreign.SourceCode) : Synthetic
 
     data class Namespace(val path: List<String>) : Synthetic
+    data class Trampoline(val target: SirDeclaration) : Synthetic
 
     sealed interface Foreign : SirOrigin {
 

@@ -46,3 +46,25 @@ fun <T : SirDeclaration> SirMutableDeclarationContainer.addChild(producer: () ->
     declarations += child
     return child
 }
+
+val SirType.swiftName
+    get(): String = when (this) {
+        is SirExistentialType -> "Any"
+        is SirNominalType -> type.swiftFqName
+        is SirErrorType -> "ERROR_TYPE"
+        is SirUnsupportedType -> "UNSUPPORTED_TYPE"
+    }
+
+private val SirDeclaration.swiftParentNamePrefix: String?
+    get() = (parent as? SirNamedDeclaration)?.swiftFqName
+        ?: ((parent as? SirNamed)?.name)
+        ?: ((parent as? SirExtension)?.extendedType?.swiftName)
+
+val SirNamedDeclaration.swiftFqName: String
+    get() = swiftParentNamePrefix?.let { "$it.$name" } ?: name
+
+val SirFunction.swiftFqName: String
+    get() = swiftParentNamePrefix?.let { "$it.$name" } ?: name
+
+val SirVariable.swiftFqName: String
+    get() = swiftParentNamePrefix?.let { "$it.$name" } ?: name

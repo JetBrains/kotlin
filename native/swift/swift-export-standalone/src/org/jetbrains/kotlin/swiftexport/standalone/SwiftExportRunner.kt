@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.SimpleUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
+import org.jetbrains.kotlin.sir.util.swiftName
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.RENDER_DOC_COMMENTS
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSwiftModule
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpResultToFiles
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.io.Serializable
-import org.jetbrains.sir.printer.swift
 import java.nio.file.Path
 import kotlin.io.path.div
 
@@ -56,7 +56,7 @@ public data class SwiftExportConfig(
 
         public const val RENDER_DOC_COMMENTS: String = "RENDER_DOC_COMMENTS"
 
-        public const val ROOT_PACKAGE: String = "rootPackage"
+        public const val ROOT_PACKAGE: String = "packageRoot"
     }
 }
 
@@ -147,7 +147,7 @@ public fun runSwiftExport(
     val unsupportedDeclarationReporter = config.unsupportedDeclarationReporterKind.toReporter()
     val buildResult = buildSwiftModule(input, config, unsupportedDeclarationReporter)
     val bridgeGenerator = createBridgeGenerator(object : SirTypeNamer {
-        override fun swiftFqName(type: SirType): String = type.swift
+        override fun swiftFqName(type: SirType): String = type.swiftName
         override fun kotlinFqName(type: SirType): String {
             require(type is SirNominalType)
             return ((type.type.origin as KotlinSource).symbol as KtClassLikeSymbol).classId!!.asFqNameString()

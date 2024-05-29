@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
+import org.jetbrains.kotlin.diagnostics.warning0
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirModule
@@ -24,8 +27,11 @@ import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.util.addChild
+import org.jetbrains.kotlin.sir.util.isValidSwiftIdentifier
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportConfig.Companion.DEFAULT_BRIDGE_MODULE_NAME
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportLogger
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 import kotlin.io.path.Path
@@ -55,7 +61,17 @@ internal fun buildSwiftModule(
             unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
             moduleForPackageEnums = moduleForPackageEnums,
             unsupportedDeclarationReporter = unsupportedDeclarationReporter,
-            moduleProviderBuilder = { sirOneToOneModuleProvider }
+            moduleProviderBuilder = { sirOneToOneModuleProvider },
+            targetPackageFqName = config.settings[SwiftExportConfig.ROOT_PACKAGE]?.let { packageName ->
+                packageName.takeIf { FqNameUnsafe.isValid(it) }?.let { FqName(it) }
+                    ?.takeIf { it.pathSegments().all { it.toString().isValidSwiftIdentifier() } }
+                    ?: null.also {
+                        config.logger.report(
+                            SwiftExportLogger.Severity.Warning,
+                            "'$packageName' is not a valid name for ${SwiftExportConfig.ROOT_PACKAGE} and will be ignored"
+                        )
+                    }
+            },
         )
         with(sirSession) {
             scopeProvider(this@analyze).flatMap { scope ->
