@@ -1,6 +1,6 @@
 KtNameReferenceExpression(96,102): 'Helper'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: Inapplicable candidate>
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

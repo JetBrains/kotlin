@@ -17,4 +17,4 @@ KtNameReferenceExpression(327,331): 'Test'
         }
         argumentMapping = {}
     ]
-    diagnostic = ERROR<null: Inapplicable candidate>
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

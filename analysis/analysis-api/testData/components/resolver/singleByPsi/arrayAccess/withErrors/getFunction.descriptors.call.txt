@@ -32,4 +32,4 @@ KtArrayAccessExpression(44,48): '1[2]'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<null: OTHER_ERROR with get>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with get>

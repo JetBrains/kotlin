@@ -31,4 +31,4 @@ KtCallExpression(43,66): 'generic<Int, String>(5)'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<null: OTHER_ERROR with generic>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generic>

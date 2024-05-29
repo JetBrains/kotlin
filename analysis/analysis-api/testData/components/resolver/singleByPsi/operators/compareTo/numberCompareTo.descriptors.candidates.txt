@@ -1,6 +1,6 @@
 KtNameReferenceExpression(20,29): 'compareTo'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with compareTo>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -32,9 +32,9 @@ KtNameReferenceExpression(20,29): 'compareTo'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with compareTo>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -66,9 +66,9 @@ KtNameReferenceExpression(20,29): 'compareTo'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with compareTo>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -100,7 +100,7 @@ KtNameReferenceExpression(20,29): 'compareTo'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -133,9 +133,9 @@ KtNameReferenceExpression(20,29): 'compareTo'
           callableId = null)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with compareTo>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -167,9 +167,9 @@ KtNameReferenceExpression(20,29): 'compareTo'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with compareTo>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

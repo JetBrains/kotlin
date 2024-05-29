@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
-import org.jetbrains.kotlin.analysis.api.diagnostics.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.isInvokeFunction
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
+import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.resolution.KaAnnotationCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCall
@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -319,7 +320,9 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
         }
     }
 
-    private fun inapplicableCandidateDiagnostic() = KaNonBoundToPsiErrorDiagnostic(null, "Inapplicable candidate", token)
+    private fun inapplicableCandidateDiagnostic(): KaDiagnostic {
+        return KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, "Inapplicable candidate", token)
+    }
 
     /**
      * When resolving the calleeExpression of a `KtCallExpression`, we resolve the entire `KtCallExpression` instead. This way, the
@@ -1186,7 +1189,7 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
         if (diagnostic is ConeHiddenCandidateError) return null
         val ktDiagnostic =
             resolvable.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement()) }
-                ?: KaNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
+                ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, token)
         return KaInapplicableCallCandidateInfo(call, isInBestCandidates, ktDiagnostic)
     }
 
@@ -1241,7 +1244,11 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
                                 false,
                             )
                         ),
-                        KaNonBoundToPsiErrorDiagnostic(factoryName = null, "type of arrayOf call is not resolved", token),
+                        KaNonBoundToPsiErrorDiagnostic(
+                            factoryName = FirErrors.OTHER_ERROR.name,
+                            defaultMessage = "type of arrayOf call is not resolved",
+                            token = token
+                        ),
                         token
                     )
                 }
@@ -1406,6 +1413,6 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
 
     private fun FirDiagnosticHolder.createKtDiagnostic(psi: KtElement?): KaDiagnostic {
         return (source?.let { diagnostic.asKtDiagnostic(it, psi?.toKtPsiSourceElement()) }
-            ?: KaNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token))
+            ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, token))
     }
 }

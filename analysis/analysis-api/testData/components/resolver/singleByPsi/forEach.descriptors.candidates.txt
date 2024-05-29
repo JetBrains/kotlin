@@ -1,6 +1,6 @@
 KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -34,9 +34,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -68,9 +68,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -102,9 +102,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -136,9 +136,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -170,9 +170,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -204,9 +204,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -238,9 +238,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -272,9 +272,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -306,9 +306,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -340,9 +340,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -374,9 +374,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -408,9 +408,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -442,9 +442,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -476,7 +476,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -511,7 +511,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = true
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -546,9 +546,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -582,7 +582,7 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
@@ -615,9 +615,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -652,9 +652,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -689,9 +689,9 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

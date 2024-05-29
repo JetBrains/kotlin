@@ -17,4 +17,4 @@ KtCallExpression(64,75): 'ALE<String>'
         }
         argumentMapping = {}
     ]
-    diagnostic = ERROR<null: Inapplicable candidate>
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

@@ -15,4 +15,4 @@ KtConstructorCalleeExpression(31,32): 'A'
         typeArgumentsMapping = {}
         argumentMapping = {}
     ]
-    diagnostic = ERROR<null: OTHER_ERROR with <init>>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>

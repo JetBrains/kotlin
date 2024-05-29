@@ -30,4 +30,4 @@ KtCallExpression(31,44): 'Array<String>'
         }
         argumentMapping = {}
     ]
-    diagnostic = ERROR<null: Inapplicable candidate>
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

@@ -1,6 +1,6 @@
 KtConstructorCalleeExpression(40,41): 'A'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with <init>>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     candidate = KaDelegatedConstructorCall:
       kind = SUPER_CALL
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

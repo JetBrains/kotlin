@@ -1,6 +1,6 @@
 KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with generic>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generic>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

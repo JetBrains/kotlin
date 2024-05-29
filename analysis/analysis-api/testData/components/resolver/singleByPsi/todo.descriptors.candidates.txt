@@ -1,6 +1,6 @@
 KtNameReferenceExpression(55,59): 'TODO'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with TODO>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with TODO>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -15,7 +15,7 @@ KtNameReferenceExpression(55,59): 'TODO'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false

@@ -19,9 +19,9 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
       typeArgumentsMapping = {}
       argumentMapping = {}
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with clear>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with clear>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

@@ -31,9 +31,9 @@ KtArrayAccessExpression(70,77): 'list[0]'
           callableId = null)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with get>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with get>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -68,7 +68,7 @@ KtArrayAccessExpression(70,77): 'list[0]'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     candidate = KaSimpleFunctionCall:

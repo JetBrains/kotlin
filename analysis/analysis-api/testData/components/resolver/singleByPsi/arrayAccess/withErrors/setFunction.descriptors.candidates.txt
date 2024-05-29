@@ -1,6 +1,6 @@
 KtArrayAccessExpression(59,63): '1[2]'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with set>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with set>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

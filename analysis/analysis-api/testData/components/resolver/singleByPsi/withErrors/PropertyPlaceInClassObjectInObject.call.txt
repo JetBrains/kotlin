@@ -1,4 +1,4 @@
 KtNameReferenceExpression(104,106): 'va'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<null: Unresolved name: va>
+    diagnostic = ERROR<OTHER_ERROR: Unresolved name: va>

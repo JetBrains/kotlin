@@ -35,9 +35,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -85,9 +85,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -134,7 +134,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> BooleanArray.groupBy(keySelector: (Boolean) -> K): Map<K, List<Boolean>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -170,9 +170,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -219,7 +219,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> ByteArray.groupBy(keySelector: (Byte) -> K): Map<K, List<Byte>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -255,9 +255,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -304,7 +304,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> CharArray.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -340,9 +340,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -389,7 +389,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> CharSequence.groupBy(keySelector: (Char) -> K): Map<K, List<Char>> defined in kotlin.text>
     candidate = KaSimpleFunctionCall:
@@ -425,9 +425,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -474,7 +474,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> DoubleArray.groupBy(keySelector: (Double) -> K): Map<K, List<Double>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -510,9 +510,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -559,7 +559,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> FloatArray.groupBy(keySelector: (Float) -> K): Map<K, List<Float>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -595,9 +595,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -644,7 +644,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> IntArray.groupBy(keySelector: (Int) -> K): Map<K, List<Int>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -680,9 +680,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -729,7 +729,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> LongArray.groupBy(keySelector: (Long) -> K): Map<K, List<Long>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -765,9 +765,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -814,7 +814,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> ShortArray.groupBy(keySelector: (Short) -> K): Map<K, List<Short>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -850,9 +850,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -899,7 +899,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> UByteArray.groupBy(keySelector: (UByte) -> K): Map<K, List<UByte>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -935,9 +935,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -984,7 +984,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> UIntArray.groupBy(keySelector: (UInt) -> K): Map<K, List<UInt>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -1020,9 +1020,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1069,7 +1069,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> ULongArray.groupBy(keySelector: (ULong) -> K): Map<K, List<ULong>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -1105,9 +1105,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1154,7 +1154,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <K> UShortArray.groupBy(keySelector: (UShort) -> K): Map<K, List<UShort>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -1190,9 +1190,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1240,7 +1240,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <T, K> Iterable<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> defined in kotlin.collections>
     candidate = KaSimpleFunctionCall:
@@ -1277,9 +1277,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -1325,7 +1325,7 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> defined in kotlin.sequences>
     candidate = KaSimpleFunctionCall:
@@ -1362,9 +1362,9 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with groupBy>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with groupBy>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

@@ -33,9 +33,9 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           callableId = null)
       }
     isInBestCandidates = true
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with plusAssign>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plusAssign>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -69,9 +69,9 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with plusAssign>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plusAssign>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -105,9 +105,9 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with plusAssign>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with plusAssign>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -141,9 +141,9 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with plusAssign>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -178,9 +178,9 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with plusAssign>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -215,9 +215,9 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with plusAssign>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -252,9 +252,9 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with plusAssign>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -289,9 +289,9 @@ KtNameReferenceExpression(54,64): 'plusAssign'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with plusAssign>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with plusAssign>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

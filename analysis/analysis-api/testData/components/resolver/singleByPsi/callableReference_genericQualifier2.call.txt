@@ -17,4 +17,4 @@ KtCallExpression(76,85): 'Test<Bar>'
         }
         argumentMapping = {}
     ]
-    diagnostic = ERROR<null: Inapplicable candidate>
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

@@ -1,6 +1,6 @@
 KtNameReferenceExpression(114,123): 'compareTo'
   KaInapplicableCallCandidateInfo:
-    diagnostic = ERROR<null: OTHER_ERROR with compareTo>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with compareTo>
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
@@ -32,7 +32,7 @@ KtNameReferenceExpression(114,123): 'compareTo'
           callableId = null)
       }
     isInBestCandidates = false
-  
+
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       isImplicitInvoke = false

@@ -17,4 +17,4 @@ KtCallExpression(39,64): 'generic<String, String>()'
         }
         argumentMapping = {}
     ]
-    diagnostic = ERROR<null: OTHER_ERROR with generic>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generic>

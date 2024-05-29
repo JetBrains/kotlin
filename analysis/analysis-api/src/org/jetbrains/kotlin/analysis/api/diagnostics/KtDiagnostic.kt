@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.analysis.api.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import kotlin.reflect.KClass
 
 public enum class KaSeverity {
@@ -20,7 +18,7 @@ public enum class KaSeverity {
 
 public interface KaDiagnostic : KaLifetimeOwner {
     public val severity: KaSeverity
-    public val factoryName: String?
+    public val factoryName: String
     public val defaultMessage: String
 }
 
@@ -34,17 +32,6 @@ public interface KaDiagnosticWithPsi<out PSI : PsiElement> : KaDiagnostic {
 
 public typealias KtDiagnosticWithPsi<PSI> = KaDiagnosticWithPsi<PSI>
 
-public class KaNonBoundToPsiErrorDiagnostic(
-    override val factoryName: String?,
-    override val defaultMessage: String,
-    override val token: KaLifetimeToken,
-) : KaDiagnostic {
-    override val severity: KaSeverity
-        get() = withValidityAssertion { KaSeverity.ERROR }
+public fun KaDiagnostic.getDefaultMessageWithFactoryName(): String {
+    return "[$factoryName] $defaultMessage"
 }
-
-public typealias KtNonBoundToPsiErrorDiagnostic = KaNonBoundToPsiErrorDiagnostic
-
-public fun KaDiagnostic.getDefaultMessageWithFactoryName(): String =
-    if (factoryName == null) defaultMessage
-    else "[$factoryName] $defaultMessage"
