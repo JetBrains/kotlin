@@ -73,8 +73,12 @@ class ClassRef<P : TypeParameterRef> private constructor(
     /** Simple name of this class, like `"Entry"` for `Map.Entry`. */
     val simpleName: String get() = names[names.size - 1]
 
-    override val typeName: String
+    /** Name of this class, including parent classes, like `"Map.Entry"` for `Map.Entry`. */
+    val typeName: String
         get() = simpleNames.joinToString(separator = ".")
+
+    /** Simple name of top level class, like `"Map"` for `Map.Entry`. */
+    override val importableName: String = names[1]
 
     override fun renderTo(appendable: Appendable, importCollector: ImportCollecting) {
         importCollector.addImport(this)
@@ -137,8 +141,11 @@ data class ElementRef<Element : AbstractElement<Element, *, *>>(
     override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementRef(element, args, nullable)
     override fun copy(nullable: Boolean) = ElementRef(element, args, nullable)
 
-    override val typeName: String
+    val typeName: String
         get() = element.typeName
+
+    override val importableName: String
+        get() = element.importableName
 
     override val packageName: String
         get() = element.packageName
