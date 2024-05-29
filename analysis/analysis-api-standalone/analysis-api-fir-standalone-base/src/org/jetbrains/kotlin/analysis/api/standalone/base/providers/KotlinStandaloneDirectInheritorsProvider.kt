@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinDirectInheritorsProvider
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderFactory
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -29,11 +29,11 @@ import kotlin.collections.filter
 
 @OptIn(LLFirInternals::class, SymbolInternals::class)
 internal class KotlinStandaloneDirectInheritorsProvider(private val project: Project) : KotlinDirectInheritorsProvider {
-    private val staticDeclarationProviderFactory by lazy {
-        KotlinDeclarationProviderFactory.getInstance(project) as? KotlinStaticDeclarationProviderFactory
+    private val standaloneDeclarationProviderFactory by lazy {
+        KotlinDeclarationProviderFactory.getInstance(project) as? KotlinStandaloneDeclarationProviderFactory
             ?: error(
                 "`${KotlinStandaloneDirectInheritorsProvider::class.simpleName}` expects the following declaration provider factory to be" +
-                        " registered: `${KotlinStaticDeclarationProviderFactory::class.simpleName}`"
+                        " registered: `${KotlinStandaloneDeclarationProviderFactory::class.simpleName}`"
             )
     }
 
@@ -47,7 +47,7 @@ internal class KotlinStandaloneDirectInheritorsProvider(private val project: Pro
         val aliases = mutableSetOf(classId.shortClassName)
         calculateAliases(classId.shortClassName, aliases)
 
-        val possibleInheritors = aliases.flatMap { staticDeclarationProviderFactory.getDirectInheritorCandidates(it) }
+        val possibleInheritors = aliases.flatMap { standaloneDeclarationProviderFactory.getDirectInheritorCandidates(it) }
 
         if (possibleInheritors.isEmpty()) {
             return emptyList()
@@ -71,7 +71,7 @@ internal class KotlinStandaloneDirectInheritorsProvider(private val project: Pro
     }
 
     private fun calculateAliases(aliasedName: Name, aliases: MutableSet<Name>) {
-        staticDeclarationProviderFactory.getInheritableTypeAliases(aliasedName).forEach { alias ->
+        standaloneDeclarationProviderFactory.getInheritableTypeAliases(aliasedName).forEach { alias ->
             val aliasName = alias.nameAsSafeName
             val isNewAliasName = aliases.add(aliasName)
             if (isNewAliasName) {

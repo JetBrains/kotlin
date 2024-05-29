@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.providers.impl
+package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
  *
  * Required for and used only in the test infrastructure.
  */
-private class KotlinStaticAnnotationsResolver(
+private class KotlinStandaloneAnnotationsResolver(
     private val project: Project,
     ktFiles: Collection<KtFile>,
     scope: GlobalSearchScope
@@ -77,11 +77,11 @@ private class KotlinStaticAnnotationsResolver(
     }
 }
 
-public class KotlinStaticAnnotationsResolverFactory(
+class KotlinStandaloneAnnotationsResolverFactory(
     private val project: Project,
     private val files: Collection<KtFile>,
 ) : KotlinAnnotationsResolverFactory {
     override fun createAnnotationResolver(searchScope: GlobalSearchScope): KotlinAnnotationsResolver {
-        return KotlinStaticAnnotationsResolver(project, files, searchScope)
+        return KotlinStandaloneAnnotationsResolver(project, files, searchScope)
     }
 }

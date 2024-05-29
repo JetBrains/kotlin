@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.providers.impl
+package org.jetbrains.kotlin.analysis.api.standalone.base.packages
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderMerger
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinPackageProviderBase
+import org.jetbrains.kotlin.analysis.providers.impl.mergeSpecificProviders
 import org.jetbrains.kotlin.analysis.providers.impl.packageProviders.CompositeKotlinPackageProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
-public class KotlinStaticPackageProvider(
+class KotlinStandalonePackageProvider(
     project: Project,
     internal val scope: GlobalSearchScope,
     files: Collection<KtFile>
@@ -44,22 +46,22 @@ public class KotlinStaticPackageProvider(
     }
 }
 
-public class KotlinStaticPackageProviderFactory(
+class KotlinStandalonePackageProviderFactory(
     private val project: Project,
     private val files: Collection<KtFile>
 ) : KotlinPackageProviderFactory() {
     override fun createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider {
-        return KotlinStaticPackageProvider(project, searchScope, files)
+        return KotlinStandalonePackageProvider(project, searchScope, files)
     }
 }
 
-public class KotlinStaticPackageProviderMerger(private val project: Project) : KotlinPackageProviderMerger() {
+class KotlinStandalonePackageProviderMerger(private val project: Project) : KotlinPackageProviderMerger() {
     override fun merge(providers: List<KotlinPackageProvider>): KotlinPackageProvider =
-        providers.mergeSpecificProviders<_, KotlinStaticPackageProvider>(CompositeKotlinPackageProvider.factory) { targetProviders ->
+        providers.mergeSpecificProviders<_, KotlinStandalonePackageProvider>(CompositeKotlinPackageProvider.factory) { targetProviders ->
             val combinedScope = GlobalSearchScope.union(targetProviders.map { it.scope })
             project.createPackageProvider(combinedScope).apply {
-                check(this is KotlinStaticPackageProvider) {
-                    "`${KotlinStaticPackageProvider::class.simpleName}` can only be merged into a combined package provider of the same type."
+                check(this is KotlinStandalonePackageProvider) {
+                    "`${KotlinStandalonePackageProvider::class.simpleName}` can only be merged into a combined package provider of the same type."
                 }
             }
         }

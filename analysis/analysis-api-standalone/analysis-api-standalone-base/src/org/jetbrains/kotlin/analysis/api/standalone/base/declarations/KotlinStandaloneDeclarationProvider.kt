@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.providers.impl
+package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.application.ApplicationManager
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderMerger
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.impl.declarationProviders.CompositeKotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.impl.mergeSpecificProviders
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.*
@@ -45,9 +46,9 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.util.concurrent.ConcurrentHashMap
 
-public class KotlinStaticDeclarationProvider internal constructor(
-    private val index: KotlinStaticDeclarationIndex,
-    public val scope: GlobalSearchScope,
+class KotlinStandaloneDeclarationProvider internal constructor(
+    private val index: KotlinStandaloneDeclarationIndex,
+    val scope: GlobalSearchScope,
 ) : KotlinDeclarationProvider() {
 
     private val KtElement.inScope: Boolean
@@ -150,7 +151,7 @@ public class KotlinStaticDeclarationProvider internal constructor(
  * @param sharedBinaryRoots Binary roots that are shared between multiple different projects. This allows Kotlin tests to cache stubs for
  * shared libraries like the Kotlin stdlib.
  */
-public class KotlinStaticDeclarationProviderFactory(
+class KotlinStandaloneDeclarationProviderFactory(
     private val project: Project,
     sourceKtFiles: Collection<KtFile>,
     binaryRoots: List<VirtualFile> = emptyList(),
@@ -159,7 +160,7 @@ public class KotlinStaticDeclarationProviderFactory(
     shouldBuildStubsForBinaryLibraries: Boolean = false,
 ) : KotlinDeclarationProviderFactory() {
 
-    private val index = KotlinStaticDeclarationIndex()
+    private val index = KotlinStandaloneDeclarationIndex()
 
     private val psiManager = PsiManager.getInstance(project)
     private val builtInDecompiler = KotlinBuiltInDecompiler()
@@ -287,7 +288,7 @@ public class KotlinStaticDeclarationProviderFactory(
      * This is a simplified version of `KtTypeElement.index()` from the IDE. If we need to move more indexing code to Standalone, we should
      * consider moving more code from the IDE to the Analysis API.
      *
-     * @see KotlinStaticDeclarationIndex.inheritableTypeAliasesByAliasedName
+     * @see KotlinStandaloneDeclarationIndex.inheritableTypeAliasesByAliasedName
      */
     private fun findInheritableSimpleNames(typeElement: KtTypeElement): List<String> {
         return when (typeElement) {
@@ -448,19 +449,19 @@ public class KotlinStaticDeclarationProviderFactory(
     }
 
     override fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KtModule?): KotlinDeclarationProvider {
-        return KotlinStaticDeclarationProvider(index, scope)
+        return KotlinStandaloneDeclarationProvider(index, scope)
     }
 
-    public fun getAdditionalCreatedKtFiles(): List<KtFile> {
+    fun getAdditionalCreatedKtFiles(): List<KtFile> {
         return createdFakeKtFiles
     }
 
-    public fun getAllKtClasses(): List<KtClassOrObject> = index.classMap.values.flattenTo(mutableListOf())
+    fun getAllKtClasses(): List<KtClassOrObject> = index.classMap.values.flattenTo(mutableListOf())
 
-    public fun getDirectInheritorCandidates(baseClassName: Name): Set<KtClassOrObject> =
+    fun getDirectInheritorCandidates(baseClassName: Name): Set<KtClassOrObject> =
         index.classesBySupertypeName[baseClassName].orEmpty()
 
-    public fun getInheritableTypeAliases(aliasedName: Name): Set<KtTypeAlias> =
+    fun getInheritableTypeAliases(aliasedName: Name): Set<KtTypeAlias> =
         index.inheritableTypeAliasesByAliasedName[aliasedName].orEmpty()
 }
 
@@ -469,11 +470,11 @@ public class KotlinStaticDeclarationProviderFactory(
  *
  * Otherwise, each test would start indexing of stdlib from scratch,
  * and under the lock which makes tests extremely slow*/
-public class KotlinFakeClsStubsCache {
+class KotlinFakeClsStubsCache {
     private val fakeFileClsStubs = ConcurrentHashMap<String, Map<VirtualFile, KotlinFileStubImpl>>()
 
-    public companion object {
-        public fun processAdditionalRoot(
+    companion object {
+        fun processAdditionalRoot(
             root: VirtualFile,
             storage: (VirtualFile) -> Map<VirtualFile, KotlinFileStubImpl>
         ): Map<VirtualFile, KotlinFileStubImpl>? {
@@ -485,13 +486,13 @@ public class KotlinFakeClsStubsCache {
     }
 }
 
-public class KotlinStaticDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMerger() {
+class KotlinStandaloneDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMerger() {
     override fun merge(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
-        providers.mergeSpecificProviders<_, KotlinStaticDeclarationProvider>(CompositeKotlinDeclarationProvider.factory) { targetProviders ->
+        providers.mergeSpecificProviders<_, KotlinStandaloneDeclarationProvider>(CompositeKotlinDeclarationProvider.factory) { targetProviders ->
             val combinedScope = GlobalSearchScope.union(targetProviders.map { it.scope })
             project.createDeclarationProvider(combinedScope, contextualModule = null).apply {
-                check(this is KotlinStaticDeclarationProvider) {
-                    "`KotlinStaticDeclarationProvider` can only be merged into a combined declaration provider of the same type."
+                check(this is KotlinStandaloneDeclarationProvider) {
+                    "`KotlinStandaloneDeclarationProvider` can only be merged into a combined declaration provider of the same type."
                 }
             }
         }
