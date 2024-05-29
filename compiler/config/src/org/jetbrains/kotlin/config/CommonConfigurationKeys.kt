@@ -103,6 +103,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val VERIFY_IR = CompilerConfigurationKey.create<IrVerificationMode>("IR verification mode")
+
+    @JvmField
+    val USE_BIR = CompilerConfigurationKey.create<Boolean>("Compile using experimental BIR implementation")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

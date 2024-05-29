@@ -172,6 +172,7 @@ fun Project.configureKotlinCompilationOptions() {
             "-Xno-kotlin-nothing-value-exception",
         )
 
+        val projectsWithEnabledContextReceivers: List<String> by rootProject.extra
         val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
 
         tasks.withType<KotlinJvmCompile>().configureEach {
@@ -181,6 +182,9 @@ fun Project.configureKotlinCompilationOptions() {
                     freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
                 }
                 allWarningsAsErrors.set(!kotlinBuildProperties.disableWerror)
+                if (project.path in projectsWithEnabledContextReceivers) {
+                    freeCompilerArgs.add("-Xcontext-receivers")
+                }
                 if (project.path in projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib) {
                     freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction")
                 }
