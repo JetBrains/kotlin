@@ -16,9 +16,14 @@ data class VarargData private constructor(val value: IntArray) {
     fun copy(vararg value: Int): VarargData = null!!
 }
 
+data object DataObject {
+    <!CONFLICTING_OVERLOADS!>fun copy()<!> {}
+}
+
 fun topLevel(data: Data, varargData: VarargData) {
     data.copy()
     varargData.copy(42, 42)
+    DataObject.<!OVERLOAD_RESOLUTION_AMBIGUITY!>copy<!>()
 }
 
 fun Data.topLevelExtension() {

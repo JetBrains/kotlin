@@ -16,9 +16,14 @@ data class VarargData <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>priv
     fun copy(vararg value: Int): VarargData = null!!
 }
 
+data object DataObject {
+    fun copy() {}
+}
+
 fun topLevel(data: Data, varargData: VarargData) {
     data.<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
     varargData.copy(42, 42)
+    DataObject.copy()
 }
 
 fun Data.topLevelExtension() {
