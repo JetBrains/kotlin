@@ -34166,6 +34166,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/operatorConventions/augmentedAssigmentPlusLhsCount.kt");
     }
 
+    @TestMetadata("BoundedGenericValueInRangeCheck.kt")
+    public void ignoreBoundedGenericValueInRangeCheck() {
+      runTest("compiler/testData/codegen/box/operatorConventions/BoundedGenericValueInRangeCheck.kt");
+    }
+
     private void runTest(String testDataFilePath) {
       KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }

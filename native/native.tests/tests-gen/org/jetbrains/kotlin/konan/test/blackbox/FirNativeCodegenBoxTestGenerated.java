@@ -32584,6 +32584,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("BoundedGenericValueInRangeCheck.kt")
+      public void testBoundedGenericValueInRangeCheck() {
+        runTest("compiler/testData/codegen/box/operatorConventions/BoundedGenericValueInRangeCheck.kt");
+      }
+
+      @Test
       @TestMetadata("genericArrayAccessCall.kt")
       public void testGenericArrayAccessCall() {
         runTest("compiler/testData/codegen/box/operatorConventions/genericArrayAccessCall.kt");
