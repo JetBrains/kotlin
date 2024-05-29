@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.file.PsiPackageImpl
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.providers.impl.forEachNonKotlinPsiElementFinder
+import org.jetbrains.kotlin.analysis.api.platform.impl.forEachNonKotlinPsiElementFinder
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
  * not necessarily the case for declaration providers (e.g. the IDE declaration provider hitting the index without caching).
  *
  * However, since symbol names providers may not be able to compute name sets per their contract, we may have to fall back to the
- * [declaration provider][org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider].
+ * [declaration provider][org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider].
  *
  * Since this fallback is not suitable for symbols from binary libraries in Standalone mode, the symbol names provider absolutely needs to
  * work there. This functionality is covered by package scope tests.

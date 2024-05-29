@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleOutOfBlockModificationListener
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics
+import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinModuleOutOfBlockModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinTopics
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider

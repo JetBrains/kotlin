@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueFor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.createPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory

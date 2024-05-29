@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compile
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import org.jetbrains.kotlin.analysis.providers.ForeignValueProviderService
+import org.jetbrains.kotlin.analysis.api.platform.ForeignValueProviderService
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities

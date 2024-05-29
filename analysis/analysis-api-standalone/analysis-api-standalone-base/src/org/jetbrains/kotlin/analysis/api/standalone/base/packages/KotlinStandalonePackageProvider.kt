@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.packages
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
-import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderFactory
-import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderMerger
-import org.jetbrains.kotlin.analysis.providers.createPackageProvider
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinPackageProviderBase
-import org.jetbrains.kotlin.analysis.providers.impl.mergeSpecificProviders
-import org.jetbrains.kotlin.analysis.providers.impl.packageProviders.CompositeKotlinPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProviderMerger
+import org.jetbrains.kotlin.analysis.api.platform.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.impl.KotlinPackageProviderBase
+import org.jetbrains.kotlin.analysis.api.platform.impl.mergeSpecificProviders
+import org.jetbrains.kotlin.analysis.api.platform.impl.packageProviders.CompositeKotlinPackageProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile

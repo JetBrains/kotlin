@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.modification
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinGlobalModificationServiceBase
+import org.jetbrains.kotlin.analysis.api.platform.impl.KotlinGlobalModificationServiceBase
 
 class KotlinStandaloneGlobalModificationService(private val project: Project) : KotlinGlobalModificationServiceBase(project) {
     @TestOnly

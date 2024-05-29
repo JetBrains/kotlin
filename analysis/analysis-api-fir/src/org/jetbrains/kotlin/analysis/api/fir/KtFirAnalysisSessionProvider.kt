@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.isStable
-import org.jetbrains.kotlin.analysis.providers.lifetime.KtReadActionConfinementLifetimeToken
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KtReadActionConfinementLifetimeToken
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentMap
 import kotlin.reflect.KClass

@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPsiDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPsiDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.impl.KotlinStaticPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.services.TestServices
 

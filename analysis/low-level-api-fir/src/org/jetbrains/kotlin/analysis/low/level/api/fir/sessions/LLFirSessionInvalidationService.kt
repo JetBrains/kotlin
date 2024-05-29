@@ -9,12 +9,18 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.providers.KotlinAnchorModuleProvider
-import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
-import org.jetbrains.kotlin.analysis.providers.topics.*
+import org.jetbrains.kotlin.analysis.api.platform.KotlinAnchorModuleProvider
+import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinCodeFragmentContextModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinGlobalModuleStateModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinGlobalSourceModuleStateModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinGlobalSourceOutOfBlockModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinModuleOutOfBlockModificationListener
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinModuleStateModificationKind
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinModuleStateModificationListener
 
 /**
- * [LLFirSessionInvalidationService] listens to [modification events][KotlinTopics] and invalidates [LLFirSession]s which depend on the
+ * [LLFirSessionInvalidationService] listens to [modification events][org.jetbrains.kotlin.analysis.api.platform.topics.KotlinTopics] and invalidates [LLFirSession]s which depend on the
  * modified [KtModule]. Its invalidation functions should always be invoked in a **write action** because invalidation affects multiple
  * sessions in [LLFirSessionCache] and the cache has to be kept consistent.
  */

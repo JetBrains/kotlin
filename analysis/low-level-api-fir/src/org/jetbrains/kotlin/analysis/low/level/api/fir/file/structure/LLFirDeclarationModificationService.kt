@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics.CODE_FRAGMENT_CONTEXT_MODIFICATION
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics.MODULE_OUT_OF_BLOCK_MODIFICATION
+import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinTopics.CODE_FRAGMENT_CONTEXT_MODIFICATION
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinTopics.MODULE_OUT_OF_BLOCK_MODIFICATION
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
  *
  * @see getNonLocalReanalyzableContainingDeclaration
  * @see MODULE_OUT_OF_BLOCK_MODIFICATION
- * @see org.jetbrains.kotlin.analysis.providers.topics.KotlinModuleOutOfBlockModificationListener
+ * @see org.jetbrains.kotlin.analysis.api.platform.topics.KotlinModuleOutOfBlockModificationListener
  */
 @LLFirInternals
 class LLFirDeclarationModificationService(val project: Project) : Disposable {

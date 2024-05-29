@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.createPackageProvider
 import org.jetbrains.kotlin.name.FqName
 
 class KaFirPackageSymbol(

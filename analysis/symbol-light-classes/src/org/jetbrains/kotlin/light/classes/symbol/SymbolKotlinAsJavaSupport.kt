@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightCla
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.providers.createAllLibrariesModificationTracker
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.createPackageProvider
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.createAllLibrariesModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass

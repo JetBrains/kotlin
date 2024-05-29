@@ -11,6 +11,14 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.platform.KotlinAnnotationsResolverFactory
+import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProviderMerger
+import org.jetbrains.kotlin.analysis.api.platform.KotlinGlobalModificationService
+import org.jetbrains.kotlin.analysis.api.platform.KotlinModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProviderMerger
+import org.jetbrains.kotlin.analysis.api.platform.KotlinResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderMerger
@@ -26,8 +34,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInDefinitionFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.providers.*
-import org.jetbrains.kotlin.analysis.providers.impl.*
+import org.jetbrains.kotlin.analysis.api.platform.impl.*
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.libraryIndexingConfiguration

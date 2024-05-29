@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.providers.lifetime.KaLifetimeTracker
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KaLifetimeTracker
 
 internal class KaBaseLifetimeTracker : KaLifetimeTracker {
     private val lifetimeOwnersStack = ThreadLocal.withInitial<PersistentList<KtLifetimeToken>> { persistentListOf() }

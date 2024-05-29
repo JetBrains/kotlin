@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 /**
  * [Topic]s for events published by [LLFirSessionInvalidationService] *after* session invalidation. These topics should be subscribed to via
- * the Analysis API message bus: [analysisMessageBus][org.jetbrains.kotlin.analysis.providers.analysisMessageBus].
+ * the Analysis API message bus: [analysisMessageBus][org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus].
  *
  * Session invalidation events are guaranteed to be published after the associated sessions have been invalidated. Because sessions are
  * invalidated in a write action, all session invalidation events are published during that same write action.

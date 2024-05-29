@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.permissions
 
-import org.jetbrains.kotlin.analysis.providers.permissions.KotlinAnalysisPermissionOptions
+import org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinAnalysisPermissionOptions
 
 // TODO (KT-68386): Currently unused due to KT-68386, but will be used again.
 class KotlinStandaloneAnalysisPermissionOptions : KotlinAnalysisPermissionOptions {

@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.permissions
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry
-import org.jetbrains.kotlin.analysis.providers.KaCachedService
-import org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker
-import org.jetbrains.kotlin.analysis.providers.permissions.KotlinAnalysisPermissionOptions
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
+import org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinAnalysisPermissionOptions
 
 internal class KaBaseAnalysisPermissionChecker : KaAnalysisPermissionChecker {
     /**

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinModificationEventKind
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinModificationEventKind
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishWildcardModificationEventsByDirective
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktTestModuleStructure

@@ -22,17 +22,17 @@
     />
 
     <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.providers.KotlinMessageBusProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.providers.impl.KotlinProjectMessageBusProvider"
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.KotlinMessageBusProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.platform.impl.KotlinProjectMessageBusProvider"
     />
 
     <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker"
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseAnalysisPermissionChecker"
     />
 
     <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.providers.lifetime.KaLifetimeTracker"
+        serviceInterface="org.jetbrains.kotlin.analysis.api.platform.lifetime.KaLifetimeTracker"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker"
     />
 

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework.services
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.analysis.providers.ForeignValueProviderService
+import org.jetbrains.kotlin.analysis.api.platform.ForeignValueProviderService
 import org.jetbrains.kotlin.psi.KtCodeFragment
 
 class TestForeignValue(val name: String, val internalType: String)

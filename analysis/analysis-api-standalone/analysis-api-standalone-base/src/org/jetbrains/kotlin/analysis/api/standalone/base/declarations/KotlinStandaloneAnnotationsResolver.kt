@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolver
-import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolverFactory
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.KotlinAnnotationsResolver
+import org.jetbrains.kotlin.analysis.api.platform.KotlinAnnotationsResolverFactory
+import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.createDeclarationProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*

@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llReso
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.createPackageProvider
-import org.jetbrains.kotlin.analysis.providers.impl.declarationProviders.CompositeKotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.impl.packageProviders.CompositeKotlinPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.impl.declarationProviders.CompositeKotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.impl.packageProviders.CompositeKotlinPackageProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.caches.FirCache

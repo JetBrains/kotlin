@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteAction
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.providers.KaCachedService
-import org.jetbrains.kotlin.analysis.providers.lifetime.KtLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.analysis.providers.permissions.KaAnalysisPermissionChecker
+import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 
 abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(project) {
     /**

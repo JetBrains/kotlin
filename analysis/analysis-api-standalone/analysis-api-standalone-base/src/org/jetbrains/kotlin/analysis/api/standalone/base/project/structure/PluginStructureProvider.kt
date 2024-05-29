@@ -22,7 +22,7 @@ import com.intellij.util.messages.ListenerDescriptor
 import com.intellij.util.messages.impl.MessageBusEx
 import com.intellij.util.xml.dom.NoOpXmlInterner
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
+import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.utils.SmartList
 import java.io.InputStream
 import java.util.concurrent.ConcurrentHashMap

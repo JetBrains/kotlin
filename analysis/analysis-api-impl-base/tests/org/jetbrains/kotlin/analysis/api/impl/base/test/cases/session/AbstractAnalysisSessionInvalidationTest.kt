@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.providers.topics.KotlinModificationEventKind
+import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinModificationEventKind
 
 abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalidationTest<KaSession>() {
     override val resultFileSuffix: String get() = "analysis_session"

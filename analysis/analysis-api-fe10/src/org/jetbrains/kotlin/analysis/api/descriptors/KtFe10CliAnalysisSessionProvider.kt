@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.psi.KtElement
 
 internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(project) {
