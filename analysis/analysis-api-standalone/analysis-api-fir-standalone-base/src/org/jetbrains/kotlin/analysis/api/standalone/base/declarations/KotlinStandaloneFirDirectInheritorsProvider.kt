@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.standalone.base.providers
+package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinDirectInheritorsProvider
-import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderFactory
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -28,11 +27,11 @@ import org.jetbrains.kotlin.psi.psiUtil.contains
 import kotlin.collections.filter
 
 @OptIn(LLFirInternals::class, SymbolInternals::class)
-internal class KotlinStandaloneDirectInheritorsProvider(private val project: Project) : KotlinDirectInheritorsProvider {
+internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: Project) : KotlinDirectInheritorsProvider {
     private val standaloneDeclarationProviderFactory by lazy {
         KotlinDeclarationProviderFactory.getInstance(project) as? KotlinStandaloneDeclarationProviderFactory
             ?: error(
-                "`${KotlinStandaloneDirectInheritorsProvider::class.simpleName}` expects the following declaration provider factory to be" +
+                "`${KotlinStandaloneFirDirectInheritorsProvider::class.simpleName}` expects the following declaration provider factory to be" +
                         " registered: `${KotlinStandaloneDeclarationProviderFactory::class.simpleName}`"
             )
     }

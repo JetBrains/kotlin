@@ -4,7 +4,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.providers.KotlinDirectInheritorsProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.providers.KotlinStandaloneDirectInheritorsProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneFirDirectInheritorsProvider"
     />
   </extensions>
 </idea-plugin>
