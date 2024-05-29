@@ -238,7 +238,7 @@ class KaFe10ExpressionTypeProvider(
             is KtWhenConditionWithExpression -> {
                 val whenExpression = (parentExpression.parent as? KtWhenEntry)?.parent as? KtWhenExpression
                 if (whenExpression != null) {
-                    val subject = whenExpression.subjectExpression ?: return with(analysisSession) { builtinTypes.BOOLEAN }
+                    val subject = whenExpression.subjectExpression ?: return with(analysisSession) { builtinTypes.boolean }
                     val kotlinType = analysisContext.analyze(subject).getType(subject)
                     return kotlinType?.toKtNonErrorType(analysisContext)
                 }

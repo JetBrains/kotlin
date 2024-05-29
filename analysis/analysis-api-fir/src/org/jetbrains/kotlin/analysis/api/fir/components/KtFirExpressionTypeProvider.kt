@@ -77,7 +77,7 @@ internal class KaFirExpressionTypeProvider(
             if (fir.calleeReference is FirSuperReference && fir.resolvedType is ConeErrorType && containingClass != null) {
                 val superTypes = containingClass.resolvedSuperTypes
                 when (superTypes.size) {
-                    0 -> analysisSession.builtinTypes.ANY
+                    0 -> analysisSession.builtinTypes.any
                     1 -> superTypes.single().asKtType()
                     else -> ConeIntersectionType(superTypes).asKtType()
                 }
@@ -91,12 +91,12 @@ internal class KaFirExpressionTypeProvider(
             } else if (expression is KtUnaryExpression && expression.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
                 fir.rValue.resolvedType.asKtType()
             } else {
-                analysisSession.builtinTypes.UNIT
+                analysisSession.builtinTypes.unit
             }
         }
         is FirExpression -> fir.resolvedType.asKtType()
         is FirNamedReference -> fir.getCorrespondingTypeIfPossible()?.asKtType()
-        is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
+        is FirStatement -> with(analysisSession) { builtinTypes.unit }
         is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel, is FirTypeParameterRef -> null
 
         // `listOf<_>(1)` where `expression` is `_`
@@ -302,7 +302,7 @@ internal class KaFirExpressionTypeProvider(
         unwrapQualified { returnExpr, target -> returnExpr.returnedExpression == target }
 
     private fun getExpressionTypeByIfOrBooleanCondition(expression: PsiElement): KaType? = when {
-        expression.isWhileLoopCondition() || expression.isIfCondition() -> with(analysisSession) { builtinTypes.BOOLEAN }
+        expression.isWhileLoopCondition() || expression.isIfCondition() -> with(analysisSession) { builtinTypes.boolean }
         else -> null
     }
 
@@ -410,7 +410,7 @@ internal class KaFirExpressionTypeProvider(
     private fun getExpectedTypeByWhenEntryValue(expression: PsiElement): KaType? {
         val condition = expression.parent as? KtWhenConditionWithExpression ?: return null
         val whenExpression = (condition.parent as? KtWhenEntry)?.parent as? KtWhenExpression ?: return null
-        val subject = whenExpression.subjectExpression ?: return with(analysisSession) { builtinTypes.BOOLEAN }
+        val subject = whenExpression.subjectExpression ?: return with(analysisSession) { builtinTypes.boolean }
         return getKtExpressionNonErrorType(subject)
     }
 

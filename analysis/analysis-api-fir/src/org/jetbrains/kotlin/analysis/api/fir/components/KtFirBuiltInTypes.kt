@@ -20,25 +20,25 @@ internal class KaFirBuiltInTypes(
     override val token: KaLifetimeToken
 ) : KaBuiltinTypes() {
 
-    override val INT: KaType by cachedBuiltin(builtinTypes.intType)
-    override val LONG: KaType by cachedBuiltin(builtinTypes.longType)
-    override val SHORT: KaType by cachedBuiltin(builtinTypes.shortType)
-    override val BYTE: KaType by cachedBuiltin(builtinTypes.byteType)
+    override val int: KaType by cachedBuiltin(builtinTypes.intType)
+    override val long: KaType by cachedBuiltin(builtinTypes.longType)
+    override val short: KaType by cachedBuiltin(builtinTypes.shortType)
+    override val byte: KaType by cachedBuiltin(builtinTypes.byteType)
 
-    override val FLOAT: KaType by cachedBuiltin(builtinTypes.floatType)
-    override val DOUBLE: KaType by cachedBuiltin(builtinTypes.doubleType)
+    override val float: KaType by cachedBuiltin(builtinTypes.floatType)
+    override val double: KaType by cachedBuiltin(builtinTypes.doubleType)
 
-    override val CHAR: KaType by cachedBuiltin(builtinTypes.charType)
-    override val BOOLEAN: KaType by cachedBuiltin(builtinTypes.booleanType)
-    override val STRING: KaType by cachedBuiltin(builtinTypes.stringType)
+    override val char: KaType by cachedBuiltin(builtinTypes.charType)
+    override val boolean: KaType by cachedBuiltin(builtinTypes.booleanType)
+    override val string: KaType by cachedBuiltin(builtinTypes.stringType)
 
-    override val UNIT: KaType by cachedBuiltin(builtinTypes.unitType)
-    override val NOTHING: KaType by cachedBuiltin(builtinTypes.nothingType)
-    override val ANY: KaType by cachedBuiltin(builtinTypes.anyType)
+    override val unit: KaType by cachedBuiltin(builtinTypes.unitType)
+    override val nothing: KaType by cachedBuiltin(builtinTypes.nothingType)
+    override val any: KaType by cachedBuiltin(builtinTypes.anyType)
 
-    override val THROWABLE: KaType by cachedBuiltin(builtinTypes.throwableType)
-    override val NULLABLE_ANY: KaType by cachedBuiltin(builtinTypes.nullableAnyType)
-    override val NULLABLE_NOTHING: KaType by cachedBuiltin(builtinTypes.nullableNothingType)
+    override val throwable: KaType by cachedBuiltin(builtinTypes.throwableType)
+    override val nullableAny: KaType by cachedBuiltin(builtinTypes.nullableAnyType)
+    override val nullableNothing: KaType by cachedBuiltin(builtinTypes.nullableNothingType)
 
     private fun cachedBuiltin(builtinTypeRef: FirImplicitBuiltinTypeRef): ValidityAwareCachedValue<KaType> = cached {
         builder.typeBuilder.buildKtType(builtinTypeRef)

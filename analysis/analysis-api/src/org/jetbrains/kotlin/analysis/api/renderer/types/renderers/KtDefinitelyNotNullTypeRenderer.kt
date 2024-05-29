@@ -30,7 +30,7 @@ public interface KaDefinitelyNotNullTypeRenderer {
                 printer {
                     typeRenderer.renderType(analysisSession, type.original, printer)
                     printer.append(" & ")
-                    typeRenderer.renderType(analysisSession, builtinTypes.ANY, printer)
+                    typeRenderer.renderType(analysisSession, builtinTypes.any, printer)
                 }
             }
         }

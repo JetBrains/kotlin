@@ -454,49 +454,49 @@ private class KaFe10BuiltinTypes(private val analysisContext: Fe10AnalysisContex
     override val token: KaLifetimeToken
         get() = analysisContext.token
 
-    override val INT: KaType
+    override val int: KaType
         get() = withValidityAssertion { analysisContext.builtIns.intType.toKtType(analysisContext) }
 
-    override val LONG: KaType
+    override val long: KaType
         get() = withValidityAssertion { analysisContext.builtIns.longType.toKtType(analysisContext) }
 
-    override val SHORT: KaType
+    override val short: KaType
         get() = withValidityAssertion { analysisContext.builtIns.shortType.toKtType(analysisContext) }
 
-    override val BYTE: KaType
+    override val byte: KaType
         get() = withValidityAssertion { analysisContext.builtIns.byteType.toKtType(analysisContext) }
 
-    override val FLOAT: KaType
+    override val float: KaType
         get() = withValidityAssertion { analysisContext.builtIns.floatType.toKtType(analysisContext) }
 
-    override val DOUBLE: KaType
+    override val double: KaType
         get() = withValidityAssertion { analysisContext.builtIns.doubleType.toKtType(analysisContext) }
 
-    override val BOOLEAN: KaType
+    override val boolean: KaType
         get() = withValidityAssertion { analysisContext.builtIns.booleanType.toKtType(analysisContext) }
 
-    override val CHAR: KaType
+    override val char: KaType
         get() = withValidityAssertion { analysisContext.builtIns.charType.toKtType(analysisContext) }
 
-    override val STRING: KaType
+    override val string: KaType
         get() = withValidityAssertion { analysisContext.builtIns.stringType.toKtType(analysisContext) }
 
-    override val UNIT: KaType
+    override val unit: KaType
         get() = withValidityAssertion { analysisContext.builtIns.unitType.toKtType(analysisContext) }
 
-    override val NOTHING: KaType
+    override val nothing: KaType
         get() = withValidityAssertion { analysisContext.builtIns.nothingType.toKtType(analysisContext) }
 
-    override val ANY: KaType
+    override val any: KaType
         get() = withValidityAssertion { analysisContext.builtIns.anyType.toKtType(analysisContext) }
 
-    override val THROWABLE: KaType
+    override val throwable: KaType
         get() = withValidityAssertion { analysisContext.builtIns.throwable.defaultType.toKtType(analysisContext) }
 
-    override val NULLABLE_ANY: KaType
+    override val nullableAny: KaType
         get() = withValidityAssertion { analysisContext.builtIns.nullableAnyType.toKtType(analysisContext) }
 
-    override val NULLABLE_NOTHING: KaType
+    override val nullableNothing: KaType
         get() = withValidityAssertion { analysisContext.builtIns.nullableNothingType.toKtType(analysisContext) }
 
 }

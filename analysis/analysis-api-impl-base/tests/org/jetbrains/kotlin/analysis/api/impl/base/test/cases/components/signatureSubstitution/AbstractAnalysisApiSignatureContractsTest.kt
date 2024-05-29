@@ -37,8 +37,8 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
     ) {
         analyseForTest(callableDeclaration) {
             val typesToCheckOn = buildList {
-                add(builtinTypes.INT)
-                add(buildClassType(StandardClassIds.List) { argument(builtinTypes.LONG) })
+                add(builtinTypes.int)
+                add(buildClassType(StandardClassIds.List) { argument(builtinTypes.long) })
             }
 
             val symbol = callableDeclaration.getSymbol() as KaCallableSymbol

@@ -179,26 +179,95 @@ public typealias KtTypeProviderMixIn = KaTypeProviderMixIn
 
 @Suppress("PropertyName")
 public abstract class KaBuiltinTypes : KaLifetimeOwner {
-    public abstract val INT: KaType
-    public abstract val LONG: KaType
-    public abstract val SHORT: KaType
-    public abstract val BYTE: KaType
+    public abstract val int: KaType
 
-    public abstract val FLOAT: KaType
-    public abstract val DOUBLE: KaType
+    @Deprecated("Use 'int' instead.", replaceWith = ReplaceWith("int"))
+    public val INT: KaType
+        get() = int
 
-    public abstract val BOOLEAN: KaType
-    public abstract val CHAR: KaType
-    public abstract val STRING: KaType
+    public abstract val long: KaType
 
-    public abstract val UNIT: KaType
-    public abstract val NOTHING: KaType
-    public abstract val ANY: KaType
+    @Deprecated("Use 'long' instead.", replaceWith = ReplaceWith("long"))
+    public val LONG: KaType
+        get() = long
 
-    public abstract val THROWABLE: KaType
+    public abstract val short: KaType
 
-    public abstract val NULLABLE_ANY: KaType
-    public abstract val NULLABLE_NOTHING: KaType
+    @Deprecated("Use 'short' instead.", replaceWith = ReplaceWith("short"))
+    public val SHORT: KaType
+        get() = short
+
+    public abstract val byte: KaType
+
+    @Deprecated("Use 'byte' instead.", replaceWith = ReplaceWith("byte"))
+    public val BYTE: KaType
+        get() = byte
+
+    public abstract val float: KaType
+
+    @Deprecated("Use 'float' instead.", replaceWith = ReplaceWith("float"))
+    public val FLOAT: KaType
+        get() = float
+
+    public abstract val double: KaType
+
+    @Deprecated("Use 'double' instead.", replaceWith = ReplaceWith("double"))
+    public val DOUBLE: KaType
+        get() = double
+
+    public abstract val boolean: KaType
+
+    @Deprecated("Use 'boolean' instead.", replaceWith = ReplaceWith("boolean"))
+    public val BOOLEAN: KaType
+        get() = boolean
+
+    public abstract val char: KaType
+
+    @Deprecated("Use 'char' instead.", replaceWith = ReplaceWith("char"))
+    public val CHAR: KaType
+        get() = char
+
+    public abstract val string: KaType
+
+    @Deprecated("Use 'string' instead.", replaceWith = ReplaceWith("string"))
+    public val STRING: KaType
+        get() = string
+
+    public abstract val unit: KaType
+
+    @Deprecated("Use 'unit' instead.", replaceWith = ReplaceWith("unit"))
+    public val UNIT: KaType
+        get() = unit
+
+    public abstract val nothing: KaType
+
+    @Deprecated("Use 'nothing' instead.", replaceWith = ReplaceWith("nothing"))
+    public val NOTHING: KaType
+        get() = nothing
+
+    public abstract val any: KaType
+
+    @Deprecated("Use 'any' instead.", replaceWith = ReplaceWith("any"))
+    public val ANY: KaType
+        get() = any
+
+    public abstract val throwable: KaType
+
+    @Deprecated("Use 'throwable' instead.", replaceWith = ReplaceWith("throwable"))
+    public val THROWABLE: KaType
+        get() = throwable
+
+    public abstract val nullableAny: KaType
+
+    @Deprecated("Use 'nullableAny' instead.", replaceWith = ReplaceWith("nullableAny"))
+    public val NULLABLE_ANY: KaType
+        get() = nullableAny
+
+    public abstract val nullableNothing: KaType
+
+    @Deprecated("Use 'nullableNothing' instead.", replaceWith = ReplaceWith("nullableNothing"))
+    public val NULLABLE_NOTHING: KaType
+        get() = nullableNothing
 }
 
 public typealias KtBuiltinTypes = KaBuiltinTypes

@@ -28,12 +28,12 @@ abstract class AbstractSubstitutorBuilderTest : AbstractAnalysisApiBasedTest() {
             val symbol = declaration.getSymbol() as KaCallableSymbol
 
             val substitutor = buildSubstitutor {
-                substitution(getSymbolByName(mainFile, "A"), builtinTypes.INT)
-                substitution(getSymbolByName(mainFile, "B"), builtinTypes.LONG)
+                substitution(getSymbolByName(mainFile, "A"), builtinTypes.int)
+                substitution(getSymbolByName(mainFile, "B"), builtinTypes.long)
                 substitution(
                     getSymbolByName(mainFile, "C"),
                     buildClassType(StandardClassIds.List) {
-                        argument(builtinTypes.STRING)
+                        argument(builtinTypes.string)
                     }
                 )
             }

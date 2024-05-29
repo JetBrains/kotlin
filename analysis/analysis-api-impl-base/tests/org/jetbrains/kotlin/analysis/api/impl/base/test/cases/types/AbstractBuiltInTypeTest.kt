@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.services.TestServices
-import java.util.Locale
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 abstract class AbstractBuiltInTypeTest : AbstractTypeTest() {
 
@@ -28,7 +28,7 @@ abstract class AbstractBuiltInTypeTest : AbstractTypeTest() {
         with(analysisSession) {
             val builtInTypeName = module.testModule.directives.singleValue(Directives.BUILTIN_TYPE_NAME)
             val typeMethod = builtinTypes::class.java.methods.singleOrNull {
-                it.name == "get${builtInTypeName.uppercase(Locale.US)}"
+                it.name == "get" + builtInTypeName.capitalizeAsciiOnly()
             }!!
             typeMethod.isAccessible = true
             return typeMethod.invoke(builtinTypes) as KaType
