@@ -17,7 +17,7 @@ data class VarargData <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>priv
 }
 
 data object DataObject {
-    fun copy() {}
+    fun copy(): DataObject = null!!
 }
 
 fun topLevel(data: Data, varargData: VarargData) {

@@ -17,7 +17,7 @@ data class VarargData private constructor(val value: IntArray) {
 }
 
 data object DataObject {
-    <!CONFLICTING_OVERLOADS!>fun copy()<!> {}
+    <!CONFLICTING_OVERLOADS!>fun copy(): DataObject<!> = null!!
 }
 
 fun topLevel(data: Data, varargData: VarargData) {
