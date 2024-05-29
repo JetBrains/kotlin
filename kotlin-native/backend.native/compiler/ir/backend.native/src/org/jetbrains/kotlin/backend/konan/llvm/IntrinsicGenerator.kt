@@ -12,9 +12,13 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.objcinterop.getExternalObjCClassBinaryName
+import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
+import org.jetbrains.kotlin.ir.objcinterop.isObjCProtocolClass
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.findAnnotation
+import org.jetbrains.kotlin.ir.util.isInterface
 
 internal enum class IntrinsicType {
     PLUS,
@@ -115,6 +119,7 @@ internal enum class IntrinsicType {
 
 internal enum class ConstantConstructorIntrinsicType {
     KCLASS_IMPL,
+    OBJC_KCLASS_IMPL,
     KTYPE_IMPL,
 }
 
@@ -310,8 +315,18 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 require(args.isEmpty())
                 val typeArgument = constant.typeArguments[0]
                 val typeArgumentClass = typeArgument.getClass()!!
+                require(!typeArgumentClass.isExternalObjCClass())
                 val typeInfo = codegen.typeInfoValue(typeArgumentClass)
                 listOf(constPointer(typeInfo).bitcast(codegen.llvm.int8PtrType))
+            }
+            ConstantConstructorIntrinsicType.OBJC_KCLASS_IMPL -> {
+                require(args.isEmpty())
+                val typeArgument = constant.typeArguments[0]
+                val typeArgumentClass = typeArgument.getClass()!!
+                require(typeArgumentClass.isExternalObjCClass() && !typeArgumentClass.isInterface)
+                val binaryName = typeArgumentClass.getExternalObjCClassBinaryName()
+                val objcClassPtr = codegen.objCDataGenerator!!.genClassRef(binaryName)
+                listOf(objcClassPtr)
             }
             ConstantConstructorIntrinsicType.KTYPE_IMPL ->
                 reportNonLoweredIntrinsic(intrinsicType)

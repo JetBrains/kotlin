@@ -425,6 +425,9 @@ internal class KonanSymbols(
     val kClassImpl = internalClass("KClassImpl")
     val kClassImplConstructor = lookup.findPrimaryConstructor(kClassImpl)!!
     val kClassImplIntrinsicConstructor = lookup.findNoParametersConstructor(kClassImpl)!!
+    val kObjCClassImpl = internalCInteropClass("ObjectiveCKClassImpl")
+    val kObjCClassImplConstructor = lookup.findPrimaryConstructor(kObjCClassImpl)!!
+    val kObjCClassImplIntrinsicConstructor = lookup.findNoParametersConstructor(kObjCClassImpl)!!
     val kClassUnsupportedImpl = internalClass("KClassUnsupportedImpl")
     val kTypeParameterImpl = internalClass("KTypeParameterImpl")
     val kTypeImpl = internalClass("KTypeImpl")
@@ -460,6 +463,9 @@ internal class KonanSymbols(
 
     private fun internalClass(name: String) =
             irBuiltIns.findClass(Name.identifier(name), RuntimeNames.kotlinNativeInternalPackageName)!!
+
+    private fun internalCInteropClass(name: String) =
+            irBuiltIns.findClass(Name.identifier(name), RuntimeNames.kotlinxCInteropInternalPackageName)!!
 
     private fun internalCoroutinesClass(name: String) =
             irBuiltIns.findClass(Name.identifier(name), RuntimeNames.kotlinNativeCoroutinesInternalPackageName)!!

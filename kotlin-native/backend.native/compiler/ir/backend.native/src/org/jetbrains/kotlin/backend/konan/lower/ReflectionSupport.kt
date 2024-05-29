@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
@@ -179,8 +180,14 @@ internal fun IrBuilderWithScope.irKClass(context: KonanBackendContext, symbol: I
             this.symbol == context.ir.symbols.nativePointed || getSuperClassNotAny()?.isNativePointedChild() == true
 
     return when {
+        symbol.owner.isExternalObjCClass() ->
+            if (symbol.owner.isInterface)
+                irKClassUnsupported(context, "KClass for Objective-C protocols is not supported yet")
+            else
+                irConstantObject(symbols.kObjCClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
+
         symbol.owner.isObjCClass() ->
-            irKClassUnsupported(context, "KClass for Objective-C classes is not supported yet")
+            irKClassUnsupported(context, "KClass for Kotlin subclasses of Objective-C classes is not supported yet")
 
         symbol.owner.isNativePointedChild() ->
             irKClassUnsupported(context, "KClass for interop types is not supported yet")

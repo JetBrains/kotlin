@@ -351,6 +351,13 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testReflection() {
+        val testName = "reflection"
+        val testCase = generateObjCFramework(testName)
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
     fun objCExportTest() {
         objCExportTestImpl("", emptyList(), emptyList(), false, true)
     }

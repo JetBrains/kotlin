@@ -228,6 +228,11 @@ extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForProtocol(Protocol* p
 
 static const TypeInfo* getOrCreateTypeInfo(Class clazz);
 
+extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForObjCClassPtr(Class* clazz) {
+  RuntimeAssert(clazz != nullptr, "Cannot be null");
+  return getOrCreateTypeInfo(*clazz);
+}
+
 extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
   if (kotlin::mm::IsCurrentThreadRegistered()) {
     // ObjC runtime might have taken a lock in Runnable context on the way here. Safe-points are unwelcome in the code below.
@@ -644,7 +649,7 @@ static const TypeInfo* createTypeInfo(
   TypeInfo* result = (TypeInfo*)std::calloc(1, sizeof(TypeInfo) + vtable.size() * sizeof(void*));
   result->typeInfo_ = result;
 
-  result->flags_ = TF_OBJC_DYNAMIC;
+  result->flags_ = TF_OBJC_DYNAMIC | TF_REFLECTION_SHOW_REL_NAME;
 
   result->superType_ = superType;
   if (fieldsInfo == nullptr) {
@@ -1078,6 +1083,11 @@ extern "C" ALWAYS_INLINE void* Kotlin_Interop_refToObjC(ObjHeader* obj) {
 extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, void* obj) {
   RuntimeAssert(false, "Unavailable operation");
   RETURN_OBJ(nullptr);
+}
+
+extern "C" ALWAYS_INLINE const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForObjCClassPtr(Class* clazz) {
+  RuntimeAssert(false, "Unavailable operation");
+  return nullptr;
 }
 
 #endif // KONAN_OBJC_INTEROP
