@@ -22,26 +22,21 @@ import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import java.io.File
-import java.net.URLClassLoader
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.junit.After
 import org.junit.BeforeClass
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import java.io.File
+import java.net.URLClassLoader
 
 @RunWith(Parameterized::class)
 abstract class AbstractCompilerTest(val useFir: Boolean) {
@@ -91,6 +86,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
 
     protected open fun CompilerConfiguration.updateConfiguration() {}
 
+    @OptIn(ExperimentalCompilerApi::class)
     private fun createCompilerFacade(
         additionalPaths: List<File> = listOf(),
         forcedFirSetting: Boolean? = null,
@@ -127,7 +123,11 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
             configureJdkClasspathRoots()
         },
         registerExtensions = registerExtensions ?: { configuration ->
-            ComposePluginRegistrar.registerCommonExtensions(this)
+            registerExtensionsForTest(this, configuration) {
+                with(ComposePluginRegistrar.Companion) {
+                    registerCommonExtensions()
+                }
+            }
             IrGenerationExtension.registerExtension(
                 this,
                 ComposePluginRegistrar.createComposeIrExtension(configuration)
