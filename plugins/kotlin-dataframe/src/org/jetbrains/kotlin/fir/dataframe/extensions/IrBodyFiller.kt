@@ -62,8 +62,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.serialize
 import java.io.File
 
 class IrBodyFiller(
-    val resolutionPath: String?,
-    val schemasDirectory: String?
+    private val resolutionPath: String?,
+    private val schemasDirectory: String?
 ) : IrGenerationExtension {
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
@@ -106,7 +106,7 @@ class IrBodyFiller(
                 val df = org.jetbrains.kotlinx.dataframe.plugin.readJson(resolutionPath, path)
                 val json = df.schema().serialize()
                 schemas.add(IoSchema(path, json))
-            } catch (e: Exception) {
+            } catch (_: Exception) {
 
             }
         }
@@ -142,7 +142,6 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         return declaration
     }
 
-//    @OptIn(IrSymbolInternals::class)
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun generateBodyForDefaultConstructor(declaration: IrConstructor): IrBody? {
         val irType = declaration.returnType.superTypes()[0]

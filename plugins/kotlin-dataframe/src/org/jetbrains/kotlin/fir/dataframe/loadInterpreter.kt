@@ -6,16 +6,8 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.dataframe.Names.INTERPRETABLE_FQNAME
-import org.jetbrains.kotlin.fir.dataframe.api.DataFrameGroupBy
-import org.jetbrains.kotlin.fir.dataframe.api.Exclude0
-import org.jetbrains.kotlin.fir.dataframe.api.Exclude1
-import org.jetbrains.kotlin.fir.dataframe.api.GroupByInto
-import org.jetbrains.kotlin.fir.dataframe.api.Preserve0
-import org.jetbrains.kotlin.fir.dataframe.api.Preserve1
-import org.jetbrains.kotlin.fir.dataframe.api.Properties0
-import org.jetbrains.kotlin.fir.dataframe.api.Rename
-import org.jetbrains.kotlin.fir.dataframe.api.RenameInto
+import org.jetbrains.kotlin.fir.dataframe.utils.Names.INTERPRETABLE_FQNAME
+import org.jetbrains.kotlin.fir.dataframe.api.*
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall

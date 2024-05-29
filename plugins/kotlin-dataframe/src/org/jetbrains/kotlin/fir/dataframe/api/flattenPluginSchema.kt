@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.fir.dataframe
+package org.jetbrains.kotlin.fir.dataframe.api
 
 import org.jetbrains.kotlinx.dataframe.plugin.ColumnPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.ColumnWithPathApproximation

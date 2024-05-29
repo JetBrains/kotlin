@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.dataframe.CallShapeData
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
-import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.SchemaProperty
 import org.jetbrains.kotlin.fir.dataframe.analyzeRefinedCallShape
 import org.jetbrains.kotlin.fir.dataframe.callShapeData
-import org.jetbrains.kotlin.fir.dataframe.projectOverDataColumnType
+import org.jetbrains.kotlin.fir.dataframe.utils.Names
+import org.jetbrains.kotlin.fir.dataframe.utils.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.EmptyDeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -79,17 +79,15 @@ import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
 import kotlin.math.abs
 
 @OptIn(FirExtensionApiInternals::class)
-class CandidateInterceptor(
-    val path: String?,
+class FunctionCallTransformer(
+    override val resolutionPath: String?,
     session: FirSession,
     override val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>,
     override val schemasDirectory: String?,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     companion object {
-        val DEFAULT_NAME = "DataFrameType"
+        const val DEFAULT_NAME = "DataFrameType"
     }
-
-    override val resolutionPath: String? = path
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
@@ -177,11 +175,7 @@ class CandidateInterceptor(
     private fun hashToTwoCharString(hash: Int): String {
         val baseChars = "0123456789"
         val base = baseChars.length
-
-        // Ensure the hash is positive
         val positiveHash = abs(hash)
-
-        // Convert the hash to a string with the base characters
         val char1 = baseChars[positiveHash % base]
         val char2 = baseChars[(positiveHash / base) % base]
 
@@ -189,7 +183,6 @@ class CandidateInterceptor(
     }
 
     private fun nextName(s: String) = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName(s), true)
-
 
     @OptIn(SymbolInternals::class)
     override fun transform(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall {
@@ -206,10 +199,7 @@ class CandidateInterceptor(
 
         val firstSchema = token.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
 
-        data class DataSchemaApi(val schema: FirRegularClass, val scope: FirRegularClass) {
-            val scopeCallShapeData get() = scope.callShapeData
-            val schemaCallShapeData get() = schema.callShapeData
-        }
+        data class DataSchemaApi(val schema: FirRegularClass, val scope: FirRegularClass)
 
         var i = 0
         val dataSchemaApis = mutableListOf<DataSchemaApi>()

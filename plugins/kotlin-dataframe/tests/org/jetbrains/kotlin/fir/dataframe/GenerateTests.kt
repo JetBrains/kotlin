@@ -4,16 +4,6 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 
 fun main() {
     generateTestGroupSuiteWithJUnit5 {
-//        testGroup(testDataRoot = "testData", testsRoot = "test-gen") {
-//            testClass<AbstractDiagnosticTest> {
-//                model("diagnostics")
-//            }
-//
-//            testClass<AbstractBoxTest> {
-//                model("box")
-//            }
-//        }
-
         testGroup("tests-gen", "testData") {
             testClass<AbstractDataFrameDiagnosticTest> {
                 model("diagnostics")
@@ -22,10 +12,6 @@ fun main() {
             testClass<AbstractDataFrameBlackBoxCodegenTest> {
                 model("box")
             }
-//
-//            testClass<AbstractResearchTest> {
-//                model("research")
-//            }
         }
     }
 }
