@@ -24,7 +24,7 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(project(":analysis:analysis-api-providers"))
+    testImplementation(project(":analysis:analysis-api-platform-interface"))
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     testImplementation(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))

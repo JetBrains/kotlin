@@ -27,7 +27,7 @@ dependencies {
     embedded(project(":analysis:analysis-api-fir")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-impl-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-impl-barebone")) { isTransitive = false }
-    embedded(project(":analysis:analysis-api-providers")) { isTransitive = false }
+    embedded(project(":analysis:analysis-api-platform-interface")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-standalone:analysis-api-standalone-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base")) { isTransitive = false }
     embedded(project(":analysis:analysis-internal-utils")) { isTransitive = false }

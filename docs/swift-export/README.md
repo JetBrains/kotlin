@@ -40,7 +40,7 @@ implementation("org.jetbrains.kotlin:kotlin-native-utils:2.0.0")
 implementation("org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion")
 // Analysis API components which are required for the Swift export
 implementation("org.jetbrains.kotlin:analysis-api-standalone-for-ide:$kotlinVersion") { isTransitive = false }
-implementation("org.jetbrains.kotlin:analysis-api-providers-for-ide:$kotlinVersion") { isTransitive = false }
+implementation("org.jetbrains.kotlin:analysis-api-platform-interface-for-ide:$kotlinVersion") { isTransitive = false }
 implementation("org.jetbrains.kotlin:high-level-api-for-ide:$kotlinVersion") { isTransitive = false }
 implementation("org.jetbrains.kotlin:high-level-api-fir-for-ide:$kotlinVersion") { isTransitive = false }
 implementation("org.jetbrains.kotlin:high-level-api-impl-base-for-ide:$kotlinVersion") { isTransitive = false }

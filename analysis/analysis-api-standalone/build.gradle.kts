@@ -7,7 +7,7 @@ dependencies {
     implementation(intellijCore())
     implementation(project(":compiler:psi"))
     api(project(":analysis:analysis-api"))
-    api(project(":analysis:analysis-api-providers"))
+    api(project(":analysis:analysis-api-platform-interface"))
     api(project(":analysis:project-structure"))
     api(project(":analysis:analysis-api-fir"))
     api(project(":analysis:low-level-api-fir"))
