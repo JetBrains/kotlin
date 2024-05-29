@@ -112,7 +112,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
         is KaCallableSignature<*> -> stringRepresentation(this)
         else -> buildString {
             val clazz = this@with::class
-            val className = DebugSymbolRenderer.computeApiEntityName(clazz)
+            val className = clazz.simpleName
             append(className)
             clazz.memberProperties.filter { it.name != "token" && it.visibility == KVisibility.PUBLIC }.ifNotEmpty {
                 joinTo(this@buildString, separator = "\n  ", prefix = ":\n  ") { property ->
@@ -120,7 +120,7 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
 
                     @Suppress("UNCHECKED_CAST")
                     val value = (property as KProperty1<Any, *>).get(this@with)?.let {
-                        if (className == "KtErrorCallInfo" && name == "candidateCalls") {
+                        if (className == "KaErrorCallInfo" && name == "candidateCalls") {
                             sortedCalls(it as Collection<KaCall>)
                         } else it
                     }
@@ -134,8 +134,8 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
 
 private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): String = buildString {
     when (signature) {
-        is KaFunctionLikeSignature<*> -> append(DebugSymbolRenderer.computeApiEntityName(KaFunctionLikeSignature::class))
-        is KaVariableLikeSignature<*> -> append(DebugSymbolRenderer.computeApiEntityName(KaVariableLikeSignature::class))
+        is KaFunctionLikeSignature<*> -> append(KaFunctionLikeSignature::class.simpleName)
+        is KaVariableLikeSignature<*> -> append(KaVariableLikeSignature::class.simpleName)
     }
 
     val memberProperties = listOfNotNull(

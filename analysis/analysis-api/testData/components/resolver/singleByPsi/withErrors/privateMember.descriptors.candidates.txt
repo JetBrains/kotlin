@@ -1,14 +1,14 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'foo': it is private in 'A'>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = a
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
         symbol = /A.foo(<dispatch receiver>: A): kotlin.Unit

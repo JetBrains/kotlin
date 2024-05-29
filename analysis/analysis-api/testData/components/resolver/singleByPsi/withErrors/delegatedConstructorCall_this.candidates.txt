@@ -1,15 +1,15 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtDelegatedConstructorCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaDelegatedConstructorCall:
     kind = THIS_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = Sub
         symbol = <constructor>(p1: kotlin.Int): Sub
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = p1
             receiverType = null
             returnType = kotlin.Int
@@ -19,7 +19,7 @@ KtApplicableCallCandidateInfo:
         callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
-      s.length -> (KtVariableLikeSignature:
+      s.length -> (KaVariableLikeSignature:
         name = p1
         receiverType = null
         returnType = kotlin.Int
@@ -28,19 +28,19 @@ KtApplicableCallCandidateInfo:
     }
   isInBestCandidates = true
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
-  candidate = KtDelegatedConstructorCall:
+  candidate = KaDelegatedConstructorCall:
     kind = THIS_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = Sub
         symbol = <constructor>(s: kotlin.String): Sub
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = s
             receiverType = null
             returnType = kotlin.String

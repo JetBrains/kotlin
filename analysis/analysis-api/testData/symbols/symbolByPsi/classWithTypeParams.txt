@@ -1,4 +1,4 @@
-KtTypeParameterSymbol:
+KaTypeParameterSymbol:
   annotationsList: [
     org/jetbrains/annotations/NotNull()
       psi: KtAnnotationEntry
@@ -9,11 +9,11 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(classWithTypeParams.kt)
+  getContainingFileSymbol: KaFileSymbol(classWithTypeParams.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtTypeParameterSymbol:
+KaTypeParameterSymbol:
   annotationsList: []
   isReified: false
   name: R
@@ -21,11 +21,11 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(classWithTypeParams.kt)
+  getContainingFileSymbol: KaFileSymbol(classWithTypeParams.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: A
   classKind: CLASS
@@ -42,18 +42,18 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtTypeParameterSymbol(T)
-    KtTypeParameterSymbol(R)
+    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol(R)
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(classWithTypeParams.kt)
+  getContainingFileSymbol: KaFileSymbol(classWithTypeParams.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

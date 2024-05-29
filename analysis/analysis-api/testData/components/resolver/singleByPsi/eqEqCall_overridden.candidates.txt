@@ -1,18 +1,18 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = a1
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Boolean
         symbol = /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = other
             receiverType = null
             returnType = kotlin.Any?
@@ -22,7 +22,7 @@ KtApplicableCallCandidateInfo:
         callableId = /A.equals
     typeArgumentsMapping = {}
     argumentMapping = {
-      a2 -> (KtVariableLikeSignature:
+      a2 -> (KaVariableLikeSignature:
         name = other
         receiverType = null
         returnType = kotlin.Any?

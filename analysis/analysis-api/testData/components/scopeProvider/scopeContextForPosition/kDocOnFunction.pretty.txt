@@ -1,7 +1,7 @@
 element: param1
 implicit receivers:
   type: test.Receiver
-  owner symbol: KtFirFunctionSymbol
+  owner symbol: KaFirFunctionSymbol
 
 scopes:
   TypeScope, index = 0

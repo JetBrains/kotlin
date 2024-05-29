@@ -1,15 +1,15 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = JavaClass
         symbol = <constructor>(s: @EnhancedNullability kotlin.String): JavaClass
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = s
             receiverType = null
             returnType = @EnhancedNullability kotlin.String
@@ -19,7 +19,7 @@ KtApplicableCallCandidateInfo:
         callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
-      "" -> (KtVariableLikeSignature:
+      "" -> (KaVariableLikeSignature:
         name = s
         receiverType = null
         returnType = @EnhancedNullability kotlin.String

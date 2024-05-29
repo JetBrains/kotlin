@@ -1,15 +1,15 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = Anno
         symbol = <constructor>(value: kotlin.String): Anno
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = value
             receiverType = null
             returnType = kotlin.String

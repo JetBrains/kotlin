@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
@@ -6,20 +6,20 @@ KtFunctionSymbol:
   callableId: /twoContracts
   contextReceivers: []
   contractEffects: [
-    KtContractConditionalContractEffectDeclaration:
+    KaContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsSpecificValueEffectDeclaration:
+        KaContractReturnsSpecificValueEffectDeclaration:
           value:
-            KtContractConstantValue:
+            KaContractConstantValue:
               constantType: TRUE
       condition:
-        KtContractBinaryLogicExpression:
+        KaContractBinaryLogicExpression:
           left:
-            KtContractIsNullPredicateExpression:
+            KaContractIsNullPredicateExpression:
               argument:
-                KtContractParameterValue:
+                KaContractParameterValue:
                   parameterSymbol:
-                    KtValueParameterSymbol:
+                    KaValueParameterSymbol:
                       annotationsList: []
                       callableId: null
                       contextReceivers: []
@@ -33,23 +33,23 @@ KtFunctionSymbol:
                       name: foo
                       origin: SOURCE
                       receiverParameter: null
-                      returnType: KtUsualClassType:
+                      returnType: KaUsualClassType:
                         annotationsList: []
                         ownTypeArguments: []
                         type: kotlin/Any?
                       symbolKind: LOCAL
                       typeParameters: []
-                      getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+                      getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
                       getContainingJvmClassName: TwoContractsKt
                       getContainingModule: KtSourceModule "Sources of main"
                       deprecationStatus: null
               isNegated: false
           right:
-            KtContractIsNullPredicateExpression:
+            KaContractIsNullPredicateExpression:
               argument:
-                KtContractParameterValue:
+                KaContractParameterValue:
                   parameterSymbol:
-                    KtValueParameterSymbol:
+                    KaValueParameterSymbol:
                       annotationsList: []
                       callableId: null
                       contextReceivers: []
@@ -63,23 +63,23 @@ KtFunctionSymbol:
                       name: bar
                       origin: SOURCE
                       receiverParameter: null
-                      returnType: KtUsualClassType:
+                      returnType: KaUsualClassType:
                         annotationsList: []
                         ownTypeArguments: []
                         type: kotlin/Any?
                       symbolKind: LOCAL
                       typeParameters: []
-                      getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+                      getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
                       getContainingJvmClassName: TwoContractsKt
                       getContainingModule: KtSourceModule "Sources of main"
                       deprecationStatus: null
               isNegated: true
           operation: AND
-    KtContractCallsInPlaceContractEffectDeclaration:
+    KaContractCallsInPlaceContractEffectDeclaration:
       valueParameterReference:
-        KtContractParameterValue:
+        KaContractParameterValue:
           parameterSymbol:
-            KtValueParameterSymbol:
+            KaValueParameterSymbol:
               annotationsList: []
               callableId: null
               contextReceivers: []
@@ -93,10 +93,10 @@ KtFunctionSymbol:
               name: block
               origin: SOURCE
               receiverParameter: null
-              returnType: KtFunctionalType:
+              returnType: KaFunctionalType:
                 annotationsList: []
                 ownTypeArguments: [
-                  KtUsualClassType:
+                  KaUsualClassType:
                     annotationsList: []
                     ownTypeArguments: []
                     type: kotlin/Unit
@@ -104,7 +104,7 @@ KtFunctionSymbol:
                 type: kotlin/Function0<kotlin/Unit>
               symbolKind: LOCAL
               typeParameters: []
-              getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+              getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
               getContainingJvmClassName: TwoContractsKt
               getContainingModule: KtSourceModule "Sources of main"
               deprecationStatus: null
@@ -127,14 +127,14 @@ KtFunctionSymbol:
   name: twoContracts
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -148,17 +148,17 @@ KtFunctionSymbol:
       name: foo
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+      getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -172,17 +172,17 @@ KtFunctionSymbol:
       name: bar
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+      getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -196,10 +196,10 @@ KtFunctionSymbol:
       name: block
       origin: SOURCE
       receiverParameter: null
-      returnType: KtFunctionalType:
+      returnType: KaFunctionalType:
         annotationsList: []
         ownTypeArguments: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Unit
@@ -207,13 +207,13 @@ KtFunctionSymbol:
         type: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+      getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
       getContainingJvmClassName: TwoContractsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(twoContracts.kt)
+  getContainingFileSymbol: KaFileSymbol(twoContracts.kt)
   getContainingJvmClassName: TwoContractsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

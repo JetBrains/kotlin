@@ -1,11 +1,11 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: OTHER_ERROR with <init>>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = foo.Foo
         symbol = <constructor>(): foo.Foo

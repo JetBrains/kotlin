@@ -1,4 +1,4 @@
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: kotlin/reflect/KClass
   classKind: INTERFACE
@@ -15,22 +15,22 @@ KtNamedClassOrObjectSymbol:
   name: KClass
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/reflect/KDeclarationContainer
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/reflect/KAnnotatedElement
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/reflect/KClassifier
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtTypeParameterSymbol(T)
+    KaTypeParameterSymbol(T)
   ]
   visibility: Public
   getContainingFileSymbol: null

@@ -1,9 +1,9 @@
-KtSyntheticJavaPropertySymbol:
+KaSyntheticJavaPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
   callableId: /Derived.something
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: /Derived.getSomething
     contextReceivers: []
@@ -16,7 +16,7 @@ KtSyntheticJavaPropertySymbol:
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/String
@@ -24,7 +24,7 @@ KtSyntheticJavaPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
+    getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: Derived
@@ -42,17 +42,17 @@ KtSyntheticJavaPropertySymbol:
   isOverride: true
   isStatic: false
   isVal: false
-  javaGetterSymbol: KtFunctionSymbol(/Derived.getSomething)
-  javaSetterSymbol: KtFunctionSymbol(/Derived.setSomething)
+  javaGetterSymbol: KaFunctionSymbol(/Derived.getSomething)
+  javaSetterSymbol: KaFunctionSymbol(/Derived.setSomething)
   modality: OPEN
   name: something
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/String
-  setter: KtPropertySetterSymbol:
+  setter: KaPropertySetterSymbol:
     annotationsList: []
     callableId: /Derived.setSomething
     contextReceivers: []
@@ -64,7 +64,7 @@ KtSyntheticJavaPropertySymbol:
     isOverride: true
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
-    parameter: KtValueParameterSymbol:
+    parameter: KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -78,25 +78,25 @@ KtSyntheticJavaPropertySymbol:
       name: s
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(Derived.kt)
+      getContainingFileSymbol: KaFileSymbol(Derived.kt)
       getContainingJvmClassName: Derived
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
-      KtValueParameterSymbol:
+      KaValueParameterSymbol:
         annotationsList: []
         callableId: null
         contextReceivers: []
@@ -110,19 +110,19 @@ KtSyntheticJavaPropertySymbol:
         name: s
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/String
         symbolKind: LOCAL
         typeParameters: []
-        getContainingFileSymbol: KtFileSymbol(Derived.kt)
+        getContainingFileSymbol: KaFileSymbol(Derived.kt)
         getContainingJvmClassName: Derived
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
     ]
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
+    getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: Derived
@@ -133,7 +133,7 @@ KtSyntheticJavaPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: Derived

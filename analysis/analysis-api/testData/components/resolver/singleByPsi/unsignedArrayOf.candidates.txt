@@ -1,15 +1,15 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.UIntArray
         symbol = kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = elements
             receiverType = null
             returnType = kotlin.UInt
@@ -19,7 +19,7 @@ KtApplicableCallCandidateInfo:
         callableId = kotlin/uintArrayOf
     typeArgumentsMapping = {}
     argumentMapping = {
-      42u -> (KtVariableLikeSignature:
+      42u -> (KaVariableLikeSignature:
         name = elements
         receiverType = null
         returnType = kotlin.UInt

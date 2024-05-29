@@ -1,12 +1,12 @@
-KtSuccessCallInfo:
-  call = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+KaSuccessCallInfo:
+  call = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = a
         isSafeNavigation = true
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = aa
         receiverType = null
         returnType = A?

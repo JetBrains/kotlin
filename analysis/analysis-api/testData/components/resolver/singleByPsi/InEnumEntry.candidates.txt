@@ -1,9 +1,9 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = TOP_LEVEL
         receiverType = null
         returnType = kotlin.Int

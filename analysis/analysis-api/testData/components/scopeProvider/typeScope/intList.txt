@@ -1,13 +1,13 @@
-expression: list
-KtType: kotlin.collections.List<kotlin.Int>
+Expression: list
+KaType: kotlin.collections.List<kotlin.Int>
 
-KtTypeScope:
-KtFunctionLikeSignature:
+KaTypeScope:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/collections/List.contains(<dispatch receiver>: kotlin.collections.List<E>, element: E): kotlin.Boolean
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = element
       receiverType = null
       returnType = kotlin.Int
@@ -15,12 +15,12 @@ KtFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/collections/List.contains
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/collections/List.containsAll(<dispatch receiver>: kotlin.collections.List<E>, elements: kotlin.collections.Collection<E>): kotlin.Boolean
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = elements
       receiverType = null
       returnType = kotlin.collections.Collection<kotlin.Int>
@@ -28,12 +28,12 @@ KtFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/collections/List.containsAll
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/collections/List.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = index
       receiverType = null
       returnType = kotlin.Int
@@ -41,12 +41,12 @@ KtFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/collections/List.get
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/collections/List.indexOf(<dispatch receiver>: kotlin.collections.List<E>, element: E): kotlin.Int
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = element
       receiverType = null
       returnType = kotlin.Int
@@ -54,24 +54,24 @@ KtFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/collections/List.indexOf
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/collections/List.isEmpty(<dispatch receiver>: kotlin.collections.List<E>): kotlin.Boolean
   valueParameters = []
   callableId = kotlin/collections/List.isEmpty
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.collections.Iterator<kotlin.Int>
   symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
   valueParameters = []
   callableId = kotlin/collections/List.iterator
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/collections/List.lastIndexOf(<dispatch receiver>: kotlin.collections.List<E>, element: E): kotlin.Int
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = element
       receiverType = null
       returnType = kotlin.Int
@@ -79,18 +79,18 @@ KtFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/collections/List.lastIndexOf
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.collections.ListIterator<kotlin.Int>
   symbol = kotlin/collections/List.listIterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.ListIterator<E>
   valueParameters = []
   callableId = kotlin/collections/List.listIterator
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.collections.ListIterator<kotlin.Int>
   symbol = kotlin/collections/List.listIterator(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): kotlin.collections.ListIterator<E>
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = index
       receiverType = null
       returnType = kotlin.Int
@@ -98,18 +98,18 @@ KtFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/collections/List.listIterator
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.collections.List<kotlin.Int>
   symbol = kotlin/collections/List.subList(<dispatch receiver>: kotlin.collections.List<E>, fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.List<E>
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = fromIndex
       receiverType = null
       returnType = kotlin.Int
       symbol = fromIndex: kotlin.Int
       callableId = null,
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = toIndex
       receiverType = null
       returnType = kotlin.Int
@@ -117,18 +117,18 @@ KtFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/collections/List.subList
-KtVariableLikeSignature:
+KaVariableLikeSignature:
   name = size
   receiverType = null
   returnType = kotlin.Int
   symbol = val size: kotlin.Int
   callableId = kotlin/collections/List.size
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Boolean
   symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
   valueParameters = [
-    KtVariableLikeSignature:
+    KaVariableLikeSignature:
       name = other
       receiverType = null
       returnType = kotlin.Any?
@@ -136,25 +136,25 @@ KtFunctionLikeSignature:
       callableId = null
   ]
   callableId = kotlin/Any.equals
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
   valueParameters = []
   callableId = kotlin/Any.hashCode
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.String
   symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
   valueParameters = []
   callableId = kotlin/Any.toString
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/collections/List.getFirst(<dispatch receiver>: kotlin.collections.List<E>): E
   valueParameters = []
   callableId = kotlin/collections/List.getFirst
-KtFunctionLikeSignature:
+KaFunctionLikeSignature:
   receiverType = null
   returnType = kotlin.Int
   symbol = kotlin/collections/List.getLast(<dispatch receiver>: kotlin.collections.List<E>): E
@@ -163,7 +163,7 @@ KtFunctionLikeSignature:
 
 
 Declaration Scope:
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.contains
   contextReceivers: []
@@ -185,14 +185,14 @@ KtFunctionSymbol:
   name: contains
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -206,14 +206,14 @@ KtFunctionSymbol:
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtTypeParameterType:
+      returnType: KaTypeParameterType:
         annotationsList: []
         type: E
       symbolKind: LOCAL
       typeParameters: []
   ]
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.containsAll
   contextReceivers: []
@@ -235,14 +235,14 @@ KtFunctionSymbol:
   name: containsAll
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -256,10 +256,10 @@ KtFunctionSymbol:
       name: elements
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: [
-          KtTypeParameterType:
+          KaTypeParameterType:
             annotationsList: []
             type: E
         ]
@@ -268,7 +268,7 @@ KtFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.get
   contextReceivers: []
@@ -290,13 +290,13 @@ KtFunctionSymbol:
   name: get
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtTypeParameterType:
+  returnType: KaTypeParameterType:
     annotationsList: []
     type: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -310,7 +310,7 @@ KtFunctionSymbol:
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -318,7 +318,7 @@ KtFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.indexOf
   contextReceivers: []
@@ -340,14 +340,14 @@ KtFunctionSymbol:
   name: indexOf
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -361,14 +361,14 @@ KtFunctionSymbol:
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtTypeParameterType:
+      returnType: KaTypeParameterType:
         annotationsList: []
         type: E
       symbolKind: LOCAL
       typeParameters: []
   ]
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.isEmpty
   contextReceivers: []
@@ -390,7 +390,7 @@ KtFunctionSymbol:
   name: isEmpty
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
@@ -398,7 +398,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.iterator
   contextReceivers: []
@@ -420,10 +420,10 @@ KtFunctionSymbol:
   name: iterator
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -432,7 +432,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.lastIndexOf
   contextReceivers: []
@@ -454,14 +454,14 @@ KtFunctionSymbol:
   name: lastIndexOf
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -475,14 +475,14 @@ KtFunctionSymbol:
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtTypeParameterType:
+      returnType: KaTypeParameterType:
         annotationsList: []
         type: E
       symbolKind: LOCAL
       typeParameters: []
   ]
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.listIterator
   contextReceivers: []
@@ -504,10 +504,10 @@ KtFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -516,7 +516,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.listIterator
   contextReceivers: []
@@ -538,10 +538,10 @@ KtFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -549,7 +549,7 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -563,7 +563,7 @@ KtFunctionSymbol:
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -571,7 +571,7 @@ KtFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.subList
   contextReceivers: []
@@ -593,10 +593,10 @@ KtFunctionSymbol:
   name: subList
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -604,7 +604,7 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -618,13 +618,13 @@ KtFunctionSymbol:
       name: fromIndex
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -638,7 +638,7 @@ KtFunctionSymbol:
       name: toIndex
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -646,18 +646,18 @@ KtFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(kotlin/collections/List.size)
+    owningProperty: KaKotlinPropertySymbol(kotlin/collections/List.size)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -665,7 +665,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
   callableId: kotlin/collections/List.size
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -678,7 +678,7 @@ KtKotlinPropertySymbol:
     modality: ABSTRACT
     origin: LIBRARY
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -704,7 +704,7 @@ KtKotlinPropertySymbol:
   name: size
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -712,7 +712,7 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/Any.equals
   contextReceivers: []
@@ -734,14 +734,14 @@ KtFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -755,7 +755,7 @@ KtFunctionSymbol:
       name: other
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any?
@@ -763,7 +763,7 @@ KtFunctionSymbol:
       typeParameters: []
   ]
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/Any.hashCode
   contextReceivers: []
@@ -785,7 +785,7 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -793,7 +793,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/Any.toString
   contextReceivers: []
@@ -815,7 +815,7 @@ KtFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/String
@@ -823,7 +823,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.getFirst
   contextReceivers: []
@@ -845,14 +845,14 @@ KtFunctionSymbol:
   name: getFirst
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtTypeParameterType:
+  returnType: KaTypeParameterType:
     annotationsList: []
     type: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.getLast
   contextReceivers: []
@@ -874,7 +874,7 @@ KtFunctionSymbol:
   name: getLast
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtTypeParameterType:
+  returnType: KaTypeParameterType:
     annotationsList: []
     type: E
   symbolKind: CLASS_MEMBER

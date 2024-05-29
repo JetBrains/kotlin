@@ -1,15 +1,15 @@
-KtClassErrorType:
-  abbreviatedType: KtUsualClassType:
+KaClassErrorType:
+  abbreviatedType: KaUsualClassType:
     abbreviatedType: null
     annotationsList: []
     classId: expansion/FooAlias
-    classSymbol: KtTypeAliasSymbol(expansion/FooAlias)
+    classSymbol: KaTypeAliasSymbol(expansion/FooAlias)
     nullability: NON_NULLABLE
     ownTypeArguments: []
     qualifiers: [
       qualifier:
         name: FooAlias
-        symbol: KtTypeAliasSymbol(expansion/FooAlias)
+        symbol: KaTypeAliasSymbol(expansion/FooAlias)
         typeArguments: []
     ]
   annotationsList: []

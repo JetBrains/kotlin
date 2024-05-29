@@ -1,4 +1,4 @@
-KtJavaFieldSymbol:
+KaJavaFieldSymbol:
   annotationsList: [
     Anno1()
       psi: null
@@ -12,7 +12,7 @@ KtJavaFieldSymbol:
   name: field
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: [
       Anno1()
         psi: null
@@ -21,7 +21,7 @@ KtJavaFieldSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass

@@ -1,11 +1,11 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: Inapplicable candidate>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = t.A.Named
         symbol = <constructor>(): t.A.Named

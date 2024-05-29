@@ -1,12 +1,12 @@
 packages: 2
-  KtPackageSymbol:
+  KaPackageSymbol:
     fqName: rex1
     origin: SOURCE
-  KtPackageSymbol:
+  KaPackageSymbol:
     fqName: rex2
     origin: SOURCE
 classifiers: 2
-  KtNamedClassOrObjectSymbol:
+  KaNamedClassOrObjectSymbol:
     annotationsList: []
     classId: rex1/RexClass1
     classKind: INTERFACE
@@ -23,7 +23,7 @@ classifiers: 2
     name: RexClass1
     origin: SOURCE
     superTypes: [
-      KtUsualClassType:
+      KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any
@@ -35,7 +35,7 @@ classifiers: 2
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtClass RexClass1]
-  KtNamedClassOrObjectSymbol:
+  KaNamedClassOrObjectSymbol:
     annotationsList: []
     classId: rex2/RexClass2
     classKind: INTERFACE
@@ -52,7 +52,7 @@ classifiers: 2
     name: RexClass2
     origin: SOURCE
     superTypes: [
-      KtUsualClassType:
+      KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any
@@ -65,7 +65,7 @@ classifiers: 2
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtClass RexClass2]
 callables: 2
-  KtFunctionSymbol:
+  KaFunctionSymbol:
     annotationsList: []
     callableId: rex1/rexCallable1
     contextReceivers: []
@@ -87,7 +87,7 @@ callables: 2
     name: rexCallable1
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -99,7 +99,7 @@ callables: 2
       From resolve extension: true
       Resolve extension navigation targets: 1
         [Resolve extension navigation target for test for KtNamedFunction rexCallable1]
-  KtFunctionSymbol:
+  KaFunctionSymbol:
     annotationsList: []
     callableId: rex2/rexCallable2
     contextReceivers: []
@@ -121,7 +121,7 @@ callables: 2
     name: rexCallable2
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any

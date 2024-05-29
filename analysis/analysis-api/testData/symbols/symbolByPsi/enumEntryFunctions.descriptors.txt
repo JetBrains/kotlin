@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -20,7 +20,7 @@ KtFunctionSymbol:
   name: a
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -28,36 +28,36 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass.FirstEntry
-  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtEnumEntrySymbol:
+KaEnumEntrySymbol:
   annotationsList: []
   callableId: /MyEnumClass.FirstEntry
   contextReceivers: []
-  enumEntryInitializer: KtEnumEntrySymbol(/MyEnumClass.FirstEntry)
+  enumEntryInitializer: KaEnumEntrySymbol(/MyEnumClass.FirstEntry)
   isExtension: false
   name: FirstEntry
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtEnumEntrySymbol:
+KaEnumEntrySymbol:
   annotationsList: []
   callableId: /MyEnumClass.SecondEntry
   contextReceivers: []
@@ -66,18 +66,18 @@ KtEnumEntrySymbol:
   name: SecondEntry
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -99,7 +99,7 @@ KtFunctionSymbol:
   name: one
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -107,16 +107,16 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass.ThirdEntry
-  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -138,14 +138,14 @@ KtFunctionSymbol:
   name: one
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -159,48 +159,48 @@ KtFunctionSymbol:
       name: i
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+      getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
       getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass.ThirdEntry
-  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtEnumEntrySymbol:
+KaEnumEntrySymbol:
   annotationsList: []
   callableId: /MyEnumClass.ThirdEntry
   contextReceivers: []
-  enumEntryInitializer: KtEnumEntrySymbol(/MyEnumClass.ThirdEntry)
+  enumEntryInitializer: KaEnumEntrySymbol(/MyEnumClass.ThirdEntry)
   isExtension: false
   name: ThirdEntry
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
   getContainingJvmClassName: MyEnumClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: MyEnumClass
   classKind: ENUM_CLASS
@@ -217,10 +217,10 @@ KtNamedClassOrObjectSymbol:
   name: MyEnumClass
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: [
-        KtUsualClassType:
+        KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: MyEnumClass
@@ -230,7 +230,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(enumEntryFunctions.kt)
+  getContainingFileSymbol: KaFileSymbol(enumEntryFunctions.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

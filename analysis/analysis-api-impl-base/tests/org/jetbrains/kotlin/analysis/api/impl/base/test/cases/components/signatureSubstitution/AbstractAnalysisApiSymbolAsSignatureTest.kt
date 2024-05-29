@@ -26,7 +26,7 @@ abstract class AbstractAnalysisApiSymbolAsSignatureTest : AbstractAnalysisApiBas
             val renderedSymbol = symbol.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)
             val renderedSignature = stringRepresentation(signature)
             prettyPrint {
-                appendLine("KtDeclaration: ${declaration::class.simpleName}")
+                appendLine("${KtDeclaration::class.simpleName}: ${declaration::class.simpleName}")
 
                 appendLine("Symbol:")
                 appendLine(renderedSymbol)

@@ -1,16 +1,16 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
-  candidate = KtDelegatedConstructorCall:
+  candidate = KaDelegatedConstructorCall:
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = Base
         symbol = <constructor>(p1: kotlin.Int): Base
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = p1
             receiverType = null
             returnType = kotlin.Int
@@ -20,7 +20,7 @@ KtInapplicableCallCandidateInfo:
         callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
-      s -> (KtVariableLikeSignature:
+      s -> (KaVariableLikeSignature:
         name = p1
         receiverType = null
         returnType = kotlin.Int

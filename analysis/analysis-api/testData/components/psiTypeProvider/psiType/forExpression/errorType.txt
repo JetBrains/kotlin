@@ -1,4 +1,4 @@
-KtType: UNRESOLVED<kotlin.Nothing>
+KaType: UNRESOLVED<kotlin.Nothing>
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=false):
   PsiType: null
 

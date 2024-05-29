@@ -1,13 +1,13 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = Conflict
         isSafeNavigation = false
         type = test.Conflict
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
         symbol = test/Conflict.invoke(<dispatch receiver>: test.Conflict): kotlin.Unit
@@ -17,13 +17,13 @@ KtApplicableCallCandidateInfo:
     argumentMapping = {}
   isInBestCandidates = false
 
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = <local>.Conflict
         symbol = <constructor>(): <local>.Conflict

@@ -1,18 +1,18 @@
-KtSuccessCallInfo:
-  call = KtSimpleFunctionCall:
+KaSuccessCallInfo:
+  call = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = serializer
         isSafeNavigation = false
         type = test.Serializer
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
         symbol = test/Serializer.serializeFirstTarget(<dispatch receiver>: test.Serializer, x: test.FirstTarget): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = x
             receiverType = null
             returnType = test.FirstTarget
@@ -22,7 +22,7 @@ KtSuccessCallInfo:
         callableId = test/Serializer.serializeFirstTarget
     typeArgumentsMapping = {}
     argumentMapping = {
-      target -> (KtVariableLikeSignature:
+      target -> (KaVariableLikeSignature:
         name = x
         receiverType = null
         returnType = test.FirstTarget

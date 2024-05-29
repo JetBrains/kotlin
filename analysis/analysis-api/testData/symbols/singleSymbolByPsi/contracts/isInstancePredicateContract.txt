@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
@@ -6,15 +6,15 @@ KtFunctionSymbol:
   callableId: /isInstancePredicateContract
   contextReceivers: []
   contractEffects: [
-    KtContractConditionalContractEffectDeclaration:
+    KaContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsSuccessfullyEffectDeclaration:
+        KaContractReturnsSuccessfullyEffectDeclaration:
       condition:
-        KtContractIsInstancePredicateExpression:
+        KaContractIsInstancePredicateExpression:
           argument:
-            KtContractParameterValue:
+            KaContractParameterValue:
               parameterSymbol:
-                KtValueParameterSymbol:
+                KaValueParameterSymbol:
                   annotationsList: []
                   callableId: null
                   contextReceivers: []
@@ -28,18 +28,18 @@ KtFunctionSymbol:
                   name: value
                   origin: SOURCE
                   receiverParameter: null
-                  returnType: KtUsualClassType:
+                  returnType: KaUsualClassType:
                     annotationsList: []
                     ownTypeArguments: []
                     type: kotlin/Any
                   symbolKind: LOCAL
                   typeParameters: []
-                  getContainingFileSymbol: KtFileSymbol(isInstancePredicateContract.kt)
+                  getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
                   getContainingJvmClassName: IsInstancePredicateContractKt
                   getContainingModule: KtSourceModule "Sources of main"
                   deprecationStatus: null
           type:
-            KtUsualClassType:
+            KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: Foo
@@ -62,14 +62,14 @@ KtFunctionSymbol:
   name: isInstancePredicateContract
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -83,19 +83,19 @@ KtFunctionSymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(isInstancePredicateContract.kt)
+      getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
       getContainingJvmClassName: IsInstancePredicateContractKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(isInstancePredicateContract.kt)
+  getContainingFileSymbol: KaFileSymbol(isInstancePredicateContract.kt)
   getContainingJvmClassName: IsInstancePredicateContractKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

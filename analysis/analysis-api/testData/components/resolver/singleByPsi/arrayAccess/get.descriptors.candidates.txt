@@ -1,18 +1,18 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = list
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Int
         symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = index
             receiverType = null
             returnType = kotlin.Int
@@ -22,7 +22,7 @@ KtApplicableCallCandidateInfo:
         callableId = kotlin/collections/MutableList.get
     typeArgumentsMapping = {}
     argumentMapping = {
-      0 -> (KtVariableLikeSignature:
+      0 -> (KaVariableLikeSignature:
         name = index
         receiverType = null
         returnType = kotlin.Int
@@ -31,22 +31,22 @@ KtApplicableCallCandidateInfo:
     }
   isInBestCandidates = true
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with get>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = list
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.Map<out kotlin.Int, ERROR_TYPE>
         returnType = ERROR_TYPE?
         symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = key
             receiverType = null
             returnType = kotlin.Int
@@ -59,7 +59,7 @@ KtInapplicableCallCandidateInfo:
       V -> (ERROR_TYPE)
     }
     argumentMapping = {
-      0 -> (KtVariableLikeSignature:
+      0 -> (KaVariableLikeSignature:
         name = key
         receiverType = null
         returnType = kotlin.Int
@@ -68,22 +68,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = list
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.text.MatchGroupCollection
         returnType = kotlin.text.MatchGroup?
         symbol = kotlin/text/get(<extension receiver>: kotlin.text.MatchGroupCollection, name: kotlin.String): kotlin.text.MatchGroup?
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = name
             receiverType = null
             returnType = kotlin.String
@@ -93,7 +93,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/text/get
     typeArgumentsMapping = {}
     argumentMapping = {
-      0 -> (KtVariableLikeSignature:
+      0 -> (KaVariableLikeSignature:
         name = name
         receiverType = null
         returnType = kotlin.String

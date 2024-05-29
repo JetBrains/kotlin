@@ -1,15 +1,15 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Int
         symbol = /processB(b: B): kotlin.Int
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = b
             receiverType = null
             returnType = B
@@ -19,7 +19,7 @@ KtApplicableCallCandidateInfo:
         callableId = /processB
     typeArgumentsMapping = {}
     argumentMapping = {
-      a -> (KtVariableLikeSignature:
+      a -> (KaVariableLikeSignature:
         name = b
         receiverType = null
         returnType = B

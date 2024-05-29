@@ -1,14 +1,14 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtAnnotationCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+KaApplicableCallCandidateInfo:
+  candidate = KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = AnnotationInner
         symbol = <constructor>(value: Annotation): AnnotationInner
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = value
             receiverType = null
             returnType = Annotation
@@ -18,7 +18,7 @@ KtApplicableCallCandidateInfo:
         callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
-      Annotation("v1", "v2") -> (KtVariableLikeSignature:
+      Annotation("v1", "v2") -> (KaVariableLikeSignature:
         name = value
         receiverType = null
         returnType = Annotation

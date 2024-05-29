@@ -1,9 +1,9 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtAnnotationCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+KaApplicableCallCandidateInfo:
+  candidate = KaAnnotationCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = Anno
         symbol = <constructor>(): Anno

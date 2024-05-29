@@ -1,9 +1,9 @@
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: [
     PropertyAnnotation()
       psi: KtAnnotationEntry
   ]
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: [
       FieldAnnotation()
         psi: KtAnnotationEntry
@@ -13,21 +13,21 @@ KtKotlinPropertySymbol:
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(/prop)
+    owningProperty: KaKotlinPropertySymbol(/prop)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+    getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
     getContainingJvmClassName: PropertyWithAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /prop
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: [
       GetAnnotation()
         psi: KtAnnotationEntry
@@ -43,7 +43,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -51,7 +51,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+    getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
     getContainingJvmClassName: PropertyWithAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -73,11 +73,11 @@ KtKotlinPropertySymbol:
   name: prop
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
-  setter: KtPropertySetterSymbol:
+  setter: KaPropertySetterSymbol:
     annotationsList: [
       SetAnnotation()
         psi: KtAnnotationEntry
@@ -92,7 +92,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    parameter: KtValueParameterSymbol:
+    parameter: KaValueParameterSymbol:
       annotationsList: [
         SetparamAnnotation()
           psi: KtAnnotationEntry
@@ -109,25 +109,25 @@ KtKotlinPropertySymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+      getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
       getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
-      KtValueParameterSymbol:
+      KaValueParameterSymbol:
         annotationsList: [
           SetparamAnnotation()
             psi: KtAnnotationEntry
@@ -144,26 +144,26 @@ KtKotlinPropertySymbol:
         name: value
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
-        getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+        getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
         getContainingJvmClassName: null
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
     ]
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+    getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
     getContainingJvmClassName: PropertyWithAnnotationsKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(propertyWithAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(propertyWithAnnotations.kt)
   getContainingJvmClassName: PropertyWithAnnotationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

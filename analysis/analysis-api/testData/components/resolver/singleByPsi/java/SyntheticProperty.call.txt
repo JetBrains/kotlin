@@ -1,12 +1,12 @@
-KtSuccessCallInfo:
-  call = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+KaSuccessCallInfo:
+  call = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = javaClass
         isSafeNavigation = false
         type = JavaClass
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = something
         receiverType = null
         returnType = kotlin.Int

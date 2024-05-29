@@ -1,18 +1,18 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = RetentionPolicy
         isSafeNavigation = false
         type = kotlin.Unit
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = java.lang.annotation.RetentionPolicy
         symbol = java/lang/annotation/RetentionPolicy.valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = value
             receiverType = null
             returnType = kotlin.String
@@ -22,7 +22,7 @@ KtApplicableCallCandidateInfo:
         callableId = java/lang/annotation/RetentionPolicy.valueOf
     typeArgumentsMapping = {}
     argumentMapping = {
-      "" -> (KtVariableLikeSignature:
+      "" -> (KaVariableLikeSignature:
         name = value
         receiverType = null
         returnType = kotlin.String

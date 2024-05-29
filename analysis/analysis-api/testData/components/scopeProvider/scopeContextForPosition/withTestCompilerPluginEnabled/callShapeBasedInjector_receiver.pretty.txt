@@ -1,7 +1,7 @@
 element: column
 implicit receivers:
   type: Scope1
-  owner symbol: KtFirFunctionSymbol
+  owner symbol: KaFirFunctionSymbol
 
 scopes:
   TypeScope, index = 0

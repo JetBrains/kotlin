@@ -1,18 +1,18 @@
-KtSuccessCallInfo:
-  call = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtReceiverParameterSymbol:
+KaSuccessCallInfo:
+  call = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
           annotationsList: []
           origin: SOURCE
-          owningCallableSymbol: KtFunctionSymbol(/foo)
-          type: KtUsualClassType:
+          owningCallableSymbol: KaFunctionSymbol(/foo)
+          type: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: A
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = i
         receiverType = null
         returnType = kotlin.Int

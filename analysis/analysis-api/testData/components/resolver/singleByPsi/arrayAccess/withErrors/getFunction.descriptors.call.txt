@@ -1,19 +1,19 @@
-KtErrorCallInfo:
+KaErrorCallInfo:
   candidateCalls = [
-    KtSimpleFunctionCall:
+    KaSimpleFunctionCall:
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
-        extensionReceiver = KtExplicitReceiverValue:
+        extensionReceiver = KaExplicitReceiverValue:
           expression = 1
           isSafeNavigation = false
           type = kotlin.Int
-        signature = KtFunctionLikeSignature:
+        signature = KaFunctionLikeSignature:
           receiverType = kotlin.Int
           returnType = kotlin.Int
           symbol = /get(<extension receiver>: kotlin.Int, index: kotlin.Int): kotlin.Int
           valueParameters = [
-            KtVariableLikeSignature:
+            KaVariableLikeSignature:
               name = index
               receiverType = null
               returnType = kotlin.Int
@@ -23,7 +23,7 @@ KtErrorCallInfo:
           callableId = /get
       typeArgumentsMapping = {}
       argumentMapping = {
-        2 -> (KtVariableLikeSignature:
+        2 -> (KaVariableLikeSignature:
           name = index
           receiverType = null
           returnType = kotlin.Int

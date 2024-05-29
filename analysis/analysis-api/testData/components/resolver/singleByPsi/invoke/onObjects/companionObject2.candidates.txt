@@ -1,16 +1,16 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: Inapplicable candidate>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = foo.Foo
         symbol = <constructor>(i: kotlin.Int): foo.Foo
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = i
             receiverType = null
             returnType = kotlin.Int

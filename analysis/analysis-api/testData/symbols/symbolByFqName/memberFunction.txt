@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/List.get
   contextReceivers: []
@@ -20,13 +20,13 @@ KtFunctionSymbol:
   name: get
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtTypeParameterType:
+  returnType: KaTypeParameterType:
     annotationsList: []
     type: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -40,7 +40,7 @@ KtFunctionSymbol:
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -52,10 +52,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]

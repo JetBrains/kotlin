@@ -1,67 +1,67 @@
-KtEnumEntrySymbol:
+KaEnumEntrySymbol:
   annotationsList: []
   callableId: test/E.A
   contextReceivers: []
-  enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
+  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
   name: A
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtEnumEntrySymbol:
+KaEnumEntrySymbol:
   annotationsList: []
   callableId: test/E.B
   contextReceivers: []
-  enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
+  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isExtension: false
   name: B
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(test/E.foo)
+    owningProperty: KaKotlinPropertySymbol(test/E.foo)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int?
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+    getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
     getContainingJvmClassName: test.E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableId: test/E.foo
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -74,7 +74,7 @@ KtKotlinPropertySymbol:
     modality: ABSTRACT
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int?
@@ -82,11 +82,11 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
+    getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: test/E
-    getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+    getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
     getContainingJvmClassName: test.E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -108,7 +108,7 @@ KtKotlinPropertySymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int?
@@ -116,11 +116,11 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
-  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -129,7 +129,7 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: test/E.bar
   contextReceivers: []
@@ -151,7 +151,7 @@ KtFunctionSymbol:
   name: bar
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -159,16 +159,16 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
-  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: test/E.values
   contextReceivers: []
@@ -190,10 +190,10 @@ KtFunctionSymbol:
   name: values
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtUsualClassType:
+      KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: test/E
@@ -203,12 +203,12 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: test/E.valueOf
   contextReceivers: []
@@ -230,14 +230,14 @@ KtFunctionSymbol:
   name: valueOf
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -251,29 +251,29 @@ KtFunctionSymbol:
       name: value
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+      getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
       getContainingJvmClassName: test.E
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
   callableId: test/E.entries
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -286,10 +286,10 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: [
-        KtUsualClassType:
+        KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: test/E
@@ -299,7 +299,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+    getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
     getContainingJvmClassName: test.E
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -321,10 +321,10 @@ KtKotlinPropertySymbol:
   name: entries
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtUsualClassType:
+      KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: test/E
@@ -334,7 +334,7 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -343,7 +343,7 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: test/E
@@ -355,7 +355,7 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
@@ -363,7 +363,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Private
-  getContainingFileSymbol: KtFileSymbol(enumClassWithAbstractMembers.kt)
+  getContainingFileSymbol: KaFileSymbol(enumClassWithAbstractMembers.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

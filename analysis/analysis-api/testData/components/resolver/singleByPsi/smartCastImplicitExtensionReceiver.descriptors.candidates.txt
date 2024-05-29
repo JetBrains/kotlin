@@ -1,21 +1,21 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtSmartCastedReceiverValue:
-        original = KtImplicitReceiverValue:
-          symbol = KtReceiverParameterSymbol:
+      extensionReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotationsList: []
             origin: SOURCE
-            owningCallableSymbol: KtFunctionSymbol(/test)
-            type: KtUsualClassType:
+            owningCallableSymbol: KaFunctionSymbol(/test)
+            type: KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: kotlin/Any
           type = kotlin.Any
         type = kotlin.String
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.String
         returnType = kotlin.Unit
         symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit

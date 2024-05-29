@@ -40,7 +40,7 @@ abstract class AbstractSubstitutorBuilderTest : AbstractAnalysisApiBasedTest() {
 
             val signatureAfterSubstitution = symbol.substitute(substitutor)
             prettyPrint {
-                appendLine("KtDeclaration: ${declaration::class.simpleName}")
+                appendLine("${KtDeclaration::class.simpleName}: ${declaration::class.simpleName}")
 
                 appendLine("Symbol:")
                 appendLine(symbol.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES))

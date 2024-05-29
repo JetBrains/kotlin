@@ -1,2 +1,2 @@
 PsiType: int
-KtType: kotlin.Int
+KaType: kotlin.Int

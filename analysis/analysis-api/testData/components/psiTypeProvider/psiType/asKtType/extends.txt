@@ -1,2 +1,2 @@
 PsiType: java.util.List<? extends java.lang.String>
-KtType: kotlin.collections.(Mutable)List<out kotlin.String!>!
+KaType: kotlin.collections.(Mutable)List<out kotlin.String!>!

@@ -1,18 +1,18 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
         symbol = /to(<extension receiver>: A, other: B): A
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = other
             receiverType = null
             returnType = kotlin.Int
@@ -25,7 +25,7 @@ KtApplicableCallCandidateInfo:
       B -> (kotlin.Int)
     }
     argumentMapping = {
-      2 -> (KtVariableLikeSignature:
+      2 -> (KaVariableLikeSignature:
         name = other
         receiverType = null
         returnType = kotlin.Int

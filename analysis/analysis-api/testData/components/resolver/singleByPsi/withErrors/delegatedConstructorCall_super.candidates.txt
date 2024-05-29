@@ -1,15 +1,15 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtDelegatedConstructorCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaDelegatedConstructorCall:
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = Base
         symbol = <constructor>(p1: kotlin.Int): Base
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = p1
             receiverType = null
             returnType = kotlin.Int
@@ -19,7 +19,7 @@ KtApplicableCallCandidateInfo:
         callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
-      i + j -> (KtVariableLikeSignature:
+      i + j -> (KaVariableLikeSignature:
         name = p1
         receiverType = null
         returnType = kotlin.Int

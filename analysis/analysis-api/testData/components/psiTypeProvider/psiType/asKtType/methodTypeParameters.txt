@@ -1,2 +1,2 @@
 PsiType: K
-KtType: K!
+KaType: K!

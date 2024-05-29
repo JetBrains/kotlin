@@ -1,2 +1,2 @@
 PsiType: @MyAnno("outer") java.util.List<@MyAnno("middle") java.util.List<@MyAnno("nested") java.lang.String>> @MyAnno("vararg") ...
-KtType: @MyAnno(value = "vararg") kotlin.Array<@MyAnno(value = "outer") kotlin.collections.(Mutable)List<@MyAnno(value = "middle") kotlin.collections.(Mutable)List<@MyAnno(value = "nested") kotlin.String!>!>!>!
+KaType: @MyAnno(value = "vararg") kotlin.Array<@MyAnno(value = "outer") kotlin.collections.(Mutable)List<@MyAnno(value = "middle") kotlin.collections.(Mutable)List<@MyAnno(value = "nested") kotlin.String!>!>!>!

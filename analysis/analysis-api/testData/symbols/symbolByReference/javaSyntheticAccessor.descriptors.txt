@@ -1,9 +1,9 @@
-KtSyntheticJavaPropertySymbol:
+KaSyntheticJavaPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
   callableId: /JavaClass.foo
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: /JavaClass.getFoo
     contextReceivers: []
@@ -15,11 +15,11 @@ KtSyntheticJavaPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
-    receiverParameter: KtReceiverParameterSymbol:
+    receiverParameter: KaReceiverParameterSymbol:
       annotationsList: []
       origin: SOURCE
-      owningCallableSymbol: KtSyntheticJavaPropertySymbol(/JavaClass.foo)
-      type: KtUsualClassType:
+      owningCallableSymbol: KaSyntheticJavaPropertySymbol(/JavaClass.foo)
+      type: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: JavaClass
@@ -27,7 +27,7 @@ KtSyntheticJavaPropertySymbol:
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
 
       deprecationStatus: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -51,16 +51,16 @@ KtSyntheticJavaPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
-  javaGetterSymbol: KtFunctionSymbol(/JavaClass.getFoo)
+  javaGetterSymbol: KaFunctionSymbol(/JavaClass.getFoo)
   javaSetterSymbol: null
   modality: FINAL
   name: foo
   origin: JAVA_SYNTHETIC_PROPERTY
-  receiverParameter: KtReceiverParameterSymbol:
+  receiverParameter: KaReceiverParameterSymbol:
     annotationsList: []
     origin: SOURCE
-    owningCallableSymbol: KtSyntheticJavaPropertySymbol(/JavaClass.foo)
-    type: KtUsualClassType:
+    owningCallableSymbol: KaSyntheticJavaPropertySymbol(/JavaClass.foo)
+    type: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: JavaClass
@@ -68,7 +68,7 @@ KtSyntheticJavaPropertySymbol:
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10ReceiverParameterSymbol
 
     deprecationStatus: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int

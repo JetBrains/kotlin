@@ -1,13 +1,13 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = collection
         isSafeNavigation = false
         type = kotlin.collections.Collection<kotlin.String>
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = @EnhancedNullability java.util.stream.Stream<@EnhancedNullability kotlin.String>
         symbol = kotlin/collections/Collection.stream(<dispatch receiver>: kotlin.collections.Collection<E>): @EnhancedNullability java.util.stream.Stream<@EnhancedNullability E>

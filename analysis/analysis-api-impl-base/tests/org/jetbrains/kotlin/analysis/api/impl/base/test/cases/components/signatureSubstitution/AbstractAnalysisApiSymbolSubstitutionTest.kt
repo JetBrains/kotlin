@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.SubstitutionParser
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -28,7 +29,7 @@ abstract class AbstractAnalysisApiSymbolSubstitutionTest : AbstractAnalysisApiBa
 
             val signature = symbol.substitute(substitutor)
             prettyPrint {
-                appendLine("KtDeclaration: ${declaration::class.simpleName}")
+                appendLine("${KtDeclaration::class.simpleName}: ${declaration::class.simpleName}")
 
                 appendLine("Symbol:")
                 appendLine(symbol.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES))

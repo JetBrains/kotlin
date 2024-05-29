@@ -1,5 +1,5 @@
 expression: ::dummy
-expected type: KtUsualClassType:
+expected type: KaUsualClassType:
   annotationsList: []
   ownTypeArguments: []
   type: java/lang/Runnable

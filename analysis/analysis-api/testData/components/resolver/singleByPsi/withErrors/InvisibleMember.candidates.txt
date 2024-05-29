@@ -1,13 +1,13 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'val i: Int': it is private in '/A'.>
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = a
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = i
         receiverType = null
         returnType = kotlin.Int

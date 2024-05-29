@@ -1,4 +1,4 @@
-KtTypeParameterSymbol:
+KaTypeParameterSymbol:
   annotationsList: []
   isReified: false
   name: TYPE
@@ -6,6 +6,6 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(incompleteFunctionTypeParameter.kt)
+  getContainingFileSymbol: KaFileSymbol(incompleteFunctionTypeParameter.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

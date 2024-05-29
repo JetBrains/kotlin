@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /foo
   contextReceivers: []
@@ -20,14 +20,14 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -41,10 +41,10 @@ KtFunctionSymbol:
       name: action
       origin: SOURCE
       receiverParameter: null
-      returnType: KtFunctionalType:
+      returnType: KaFunctionalType:
         annotationsList: []
         ownTypeArguments: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -52,23 +52,23 @@ KtFunctionSymbol:
         type: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(scriptWithClassDeclaration.kts)
+      getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
       getContainingJvmClassName: null
       getContainingModule: KtScriptModule "Script scriptWithClassDeclaration.kts"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(scriptWithClassDeclaration.kts)
+  getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
   getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script scriptWithClassDeclaration.kts"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
   callableId: /$$result
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -81,7 +81,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: PLUGIN
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Unit
@@ -89,7 +89,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(scriptWithClassDeclaration.kts)
+    getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
     getContainingJvmClassName: null
     getContainingModule: KtScriptModule "Script scriptWithClassDeclaration.kts"
     deprecationStatus: null
@@ -111,7 +111,7 @@ KtKotlinPropertySymbol:
   name: $$result
   origin: PLUGIN
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -119,7 +119,7 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(scriptWithClassDeclaration.kts)
+  getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
   getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script scriptWithClassDeclaration.kts"
   deprecationStatus: null
@@ -128,7 +128,7 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: Person
   classKind: CLASS
@@ -145,7 +145,7 @@ KtNamedClassOrObjectSymbol:
   name: Person
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -153,7 +153,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(scriptWithClassDeclaration.kts)
+  getContainingFileSymbol: KaFileSymbol(scriptWithClassDeclaration.kts)
   getContainingModule: KtScriptModule "Script scriptWithClassDeclaration.kts"
   annotationApplicableTargets: null
   deprecationStatus: null

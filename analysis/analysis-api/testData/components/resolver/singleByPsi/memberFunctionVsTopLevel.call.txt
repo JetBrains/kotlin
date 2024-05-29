@@ -1,12 +1,12 @@
-KtSuccessCallInfo:
-  call = KtSimpleFunctionCall:
+KaSuccessCallInfo:
+  call = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtImplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaImplicitReceiverValue:
         symbol = test/A
         type = test.A
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
         symbol = test/A.foo(<dispatch receiver>: test.A): kotlin.Unit

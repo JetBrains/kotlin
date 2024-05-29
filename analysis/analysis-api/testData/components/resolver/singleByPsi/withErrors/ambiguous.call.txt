@@ -1,16 +1,16 @@
-KtErrorCallInfo:
+KaErrorCallInfo:
   candidateCalls = [
-    KtSimpleFunctionCall:
+    KaSimpleFunctionCall:
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KtFunctionLikeSignature:
+        signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /function(a: kotlin.Char): kotlin.Unit
           valueParameters = [
-            KtVariableLikeSignature:
+            KaVariableLikeSignature:
               name = a
               receiverType = null
               returnType = kotlin.Char
@@ -20,24 +20,24 @@ KtErrorCallInfo:
           callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KtVariableLikeSignature:
+        1 -> (KaVariableLikeSignature:
           name = a
           receiverType = null
           returnType = kotlin.Char
           symbol = a: kotlin.Char
           callableId = null)
       },
-    KtSimpleFunctionCall:
+    KaSimpleFunctionCall:
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KtFunctionLikeSignature:
+        signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /function(b: kotlin.Boolean): kotlin.Unit
           valueParameters = [
-            KtVariableLikeSignature:
+            KaVariableLikeSignature:
               name = b
               receiverType = null
               returnType = kotlin.Boolean
@@ -47,24 +47,24 @@ KtErrorCallInfo:
           callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KtVariableLikeSignature:
+        1 -> (KaVariableLikeSignature:
           name = b
           receiverType = null
           returnType = kotlin.Boolean
           symbol = b: kotlin.Boolean
           callableId = null)
       },
-    KtSimpleFunctionCall:
+    KaSimpleFunctionCall:
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KtFunctionLikeSignature:
+        signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = /function(c: kotlin.String): kotlin.Unit
           valueParameters = [
-            KtVariableLikeSignature:
+            KaVariableLikeSignature:
               name = c
               receiverType = null
               returnType = kotlin.String
@@ -74,7 +74,7 @@ KtErrorCallInfo:
           callableId = /function
       typeArgumentsMapping = {}
       argumentMapping = {
-        1 -> (KtVariableLikeSignature:
+        1 -> (KaVariableLikeSignature:
           name = c
           receiverType = null
           returnType = kotlin.String

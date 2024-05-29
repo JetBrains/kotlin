@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.add
   contextReceivers: []
@@ -20,14 +20,14 @@ KtFunctionSymbol:
   name: add
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -41,7 +41,7 @@ KtFunctionSymbol:
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtTypeParameterType:
+      returnType: KaTypeParameterType:
         annotationsList: []
         type: E
       symbolKind: LOCAL
@@ -52,10 +52,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -65,7 +65,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.add
   contextReceivers: []
@@ -87,14 +87,14 @@ KtFunctionSymbol:
   name: add
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -108,7 +108,7 @@ KtFunctionSymbol:
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -118,7 +118,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -132,7 +132,7 @@ KtFunctionSymbol:
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtTypeParameterType:
+      returnType: KaTypeParameterType:
         annotationsList: []
         type: E
       symbolKind: LOCAL
@@ -143,10 +143,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -156,7 +156,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.addAll
   contextReceivers: []
@@ -178,14 +178,14 @@ KtFunctionSymbol:
   name: addAll
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -199,7 +199,7 @@ KtFunctionSymbol:
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -209,7 +209,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -223,10 +223,10 @@ KtFunctionSymbol:
       name: elements
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: [
-          KtTypeParameterType:
+          KaTypeParameterType:
             annotationsList: []
             type: E
         ]
@@ -239,10 +239,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -252,7 +252,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.addAll
   contextReceivers: []
@@ -274,14 +274,14 @@ KtFunctionSymbol:
   name: addAll
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -295,10 +295,10 @@ KtFunctionSymbol:
       name: elements
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: [
-          KtTypeParameterType:
+          KaTypeParameterType:
             annotationsList: []
             type: E
         ]
@@ -311,10 +311,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -324,7 +324,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.clear
   contextReceivers: []
@@ -346,7 +346,7 @@ KtFunctionSymbol:
   name: clear
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -354,10 +354,10 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -367,7 +367,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.listIterator
   contextReceivers: []
@@ -389,10 +389,10 @@ KtFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -401,10 +401,10 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -414,7 +414,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.listIterator
   contextReceivers: []
@@ -436,10 +436,10 @@ KtFunctionSymbol:
   name: listIterator
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -447,7 +447,7 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -461,7 +461,7 @@ KtFunctionSymbol:
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -473,10 +473,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -486,7 +486,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.remove
   contextReceivers: []
@@ -508,14 +508,14 @@ KtFunctionSymbol:
   name: remove
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -529,7 +529,7 @@ KtFunctionSymbol:
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtTypeParameterType:
+      returnType: KaTypeParameterType:
         annotationsList: []
         type: E
       symbolKind: LOCAL
@@ -540,10 +540,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -553,7 +553,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.removeAll
   contextReceivers: []
@@ -575,14 +575,14 @@ KtFunctionSymbol:
   name: removeAll
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -596,10 +596,10 @@ KtFunctionSymbol:
       name: elements
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: [
-          KtTypeParameterType:
+          KaTypeParameterType:
             annotationsList: []
             type: E
         ]
@@ -612,10 +612,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -625,7 +625,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.removeAt
   contextReceivers: []
@@ -647,13 +647,13 @@ KtFunctionSymbol:
   name: removeAt
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtTypeParameterType:
+  returnType: KaTypeParameterType:
     annotationsList: []
     type: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -667,7 +667,7 @@ KtFunctionSymbol:
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -679,10 +679,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -692,7 +692,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.retainAll
   contextReceivers: []
@@ -714,14 +714,14 @@ KtFunctionSymbol:
   name: retainAll
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -735,10 +735,10 @@ KtFunctionSymbol:
       name: elements
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: [
-          KtTypeParameterType:
+          KaTypeParameterType:
             annotationsList: []
             type: E
         ]
@@ -751,10 +751,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -764,7 +764,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.set
   contextReceivers: []
@@ -786,13 +786,13 @@ KtFunctionSymbol:
   name: set
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtTypeParameterType:
+  returnType: KaTypeParameterType:
     annotationsList: []
     type: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -806,7 +806,7 @@ KtFunctionSymbol:
       name: index
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -816,7 +816,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -830,7 +830,7 @@ KtFunctionSymbol:
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtTypeParameterType:
+      returnType: KaTypeParameterType:
         annotationsList: []
         type: E
       symbolKind: LOCAL
@@ -841,10 +841,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -854,7 +854,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.subList
   contextReceivers: []
@@ -876,10 +876,10 @@ KtFunctionSymbol:
   name: subList
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -887,7 +887,7 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -901,7 +901,7 @@ KtFunctionSymbol:
       name: fromIndex
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -911,7 +911,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: kotlin.collections.MutableList
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -925,7 +925,7 @@ KtFunctionSymbol:
       name: toIndex
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -937,10 +937,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -950,7 +950,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
   callableId: kotlin/collections/MutableList.size
@@ -974,7 +974,7 @@ KtKotlinPropertySymbol:
   name: size
   origin: INTERSECTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -982,10 +982,10 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -999,7 +999,7 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.isEmpty
   contextReceivers: []
@@ -1021,7 +1021,7 @@ KtFunctionSymbol:
   name: isEmpty
   origin: INTERSECTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
@@ -1029,10 +1029,10 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -1042,7 +1042,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.contains
   contextReceivers: []
@@ -1064,14 +1064,14 @@ KtFunctionSymbol:
   name: contains
   origin: INTERSECTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1085,7 +1085,7 @@ KtFunctionSymbol:
       name: element
       origin: INTERSECTION_OVERRIDE
       receiverParameter: null
-      returnType: KtTypeParameterType:
+      returnType: KaTypeParameterType:
         annotationsList: []
         type: E
       symbolKind: LOCAL
@@ -1096,10 +1096,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -1109,7 +1109,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.iterator
   contextReceivers: []
@@ -1131,10 +1131,10 @@ KtFunctionSymbol:
   name: iterator
   origin: INTERSECTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -1143,10 +1143,10 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -1156,7 +1156,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.containsAll
   contextReceivers: []
@@ -1178,14 +1178,14 @@ KtFunctionSymbol:
   name: containsAll
   origin: INTERSECTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1199,10 +1199,10 @@ KtFunctionSymbol:
       name: elements
       origin: INTERSECTION_OVERRIDE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: [
-          KtTypeParameterType:
+          KaTypeParameterType:
             annotationsList: []
             type: E
         ]
@@ -1215,10 +1215,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -1228,7 +1228,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.get
   contextReceivers: []
@@ -1250,13 +1250,13 @@ KtFunctionSymbol:
   name: get
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtTypeParameterType:
+  returnType: KaTypeParameterType:
     annotationsList: []
     type: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1270,7 +1270,7 @@ KtFunctionSymbol:
       name: index
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -1282,10 +1282,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -1295,7 +1295,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.indexOf
   contextReceivers: []
@@ -1317,14 +1317,14 @@ KtFunctionSymbol:
   name: indexOf
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1338,7 +1338,7 @@ KtFunctionSymbol:
       name: element
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtTypeParameterType:
+      returnType: KaTypeParameterType:
         annotationsList: []
         type: E
       symbolKind: LOCAL
@@ -1349,10 +1349,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -1362,7 +1362,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.lastIndexOf
   contextReceivers: []
@@ -1384,14 +1384,14 @@ KtFunctionSymbol:
   name: lastIndexOf
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1405,7 +1405,7 @@ KtFunctionSymbol:
       name: element
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtTypeParameterType:
+      returnType: KaTypeParameterType:
         annotationsList: []
         type: E
       symbolKind: LOCAL
@@ -1416,10 +1416,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -1429,7 +1429,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/Any.equals
   contextReceivers: []
@@ -1451,14 +1451,14 @@ KtFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1472,7 +1472,7 @@ KtFunctionSymbol:
       name: other
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any?
@@ -1484,7 +1484,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Any
@@ -1493,7 +1493,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/Any.hashCode
   contextReceivers: []
@@ -1515,7 +1515,7 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -1523,7 +1523,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Any
@@ -1532,7 +1532,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/Any.toString
   contextReceivers: []
@@ -1554,7 +1554,7 @@ KtFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/String
@@ -1562,7 +1562,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Any
@@ -1571,7 +1571,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.getFirst
   contextReceivers: []
@@ -1593,17 +1593,17 @@ KtFunctionSymbol:
   name: getFirst
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtTypeParameterType:
+  returnType: KaTypeParameterType:
     annotationsList: []
     type: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -1613,7 +1613,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/collections/MutableList.getLast
   contextReceivers: []
@@ -1635,17 +1635,17 @@ KtFunctionSymbol:
   name: getLast
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtTypeParameterType:
+  returnType: KaTypeParameterType:
     annotationsList: []
     type: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]

@@ -1,4 +1,4 @@
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: [
     org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype()
       psi: KtAnnotationEntry
@@ -18,11 +18,11 @@ KtNamedClassOrObjectSymbol:
   name: MyClass
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: foo/MyInterface
@@ -30,7 +30,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(myInterfaceSupertype.kt)
+  getContainingFileSymbol: KaFileSymbol(myInterfaceSupertype.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

@@ -1,16 +1,16 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'len'>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = Foo<kotlin.String>
         symbol = <constructor>(len: kotlin.Int): Foo<T>
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = len
             receiverType = null
             returnType = kotlin.Int
@@ -22,19 +22,19 @@ KtInapplicableCallCandidateInfo:
     argumentMapping = {}
   isInBestCandidates = true
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = Foo<kotlin.String>
         symbol = <constructor>(s: kotlin.String): Foo<T>
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = s
             receiverType = null
             returnType = kotlin.String

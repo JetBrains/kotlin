@@ -1,4 +1,4 @@
-KtJavaFieldSymbol:
+KaJavaFieldSymbol:
   annotationsList: []
   callableId: java/lang/String.value
   contextReceivers: []
@@ -9,13 +9,13 @@ KtJavaFieldSymbol:
   name: value
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/CharArray!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Private
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -24,7 +24,7 @@ KtJavaFieldSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtJavaFieldSymbol:
+KaJavaFieldSymbol:
   annotationsList: []
   callableId: java/lang/String.hash
   contextReceivers: []
@@ -35,14 +35,14 @@ KtJavaFieldSymbol:
   name: hash
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Private
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -51,7 +51,7 @@ KtJavaFieldSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.hash32
   contextReceivers: []
@@ -73,7 +73,7 @@ KtFunctionSymbol:
   name: hash32
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -81,7 +81,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: PackageVisibility
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -90,7 +90,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtJavaFieldSymbol:
+KaJavaFieldSymbol:
   annotationsList: []
   callableId: java/lang/String.hash32
   contextReceivers: []
@@ -101,14 +101,14 @@ KtJavaFieldSymbol:
   name: hash32
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Private
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -117,12 +117,12 @@ KtJavaFieldSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtSyntheticJavaPropertySymbol:
+KaSyntheticJavaPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
   callableId: java/lang/String.length
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: java/lang/String.length
     contextReceivers: []
@@ -135,7 +135,7 @@ KtSyntheticJavaPropertySymbol:
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -143,7 +143,7 @@ KtSyntheticJavaPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
+    getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: java/lang/String
@@ -161,13 +161,13 @@ KtSyntheticJavaPropertySymbol:
   isOverride: false
   isStatic: false
   isVal: true
-  javaGetterSymbol: KtFunctionSymbol(java/lang/String.length)
+  javaGetterSymbol: KaFunctionSymbol(java/lang/String.length)
   javaSetterSymbol: null
   modality: OPEN
   name: length
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -175,7 +175,7 @@ KtSyntheticJavaPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -188,7 +188,7 @@ KtSyntheticJavaPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.isEmpty
   contextReceivers: []
@@ -210,7 +210,7 @@ KtFunctionSymbol:
   name: isEmpty
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
@@ -218,7 +218,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -227,7 +227,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.codePointAt
   contextReceivers: []
@@ -249,14 +249,14 @@ KtFunctionSymbol:
   name: codePointAt
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -270,7 +270,7 @@ KtFunctionSymbol:
       name: index
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -282,7 +282,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -291,7 +291,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.codePointBefore
   contextReceivers: []
@@ -313,14 +313,14 @@ KtFunctionSymbol:
   name: codePointBefore
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -334,7 +334,7 @@ KtFunctionSymbol:
       name: index
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -346,7 +346,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -355,7 +355,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.codePointCount
   contextReceivers: []
@@ -377,14 +377,14 @@ KtFunctionSymbol:
   name: codePointCount
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -398,7 +398,7 @@ KtFunctionSymbol:
       name: beginIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -408,7 +408,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -422,7 +422,7 @@ KtFunctionSymbol:
       name: endIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -434,7 +434,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -443,7 +443,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.offsetByCodePoints
   contextReceivers: []
@@ -465,14 +465,14 @@ KtFunctionSymbol:
   name: offsetByCodePoints
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -486,7 +486,7 @@ KtFunctionSymbol:
       name: index
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -496,7 +496,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -510,7 +510,7 @@ KtFunctionSymbol:
       name: codePointOffset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -522,7 +522,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -531,7 +531,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.getChars
   contextReceivers: []
@@ -553,14 +553,14 @@ KtFunctionSymbol:
   name: getChars
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -574,7 +574,7 @@ KtFunctionSymbol:
       name: dst
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/CharArray!
       symbolKind: LOCAL
@@ -583,7 +583,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -597,7 +597,7 @@ KtFunctionSymbol:
       name: dstBegin
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -609,7 +609,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: PackageVisibility
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -618,7 +618,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.getChars
   contextReceivers: []
@@ -640,14 +640,14 @@ KtFunctionSymbol:
   name: getChars
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -661,7 +661,7 @@ KtFunctionSymbol:
       name: srcBegin
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -671,7 +671,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -685,7 +685,7 @@ KtFunctionSymbol:
       name: srcEnd
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -695,7 +695,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -709,7 +709,7 @@ KtFunctionSymbol:
       name: dst
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/CharArray!
       symbolKind: LOCAL
@@ -718,7 +718,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -732,7 +732,7 @@ KtFunctionSymbol:
       name: dstBegin
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -744,7 +744,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -753,7 +753,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
@@ -778,14 +778,14 @@ KtFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -799,7 +799,7 @@ KtFunctionSymbol:
       name: srcBegin
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -809,7 +809,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -823,7 +823,7 @@ KtFunctionSymbol:
       name: srcEnd
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -833,7 +833,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -847,7 +847,7 @@ KtFunctionSymbol:
       name: dst
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/ByteArray!
       symbolKind: LOCAL
@@ -856,7 +856,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -870,7 +870,7 @@ KtFunctionSymbol:
       name: dstBegin
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -882,7 +882,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -891,7 +891,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.getBytes
   contextReceivers: []
@@ -913,13 +913,13 @@ KtFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/ByteArray!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -933,7 +933,7 @@ KtFunctionSymbol:
       name: charsetName
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -944,7 +944,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -953,7 +953,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.getBytes
   contextReceivers: []
@@ -975,13 +975,13 @@ KtFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/ByteArray!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -995,7 +995,7 @@ KtFunctionSymbol:
       name: charset
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: java/nio/charset/Charset!
       symbolKind: LOCAL
@@ -1006,7 +1006,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1015,7 +1015,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.getBytes
   contextReceivers: []
@@ -1037,14 +1037,14 @@ KtFunctionSymbol:
   name: getBytes
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/ByteArray!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1053,7 +1053,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.equals
   contextReceivers: []
@@ -1075,14 +1075,14 @@ KtFunctionSymbol:
   name: equals
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1096,7 +1096,7 @@ KtFunctionSymbol:
       name: anObject
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: @EnhancedNullability kotlin/Any?
@@ -1108,7 +1108,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1117,7 +1117,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.contentEquals
   contextReceivers: []
@@ -1139,14 +1139,14 @@ KtFunctionSymbol:
   name: contentEquals
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1160,7 +1160,7 @@ KtFunctionSymbol:
       name: sb
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: java/lang/StringBuffer!
       symbolKind: LOCAL
@@ -1171,7 +1171,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1180,7 +1180,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.contentEquals
   contextReceivers: []
@@ -1202,14 +1202,14 @@ KtFunctionSymbol:
   name: contentEquals
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1223,7 +1223,7 @@ KtFunctionSymbol:
       name: cs
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/CharSequence!
       symbolKind: LOCAL
@@ -1234,7 +1234,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1243,7 +1243,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.equalsIgnoreCase
   contextReceivers: []
@@ -1265,14 +1265,14 @@ KtFunctionSymbol:
   name: equalsIgnoreCase
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1286,7 +1286,7 @@ KtFunctionSymbol:
       name: anotherString
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -1297,7 +1297,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1306,7 +1306,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.compareTo
   contextReceivers: []
@@ -1328,14 +1328,14 @@ KtFunctionSymbol:
   name: compareTo
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1349,7 +1349,7 @@ KtFunctionSymbol:
       name: anotherString
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -1360,7 +1360,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1369,7 +1369,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.compareToIgnoreCase
   contextReceivers: []
@@ -1391,14 +1391,14 @@ KtFunctionSymbol:
   name: compareToIgnoreCase
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1412,7 +1412,7 @@ KtFunctionSymbol:
       name: str
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -1423,7 +1423,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1432,7 +1432,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.regionMatches
   contextReceivers: []
@@ -1454,14 +1454,14 @@ KtFunctionSymbol:
   name: regionMatches
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1475,7 +1475,7 @@ KtFunctionSymbol:
       name: toffset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -1485,7 +1485,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1499,7 +1499,7 @@ KtFunctionSymbol:
       name: other
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -1508,7 +1508,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1522,7 +1522,7 @@ KtFunctionSymbol:
       name: ooffset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -1532,7 +1532,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1546,7 +1546,7 @@ KtFunctionSymbol:
       name: len
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -1558,7 +1558,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1567,7 +1567,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.regionMatches
   contextReceivers: []
@@ -1589,14 +1589,14 @@ KtFunctionSymbol:
   name: regionMatches
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1610,7 +1610,7 @@ KtFunctionSymbol:
       name: ignoreCase
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Boolean
@@ -1620,7 +1620,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1634,7 +1634,7 @@ KtFunctionSymbol:
       name: toffset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -1644,7 +1644,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1658,7 +1658,7 @@ KtFunctionSymbol:
       name: other
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -1667,7 +1667,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1681,7 +1681,7 @@ KtFunctionSymbol:
       name: ooffset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -1691,7 +1691,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1705,7 +1705,7 @@ KtFunctionSymbol:
       name: len
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -1717,7 +1717,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1726,7 +1726,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.startsWith
   contextReceivers: []
@@ -1748,14 +1748,14 @@ KtFunctionSymbol:
   name: startsWith
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1769,7 +1769,7 @@ KtFunctionSymbol:
       name: prefix
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -1778,7 +1778,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1792,7 +1792,7 @@ KtFunctionSymbol:
       name: toffset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -1804,7 +1804,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1813,7 +1813,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.startsWith
   contextReceivers: []
@@ -1835,14 +1835,14 @@ KtFunctionSymbol:
   name: startsWith
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1856,7 +1856,7 @@ KtFunctionSymbol:
       name: prefix
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -1867,7 +1867,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1876,7 +1876,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.endsWith
   contextReceivers: []
@@ -1898,14 +1898,14 @@ KtFunctionSymbol:
   name: endsWith
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -1919,7 +1919,7 @@ KtFunctionSymbol:
       name: suffix
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -1930,7 +1930,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1939,7 +1939,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.hashCode
   contextReceivers: []
@@ -1961,7 +1961,7 @@ KtFunctionSymbol:
   name: hashCode
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -1969,7 +1969,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -1978,7 +1978,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.indexOf
   contextReceivers: []
@@ -2000,14 +2000,14 @@ KtFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2021,7 +2021,7 @@ KtFunctionSymbol:
       name: ch
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2033,7 +2033,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2042,7 +2042,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.indexOf
   contextReceivers: []
@@ -2064,14 +2064,14 @@ KtFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2085,7 +2085,7 @@ KtFunctionSymbol:
       name: ch
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2095,7 +2095,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2109,7 +2109,7 @@ KtFunctionSymbol:
       name: fromIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2121,7 +2121,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2130,7 +2130,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.indexOf
   contextReceivers: []
@@ -2152,14 +2152,14 @@ KtFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2173,7 +2173,7 @@ KtFunctionSymbol:
       name: str
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -2184,7 +2184,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2193,7 +2193,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.indexOf
   contextReceivers: []
@@ -2215,14 +2215,14 @@ KtFunctionSymbol:
   name: indexOf
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2236,7 +2236,7 @@ KtFunctionSymbol:
       name: str
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -2245,7 +2245,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2259,7 +2259,7 @@ KtFunctionSymbol:
       name: fromIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2271,7 +2271,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2280,7 +2280,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.indexOfSupplementary
   contextReceivers: []
@@ -2302,14 +2302,14 @@ KtFunctionSymbol:
   name: indexOfSupplementary
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2323,7 +2323,7 @@ KtFunctionSymbol:
       name: ch
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2333,7 +2333,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2347,7 +2347,7 @@ KtFunctionSymbol:
       name: fromIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2359,7 +2359,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Private
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2368,7 +2368,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.lastIndexOf
   contextReceivers: []
@@ -2390,14 +2390,14 @@ KtFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2411,7 +2411,7 @@ KtFunctionSymbol:
       name: ch
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2423,7 +2423,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2432,7 +2432,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.lastIndexOf
   contextReceivers: []
@@ -2454,14 +2454,14 @@ KtFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2475,7 +2475,7 @@ KtFunctionSymbol:
       name: ch
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2485,7 +2485,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2499,7 +2499,7 @@ KtFunctionSymbol:
       name: fromIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2511,7 +2511,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2520,7 +2520,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.lastIndexOf
   contextReceivers: []
@@ -2542,14 +2542,14 @@ KtFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2563,7 +2563,7 @@ KtFunctionSymbol:
       name: str
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -2574,7 +2574,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2583,7 +2583,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.lastIndexOf
   contextReceivers: []
@@ -2605,14 +2605,14 @@ KtFunctionSymbol:
   name: lastIndexOf
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2626,7 +2626,7 @@ KtFunctionSymbol:
       name: str
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -2635,7 +2635,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2649,7 +2649,7 @@ KtFunctionSymbol:
       name: fromIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2661,7 +2661,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2670,7 +2670,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.lastIndexOfSupplementary
   contextReceivers: []
@@ -2692,14 +2692,14 @@ KtFunctionSymbol:
   name: lastIndexOfSupplementary
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2713,7 +2713,7 @@ KtFunctionSymbol:
       name: ch
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2723,7 +2723,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2737,7 +2737,7 @@ KtFunctionSymbol:
       name: fromIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2749,7 +2749,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Private
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2758,7 +2758,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.substring
   contextReceivers: []
@@ -2780,13 +2780,13 @@ KtFunctionSymbol:
   name: substring
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2800,7 +2800,7 @@ KtFunctionSymbol:
       name: beginIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2812,7 +2812,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2821,7 +2821,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.substring
   contextReceivers: []
@@ -2843,13 +2843,13 @@ KtFunctionSymbol:
   name: substring
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2863,7 +2863,7 @@ KtFunctionSymbol:
       name: beginIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2873,7 +2873,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2887,7 +2887,7 @@ KtFunctionSymbol:
       name: endIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2899,7 +2899,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2908,7 +2908,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.subSequence
   contextReceivers: []
@@ -2930,14 +2930,14 @@ KtFunctionSymbol:
   name: subSequence
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: @EnhancedNullability kotlin/CharSequence
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2951,7 +2951,7 @@ KtFunctionSymbol:
       name: beginIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2961,7 +2961,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -2975,7 +2975,7 @@ KtFunctionSymbol:
       name: endIndex
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -2987,7 +2987,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -2996,7 +2996,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.concat
   contextReceivers: []
@@ -3018,13 +3018,13 @@ KtFunctionSymbol:
   name: concat
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3038,7 +3038,7 @@ KtFunctionSymbol:
       name: str
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -3049,7 +3049,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3058,7 +3058,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.replace
   contextReceivers: []
@@ -3080,13 +3080,13 @@ KtFunctionSymbol:
   name: replace
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3100,7 +3100,7 @@ KtFunctionSymbol:
       name: oldChar
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Char
@@ -3110,7 +3110,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3124,7 +3124,7 @@ KtFunctionSymbol:
       name: newChar
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Char
@@ -3136,7 +3136,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3145,7 +3145,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.replace
   contextReceivers: []
@@ -3167,13 +3167,13 @@ KtFunctionSymbol:
   name: replace
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3187,7 +3187,7 @@ KtFunctionSymbol:
       name: target
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/CharSequence!
       symbolKind: LOCAL
@@ -3196,7 +3196,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3210,7 +3210,7 @@ KtFunctionSymbol:
       name: replacement
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/CharSequence!
       symbolKind: LOCAL
@@ -3221,7 +3221,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3230,7 +3230,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.matches
   contextReceivers: []
@@ -3252,14 +3252,14 @@ KtFunctionSymbol:
   name: matches
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3273,7 +3273,7 @@ KtFunctionSymbol:
       name: regex
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -3284,7 +3284,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3293,7 +3293,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.contains
   contextReceivers: []
@@ -3315,14 +3315,14 @@ KtFunctionSymbol:
   name: contains
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3336,7 +3336,7 @@ KtFunctionSymbol:
       name: s
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/CharSequence!
       symbolKind: LOCAL
@@ -3347,7 +3347,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3356,7 +3356,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.replaceFirst
   contextReceivers: []
@@ -3378,13 +3378,13 @@ KtFunctionSymbol:
   name: replaceFirst
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3398,7 +3398,7 @@ KtFunctionSymbol:
       name: regex
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -3407,7 +3407,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3421,7 +3421,7 @@ KtFunctionSymbol:
       name: replacement
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -3432,7 +3432,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3441,7 +3441,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.replaceAll
   contextReceivers: []
@@ -3463,13 +3463,13 @@ KtFunctionSymbol:
   name: replaceAll
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3483,7 +3483,7 @@ KtFunctionSymbol:
       name: regex
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -3492,7 +3492,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3506,7 +3506,7 @@ KtFunctionSymbol:
       name: replacement
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -3517,7 +3517,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3526,7 +3526,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.split
   contextReceivers: []
@@ -3548,13 +3548,13 @@ KtFunctionSymbol:
   name: split
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3568,7 +3568,7 @@ KtFunctionSymbol:
       name: regex
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -3577,7 +3577,7 @@ KtFunctionSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3591,7 +3591,7 @@ KtFunctionSymbol:
       name: limit
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -3603,7 +3603,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3612,7 +3612,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.split
   contextReceivers: []
@@ -3634,13 +3634,13 @@ KtFunctionSymbol:
   name: split
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3654,7 +3654,7 @@ KtFunctionSymbol:
       name: regex
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -3665,7 +3665,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3674,7 +3674,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.toLowerCase
   contextReceivers: []
@@ -3696,13 +3696,13 @@ KtFunctionSymbol:
   name: toLowerCase
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3716,7 +3716,7 @@ KtFunctionSymbol:
       name: locale
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: java/util/Locale!
       symbolKind: LOCAL
@@ -3727,7 +3727,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3736,7 +3736,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.toLowerCase
   contextReceivers: []
@@ -3758,14 +3758,14 @@ KtFunctionSymbol:
   name: toLowerCase
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3774,7 +3774,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.toUpperCase
   contextReceivers: []
@@ -3796,13 +3796,13 @@ KtFunctionSymbol:
   name: toUpperCase
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -3816,7 +3816,7 @@ KtFunctionSymbol:
       name: locale
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: java/util/Locale!
       symbolKind: LOCAL
@@ -3827,7 +3827,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3836,7 +3836,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.toUpperCase
   contextReceivers: []
@@ -3858,14 +3858,14 @@ KtFunctionSymbol:
   name: toUpperCase
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3874,7 +3874,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.trim
   contextReceivers: []
@@ -3896,14 +3896,14 @@ KtFunctionSymbol:
   name: trim
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3912,7 +3912,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.toString
   contextReceivers: []
@@ -3934,7 +3934,7 @@ KtFunctionSymbol:
   name: toString
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: @EnhancedNullability kotlin/String
@@ -3942,7 +3942,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3951,7 +3951,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.toCharArray
   contextReceivers: []
@@ -3973,14 +3973,14 @@ KtFunctionSymbol:
   name: toCharArray
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/CharArray!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -3989,7 +3989,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.intern
   contextReceivers: []
@@ -4011,14 +4011,14 @@ KtFunctionSymbol:
   name: intern
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -4027,7 +4027,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: java/lang/String.get
   contextReceivers: []
@@ -4049,14 +4049,14 @@ KtFunctionSymbol:
   name: get
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Char
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4070,7 +4070,7 @@ KtFunctionSymbol:
       name: index
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4082,7 +4082,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -4091,7 +4091,7 @@ KtFunctionSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: java/lang/String.CaseInsensitiveComparator
   classKind: CLASS
@@ -4108,19 +4108,19 @@ KtNamedClassOrObjectSymbol:
   name: CaseInsensitiveComparator
   origin: JAVA
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: [
-        KtFlexibleType:
+        KaFlexibleType:
           annotationsList: []
           type: kotlin/String!
       ]
       type: java/util/Comparator<kotlin/String!>
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: java/io/Serializable
@@ -4133,7 +4133,7 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -4145,7 +4145,7 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
@@ -4158,7 +4158,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -4170,14 +4170,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4191,7 +4191,7 @@ KtConstructorSymbol:
       name: original
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -4207,7 +4207,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -4219,14 +4219,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4240,7 +4240,7 @@ KtConstructorSymbol:
       name: value
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/CharArray!
       symbolKind: LOCAL
@@ -4256,7 +4256,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -4268,14 +4268,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4289,7 +4289,7 @@ KtConstructorSymbol:
       name: value
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/CharArray!
       symbolKind: LOCAL
@@ -4298,7 +4298,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4312,7 +4312,7 @@ KtConstructorSymbol:
       name: offset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4322,7 +4322,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4336,7 +4336,7 @@ KtConstructorSymbol:
       name: count
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4353,7 +4353,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -4365,14 +4365,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4386,7 +4386,7 @@ KtConstructorSymbol:
       name: codePoints
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/IntArray!
       symbolKind: LOCAL
@@ -4395,7 +4395,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4409,7 +4409,7 @@ KtConstructorSymbol:
       name: offset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4419,7 +4419,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4433,7 +4433,7 @@ KtConstructorSymbol:
       name: count
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4450,7 +4450,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
@@ -4465,14 +4465,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4486,7 +4486,7 @@ KtConstructorSymbol:
       name: ascii
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/ByteArray!
       symbolKind: LOCAL
@@ -4495,7 +4495,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4509,7 +4509,7 @@ KtConstructorSymbol:
       name: hibyte
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4519,7 +4519,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4533,7 +4533,7 @@ KtConstructorSymbol:
       name: offset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4543,7 +4543,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4557,7 +4557,7 @@ KtConstructorSymbol:
       name: count
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4574,7 +4574,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
@@ -4589,14 +4589,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4610,7 +4610,7 @@ KtConstructorSymbol:
       name: ascii
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/ByteArray!
       symbolKind: LOCAL
@@ -4619,7 +4619,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4633,7 +4633,7 @@ KtConstructorSymbol:
       name: hibyte
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4650,7 +4650,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -4662,14 +4662,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4683,7 +4683,7 @@ KtConstructorSymbol:
       name: bytes
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/ByteArray!
       symbolKind: LOCAL
@@ -4692,7 +4692,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4706,7 +4706,7 @@ KtConstructorSymbol:
       name: offset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4716,7 +4716,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4730,7 +4730,7 @@ KtConstructorSymbol:
       name: length
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4740,7 +4740,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4754,7 +4754,7 @@ KtConstructorSymbol:
       name: charsetName
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -4770,7 +4770,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -4782,14 +4782,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4803,7 +4803,7 @@ KtConstructorSymbol:
       name: bytes
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/ByteArray!
       symbolKind: LOCAL
@@ -4812,7 +4812,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4826,7 +4826,7 @@ KtConstructorSymbol:
       name: offset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4836,7 +4836,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4850,7 +4850,7 @@ KtConstructorSymbol:
       name: length
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -4860,7 +4860,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4874,7 +4874,7 @@ KtConstructorSymbol:
       name: charset
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: java/nio/charset/Charset!
       symbolKind: LOCAL
@@ -4890,7 +4890,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -4902,14 +4902,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4923,7 +4923,7 @@ KtConstructorSymbol:
       name: bytes
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/ByteArray!
       symbolKind: LOCAL
@@ -4932,7 +4932,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4946,7 +4946,7 @@ KtConstructorSymbol:
       name: charsetName
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -4962,7 +4962,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -4974,14 +4974,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -4995,7 +4995,7 @@ KtConstructorSymbol:
       name: bytes
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/ByteArray!
       symbolKind: LOCAL
@@ -5004,7 +5004,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5018,7 +5018,7 @@ KtConstructorSymbol:
       name: charset
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: java/nio/charset/Charset!
       symbolKind: LOCAL
@@ -5034,7 +5034,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -5046,14 +5046,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5067,7 +5067,7 @@ KtConstructorSymbol:
       name: bytes
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/ByteArray!
       symbolKind: LOCAL
@@ -5076,7 +5076,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5090,7 +5090,7 @@ KtConstructorSymbol:
       name: offset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -5100,7 +5100,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5114,7 +5114,7 @@ KtConstructorSymbol:
       name: length
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -5131,7 +5131,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -5143,14 +5143,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5164,7 +5164,7 @@ KtConstructorSymbol:
       name: bytes
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/ByteArray!
       symbolKind: LOCAL
@@ -5180,7 +5180,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -5192,14 +5192,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5213,7 +5213,7 @@ KtConstructorSymbol:
       name: buffer
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: java/lang/StringBuffer!
       symbolKind: LOCAL
@@ -5229,7 +5229,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -5241,14 +5241,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5262,7 +5262,7 @@ KtConstructorSymbol:
       name: builder
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: java/lang/StringBuilder!
       symbolKind: LOCAL
@@ -5278,7 +5278,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/lang/String
@@ -5290,14 +5290,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5311,7 +5311,7 @@ KtConstructorSymbol:
       name: value
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/CharArray!
       symbolKind: LOCAL
@@ -5320,7 +5320,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5334,7 +5334,7 @@ KtConstructorSymbol:
       name: share
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Boolean
@@ -5351,7 +5351,7 @@ KtConstructorSymbol:
   getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: [
     kotlin/Deprecated(message = "Deprecated in Java")
       psi: null
@@ -5366,14 +5366,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5387,7 +5387,7 @@ KtConstructorSymbol:
       name: offset
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -5397,7 +5397,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5411,7 +5411,7 @@ KtConstructorSymbol:
       name: count
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -5421,7 +5421,7 @@ KtConstructorSymbol:
       getContainingJvmClassName: java.lang.String
       getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -5435,7 +5435,7 @@ KtConstructorSymbol:
       name: value
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/CharArray!
       symbolKind: LOCAL

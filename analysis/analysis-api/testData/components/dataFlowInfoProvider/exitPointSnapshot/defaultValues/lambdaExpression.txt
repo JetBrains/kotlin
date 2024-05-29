@@ -1,4 +1,4 @@
-KtDataFlowExitPointSnapshot:
+KaDataFlowExitPointSnapshot:
   defaultExpressionInfo = DefaultExpressionInfo:
     expression = { n: Int -> n + 1 }
     type = kotlin.Function1<kotlin.Int, kotlin.Int>

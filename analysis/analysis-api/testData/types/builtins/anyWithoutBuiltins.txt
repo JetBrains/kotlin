@@ -1,4 +1,4 @@
-KtClassErrorType:
+KaClassErrorType:
   abbreviatedType: null
   annotationsList: []
   candidateClassSymbols: []

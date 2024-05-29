@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.SubstitutionParser
@@ -29,7 +30,7 @@ abstract class AbstractAnalysisApiSubstitutorsTest : AbstractAnalysisApiBasedTes
 
             prettyPrint {
                 appendLine("PSI type: ${declaration.typeReference?.text}")
-                appendLine("KtType: ${type.render(position = Variance.INVARIANT)}")
+                appendLine("${KaType::class.simpleName}: ${type.render(position = Variance.INVARIANT)}")
                 appendLine("substitutor.substitute: ${substituted.render(position = Variance.INVARIANT)}")
                 appendLine("substitutor.substituteOrNull: ${substitutedOrNull?.render(position = Variance.INVARIANT)}")
             }

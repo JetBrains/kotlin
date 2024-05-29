@@ -1,11 +1,11 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtImplicitReceiverValue:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaImplicitReceiverValue:
         symbol = one/two/TopLevelObject.Nested
         type = one.two.TopLevelObject.Nested
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = bar
         receiverType = null
         returnType = kotlin.Int

@@ -1,38 +1,38 @@
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/Base.noGeneric
   name: noGeneric
   origin: SOURCE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/ClassWithGenericBase.withOuterGeneric
   name: withOuterGeneric
   origin: SUBSTITUTION_OVERRIDE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/Base.withOwnGeneric
   name: withOwnGeneric
   origin: SOURCE
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   callableId: test/ClassWithGenericBase.withOuterAndOwnGeneric
   name: withOuterAndOwnGeneric
   origin: SUBSTITUTION_OVERRIDE
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: kotlin/Any.equals
   name: equals
   origin: LIBRARY
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: kotlin/Any.hashCode
   name: hashCode
   origin: LIBRARY
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   callableId: kotlin/Any.toString
   name: toString
   origin: LIBRARY
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   callableId: null
   origin: SOURCE_MEMBER_GENERATED

@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
@@ -6,20 +6,20 @@ KtFunctionSymbol:
   callableId: /boolenExprContract
   contextReceivers: []
   contractEffects: [
-    KtContractConditionalContractEffectDeclaration:
+    KaContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsSpecificValueEffectDeclaration:
+        KaContractReturnsSpecificValueEffectDeclaration:
           value:
-            KtContractConstantValue:
+            KaContractConstantValue:
               constantType: TRUE
       condition:
-        KtContractBinaryLogicExpression:
+        KaContractBinaryLogicExpression:
           left:
-            KtContractIsNullPredicateExpression:
+            KaContractIsNullPredicateExpression:
               argument:
-                KtContractParameterValue:
+                KaContractParameterValue:
                   parameterSymbol:
-                    KtValueParameterSymbol:
+                    KaValueParameterSymbol:
                       annotationsList: []
                       callableId: null
                       contextReceivers: []
@@ -33,23 +33,23 @@ KtFunctionSymbol:
                       name: foo
                       origin: SOURCE
                       receiverParameter: null
-                      returnType: KtUsualClassType:
+                      returnType: KaUsualClassType:
                         annotationsList: []
                         ownTypeArguments: []
                         type: kotlin/Any?
                       symbolKind: LOCAL
                       typeParameters: []
-                      getContainingFileSymbol: KtFileSymbol(booleanExprContract.kt)
+                      getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
                       getContainingJvmClassName: BooleanExprContractKt
                       getContainingModule: KtSourceModule "Sources of main"
                       deprecationStatus: null
               isNegated: false
           right:
-            KtContractIsNullPredicateExpression:
+            KaContractIsNullPredicateExpression:
               argument:
-                KtContractParameterValue:
+                KaContractParameterValue:
                   parameterSymbol:
-                    KtValueParameterSymbol:
+                    KaValueParameterSymbol:
                       annotationsList: []
                       callableId: null
                       contextReceivers: []
@@ -63,13 +63,13 @@ KtFunctionSymbol:
                       name: bar
                       origin: SOURCE
                       receiverParameter: null
-                      returnType: KtUsualClassType:
+                      returnType: KaUsualClassType:
                         annotationsList: []
                         ownTypeArguments: []
                         type: kotlin/Any?
                       symbolKind: LOCAL
                       typeParameters: []
-                      getContainingFileSymbol: KtFileSymbol(booleanExprContract.kt)
+                      getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
                       getContainingJvmClassName: BooleanExprContractKt
                       getContainingModule: KtSourceModule "Sources of main"
                       deprecationStatus: null
@@ -93,14 +93,14 @@ KtFunctionSymbol:
   name: boolenExprContract
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -114,17 +114,17 @@ KtFunctionSymbol:
       name: foo
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(booleanExprContract.kt)
+      getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
       getContainingJvmClassName: BooleanExprContractKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -138,19 +138,19 @@ KtFunctionSymbol:
       name: bar
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(booleanExprContract.kt)
+      getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
       getContainingJvmClassName: BooleanExprContractKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(booleanExprContract.kt)
+  getContainingFileSymbol: KaFileSymbol(booleanExprContract.kt)
   getContainingJvmClassName: BooleanExprContractKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

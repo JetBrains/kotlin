@@ -1,15 +1,15 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtDelegatedConstructorCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaDelegatedConstructorCall:
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = ClassWithType<kotlin.Int>
         symbol = <constructor>(i: T): ClassWithType<T>
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = i
             receiverType = null
             returnType = kotlin.Int
@@ -19,7 +19,7 @@ KtApplicableCallCandidateInfo:
         callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
-      1 -> (KtVariableLikeSignature:
+      1 -> (KaVariableLikeSignature:
         name = i
         receiverType = null
         returnType = kotlin.Int
@@ -28,25 +28,25 @@ KtApplicableCallCandidateInfo:
     }
   isInBestCandidates = true
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'str'>
-  candidate = KtDelegatedConstructorCall:
+  candidate = KaDelegatedConstructorCall:
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = ClassWithType<kotlin.Int>
         symbol = <constructor>(i: T, str: kotlin.String): ClassWithType<T>
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = i
             receiverType = null
             returnType = kotlin.Int
             symbol = i: T
             callableId = null,
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = str
             receiverType = null
             returnType = kotlin.String
@@ -56,7 +56,7 @@ KtInapplicableCallCandidateInfo:
         callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
-      1 -> (KtVariableLikeSignature:
+      1 -> (KaVariableLikeSignature:
         name = i
         receiverType = null
         returnType = kotlin.Int

@@ -1,15 +1,15 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
         symbol = /foo(i: kotlin.Int): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = i
             receiverType = null
             returnType = kotlin.Int
@@ -19,7 +19,7 @@ KtApplicableCallCandidateInfo:
         callableId = /foo
     typeArgumentsMapping = {}
     argumentMapping = {
-      localProperty++ -> (KtVariableLikeSignature:
+      localProperty++ -> (KaVariableLikeSignature:
         name = i
         receiverType = null
         returnType = kotlin.Int

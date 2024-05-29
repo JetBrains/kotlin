@@ -1,2 +1,2 @@
-KtType: suspend (Int) -> Unit
+KaType: suspend (Int) -> Unit
 PsiType: null

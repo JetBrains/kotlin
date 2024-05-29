@@ -1,18 +1,18 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = MyClass()
         isSafeNavigation = false
         type = MyClass
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
         symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = int
             receiverType = null
             returnType = kotlin.Int
@@ -24,7 +24,7 @@ KtApplicableCallCandidateInfo:
       T -> (MyClass)
     }
     argumentMapping = {
-      f -> (KtVariableLikeSignature:
+      f -> (KaVariableLikeSignature:
         name = int
         receiverType = null
         returnType = kotlin.Int

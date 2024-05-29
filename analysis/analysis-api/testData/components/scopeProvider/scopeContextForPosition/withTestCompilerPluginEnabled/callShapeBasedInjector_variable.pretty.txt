@@ -1,7 +1,7 @@
 element: df.column
 implicit receivers:
   type: Scope1
-  owner symbol: KtFirLocalVariableSymbol
+  owner symbol: KaFirLocalVariableSymbol
 
 scopes:
   TypeScope, index = 0

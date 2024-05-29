@@ -1,2 +1,2 @@
 PsiType: @MyAnno("outer type") List<@MyAnno("middle") List<@MyAnno("nested") java.lang.String>> @MyAnno("array") []
-KtType: @MyAnno(value = "array") kotlin.Array<(@MyAnno(value = "outer type")List..@MyAnno(value = "outer type")List)>!
+KaType: @MyAnno(value = "array") kotlin.Array<(@MyAnno(value = "outer type")List..@MyAnno(value = "outer type")List)>!

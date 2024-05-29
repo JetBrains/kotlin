@@ -1,4 +1,4 @@
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: test/E
@@ -10,7 +10,7 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
@@ -18,7 +18,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Private
-  getContainingFileSymbol: KtFileSymbol(enumClass.kt)
+  getContainingFileSymbol: KaFileSymbol(enumClass.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

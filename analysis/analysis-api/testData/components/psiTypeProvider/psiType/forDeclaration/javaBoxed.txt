@@ -1,2 +1,2 @@
-KtType: kotlin.Int!
+KaType: kotlin.Int!
 PsiType: java.lang.Integer

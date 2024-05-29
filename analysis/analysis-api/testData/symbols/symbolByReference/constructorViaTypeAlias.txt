@@ -1,4 +1,4 @@
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: java/util/ArrayList
@@ -10,20 +10,20 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
     type: java/util/ArrayList<E>
   symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(E)
+    KaTypeParameterSymbol(E)
   ]
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -37,7 +37,7 @@ KtConstructorSymbol:
       name: c
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: ft<kotlin/collections/MutableCollection<out E!>, kotlin/collections/Collection<out E!>?>
       symbolKind: LOCAL

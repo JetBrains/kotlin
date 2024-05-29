@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -170,7 +170,7 @@ public class DebugSymbolRenderer(
 
     private fun renderFrontendIndependentKClassNameOf(instanceOfClassToRender: Any, printer: PrettyPrinter) {
         val apiClass = getFrontendIndependentKClassOf(instanceOfClassToRender)
-        printer.append(computeApiEntityName(apiClass)).append(':')
+        printer.append(apiClass.simpleName).append(':')
     }
 
     private fun KaSession.renderList(values: List<*>, printer: PrettyPrinter, renderSymbolsFully: Boolean) {
@@ -203,7 +203,7 @@ public class DebugSymbolRenderer(
         }
 
         with(printer) {
-            append(computeApiEntityName(getFrontendIndependentKClassOf(symbol)))
+            append(getFrontendIndependentKClassOf(symbol).simpleName)
             append("(")
             when (symbol) {
                 is KaClassLikeSymbol -> renderId(symbol.classId, symbol)
@@ -373,7 +373,7 @@ public class DebugSymbolRenderer(
 
     private fun renderKtModule(ktModule: KtModule, printer: PrettyPrinter) {
         val ktModuleClass = ktModule::class.allSuperclasses.first { it in ktModuleSubclasses }
-        printer.append(computeApiEntityName(ktModuleClass) + " \"" + ktModule.moduleDescription + "\"")
+        printer.append(ktModuleClass.simpleName + " \"" + ktModule.moduleDescription + "\"")
     }
 
     private fun KClass<*>.allSealedSubClasses(): List<KClass<*>> = buildList {
@@ -438,17 +438,6 @@ public class DebugSymbolRenderer(
     }
 
     public companion object {
-        public fun computeApiEntityName(klass: KClass<*>): String {
-            val simpleName = klass.simpleName ?: return "null"
-
-            if (simpleName.startsWith("Ka")) {
-                // A temporary replacement to ease the 'Kt' -> 'Ka' prefix migration
-                return "Kt" + simpleName.drop(2)
-            }
-
-            return simpleName
-        }
-
         private val ignoredPropertyNames = setOf(
             "psi",
             "token",

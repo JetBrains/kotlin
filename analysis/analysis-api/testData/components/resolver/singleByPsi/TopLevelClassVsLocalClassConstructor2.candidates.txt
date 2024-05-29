@@ -1,16 +1,16 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'.>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = <local>.Conflict
         symbol = <constructor>(i: kotlin.Int): <local>.Conflict
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = i
             receiverType = null
             returnType = kotlin.Int
@@ -22,13 +22,13 @@ KtInapplicableCallCandidateInfo:
     argumentMapping = {}
   isInBestCandidates = false
 
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = test.Conflict
         symbol = <constructor>(): test.Conflict

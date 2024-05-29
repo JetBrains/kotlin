@@ -1,128 +1,128 @@
-KtUsualClassType:
-  abbreviatedType: KtUsualClassType:
+KaUsualClassType:
+  abbreviatedType: KaUsualClassType:
     abbreviatedType: null
     annotationsList: []
     classId: library1/ListAlias
-    classSymbol: KtTypeAliasSymbol(library1/ListAlias)
+    classSymbol: KaTypeAliasSymbol(library1/ListAlias)
     nullability: NON_NULLABLE
     ownTypeArguments: [
-      KtUsualClassType:
-        abbreviatedType: KtUsualClassType:
+      KaUsualClassType:
+        abbreviatedType: KaUsualClassType:
           abbreviatedType: null
           annotationsList: []
           classId: library1/StringAlias
-          classSymbol: KtTypeAliasSymbol(library1/StringAlias)
+          classSymbol: KaTypeAliasSymbol(library1/StringAlias)
           nullability: NON_NULLABLE
           ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: StringAlias
-              symbol: KtTypeAliasSymbol(library1/StringAlias)
+              symbol: KaTypeAliasSymbol(library1/StringAlias)
               typeArguments: []
           ]
         annotationsList: []
         classId: kotlin/String
-        classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+        classSymbol: KaNamedClassOrObjectSymbol(kotlin/String)
         nullability: NON_NULLABLE
         ownTypeArguments: []
         qualifiers: [
           qualifier:
             name: String
-            symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+            symbol: KaNamedClassOrObjectSymbol(kotlin/String)
             typeArguments: []
         ]
     ]
     qualifiers: [
       qualifier:
         name: ListAlias
-        symbol: KtTypeAliasSymbol(library1/ListAlias)
+        symbol: KaTypeAliasSymbol(library1/ListAlias)
         typeArguments: [
-          KtUsualClassType:
-            abbreviatedType: KtUsualClassType:
+          KaUsualClassType:
+            abbreviatedType: KaUsualClassType:
               abbreviatedType: null
               annotationsList: []
               classId: library1/StringAlias
-              classSymbol: KtTypeAliasSymbol(library1/StringAlias)
+              classSymbol: KaTypeAliasSymbol(library1/StringAlias)
               nullability: NON_NULLABLE
               ownTypeArguments: []
               qualifiers: [
                 qualifier:
                   name: StringAlias
-                  symbol: KtTypeAliasSymbol(library1/StringAlias)
+                  symbol: KaTypeAliasSymbol(library1/StringAlias)
                   typeArguments: []
               ]
             annotationsList: []
             classId: kotlin/String
-            classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+            classSymbol: KaNamedClassOrObjectSymbol(kotlin/String)
             nullability: NON_NULLABLE
             ownTypeArguments: []
             qualifiers: [
               qualifier:
                 name: String
-                symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+                symbol: KaNamedClassOrObjectSymbol(kotlin/String)
                 typeArguments: []
             ]
         ]
     ]
   annotationsList: []
   classId: kotlin/collections/List
-  classSymbol: KtNamedClassOrObjectSymbol(kotlin/collections/List)
+  classSymbol: KaNamedClassOrObjectSymbol(kotlin/collections/List)
   nullability: NON_NULLABLE
   ownTypeArguments: [
-    KtUsualClassType:
-      abbreviatedType: KtUsualClassType:
+    KaUsualClassType:
+      abbreviatedType: KaUsualClassType:
         abbreviatedType: null
         annotationsList: []
         classId: library1/StringAlias
-        classSymbol: KtTypeAliasSymbol(library1/StringAlias)
+        classSymbol: KaTypeAliasSymbol(library1/StringAlias)
         nullability: NON_NULLABLE
         ownTypeArguments: []
         qualifiers: [
           qualifier:
             name: StringAlias
-            symbol: KtTypeAliasSymbol(library1/StringAlias)
+            symbol: KaTypeAliasSymbol(library1/StringAlias)
             typeArguments: []
         ]
       annotationsList: []
       classId: kotlin/String
-      classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      classSymbol: KaNamedClassOrObjectSymbol(kotlin/String)
       nullability: NON_NULLABLE
       ownTypeArguments: []
       qualifiers: [
         qualifier:
           name: String
-          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          symbol: KaNamedClassOrObjectSymbol(kotlin/String)
           typeArguments: []
       ]
   ]
   qualifiers: [
     qualifier:
       name: List
-      symbol: KtNamedClassOrObjectSymbol(kotlin/collections/List)
+      symbol: KaNamedClassOrObjectSymbol(kotlin/collections/List)
       typeArguments: [
-        KtUsualClassType:
-          abbreviatedType: KtUsualClassType:
+        KaUsualClassType:
+          abbreviatedType: KaUsualClassType:
             abbreviatedType: null
             annotationsList: []
             classId: library1/StringAlias
-            classSymbol: KtTypeAliasSymbol(library1/StringAlias)
+            classSymbol: KaTypeAliasSymbol(library1/StringAlias)
             nullability: NON_NULLABLE
             ownTypeArguments: []
             qualifiers: [
               qualifier:
                 name: StringAlias
-                symbol: KtTypeAliasSymbol(library1/StringAlias)
+                symbol: KaTypeAliasSymbol(library1/StringAlias)
                 typeArguments: []
             ]
           annotationsList: []
           classId: kotlin/String
-          classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          classSymbol: KaNamedClassOrObjectSymbol(kotlin/String)
           nullability: NON_NULLABLE
           ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: String
-              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              symbol: KaNamedClassOrObjectSymbol(kotlin/String)
               typeArguments: []
           ]
       ]

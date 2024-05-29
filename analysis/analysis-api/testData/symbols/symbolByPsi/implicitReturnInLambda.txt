@@ -1,4 +1,4 @@
-KtLocalVariableSymbol:
+KaLocalVariableSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -7,18 +7,18 @@ KtLocalVariableSymbol:
   name: b
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtAnonymousFunctionSymbol:
+KaAnonymousFunctionSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -26,14 +26,14 @@ KtAnonymousFunctionSymbol:
   isExtension: false
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -47,23 +47,23 @@ KtAnonymousFunctionSymbol:
       name: a
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+      getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtLocalVariableSymbol:
+KaLocalVariableSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -72,14 +72,14 @@ KtLocalVariableSymbol:
   name: lam1
   origin: SOURCE
   receiverParameter: null
-  returnType: KtFunctionalType:
+  returnType: KaFunctionalType:
     annotationsList: []
     ownTypeArguments: [
-      KtUsualClassType:
+      KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
-      KtUsualClassType:
+      KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -87,12 +87,12 @@ KtLocalVariableSymbol:
     type: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtLocalVariableSymbol:
+KaLocalVariableSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -101,18 +101,18 @@ KtLocalVariableSymbol:
   name: c
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtAnonymousFunctionSymbol:
+KaAnonymousFunctionSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -120,14 +120,14 @@ KtAnonymousFunctionSymbol:
   isExtension: false
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -141,23 +141,23 @@ KtAnonymousFunctionSymbol:
       name: a
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+      getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtLocalVariableSymbol:
+KaLocalVariableSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -166,14 +166,14 @@ KtLocalVariableSymbol:
   name: lam2
   origin: SOURCE
   receiverParameter: null
-  returnType: KtFunctionalType:
+  returnType: KaFunctionalType:
     annotationsList: []
     ownTypeArguments: [
-      KtUsualClassType:
+      KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
-      KtUsualClassType:
+      KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -181,12 +181,12 @@ KtLocalVariableSymbol:
     type: kotlin/Function1<kotlin/Int, kotlin/Int>
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtLocalVariableSymbol:
+KaLocalVariableSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -195,18 +195,18 @@ KtLocalVariableSymbol:
   name: b
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtAnonymousFunctionSymbol:
+KaAnonymousFunctionSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -214,14 +214,14 @@ KtAnonymousFunctionSymbol:
   isExtension: false
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -235,23 +235,23 @@ KtAnonymousFunctionSymbol:
       name: it
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+      getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: null
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
-  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /foo
   contextReceivers: []
@@ -273,7 +273,7 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -281,12 +281,12 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: ImplicitReturnInLambdaKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /bar
   contextReceivers: []
@@ -308,14 +308,14 @@ KtFunctionSymbol:
   name: bar
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -329,14 +329,14 @@ KtFunctionSymbol:
       name: lmbd
       origin: SOURCE
       receiverParameter: null
-      returnType: KtFunctionalType:
+      returnType: KaFunctionalType:
         annotationsList: []
         ownTypeArguments: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -344,13 +344,13 @@ KtFunctionSymbol:
         type: kotlin/Function1<kotlin/Int, kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+      getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
       getContainingJvmClassName: ImplicitReturnInLambdaKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Private
-  getContainingFileSymbol: KtFileSymbol(implicitReturnInLambda.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitReturnInLambda.kt)
   getContainingJvmClassName: ImplicitReturnInLambdaKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

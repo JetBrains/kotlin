@@ -1,19 +1,19 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Int
         symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.Int
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = other
             receiverType = null
             returnType = kotlin.Byte
@@ -23,7 +23,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/Int.compareTo
     typeArgumentsMapping = {}
     argumentMapping = {
-      2 -> (KtVariableLikeSignature:
+      2 -> (KaVariableLikeSignature:
         name = other
         receiverType = null
         returnType = kotlin.Byte
@@ -32,22 +32,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Double' was expected.>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Int
         symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Double): kotlin.Int
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = other
             receiverType = null
             returnType = kotlin.Double
@@ -57,7 +57,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/Int.compareTo
     typeArgumentsMapping = {}
     argumentMapping = {
-      2 -> (KtVariableLikeSignature:
+      2 -> (KaVariableLikeSignature:
         name = other
         receiverType = null
         returnType = kotlin.Double
@@ -66,22 +66,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Float' was expected.>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Int
         symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Float): kotlin.Int
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = other
             receiverType = null
             returnType = kotlin.Float
@@ -91,7 +91,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/Int.compareTo
     typeArgumentsMapping = {}
     argumentMapping = {
-      2 -> (KtVariableLikeSignature:
+      2 -> (KaVariableLikeSignature:
         name = other
         receiverType = null
         returnType = kotlin.Float
@@ -100,21 +100,21 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Int
         symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = other
             receiverType = null
             returnType = kotlin.Int
@@ -124,7 +124,7 @@ KtApplicableCallCandidateInfo:
         callableId = kotlin/Int.compareTo
     typeArgumentsMapping = {}
     argumentMapping = {
-      2 -> (KtVariableLikeSignature:
+      2 -> (KaVariableLikeSignature:
         name = other
         receiverType = null
         returnType = kotlin.Int
@@ -133,22 +133,22 @@ KtApplicableCallCandidateInfo:
     }
   isInBestCandidates = true
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Long' was expected.>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Int
         symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.Int
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = other
             receiverType = null
             returnType = kotlin.Long
@@ -158,7 +158,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/Int.compareTo
     typeArgumentsMapping = {}
     argumentMapping = {
-      2 -> (KtVariableLikeSignature:
+      2 -> (KaVariableLikeSignature:
         name = other
         receiverType = null
         returnType = kotlin.Long
@@ -167,22 +167,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Int
         symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.Int
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = other
             receiverType = null
             returnType = kotlin.Short
@@ -192,7 +192,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/Int.compareTo
     typeArgumentsMapping = {}
     argumentMapping = {
-      2 -> (KtVariableLikeSignature:
+      2 -> (KaVariableLikeSignature:
         name = other
         receiverType = null
         returnType = kotlin.Short

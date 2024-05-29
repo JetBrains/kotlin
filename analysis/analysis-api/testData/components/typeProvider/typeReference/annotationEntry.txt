@@ -1,2 +1,2 @@
-expression: Anno
-ktType: Anno
+KtTypeReference: Anno
+KaType: Anno

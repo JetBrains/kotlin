@@ -1,19 +1,19 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Boolean' was expected.>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = a
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
         symbol = /A.x(<dispatch receiver>: A, b: kotlin.Boolean): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = b
             receiverType = null
             returnType = kotlin.Boolean
@@ -23,7 +23,7 @@ KtInapplicableCallCandidateInfo:
         callableId = /A.x
     typeArgumentsMapping = {}
     argumentMapping = {
-      1 -> (KtVariableLikeSignature:
+      1 -> (KaVariableLikeSignature:
         name = b
         receiverType = null
         returnType = kotlin.Boolean
@@ -32,21 +32,21 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = x
         isSafeNavigation = false
         type = kotlin.Int
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit
         symbol = /invoke(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = i
             receiverType = null
             returnType = kotlin.Int
@@ -56,7 +56,7 @@ KtApplicableCallCandidateInfo:
         callableId = /invoke
     typeArgumentsMapping = {}
     argumentMapping = {
-      1 -> (KtVariableLikeSignature:
+      1 -> (KaVariableLikeSignature:
         name = i
         receiverType = null
         returnType = kotlin.Int

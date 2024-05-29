@@ -1,2 +1,2 @@
 PsiType: @MyAnno() java.lang.String
-KtType: @MyAnno kotlin.String!
+KaType: @MyAnno kotlin.String!

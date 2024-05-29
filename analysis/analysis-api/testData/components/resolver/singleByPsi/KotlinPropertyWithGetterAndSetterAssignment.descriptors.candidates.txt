@@ -1,12 +1,12 @@
-<caret_1>: KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+<caret_1>: KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = a
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = something
         receiverType = null
         returnType = kotlin.Int
@@ -16,15 +16,15 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_2>: KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+<caret_2>: KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = a
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = something
         receiverType = null
         returnType = kotlin.Int
@@ -35,15 +35,15 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_3>: KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+<caret_3>: KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = a
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = something
         receiverType = null
         returnType = kotlin.Int
@@ -53,15 +53,15 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_4>: KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+<caret_4>: KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = a
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = something
         receiverType = null
         returnType = kotlin.Int
@@ -71,15 +71,15 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_5>: KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+<caret_5>: KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = a
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = something
         receiverType = null
         returnType = kotlin.Int
@@ -89,21 +89,21 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_6>: KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtReceiverParameterSymbol:
+<caret_6>: KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
           annotationsList: []
           origin: SOURCE
-          owningCallableSymbol: KtFunctionSymbol(/foo)
-          type: KtUsualClassType:
+          owningCallableSymbol: KaFunctionSymbol(/foo)
+          type: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: A
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = something
         receiverType = null
         returnType = kotlin.Int
@@ -113,21 +113,21 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_7>: KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtReceiverParameterSymbol:
+<caret_7>: KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
           annotationsList: []
           origin: SOURCE
-          owningCallableSymbol: KtFunctionSymbol(/foo)
-          type: KtUsualClassType:
+          owningCallableSymbol: KaFunctionSymbol(/foo)
+          type: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: A
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = something
         receiverType = null
         returnType = kotlin.Int
@@ -137,21 +137,21 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_8>: KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtReceiverParameterSymbol:
+<caret_8>: KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
           annotationsList: []
           origin: SOURCE
-          owningCallableSymbol: KtFunctionSymbol(/foo)
-          type: KtUsualClassType:
+          owningCallableSymbol: KaFunctionSymbol(/foo)
+          type: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: A
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = something
         receiverType = null
         returnType = kotlin.Int
@@ -162,15 +162,15 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_9>: KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+<caret_9>: KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = a
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = something
         receiverType = null
         returnType = kotlin.Int

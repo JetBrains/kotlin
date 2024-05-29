@@ -1,18 +1,18 @@
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: [
     one/Anno()
       psi: null
   ]
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(one/topLevelPropertyWithAnnotations)
+    owningProperty: KaKotlinPropertySymbol(one/topLevelPropertyWithAnnotations)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Short
@@ -24,7 +24,7 @@ KtKotlinPropertySymbol:
     deprecationStatus: null
   callableId: one/topLevelPropertyWithAnnotations
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: [
       one/Anno()
         psi: null
@@ -40,7 +40,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Short
@@ -70,7 +70,7 @@ KtKotlinPropertySymbol:
   name: topLevelPropertyWithAnnotations
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Short

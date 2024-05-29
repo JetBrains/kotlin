@@ -1,22 +1,22 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(i: Int, j: Int) defined in Sub>
-  candidate = KtDelegatedConstructorCall:
+  candidate = KaDelegatedConstructorCall:
     kind = THIS_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = Sub
         symbol = <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = i
             receiverType = null
             returnType = kotlin.Int
             symbol = i: kotlin.Int
             callableId = null,
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = j
             receiverType = null
             returnType = kotlin.Int
@@ -26,13 +26,13 @@ KtInapplicableCallCandidateInfo:
         callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
-      i -> (KtVariableLikeSignature:
+      i -> (KaVariableLikeSignature:
         name = i
         receiverType = null
         returnType = kotlin.Int
         symbol = i: kotlin.Int
         callableId = null),
-      j -> (KtVariableLikeSignature:
+      j -> (KaVariableLikeSignature:
         name = j
         receiverType = null
         returnType = kotlin.Int
@@ -41,19 +41,19 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = true
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(p: Int) defined in Sub>
-  candidate = KtDelegatedConstructorCall:
+  candidate = KaDelegatedConstructorCall:
     kind = THIS_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = Sub
         symbol = <constructor>(p: kotlin.Int): Sub
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = p
             receiverType = null
             returnType = kotlin.Int
@@ -63,7 +63,7 @@ KtInapplicableCallCandidateInfo:
         callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
-      i -> (KtVariableLikeSignature:
+      i -> (KaVariableLikeSignature:
         name = p
         receiverType = null
         returnType = kotlin.Int

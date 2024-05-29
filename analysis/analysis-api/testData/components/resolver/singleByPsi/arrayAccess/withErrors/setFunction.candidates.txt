@@ -1,25 +1,25 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /set' in 'set'.>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
         symbol = /set(<extension receiver>: kotlin.Int, index: kotlin.Int, value: kotlin.Int): kotlin.Int
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = index
             receiverType = null
             returnType = kotlin.Int
             symbol = index: kotlin.Int
             callableId = null,
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = value
             receiverType = null
             returnType = kotlin.Int
@@ -29,13 +29,13 @@ KtInapplicableCallCandidateInfo:
         callableId = /set
     typeArgumentsMapping = {}
     argumentMapping = {
-      2 -> (KtVariableLikeSignature:
+      2 -> (KaVariableLikeSignature:
         name = index
         receiverType = null
         returnType = kotlin.Int
         symbol = index: kotlin.Int
         callableId = null),
-      42 -> (KtVariableLikeSignature:
+      42 -> (KaVariableLikeSignature:
         name = value
         receiverType = null
         returnType = kotlin.Int

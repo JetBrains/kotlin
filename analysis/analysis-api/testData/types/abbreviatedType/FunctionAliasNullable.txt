@@ -1,9 +1,9 @@
-KtFunctionalType:
+KaFunctionalType:
   abbreviatedType: null
   annotationsList: []
   arity: 1
   classId: kotlin/Function1
-  classSymbol: KtNamedClassOrObjectSymbol(kotlin/Function1)
+  classSymbol: KaNamedClassOrObjectSymbol(kotlin/Function1)
   contextReceivers: []
   hasContextReceivers: false
   hasReceiver: false
@@ -11,93 +11,93 @@ KtFunctionalType:
   isSuspend: false
   nullability: NULLABLE
   ownTypeArguments: [
-    KtUsualClassType:
+    KaUsualClassType:
       abbreviatedType: null
       annotationsList: []
       classId: kotlin/String
-      classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      classSymbol: KaNamedClassOrObjectSymbol(kotlin/String)
       nullability: NON_NULLABLE
       ownTypeArguments: []
       qualifiers: [
         qualifier:
           name: String
-          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          symbol: KaNamedClassOrObjectSymbol(kotlin/String)
           typeArguments: []
       ]
-    KtUsualClassType:
+    KaUsualClassType:
       abbreviatedType: null
       annotationsList: []
       classId: kotlin/Int
-      classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+      classSymbol: KaNamedClassOrObjectSymbol(kotlin/Int)
       nullability: NON_NULLABLE
       ownTypeArguments: []
       qualifiers: [
         qualifier:
           name: Int
-          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
           typeArguments: []
       ]
   ]
   parameterTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       abbreviatedType: null
       annotationsList: []
       classId: kotlin/String
-      classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      classSymbol: KaNamedClassOrObjectSymbol(kotlin/String)
       nullability: NON_NULLABLE
       ownTypeArguments: []
       qualifiers: [
         qualifier:
           name: String
-          symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          symbol: KaNamedClassOrObjectSymbol(kotlin/String)
           typeArguments: []
       ]
   ]
   qualifiers: [
     qualifier:
       name: Function1
-      symbol: KtNamedClassOrObjectSymbol(kotlin/Function1)
+      symbol: KaNamedClassOrObjectSymbol(kotlin/Function1)
       typeArguments: [
-        KtUsualClassType:
+        KaUsualClassType:
           abbreviatedType: null
           annotationsList: []
           classId: kotlin/String
-          classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+          classSymbol: KaNamedClassOrObjectSymbol(kotlin/String)
           nullability: NON_NULLABLE
           ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: String
-              symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+              symbol: KaNamedClassOrObjectSymbol(kotlin/String)
               typeArguments: []
           ]
-        KtUsualClassType:
+        KaUsualClassType:
           abbreviatedType: null
           annotationsList: []
           classId: kotlin/Int
-          classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          classSymbol: KaNamedClassOrObjectSymbol(kotlin/Int)
           nullability: NON_NULLABLE
           ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: Int
-              symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+              symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
               typeArguments: []
           ]
       ]
   ]
   receiverType: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     abbreviatedType: null
     annotationsList: []
     classId: kotlin/Int
-    classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+    classSymbol: KaNamedClassOrObjectSymbol(kotlin/Int)
     nullability: NON_NULLABLE
     ownTypeArguments: []
     qualifiers: [
       qualifier:
         name: Int
-        symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+        symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
         typeArguments: []
     ]
 

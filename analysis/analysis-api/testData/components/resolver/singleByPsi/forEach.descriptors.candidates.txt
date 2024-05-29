@@ -1,19 +1,19 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.Array<out ERROR_TYPE>
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.Array<out T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
@@ -25,7 +25,7 @@ KtInapplicableCallCandidateInfo:
       T -> (ERROR_TYPE)
     }
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
@@ -34,22 +34,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.BooleanArray, action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
@@ -59,7 +59,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
@@ -68,22 +68,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.ByteArray, action: kotlin.Function1<kotlin.Byte, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Byte, kotlin.Unit>
@@ -93,7 +93,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Byte, kotlin.Unit>
@@ -102,22 +102,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.CharArray, action: kotlin.Function1<kotlin.Char, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
@@ -127,7 +127,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
@@ -136,22 +136,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.CharSequence
         returnType = kotlin.Unit
         symbol = kotlin/text/forEach(<extension receiver>: kotlin.CharSequence, action: kotlin.Function1<kotlin.Char, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
@@ -161,7 +161,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/text/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
@@ -170,22 +170,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.DoubleArray, action: kotlin.Function1<kotlin.Double, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Double, kotlin.Unit>
@@ -195,7 +195,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Double, kotlin.Unit>
@@ -204,22 +204,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.FloatArray, action: kotlin.Function1<kotlin.Float, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Float, kotlin.Unit>
@@ -229,7 +229,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Float, kotlin.Unit>
@@ -238,22 +238,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.IntArray, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -263,7 +263,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -272,22 +272,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.LongArray, action: kotlin.Function1<kotlin.Long, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Long, kotlin.Unit>
@@ -297,7 +297,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Long, kotlin.Unit>
@@ -306,22 +306,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.ShortArray, action: kotlin.Function1<kotlin.Short, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Short, kotlin.Unit>
@@ -331,7 +331,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Short, kotlin.Unit>
@@ -340,22 +340,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.UByteArray, action: kotlin.Function1<kotlin.UByte, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.UByte, kotlin.Unit>
@@ -365,7 +365,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.UByte, kotlin.Unit>
@@ -374,22 +374,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.UIntArray, action: kotlin.Function1<kotlin.UInt, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.UInt, kotlin.Unit>
@@ -399,7 +399,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.UInt, kotlin.Unit>
@@ -408,22 +408,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.ULongArray, action: kotlin.Function1<kotlin.ULong, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.ULong, kotlin.Unit>
@@ -433,7 +433,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.ULong, kotlin.Unit>
@@ -442,22 +442,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.UShortArray, action: kotlin.Function1<kotlin.UShort, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.UShort, kotlin.Unit>
@@ -467,7 +467,7 @@ KtInapplicableCallCandidateInfo:
         callableId = kotlin/collections/forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.UShort, kotlin.Unit>
@@ -476,21 +476,21 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -502,7 +502,7 @@ KtApplicableCallCandidateInfo:
       T -> (kotlin.Int)
     }
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -511,21 +511,21 @@ KtApplicableCallCandidateInfo:
     }
   isInBestCandidates = true
 
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -537,7 +537,7 @@ KtApplicableCallCandidateInfo:
       T -> (kotlin.Int)
     }
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -546,22 +546,22 @@ KtApplicableCallCandidateInfo:
     }
   isInBestCandidates = true
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.Iterator<ERROR_TYPE>
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterator<T>, operation: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = operation
             receiverType = null
             returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
@@ -573,7 +573,7 @@ KtInapplicableCallCandidateInfo:
       T -> (ERROR_TYPE)
     }
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = operation
         receiverType = null
         returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
@@ -582,21 +582,21 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.List<kotlin.Int>
         returnType = kotlin.Unit
         symbol = /forEach(<extension receiver>: kotlin.collections.List<kotlin.Int>, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -606,7 +606,7 @@ KtApplicableCallCandidateInfo:
         callableId = /forEach
     typeArgumentsMapping = {}
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -615,22 +615,22 @@ KtApplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.Map<out ERROR_TYPE, ERROR_TYPE>
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Map<out K, V>, action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
@@ -643,7 +643,7 @@ KtInapplicableCallCandidateInfo:
       V -> (ERROR_TYPE)
     }
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
@@ -652,22 +652,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.Map<out ERROR_TYPE, ERROR_TYPE>
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Map<out K, V>, action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
@@ -680,7 +680,7 @@ KtInapplicableCallCandidateInfo:
       V -> (ERROR_TYPE)
     }
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
@@ -689,22 +689,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.sequences.Sequence<ERROR_TYPE>
         returnType = kotlin.Unit
         symbol = kotlin/sequences/forEach(<extension receiver>: kotlin.sequences.Sequence<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
@@ -716,7 +716,7 @@ KtInapplicableCallCandidateInfo:
       T -> (ERROR_TYPE)
     }
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>

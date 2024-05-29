@@ -1,12 +1,12 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = ktClass
         isSafeNavigation = false
         type = KtClass
       extensionReceiver = null
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = instance
         receiverType = null
         returnType = KtSubClass

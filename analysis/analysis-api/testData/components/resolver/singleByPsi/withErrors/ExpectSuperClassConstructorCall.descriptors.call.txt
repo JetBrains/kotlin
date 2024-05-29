@@ -1,10 +1,10 @@
-KtSuccessCallInfo:
-  call = KtDelegatedConstructorCall:
+KaSuccessCallInfo:
+  call = KaDelegatedConstructorCall:
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = Foo
         symbol = <constructor>(): Foo

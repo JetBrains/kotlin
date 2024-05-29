@@ -1,17 +1,17 @@
-KtReceiverParameterSymbol:
+KaReceiverParameterSymbol:
   annotationsList: [
     ReceiverAnnotation()
       psi: KtAnnotationEntry
   ]
   origin: SOURCE
-  owningCallableSymbol: KtFunctionSymbol(/foo)
-  type: KtUsualClassType:
+  owningCallableSymbol: KaFunctionSymbol(/foo)
+  type: KaUsualClassType:
     annotationsList: [
       ReceiverTypeAnnotation()
         psi: KtAnnotationEntry
     ]
     ownTypeArguments: []
     type: @R|ReceiverTypeAnnotation|()  kotlin/Int
-  getContainingFileSymbol: KtFileSymbol(functionReceiverParameter.kt)
+  getContainingFileSymbol: KaFileSymbol(functionReceiverParameter.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

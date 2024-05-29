@@ -1,11 +1,11 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'protected constructor(): A'.>
-  candidate = KtDelegatedConstructorCall:
+  candidate = KaDelegatedConstructorCall:
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = A
         symbol = <constructor>(): A
@@ -15,19 +15,19 @@ KtInapplicableCallCandidateInfo:
     argumentMapping = {}
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(p: String): A': it is private in '/A'.>
-  candidate = KtDelegatedConstructorCall:
+  candidate = KaDelegatedConstructorCall:
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = A
         symbol = <constructor>(p: kotlin.String): A
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = p
             receiverType = null
             returnType = kotlin.String
@@ -39,18 +39,18 @@ KtInapplicableCallCandidateInfo:
     argumentMapping = {}
   isInBestCandidates = false
 
-KtApplicableCallCandidateInfo:
-  candidate = KtDelegatedConstructorCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaDelegatedConstructorCall:
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = A
         symbol = <constructor>(x: kotlin.Int): A
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = x
             receiverType = null
             returnType = kotlin.Int
@@ -60,7 +60,7 @@ KtApplicableCallCandidateInfo:
         callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
-      5 -> (KtVariableLikeSignature:
+      5 -> (KaVariableLikeSignature:
         name = x
         receiverType = null
         returnType = kotlin.Int

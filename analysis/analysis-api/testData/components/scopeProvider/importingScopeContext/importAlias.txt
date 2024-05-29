@@ -17,7 +17,7 @@ scopes:
   ExplicitSimpleImportingScope, index = 5
     packages: 0
     classifiers: 1
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: other/A
         classKind: CLASS
@@ -34,7 +34,7 @@ scopes:
         name: A
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Any

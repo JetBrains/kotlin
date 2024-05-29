@@ -1,4 +1,4 @@
-KtBackingFieldSymbol:
+KaBackingFieldSymbol:
   annotationsList: [
     FieldAnnotation()
       psi: KtAnnotationEntry
@@ -10,15 +10,15 @@ KtBackingFieldSymbol:
   isExtension: false
   name: field
   origin: PROPERTY_BACKING_FIELD
-  owningProperty: KtKotlinPropertySymbol(/x)
+  owningProperty: KaKotlinPropertySymbol(/x)
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(accessorField.kt)
+  getContainingFileSymbol: KaFileSymbol(accessorField.kt)
   getContainingJvmClassName: AccessorFieldKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)

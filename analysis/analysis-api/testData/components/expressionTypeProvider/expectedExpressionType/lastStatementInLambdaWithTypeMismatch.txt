@@ -1,11 +1,11 @@
 expression: av
-expected type: KtUsualClassType:
+expected type: KaUsualClassType:
   annotationsList: []
   ownTypeArguments: [
-    KtTypeParameterType:
+    KaTypeParameterType:
       annotationsList: []
       type: K
-    KtTypeParameterType:
+    KaTypeParameterType:
       annotationsList: []
       type: V
   ]

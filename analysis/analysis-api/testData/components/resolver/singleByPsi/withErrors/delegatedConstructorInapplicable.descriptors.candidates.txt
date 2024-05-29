@@ -1,16 +1,16 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: OTHER_ERROR with <init>>
-  candidate = KtDelegatedConstructorCall:
+  candidate = KaDelegatedConstructorCall:
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = A
         symbol = <constructor>(x: kotlin.String): A
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = x
             receiverType = null
             returnType = kotlin.String
@@ -20,7 +20,7 @@ KtInapplicableCallCandidateInfo:
         callableId = null
     typeArgumentsMapping = {}
     argumentMapping = {
-      5 -> (KtVariableLikeSignature:
+      5 -> (KaVariableLikeSignature:
         name = x
         receiverType = null
         returnType = kotlin.String

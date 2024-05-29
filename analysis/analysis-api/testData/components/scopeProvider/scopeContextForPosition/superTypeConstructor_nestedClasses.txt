@@ -10,7 +10,7 @@ scopes:
   StaticMemberScope, index = 1
     packages: 0
     classifiers: 2
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/Base.NestedFromClass
         classKind: CLASS
@@ -27,7 +27,7 @@ scopes:
         name: NestedFromClass
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Any
@@ -35,7 +35,7 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/Base.InnerFromClass
         classKind: CLASS
@@ -52,7 +52,7 @@ scopes:
         name: InnerFromClass
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Any
@@ -72,7 +72,7 @@ scopes:
   PackageMemberScope, index = 3
     packages: 0
     classifiers: 3
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/BaseInterface
         classKind: INTERFACE
@@ -89,7 +89,7 @@ scopes:
         name: BaseInterface
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Any
@@ -97,7 +97,7 @@ scopes:
         symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/Base
         classKind: CLASS
@@ -114,7 +114,7 @@ scopes:
         name: Base
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: test/BaseInterface
@@ -122,7 +122,7 @@ scopes:
         symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/Child
         classKind: CLASS
@@ -139,7 +139,7 @@ scopes:
         name: Child
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: test/Base

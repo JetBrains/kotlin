@@ -5,7 +5,7 @@ scopes:
   ExplicitStarImportingScope, index = 1
     packages: 0
     classifiers: 1
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: other/A
         classKind: CLASS
@@ -22,7 +22,7 @@ scopes:
         name: A
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Any
@@ -31,7 +31,7 @@ scopes:
         typeParameters: []
         visibility: Public
     callables: 1
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: other/b
         contextReceivers: []
@@ -53,7 +53,7 @@ scopes:
         name: b
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Unit

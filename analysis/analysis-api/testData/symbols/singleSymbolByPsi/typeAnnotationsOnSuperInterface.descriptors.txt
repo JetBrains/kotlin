@@ -1,4 +1,4 @@
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: Foo
   classKind: CLASS
@@ -15,11 +15,11 @@ KtNamedClassOrObjectSymbol:
   name: Foo
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: [
         Anno3()
           psi: KtAnnotationEntry
@@ -34,7 +34,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnSuperInterface.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnSuperInterface.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

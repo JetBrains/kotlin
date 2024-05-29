@@ -1,12 +1,12 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = obj
         isSafeNavigation = false
         type = Foo
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = foo
         receiverType = Foo
         returnType = kotlin.String

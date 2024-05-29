@@ -1,4 +1,4 @@
-KtDataFlowExitPointSnapshot:
+KaDataFlowExitPointSnapshot:
   defaultExpressionInfo = DefaultExpressionInfo:
     expression = if (foo() == 5) {
                 return 1

@@ -1,2 +1,2 @@
-KtType: kotlin.collections.(Mutable)List<kotlin.Any?>!
+KaType: kotlin.collections.(Mutable)List<kotlin.Any?>!
 PsiType: java.util.List<?>

@@ -1,11 +1,11 @@
-KtErrorCallInfo:
+KaErrorCallInfo:
   candidateCalls = [
-    KtSimpleFunctionCall:
+    KaSimpleFunctionCall:
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KtFunctionLikeSignature:
+        signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = foo.DD<ERROR_TYPE, ERROR_TYPE>
           symbol = <constructor>(): foo.DD<T, T2>

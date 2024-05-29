@@ -1,4 +1,4 @@
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: test/B.InnerClassInB
   classKind: CLASS
@@ -15,7 +15,7 @@ KtNamedClassOrObjectSymbol:
   name: InnerClassInB
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -23,12 +23,12 @@ KtNamedClassOrObjectSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(innerClass.kt)
+  getContainingFileSymbol: KaFileSymbol(innerClass.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: test/B
@@ -40,7 +40,7 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/B
@@ -48,7 +48,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(innerClass.kt)
+  getContainingFileSymbol: KaFileSymbol(innerClass.kt)
   getContainingJvmClassName: test.B
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

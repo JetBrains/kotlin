@@ -1,15 +1,15 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Function0<kotlin.Unit>
         symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = baseExpr
             receiverType = null
             returnType = kotlin.Function0<kotlin.Unit>?
@@ -21,7 +21,7 @@ KtApplicableCallCandidateInfo:
       <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.Function0<kotlin.Unit>)
     }
     argumentMapping = {
-      a -> (KtVariableLikeSignature:
+      a -> (KaVariableLikeSignature:
         name = baseExpr
         receiverType = null
         returnType = kotlin.Function0<kotlin.Unit>?

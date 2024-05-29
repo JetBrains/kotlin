@@ -1,13 +1,13 @@
 element: e
 implicit receivers:
   type: A
-  owner symbol: KtFirAnonymousFunctionSymbol
+  owner symbol: KaFirAnonymousFunctionSymbol
 
   type: B
-  owner symbol: KtFirAnonymousFunctionSymbol
+  owner symbol: KaFirAnonymousFunctionSymbol
 
   type: C
-  owner symbol: KtFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassOrObjectSymbol
 
 scopes:
   LocalScope, index = 0

@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /foo
   contextReceivers: []
@@ -20,7 +20,7 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtFunctionalType:
+  returnType: KaFunctionalType:
     annotationsList: [
       Anno1()
         psi: KtAnnotationEntry
@@ -30,7 +30,7 @@ KtFunctionSymbol:
         psi: KtAnnotationEntry
     ]
     ownTypeArguments: [
-      KtUsualClassType:
+      KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Unit
@@ -40,7 +40,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnFunctionalTypeWithTypeAlias.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnFunctionalTypeWithTypeAlias.kt)
   getContainingJvmClassName: TypeAnnotationsOnFunctionalTypeWithTypeAliasKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

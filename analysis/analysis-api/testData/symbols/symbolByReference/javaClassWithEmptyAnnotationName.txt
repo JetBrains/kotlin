@@ -1,4 +1,4 @@
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: [
     <error>()
       psi: null
@@ -18,7 +18,7 @@ KtNamedClassOrObjectSymbol:
   name: JavaClass
   origin: JAVA
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any

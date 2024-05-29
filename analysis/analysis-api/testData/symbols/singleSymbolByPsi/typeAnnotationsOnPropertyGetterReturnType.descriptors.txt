@@ -1,4 +1,4 @@
-KtPropertyGetterSymbol:
+KaPropertyGetterSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -11,7 +11,7 @@ KtPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: [
       Anno3()
         psi: KtAnnotationEntry
@@ -26,7 +26,7 @@ KtPropertyGetterSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotationsOnPropertyGetterReturnType.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyGetterReturnType.kt)
   getContainingJvmClassName: TypeAnnotationsOnPropertyGetterReturnTypeKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

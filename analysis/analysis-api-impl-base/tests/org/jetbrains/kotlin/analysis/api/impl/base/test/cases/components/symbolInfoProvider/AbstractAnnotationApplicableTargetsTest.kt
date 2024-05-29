@@ -27,7 +27,7 @@ abstract class AbstractAnnotationApplicableTargetsTest : AbstractAnalysisApiBase
                     ?: "<null>"
 
             buildString {
-                appendLine("KtAnnotationEntry: ${annotationEntry.text}")
+                appendLine("${KtAnnotationEntry::class.simpleName}: ${annotationEntry.text}")
                 appendLine()
                 appendLine("Resolved annotation symbol:")
                 appendLine(annotationClassSymbol.render(KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES))

@@ -1,24 +1,24 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = list
         isSafeNavigation = false
         type = MyList
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
         symbol = /MyList.set(<dispatch receiver>: MyList, index: kotlin.Int, value: kotlin.String): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = index
             receiverType = null
             returnType = kotlin.Int
             symbol = index: kotlin.Int
             callableId = null,
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = value
             receiverType = null
             returnType = kotlin.String
@@ -28,13 +28,13 @@ KtApplicableCallCandidateInfo:
         callableId = /MyList.set
     typeArgumentsMapping = {}
     argumentMapping = {
-      10 -> (KtVariableLikeSignature:
+      10 -> (KaVariableLikeSignature:
         name = index
         receiverType = null
         returnType = kotlin.Int
         symbol = index: kotlin.Int
         callableId = null),
-      "value" -> (KtVariableLikeSignature:
+      "value" -> (KaVariableLikeSignature:
         name = value
         receiverType = null
         returnType = kotlin.String

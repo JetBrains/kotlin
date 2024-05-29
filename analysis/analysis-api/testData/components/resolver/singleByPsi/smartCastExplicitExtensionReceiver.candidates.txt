@@ -1,15 +1,15 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtSmartCastedReceiverValue:
-        original = KtExplicitReceiverValue:
+      extensionReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
           expression = a
           isSafeNavigation = false
           type = kotlin.Any
         type = kotlin.String
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.String
         returnType = kotlin.Unit
         symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit

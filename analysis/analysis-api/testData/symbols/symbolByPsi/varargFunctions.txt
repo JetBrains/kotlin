@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /primitive
   contextReceivers: []
@@ -20,14 +20,14 @@ KtFunctionSymbol:
   name: primitive
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -41,24 +41,24 @@ KtFunctionSymbol:
       name: a
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+      getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
       getContainingJvmClassName: VarargFunctionsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+  getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
   getContainingJvmClassName: VarargFunctionsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /nullablePrimitive
   contextReceivers: []
@@ -80,14 +80,14 @@ KtFunctionSymbol:
   name: nullablePrimitive
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -101,24 +101,24 @@ KtFunctionSymbol:
       name: b
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Float?
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+      getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
       getContainingJvmClassName: VarargFunctionsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+  getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
   getContainingJvmClassName: VarargFunctionsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /nonPrimitive
   contextReceivers: []
@@ -140,14 +140,14 @@ KtFunctionSymbol:
   name: nonPrimitive
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -161,24 +161,24 @@ KtFunctionSymbol:
       name: c
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+      getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
       getContainingJvmClassName: VarargFunctionsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+  getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
   getContainingJvmClassName: VarargFunctionsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /error
   contextReceivers: []
@@ -200,14 +200,14 @@ KtFunctionSymbol:
   name: error
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -221,18 +221,18 @@ KtFunctionSymbol:
       name: d
       origin: SOURCE
       receiverParameter: null
-      returnType: KtClassErrorType:
+      returnType: KaClassErrorType:
         annotationsList: []
         type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+      getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
       getContainingJvmClassName: VarargFunctionsKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(varargFunctions.kt)
+  getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
   getContainingJvmClassName: VarargFunctionsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

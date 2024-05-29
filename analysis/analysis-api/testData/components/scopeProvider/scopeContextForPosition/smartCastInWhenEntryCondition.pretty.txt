@@ -1,7 +1,7 @@
 element: a
 implicit receivers:
   type: A
-  owner symbol: KtFirFunctionSymbol
+  owner symbol: KaFirFunctionSymbol
 
 scopes:
   LocalScope, index = 0

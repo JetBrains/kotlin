@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: [
     org/jetbrains/annotations/NotNull()
       psi: null
@@ -23,14 +23,14 @@ KtFunctionSymbol:
   name: foo
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass

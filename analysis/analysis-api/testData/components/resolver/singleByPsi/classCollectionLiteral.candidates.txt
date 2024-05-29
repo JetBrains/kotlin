@@ -1,15 +1,15 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Array<kotlin.reflect.KClass<*>>
         symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = elements
             receiverType = null
             returnType = kotlin.reflect.KClass<*>
@@ -21,13 +21,13 @@ KtApplicableCallCandidateInfo:
       T -> (kotlin.reflect.KClass<*>)
     }
     argumentMapping = {
-      AnnoWithKClass::class -> (KtVariableLikeSignature:
+      AnnoWithKClass::class -> (KaVariableLikeSignature:
         name = elements
         receiverType = null
         returnType = kotlin.reflect.KClass<*>
         symbol = vararg elements: T
         callableId = null),
-      one.AnnoWithKClass::class -> (KtVariableLikeSignature:
+      one.AnnoWithKClass::class -> (KaVariableLikeSignature:
         name = elements
         receiverType = null
         returnType = kotlin.reflect.KClass<*>

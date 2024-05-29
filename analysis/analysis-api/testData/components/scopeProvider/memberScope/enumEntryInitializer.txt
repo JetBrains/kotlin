@@ -1,27 +1,27 @@
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(<local>/x)
+    owningProperty: KaKotlinPropertySymbol(<local>/x)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/String
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(enumEntryInitializer.kt)
+    getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
     getContainingJvmClassName: null
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableId: null
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -34,7 +34,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/String
@@ -42,11 +42,11 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
+    getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: test/<anonymous>
-    getContainingFileSymbol: KtFileSymbol(enumEntryInitializer.kt)
+    getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
     getContainingJvmClassName: null
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -68,7 +68,7 @@ KtKotlinPropertySymbol:
   name: x
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/String
@@ -76,11 +76,11 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/<anonymous>
-  getContainingFileSymbol: KtFileSymbol(enumEntryInitializer.kt)
+  getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -89,7 +89,7 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/Enum.clone
   contextReceivers: []
@@ -111,7 +111,7 @@ KtFunctionSymbol:
   name: clone
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Any
@@ -119,10 +119,10 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Protected
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -132,7 +132,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: test/E.compareTo
   contextReceivers: []
@@ -154,14 +154,14 @@ KtFunctionSymbol:
   name: compareTo
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -175,28 +175,28 @@ KtFunctionSymbol:
       name: other
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: test/E
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(enumEntryInitializer.kt)
+      getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
       getContainingJvmClassName: test.E
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
-  getContainingFileSymbol: KtFileSymbol(enumEntryInitializer.kt)
+  getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/Enum.equals
   contextReceivers: []
@@ -218,14 +218,14 @@ KtFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -239,7 +239,7 @@ KtFunctionSymbol:
       name: other
       origin: LIBRARY
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any?
@@ -251,10 +251,10 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -264,7 +264,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/Enum.hashCode
   contextReceivers: []
@@ -286,7 +286,7 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -294,10 +294,10 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -307,7 +307,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/Enum.toString
   contextReceivers: []
@@ -329,7 +329,7 @@ KtFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/String
@@ -337,10 +337,10 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -350,21 +350,21 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(kotlin/Enum.name)
+    owningProperty: KaKotlinPropertySymbol(kotlin/Enum.name)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/String
@@ -376,7 +376,7 @@ KtKotlinPropertySymbol:
     deprecationStatus: null
   callableId: kotlin/Enum.name
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -389,7 +389,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/String
@@ -397,10 +397,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
+    getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
       ownTypeArguments: [
-        KtTypeParameterType:
+        KaTypeParameterType:
           annotationsList: []
           type: E
       ]
@@ -427,7 +427,7 @@ KtKotlinPropertySymbol:
   name: name
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/String
@@ -435,10 +435,10 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -452,18 +452,18 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(kotlin/Enum.ordinal)
+    owningProperty: KaKotlinPropertySymbol(kotlin/Enum.ordinal)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -475,7 +475,7 @@ KtKotlinPropertySymbol:
     deprecationStatus: null
   callableId: kotlin/Enum.ordinal
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -488,7 +488,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -496,10 +496,10 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
+    getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
       ownTypeArguments: [
-        KtTypeParameterType:
+        KaTypeParameterType:
           annotationsList: []
           type: E
       ]
@@ -526,7 +526,7 @@ KtKotlinPropertySymbol:
   name: ordinal
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -534,10 +534,10 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -551,7 +551,7 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: test/E.getDeclaringClass
   contextReceivers: []
@@ -573,23 +573,23 @@ KtFunctionSymbol:
   name: getDeclaringClass
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: ft<java/lang/Class<test/E!>, java/lang/Class<test/E!>?>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/E
-  getContainingFileSymbol: KtFileSymbol(enumEntryInitializer.kt)
+  getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: kotlin/Enum.finalize
   contextReceivers: []
@@ -611,7 +611,7 @@ KtFunctionSymbol:
   name: finalize
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -619,10 +619,10 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: ProtectedAndPackage
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: []
         type: E
     ]
@@ -632,7 +632,7 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: kotlin/Enum.Companion
   classKind: COMPANION_OBJECT
@@ -649,7 +649,7 @@ KtNamedClassOrObjectSymbol:
   name: Companion
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -662,7 +662,7 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: null
@@ -674,7 +674,7 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/<anonymous>
@@ -682,7 +682,7 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Private
-  getContainingFileSymbol: KtFileSymbol(enumEntryInitializer.kt)
+  getContainingFileSymbol: KaFileSymbol(enumEntryInitializer.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -1,4 +1,4 @@
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: java/lang/String
   classKind: CLASS
@@ -15,23 +15,23 @@ KtNamedClassOrObjectSymbol:
   name: String
   origin: JAVA
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: java/io/Serializable
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: [
-        KtFlexibleType:
+        KaFlexibleType:
           annotationsList: []
           type: kotlin/String!
       ]
       type: kotlin/Comparable<kotlin/String!>
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/CharSequence

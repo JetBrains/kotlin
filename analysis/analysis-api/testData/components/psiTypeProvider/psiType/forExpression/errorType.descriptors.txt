@@ -1,4 +1,4 @@
-KtType: `UNRESOLVED<Nothing>`
+KaType: `UNRESOLVED<Nothing>`
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=false):
   PsiType: null
 

@@ -69,7 +69,7 @@ sealed class SymbolData {
 
     object ScriptData : SymbolData() {
         override fun KaSession.toSymbols(ktFile: KtFile): List<KaSymbol> {
-            val script = ktFile.script ?: error("KtScript is not found")
+            val script = ktFile.script ?: error("Script is not found")
             return listOf(script.getScriptSymbol())
         }
     }

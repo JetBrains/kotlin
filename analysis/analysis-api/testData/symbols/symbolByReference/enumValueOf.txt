@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /MyKotlinEnum.valueOf
   contextReceivers: []
@@ -20,14 +20,14 @@ KtFunctionSymbol:
   name: valueOf
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: MyKotlinEnum
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -41,19 +41,19 @@ KtFunctionSymbol:
       name: value
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(enumValueOf.kt)
+      getContainingFileSymbol: KaFileSymbol(enumValueOf.kt)
       getContainingJvmClassName: MyKotlinEnum
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(enumValueOf.kt)
+  getContainingFileSymbol: KaFileSymbol(enumValueOf.kt)
   getContainingJvmClassName: MyKotlinEnum
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

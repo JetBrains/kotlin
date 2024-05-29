@@ -1,4 +1,4 @@
-KtTypeParameterSymbol:
+KaTypeParameterSymbol:
   annotationsList: [
     A()
       psi: KtAnnotationEntry
@@ -9,6 +9,6 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(typeParameter.kt)
+  getContainingFileSymbol: KaFileSymbol(typeParameter.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

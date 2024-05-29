@@ -1,4 +1,4 @@
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: A
@@ -10,7 +10,7 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: A
@@ -18,12 +18,12 @@ KtConstructorSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(classSecondaryConstructors.kt)
+  getContainingFileSymbol: KaFileSymbol(classSecondaryConstructors.kt)
   getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: A
@@ -35,14 +35,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -56,24 +56,24 @@ KtConstructorSymbol:
       name: x
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(classSecondaryConstructors.kt)
+      getContainingFileSymbol: KaFileSymbol(classSecondaryConstructors.kt)
       getContainingJvmClassName: A
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(classSecondaryConstructors.kt)
+  getContainingFileSymbol: KaFileSymbol(classSecondaryConstructors.kt)
   getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: A
@@ -85,14 +85,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -106,17 +106,17 @@ KtConstructorSymbol:
       name: y
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(classSecondaryConstructors.kt)
+      getContainingFileSymbol: KaFileSymbol(classSecondaryConstructors.kt)
       getContainingJvmClassName: A
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -130,24 +130,24 @@ KtConstructorSymbol:
       name: z
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(classSecondaryConstructors.kt)
+      getContainingFileSymbol: KaFileSymbol(classSecondaryConstructors.kt)
       getContainingJvmClassName: A
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(classSecondaryConstructors.kt)
+  getContainingFileSymbol: KaFileSymbol(classSecondaryConstructors.kt)
   getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: A
   classKind: CLASS
@@ -164,7 +164,7 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -172,7 +172,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(classSecondaryConstructors.kt)
+  getContainingFileSymbol: KaFileSymbol(classSecondaryConstructors.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

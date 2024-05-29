@@ -1,4 +1,4 @@
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: [
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
@@ -18,7 +18,7 @@ KtNamedClassOrObjectSymbol:
   name: Anno1
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Annotation
@@ -26,12 +26,12 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [TYPE]
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: [
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
@@ -51,7 +51,7 @@ KtNamedClassOrObjectSymbol:
   name: Anno2
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Annotation
@@ -59,12 +59,12 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [TYPE]
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: [
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
@@ -84,7 +84,7 @@ KtNamedClassOrObjectSymbol:
   name: Anno3
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Annotation
@@ -92,12 +92,12 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [TYPE]
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: [
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
@@ -117,7 +117,7 @@ KtNamedClassOrObjectSymbol:
   name: Anno4
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Annotation
@@ -125,12 +125,12 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [TYPE]
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: Anno5
@@ -142,41 +142,41 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: Anno5
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
-      generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+      generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
         annotationsList: []
-        backingFieldSymbol: KtBackingFieldSymbol:
+        backingFieldSymbol: KaBackingFieldSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
           isExtension: false
           name: field
           origin: PROPERTY_BACKING_FIELD
-          owningProperty: KtKotlinPropertySymbol(/Anno5.s)
+          owningProperty: KaKotlinPropertySymbol(/Anno5.s)
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/String
           symbolKind: LOCAL
           typeParameters: []
-          getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+          getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
           getContainingJvmClassName: Anno5
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         callableId: /Anno5.s
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
+        getter: KaPropertyGetterSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
@@ -189,7 +189,7 @@ KtConstructorSymbol:
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/String
@@ -197,11 +197,11 @@ KtConstructorSymbol:
           typeParameters: []
           valueParameters: []
           visibility: Public
-          getDispatchReceiver(): KtUsualClassType:
+          getDispatchReceiver(): KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: Anno5
-          getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+          getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
           getContainingJvmClassName: Anno5
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
@@ -223,7 +223,7 @@ KtConstructorSymbol:
         name: s
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/String
@@ -231,11 +231,11 @@ KtConstructorSymbol:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
-        getDispatchReceiver(): KtUsualClassType:
+        getDispatchReceiver(): KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: Anno5
-        getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+        getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
         getContainingJvmClassName: Anno5
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
@@ -252,24 +252,24 @@ KtConstructorSymbol:
       name: s
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+      getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
       getContainingJvmClassName: Anno5
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingJvmClassName: Anno5
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: [
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
@@ -289,7 +289,7 @@ KtNamedClassOrObjectSymbol:
   name: Anno5
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Annotation
@@ -297,12 +297,12 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: [TYPE]
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: I
   classKind: INTERFACE
@@ -319,7 +319,7 @@ KtNamedClassOrObjectSymbol:
   name: I
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -327,12 +327,12 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /X.f
   contextReceivers: []
@@ -354,7 +354,7 @@ KtFunctionSymbol:
   name: f
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: [
       Anno3()
         psi: KtAnnotationEntry
@@ -364,7 +364,7 @@ KtFunctionSymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -378,7 +378,7 @@ KtFunctionSymbol:
       name: arg
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: [
           Anno2()
             psi: KtAnnotationEntry
@@ -387,33 +387,33 @@ KtFunctionSymbol:
         type: @R|Anno2|()  I
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+      getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
       getContainingJvmClassName: X
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: X
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingJvmClassName: X
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(/X.x)
+    owningProperty: KaKotlinPropertySymbol(/X.x)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: [
         Anno4()
           psi: KtAnnotationEntry
@@ -422,13 +422,13 @@ KtKotlinPropertySymbol:
       type: @R|Anno4|()  I
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+    getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
     getContainingJvmClassName: X
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /X.x
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -441,7 +441,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: [
         Anno4()
           psi: KtAnnotationEntry
@@ -452,11 +452,11 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
+    getDispatchReceiver(): KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: X
-    getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+    getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
     getContainingJvmClassName: X
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -478,7 +478,7 @@ KtKotlinPropertySymbol:
   name: x
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: [
       Anno4()
         psi: KtAnnotationEntry
@@ -489,11 +489,11 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: X
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingJvmClassName: X
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -502,7 +502,7 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: X
   classKind: CLASS
@@ -519,7 +519,7 @@ KtNamedClassOrObjectSymbol:
   name: X
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: [
         Anno1()
           psi: KtAnnotationEntry
@@ -530,12 +530,12 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtTypeParameterSymbol:
+KaTypeParameterSymbol:
   annotationsList: []
   isReified: false
   name: T
@@ -543,11 +543,11 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /foo
   contextReceivers: []
@@ -568,20 +568,20 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
+  receiverParameter: KaReceiverParameterSymbol:
     annotationsList: []
     origin: SOURCE
-    owningCallableSymbol: KtFunctionSymbol(/foo)
-    type: KtTypeParameterType:
+    owningCallableSymbol: KaFunctionSymbol(/foo)
+    type: KaTypeParameterType:
       annotationsList: []
       type: T
-    getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+    getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtTypeParameterType:
+      KaTypeParameterType:
         annotationsList: [
           Anno5(s = "1")
             psi: KtAnnotationEntry
@@ -591,16 +591,16 @@ KtFunctionSymbol:
     type: kotlin/collections/List<@R|Anno5|(s = String(1))  T>?
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtTypeParameterSymbol(T)
+    KaTypeParameterSymbol(T)
   ]
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingJvmClassName: TypeAnnotationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtTypeParameterSymbol:
+KaTypeParameterSymbol:
   annotationsList: []
   isReified: false
   name: T
@@ -608,11 +608,11 @@ KtTypeParameterSymbol:
   typeParameters: []
   upperBounds: []
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /foo2
   contextReceivers: []
@@ -633,23 +633,23 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo2
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
+  receiverParameter: KaReceiverParameterSymbol:
     annotationsList: []
     origin: SOURCE
-    owningCallableSymbol: KtFunctionSymbol(/foo2)
-    type: KtTypeParameterType:
+    owningCallableSymbol: KaFunctionSymbol(/foo2)
+    type: KaTypeParameterType:
       annotationsList: []
       type: T
-    getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+    getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtUsualClassType:
+      KaUsualClassType:
         annotationsList: []
         ownTypeArguments: [
-          KtTypeParameterType:
+          KaTypeParameterType:
             annotationsList: [
               Anno5(s = "1")
                 psi: KtAnnotationEntry
@@ -661,11 +661,11 @@ KtFunctionSymbol:
     type: kotlin/collections/List<kotlin/collections/List<@R|Anno5|(s = String(1))  T>>?
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtTypeParameterSymbol(T)
+    KaTypeParameterSymbol(T)
   ]
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeAnnotations.kt)
+  getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
   getContainingJvmClassName: TypeAnnotationsKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

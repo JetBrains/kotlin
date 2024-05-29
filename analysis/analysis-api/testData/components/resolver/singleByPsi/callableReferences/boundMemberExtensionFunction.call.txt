@@ -1,24 +1,24 @@
-KtSuccessCallInfo:
-  call = KtSimpleFunctionCall:
+KaSuccessCallInfo:
+  call = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtImplicitReceiverValue:
-        symbol = KtReceiverParameterSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
           annotationsList: []
           origin: SOURCE
-          owningCallableSymbol: KtAnonymousFunctionSymbol(<local>/<no name provided>)
-          type: KtUsualClassType:
+          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          type: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: Foo
         type = Foo
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = Bar
         returnType = kotlin.Unit
         symbol = /Foo.foo(<extension receiver>: Bar, <dispatch receiver>: Foo, a: kotlin.Int): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = a
             receiverType = null
             returnType = kotlin.Int

@@ -1,4 +1,4 @@
-KtDataFlowExitPointSnapshot:
+KaDataFlowExitPointSnapshot:
   defaultExpressionInfo = DefaultExpressionInfo:
     expression = call()
     type = ERROR CLASS: Symbol not found for Foo?

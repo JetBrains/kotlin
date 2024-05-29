@@ -1,20 +1,20 @@
-KtTypeParameterSymbol:
+KaTypeParameterSymbol:
   annotationsList: []
   isReified: false
   name: T
   origin: SOURCE
   typeParameters: []
   upperBounds: [
-    KtClassErrorType:
+    KaClassErrorType:
       annotationsList: []
       type: ERROR_TYPE
   ]
   variance: INVARIANT
-  getContainingFileSymbol: KtFileSymbol(typeParameters.kt)
+  getContainingFileSymbol: KaFileSymbol(typeParameters.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtLocalVariableSymbol:
+KaLocalVariableSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -23,18 +23,18 @@ KtLocalVariableSymbol:
   name: x
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(typeParameters.kt)
+  getContainingFileSymbol: KaFileSymbol(typeParameters.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /f
   contextReceivers: []
@@ -56,7 +56,7 @@ KtFunctionSymbol:
   name: f
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -64,7 +64,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(typeParameters.kt)
+  getContainingFileSymbol: KaFileSymbol(typeParameters.kt)
   getContainingJvmClassName: TypeParametersKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

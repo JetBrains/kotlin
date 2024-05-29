@@ -1,2 +1,2 @@
-KtType: @foo.MyAnno(s = "outer") kotlin.collections.List<@foo.MyAnno(s = "middle") kotlin.collections.List<@foo.AnotherAnnotation(k = foo.Nested::class) kotlin.String>>
+KaType: @foo.MyAnno(s = "outer") kotlin.collections.List<@foo.MyAnno(s = "middle") kotlin.collections.List<@foo.AnotherAnnotation(k = foo.Nested::class) kotlin.String>>
 PsiType: @foo.MyAnno(s = "outer") @org.jetbrains.annotations.NotNull() java.util.List<? extends @foo.MyAnno(s = "middle") @org.jetbrains.annotations.NotNull() java.util.List<? extends @foo.AnotherAnnotation(k = foo.Nested.class) @org.jetbrains.annotations.NotNull() java.lang.String>>

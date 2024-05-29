@@ -1,18 +1,18 @@
-KtSuccessCallInfo:
-  call = KtSimpleFunctionCall:
+KaSuccessCallInfo:
+  call = KaSimpleFunctionCall:
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = x
         isSafeNavigation = false
         type = kotlin.Int
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit
         symbol = /invoke(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = i
             receiverType = null
             returnType = kotlin.Int
@@ -22,7 +22,7 @@ KtSuccessCallInfo:
         callableId = /invoke
     typeArgumentsMapping = {}
     argumentMapping = {
-      1 -> (KtVariableLikeSignature:
+      1 -> (KaVariableLikeSignature:
         name = i
         receiverType = null
         returnType = kotlin.Int

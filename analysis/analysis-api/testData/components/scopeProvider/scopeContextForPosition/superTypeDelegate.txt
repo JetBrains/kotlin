@@ -5,7 +5,7 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 1
-      KtValueParameterSymbol:
+      KaValueParameterSymbol:
         annotationsList: []
         callableId: null
         contextReceivers: []
@@ -19,7 +19,7 @@ scopes:
         name: base
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: test/Base
@@ -36,7 +36,7 @@ scopes:
   PackageMemberScope, index = 2
     packages: 0
     classifiers: 2
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/Base
         classKind: INTERFACE
@@ -53,7 +53,7 @@ scopes:
         name: Base
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Any
@@ -61,7 +61,7 @@ scopes:
         symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/Child
         classKind: CLASS
@@ -78,7 +78,7 @@ scopes:
         name: Child
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: test/Base

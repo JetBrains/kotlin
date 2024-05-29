@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
@@ -6,14 +6,14 @@ KtFunctionSymbol:
   callableId: /booleanConstReferenceInImplies
   contextReceivers: []
   contractEffects: [
-    KtContractConditionalContractEffectDeclaration:
+    KaContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsSpecificValueEffectDeclaration:
+        KaContractReturnsSpecificValueEffectDeclaration:
           value:
-            KtContractConstantValue:
+            KaContractConstantValue:
               constantType: TRUE
       condition:
-        KtContractBooleanConstantExpression:
+        KaContractBooleanConstantExpression:
           booleanConstant: true
   ]
   hasStableParameterNames: true
@@ -33,7 +33,7 @@ KtFunctionSymbol:
   name: booleanConstReferenceInImplies
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Boolean
@@ -41,7 +41,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(booleanConstReferenceInImplies.kt)
+  getContainingFileSymbol: KaFileSymbol(booleanConstReferenceInImplies.kt)
   getContainingJvmClassName: BooleanConstReferenceInImpliesKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

@@ -1,4 +1,4 @@
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: [
     <Error class: unknown class>()
       psi: KtAnnotationEntry
@@ -18,7 +18,7 @@ KtNamedClassOrObjectSymbol:
   name: WithGeneratedCompanion
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -26,7 +26,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(generatedCompanionWorksAsValue.kt)
+  getContainingFileSymbol: KaFileSymbol(generatedCompanionWorksAsValue.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

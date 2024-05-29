@@ -1,4 +1,4 @@
-KtType: Outer.`<no name provided>`.Inner
+KaType: Outer.`<no name provided>`.Inner
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=false):
   PsiType: null
 

@@ -1,4 +1,4 @@
-KtEnumEntrySymbol:
+KaEnumEntrySymbol:
   annotationsList: []
   callableId: /X.Y
   contextReceivers: []
@@ -7,18 +7,18 @@ KtEnumEntrySymbol:
   name: Y
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: X
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(enum.kt)
+  getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: X
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtEnumEntrySymbol:
+KaEnumEntrySymbol:
   annotationsList: []
   callableId: /X.Z
   contextReceivers: []
@@ -27,18 +27,18 @@ KtEnumEntrySymbol:
   name: Z
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: X
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(enum.kt)
+  getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: X
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: X
   classKind: ENUM_CLASS
@@ -55,10 +55,10 @@ KtNamedClassOrObjectSymbol:
   name: X
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: [
-        KtUsualClassType:
+        KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: X
@@ -68,7 +68,7 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(enum.kt)
+  getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

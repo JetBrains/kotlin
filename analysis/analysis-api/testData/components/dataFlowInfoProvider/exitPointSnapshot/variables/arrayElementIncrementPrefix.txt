@@ -1,4 +1,4 @@
-KtDataFlowExitPointSnapshot:
+KaDataFlowExitPointSnapshot:
   defaultExpressionInfo = DefaultExpressionInfo:
     expression = ++x[0]
     type = kotlin.Unit

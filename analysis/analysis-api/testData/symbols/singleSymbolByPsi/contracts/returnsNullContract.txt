@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
@@ -6,18 +6,18 @@ KtFunctionSymbol:
   callableId: /returnsNullContract
   contextReceivers: []
   contractEffects: [
-    KtContractConditionalContractEffectDeclaration:
+    KaContractConditionalContractEffectDeclaration:
       effect:
-        KtContractReturnsSpecificValueEffectDeclaration:
+        KaContractReturnsSpecificValueEffectDeclaration:
           value:
-            KtContractConstantValue:
+            KaContractConstantValue:
               constantType: NULL
       condition:
-        KtContractIsNullPredicateExpression:
+        KaContractIsNullPredicateExpression:
           argument:
-            KtContractParameterValue:
+            KaContractParameterValue:
               parameterSymbol:
-                KtValueParameterSymbol:
+                KaValueParameterSymbol:
                   annotationsList: []
                   callableId: null
                   contextReceivers: []
@@ -31,13 +31,13 @@ KtFunctionSymbol:
                   name: foo
                   origin: SOURCE
                   receiverParameter: null
-                  returnType: KtUsualClassType:
+                  returnType: KaUsualClassType:
                     annotationsList: []
                     ownTypeArguments: []
                     type: kotlin/Any?
                   symbolKind: LOCAL
                   typeParameters: []
-                  getContainingFileSymbol: KtFileSymbol(returnsNullContract.kt)
+                  getContainingFileSymbol: KaFileSymbol(returnsNullContract.kt)
                   getContainingJvmClassName: ReturnsNullContractKt
                   getContainingModule: KtSourceModule "Sources of main"
                   deprecationStatus: null
@@ -60,14 +60,14 @@ KtFunctionSymbol:
   name: returnsNullContract
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Any?
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -81,19 +81,19 @@ KtFunctionSymbol:
       name: foo
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(returnsNullContract.kt)
+      getContainingFileSymbol: KaFileSymbol(returnsNullContract.kt)
       getContainingJvmClassName: ReturnsNullContractKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(returnsNullContract.kt)
+  getContainingFileSymbol: KaFileSymbol(returnsNullContract.kt)
   getContainingJvmClassName: ReturnsNullContractKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

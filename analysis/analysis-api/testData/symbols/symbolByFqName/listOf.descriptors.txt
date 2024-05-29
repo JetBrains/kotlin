@@ -1,4 +1,4 @@
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: kotlin/io/FileWalkDirection
   classKind: ENUM_CLASS
@@ -15,10 +15,10 @@ KtNamedClassOrObjectSymbol:
   name: FileWalkDirection
   origin: LIBRARY
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: [
-        KtUsualClassType:
+        KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/io/FileWalkDirection

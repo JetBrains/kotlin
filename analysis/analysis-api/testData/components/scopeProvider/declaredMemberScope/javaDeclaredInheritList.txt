@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /JavaClass.add
   contextReceivers: []
@@ -20,14 +20,14 @@ KtFunctionSymbol:
   name: add
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -41,7 +41,7 @@ KtFunctionSymbol:
       name: s
       origin: JAVA
       receiverParameter: null
-      returnType: KtFlexibleType:
+      returnType: KaFlexibleType:
         annotationsList: []
         type: kotlin/String!
       symbolKind: LOCAL
@@ -52,7 +52,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass
@@ -61,7 +61,7 @@ KtFunctionSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /JavaClass.removeAt
   contextReceivers: []
@@ -83,13 +83,13 @@ KtFunctionSymbol:
   name: removeAt
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -103,7 +103,7 @@ KtFunctionSymbol:
       name: index
       origin: JAVA
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -115,7 +115,7 @@ KtFunctionSymbol:
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass
@@ -124,7 +124,7 @@ KtFunctionSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: JavaClass
@@ -136,7 +136,7 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: JavaClass

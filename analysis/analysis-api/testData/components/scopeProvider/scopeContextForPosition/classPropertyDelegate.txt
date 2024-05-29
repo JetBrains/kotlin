@@ -1,17 +1,17 @@
 element: ::value
 implicit receivers:
-  type: KtUsualClassType:
+  type: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: test/Child
-  owner symbol: KtFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassOrObjectSymbol
 
 scopes:
   LocalScope, index = 0
     packages: 0
     classifiers: 0
     callables: 1
-      KtValueParameterSymbol:
+      KaValueParameterSymbol:
         annotationsList: []
         callableId: null
         contextReceivers: []
@@ -25,7 +25,7 @@ scopes:
         name: constructorParam
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -37,18 +37,18 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 9
-      KtKotlinPropertySymbol:
+      KaKotlinPropertySymbol:
         annotationsList: []
-        backingFieldSymbol: KtBackingFieldSymbol:
+        backingFieldSymbol: KaBackingFieldSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
           isExtension: false
           name: field
           origin: PROPERTY_BACKING_FIELD
-          owningProperty: KtKotlinPropertySymbol(test/Child.constructorProp)
+          owningProperty: KaKotlinPropertySymbol(test/Child.constructorProp)
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -56,7 +56,7 @@ scopes:
           typeParameters: []
         callableId: test/Child.constructorProp
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
+        getter: KaPropertyGetterSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
@@ -69,7 +69,7 @@ scopes:
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -95,7 +95,7 @@ scopes:
         name: constructorProp
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -103,7 +103,7 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: test/Child.childMember
         contextReceivers: []
@@ -125,7 +125,7 @@ scopes:
         name: childMember
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -133,18 +133,18 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KtKotlinPropertySymbol:
+      KaKotlinPropertySymbol:
         annotationsList: []
-        backingFieldSymbol: KtBackingFieldSymbol:
+        backingFieldSymbol: KaBackingFieldSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
           isExtension: false
           name: field
           origin: PROPERTY_BACKING_FIELD
-          owningProperty: KtKotlinPropertySymbol(test/Child.childProp)
+          owningProperty: KaKotlinPropertySymbol(test/Child.childProp)
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -152,7 +152,7 @@ scopes:
           typeParameters: []
         callableId: test/Child.childProp
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
+        getter: KaPropertyGetterSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
@@ -165,7 +165,7 @@ scopes:
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -191,7 +191,7 @@ scopes:
         name: childProp
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -199,18 +199,18 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
-      KtKotlinPropertySymbol:
+      KaKotlinPropertySymbol:
         annotationsList: []
-        backingFieldSymbol: KtBackingFieldSymbol:
+        backingFieldSymbol: KaBackingFieldSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
           isExtension: false
           name: field
           origin: PROPERTY_BACKING_FIELD
-          owningProperty: KtKotlinPropertySymbol(test/Base.value)
+          owningProperty: KaKotlinPropertySymbol(test/Base.value)
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -218,7 +218,7 @@ scopes:
           typeParameters: []
         callableId: test/Base.value
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
+        getter: KaPropertyGetterSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
@@ -231,7 +231,7 @@ scopes:
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -257,7 +257,7 @@ scopes:
         name: value
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -265,7 +265,7 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: test/Base.baseMember
         contextReceivers: []
@@ -287,7 +287,7 @@ scopes:
         name: baseMember
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -295,18 +295,18 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KtKotlinPropertySymbol:
+      KaKotlinPropertySymbol:
         annotationsList: []
-        backingFieldSymbol: KtBackingFieldSymbol:
+        backingFieldSymbol: KaBackingFieldSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
           isExtension: false
           name: field
           origin: PROPERTY_BACKING_FIELD
-          owningProperty: KtKotlinPropertySymbol(test/Base.baseProp)
+          owningProperty: KaKotlinPropertySymbol(test/Base.baseProp)
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -314,7 +314,7 @@ scopes:
           typeParameters: []
         callableId: test/Base.baseProp
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
+        getter: KaPropertyGetterSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
@@ -327,7 +327,7 @@ scopes:
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -353,7 +353,7 @@ scopes:
         name: baseProp
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -361,7 +361,7 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: kotlin/Any.equals
         contextReceivers: []
@@ -383,14 +383,14 @@ scopes:
         name: equals
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Boolean
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
-          KtValueParameterSymbol:
+          KaValueParameterSymbol:
             annotationsList: []
             callableId: null
             contextReceivers: []
@@ -404,7 +404,7 @@ scopes:
             name: other
             origin: LIBRARY
             receiverParameter: null
-            returnType: KtUsualClassType:
+            returnType: KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: kotlin/Any?
@@ -412,7 +412,7 @@ scopes:
             typeParameters: []
         ]
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: kotlin/Any.hashCode
         contextReceivers: []
@@ -434,7 +434,7 @@ scopes:
         name: hashCode
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -442,7 +442,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: kotlin/Any.toString
         contextReceivers: []
@@ -464,7 +464,7 @@ scopes:
         name: toString
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/String
@@ -473,7 +473,7 @@ scopes:
         valueParameters: []
         visibility: Public
     constructors: 1
-      KtConstructorSymbol:
+      KaConstructorSymbol:
         annotationsList: []
         callableId: null
         containingClassId: test/Child
@@ -485,29 +485,29 @@ scopes:
         isPrimary: true
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: test/Child
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
-          KtValueParameterSymbol:
+          KaValueParameterSymbol:
             annotationsList: []
             callableId: null
             contextReceivers: []
-            generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
+            generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
               annotationsList: []
-              backingFieldSymbol: KtBackingFieldSymbol:
+              backingFieldSymbol: KaBackingFieldSymbol:
                 annotationsList: []
                 callableId: null
                 contextReceivers: []
                 isExtension: false
                 name: field
                 origin: PROPERTY_BACKING_FIELD
-                owningProperty: KtKotlinPropertySymbol(test/Child.constructorProp)
+                owningProperty: KaKotlinPropertySymbol(test/Child.constructorProp)
                 receiverParameter: null
-                returnType: KtUsualClassType:
+                returnType: KaUsualClassType:
                   annotationsList: []
                   ownTypeArguments: []
                   type: kotlin/Int
@@ -515,7 +515,7 @@ scopes:
                 typeParameters: []
               callableId: test/Child.constructorProp
               contextReceivers: []
-              getter: KtPropertyGetterSymbol:
+              getter: KaPropertyGetterSymbol:
                 annotationsList: []
                 callableId: null
                 contextReceivers: []
@@ -528,7 +528,7 @@ scopes:
                 modality: FINAL
                 origin: SOURCE
                 receiverParameter: null
-                returnType: KtUsualClassType:
+                returnType: KaUsualClassType:
                   annotationsList: []
                   ownTypeArguments: []
                   type: kotlin/Int
@@ -554,7 +554,7 @@ scopes:
               name: constructorProp
               origin: SOURCE
               receiverParameter: null
-              returnType: KtUsualClassType:
+              returnType: KaUsualClassType:
                 annotationsList: []
                 ownTypeArguments: []
                 type: kotlin/Int
@@ -571,13 +571,13 @@ scopes:
             name: constructorProp
             origin: SOURCE
             receiverParameter: null
-            returnType: KtUsualClassType:
+            returnType: KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: kotlin/Int
             symbolKind: LOCAL
             typeParameters: []
-          KtValueParameterSymbol:
+          KaValueParameterSymbol:
             annotationsList: []
             callableId: null
             contextReceivers: []
@@ -591,7 +591,7 @@ scopes:
             name: constructorParam
             origin: SOURCE
             receiverParameter: null
-            returnType: KtUsualClassType:
+            returnType: KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: kotlin/Int
@@ -609,7 +609,7 @@ scopes:
   PackageMemberScope, index = 3
     packages: 0
     classifiers: 2
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/Base
         classKind: CLASS
@@ -626,7 +626,7 @@ scopes:
         name: Base
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Any
@@ -634,7 +634,7 @@ scopes:
         symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/Child
         classKind: CLASS
@@ -651,7 +651,7 @@ scopes:
         name: Child
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: test/Base

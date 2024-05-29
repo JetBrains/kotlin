@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /foo
   contextReceivers: []
@@ -20,7 +20,7 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -28,7 +28,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(implicitReturn.kt)
+  getContainingFileSymbol: KaFileSymbol(implicitReturn.kt)
   getContainingJvmClassName: ImplicitReturnKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

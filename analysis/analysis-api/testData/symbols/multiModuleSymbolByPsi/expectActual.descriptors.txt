@@ -1,6 +1,6 @@
 // FILE: Common.kt
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: sample/A
   classKind: OBJECT
@@ -17,7 +17,7 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -26,7 +26,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: sample/B
   classKind: CLASS
@@ -43,7 +43,7 @@ KtNamedClassOrObjectSymbol:
   name: B
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -52,7 +52,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: sample/B
@@ -64,14 +64,14 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: sample/B
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -85,7 +85,7 @@ KtConstructorSymbol:
       name: s
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/String
@@ -94,7 +94,7 @@ KtConstructorSymbol:
   ]
   visibility: Public
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: sample/B
@@ -106,14 +106,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: sample/B
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -127,7 +127,7 @@ KtConstructorSymbol:
       name: n
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -136,7 +136,7 @@ KtConstructorSymbol:
   ]
   visibility: Public
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: sample/B.Nested
   classKind: CLASS
@@ -153,7 +153,7 @@ KtNamedClassOrObjectSymbol:
   name: Nested
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -162,7 +162,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: sample/B.bar
   contextReceivers: []
@@ -184,7 +184,7 @@ KtFunctionSymbol:
   name: bar
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -193,18 +193,18 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(sample/B.n)
+    owningProperty: KaKotlinPropertySymbol(sample/B.n)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -212,7 +212,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
   callableId: sample/B.n
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -225,7 +225,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -251,7 +251,7 @@ KtKotlinPropertySymbol:
   name: n
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -260,7 +260,7 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: sample/C
   classKind: CLASS
@@ -277,7 +277,7 @@ KtNamedClassOrObjectSymbol:
   name: C
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -286,7 +286,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: sample/C.Nested
   classKind: CLASS
@@ -303,7 +303,7 @@ KtNamedClassOrObjectSymbol:
   name: Nested
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -312,7 +312,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: sample/baz
   contextReceivers: []
@@ -334,7 +334,7 @@ KtFunctionSymbol:
   name: baz
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -343,18 +343,18 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(sample/m)
+    owningProperty: KaKotlinPropertySymbol(sample/m)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -362,7 +362,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
   callableId: sample/m
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -375,7 +375,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -401,11 +401,11 @@ KtKotlinPropertySymbol:
   name: m
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
-  setter: KtPropertySetterSymbol:
+  setter: KaPropertySetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -417,7 +417,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    parameter: KtValueParameterSymbol:
+    parameter: KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -431,21 +431,21 @@ KtKotlinPropertySymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
-      KtValueParameterSymbol:
+      KaValueParameterSymbol:
         annotationsList: []
         callableId: null
         contextReceivers: []
@@ -459,7 +459,7 @@ KtKotlinPropertySymbol:
         name: value
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -473,7 +473,7 @@ KtKotlinPropertySymbol:
 
 // FILE: JvmAndroid.kt
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: sample/A
   classKind: OBJECT
@@ -490,7 +490,7 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -499,7 +499,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: sample/B
   classKind: CLASS
@@ -516,7 +516,7 @@ KtNamedClassOrObjectSymbol:
   name: B
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -525,7 +525,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: sample/B
@@ -537,14 +537,14 @@ KtConstructorSymbol:
   isPrimary: true
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: sample/B
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -558,7 +558,7 @@ KtConstructorSymbol:
       name: s
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/String
@@ -567,7 +567,7 @@ KtConstructorSymbol:
   ]
   visibility: Public
 
-KtConstructorSymbol:
+KaConstructorSymbol:
   annotationsList: []
   callableId: null
   containingClassId: sample/B
@@ -579,14 +579,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: sample/B
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -600,7 +600,7 @@ KtConstructorSymbol:
       name: n
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
@@ -609,7 +609,7 @@ KtConstructorSymbol:
   ]
   visibility: Public
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: sample/B.Nested
   classKind: CLASS
@@ -626,7 +626,7 @@ KtNamedClassOrObjectSymbol:
   name: Nested
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -635,7 +635,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: sample/B.bar
   contextReceivers: []
@@ -657,7 +657,7 @@ KtFunctionSymbol:
   name: bar
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -666,18 +666,18 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(sample/B.n)
+    owningProperty: KaKotlinPropertySymbol(sample/B.n)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -685,7 +685,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
   callableId: sample/B.n
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -698,7 +698,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -724,7 +724,7 @@ KtKotlinPropertySymbol:
   name: n
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -733,10 +733,10 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
 
-KtTypeAliasSymbol:
+KaTypeAliasSymbol:
   annotationsList: []
   classId: sample/C
-  expandedType: KtUsualClassType:
+  expandedType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: sample/D
@@ -748,7 +748,7 @@ KtTypeAliasSymbol:
   typeParameters: []
   visibility: Public
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: sample/D
   classKind: CLASS
@@ -765,7 +765,7 @@ KtNamedClassOrObjectSymbol:
   name: D
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -774,7 +774,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: sample/D.Nested
   classKind: CLASS
@@ -791,7 +791,7 @@ KtNamedClassOrObjectSymbol:
   name: Nested
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -800,7 +800,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: sample/baz
   contextReceivers: []
@@ -822,7 +822,7 @@ KtFunctionSymbol:
   name: baz
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -831,18 +831,18 @@ KtFunctionSymbol:
   valueParameters: []
   visibility: Public
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(sample/m)
+    owningProperty: KaKotlinPropertySymbol(sample/m)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -850,7 +850,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
   callableId: sample/m
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -863,7 +863,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -889,11 +889,11 @@ KtKotlinPropertySymbol:
   name: m
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
-  setter: KtPropertySetterSymbol:
+  setter: KaPropertySetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -905,7 +905,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    parameter: KtValueParameterSymbol:
+    parameter: KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -919,21 +919,21 @@ KtKotlinPropertySymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
-      KtValueParameterSymbol:
+      KaValueParameterSymbol:
         annotationsList: []
         callableId: null
         contextReceivers: []
@@ -947,7 +947,7 @@ KtKotlinPropertySymbol:
         name: value
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int

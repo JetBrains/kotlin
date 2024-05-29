@@ -1,4 +1,4 @@
-KtLocalVariableSymbol:
+KaLocalVariableSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -7,13 +7,13 @@ KtLocalVariableSymbol:
   name: a
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(entryInDestructuringDeclaration.kt)
+  getContainingFileSymbol: KaFileSymbol(entryInDestructuringDeclaration.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

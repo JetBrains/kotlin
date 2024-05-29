@@ -1,11 +1,11 @@
 expression: function::apply
-expected type: KtFunctionalType:
+expected type: KaFunctionalType:
   annotationsList: []
   ownTypeArguments: [
-    KtTypeParameterType:
+    KaTypeParameterType:
       annotationsList: []
       type: T
-    KtFlexibleType:
+    KaFlexibleType:
       annotationsList: []
       type: ft<U & Any, U>
   ]

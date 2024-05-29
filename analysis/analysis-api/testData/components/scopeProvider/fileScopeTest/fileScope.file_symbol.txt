@@ -1,4 +1,4 @@
-KtFileSymbol:
+KaFileSymbol:
   annotationsList: []
   origin: SOURCE
   getContainingFileSymbol: null

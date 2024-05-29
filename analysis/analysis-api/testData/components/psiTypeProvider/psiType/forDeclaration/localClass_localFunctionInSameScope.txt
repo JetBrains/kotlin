@@ -1,2 +1,2 @@
-KtType: Local
+KaType: Local
 PsiType: @org.jetbrains.annotations.NotNull() Local

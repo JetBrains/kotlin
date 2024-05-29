@@ -1,4 +1,4 @@
-KtAnonymousObjectSymbol:
+KaAnonymousObjectSymbol:
   annotationsList: []
   classId: null
   classKind: ANONYMOUS_OBJECT
@@ -7,10 +7,10 @@ KtAnonymousObjectSymbol:
   name: null
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: [
-        KtUsualClassType:
+        KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -19,7 +19,7 @@ KtAnonymousObjectSymbol:
   ]
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(anonymousObjectInInvalidPosition.kt)
+  getContainingFileSymbol: KaFileSymbol(anonymousObjectInInvalidPosition.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null

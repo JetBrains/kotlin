@@ -1,18 +1,18 @@
-KtSuccessCallInfo:
-  call = KtSimpleFunctionCall:
+KaSuccessCallInfo:
+  call = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = kotlin.Unit
         symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = action
             receiverType = null
             returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
@@ -24,7 +24,7 @@ KtSuccessCallInfo:
       T -> (kotlin.Int)
     }
     argumentMapping = {
-      { } -> (KtVariableLikeSignature:
+      { } -> (KaVariableLikeSignature:
         name = action
         receiverType = null
         returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>

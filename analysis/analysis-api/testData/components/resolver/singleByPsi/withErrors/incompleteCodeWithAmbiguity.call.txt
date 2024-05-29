@@ -1,16 +1,16 @@
-KtErrorCallInfo:
+KaErrorCallInfo:
   candidateCalls = [
-    KtSimpleFunctionCall:
+    KaSimpleFunctionCall:
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KtFunctionLikeSignature:
+        signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = Foo<T>
           symbol = <constructor>(len: kotlin.Int): Foo<T>
           valueParameters = [
-            KtVariableLikeSignature:
+            KaVariableLikeSignature:
               name = len
               receiverType = null
               returnType = kotlin.Int
@@ -22,17 +22,17 @@ KtErrorCallInfo:
         T -> (kotlin.String)
       }
       argumentMapping = {},
-    KtSimpleFunctionCall:
+    KaSimpleFunctionCall:
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KtFunctionLikeSignature:
+        signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = Foo<T>
           symbol = <constructor>(s: kotlin.String): Foo<T>
           valueParameters = [
-            KtVariableLikeSignature:
+            KaVariableLikeSignature:
               name = s
               receiverType = null
               returnType = kotlin.String

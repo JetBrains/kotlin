@@ -1,4 +1,4 @@
-KtJavaFieldSymbol:
+KaJavaFieldSymbol:
   annotationsList: []
   callableId: /JavaClass.count
   contextReceivers: []
@@ -9,7 +9,7 @@ KtJavaFieldSymbol:
   name: count
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/Int!
   symbolKind: CLASS_MEMBER

@@ -1,11 +1,11 @@
-KtErrorCallInfo:
+KaErrorCallInfo:
   candidateCalls = [
-    KtSimpleFunctionCall:
+    KaSimpleFunctionCall:
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KtFunctionLikeSignature:
+        signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = testing/test(): kotlin.Unit
@@ -13,12 +13,12 @@ KtErrorCallInfo:
           callableId = testing/test
       typeArgumentsMapping = {}
       argumentMapping = {},
-    KtSimpleFunctionCall:
+    KaSimpleFunctionCall:
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KtFunctionLikeSignature:
+        signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = kotlin.Unit
           symbol = testing/test(): kotlin.Unit

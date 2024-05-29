@@ -1,4 +1,4 @@
-KtType: kotlin.collections.List<Wrapper>
+KaType: kotlin.collections.List<Wrapper>
 asPsiType(allowErrorTypes=false, mode=DEFAULT, isAnnotationMethod=false):
   PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends @org.jetbrains.annotations.NotNull() java.lang.Comparable<? super Wrapper<T>>>
 

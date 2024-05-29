@@ -1,18 +1,18 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
         returnType = kotlin.Unit
         symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = element
             receiverType = null
             returnType = kotlin.Int
@@ -24,7 +24,7 @@ KtApplicableCallCandidateInfo:
       T -> (kotlin.Int)
     }
     argumentMapping = {
-      1 -> (KtVariableLikeSignature:
+      1 -> (KaVariableLikeSignature:
         name = element
         receiverType = null
         returnType = kotlin.Int
@@ -33,22 +33,22 @@ KtApplicableCallCandidateInfo:
     }
   isInBestCandidates = true
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Array<T>' was expected.>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
         returnType = kotlin.Unit
         symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.Array<T>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = elements
             receiverType = null
             returnType = kotlin.Array<kotlin.Int>
@@ -60,7 +60,7 @@ KtInapplicableCallCandidateInfo:
       T -> (kotlin.Int)
     }
     argumentMapping = {
-      1 -> (KtVariableLikeSignature:
+      1 -> (KaVariableLikeSignature:
         name = elements
         receiverType = null
         returnType = kotlin.Array<kotlin.Int>
@@ -69,22 +69,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.collections.Iterable<T>' was expected.>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
         returnType = kotlin.Unit
         symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.collections.Iterable<T>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = elements
             receiverType = null
             returnType = kotlin.collections.Iterable<kotlin.Int>
@@ -96,7 +96,7 @@ KtInapplicableCallCandidateInfo:
       T -> (kotlin.Int)
     }
     argumentMapping = {
-      1 -> (KtVariableLikeSignature:
+      1 -> (KaVariableLikeSignature:
         name = elements
         receiverType = null
         returnType = kotlin.collections.Iterable<kotlin.Int>
@@ -105,22 +105,22 @@ KtInapplicableCallCandidateInfo:
     }
   isInBestCandidates = false
 
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.sequences.Sequence<T>' was expected.>
-  candidate = KtSimpleFunctionCall:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
         returnType = kotlin.Unit
         symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, elements: kotlin.sequences.Sequence<T>): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = elements
             receiverType = null
             returnType = kotlin.sequences.Sequence<kotlin.Int>
@@ -132,7 +132,7 @@ KtInapplicableCallCandidateInfo:
       T -> (kotlin.Int)
     }
     argumentMapping = {
-      1 -> (KtVariableLikeSignature:
+      1 -> (KaVariableLikeSignature:
         name = elements
         receiverType = null
         returnType = kotlin.sequences.Sequence<kotlin.Int>

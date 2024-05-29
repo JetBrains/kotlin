@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /foo
   contextReceivers: []
@@ -20,7 +20,7 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -28,12 +28,12 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+  getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
   getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /foo
   contextReceivers: []
@@ -54,18 +54,18 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
+  receiverParameter: KaReceiverParameterSymbol:
     annotationsList: []
     origin: SOURCE
-    owningCallableSymbol: KtFunctionSymbol(/foo)
-    type: KtUsualClassType:
+    owningCallableSymbol: KaFunctionSymbol(/foo)
+    type: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/String
-    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+    getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -73,35 +73,35 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+  getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
   getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(/x)
+    owningProperty: KaKotlinPropertySymbol(/x)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+    getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
     getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /x
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -114,7 +114,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -122,7 +122,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+    getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
     getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -144,7 +144,7 @@ KtKotlinPropertySymbol:
   name: x
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -152,7 +152,7 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+  getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
   getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -161,30 +161,30 @@ KtKotlinPropertySymbol:
   javaSetterName: null
   setterDeprecationStatus: null
 
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
+  backingFieldSymbol: KaBackingFieldSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
     isExtension: false
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(/y)
+    owningProperty: KaKotlinPropertySymbol(/y)
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
-    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+    getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
     getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   callableId: /y
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -196,18 +196,18 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverParameter: KtReceiverParameterSymbol:
+    receiverParameter: KaReceiverParameterSymbol:
       annotationsList: []
       origin: SOURCE
-      owningCallableSymbol: KtKotlinPropertySymbol(/y)
-      type: KtUsualClassType:
+      owningCallableSymbol: KaKotlinPropertySymbol(/y)
+      type: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: kotlin/Int
-      getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+      getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -215,7 +215,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+    getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
     getContainingJvmClassName: NotMultiFilePartKt
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
@@ -236,18 +236,18 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
+  receiverParameter: KaReceiverParameterSymbol:
     annotationsList: []
     origin: SOURCE
-    owningCallableSymbol: KtKotlinPropertySymbol(/y)
-    type: KtUsualClassType:
+    owningCallableSymbol: KaKotlinPropertySymbol(/y)
+    type: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
-    getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+    getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -255,7 +255,7 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(multifilePart.kt)
+  getContainingFileSymbol: KaFileSymbol(multifilePart.kt)
   getContainingJvmClassName: NotMultiFilePartKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

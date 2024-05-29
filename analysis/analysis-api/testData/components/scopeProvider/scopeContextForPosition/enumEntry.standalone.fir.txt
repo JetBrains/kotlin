@@ -1,16 +1,16 @@
 element: e
 implicit receivers:
-  type: KtUsualClassType:
+  type: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: <anonymous>
-  owner symbol: KtFirEnumEntryInitializerSymbol
+  owner symbol: KaFirEnumEntryInitializerSymbol
 
-  type: KtUsualClassType:
+  type: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Enum.Companion
-  owner symbol: KtFirNamedClassOrObjectSymbol
+  owner symbol: KaFirNamedClassOrObjectSymbol
 
 scopes:
   LocalScope, index = 0
@@ -28,7 +28,7 @@ scopes:
   TypeScope, index = 2
     packages: 0
     classifiers: 1
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: kotlin/Enum.Companion
         classKind: COMPANION_OBJECT
@@ -45,7 +45,7 @@ scopes:
         name: Companion
         origin: LIBRARY
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Any
@@ -54,18 +54,18 @@ scopes:
         typeParameters: []
         visibility: Public
     callables: 11
-      KtKotlinPropertySymbol:
+      KaKotlinPropertySymbol:
         annotationsList: []
-        backingFieldSymbol: KtBackingFieldSymbol:
+        backingFieldSymbol: KaBackingFieldSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
           isExtension: false
           name: field
           origin: PROPERTY_BACKING_FIELD
-          owningProperty: KtKotlinPropertySymbol(<local>/x)
+          owningProperty: KaKotlinPropertySymbol(<local>/x)
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/String
@@ -73,7 +73,7 @@ scopes:
           typeParameters: []
         callableId: null
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
+        getter: KaPropertyGetterSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
@@ -86,7 +86,7 @@ scopes:
           modality: FINAL
           origin: SOURCE
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/String
@@ -112,7 +112,7 @@ scopes:
         name: x
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/String
@@ -120,7 +120,7 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: null
         contextReceivers: []
@@ -142,7 +142,7 @@ scopes:
         name: foo
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Unit
@@ -150,7 +150,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: kotlin/Enum.clone
         contextReceivers: []
@@ -172,7 +172,7 @@ scopes:
         name: clone
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Any
@@ -180,7 +180,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Protected
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: /E.compareTo
         contextReceivers: []
@@ -202,14 +202,14 @@ scopes:
         name: compareTo
         origin: SUBSTITUTION_OVERRIDE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
-          KtValueParameterSymbol:
+          KaValueParameterSymbol:
             annotationsList: []
             callableId: null
             contextReceivers: []
@@ -223,7 +223,7 @@ scopes:
             name: other
             origin: SUBSTITUTION_OVERRIDE
             receiverParameter: null
-            returnType: KtUsualClassType:
+            returnType: KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: E
@@ -231,7 +231,7 @@ scopes:
             typeParameters: []
         ]
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: kotlin/Enum.equals
         contextReceivers: []
@@ -253,14 +253,14 @@ scopes:
         name: equals
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Boolean
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
-          KtValueParameterSymbol:
+          KaValueParameterSymbol:
             annotationsList: []
             callableId: null
             contextReceivers: []
@@ -274,7 +274,7 @@ scopes:
             name: other
             origin: LIBRARY
             receiverParameter: null
-            returnType: KtUsualClassType:
+            returnType: KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: kotlin/Any?
@@ -282,7 +282,7 @@ scopes:
             typeParameters: []
         ]
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: kotlin/Enum.hashCode
         contextReceivers: []
@@ -304,7 +304,7 @@ scopes:
         name: hashCode
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -312,7 +312,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: kotlin/Enum.toString
         contextReceivers: []
@@ -334,7 +334,7 @@ scopes:
         name: toString
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/String
@@ -342,21 +342,21 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KtKotlinPropertySymbol:
+      KaKotlinPropertySymbol:
         annotationsList: [
           kotlin/internal/IntrinsicConstEvaluation()
             psi: null
         ]
-        backingFieldSymbol: KtBackingFieldSymbol:
+        backingFieldSymbol: KaBackingFieldSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
           isExtension: false
           name: field
           origin: PROPERTY_BACKING_FIELD
-          owningProperty: KtKotlinPropertySymbol(kotlin/Enum.name)
+          owningProperty: KaKotlinPropertySymbol(kotlin/Enum.name)
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/String
@@ -364,7 +364,7 @@ scopes:
           typeParameters: []
         callableId: kotlin/Enum.name
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
+        getter: KaPropertyGetterSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
@@ -377,7 +377,7 @@ scopes:
           modality: FINAL
           origin: LIBRARY
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/String
@@ -403,7 +403,7 @@ scopes:
         name: name
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/String
@@ -411,18 +411,18 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
-      KtKotlinPropertySymbol:
+      KaKotlinPropertySymbol:
         annotationsList: []
-        backingFieldSymbol: KtBackingFieldSymbol:
+        backingFieldSymbol: KaBackingFieldSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
           isExtension: false
           name: field
           origin: PROPERTY_BACKING_FIELD
-          owningProperty: KtKotlinPropertySymbol(kotlin/Enum.ordinal)
+          owningProperty: KaKotlinPropertySymbol(kotlin/Enum.ordinal)
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -430,7 +430,7 @@ scopes:
           typeParameters: []
         callableId: kotlin/Enum.ordinal
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
+        getter: KaPropertyGetterSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
@@ -443,7 +443,7 @@ scopes:
           modality: FINAL
           origin: LIBRARY
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Int
@@ -469,7 +469,7 @@ scopes:
         name: ordinal
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -477,7 +477,7 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: /E.getDeclaringClass
         contextReceivers: []
@@ -499,14 +499,14 @@ scopes:
         name: getDeclaringClass
         origin: SUBSTITUTION_OVERRIDE
         receiverParameter: null
-        returnType: KtFlexibleType:
+        returnType: KaFlexibleType:
           annotationsList: []
           type: ft<java/lang/Class<E!>, java/lang/Class<E!>?>
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: kotlin/Enum.finalize
         contextReceivers: []
@@ -528,7 +528,7 @@ scopes:
         name: finalize
         origin: JAVA
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Unit
@@ -537,7 +537,7 @@ scopes:
         valueParameters: []
         visibility: ProtectedAndPackage
     constructors: 1
-      KtConstructorSymbol:
+      KaConstructorSymbol:
         annotationsList: []
         callableId: null
         containingClassId: null
@@ -549,7 +549,7 @@ scopes:
         isPrimary: true
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: <anonymous>
@@ -562,22 +562,22 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 4
-      KtEnumEntrySymbol:
+      KaEnumEntrySymbol:
         annotationsList: []
         callableId: /E.A
         contextReceivers: []
-        enumEntryInitializer: KtAnonymousObjectSymbol(<local>/<no name provided>)
+        enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
         isExtension: false
         name: A
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: E
         symbolKind: CLASS_MEMBER
         typeParameters: []
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: /E.values
         contextReceivers: []
@@ -599,10 +599,10 @@ scopes:
         name: values
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: [
-            KtUsualClassType:
+            KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: E
@@ -612,7 +612,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: /E.valueOf
         contextReceivers: []
@@ -634,14 +634,14 @@ scopes:
         name: valueOf
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: E
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
-          KtValueParameterSymbol:
+          KaValueParameterSymbol:
             annotationsList: []
             callableId: null
             contextReceivers: []
@@ -655,7 +655,7 @@ scopes:
             name: value
             origin: SOURCE_MEMBER_GENERATED
             receiverParameter: null
-            returnType: KtUsualClassType:
+            returnType: KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: kotlin/String
@@ -663,12 +663,12 @@ scopes:
             typeParameters: []
         ]
         visibility: Public
-      KtKotlinPropertySymbol:
+      KaKotlinPropertySymbol:
         annotationsList: []
         backingFieldSymbol: null
         callableId: /E.entries
         contextReceivers: []
-        getter: KtPropertyGetterSymbol:
+        getter: KaPropertyGetterSymbol:
           annotationsList: []
           callableId: null
           contextReceivers: []
@@ -681,10 +681,10 @@ scopes:
           modality: FINAL
           origin: SOURCE_MEMBER_GENERATED
           receiverParameter: null
-          returnType: KtUsualClassType:
+          returnType: KaUsualClassType:
             annotationsList: []
             ownTypeArguments: [
-              KtUsualClassType:
+              KaUsualClassType:
                 annotationsList: []
                 ownTypeArguments: []
                 type: E
@@ -712,10 +712,10 @@ scopes:
         name: entries
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: [
-            KtUsualClassType:
+            KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: E
@@ -730,7 +730,7 @@ scopes:
   StaticMemberScope, index = 4
     packages: 0
     classifiers: 1
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: kotlin/Enum.Companion
         classKind: COMPANION_OBJECT
@@ -747,7 +747,7 @@ scopes:
         name: Companion
         origin: LIBRARY
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Any
@@ -762,7 +762,7 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 3
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: kotlin/Any.equals
         contextReceivers: []
@@ -784,14 +784,14 @@ scopes:
         name: equals
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Boolean
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
-          KtValueParameterSymbol:
+          KaValueParameterSymbol:
             annotationsList: []
             callableId: null
             contextReceivers: []
@@ -805,7 +805,7 @@ scopes:
             name: other
             origin: LIBRARY
             receiverParameter: null
-            returnType: KtUsualClassType:
+            returnType: KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: kotlin/Any?
@@ -813,7 +813,7 @@ scopes:
             typeParameters: []
         ]
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: kotlin/Any.hashCode
         contextReceivers: []
@@ -835,7 +835,7 @@ scopes:
         name: hashCode
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Int
@@ -843,7 +843,7 @@ scopes:
         typeParameters: []
         valueParameters: []
         visibility: Public
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: kotlin/Any.toString
         contextReceivers: []
@@ -865,7 +865,7 @@ scopes:
         name: toString
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/String
@@ -874,7 +874,7 @@ scopes:
         valueParameters: []
         visibility: Public
     constructors: 1
-      KtConstructorSymbol:
+      KaConstructorSymbol:
         annotationsList: []
         callableId: null
         containingClassId: kotlin/Enum.Companion
@@ -886,7 +886,7 @@ scopes:
         isPrimary: true
         origin: LIBRARY
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Enum.Companion
@@ -903,26 +903,26 @@ scopes:
 
   PackageMemberScope, index = 7
     packages: 6
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: META-INF
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: java
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: javax
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: kotlin
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: org
         origin: SOURCE
-      KtPackageSymbol:
+      KaPackageSymbol:
         fqName: sun
         origin: SOURCE
     classifiers: 1
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: E
         classKind: ENUM_CLASS
@@ -939,10 +939,10 @@ scopes:
         name: E
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: [
-              KtUsualClassType:
+              KaUsualClassType:
                 annotationsList: []
                 ownTypeArguments: []
                 type: E

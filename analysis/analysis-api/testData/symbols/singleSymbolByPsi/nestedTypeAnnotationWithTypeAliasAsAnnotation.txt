@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /foo2
   contextReceivers: []
@@ -19,23 +19,23 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo2
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
+  receiverParameter: KaReceiverParameterSymbol:
     annotationsList: []
     origin: SOURCE
-    owningCallableSymbol: KtFunctionSymbol(/foo2)
-    type: KtTypeParameterType:
+    owningCallableSymbol: KaFunctionSymbol(/foo2)
+    type: KaTypeParameterType:
       annotationsList: []
       type: T
-    getContainingFileSymbol: KtFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
+    getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: [
-      KtUsualClassType:
+      KaUsualClassType:
         annotationsList: []
         ownTypeArguments: [
-          KtTypeParameterType:
+          KaTypeParameterType:
             annotationsList: [
               BaseAnnotation()
                 psi: KtAnnotationEntry
@@ -47,11 +47,11 @@ KtFunctionSymbol:
     type: kotlin/collections/List<kotlin/collections/List<@R|SecondTypeAlias|()  T>>?
   symbolKind: TOP_LEVEL
   typeParameters: [
-    KtTypeParameterSymbol(T)
+    KaTypeParameterSymbol(T)
   ]
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
+  getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
   getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasAsAnnotationKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

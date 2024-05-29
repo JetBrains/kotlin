@@ -1,4 +1,4 @@
-KtLocalVariableSymbol:
+KaLocalVariableSymbol:
   annotationsList: []
   callableId: null
   contextReceivers: []
@@ -7,18 +7,18 @@ KtLocalVariableSymbol:
   name: loopVariable
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
-  getContainingFileSymbol: KtFileSymbol(forLoopVariable.kt)
+  getContainingFileSymbol: KaFileSymbol(forLoopVariable.kt)
   getContainingJvmClassName: null
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /usage
   contextReceivers: []
@@ -40,7 +40,7 @@ KtFunctionSymbol:
   name: usage
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -48,7 +48,7 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(forLoopVariable.kt)
+  getContainingFileSymbol: KaFileSymbol(forLoopVariable.kt)
   getContainingJvmClassName: ForLoopVariableKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

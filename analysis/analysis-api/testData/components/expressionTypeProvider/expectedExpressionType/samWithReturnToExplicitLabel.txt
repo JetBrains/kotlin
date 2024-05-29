@@ -1,5 +1,5 @@
 expression: { return@l }
-expected type: KtUsualClassType:
+expected type: KaUsualClassType:
   annotationsList: []
   ownTypeArguments: []
   type: java/lang/Runnable

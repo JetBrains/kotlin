@@ -1,9 +1,9 @@
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
   callableId: /<unused var>
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
+  getter: KaPropertyGetterSymbol:
     annotationsList: []
     callableId: null
     contextReceivers: []
@@ -16,7 +16,7 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KtUsualClassType:
+    returnType: KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
@@ -24,7 +24,7 @@ KtKotlinPropertySymbol:
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getContainingFileSymbol: KtFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
+    getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
     getContainingJvmClassName: null
     getContainingModule: KtScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
     deprecationStatus: null
@@ -46,7 +46,7 @@ KtKotlinPropertySymbol:
   name: <unused var>
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -54,7 +54,7 @@ KtKotlinPropertySymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
+  getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
   getContainingJvmClassName: null
   getContainingModule: KtScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
   deprecationStatus: null

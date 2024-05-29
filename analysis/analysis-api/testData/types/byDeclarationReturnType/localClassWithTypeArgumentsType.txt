@@ -1,40 +1,40 @@
-KtUsualClassType:
+KaUsualClassType:
   abbreviatedType: null
   annotationsList: []
   classId: <local>/B
-  classSymbol: KtNamedClassOrObjectSymbol(<local>/B)
+  classSymbol: KaNamedClassOrObjectSymbol(<local>/B)
   nullability: NON_NULLABLE
   ownTypeArguments: [
-    KtUsualClassType:
+    KaUsualClassType:
       abbreviatedType: null
       annotationsList: []
       classId: kotlin/Int
-      classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+      classSymbol: KaNamedClassOrObjectSymbol(kotlin/Int)
       nullability: NON_NULLABLE
       ownTypeArguments: []
       qualifiers: [
         qualifier:
           name: Int
-          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
           typeArguments: []
       ]
   ]
   qualifiers: [
     qualifier:
       name: B
-      symbol: KtNamedClassOrObjectSymbol(<local>/B)
+      symbol: KaNamedClassOrObjectSymbol(<local>/B)
       typeArguments: [
-        KtUsualClassType:
+        KaUsualClassType:
           abbreviatedType: null
           annotationsList: []
           classId: kotlin/Int
-          classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          classSymbol: KaNamedClassOrObjectSymbol(kotlin/Int)
           nullability: NON_NULLABLE
           ownTypeArguments: []
           qualifiers: [
             qualifier:
               name: Int
-              symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+              symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
               typeArguments: []
           ]
       ]

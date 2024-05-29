@@ -1,13 +1,13 @@
-KtInapplicableCallCandidateInfo:
+KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: UNSAFE_CALL_ERROR with invoke>
-  candidate = KtSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+  candidate = KaSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = KtExplicitReceiverValue:
+      extensionReceiver = KaExplicitReceiverValue:
         expression = foo
         isSafeNavigation = true
         type = test.Foo?
-      signature = KtVariableLikeSignature:
+      signature = KaVariableLikeSignature:
         name = action
         receiverType = test.Foo
         returnType = kotlin.Function0<kotlin.Unit>

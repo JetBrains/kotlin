@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -80,7 +80,7 @@ private fun Context.renderKaParameterSymbol(value: KaParameterSymbol, endWithNew
 internal data class Context(val session: KaSession, val printer: PrettyPrinter, val symbolRenderer: DebugSymbolRenderer)
 
 private fun PrettyPrinter.appendHeader(clazz: KClass<*>, body: PrettyPrinter.() -> Unit) {
-    append(DebugSymbolRenderer.computeApiEntityName(clazz))
+    append(clazz.simpleName)
     appendLine(":")
     withIndent { body() }
 }

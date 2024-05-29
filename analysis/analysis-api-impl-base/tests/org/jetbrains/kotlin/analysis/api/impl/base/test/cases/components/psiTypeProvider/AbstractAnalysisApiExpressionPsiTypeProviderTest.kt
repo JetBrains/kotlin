@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTyp
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AnalysisApiPsiTypeProviderTestUtils.findLightDeclarationContext
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AnalysisApiPsiTypeProviderTestUtils.getContainingKtLightClass
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -40,7 +41,7 @@ abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalys
             val returnType = declarationAtCaret.getKaType()
             if (returnType != null) {
                 prettyPrint {
-                    appendLine("KtType: ${AnalysisApiPsiTypeProviderTestUtils.render(analysisSession, returnType)}")
+                    appendLine("${KaType::class.simpleName}: ${AnalysisApiPsiTypeProviderTestUtils.render(analysisSession, returnType)}")
                     for (allowErrorTypes in listOf(false, true)) {
                         for (typeMappingMode in KaTypeMappingMode.entries) {
                             for (isAnnotationMethod in listOf(false, true)) {

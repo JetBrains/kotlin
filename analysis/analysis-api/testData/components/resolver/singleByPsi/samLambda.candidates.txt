@@ -1,17 +1,17 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtImplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaImplicitReceiverValue:
         symbol = /Test
         type = Test
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
         symbol = /Test.test(<dispatch receiver>: Test, foo: Test.Foo): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = foo
             receiverType = null
             returnType = Test.Foo
@@ -21,7 +21,7 @@ KtApplicableCallCandidateInfo:
         callableId = /Test.test
     typeArgumentsMapping = {}
     argumentMapping = {
-      { uiMethod() } -> (KtVariableLikeSignature:
+      { uiMethod() } -> (KaVariableLikeSignature:
         name = foo
         receiverType = null
         returnType = Test.Foo

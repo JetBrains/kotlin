@@ -1,4 +1,4 @@
-KtTypeScope:
+KaTypeScope:
   Classifier names:
 
   Callable names:

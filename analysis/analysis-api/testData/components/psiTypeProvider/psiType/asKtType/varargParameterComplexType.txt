@@ -1,2 +1,2 @@
 PsiType: java.util.List<java.util.List<java.lang.String>>...
-KtType: kotlin.Array<kotlin.collections.(Mutable)List<kotlin.collections.(Mutable)List<kotlin.String!>!>!>!
+KaType: kotlin.Array<kotlin.collections.(Mutable)List<kotlin.collections.(Mutable)List<kotlin.String!>!>!>!

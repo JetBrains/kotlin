@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /JavaClass.bar
   contextReceivers: []
@@ -20,7 +20,7 @@ KtFunctionSymbol:
   name: bar
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
@@ -32,7 +32,7 @@ KtFunctionSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtJavaFieldSymbol:
+KaJavaFieldSymbol:
   annotationsList: []
   callableId: /SuperClass.superFoo
   contextReceivers: []
@@ -43,7 +43,7 @@ KtJavaFieldSymbol:
   name: superFoo
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -55,7 +55,7 @@ KtJavaFieldSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /SuperClass.superBar
   contextReceivers: []
@@ -77,7 +77,7 @@ KtFunctionSymbol:
   name: superBar
   origin: JAVA
   receiverParameter: null
-  returnType: KtFlexibleType:
+  returnType: KaFlexibleType:
     annotationsList: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
@@ -89,7 +89,7 @@ KtFunctionSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtJavaFieldSymbol:
+KaJavaFieldSymbol:
   annotationsList: []
   callableId: /JavaClass.foo
   contextReceivers: []
@@ -100,7 +100,7 @@ KtJavaFieldSymbol:
   name: foo
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -112,7 +112,7 @@ KtJavaFieldSymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: JavaClass.InnerClass
   classKind: CLASS
@@ -129,7 +129,7 @@ KtNamedClassOrObjectSymbol:
   name: InnerClass
   origin: JAVA
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -142,7 +142,7 @@ KtNamedClassOrObjectSymbol:
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: JavaClass.NestedClass
   classKind: CLASS
@@ -159,7 +159,7 @@ KtNamedClassOrObjectSymbol:
   name: NestedClass
   origin: JAVA
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any

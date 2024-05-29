@@ -1,7 +1,7 @@
 element: this
 implicit receivers:
   type: test.Receiver
-  owner symbol: KtFirAnonymousFunctionSymbol
+  owner symbol: KaFirAnonymousFunctionSymbol
 
 scopes:
   LocalScope, index = 0

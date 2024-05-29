@@ -1,12 +1,12 @@
 expression: av
-expected type: KtFunctionalType:
+expected type: KaFunctionalType:
   annotationsList: []
   ownTypeArguments: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Int
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/String

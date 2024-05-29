@@ -1,22 +1,22 @@
-KtErrorCallInfo:
+KaErrorCallInfo:
   candidateCalls = [
-    KtDelegatedConstructorCall:
+    KaDelegatedConstructorCall:
       kind = THIS_CALL
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KtFunctionLikeSignature:
+        signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = Sub
           symbol = <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
           valueParameters = [
-            KtVariableLikeSignature:
+            KaVariableLikeSignature:
               name = i
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int
               callableId = null,
-            KtVariableLikeSignature:
+            KaVariableLikeSignature:
               name = j
               receiverType = null
               returnType = kotlin.Int
@@ -26,30 +26,30 @@ KtErrorCallInfo:
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        i -> (KtVariableLikeSignature:
+        i -> (KaVariableLikeSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
           symbol = i: kotlin.Int
           callableId = null),
-        j -> (KtVariableLikeSignature:
+        j -> (KaVariableLikeSignature:
           name = j
           receiverType = null
           returnType = kotlin.Int
           symbol = j: kotlin.Int
           callableId = null)
       },
-    KtDelegatedConstructorCall:
+    KaDelegatedConstructorCall:
       kind = THIS_CALL
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = null
         extensionReceiver = null
-        signature = KtFunctionLikeSignature:
+        signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = Sub
           symbol = <constructor>(p: kotlin.Int): Sub
           valueParameters = [
-            KtVariableLikeSignature:
+            KaVariableLikeSignature:
               name = p
               receiverType = null
               returnType = kotlin.Int
@@ -59,7 +59,7 @@ KtErrorCallInfo:
           callableId = null
       typeArgumentsMapping = {}
       argumentMapping = {
-        i -> (KtVariableLikeSignature:
+        i -> (KaVariableLikeSignature:
           name = p
           receiverType = null
           returnType = kotlin.Int

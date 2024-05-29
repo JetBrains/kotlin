@@ -10,7 +10,7 @@ scopes:
   PackageMemberScope, index = 1
     packages: 0
     classifiers: 3
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/BaseInterface
         classKind: INTERFACE
@@ -27,7 +27,7 @@ scopes:
         name: BaseInterface
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Any
@@ -35,7 +35,7 @@ scopes:
         symbolKind: TOP_LEVEL
         typeParameters: []
         visibility: Public
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/Base
         classKind: CLASS
@@ -52,17 +52,17 @@ scopes:
         name: Base
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: test/BaseInterface
         ]
         symbolKind: TOP_LEVEL
         typeParameters: [
-          KtTypeParameterSymbol(T)
+          KaTypeParameterSymbol(T)
         ]
         visibility: Public
-      KtNamedClassOrObjectSymbol:
+      KaNamedClassOrObjectSymbol:
         annotationsList: []
         classId: test/Child
         classKind: CLASS
@@ -79,10 +79,10 @@ scopes:
         name: Child
         origin: SOURCE
         superTypes: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: [
-              KtUsualClassType:
+              KaUsualClassType:
                 annotationsList: []
                 ownTypeArguments: []
                 type: test/Base.NestedFromClass

@@ -1,18 +1,18 @@
-KtApplicableCallCandidateInfo:
-  candidate = KtSimpleFunctionCall:
+KaApplicableCallCandidateInfo:
+  candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = KtExplicitReceiverValue:
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      dispatchReceiver = KaExplicitReceiverValue:
         expression = jClass
         isSafeNavigation = false
         type = JavaTest.SomeJavaClass
       extensionReceiver = null
-      signature = KtFunctionLikeSignature:
+      signature = KaFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
         symbol = /JavaTest.SomeJavaClass.setListener(<dispatch receiver>: JavaTest.SomeJavaClass, listener: JavaTest.SAMInterface!): kotlin.Unit
         valueParameters = [
-          KtVariableLikeSignature:
+          KaVariableLikeSignature:
             name = listener
             receiverType = null
             returnType = JavaTest.SAMInterface!
@@ -22,7 +22,7 @@ KtApplicableCallCandidateInfo:
         callableId = /JavaTest.SomeJavaClass.setListener
     typeArgumentsMapping = {}
     argumentMapping = {
-      {} -> (KtVariableLikeSignature:
+      {} -> (KaVariableLikeSignature:
         name = listener
         receiverType = null
         returnType = JavaTest.SAMInterface!

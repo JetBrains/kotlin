@@ -11,7 +11,7 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 1
-      KtLocalVariableSymbol:
+      KaLocalVariableSymbol:
         annotationsList: []
         callableId: null
         contextReceivers: []
@@ -20,10 +20,10 @@ scopes:
         name: <iterator>
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: [
-            KtUsualClassType:
+            KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: kotlin/Int
@@ -43,7 +43,7 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 1
-      KtValueParameterSymbol:
+      KaValueParameterSymbol:
         annotationsList: []
         callableId: null
         contextReceivers: []
@@ -57,10 +57,10 @@ scopes:
         name: list
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: [
-            KtUsualClassType:
+            KaUsualClassType:
               annotationsList: []
               ownTypeArguments: []
               type: kotlin/Int
@@ -80,7 +80,7 @@ scopes:
     packages: 0
     classifiers: 0
     callables: 1
-      KtFunctionSymbol:
+      KaFunctionSymbol:
         annotationsList: []
         callableId: test/usage
         contextReceivers: []
@@ -102,14 +102,14 @@ scopes:
         name: usage
         origin: SOURCE
         receiverParameter: null
-        returnType: KtUsualClassType:
+        returnType: KaUsualClassType:
           annotationsList: []
           ownTypeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: [
-          KtValueParameterSymbol:
+          KaValueParameterSymbol:
             annotationsList: []
             callableId: null
             contextReceivers: []
@@ -123,10 +123,10 @@ scopes:
             name: list
             origin: SOURCE
             receiverParameter: null
-            returnType: KtUsualClassType:
+            returnType: KaUsualClassType:
               annotationsList: []
               ownTypeArguments: [
-                KtUsualClassType:
+                KaUsualClassType:
                   annotationsList: []
                   ownTypeArguments: []
                   type: kotlin/Int

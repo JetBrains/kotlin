@@ -1,4 +1,4 @@
-KtSamConstructorSymbol:
+KaSamConstructorSymbol:
   annotationsList: []
   callableId: java/lang/Runnable
   contextReceivers: []
@@ -7,14 +7,14 @@ KtSamConstructorSymbol:
   name: Runnable
   origin: SAM_CONSTRUCTOR
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: java/lang/Runnable
   symbolKind: SAM_CONSTRUCTOR
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -28,10 +28,10 @@ KtSamConstructorSymbol:
       name: function
       origin: SAM_CONSTRUCTOR
       receiverParameter: null
-      returnType: KtFunctionalType:
+      returnType: KaFunctionalType:
         annotationsList: []
         ownTypeArguments: [
-          KtUsualClassType:
+          KaUsualClassType:
             annotationsList: []
             ownTypeArguments: []
             type: kotlin/Unit

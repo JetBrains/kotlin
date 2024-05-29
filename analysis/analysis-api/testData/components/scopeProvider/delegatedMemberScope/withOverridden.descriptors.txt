@@ -1,4 +1,4 @@
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /I2.bar
   contextReceivers: []
@@ -20,7 +20,7 @@ KtFunctionSymbol:
   name: bar
   origin: DELEGATED
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
@@ -28,11 +28,11 @@ KtFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: B
-  getContainingFileSymbol: KtFileSymbol(withOverridden.kt)
+  getContainingFileSymbol: KaFileSymbol(withOverridden.kt)
   getContainingJvmClassName: I2
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

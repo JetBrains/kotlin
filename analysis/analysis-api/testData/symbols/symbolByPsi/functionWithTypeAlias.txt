@@ -1,4 +1,4 @@
-KtNamedClassOrObjectSymbol:
+KaNamedClassOrObjectSymbol:
   annotationsList: []
   classId: A
   classKind: CLASS
@@ -15,7 +15,7 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    KtUsualClassType:
+    KaUsualClassType:
       annotationsList: []
       ownTypeArguments: []
       type: kotlin/Any
@@ -23,15 +23,15 @@ KtNamedClassOrObjectSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
 
-KtTypeAliasSymbol:
+KaTypeAliasSymbol:
   annotationsList: []
   classId: TypeAlias
-  expandedType: KtUsualClassType:
+  expandedType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: A
@@ -42,11 +42,11 @@ KtTypeAliasSymbol:
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /function
   contextReceivers: []
@@ -68,14 +68,14 @@ KtFunctionSymbol:
   name: function
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -89,24 +89,24 @@ KtFunctionSymbol:
       name: t
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: TypeAlias
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+      getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingJvmClassName: FunctionWithTypeAliasKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
-KtFunctionSymbol:
+KaFunctionSymbol:
   annotationsList: []
   callableId: /function
   contextReceivers: []
@@ -128,14 +128,14 @@ KtFunctionSymbol:
   name: function
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol:
+    KaValueParameterSymbol:
       annotationsList: []
       callableId: null
       contextReceivers: []
@@ -149,19 +149,19 @@ KtFunctionSymbol:
       name: t
       origin: SOURCE
       receiverParameter: null
-      returnType: KtUsualClassType:
+      returnType: KaUsualClassType:
         annotationsList: []
         ownTypeArguments: []
         type: A
       symbolKind: LOCAL
       typeParameters: []
-      getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+      getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingFileSymbol: KtFileSymbol(functionWithTypeAlias.kt)
+  getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingJvmClassName: FunctionWithTypeAliasKt
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

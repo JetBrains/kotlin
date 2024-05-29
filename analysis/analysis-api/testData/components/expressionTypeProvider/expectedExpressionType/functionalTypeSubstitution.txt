@@ -1,10 +1,10 @@
 expression: {
             s: String -> 0
     }
-expected type: KtUsualClassType:
+expected type: KaUsualClassType:
   annotationsList: []
   ownTypeArguments: [
-    KtFlexibleType:
+    KaFlexibleType:
       annotationsList: []
       type: kotlin/String!
   ]

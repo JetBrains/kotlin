@@ -1,4 +1,4 @@
-KtKotlinPropertySymbol:
+KaKotlinPropertySymbol:
   annotationsList: []
   backingFieldSymbol: null
   callableId: /A.foo
@@ -22,7 +22,7 @@ KtKotlinPropertySymbol:
   name: foo
   origin: DELEGATED
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: kotlin/Int
@@ -30,11 +30,11 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
+  getDispatchReceiver(): KaUsualClassType:
     annotationsList: []
     ownTypeArguments: []
     type: A
-  getContainingFileSymbol: KtFileSymbol(propertyWithGetter.kt)
+  getContainingFileSymbol: KaFileSymbol(propertyWithGetter.kt)
   getContainingJvmClassName: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

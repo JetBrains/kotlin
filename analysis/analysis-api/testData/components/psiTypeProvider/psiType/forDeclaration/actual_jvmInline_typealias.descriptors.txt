@@ -1,2 +1,2 @@
-KtType: ERROR
+KaType: ERROR
 PsiType: null
