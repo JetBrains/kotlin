@@ -166,6 +166,7 @@ func objectsTravelBridgeAsAny() throws {
 func permanentObjectsTravelBridgeAsAny() throws {
     let obj: KotlinBase = getMainPermanentObject()
     try assertTrue(isMainPermanentObject(obj: obj))
+    try assertFalse(isMainPermanentObject(obj: getMainObject()))
 }
 
 class ReferenceTypesTests : TestProvider {
