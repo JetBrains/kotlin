@@ -250,7 +250,10 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             }
 
             val actual = restored.renderAsDeclarations()
-            testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+            val expectedFile = getTestDataFileSiblingPath().toFile()
+            if (!testServices.assertions.doesEqualToFile(expectedFile, actual)) {
+                error("Restored content is not the same. Actual:\n$actual")
+            }
         } catch (e: Throwable) {
             if (directiveToIgnore == null) throw e
             failed = true

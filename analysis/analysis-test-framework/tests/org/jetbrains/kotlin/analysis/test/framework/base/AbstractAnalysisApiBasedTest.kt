@@ -255,7 +255,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         }
     }
 
-    protected fun getTestDataFileSiblingPath(extension: String, testPrefix: String?): Path {
+    protected fun getTestDataFileSiblingPath(extension: String = "txt", testPrefix: String? = configurator.testPrefix): Path {
         val extensionWithDot = "." + extension.removePrefix(".")
         val baseName = testDataPath.nameWithoutExtension
 
