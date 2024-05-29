@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
+import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
@@ -584,8 +585,10 @@ class Fir2IrDeclarationStorage(
     private val originalForSyntheticProperty: ConcurrentHashMap<FirSyntheticPropertyKey, FirSyntheticProperty> = ConcurrentHashMap()
 
     private fun prepareProperty(property: FirProperty): FirProperty {
-        return when (property) {
-            is FirSyntheticProperty -> originalForSyntheticProperty.getOrPut(FirSyntheticPropertyKey(property)) { property }
+        return when {
+            property is FirSyntheticProperty && property.symbol is FirSimpleSyntheticPropertySymbol -> {
+                originalForSyntheticProperty.getOrPut(FirSyntheticPropertyKey(property)) { property }
+            }
             else -> property
         }
     }
