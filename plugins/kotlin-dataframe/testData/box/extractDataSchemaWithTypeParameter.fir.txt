@@ -21,10 +21,10 @@ FILE: extractDataSchemaWithTypeParameter.kt
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Record>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|<R|Record|>(vararg(R|/Record.Record|(String(1), Int(1)), R|/Record.Record|(String(2), Int(123)), R|/Record.Record|(String(3), Int(321))))
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ValueProperty_74>| = R|kotlin/collections/listOf|<R|kotlin/String|>(vararg(String(1), String(2), String(3))).R|org/jetbrains/kotlinx/dataframe/api/toDataFrame|<R|kotlin/String|>().R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/ValueProperty<kotlin/String>>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ValueProperty_74>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/api/ValueProperty<kotlin/String>>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ValueProperty_74>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class ValueProperty_74I : R|kotlin/Any| {
-                public abstract val value: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val value: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val b: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val b: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/ValueProperty_74I|

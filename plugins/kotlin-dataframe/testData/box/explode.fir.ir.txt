@@ -71,6 +71,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explode.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:timestamps visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-timestamps> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ExplodeSchema_28I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:timestamps visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ExplodeSchema_28I
@@ -141,6 +143,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explode.kt
                       public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ExplodeSchema_28I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:timestamps visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract timestamps: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ExplodeSchema_28I
                     FUN FAKE_OVERRIDE name:<get-timestamps> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ExplodeSchema_28I) returnType:kotlin.Int [fake_override]
@@ -209,6 +213,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explode.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:timestamps visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-timestamps> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.ExplodeSchema_28I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:timestamps visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.ExplodeSchema_28I
@@ -279,6 +285,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/explode.kt
                       public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.explode.<anonymous>.ExplodeSchema_28I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:timestamps visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract timestamps: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.explode.<anonymous>.ExplodeSchema_28I
                     FUN FAKE_OVERRIDE name:<get-timestamps> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.explode.<anonymous>.ExplodeSchema_28I) returnType:kotlin.Int [fake_override]

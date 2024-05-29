@@ -38,13 +38,13 @@ FILE: select.kt
     public final fun box(): R|kotlin/String| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>| = R|kotlin/collections/listOf|<R|Record|>(R|/Record.Record|(String(112), Int(42), R|/Nested.Nested|(Double(3.0)))).R|kotlin/let|<R|kotlin/collections/List<Record>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<Record>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Record_33I : R|kotlin/Any| {
-                public abstract val nested: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_101>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val nested: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_101>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Nested_101>|
 
-                public abstract val b: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val b: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val a: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/Record_33I|
@@ -75,7 +75,7 @@ FILE: select.kt
             }
 
             local abstract class Nested_101 : R|kotlin/Any| {
-                public abstract val d: R|kotlin/Double|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val d: R|kotlin/Double|
                     public get(): R|kotlin/Double|
 
                 public constructor(): R|<local>/Nested_101|
@@ -111,13 +111,13 @@ FILE: select.kt
         )
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_71>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_71>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_71>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Record_71I : R|kotlin/Any| {
-                public abstract val untitled: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val untitled: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val d: R|kotlin/Double|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val d: R|kotlin/Double|
                     public get(): R|kotlin/Double|
 
-                public abstract val a: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/Record_71I|

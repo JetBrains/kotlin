@@ -138,10 +138,14 @@ FILE fqName:<root> fileName:/toDataFrame_superType.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.test.<anonymous>.MyInterface_48I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.test.<anonymous>.MyInterface_48I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:i visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> visibility:public modality:ABSTRACT <> ($this:<root>.test.<anonymous>.MyInterface_48I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:i visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.test.<anonymous>.MyInterface_48I
@@ -240,6 +244,8 @@ FILE fqName:<root> fileName:/toDataFrame_superType.kt
                       public open fun toString (): kotlin.String declared in <root>.test.<anonymous>.MyInterface_48I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract a: kotlin.Int declared in <root>.test.<anonymous>.MyInterface_48I
                     FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.test.<anonymous>.MyInterface_48I) returnType:kotlin.Int [fake_override]
@@ -248,6 +254,8 @@ FILE fqName:<root> fileName:/toDataFrame_superType.kt
                         public abstract fun <get-a> (): kotlin.Int declared in <root>.test.<anonymous>.MyInterface_48I
                       $this: VALUE_PARAMETER name:<this> type:<root>.test.<anonymous>.MyInterface_48I
                   PROPERTY FAKE_OVERRIDE name:i visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 1)
                     overridden:
                       public abstract i: kotlin.Int declared in <root>.test.<anonymous>.MyInterface_48I
                     FUN FAKE_OVERRIDE name:<get-i> visibility:public modality:ABSTRACT <> ($this:<root>.test.<anonymous>.MyInterface_48I) returnType:kotlin.Int [fake_override]

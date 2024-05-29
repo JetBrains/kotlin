@@ -4,22 +4,22 @@ FILE: join.kt
     public final fun box(): R|kotlin/String| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_01>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_01>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_01>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class ReadJson_01I : R|kotlin/Any| {
-                public abstract val originalId: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val originalId: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val id: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val id: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val _id: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val _id: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val order: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val order: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val achievements: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Achievements_291>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val achievements: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Achievements_291>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Achievements_291>|
 
                 public constructor(): R|<local>/ReadJson_01I|
@@ -68,25 +68,25 @@ FILE: join.kt
             }
 
             local abstract class Achievements_291 : R|kotlin/Any| {
-                public abstract val hidden: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val hidden: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val id: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val id: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val reward: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val reward: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val preStage: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(6)) public abstract val preStage: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val order: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val order: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val desc: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val desc: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/Achievements_291|
@@ -158,22 +158,22 @@ FILE: join.kt
         )
         lval df2: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_77>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_01>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_77>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_01>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_77>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class ReadJson_77I : R|kotlin/Any| {
-                public abstract val originalId: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val originalId: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val id: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val id: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val _id: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val _id: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val order: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val order: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val achievements: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Achievements_921>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val achievements: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Achievements_921>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Achievements_921>|
 
                 public constructor(): R|<local>/ReadJson_77I|
@@ -222,25 +222,25 @@ FILE: join.kt
             }
 
             local abstract class Achievements_921 : R|kotlin/Any| {
-                public abstract val hidden: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val hidden: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val id: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val id: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val reward: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val reward: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val preStage: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val preStage: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val order: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val order: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val desc: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(6)) public abstract val desc: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/Achievements_921|
@@ -318,37 +318,37 @@ FILE: join.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_77>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_47>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_77>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ReadJson_47>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class ReadJson_47I : R|kotlin/Any| {
-                public abstract val originalId: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val originalId: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val order1: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(9)) public abstract val order1: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val originalId1: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(6)) public abstract val _id1: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val _id1: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(10)) public abstract val originalId1: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val id: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val id: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val name1: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(8)) public abstract val name1: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val _id: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val _id: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val id1: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(7)) public abstract val id1: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val order: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val order: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val achievements: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Achievements_541>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val achievements: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Achievements_541>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Achievements_541>|
 
                 public constructor(): R|<local>/ReadJson_47I|
@@ -368,16 +368,16 @@ FILE: join.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/ReadJson_47I>|.order1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/ReadJson_47I>|.originalId1: R|kotlin/Int?|
-                    public get(): R|kotlin/Int?|
-
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/ReadJson_47I>|.originalId1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
-
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/ReadJson_47I>|._id1: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/ReadJson_47I>|._id1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/ReadJson_47I>|.originalId1: R|kotlin/Int?|
+                    public get(): R|kotlin/Int?|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/ReadJson_47I>|.originalId1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/ReadJson_47I>|.id: R|kotlin/String|
@@ -427,43 +427,43 @@ FILE: join.kt
             }
 
             local abstract class Achievements_541 : R|kotlin/Any| {
-                public abstract val id: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val id: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val hidden1: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(7)) public abstract val hidden1: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val name1: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(11)) public abstract val name1: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val reward1: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(8)) public abstract val reward1: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val desc1: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(12)) public abstract val desc1: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val reward: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val reward: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val order: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val order: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val order1: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(10)) public abstract val order1: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val hidden: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val hidden: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val preStage1: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(9)) public abstract val preStage1: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val preStage: R|kotlin/Int?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val preStage: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
-                public abstract val desc: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(6)) public abstract val desc: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/Achievements_541|

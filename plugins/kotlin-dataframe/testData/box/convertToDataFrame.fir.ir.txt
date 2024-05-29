@@ -370,6 +370,8 @@ FILE fqName:<root> fileName:/convertToDataFrame.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:roomId visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-roomId> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.With_96I) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.RoomId_761>
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:roomId visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.With_96I
@@ -440,6 +442,8 @@ FILE fqName:<root> fileName:/convertToDataFrame.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.RoomId_761) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.A_761>
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.RoomId_761
@@ -510,14 +514,20 @@ FILE fqName:<root> fileName:/convertToDataFrame.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.A_761) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.A_761
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 2)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.A_761) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.A_761
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:sort visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sort> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.A_761) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:sort visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.A_761
@@ -644,6 +654,8 @@ FILE fqName:<root> fileName:/convertToDataFrame.kt
                       public open fun toString (): kotlin.String declared in <root>.box.<anonymous>.With_96I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:roomId visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract roomId: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.RoomId_761> declared in <root>.box.<anonymous>.With_96I
                     FUN FAKE_OVERRIDE name:<get-roomId> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.With_96I) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.RoomId_761> [fake_override]
@@ -723,6 +735,8 @@ FILE fqName:<root> fileName:/convertToDataFrame.kt
                                           public open fun toString (): kotlin.String declared in kotlin.Any
                                         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                                       PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
+                                        annotations:
+                                          Order(order = 0)
                                         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.<anonymous>.<anonymous>.Aaa_43I) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.<anonymous>.<anonymous>.A_791>
                                           correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
                                           $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.<anonymous>.<anonymous>.Aaa_43I
@@ -793,14 +807,20 @@ FILE fqName:<root> fileName:/convertToDataFrame.kt
                                           public open fun toString (): kotlin.String declared in kotlin.Any
                                         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                                       PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
+                                        annotations:
+                                          Order(order = 0)
                                         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.<anonymous>.<anonymous>.A_791) returnType:kotlin.Int
                                           correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
                                           $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.<anonymous>.<anonymous>.A_791
                                       PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
+                                        annotations:
+                                          Order(order = 2)
                                         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.<anonymous>.<anonymous>.A_791) returnType:kotlin.String
                                           correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
                                           $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.<anonymous>.<anonymous>.A_791
                                       PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:sort visibility:public modality:ABSTRACT [val]
+                                        annotations:
+                                          Order(order = 1)
                                         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-sort> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.<anonymous>.<anonymous>.A_791) returnType:kotlin.Int
                                           correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:sort visibility:public modality:ABSTRACT [val]
                                           $this: VALUE_PARAMETER name:<this> type:<root>.box.<anonymous>.<anonymous>.<anonymous>.A_791
@@ -927,6 +947,8 @@ FILE fqName:<root> fileName:/convertToDataFrame.kt
                                           public open fun toString (): kotlin.String declared in <root>.box.<anonymous>.<anonymous>.<anonymous>.Aaa_43I
                                         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                                       PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,val]
+                                        annotations:
+                                          Order(order = 0)
                                         overridden:
                                           public abstract a: org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.<anonymous>.<anonymous>.A_791> declared in <root>.box.<anonymous>.<anonymous>.<anonymous>.Aaa_43I
                                         FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:<root>.box.<anonymous>.<anonymous>.<anonymous>.Aaa_43I) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<<root>.box.<anonymous>.<anonymous>.<anonymous>.A_791> [fake_override]

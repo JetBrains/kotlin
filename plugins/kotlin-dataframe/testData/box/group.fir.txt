@@ -20,10 +20,10 @@ FILE: group.kt
     public final fun box(): R|kotlin/String| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>| = R|kotlin/collections/listOf|<R|Record|>(R|/Record.Record|(String(112), Int(42))).R|kotlin/let|<R|kotlin/collections/List<Record>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<Record>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Record_33>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Record_33I : R|kotlin/Any| {
-                public abstract val b: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val b: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val a: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/Record_33I|
@@ -64,7 +64,7 @@ FILE: group.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupClause<<local>/Record_33, it(kotlin/Comparable<*> & java/io/Serializable)>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_13>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupClause<<local>/Record_33, it(kotlin/Comparable<*> & java/io/Serializable)>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_13>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Into_13I : R|kotlin/Any| {
-                public abstract val c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
 
                 public constructor(): R|<local>/Into_13I|
@@ -83,10 +83,10 @@ FILE: group.kt
             }
 
             local abstract class C_511 : R|kotlin/Any| {
-                public abstract val b: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val b: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val a: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/C_511|

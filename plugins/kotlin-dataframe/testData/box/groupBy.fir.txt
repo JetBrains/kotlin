@@ -30,10 +30,10 @@ FILE: groupBy.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupBy<Record, Record>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_69>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupBy<Record, Record>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_69>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Aggregate_69I : R|kotlin/Any| {
-                public abstract val fsdf: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val fsdf: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val b: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val b: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Aggregate_69I|
@@ -77,7 +77,7 @@ FILE: groupBy.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupClause<Record, it(kotlin/Comparable<*> & java/io/Serializable)>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_13>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupClause<Record, it(kotlin/Comparable<*> & java/io/Serializable)>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_13>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Into_13I : R|kotlin/Any| {
-                public abstract val c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
 
                 public constructor(): R|<local>/Into_13I|
@@ -96,10 +96,10 @@ FILE: groupBy.kt
             }
 
             local abstract class C_511 : R|kotlin/Any| {
-                public abstract val b: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val b: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val a: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/C_511|
@@ -144,10 +144,10 @@ FILE: groupBy.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupBy<<local>/Into_13, <local>/Into_13>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_94>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupBy<<local>/Into_13, <local>/Into_13>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_94>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Aggregate_94I : R|kotlin/Any| {
-                public abstract val ff: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val ff: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val a: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/Aggregate_94I|
@@ -192,10 +192,10 @@ FILE: groupBy.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupBy<<local>/Into_13, <local>/Into_13>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_94>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupBy<<local>/Into_13, <local>/Into_13>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aggregate_94>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Aggregate_94I : R|kotlin/Any| {
-                public abstract val ff: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val ff: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_241>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_241>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_241>|
 
                 public constructor(): R|<local>/Aggregate_94I|
@@ -220,7 +220,7 @@ FILE: groupBy.kt
             }
 
             local abstract class C_241 : R|kotlin/Any| {
-                public abstract val a: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/C_241|

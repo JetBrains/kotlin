@@ -52,7 +52,7 @@ FILE: convertToDataFrame.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<Sessions, kotlin/collections/List<kotlin/Int>>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_96>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<Sessions, kotlin/collections/List<kotlin/Int>>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_96>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class With_96I : R|kotlin/Any| {
-                public abstract val roomId: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/RoomId_761>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val roomId: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/RoomId_761>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/RoomId_761>|
 
                 public constructor(): R|<local>/With_96I|
@@ -71,7 +71,7 @@ FILE: convertToDataFrame.kt
             }
 
             local abstract class RoomId_761 : R|kotlin/Any| {
-                public abstract val a: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_761>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_761>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_761>|
 
                 public constructor(): R|<local>/RoomId_761|
@@ -90,13 +90,13 @@ FILE: convertToDataFrame.kt
             }
 
             local abstract class A_761 : R|kotlin/Any| {
-                public abstract val id: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val id: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val sort: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val sort: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/A_761|
@@ -146,7 +146,7 @@ FILE: convertToDataFrame.kt
             ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/with|<R|Sessions|, R|kotlin/collections/List<kotlin/Int>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aaa_43>|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<Sessions>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  kotlin/collections/List<kotlin/Int>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aaa_43>| <inline=NoInline>  {
                 ^ R|kotlin/collections/listOf|<R|Aaa|>(R|/Aaa.Aaa|(R|kotlin/collections/listOf|<R|Rooms|>(R|/Rooms.Rooms|(Int(1), Int(2), String(n))))).R|kotlin/let|<R|kotlin/collections/List<Aaa>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aaa_43>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<Aaa>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Aaa_43>| <inline=Inline, kind=EXACTLY_ONCE>  {
                     local abstract class Aaa_43I : R|kotlin/Any| {
-                        public abstract val a: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_791>|
+                        @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_791>|
                             public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_791>|
 
                         public constructor(): R|<local>/Aaa_43I|
@@ -165,13 +165,13 @@ FILE: convertToDataFrame.kt
                     }
 
                     local abstract class A_791 : R|kotlin/Any| {
-                        public abstract val id: R|kotlin/Int|
+                        @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val id: R|kotlin/Int|
                             public get(): R|kotlin/Int|
 
-                        public abstract val sort: R|kotlin/Int|
+                        @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val sort: R|kotlin/Int|
                             public get(): R|kotlin/Int|
 
-                        public abstract val name: R|kotlin/String|
+                        @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val name: R|kotlin/String|
                             public get(): R|kotlin/String|
 
                         public constructor(): R|<local>/A_791|

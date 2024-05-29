@@ -40,10 +40,10 @@ FILE: join_1.kt
         lval sessions: R|org/jetbrains/kotlinx/dataframe/DataFrame<Sessions>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|<R|Sessions|>(vararg(R|/Sessions.Sessions|(Int(1))))
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Sessions_30>| = R|<local>/sessions|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<Sessions>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Sessions_30>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<Sessions>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Sessions_30>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Sessions_30I : R|kotlin/Any| {
-                public abstract val roomId: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val roomId: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val room: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Room_921>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val room: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Room_921>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Room_921>|
 
                 public constructor(): R|<local>/Sessions_30I|
@@ -68,10 +68,10 @@ FILE: join_1.kt
             }
 
             local abstract class Room_921 : R|kotlin/Any| {
-                public abstract val sort: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val sort: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/Room_921|
@@ -113,7 +113,7 @@ FILE: join_1.kt
             }
             ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupClause<Rooms, it(kotlin/Comparable<*> & java/io/Serializable)>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_72>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupClause<Rooms, it(kotlin/Comparable<*> & java/io/Serializable)>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_72>| <inline=Inline, kind=EXACTLY_ONCE>  {
                 local abstract class Into_72I : R|kotlin/Any| {
-                    public abstract val room: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Room_701>|
+                    @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val room: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Room_701>|
                         public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Room_701>|
 
                     public constructor(): R|<local>/Into_72I|
@@ -132,13 +132,13 @@ FILE: join_1.kt
                 }
 
                 local abstract class Room_701 : R|kotlin/Any| {
-                    public abstract val id: R|kotlin/Int|
+                    @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val id: R|kotlin/Int|
                         public get(): R|kotlin/Int|
 
-                    public abstract val sort: R|kotlin/Int|
+                    @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val sort: R|kotlin/Int|
                         public get(): R|kotlin/Int|
 
-                    public abstract val name: R|kotlin/String|
+                    @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val name: R|kotlin/String|
                         public get(): R|kotlin/String|
 
                     public constructor(): R|<local>/Room_701|

@@ -58,10 +58,14 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/Schema.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Schema_66I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Schema_66I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Schema_66I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Schema_66I
@@ -160,6 +164,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/Schema.kt
                       public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Schema_66I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract a: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Schema_66I
                     FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Schema_66I) returnType:kotlin.Int [fake_override]
@@ -168,6 +174,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/Schema.kt
                         public abstract fun <get-a> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Schema_66I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Schema_66I
                   PROPERTY FAKE_OVERRIDE name:wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 1)
                     overridden:
                       public abstract wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Schema_66I
                     FUN FAKE_OVERRIDE name:<get-wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Schema_66I) returnType:kotlin.Int [fake_override]
@@ -247,10 +255,14 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/Schema.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_41I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:a visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_41I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_41I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_41I
@@ -349,6 +361,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/Schema.kt
                       public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_41I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract a: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_41I
                     FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_41I) returnType:kotlin.String [fake_override]
@@ -357,6 +371,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/Schema.kt
                         public abstract fun <get-a> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_41I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_41I
                   PROPERTY FAKE_OVERRIDE name:wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 1)
                     overridden:
                       public abstract wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_41I
                     FUN FAKE_OVERRIDE name:<get-wwffffwwehirbwerffwffwffwfffffwfffwfwfwfaw> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.With_41I) returnType:kotlin.Int [fake_override]

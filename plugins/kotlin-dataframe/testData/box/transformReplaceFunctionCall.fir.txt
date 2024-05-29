@@ -9,7 +9,7 @@ FILE: transformReplaceFunctionCall.kt
         lval df: R|{org/jetbrains/kotlinx/dataframe/AnyFrame=} org/jetbrains/kotlinx/dataframe/DataFrame<*>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1)))
         (this@R|org/jetbrains/kotlinx/dataframe/test|, R|<local>/df|.R|kotlin/let|<R|{org/jetbrains/kotlinx/dataframe/AnyFrame=} org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Add_84>|>(<L> = fun <anonymous>(it: R|{org/jetbrains/kotlinx/dataframe/AnyFrame=} org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Add_84>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Add_84I : R|kotlin/Any| {
-                public abstract val col1: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val col1: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Add_84I|

@@ -30,26 +30,38 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:_id visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:_id visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:achievements visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 4)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-achievements> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291>
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:achievements visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 2)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 3)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:originalId visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 5)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-originalId> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:originalId visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
@@ -260,30 +272,44 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 2)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-desc> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 4)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-hidden> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291) returnType:kotlin.Boolean
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 5)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 6)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-preStage> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 3)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-reward> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291
@@ -522,6 +548,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:_id visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract _id: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                     FUN FAKE_OVERRIDE name:<get-_id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:kotlin.Int? [fake_override]
@@ -530,6 +558,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-_id> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                   PROPERTY FAKE_OVERRIDE name:achievements visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 4)
                     overridden:
                       public abstract achievements: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                     FUN FAKE_OVERRIDE name:<get-achievements> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291> [fake_override]
@@ -538,6 +568,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-achievements> (): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_291> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                   PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 1)
                     overridden:
                       public abstract id: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                     FUN FAKE_OVERRIDE name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:kotlin.String [fake_override]
@@ -546,6 +578,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-id> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                   PROPERTY FAKE_OVERRIDE name:name visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 2)
                     overridden:
                       public abstract name: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                     FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:kotlin.String [fake_override]
@@ -554,6 +588,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                   PROPERTY FAKE_OVERRIDE name:order visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 3)
                     overridden:
                       public abstract order: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                     FUN FAKE_OVERRIDE name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:kotlin.Int [fake_override]
@@ -562,6 +598,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-order> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                   PROPERTY FAKE_OVERRIDE name:originalId visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 5)
                     overridden:
                       public abstract originalId: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I
                     FUN FAKE_OVERRIDE name:<get-originalId> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_01I) returnType:kotlin.Int? [fake_override]
@@ -618,26 +656,38 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:_id visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:_id visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:achievements visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 4)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-achievements> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921>
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:achievements visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 2)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 3)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:originalId visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 5)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-originalId> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:originalId visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
@@ -848,30 +898,44 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 6)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-desc> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-hidden> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921) returnType:kotlin.Boolean
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 5)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 4)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 3)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-preStage> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 2)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-reward> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921
@@ -1110,6 +1174,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:_id visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract _id: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                     FUN FAKE_OVERRIDE name:<get-_id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:kotlin.Int? [fake_override]
@@ -1118,6 +1184,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-_id> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                   PROPERTY FAKE_OVERRIDE name:achievements visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 4)
                     overridden:
                       public abstract achievements: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                     FUN FAKE_OVERRIDE name:<get-achievements> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921> [fake_override]
@@ -1126,6 +1194,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-achievements> (): org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_921> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                   PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 1)
                     overridden:
                       public abstract id: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                     FUN FAKE_OVERRIDE name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:kotlin.String [fake_override]
@@ -1134,6 +1204,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-id> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                   PROPERTY FAKE_OVERRIDE name:name visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 2)
                     overridden:
                       public abstract name: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                     FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:kotlin.String [fake_override]
@@ -1142,6 +1214,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                   PROPERTY FAKE_OVERRIDE name:order visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 3)
                     overridden:
                       public abstract order: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                     FUN FAKE_OVERRIDE name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:kotlin.Int [fake_override]
@@ -1150,6 +1224,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-order> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                   PROPERTY FAKE_OVERRIDE name:originalId visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 5)
                     overridden:
                       public abstract originalId: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I
                     FUN FAKE_OVERRIDE name:<get-originalId> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_77I) returnType:kotlin.Int? [fake_override]
@@ -1231,46 +1307,68 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:_id visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:_id visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:_id1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 6)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-_id1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:_id1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:achievements visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 4)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-achievements> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541>
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:achievements visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 7)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 2)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 8)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 3)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 9)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-order1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:originalId visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 5)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-originalId> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:originalId visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:originalId1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 10)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-originalId1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:originalId1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
@@ -1332,34 +1430,6 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-order1>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> origin=null
                               columnName: CONST String type=kotlin.String value="order1"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:originalId1 visibility:public modality:FINAL [val]
-                    FIELD PROPERTY_BACKING_FIELD name:originalId1 type:kotlin.Int? visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-originalId1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>) returnType:kotlin.Int?
-                      annotations:
-                        JvmName(name = "ReadJson_47I_originalId1")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:originalId1 visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>
-                      BLOCK_BODY
-                        RETURN type=kotlin.Int? from='public final fun <get-originalId1> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
-                          TYPE_OP type=kotlin.Int? origin=CAST typeOperand=kotlin.Int?
-                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-originalId1>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> origin=null
-                              name: CONST String type=kotlin.String value="originalId1"
-                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:originalId1 visibility:public modality:FINAL [val]
-                    FIELD PROPERTY_BACKING_FIELD name:originalId1 type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> visibility:private [final]
-                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-originalId1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?>
-                      annotations:
-                        JvmName(name = "ReadJson_47I_originalId1")
-                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:originalId1 visibility:public modality:FINAL [val]
-                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
-                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>
-                      BLOCK_BODY
-                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> from='public final fun <get-originalId1> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
-                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?>
-                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
-                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-originalId1>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> origin=null
-                              columnName: CONST String type=kotlin.String value="originalId1"
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:_id1 visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:_id1 type:kotlin.Int? visibility:private [final]
                     FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-_id1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>) returnType:kotlin.Int?
@@ -1388,6 +1458,34 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                             CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
                               $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-_id1>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> origin=null
                               columnName: CONST String type=kotlin.String value="_id1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:originalId1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:originalId1 type:kotlin.Int? visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-originalId1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>) returnType:kotlin.Int?
+                      annotations:
+                        JvmName(name = "ReadJson_47I_originalId1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:originalId1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>
+                      BLOCK_BODY
+                        RETURN type=kotlin.Int? from='public final fun <get-originalId1> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
+                          TYPE_OP type=kotlin.Int? origin=CAST typeOperand=kotlin.Int?
+                            CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-originalId1>' type=org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> origin=null
+                              name: CONST String type=kotlin.String value="originalId1"
+                  PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:originalId1 visibility:public modality:FINAL [val]
+                    FIELD PROPERTY_BACKING_FIELD name:originalId1 type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> visibility:private [final]
+                    FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-originalId1> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>) returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?>
+                      annotations:
+                        JvmName(name = "ReadJson_47I_originalId1")
+                      correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:originalId1 visibility:public modality:FINAL [val]
+                      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0
+                      $receiver: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>
+                      BLOCK_BODY
+                        RETURN type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> from='public final fun <get-originalId1> (): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0'
+                          TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int?>
+                            CALL 'public open fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> declared in org.jetbrains.kotlinx.dataframe.ColumnsContainer' type=kotlin.Any? origin=null
+                              $this: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0.<get-originalId1>' type=org.jetbrains.kotlinx.dataframe.ColumnsContainer<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I> origin=null
+                              columnName: CONST String type=kotlin.String value="originalId1"
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:id visibility:public modality:FINAL [val]
                     FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]
                     FUN GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin] name:<get-id> visibility:public modality:FINAL <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Scope0, $receiver:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I>) returnType:kotlin.String
@@ -1621,54 +1719,80 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 6)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-desc> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 12)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-desc1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:desc1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-hidden> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Boolean
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 7)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-hidden1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Boolean
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:hidden1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 1)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:id visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 5)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 11)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-name1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.String
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:name1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 4)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 10)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-order1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:order1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 3)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-preStage> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 9)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-preStage1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int?
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:preStage1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 2)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-reward> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward1 visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 8)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-reward1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:reward1 visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541
@@ -2075,6 +2199,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                       public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:_id visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract _id: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     FUN FAKE_OVERRIDE name:<get-_id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int? [fake_override]
@@ -2083,6 +2209,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-_id> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY FAKE_OVERRIDE name:_id1 visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 6)
                     overridden:
                       public abstract _id1: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     FUN FAKE_OVERRIDE name:<get-_id1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int? [fake_override]
@@ -2091,6 +2219,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-_id1> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY FAKE_OVERRIDE name:achievements visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 4)
                     overridden:
                       public abstract achievements: org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     FUN FAKE_OVERRIDE name:<get-achievements> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> [fake_override]
@@ -2099,6 +2229,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-achievements> (): org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.box.<anonymous>.Achievements_541> declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY FAKE_OVERRIDE name:id visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 1)
                     overridden:
                       public abstract id: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     FUN FAKE_OVERRIDE name:<get-id> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.String [fake_override]
@@ -2107,6 +2239,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-id> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY FAKE_OVERRIDE name:id1 visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 7)
                     overridden:
                       public abstract id1: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     FUN FAKE_OVERRIDE name:<get-id1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.String [fake_override]
@@ -2115,6 +2249,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-id1> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY FAKE_OVERRIDE name:name visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 2)
                     overridden:
                       public abstract name: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.String [fake_override]
@@ -2123,6 +2259,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-name> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY FAKE_OVERRIDE name:name1 visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 8)
                     overridden:
                       public abstract name1: kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     FUN FAKE_OVERRIDE name:<get-name1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.String [fake_override]
@@ -2131,6 +2269,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-name1> (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY FAKE_OVERRIDE name:order visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 3)
                     overridden:
                       public abstract order: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     FUN FAKE_OVERRIDE name:<get-order> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int [fake_override]
@@ -2139,6 +2279,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-order> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY FAKE_OVERRIDE name:order1 visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 9)
                     overridden:
                       public abstract order1: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     FUN FAKE_OVERRIDE name:<get-order1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int [fake_override]
@@ -2147,6 +2289,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-order1> (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY FAKE_OVERRIDE name:originalId visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 5)
                     overridden:
                       public abstract originalId: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     FUN FAKE_OVERRIDE name:<get-originalId> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int? [fake_override]
@@ -2155,6 +2299,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/join.kt
                         public abstract fun <get-originalId> (): kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                   PROPERTY FAKE_OVERRIDE name:originalId1 visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 10)
                     overridden:
                       public abstract originalId1: kotlin.Int? declared in org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I
                     FUN FAKE_OVERRIDE name:<get-originalId1> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.box.<anonymous>.ReadJson_47I) returnType:kotlin.Int? [fake_override]

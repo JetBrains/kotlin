@@ -98,31 +98,31 @@ FILE: extractPluginSchemaWithUnfold.kt
         lval functions: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Function>| = this@R|org/jetbrains/kotlinx/dataframe/refine|
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Function_30>| = R|<local>/functions|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Function>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Function_30>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Function>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Function_30>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Function_30I : R|kotlin/Any| {
-                public abstract val lens: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(7)) public abstract val lens: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val functionReturnType: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/FunctionReturnType_501>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val functionReturnType: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/FunctionReturnType_501>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/FunctionReturnType_501>|
 
-                public abstract val parameters: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Parameters_501>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val parameters: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Parameters_501>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Parameters_501>|
 
-                public abstract val function: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val function: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val converter: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(6)) public abstract val converter: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val supported: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(8)) public abstract val supported: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val receiverType: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val receiverType: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val approximation: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val approximation: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val type: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Type_501>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val type: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Type_501>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Type_501>|
 
                 public constructor(): R|<local>/Function_30I|
@@ -189,7 +189,7 @@ FILE: extractPluginSchemaWithUnfold.kt
             }
 
             local abstract class Type_501 : R|kotlin/Any| {
-                public abstract val vararg: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val vararg: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
                 public constructor(): R|<local>/Type_501|
@@ -208,13 +208,13 @@ FILE: extractPluginSchemaWithUnfold.kt
             }
 
             local abstract class Parameters_501 : R|kotlin/Any| {
-                public abstract val returnType: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/ReturnType_501>|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val returnType: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/ReturnType_501>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/ReturnType_501>|
 
-                public abstract val defaultValue: R|kotlin/String?|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val defaultValue: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
-                public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/Parameters_501|
@@ -245,10 +245,10 @@ FILE: extractPluginSchemaWithUnfold.kt
             }
 
             local abstract class ReturnType_501 : R|kotlin/Any| {
-                public abstract val vararg: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val vararg: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/ReturnType_501|
@@ -273,10 +273,10 @@ FILE: extractPluginSchemaWithUnfold.kt
             }
 
             local abstract class FunctionReturnType_501 : R|kotlin/Any| {
-                public abstract val vararg: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val vararg: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/FunctionReturnType_501|

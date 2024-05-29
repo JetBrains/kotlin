@@ -54,6 +54,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.api fileName:/lowerGeneratedImplicit
                       public open fun toString (): kotlin.String declared in kotlin.Any
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:age visibility:public modality:ABSTRACT [val]
+                    annotations:
+                      Order(order = 0)
                     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-age> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Cars_26I) returnType:kotlin.Int
                       correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator.Key] name:age visibility:public modality:ABSTRACT [val]
                       $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Cars_26I
@@ -124,6 +126,8 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.api fileName:/lowerGeneratedImplicit
                       public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Cars_26I
                     $this: VALUE_PARAMETER name:<this> type:kotlin.Any
                   PROPERTY FAKE_OVERRIDE name:age visibility:public modality:ABSTRACT [fake_override,val]
+                    annotations:
+                      Order(order = 0)
                     overridden:
                       public abstract age: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Cars_26I
                     FUN FAKE_OVERRIDE name:<get-age> visibility:public modality:ABSTRACT <> ($this:org.jetbrains.kotlinx.dataframe.api.box.<anonymous>.Cars_26I) returnType:kotlin.Int [fake_override]

@@ -4,19 +4,19 @@ FILE: read.kt
     public final fun box(): R|kotlin/String| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Read_16>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Read_16>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Read_16>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Read_16I : R|kotlin/Any| {
-                public abstract val full_name: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val full_name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val topics: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val topics: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val watchers: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val watchers: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val stargazers_count: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val stargazers_count: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val html_url: R|java/net/URL|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val html_url: R|java/net/URL|
                     public get(): R|java/net/URL|
 
                 public constructor(): R|<local>/Read_16I|

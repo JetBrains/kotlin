@@ -7,10 +7,10 @@ FILE: injectAccessors.kt
     public final fun Name is evaluated to age(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Cars_25I : R|kotlin/Any| {
-                public abstract val year: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val year: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val age: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Cars_25I|
@@ -54,10 +54,10 @@ FILE: injectAccessors.kt
     public final fun ReturnType is evaluated to Int(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|kotlin/Unit| {
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<Cars>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Cars_25>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Cars_25I : R|kotlin/Any| {
-                public abstract val year: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val year: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val age: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/Cars_25I|

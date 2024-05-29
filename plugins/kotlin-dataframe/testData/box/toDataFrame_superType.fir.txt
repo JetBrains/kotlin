@@ -24,10 +24,10 @@ FILE: toDataFrame_superType.kt
     public final fun test(list: R|kotlin/collections/List<MyInterface>|): R|kotlin/Unit| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/MyInterface_48>| = R|<local>/list|.R|kotlin/let|<R|kotlin/collections/List<MyInterface>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/MyInterface_48>|>(<L> = fun <anonymous>(it: R|kotlin/collections/List<MyInterface>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/MyInterface_48>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class MyInterface_48I : R|kotlin/Any| {
-                public abstract val i: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val i: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val a: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/MyInterface_48I|

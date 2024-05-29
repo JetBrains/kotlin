@@ -9,7 +9,7 @@ FILE: explode.kt
     public final fun explode(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|kotlin/Unit| {
         lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ExplodeSchema_28>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ExplodeSchema_28>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ExplodeSchema_28>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class ExplodeSchema_28I : R|kotlin/Any| {
-                public abstract val timestamps: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val timestamps: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/ExplodeSchema_28I|
@@ -48,7 +48,7 @@ FILE: explode.kt
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(timestamps))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(100), Int(113), Int(140))), R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(400), Int(410), Int(453))))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/ExplodeSchema|>()
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ExplodeSchema_28>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ExplodeSchema_28>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/ExplodeSchema_28>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class ExplodeSchema_28I : R|kotlin/Any| {
-                public abstract val timestamps: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val timestamps: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public constructor(): R|<local>/ExplodeSchema_28I|

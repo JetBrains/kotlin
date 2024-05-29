@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.dataframe.utils.Names
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -292,7 +293,18 @@ fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType)
         .mapIndexed { i, symbol -> symbol to coneClassLikeType.typeArguments[i] }
         .toMap()
 
-    val columns = declarationSymbols.filterIsInstance<FirPropertySymbol>().map { propertySymbol ->
+    var propertySymbols = declarationSymbols.filterIsInstance<FirPropertySymbol>()
+    val annotations = propertySymbols.mapNotNull {
+        val orderArgument = it.getAnnotationByClassId(
+            Names.ORDER_ANNOTATION,
+            session
+        )?.argumentMapping?.mapping?.get(Names.ORDER_ARGUMENT)
+        (orderArgument as? FirLiteralExpression)?.value as? Int
+    }
+    if (propertySymbols.size == annotations.size) {
+        propertySymbols = propertySymbols.zip(annotations).sortedBy { it.second }.map { it.first }
+    }
+    val columns = propertySymbols.map { propertySymbol ->
         columnOf(propertySymbol, mapping)
     }
 

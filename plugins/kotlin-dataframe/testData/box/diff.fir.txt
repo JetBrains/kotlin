@@ -44,25 +44,25 @@ FILE: diff.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_08>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<org/jetbrains/kotlinx/dataframe/ActivePlayer, kotlin/String>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_08>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class With_08I : R|kotlin/Any| {
-                public abstract val timestamp: R|java/time/LocalDateTime|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(6)) public abstract val timestamp: R|java/time/LocalDateTime|
                     public get(): R|java/time/LocalDateTime|
 
-                public abstract val charclass: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val charclass: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val guild: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val guild: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val char: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val char: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val race: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val race: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val level: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val level: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val zone: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val zone: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/With_08I|
@@ -135,28 +135,28 @@ FILE: diff.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_08>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_78>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_08>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_78>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class With_78I : R|kotlin/Any| {
-                public abstract val timestamp: R|java/time/LocalDateTime|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(6)) public abstract val timestamp: R|java/time/LocalDateTime|
                     public get(): R|java/time/LocalDateTime|
 
-                public abstract val tsDiff: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(7)) public abstract val tsDiff: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val charclass: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val charclass: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val guild: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val guild: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val char: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val char: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val race: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val race: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val level: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val level: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val zone: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val zone: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/With_78I|
@@ -238,31 +238,31 @@ FILE: diff.kt
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_78>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_56>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_78>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/With_56>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class With_56I : R|kotlin/Any| {
-                public abstract val charDiff: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(8)) public abstract val charDiff: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val timestamp: R|java/time/LocalDateTime|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(6)) public abstract val timestamp: R|java/time/LocalDateTime|
                     public get(): R|java/time/LocalDateTime|
 
-                public abstract val tsDiff: R|kotlin/Boolean|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(7)) public abstract val tsDiff: R|kotlin/Boolean|
                     public get(): R|kotlin/Boolean|
 
-                public abstract val charclass: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(3)) public abstract val charclass: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val guild: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(5)) public abstract val guild: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val char: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val char: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val race: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val race: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val level: R|kotlin/Int|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val level: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
-                public abstract val zone: R|kotlin/String|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(4)) public abstract val zone: R|kotlin/String|
                     public get(): R|kotlin/String|
 
                 public constructor(): R|<local>/With_56I|
