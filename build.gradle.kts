@@ -1,6 +1,8 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -115,7 +117,10 @@ val irCompilerModules = arrayOf(
     ":compiler:ir.actualization",
     ":compiler:ir.interpreter",
     ":compiler:ir.inline",
-    ":wasm:wasm.ir"
+    ":wasm:wasm.ir",
+    ":compiler:bir",
+    ":compiler:bir.tree",
+    ":compiler:bir.backend",
 ).also { extra["irCompilerModules"] = it }
 
 val irCompilerModulesForIDE = arrayOf(
@@ -481,6 +486,14 @@ val mppProjects by extra {
     listOf(
         ":kotlin-stdlib",
         ":kotlin-test",
+    )
+}
+
+val projectsWithEnabledContextReceivers by extra {
+    listOf(
+        ":compiler:bir",
+        ":compiler:bir.tree",
+        ":compiler:bir.backend",
     )
 }
 

@@ -172,6 +172,7 @@ fun Project.configureKotlinCompilationOptions() {
             "-Xno-kotlin-nothing-value-exception",
         )
 
+        val projectsWithEnabledContextReceivers: List<String> by rootProject.extra
         val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
 
         tasks.withType<KotlinJvmCompile>().configureEach {
@@ -181,6 +182,9 @@ fun Project.configureKotlinCompilationOptions() {
                     freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
                 }
                 allWarningsAsErrors.set(!kotlinBuildProperties.disableWerror)
+                if (project.path in projectsWithEnabledContextReceivers) {
+                    freeCompilerArgs.add("-Xcontext-receivers")
+                }
                 if (project.path in projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib) {
                     freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction")
                 }
@@ -290,6 +294,10 @@ fun skipJvmDefaultAllForModule(path: String): Boolean =
             // Enabling default method generation results in a performance loss of several % on full pipeline test on Kotlin.
             // TODO: investigate the performance difference and enable new mode for ir.tree.
             path == ":compiler:ir.tree" ||
+
+            // To make consistent with :compiler:ir.tree module
+            path == ":compiler:bir.tree" ||
+
             // Workaround a Proguard issue:
             //     java.lang.IllegalAccessError: tried to access method kotlin.reflect.jvm.internal.impl.types.checker.ClassicTypeSystemContext$substitutionSupertypePolicy$2.<init>(
             //       Lkotlin/reflect/jvm/internal/impl/types/checker/ClassicTypeSystemContext;Lkotlin/reflect/jvm/internal/impl/types/TypeSubstitutor;

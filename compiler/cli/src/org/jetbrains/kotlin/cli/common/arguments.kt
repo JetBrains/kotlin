@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -45,6 +45,8 @@ fun CompilerConfiguration.setupCommonArguments(
             }
         } ?: IrVerificationMode.NONE
     )
+    
+    put(CommonConfigurationKeys.USE_BIR, arguments.useBir)
 
     val metadataVersionString = arguments.metadataVersion
     if (metadataVersionString != null) {

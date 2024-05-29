@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir
     AnnotationTarget.PROPERTY,
     AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.FUNCTION,
+    AnnotationTarget.CONSTRUCTOR,
     AnnotationTarget.TYPEALIAS
 )
 @RequiresOptIn(message = "Please use IR declaration properties and not its descriptor properties", level = RequiresOptIn.Level.ERROR)

@@ -10,6 +10,7 @@ import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyOf
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -181,6 +182,19 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
 
         for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {
+            if (processModule(module).stop()) {
+                break
+            }
+        }
+
+        val birModules = modules.map { module ->
+            module.copy().also {
+                it.arguments = module.arguments?.copyOf() ?: K2JVMCompilerArguments()
+                it.arguments!!.useBir = true
+            }
+        }
+
+        for (module in birModules.progress(step = 0.0) { "Analyzing ${it.qualifiedName} using BIR" }) {
             if (processModule(module).stop()) {
                 break
             }
