@@ -1,3 +1,4 @@
+// ALLOW_KOTLIN_PACKAGE
 // SKIP_JAVAC
 package kotlin.sub
 
