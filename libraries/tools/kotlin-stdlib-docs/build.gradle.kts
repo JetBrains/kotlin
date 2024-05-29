@@ -101,8 +101,6 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 noJdkLink.set(true)
 
                 displayName.set("Common")
-                sourceRoots.from("$kotlin_root/core/builtins/native")
-                sourceRoots.from("$kotlin_root/core/builtins/src/")
 
                 sourceRoots.from("$kotlin_stdlib_dir/common/src")
                 sourceRoots.from("$kotlin_stdlib_dir/src")
@@ -117,6 +115,8 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 dependsOn("common")
 
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/src")
+
+                sourceRoots.from("$kotlin_stdlib_dir/jvm/builtins")
 
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/runtime/kotlin/jvm/annotations")
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/runtime/kotlin/jvm/JvmClassMapping.kt")
@@ -154,14 +154,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                     "Iterator.kt",
                     "Nothing.kt",
                     "Number.kt",
-                ).forEach { sourceRoots.from("$kotlin_root/core/builtins/native/kotlin/$it") }
-
-                listOf(
-                    "annotation/Annotations.kt",
-                    "Function.kt",
-                    "internal/InternalAnnotations.kt",
-                    "Unit.kt",
-                ).forEach { sourceRoots.from("$kotlin_root/core/builtins/src/kotlin/$it") }
+                ).forEach { sourceRoots.from("$kotlin_stdlib_dir/jvm/builtins/$it") }
 
                 perPackageOption("org.w3c") {
                     reportUndocumented.set(false)
