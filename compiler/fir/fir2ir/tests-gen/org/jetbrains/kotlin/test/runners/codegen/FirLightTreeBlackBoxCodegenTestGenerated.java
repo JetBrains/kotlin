@@ -38686,6 +38686,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     @TestDataPath("$PROJECT_ROOT")
     public class K2 {
       @Test
+      @TestMetadata("AbstractMutableList_modCount.kt")
+      public void testAbstractMutableList_modCount() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/AbstractMutableList_modCount.kt");
+      }
+
+      @Test
       @TestMetadata("actualInnerClassesFirMemberMapping.kt")
       public void testActualInnerClassesFirMemberMapping() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/actualInnerClassesFirMemberMapping.kt");
