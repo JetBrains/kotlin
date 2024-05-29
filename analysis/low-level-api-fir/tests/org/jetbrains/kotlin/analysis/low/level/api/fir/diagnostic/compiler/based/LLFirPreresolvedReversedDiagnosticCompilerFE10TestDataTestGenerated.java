@@ -21047,6 +21047,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("inlineCallsPrivateInline.kt")
+      public void testInlineCallsPrivateInline() {
+        runTest("compiler/testData/diagnostics/tests/inline/inlineCallsPrivateInline.kt");
+      }
+
+      @Test
       @TestMetadata("inlineLambdaInDefaultInlineParameter.kt")
       public void testInlineLambdaInDefaultInlineParameter() {
         runTest("compiler/testData/diagnostics/tests/inline/inlineLambdaInDefaultInlineParameter.kt");

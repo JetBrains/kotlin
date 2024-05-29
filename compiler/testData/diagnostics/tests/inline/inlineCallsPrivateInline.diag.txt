@@ -1,0 +1,3 @@
+/inlineCallsPrivateInline.kt:4:9: error: public-API inline function cannot access non-public-API 'private final inline fun localDeclarations(): Boolean defined in AAA'
+        localDeclarations()
+        ^^^^^^^^^^^^^^^^^

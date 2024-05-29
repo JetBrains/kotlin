@@ -1,0 +1,3 @@
+/inlineCallsPrivateInline.kt:(111,128): error: Public-API inline function cannot access non-public-API 'fun <reified T> myFunction(): Unit'.
+
+/inlineCallsPrivateInline.kt:(150,156): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
