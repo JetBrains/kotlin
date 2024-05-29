@@ -2598,6 +2598,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         runTest("compiler/testData/diagnostics/tests/annotations/WrongAnnotationArgsOnObject.kt");
       }
 
+      @Test
+      @TestMetadata("wrongAnnotationTargetAnnotationOrder.kt")
+      public void testWrongAnnotationTargetAnnotationOrder() {
+        runTest("compiler/testData/diagnostics/tests/annotations/wrongAnnotationTargetAnnotationOrder.kt");
+      }
+
+      @Test
+      @TestMetadata("wrongAnnotationTargetAnnotationOrderProperSyntax.kt")
+      public void testWrongAnnotationTargetAnnotationOrderProperSyntax() {
+        runTest("compiler/testData/diagnostics/tests/annotations/wrongAnnotationTargetAnnotationOrderProperSyntax.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant")
       @TestDataPath("$PROJECT_ROOT")
