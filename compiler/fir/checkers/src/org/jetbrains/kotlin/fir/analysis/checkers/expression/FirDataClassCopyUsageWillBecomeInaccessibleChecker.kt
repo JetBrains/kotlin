@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -69,9 +71,11 @@ private fun FirCallableSymbol<*>.isDataClassCopy(dataClass: FirRegularClassSymbo
     val constructor = dataClass.primaryConstructorSymbol(session)
     return this is FirNamedFunctionSymbol &&
             dataClass.isData &&
+            dataClass.classKind.isClass &&
+            resolvedReturnType.classId == dataClass.classId &&
             constructor != null &&
             resolvedContextReceivers.isEmpty() &&
             typeParameterSymbols.isEmpty() &&
             receiverParameter == null &&
-            valueParameterSymbols.map { it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.resolvedReturnType }
+            valueParameterSymbols.map { it.isVararg to it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType }
 }

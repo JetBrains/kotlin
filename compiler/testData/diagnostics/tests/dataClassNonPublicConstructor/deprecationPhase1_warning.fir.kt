@@ -12,8 +12,13 @@ data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!>
     }
 }
 
-fun topLevel(data: Data) {
+data class VarargData <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val value: IntArray) {
+    fun copy(vararg value: Int): VarargData = null!!
+}
+
+fun topLevel(data: Data, varargData: VarargData) {
     data.<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
+    varargData.copy(42, 42)
 }
 
 fun Data.topLevelExtension() {
