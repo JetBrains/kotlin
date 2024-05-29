@@ -111,7 +111,7 @@ private val SirType.isSupported: Boolean
     get() = when (this) {
         is SirNominalType -> when (val declaration = type) {
             is SirTypealias -> declaration.type.isSupported
-            else -> declaration != KotlinRuntimeModule.kotlinBase  // Unexported types are mapped to KotlinBase; they cannot have bridges
+            else -> true
         }
         else -> false
     }
