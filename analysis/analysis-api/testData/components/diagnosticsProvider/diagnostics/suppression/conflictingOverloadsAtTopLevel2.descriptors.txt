@@ -1,0 +1,7 @@
+Diagnostics from elements:
+  for PSI element of type KtNamedFunction at (20,1) - (22,2)
+    CONFLICTING_OVERLOADS      text ranges: [(394,415)]
+      PSI: KtNamedFunction at (20,1) - (22,2)
+  for PSI element of type KtNamedFunction at (7,1) - (9,2)
+    CONFLICTING_OVERLOADS      text ranges: [(215,233)]
+      PSI: KtNamedFunction at (7,1) - (9,2)

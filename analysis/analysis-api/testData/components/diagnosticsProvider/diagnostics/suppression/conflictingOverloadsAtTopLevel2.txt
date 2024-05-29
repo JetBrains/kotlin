@@ -1,7 +1,7 @@
 Diagnostics from elements:
-  for PSI element of type KtNamedFunction at (20,1) - (22,2)
-    CONFLICTING_OVERLOADS      text ranges: [(394,415)]
-      PSI: KtNamedFunction at (20,1) - (22,2)
-  for PSI element of type KtNamedFunction at (7,1) - (9,2)
-    CONFLICTING_OVERLOADS      text ranges: [(215,233)]
-      PSI: KtNamedFunction at (7,1) - (9,2)
+  for PSI element of type KtStringTemplateExpression at (12,11-34)
+    ERROR_SUPPRESSION      text ranges: [(152,175)]
+      PSI: KtStringTemplateExpression at (12,11-34)
+  for PSI element of type KtStringTemplateExpression at (7,11-34)
+    ERROR_SUPPRESSION      text ranges: [(64,87)]
+      PSI: KtStringTemplateExpression at (7,11-34)

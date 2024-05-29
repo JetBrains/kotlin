@@ -1,4 +1,3 @@
-// IGNORE_FIR
 package foo.bar.baz
 
 class AA {
