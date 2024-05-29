@@ -105,8 +105,11 @@ abstract class AbstractElement<Element, Field, Implementation>(
     override val allParents: List<Element>
         get() = elementParents.map { it.element }
 
-    override val typeName: String
+    val typeName: String
         get() = namePrefix + name
+
+    override val importableName: String
+        get() = typeName
 
     final override fun renderTo(appendable: Appendable, importCollector: ImportCollecting) {
         importCollector.addImport(this)

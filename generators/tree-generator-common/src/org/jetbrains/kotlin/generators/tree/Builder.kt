@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.generators.tree.imports.Importable
 sealed class Builder<BuilderField, Element> : FieldContainer<BuilderField>, TypeRefWithNullability, Importable
         where BuilderField : AbstractField<*>,
               Element : AbstractElement<Element, *, *> {
+    abstract val typeName: String
 
     val parents: MutableList<IntermediateBuilder<BuilderField, Element>> = mutableListOf()
 
@@ -32,7 +33,7 @@ sealed class Builder<BuilderField, Element> : FieldContainer<BuilderField>, Type
 
     override fun renderTo(appendable: Appendable, importCollector: ImportCollecting) {
         importCollector.addImport(this)
-        appendable.append(typeName)
+        appendable.append(importableName)
     }
 
     override val nullable: Boolean
@@ -49,6 +50,9 @@ class LeafBuilder<BuilderField, Element, Implementation>(
               Implementation : AbstractImplementation<Implementation, Element, BuilderField> {
     override val typeName: String
         get() = (implementation.name ?: implementation.element.typeName) + "Builder"
+
+    override val importableName: String
+        get() = typeName
 
     override val allFields: List<BuilderField> by lazy { implementation.fieldsInConstructor }
 
@@ -69,6 +73,9 @@ class IntermediateBuilder<BuilderField, Element>(
 ) : Builder<BuilderField, Element>()
         where BuilderField : AbstractField<*>,
               Element : AbstractElement<Element, *, *> {
+    override val importableName: String
+        get() = typeName
+
     val fields: MutableList<BuilderField> = mutableListOf()
     var materializedElement: Element? = null
 

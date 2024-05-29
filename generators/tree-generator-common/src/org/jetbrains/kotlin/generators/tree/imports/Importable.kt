@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.generators.tree.imports
 
 interface Importable {
-
     /**
      * The name of the entity to import.
      */
-    val typeName: String
+    val importableName: String
 
     val packageName: String
 }

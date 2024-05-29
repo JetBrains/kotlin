@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.generators.tree.imports
 
-data class ArbitraryImportable(override val packageName: String, override val typeName: String) : Importable
+data class ArbitraryImportable(override val packageName: String, override val importableName: String) : Importable

@@ -61,7 +61,7 @@ internal class ImportCollector(currentPackage: String) : ImportCollecting {
     }
 
     override fun addImport(importable: Importable) {
-        addImport(importable.packageName, importable.typeName)
+        addImport(importable.packageName, importable.importableName)
     }
 
     /**
