@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlin.fir.dataframe.flatten
+import org.jetbrains.kotlin.fir.dataframe.api.flatten
 import org.jetbrains.kotlin.fir.dataframe.pluginDataFrameSchema
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference

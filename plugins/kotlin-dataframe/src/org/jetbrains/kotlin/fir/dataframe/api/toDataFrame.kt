@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.fir.dataframe.api
 
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.classId
+import org.jetbrains.kotlin.fir.dataframe.utils.Names
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
@@ -53,7 +53,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
-import java.util.Locale
+import java.util.*
 
 class Properties0 : AbstractInterpreter<Unit>() {
     val Arguments.dsl: CreateDataFrameConfiguration by arg()

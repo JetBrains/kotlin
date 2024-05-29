@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.dataframe.CallShapeData
-import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.callShapeData
-import org.jetbrains.kotlin.fir.dataframe.generateExtensionProperty
+import org.jetbrains.kotlin.fir.dataframe.utils.Names
+import org.jetbrains.kotlin.fir.dataframe.utils.generateExtensionProperty
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext

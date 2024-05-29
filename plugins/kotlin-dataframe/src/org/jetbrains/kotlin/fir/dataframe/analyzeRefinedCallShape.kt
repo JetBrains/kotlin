@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
-import org.jetbrains.kotlin.fir.dataframe.Names.DF_CLASS_ID
 import org.jetbrains.kotlin.fir.dataframe.api.CreateDataFrameConfiguration
 import org.jetbrains.kotlin.fir.dataframe.api.TraverseConfiguration
 import org.jetbrains.kotlin.fir.dataframe.api.groupBy
 import org.jetbrains.kotlin.fir.dataframe.api.toDataFrame
+import org.jetbrains.kotlin.fir.dataframe.utils.Names.DF_CLASS_ID
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -36,7 +36,7 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
         return null
     }
 
-    val dataFrameSchema: PluginDataFrameSchema = call.interpreterName(session)?.let {
+    val newSchema: PluginDataFrameSchema = call.interpreterName(session)?.let {
         when (it) {
             "toDataFrameDsl" -> {
                 val list = call.argumentList as FirResolvedArgumentList
@@ -102,10 +102,10 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
         }
     } ?: return null
 
-    return CallResult(rootMarker, dataFrameSchema)
+    return CallResult(rootMarker, newSchema)
 }
 
-data class CallResult(val rootMarker: ConeClassLikeType, val dataFrameSchema: PluginDataFrameSchema)
+data class CallResult(val rootMarker: ConeClassLikeType, val newSchema: PluginDataFrameSchema)
 
 class Arguments(val refinedArguments: List<RefinedArgument>) : List<RefinedArgument> by refinedArguments
 

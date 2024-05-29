@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.dataframe.extensions.CandidateInterceptor
 import org.jetbrains.kotlin.fir.dataframe.extensions.DataRowSchemaSupertype
 import org.jetbrains.kotlin.fir.dataframe.extensions.ExpressionAnalysisAdditionalChecker
 import org.jetbrains.kotlin.fir.dataframe.extensions.ExtensionsGenerator
+import org.jetbrains.kotlin.fir.dataframe.extensions.FunctionCallTransformer
 import org.jetbrains.kotlin.fir.dataframe.extensions.IrBodyFiller
 import org.jetbrains.kotlin.fir.dataframe.extensions.ReturnTypeBasedReceiverInjector
 import org.jetbrains.kotlin.fir.dataframe.extensions.TokenGenerator
@@ -67,11 +67,10 @@ class FirDataFrameExtensionRegistrar(
 ) : FirExtensionRegistrar() {
     @OptIn(FirExtensionApiInternals::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
-        // if input data schema for refinement is also generated schema, maybe it'll be possible to save names to a set
         +::ExtensionsGenerator
         +::ReturnTypeBasedReceiverInjector
         +{ it: FirSession ->
-            CandidateInterceptor(path, it, jsonCache(it), schemasDirectory)
+            FunctionCallTransformer(path, it, jsonCache(it), schemasDirectory)
         }
         +::TokenGenerator
         +::DataRowSchemaSupertype
@@ -90,7 +89,6 @@ class FirDataFrameExtensionRegistrar(
 
 @OptIn(ExperimentalCompilerApi::class)
 class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
-
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val schemasDirectory = configuration.get(SCHEMAS)
         val path = configuration.get(PATH)

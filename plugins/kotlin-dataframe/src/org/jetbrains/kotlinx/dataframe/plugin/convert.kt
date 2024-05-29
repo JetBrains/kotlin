@@ -1,7 +1,7 @@
 package org.jetbrains.kotlinx.dataframe.plugin
 
-import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.pluginDataFrameSchema
+import org.jetbrains.kotlin.fir.dataframe.utils.Names
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.isNullable

@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.fir.dataframe
+package org.jetbrains.kotlin.fir.dataframe.utils
 
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality

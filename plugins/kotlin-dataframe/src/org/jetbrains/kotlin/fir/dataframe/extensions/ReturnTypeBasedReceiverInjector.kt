@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.fir.dataframe.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.callShapeData
+import org.jetbrains.kotlin.fir.dataframe.utils.Names
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
