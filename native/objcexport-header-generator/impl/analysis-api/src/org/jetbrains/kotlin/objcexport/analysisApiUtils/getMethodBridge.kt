@@ -91,6 +91,8 @@ private fun bridgeType(
         type.isUShort -> ObjCValueType.UNSIGNED_SHORT
         type.isUInt -> ObjCValueType.UNSIGNED_INT
         type.isULong -> ObjCValueType.UNSIGNED_LONG_LONG
+        type.isClassTypeWithClassId(KonanPrimitiveType.VECTOR128.classId) && !type.isMarkedNullable ->
+            ObjCValueType.VECTOR_FLOAT_128
         type.isClassTypeWithClassId(KonanPrimitiveType.NON_NULL_NATIVE_PTR.classId) -> ObjCValueType.POINTER
         else -> null
     }

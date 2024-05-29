@@ -45,6 +45,7 @@ internal fun KtType.translateToObjCType(typeBridge: TypeBridge): ObjCType {
             ObjCValueType.UNSIGNED_LONG_LONG -> ObjCPrimitiveType.uint64_t
             ObjCValueType.FLOAT -> ObjCPrimitiveType.float
             ObjCValueType.DOUBLE -> ObjCPrimitiveType.double
+            ObjCValueType.VECTOR_FLOAT_128 -> ObjCPrimitiveType.vectorFloat128
             ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType, isBinaryRepresentationNullable())
         }
     }

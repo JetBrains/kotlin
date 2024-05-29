@@ -315,6 +315,7 @@ internal class ObjCExportCodeGenerator(
         ObjCValueType.CHAR, ObjCValueType.SHORT, ObjCValueType.INT, ObjCValueType.LONG_LONG,
         ObjCValueType.UNSIGNED_CHAR, ObjCValueType.UNSIGNED_SHORT, ObjCValueType.UNSIGNED_INT,
         ObjCValueType.UNSIGNED_LONG_LONG,
+        ObjCValueType.VECTOR_FLOAT_128,
         ObjCValueType.FLOAT, ObjCValueType.DOUBLE, ObjCValueType.POINTER -> value
     }
 
@@ -328,6 +329,7 @@ internal class ObjCExportCodeGenerator(
         ObjCValueType.CHAR, ObjCValueType.SHORT, ObjCValueType.INT, ObjCValueType.LONG_LONG,
         ObjCValueType.UNSIGNED_CHAR, ObjCValueType.UNSIGNED_SHORT, ObjCValueType.UNSIGNED_INT,
         ObjCValueType.UNSIGNED_LONG_LONG,
+        ObjCValueType.VECTOR_FLOAT_128,
         ObjCValueType.FLOAT, ObjCValueType.DOUBLE, ObjCValueType.POINTER -> value
     }
 
@@ -1907,6 +1909,7 @@ private fun ObjCValueType.toLlvmType(llvm: CodegenLlvmHelpers): LLVMTypeRef = wh
     ObjCValueType.UNSIGNED_LONG_LONG -> llvm.int64Type
     ObjCValueType.FLOAT -> llvm.floatType
     ObjCValueType.DOUBLE -> llvm.doubleType
+    ObjCValueType.VECTOR_FLOAT_128 -> llvm.vector128Type
     ObjCValueType.POINTER -> llvm.int8PtrType
 }
 
