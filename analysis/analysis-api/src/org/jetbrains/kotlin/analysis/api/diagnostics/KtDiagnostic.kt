@@ -17,17 +17,20 @@ public enum class KaSeverity {
 }
 
 public interface KaDiagnostic : KaLifetimeOwner {
-    public val severity: KaSeverity
+    public val diagnosticClass: KClass<*>
     public val factoryName: String
+    public val severity: KaSeverity
+
     public val defaultMessage: String
 }
 
 public typealias KtDiagnostic = KaDiagnostic
 
 public interface KaDiagnosticWithPsi<out PSI : PsiElement> : KaDiagnostic {
+    public override val diagnosticClass: KClass<out KaDiagnosticWithPsi<PSI>>
+
     public val psi: PSI
     public val textRanges: Collection<TextRange>
-    public val diagnosticClass: KClass<out KaDiagnosticWithPsi<PSI>>
 }
 
 public typealias KtDiagnosticWithPsi<PSI> = KaDiagnosticWithPsi<PSI>

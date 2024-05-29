@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.Severity.*
+import kotlin.reflect.KClass
 
 class KaNonBoundToPsiErrorDiagnostic(
     override val factoryName: String,
@@ -19,6 +20,9 @@ class KaNonBoundToPsiErrorDiagnostic(
 ) : KaDiagnostic {
     override val severity: KaSeverity
         get() = withValidityAssertion { KaSeverity.ERROR }
+
+    override val diagnosticClass: KClass<*>
+        get() = KaNonBoundToPsiErrorDiagnostic::class
 }
 
 fun Severity.toAnalysisApiSeverity(): KaSeverity {
