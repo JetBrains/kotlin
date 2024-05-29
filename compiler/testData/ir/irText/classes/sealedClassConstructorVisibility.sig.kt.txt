@@ -1,0 +1,89 @@
+// CHECK:
+//   Mangled name: PrivatePrimary
+//   Public signature: /PrivatePrimary|null[0]
+sealed class PrivatePrimary {
+  // CHECK:
+  //   Mangled name: PrivatePrimary#<init>(){}
+  //   Public signature: /PrivatePrimary.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: PrivateSecondary
+//   Public signature: /PrivateSecondary|null[0]
+sealed class PrivateSecondary {
+  // CHECK:
+  //   Mangled name: PrivateSecondary#<init>(kotlin.Int){}
+  //   Public signature: /PrivateSecondary.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  private constructor(i: Int)
+
+  // CHECK:
+  //   Mangled name: PrivateSecondary#<init>(){}
+  //   Public signature: /PrivateSecondary.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  protected constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: ProtectedPrimary
+//   Public signature: /ProtectedPrimary|null[0]
+sealed class ProtectedPrimary {
+  // CHECK:
+  //   Mangled name: ProtectedPrimary#<init>(){}
+  //   Public signature: /ProtectedPrimary.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  protected constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: ProtectedSecondary
+//   Public signature: /ProtectedSecondary|null[0]
+sealed class ProtectedSecondary {
+  // CHECK:
+  //   Mangled name: ProtectedSecondary#<init>(){}
+  //   Public signature: /ProtectedSecondary.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  protected constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: ProtectedSecondary#<init>(kotlin.Int){}
+  //   Public signature: /ProtectedSecondary.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  protected constructor(i: Int)
+
+}
+
+// CHECK:
+//   Mangled name: UnspecifiedPrimary
+//   Public signature: /UnspecifiedPrimary|null[0]
+sealed class UnspecifiedPrimary {
+  // CHECK:
+  //   Mangled name: UnspecifiedPrimary#<init>(){}
+  //   Public signature: /UnspecifiedPrimary.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  protected constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: UnspecifiedSecondary
+//   Public signature: /UnspecifiedSecondary|null[0]
+sealed class UnspecifiedSecondary {
+  // CHECK:
+  //   Mangled name: UnspecifiedSecondary#<init>(){}
+  //   Public signature: /UnspecifiedSecondary.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  protected constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: UnspecifiedSecondary#<init>(kotlin.Int){}
+  //   Public signature: /UnspecifiedSecondary.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  protected constructor(i: Int)
+
+}

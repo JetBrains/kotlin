@@ -317,6 +317,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
     }
 
     @Test
+    @TestMetadata("sealedClassConstructorVisibility.kt")
+    public void testSealedClassConstructorVisibility() {
+      runTest("compiler/testData/ir/irText/classes/sealedClassConstructorVisibility.kt");
+    }
+
+    @Test
     @TestMetadata("sealedClasses.kt")
     public void testSealedClasses() {
       runTest("compiler/testData/ir/irText/classes/sealedClasses.kt");
