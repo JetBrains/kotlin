@@ -132,7 +132,20 @@ class XcodeSimulatorExecutor(
         logger.info("Runtime for the $deviceId is not available. Downloading runtimes for $target with Xcode")
         downloadRuntimeFor(simulatorOsName(target.family))
 
-        return checkNotNull(simulatorRuntimeOrNull()) { "Runtime is not available for the selected $deviceId. Check Xcode installation" }
+        return checkNotNull(simulatorRuntimeOrNull()) {
+            """
+            |Runtime is not available for the selected $deviceId. Check Xcode installation.
+            |osMinVersion = ${configurables.osVersionMin}
+            |$ xcrun simctl list runtimes --json
+            |_____
+            |${simctl("list", "runtimes", "--json")}
+            |-----
+            |$ xcrun simctl list devices --json
+            |_____
+            |${simctl("list", "devices", "--json")}
+            |-----
+            """.trimMargin()
+        }
     }
 
     private val downloadRuntimeResultByOsName = mutableMapOf<String, Result<Unit>>()
@@ -146,13 +159,15 @@ class XcodeSimulatorExecutor(
         check(version.major >= 14) {
             "Was unable to get the required runtimes running on Xcode $version. Check the Xcode installation"
         }
-        if (version >= XcodeVersion(14, 1)) {
+        val runProcessResult = if (version >= XcodeVersion(14, 1)) {
             // Option -downloadPlatform NAME available only since 14.1
             hostExecutor.runProcess("/usr/bin/xcrun", "xcodebuild", "-downloadPlatform", osName)
         } else {
             // Have to download all platforms :(
             hostExecutor.runProcess("/usr/bin/xcrun", "xcodebuild", "-downloadAllPlatforms")
         }
+        logger.info("STDOUT:\n${runProcessResult.stdout}\n-----")
+        logger.info("STDERR:\n${runProcessResult.stderr}\n-----")
     }
 
     override fun execute(request: ExecuteRequest): ExecuteResponse {
