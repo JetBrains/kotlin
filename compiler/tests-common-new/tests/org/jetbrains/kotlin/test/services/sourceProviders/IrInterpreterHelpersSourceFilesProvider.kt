@@ -43,7 +43,6 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         private val EXCLUDES = listOf(
             "src/kotlin/UStrings.kt", "src/kotlin/UMath.kt", "src/kotlin/UNumbers.kt", "src/kotlin/reflect/TypesJVM.kt",
             "libraries/stdlib/unsigned/src/kotlin/UnsignedCommon.kt",
-            "core/builtins/src/kotlin/CompileTimeAnnotations.kt"
         ).map(::File)
     }
 
