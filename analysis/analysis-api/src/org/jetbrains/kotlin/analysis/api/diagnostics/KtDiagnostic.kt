@@ -7,14 +7,19 @@ package org.jetbrains.kotlin.analysis.api.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import kotlin.reflect.KClass
 
+public enum class KaSeverity {
+    ERROR,
+    WARNING,
+    INFO
+}
+
 public interface KaDiagnostic : KaLifetimeOwner {
-    public val severity: Severity
+    public val severity: KaSeverity
     public val factoryName: String?
     public val defaultMessage: String
 }
@@ -34,7 +39,8 @@ public class KaNonBoundToPsiErrorDiagnostic(
     override val defaultMessage: String,
     override val token: KaLifetimeToken,
 ) : KaDiagnostic {
-    override val severity: Severity get() = withValidityAssertion { Severity.ERROR }
+    override val severity: KaSeverity
+        get() = withValidityAssertion { KaSeverity.ERROR }
 }
 
 public typealias KtNonBoundToPsiErrorDiagnostic = KaNonBoundToPsiErrorDiagnostic

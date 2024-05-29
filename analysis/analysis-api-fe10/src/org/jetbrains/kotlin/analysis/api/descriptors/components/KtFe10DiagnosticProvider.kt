@@ -13,11 +13,12 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.Analysis
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity
+import org.jetbrains.kotlin.analysis.api.impl.base.util.toAnalysisApiSeverity
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
-import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.UnboundDiagnostic
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.psi.KtElement
@@ -49,8 +50,8 @@ internal class KaFe10DiagnosticProvider(
 }
 
 internal class KaFe10Diagnostic(private val diagnostic: Diagnostic, override val token: KaLifetimeToken) : KaDiagnosticWithPsi<PsiElement> {
-    override val severity: Severity
-        get() = withValidityAssertion { diagnostic.severity }
+    override val severity: KaSeverity
+        get() = withValidityAssertion { diagnostic.severity.toAnalysisApiSeverity() }
 
     override val factoryName: String
         get() = withValidityAssertion { diagnostic.factory.name }
