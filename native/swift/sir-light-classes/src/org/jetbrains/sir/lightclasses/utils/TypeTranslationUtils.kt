@@ -5,15 +5,15 @@
 
 package org.jetbrains.sir.lightclasses.utils
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionLikeSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinParameterOrigin
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 
-internal inline fun <reified T : KtCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
+internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
     return withSessions {
         this@translateReturnType.ktSymbol.returnType.translateType(
             analysisSession,
@@ -24,7 +24,7 @@ internal inline fun <reified T : KtCallableSymbol> SirFromKtSymbol<T>.translateR
     }
 }
 
-internal inline fun <reified T : KtFunctionLikeSymbol> SirFromKtSymbol<T>.translateParameters(): List<SirParameter> {
+internal inline fun <reified T : KaFunctionLikeSymbol> SirFromKtSymbol<T>.translateParameters(): List<SirParameter> {
     return withSessions {
         this@translateParameters.ktSymbol.valueParameters.map { parameter ->
             val sirType = parameter.returnType.translateType(

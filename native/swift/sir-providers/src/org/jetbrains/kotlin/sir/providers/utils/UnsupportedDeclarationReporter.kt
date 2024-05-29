@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.sir.providers.utils
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 
 public interface UnsupportedDeclarationReporter {
-    public fun report(symbol: KtSymbolWithVisibility, reason: String)
+    public fun report(symbol: KaSymbolWithVisibility, reason: String)
 }
 
 public class SimpleUnsupportedDeclarationReporter : UnsupportedDeclarationReporter {
@@ -21,11 +21,11 @@ public class SimpleUnsupportedDeclarationReporter : UnsupportedDeclarationReport
     public val messages: List<String>
         get() = _messages.toList()
 
-    override fun report(symbol: KtSymbolWithVisibility, reason: String) {
+    override fun report(symbol: KaSymbolWithVisibility, reason: String) {
         val declarationName = when (symbol) {
-            is KtCallableSymbol -> symbol.callableId?.asSingleFqName()?.asString()
-            is KtClassOrObjectSymbol -> symbol.classId?.asSingleFqName()?.asString()
-            is KtNamedSymbol -> symbol.name.asString()
+            is KaCallableSymbol -> symbol.callableId?.asSingleFqName()?.asString()
+            is KaClassOrObjectSymbol -> symbol.classId?.asSingleFqName()?.asString()
+            is KaNamedSymbol -> symbol.name.asString()
             else -> null
         } ?: "declaration"
         _messages += "Can't export $declarationName: $reason"
@@ -33,5 +33,5 @@ public class SimpleUnsupportedDeclarationReporter : UnsupportedDeclarationReport
 }
 
 public object SilentUnsupportedDeclarationReporter : UnsupportedDeclarationReporter {
-    override fun report(symbol: KtSymbolWithVisibility, reason: String) {}
+    override fun report(symbol: KaSymbolWithVisibility, reason: String) {}
 }

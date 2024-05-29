@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.scopes.KtScope
+import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -101,10 +100,9 @@ internal fun buildSwiftModule(
 private data class ModuleWithScopeProvider(
     val useSiteModule: KtModule,
     val mainModule: KtModule,
-    val scopeProvider: (KtAnalysisSession) -> List<KtScope>,
+    val scopeProvider: (KaSession) -> List<KaScope>,
 )
 
-@OptIn(KtAnalysisApiInternals::class)
 private fun createModuleWithScopeProviderFromSources(
     kotlinDistribution: Distribution,
     input: InputModule.Source,
@@ -140,7 +138,6 @@ private fun createModuleWithScopeProviderFromSources(
     }
 }
 
-@OptIn(KtAnalysisApiInternals::class)
 private fun createModuleWithScopeProviderFromBinary(
     kotlinDistribution: Distribution,
     input: InputModule.Binary,

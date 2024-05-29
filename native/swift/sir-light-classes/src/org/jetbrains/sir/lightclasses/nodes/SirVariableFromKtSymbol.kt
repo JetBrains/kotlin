@@ -5,7 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtVariableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
@@ -20,10 +20,10 @@ import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 
 internal class SirVariableFromKtSymbol(
-    override val ktSymbol: KtVariableSymbol,
+    override val ktSymbol: KaVariableSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirVariable(), SirFromKtSymbol<KtVariableSymbol> {
+) : SirVariable(), SirFromKtSymbol<KaVariableSymbol> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
 

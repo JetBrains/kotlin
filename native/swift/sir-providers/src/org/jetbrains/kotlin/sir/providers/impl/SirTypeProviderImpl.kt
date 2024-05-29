@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -22,8 +22,8 @@ public class SirTypeProviderImpl(
     override val unsupportedTypeStrategy: ErrorTypeStrategy,
 ) : SirTypeProvider {
 
-    override fun KtType.translateType(
-        ktAnalysisSession: KtAnalysisSession,
+    override fun KaType.translateType(
+        ktAnalysisSession: KaSession,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
@@ -32,8 +32,8 @@ public class SirTypeProviderImpl(
             .handleErrors(reportErrorType, reportUnsupportedType)
             .handleImports(ktAnalysisSession, processTypeImports)
 
-    private fun buildSirNominalType(ktType: KtType, ktAnalysisSession: KtAnalysisSession): SirType {
-        fun buildPrimitiveType(ktType: KtType): SirType? = with(ktAnalysisSession) {
+    private fun buildSirNominalType(ktType: KaType, ktAnalysisSession: KaSession): SirType {
+        fun buildPrimitiveType(ktType: KaType): SirType? = with(ktAnalysisSession) {
             when {
                 ktType.isUnit -> SirSwiftModule.void
 
@@ -57,25 +57,25 @@ public class SirTypeProviderImpl(
             }
         }
 
-        fun buildRegularType(ktType: KtType): SirType = when (ktType) {
-            is KtUsualClassType -> with(sirSession) {
+        fun buildRegularType(ktType: KaType): SirType = when (ktType) {
+            is KaUsualClassType -> with(sirSession) {
                 when (val classSymbol = ktType.classSymbol) {
-                        is KtSymbolWithVisibility -> {
-                            if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
-                                SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
-                            } else {
-                                // Mapping all unexported types to KotlinBase
-                                SirNominalType(KotlinRuntimeModule.kotlinBase)
-                            }
+                    is KaSymbolWithVisibility -> {
+                        if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
+                            SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
+                        } else {
+                            // Mapping all unexported types to KotlinBase
+                            SirNominalType(KotlinRuntimeModule.kotlinBase)
                         }
-                        else -> SirUnsupportedType()
                     }
+                    else -> SirUnsupportedType()
                 }
-                is KtFunctionalType,
-                is KtTypeParameterType,
-                -> SirUnsupportedType()
-                is KtErrorType -> SirErrorType(ktType.errorMessage)
-                else -> SirErrorType("Unexpected type ${ktType.asStringForDebugging()}")
+            }
+            is KaFunctionalType,
+            is KaTypeParameterType,
+            -> SirUnsupportedType()
+            is KaErrorType -> SirErrorType(ktType.errorMessage)
+            else -> SirErrorType("Unexpected type ${ktType.asStringForDebugging()}")
 
         }
 
@@ -98,7 +98,7 @@ public class SirTypeProviderImpl(
     }
 
     private fun SirType.handleImports(
-        ktAnalysisSession: KtAnalysisSession,
+        ktAnalysisSession: KaSession,
         processTypeImports: (List<SirImport>) -> Unit,
     ): SirType {
         if (this is SirNominalType) {

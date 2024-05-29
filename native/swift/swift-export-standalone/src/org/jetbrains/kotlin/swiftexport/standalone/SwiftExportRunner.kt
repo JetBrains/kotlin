@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirNominalType
@@ -150,7 +150,7 @@ public fun runSwiftExport(
         override fun swiftFqName(type: SirType): String = type.swiftName
         override fun kotlinFqName(type: SirType): String {
             require(type is SirNominalType)
-            return ((type.type.origin as KotlinSource).symbol as KtClassLikeSymbol).classId!!.asFqNameString()
+            return ((type.type.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
         }
     })
     val bridgeRequests = buildBridgeRequests(bridgeGenerator, buildResult.mainModule)

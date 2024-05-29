@@ -5,7 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeAliasSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -17,10 +17,10 @@ import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 
 internal class SirTypealiasFromKtSymbol(
-    override val ktSymbol: KtTypeAliasSymbol,
+    override val ktSymbol: KaTypeAliasSymbol,
     override val ktModule: KtModule,
     override val sirSession: SirSession,
-) : SirTypealias(), SirFromKtSymbol<KtTypeAliasSymbol> {
+) : SirTypealias(), SirFromKtSymbol<KaTypeAliasSymbol> {
 
     override val origin: SirOrigin = KotlinSource(ktSymbol)
     override val visibility: SirVisibility = SirVisibility.PUBLIC

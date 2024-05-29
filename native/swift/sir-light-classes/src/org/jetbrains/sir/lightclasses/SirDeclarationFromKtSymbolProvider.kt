@@ -17,37 +17,37 @@ public class SirDeclarationFromKtSymbolProvider(
     private val sirSession: SirSession,
 ) : SirDeclarationProvider {
 
-    override fun KtDeclarationSymbol.sirDeclaration(): SirDeclaration {
+    override fun KaDeclarationSymbol.sirDeclaration(): SirDeclaration {
         return when (val ktSymbol = this@sirDeclaration) {
-            is KtNamedClassOrObjectSymbol -> {
+            is KaNamedClassOrObjectSymbol -> {
                 SirClassFromKtSymbol(
                     ktSymbol = ktSymbol,
                     ktModule = ktModule,
                     sirSession = sirSession,
                 )
             }
-            is KtConstructorSymbol -> {
+            is KaConstructorSymbol -> {
                 SirInitFromKtSymbol(
                     ktSymbol = ktSymbol,
                     ktModule = ktModule,
                     sirSession = sirSession,
                 )
             }
-            is KtFunctionLikeSymbol -> {
+            is KaFunctionLikeSymbol -> {
                 SirFunctionFromKtSymbol(
                     ktSymbol = ktSymbol,
                     ktModule = ktModule,
                     sirSession = sirSession,
                 )
             }
-            is KtVariableSymbol -> {
+            is KaVariableSymbol -> {
                 SirVariableFromKtSymbol(
                     ktSymbol = ktSymbol,
                     ktModule = ktModule,
                     sirSession = sirSession,
                 )
             }
-            is KtTypeAliasSymbol -> {
+            is KaTypeAliasSymbol -> {
                 SirTypealiasFromKtSymbol(
                     ktSymbol = ktSymbol,
                     ktModule = ktModule,
