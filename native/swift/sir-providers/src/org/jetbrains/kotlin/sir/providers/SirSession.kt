@@ -82,7 +82,7 @@ public interface SirSession :
  * Provides methods to create [SirEnum] which emulates Kotlin packages.
  */
 public interface SirEnumGenerator {
-    public fun FqName.sirPackageEnum(module: SirModule): SirEnum
+    public fun FqName.sirPackageEnum(): SirEnum
 }
 
 /**

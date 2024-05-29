@@ -20,7 +20,6 @@ public class SirTrampolineDeclarationsProviderImpl(
     private val enumGenerator: SirEnumGenerator,
 ) : SirTrampolineDeclarationsProvider {
     private val generatedDeclarations: MutableMap<SirDeclaration, List<SirDeclaration>> = mutableMapOf()
-    private val targets: MutableMap<SirModule, SirEnum> = mutableMapOf()
 
     override fun SirDeclaration.trampolineDeclarations(): List<SirDeclaration> = generateDeclarations(this)
 
@@ -28,15 +27,12 @@ public class SirTrampolineDeclarationsProviderImpl(
         if (targetPackageFqName == null)
             return emptyList()
 
-        val containingModule = declaration.containingModule()
 
         with(sirSession) {
-            val targetEnum = targets.getOrPut(containingModule) {
-                if (declaration is SirEnum && declaration.isNamespace(targetPackageFqName)) {
-                    declaration // avoid recursion
-                } else {
-                    with(enumGenerator) { targetPackageFqName.sirPackageEnum(containingModule) }
-                }
+            val targetEnum = if (declaration is SirEnum && declaration.isNamespace(targetPackageFqName)) {
+                declaration // avoid recursion
+            } else {
+                with(enumGenerator) { targetPackageFqName.sirPackageEnum() }
             }
 
             val shouldExportToRoot = when (val parent = declaration.parent) {

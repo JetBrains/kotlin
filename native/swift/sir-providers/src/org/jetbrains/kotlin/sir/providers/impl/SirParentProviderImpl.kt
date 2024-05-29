@@ -39,7 +39,7 @@ public class SirParentProviderImpl(
             return if (packageFqName.isRoot) {
                 sirModule
             } else {
-                val enumAsPackage = with(packageEnumGenerator) { packageFqName.sirPackageEnum(sirModule) }
+                val enumAsPackage = with(packageEnumGenerator) { packageFqName.sirPackageEnum() }
                 val extensionsInModule = createdExtensionsForModule.getOrPut(sirModule) { mutableMapOf() }
                 val extensionForPackage = extensionsInModule.getOrPut(enumAsPackage) {
                     sirModule.addChild {

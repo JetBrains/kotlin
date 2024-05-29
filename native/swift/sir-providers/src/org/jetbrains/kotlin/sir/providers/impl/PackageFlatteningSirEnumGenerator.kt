@@ -17,14 +17,15 @@ import org.jetbrains.kotlin.sir.util.name
 public class PackageFlatteningSirEnumGenerator(
     private val sirSession: SirSession,
     private val enumGenerator: SirEnumGenerator,
+    private val moduleForEnums: SirModule
 ) : SirEnumGenerator {
     private val processedDeclarations: MutableSet<SirEnum> = mutableSetOf()
 
-    override fun FqName.sirPackageEnum(module: SirModule): SirEnum = with(enumGenerator) { this@sirPackageEnum.sirPackageEnum(module) }
+    override fun FqName.sirPackageEnum(): SirEnum = with(enumGenerator) { this@sirPackageEnum.sirPackageEnum() }
         .also {
             if (!processedDeclarations.contains(it)) {
                 processedDeclarations.add(it)
-                with(sirSession) { it.trampolineDeclarations().forEach { module.addChild { it } } }
+                with(sirSession) { it.trampolineDeclarations().forEach { moduleForEnums.addChild { it } } }
             }
         }
 }

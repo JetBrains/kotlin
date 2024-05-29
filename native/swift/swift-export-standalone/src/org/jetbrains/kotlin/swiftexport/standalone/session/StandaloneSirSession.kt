@@ -40,6 +40,7 @@ internal class StandaloneSirSession(
         PackageFlatteningSirEnumGenerator(
             sirSession = this,
             enumGenerator = SirEnumGeneratorImpl(moduleForPackageEnums),
+            moduleForEnums = moduleForPackageEnums,
         )
     } ?: SirEnumGeneratorImpl(moduleForPackageEnums)
 

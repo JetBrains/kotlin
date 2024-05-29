@@ -3,7 +3,6 @@ import KotlinRuntime
 
 public typealias Clazz = main.org.kotlin.foo.Clazz
 public typealias Typealias = main.org.kotlin.foo.Typealias
-public typealias bar = main.org.kotlin.foo.bar
 public var constant: Swift.Int32 {
     get {
         main.org.kotlin.foo.constant
@@ -61,6 +60,7 @@ public extension main.org.kotlin.foo {
         return org_kotlin_foo_function__TypesOfArguments__int32_t__(arg)
     }
 }
+public typealias bar = main.org.kotlin.foo.bar
 public enum org {
     public enum kotlin {
         public enum baz {
