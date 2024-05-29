@@ -60,22 +60,22 @@ public class SirTypeProviderImpl(
         fun buildRegularType(ktType: KtType): SirType = when (ktType) {
             is KtUsualClassType -> with(sirSession) {
                 when (val classSymbol = ktType.classSymbol) {
-                        is KtSymbolWithVisibility -> {
-                            if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
-                                SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
-                            } else {
-                                // Mapping all unexported types to KotlinBase
-                                SirNominalType(KotlinRuntimeModule.kotlinBase)
-                            }
+                    is KtSymbolWithVisibility -> {
+                        if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
+                            SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
+                        } else {
+                            // Mapping all unexported types to KotlinBase
+                            SirNominalType(KotlinRuntimeModule.kotlinBase)
                         }
-                        else -> SirUnsupportedType()
                     }
+                    else -> SirUnsupportedType()
                 }
-                is KtFunctionalType,
-                is KtTypeParameterType,
-                -> SirUnsupportedType()
-                is KtErrorType -> SirErrorType(ktType.errorMessage)
-                else -> SirErrorType("Unexpected type ${ktType.asStringForDebugging()}")
+            }
+            is KtFunctionalType,
+            is KtTypeParameterType,
+            -> SirUnsupportedType()
+            is KtErrorType -> SirErrorType(ktType.errorMessage)
+            else -> SirErrorType("Unexpected type ${ktType.asStringForDebugging()}")
 
         }
 

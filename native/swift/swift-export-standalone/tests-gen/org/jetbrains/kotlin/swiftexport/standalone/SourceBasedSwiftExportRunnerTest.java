@@ -24,6 +24,12 @@ public class SourceBasedSwiftExportRunnerTest extends AbstractSourceBasedSwiftRu
   }
 
   @Test
+  @TestMetadata("any")
+  public void testAny() {
+    runTest("native/swift/swift-export-standalone/testData/any/");
+  }
+
+  @Test
   @TestMetadata("classes")
   public void testClasses() {
     runTest("native/swift/swift-export-standalone/testData/classes/");
