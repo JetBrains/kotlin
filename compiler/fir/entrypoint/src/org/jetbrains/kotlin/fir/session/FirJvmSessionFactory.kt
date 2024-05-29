@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirStdlibBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
@@ -125,7 +126,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                     FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
                 }
             },
-            createProviders = { session, _, symbolProvider, generatedSymbolsProvider, dependencies ->
+            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 val javaSymbolProvider =
                     JavaSymbolProvider(session, projectEnvironment.getFirJavaFacade(session, moduleData, javaSourcesScope))
                 session.register(JavaSymbolProvider::class, javaSymbolProvider)
@@ -139,6 +140,11 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                     generatedSymbolsProvider,
                     javaSymbolProvider,
                     createJvmActualizingBuiltinSymbolProviderIfNeeded(languageVersionSettings, moduleData, dependencies),
+                    FirStdlibBuiltinSyntheticFunctionInterfaceProvider.initializeIfNeeded(
+                        session,
+                        moduleData,
+                        kotlinScopeProvider,
+                    ),
                     *dependencies.toTypedArray(),
                     incrementalCompilationSymbolProviders?.optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
                 )

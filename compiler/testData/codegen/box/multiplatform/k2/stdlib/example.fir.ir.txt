@@ -81,6 +81,25 @@ FILE fqName:<root> fileName:/testPlatform.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnumInPlatform>
+  CLASS INTERFACE name:ClassThatInheritsSyntheticFunction modality:ABSTRACT visibility:public superTypes:[kotlin.Function0<kotlin.Any>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ClassThatInheritsSyntheticFunction
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [expect,fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Function0
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [expect,fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Function0
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:invoke visibility:public modality:ABSTRACT <> ($this:kotlin.Function0<kotlin.Any>) returnType:kotlin.Any [fake_override,operator]
+      overridden:
+        public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Function0<kotlin.Any>
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [expect,fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Function0
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:any visibility:public modality:FINAL <> () returnType:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun any (): kotlin.Any declared in <root>'

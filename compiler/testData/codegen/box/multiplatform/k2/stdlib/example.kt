@@ -116,8 +116,13 @@ fun testIntArrayOf() = intArrayOf(1, 2, 3)
 // Reproduce `IrConstructorSymbolImpl is unbound` for explicitely declared `@ExtensionFunctionType`
 typealias funWithSuspend = suspend Any.() -> Any
 
+public expect interface ClassThatInheritsSyntheticFunction : () -> Any // Reproduce KT-68188
+
 // MODULE: platform()()(common)
+
 // FILE: testPlatform.kt
+
+public actual interface ClassThatInheritsSyntheticFunction : () -> Any // Reproduce KT-68188
 
 enum class TestEnumInPlatform {
     D, E, F

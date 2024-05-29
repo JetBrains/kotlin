@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbols
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrDataClassGeneratedMemberBodyGenerator
+import org.jetbrains.kotlin.fir.backend.utils.generatedBuiltinsDeclarationsFileName
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -230,6 +232,8 @@ private class Fir2IrPipeline(
         fakeOverrideResolver.cacheFakeOverridesOfAllClasses(mainIrFragment)
         (fakeOverrideBuilder.strategy as Fir2IrFakeOverrideStrategy).clearFakeOverrideFields()
 
+        removeGeneratedBuiltinsDeclarationsIfNeeded()
+
         val pluginContext = Fir2IrPluginContext(componentsStorage, irBuiltIns, componentsStorage.moduleDescriptor, symbolTable)
         pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
 
@@ -381,6 +385,20 @@ private class Fir2IrPipeline(
                         setter.overriddenSymbols = setter.overriddenSymbols.map { resolver.getReferencedSimpleFunction(it) }
                     }
                 }
+            }
+        }
+    }
+
+    /** If `stdlibCompilation` mode is enabled, there are files with synthetic declarations, at least for non-JVM platforms.
+     * JVM stdlib has some FuncitonN declarations declared in source code (`libraries/stdlib/jvm/runtime/kotlin/jvm/functions/Functions.kt`)
+     * That's why synthetic declarations might not be generated.
+     * For non-JVM all synthetic builtins declarations should be generated before FIR2II conversion and removed after the actualizaiton.
+     */
+    private fun Fir2IrConversionResult.removeGeneratedBuiltinsDeclarationsIfNeeded() {
+        if (fir2IrConfiguration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+            val filesAreRemoved = mainIrFragment.files.removeAll { it.name == generatedBuiltinsDeclarationsFileName }
+            if (!componentsStorage.session.moduleData.platform.isJvm()) {
+                require(filesAreRemoved)
             }
         }
     }
