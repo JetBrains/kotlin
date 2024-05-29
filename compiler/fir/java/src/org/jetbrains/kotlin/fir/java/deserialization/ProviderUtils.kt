@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.fir.java.deserialization
 
 /**
- * Any top level declarations in core/builtins/src are also available from FirBuiltinSymbolProvider (or FirIdeBuiltinSymbolProvider) for IDE
+ * Several top level declarations are also available from FirBuiltinSymbolProvider (or FirIdeBuiltinSymbolProvider) for IDE
+ * (see `prepareCommonSources` task in `:core:builtins` project)
  * so we filter them out to avoid providing the "same" symbols twice.
  */
 val KotlinBuiltins: Set<String> = setOf("kotlin/ArrayIntrinsicsKt", "kotlin/internal/ProgressionUtilKt")
