@@ -23,6 +23,8 @@ import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.junit.Assert.assertEquals
@@ -30,6 +32,7 @@ import org.junit.Assert.assertEquals
 abstract class AbstractLiveLiteralTransformTests(
     useFir: Boolean
 ) : AbstractIrTransformTest(useFir) {
+    @OptIn(ExperimentalCompilerApi::class)
     private fun computeKeys(files: List<SourceFile>): List<String> {
         var builtKeys = mutableSetOf<String>()
         compileToIr(
@@ -42,7 +45,11 @@ abstract class AbstractLiveLiteralTransformTests(
                     ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY
                 )
 
-                ComposePluginRegistrar.registerCommonExtensions(this)
+                registerExtensionsForTest(this, configuration) {
+                    with(ComposePluginRegistrar.Companion) {
+                        registerCommonExtensions()
+                    }
+                }
                 IrGenerationExtension.registerExtension(
                     this,
                     object : IrGenerationExtension {
