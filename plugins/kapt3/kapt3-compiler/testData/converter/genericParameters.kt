@@ -1,4 +1,4 @@
-
+// EXPECTED_ERROR_K2: (kotlin:5:1) cannot find symbol
 // CORRECT_ERROR_TYPES
 // WITH_STDLIB
 
