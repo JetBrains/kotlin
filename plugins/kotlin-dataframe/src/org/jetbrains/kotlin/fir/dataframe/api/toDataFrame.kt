@@ -224,8 +224,8 @@ internal fun KotlinTypeFacade.toDataFrame(
             }
     }
 
-    val receiver = call.explicitReceiver ?: error("abv")
-    val arg = receiver.resolvedType.typeArguments.firstOrNull() ?: error("abe")
+    val receiver = call.explicitReceiver ?: return PluginDataFrameSchema(emptyList())
+    val arg = receiver.resolvedType.typeArguments.firstOrNull() ?: return PluginDataFrameSchema(emptyList())
     return when {
         arg.isStarProjection -> PluginDataFrameSchema(emptyList())
         else -> {
