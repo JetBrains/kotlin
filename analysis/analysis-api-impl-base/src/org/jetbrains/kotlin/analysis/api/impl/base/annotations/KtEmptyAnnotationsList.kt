@@ -11,19 +11,30 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
+import java.util.Collections
 
-class KaEmptyAnnotationList(override val token: KaLifetimeToken) : KaAnnotationList() {
-    override val annotations: List<KaAnnotationApplication> get() = withValidityAssertion { emptyList() }
+class KaEmptyAnnotationList(override val token: KaLifetimeToken) : AbstractList<KaAnnotationApplication>(), KaAnnotationList {
+    override val size: Int
+        get() = withValidityAssertion { 0 }
 
-    override fun hasAnnotation(
-        classId: ClassId,
-        useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): Boolean = withValidityAssertion { false }
+    override fun iterator(): Iterator<KaAnnotationApplication> = withValidityAssertion {
+        return Collections.emptyIterator()
+    }
 
-    override fun annotationsByClassId(
-        classId: ClassId,
-        useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KaAnnotationApplication> = withValidityAssertion { emptyList() }
+    override fun get(index: Int): KaAnnotationApplication = withValidityAssertion {
+        throw IndexOutOfBoundsException("Index $index out of bounds")
+    }
 
-    override val annotationClassIds: Collection<ClassId> get() = withValidityAssertion { emptyList() }
+    override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
+        return false
+    }
+
+    override fun annotationsByClassId(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): List<KaAnnotationApplication> {
+        withValidityAssertion {
+            return emptyList()
+        }
+    }
+
+    override val annotationClassIds: Set<ClassId>
+        get() = withValidityAssertion { emptySet() }
 }

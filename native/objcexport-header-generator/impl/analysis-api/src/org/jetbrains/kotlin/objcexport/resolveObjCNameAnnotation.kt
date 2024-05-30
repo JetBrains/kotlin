@@ -46,7 +46,7 @@ internal class KtResolvedObjCNameAnnotation(
 
 context(KtAnalysisSession)
 internal fun KtAnnotatedSymbol.resolveObjCNameAnnotation(): KtResolvedObjCNameAnnotation? {
-    val annotation = annotationsList.annotations.find { it.classId?.asSingleFqName() == KonanFqNames.objCName } ?: return null
+    val annotation = annotationsList.find { it.classId?.asSingleFqName() == KonanFqNames.objCName } ?: return null
 
     return KtResolvedObjCNameAnnotation(
         objCName = annotation.findArgument("name")?.resolveStringConstantValue(),

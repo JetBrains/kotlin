@@ -13,19 +13,14 @@ import org.jetbrains.kotlin.name.ClassId
  *
  * Annotation owners are usually implement [KaAnnotated]
  */
-public abstract class KaAnnotationList : KaLifetimeOwner {
-    /**
-     * A list of annotations applied.
-     *
-     * To check if annotation is present, please use [hasAnnotation].
-     *
-     * @see KaAnnotationApplication
-     */
-    public abstract val annotations: List<KaAnnotationApplication>
+public interface KaAnnotationList : List<KaAnnotationApplication>, KaLifetimeOwner {
+    @Deprecated("Use the annotation list as a 'List'.")
+    public val annotations: List<KaAnnotationApplication>
+        get() = this
 
-    @Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations"))
+    @Deprecated("Use the annotation list as a 'List'.")
     public val annotationInfos: List<KaAnnotationApplication>
-        get() = annotations
+        get() = this
 
     /**
      * Checks if entity contains annotation with specified [classId] and filtered by [useSiteTargetFilter].
@@ -39,7 +34,7 @@ public abstract class KaAnnotationList : KaLifetimeOwner {
      * @param classId [ClassId] to search
      * @param useSiteTargetFilter specific [AnnotationUseSiteTargetFilter]
      */
-    public abstract fun hasAnnotation(
+    public fun hasAnnotation(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
     ): Boolean
@@ -56,7 +51,7 @@ public abstract class KaAnnotationList : KaLifetimeOwner {
      * }
      * ```
      */
-    public abstract fun annotationsByClassId(
+    public fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
     ): List<KaAnnotationApplication>
@@ -71,7 +66,7 @@ public abstract class KaAnnotationList : KaLifetimeOwner {
      * annotationsList.annotationClassIds == annotationsList.annotations.map { it.classId }
      * ```
      */
-    public abstract val annotationClassIds: Collection<ClassId>
+    public val annotationClassIds: Collection<ClassId>
 }
 
 public typealias KtAnnotationsList = KaAnnotationList

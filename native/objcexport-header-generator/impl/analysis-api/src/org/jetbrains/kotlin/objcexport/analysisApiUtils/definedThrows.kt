@@ -20,7 +20,7 @@ internal val KtFunctionLikeSymbol.definedThrows: List<ClassId>
         if (isSuspend) return listOf(ClassId.topLevel(KonanFqNames.cancellationException))
         if (!hasThrowsAnnotation) return emptyList()
 
-        val throwsAnnotations = annotationsList.annotations
+        val throwsAnnotations = annotationsList
             .filter { annotation -> annotation.classId?.asSingleFqName() == KonanFqNames.throws }
             .asSequence()
 

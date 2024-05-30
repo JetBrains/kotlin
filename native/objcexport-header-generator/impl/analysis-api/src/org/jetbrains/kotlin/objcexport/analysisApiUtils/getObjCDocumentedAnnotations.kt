@@ -30,7 +30,7 @@ internal fun KtAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KtAnnotation
  */
 context(KtAnalysisSession)
 internal fun KtAnnotationsList.getObjCDocumentedAnnotations(): List<KtAnnotationApplicationWithArgumentsInfo> {
-    return annotations
+    return this
         .filter { annotation ->
             val annotationClassId = annotation.classId ?: return@filter false
             if (annotationClassId.asSingleFqName() in mustBeDocumentedAnnotationsStopList) return@filter false

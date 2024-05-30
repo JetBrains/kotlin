@@ -28,7 +28,7 @@ internal interface KaFe10Type : KaLifetimeOwner, KaAnnotated {
             KaFe10AnnotationList.create(
                 fe10Type.annotations,
                 analysisContext,
-                ignoreAnnotations = setOf(
+                ignoredAnnotations = setOf(
                     StandardClassIds.Annotations.ExtensionFunctionType,
                     StandardClassIds.Annotations.ContextFunctionTypeParams,
                 )

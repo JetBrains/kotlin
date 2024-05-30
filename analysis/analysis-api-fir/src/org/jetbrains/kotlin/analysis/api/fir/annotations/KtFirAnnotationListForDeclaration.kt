@@ -20,24 +20,39 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KaFirAnnotationListForDeclaration private constructor(
     val firSymbol: FirBasedSymbol<*>,
     private val builder: KaSymbolByFirBuilder,
-) : KaAnnotationList() {
-    override val token: KaLifetimeToken get() = builder.token
-    private val useSiteSession: FirSession get() = builder.rootSession
+) : AbstractList<KaAnnotationApplication>(), KaAnnotationList {
+    private val backingAnnotations by lazy { annotations(firSymbol, builder) }
 
-    override val annotations: List<KaAnnotationApplication>
-        get() = withValidityAssertion {
-            annotations(firSymbol, builder)
-        }
+    override val token: KaLifetimeToken
+        get() = builder.token
+
+    private val useSiteSession: FirSession
+        get() = builder.rootSession
+
+    override fun isEmpty(): Boolean = withValidityAssertion {
+        return firSymbol.annotations.isEmpty()
+    }
+
+    override val size: Int
+        get() = withValidityAssertion { firSymbol.annotations.size }
+
+    override fun iterator(): Iterator<KaAnnotationApplication> = withValidityAssertion {
+        return backingAnnotations.iterator()
+    }
+
+    override fun get(index: Int): KaAnnotationApplication = withValidityAssertion {
+        return backingAnnotations[index]
+    }
 
     override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
-        hasAnnotation(firSymbol, classId, useSiteTargetFilter, useSiteSession)
+        return hasAnnotation(firSymbol, classId, useSiteTargetFilter, useSiteSession)
     }
 
     override fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     ): List<KaAnnotationApplication> = withValidityAssertion {
-        annotationsByClassId(firSymbol, classId, useSiteTargetFilter, builder)
+        return annotationsByClassId(firSymbol, classId, useSiteTargetFilter, builder)
     }
 
     override val annotationClassIds: Collection<ClassId>

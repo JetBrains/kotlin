@@ -415,7 +415,7 @@ public class DebugSymbolRenderer(
     }
 
     private fun KaSession.renderAnnotationsList(value: KaAnnotationList, printer: PrettyPrinter) {
-        renderList(value.annotations, printer, renderSymbolsFully = false)
+        renderList(value, printer, renderSymbolsFully = false)
     }
 
     private fun getFrontendIndependentKClassOf(value: Any): KClass<*> {

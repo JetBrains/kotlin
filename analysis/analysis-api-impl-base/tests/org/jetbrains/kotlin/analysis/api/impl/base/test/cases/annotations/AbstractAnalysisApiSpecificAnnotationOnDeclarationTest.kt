@@ -41,7 +41,7 @@ abstract class AbstractAnalysisApiSpecificAnnotationOnDeclarationTest : Abstract
             }
 
             val rawList = renderAnnotation(annotationList.annotationsByClassId(classId).single())
-            val resolvedList = renderAnnotation(annotationList.annotations.single { it.classId == classId })
+            val resolvedList = renderAnnotation(annotationList.single { it.classId == classId })
             testServices.assertions.assertEquals(resolvedList, rawList) {
                 "Result before and after resolve are different"
             }

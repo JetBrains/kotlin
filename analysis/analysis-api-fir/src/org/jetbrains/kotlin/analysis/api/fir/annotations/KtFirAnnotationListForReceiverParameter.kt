@@ -21,24 +21,39 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
     private val firCallableSymbol: FirCallableSymbol<*>,
     private val receiverParameter: FirAnnotationContainer,
     private val builder: KaSymbolByFirBuilder,
-) : KaAnnotationList() {
-    private val useSiteSession: FirSession get() = builder.rootSession
-    override val token: KaLifetimeToken get() = builder.token
+) : AbstractList<KaAnnotationApplication>(), KaAnnotationList {
+    private val backingAnnotations by lazy { annotations(firCallableSymbol, builder, receiverParameter) }
 
-    override val annotations: List<KaAnnotationApplication>
-        get() = withValidityAssertion {
-            annotations(firCallableSymbol, builder, receiverParameter)
-        }
+    private val useSiteSession: FirSession
+        get() = builder.rootSession
+
+    override val token: KaLifetimeToken
+        get() = builder.token
+
+    override fun isEmpty(): Boolean = withValidityAssertion {
+        return receiverParameter.annotations.isEmpty()
+    }
+
+    override val size: Int
+        get() = withValidityAssertion { receiverParameter.annotations.size }
+
+    override fun iterator(): Iterator<KaAnnotationApplication> = withValidityAssertion {
+        return backingAnnotations.iterator()
+    }
+
+    override fun get(index: Int): KaAnnotationApplication = withValidityAssertion {
+        return backingAnnotations[index]
+    }
 
     override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
-        hasAnnotation(firCallableSymbol, classId, useSiteTargetFilter, useSiteSession, receiverParameter)
+        return hasAnnotation(firCallableSymbol, classId, useSiteTargetFilter, useSiteSession, receiverParameter)
     }
 
     override fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     ): List<KaAnnotationApplication> = withValidityAssertion {
-        annotationsByClassId(firCallableSymbol, classId, useSiteTargetFilter, builder, receiverParameter)
+        return annotationsByClassId(firCallableSymbol, classId, useSiteTargetFilter, builder, receiverParameter)
     }
 
     override val annotationClassIds: Collection<ClassId>

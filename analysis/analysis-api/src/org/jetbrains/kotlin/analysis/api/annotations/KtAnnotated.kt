@@ -24,11 +24,11 @@ public typealias KtAnnotated = KaAnnotated
  * @see [KaAnnotationList.annotations]
  */
 public val KaAnnotated.annotations: List<KaAnnotationApplication>
-    get() = annotationsList.annotations
+    get() = annotationsList
 
 @Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations"))
 public val KaAnnotated.annotationInfos: List<KaAnnotationApplicationInfo>
-    get() = annotationsList.annotations
+    get() = annotationsList
 
 /**
  * Checks if entity has annotation with specified [classId] and filtered by [useSiteTargetFilter].

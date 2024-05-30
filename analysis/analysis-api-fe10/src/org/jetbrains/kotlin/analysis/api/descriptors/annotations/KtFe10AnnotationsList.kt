@@ -15,36 +15,54 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFe10AnnotationList private constructor(
     private val fe10Annotations: Annotations,
-    private val annotationsToIgnore: Set<ClassId>,
-    private val analysisContext: Fe10AnalysisContext
-) : KaAnnotationList() {
+    private val analysisContext: Fe10AnalysisContext,
+    private val ignoredAnnotations: Set<ClassId> = emptySet()
+) : AbstractList<KaAnnotationApplication>(), KaAnnotationList {
+    private val backingAnnotations: List<KaAnnotationApplication> by lazy {
+        buildList {
+            fe10Annotations.forEachIndexed { index, annotationDescriptor ->
+                if (annotationDescriptor.classIdForAnnotation !in ignoredAnnotations) {
+                    add(annotationDescriptor.toKtAnnotationApplication(analysisContext, index))
+                }
+            }
+        }
+    }
+
     override val token: KaLifetimeToken
         get() = analysisContext.token
 
-    override val annotations: List<KaAnnotationApplication>
-        get() = withValidityAssertion {
-            mapNotIgnoredAnnotationsWithIndex { index, annotation ->
-                annotation.toKtAnnotationApplication(analysisContext, index)
-            }
+    override fun isEmpty(): Boolean = withValidityAssertion {
+        return if (ignoredAnnotations.isEmpty()) {
+            fe10Annotations.isEmpty()
+        } else {
+            backingAnnotations.isEmpty()
         }
+    }
 
-    override val annotationClassIds: Collection<ClassId>
-        get() {
-            withValidityAssertion {
-                val result = mutableListOf<ClassId>()
+    override val size: Int
+        get() = withValidityAssertion { backingAnnotations.size }
+
+    override fun iterator(): Iterator<KaAnnotationApplication> = withValidityAssertion {
+        return backingAnnotations.iterator()
+    }
+
+    override fun get(index: Int): KaAnnotationApplication = withValidityAssertion {
+        return backingAnnotations[index]
+    }
+
+    override val annotationClassIds: Set<ClassId>
+        get() = withValidityAssertion {
+            buildSet {
                 for (annotation in fe10Annotations) {
                     val classId = annotation.classIdForAnnotation ?: continue
-                    if (classId in annotationsToIgnore) continue
-                    result += classId
+                    if (classId in ignoredAnnotations) continue
+                    add(classId)
                 }
-
-                return result
             }
         }
 
@@ -56,7 +74,7 @@ internal class KaFe10AnnotationList private constructor(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     ): List<KaAnnotationApplication> = withValidityAssertion {
-        if (classId in annotationsToIgnore) return@withValidityAssertion emptyList()
+        if (classId in ignoredAnnotations) return@withValidityAssertion emptyList()
 
         fe10Annotations.mapIndexedNotNull { index, annotation ->
             if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.classIdForAnnotation != classId) {
@@ -67,26 +85,14 @@ internal class KaFe10AnnotationList private constructor(
         }
     }
 
-    private fun <T> mapNotIgnoredAnnotationsWithIndex(transformer: (index: Int, annotation: AnnotationDescriptor) -> T?): List<T> {
-        var ignoredAnnotationsCounter = 0
-        return fe10Annotations.mapIndexedNotNull { index, annotation ->
-            if (annotation.classIdForAnnotation in annotationsToIgnore) {
-                ignoredAnnotationsCounter++
-                null
-            } else {
-                transformer(index - ignoredAnnotationsCounter, annotation)
-            }
-        }
-    }
-
     companion object {
         fun create(
             fe10Annotations: Annotations,
             analysisContext: Fe10AnalysisContext,
-            ignoreAnnotations: Set<ClassId> = emptySet(),
+            ignoredAnnotations: Set<ClassId> = emptySet(),
         ): KaAnnotationList {
             return if (!fe10Annotations.isEmpty()) {
-                KaFe10AnnotationList(fe10Annotations, ignoreAnnotations, analysisContext)
+                KaFe10AnnotationList(fe10Annotations, analysisContext, ignoredAnnotations)
             } else {
                 KaEmptyAnnotationList(analysisContext.token)
             }

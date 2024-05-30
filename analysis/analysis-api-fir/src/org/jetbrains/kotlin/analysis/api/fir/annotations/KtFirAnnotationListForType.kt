@@ -27,20 +27,39 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KaFirAnnotationListForType private constructor(
     val coneType: ConeKotlinType,
     private val builder: KaSymbolByFirBuilder,
-) : KaAnnotationList() {
-    override val token: KaLifetimeToken get() = builder.token
-    private val useSiteSession: FirSession get() = builder.rootSession
-
-    override val annotations: List<KaAnnotationApplication>
-        get() = withValidityAssertion {
-            coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATION_ARGUMENTS).mapIndexed { index, annotation ->
-                annotation.toKtAnnotationApplication(builder, index)
-            }
+) : AbstractList<KaAnnotationApplication>(), KaAnnotationList {
+    private val backingAnnotations by lazy {
+        coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATION_ARGUMENTS).mapIndexed { index, annotation ->
+            annotation.toKtAnnotationApplication(builder, index)
         }
+    }
 
-    override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
-        coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).any {
-            useSiteTargetFilter.isAllowed(it.useSiteTarget) && it.toAnnotationClassId(useSiteSession) == classId
+    override val token: KaLifetimeToken
+        get() = builder.token
+
+    private val useSiteSession: FirSession
+        get() = builder.rootSession
+
+    override fun isEmpty(): Boolean = withValidityAssertion {
+        return coneType.customAnnotations.isEmpty()
+    }
+
+    override val size: Int
+        get() = withValidityAssertion { coneType.customAnnotations.size }
+
+    override fun iterator(): Iterator<KaAnnotationApplication> = withValidityAssertion {
+        return backingAnnotations.iterator()
+    }
+
+    override fun get(index: Int): KaAnnotationApplication = withValidityAssertion {
+        return backingAnnotations[index]
+    }
+
+    override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean {
+        return withValidityAssertion {
+            coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).any {
+                useSiteTargetFilter.isAllowed(it.useSiteTarget) && it.toAnnotationClassId(useSiteSession) == classId
+            }
         }
     }
 
