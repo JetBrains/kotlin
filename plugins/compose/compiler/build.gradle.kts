@@ -22,6 +22,8 @@ publish {
     }
 }
 
+println("Hello")
+
 runtimeJarWithRelocation {
     configurations = listOf(project.configurations.compileClasspath.get())
     relocate("com.intellij", "org.jetbrains.kotlin.com.intellij")
