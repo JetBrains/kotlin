@@ -360,7 +360,7 @@ class RuntimeTypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(RUNTI
                 nothingType() subtype t
             }
         }
-        axiom("any_not_nullable") {
+        axiom("any_not_nullable_type_level") {
             Exp.forall(t) { t ->
                 !isSubtype(nullable(t), anyType())
             }
@@ -391,6 +391,9 @@ class RuntimeTypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(RUNTI
         }
         axiom("type_of_null") {
             nullValue() isOf nullable(nothingType())
+        }
+        axiom("any_not_nullable_value_level") {
+            !(nullValue() isOf anyType())
         }
         axiom("type_of_unit") {
             unitValue() isOf unitType()

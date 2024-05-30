@@ -2,14 +2,12 @@
 method class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Foo$return$T_Unit(this: Ref,
   local$f: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Bar(this), wildcard)
-  requires acc(T_class_global$class_Foo(local$f), wildcard)
-  ensures acc(T_class_global$class_Bar(this), wildcard)
-  ensures acc(T_class_global$class_Foo(local$f), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(this), wildcard)
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$f), dom$RuntimeType$T_class_global$class_Foo())
+  inhale acc(T_class_global$class_Foo(local$f), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   label label$ret$0
 }
@@ -18,14 +16,12 @@ method class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_
 method class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Bar$return$T_Unit(this: Ref,
   local$b: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Bar(this), wildcard)
-  requires acc(T_class_global$class_Bar(local$b), wildcard)
-  ensures acc(T_class_global$class_Bar(this), wildcard)
-  ensures acc(T_class_global$class_Bar(local$b), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(this), wildcard)
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(local$b), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   label label$ret$0
 }
@@ -33,11 +29,10 @@ method class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_
 /function_overloading.kt:(98,107): info: Generated Viper text for fakePrint:
 method global$fun_fakePrint$fun_take$T_class_global$class_Bar$return$T_Unit(local$b: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Bar(local$b), wildcard)
-  ensures acc(T_class_global$class_Bar(local$b), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$b), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(local$b), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   label label$ret$0
 }
@@ -45,11 +40,10 @@ method global$fun_fakePrint$fun_take$T_class_global$class_Bar$return$T_Unit(loca
 /function_overloading.kt:(125,134): info: Generated Viper text for fakePrint:
 method global$fun_fakePrint$fun_take$T_class_global$class_Foo$return$T_Unit(local$f: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Foo(local$f), wildcard)
-  ensures acc(T_class_global$class_Foo(local$f), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$f), dom$RuntimeType$T_class_global$class_Foo())
+  inhale acc(T_class_global$class_Foo(local$f), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   label label$ret$0
 }
@@ -99,15 +93,11 @@ method global$fun_fakePrint$fun_take$T_Int$return$T_Unit(local$value: Ref)
 
 method global$fun_fakePrint$fun_take$T_class_global$class_Bar$return$T_Unit(local$b: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_Bar(local$b), wildcard)
-  ensures acc(T_class_global$class_Bar(local$b), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 
 method global$fun_fakePrint$fun_take$T_class_global$class_Foo$return$T_Unit(local$f: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_Foo(local$f), wildcard)
-  ensures acc(T_class_global$class_Foo(local$f), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 
@@ -141,20 +131,12 @@ method class_Bar$constructor$fun_take$$return$T_class_global$class_Bar()
 method class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Bar$return$T_Unit(this: Ref,
   local$b: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_Bar(this), wildcard)
-  requires acc(T_class_global$class_Bar(local$b), wildcard)
-  ensures acc(T_class_global$class_Bar(this), wildcard)
-  ensures acc(T_class_global$class_Bar(local$b), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 
 method class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Foo$return$T_Unit(this: Ref,
   local$f: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_Bar(this), wildcard)
-  requires acc(T_class_global$class_Foo(local$f), wildcard)
-  ensures acc(T_class_global$class_Bar(this), wildcard)
-  ensures acc(T_class_global$class_Foo(local$f), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 

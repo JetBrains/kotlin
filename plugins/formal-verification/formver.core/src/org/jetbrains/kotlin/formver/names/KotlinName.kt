@@ -26,9 +26,14 @@ abstract class PrefixedKotlinName(prefix: String, name: Name) : KotlinName {
 }
 
 data class FunctionKotlinName(val name: Name) : PrefixedKotlinName("fun", name)
-data class MemberKotlinName(val name: Name) : PrefixedKotlinName("member", name)
-data class GetterKotlinName(val name: Name) : PrefixedKotlinName("getter", name)
-data class SetterKotlinName(val name: Name) : PrefixedKotlinName("setter", name)
+
+/**
+ * This name will never occur in the viper output, but rather is used to lookup properties.
+ */
+data class PropertyKotlinName(val name: Name) : PrefixedKotlinName("property_property", name)
+data class BackingFieldKotlinName(val name: Name) : PrefixedKotlinName("backing_field", name)
+data class GetterKotlinName(val name: Name) : PrefixedKotlinName("property_getter", name)
+data class SetterKotlinName(val name: Name) : PrefixedKotlinName("property_setter", name)
 data class ExtensionSetterKotlinName(val name: Name) : PrefixedKotlinName("ext_setter", name)
 data class ExtensionGetterKotlinName(val name: Name) : PrefixedKotlinName("ext_getter", name)
 

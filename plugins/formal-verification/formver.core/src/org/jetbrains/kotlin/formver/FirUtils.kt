@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.formver
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.formver.embeddings.SourceRole
 import org.jetbrains.kotlin.formver.viper.ast.Position
 
@@ -18,6 +22,15 @@ import org.jetbrains.kotlin.formver.viper.ast.Position
 //     get() = toReference()?.toResolvedBaseSymbol()!!
 // val FirElement.calleeCallableSymbol: FirCallableSymbol<*>
 //     get() = calleeReference?.toResolvedCallableSymbol()!!
+@OptIn(SymbolInternals::class)
+val FirPropertySymbol.isCustom: Boolean
+    get() {
+        val getter = getterSymbol?.fir
+        val setter = setterSymbol?.fir
+        return if (isVal) getter !is FirDefaultPropertyGetter
+        else getter !is FirDefaultPropertyGetter || setter !is FirDefaultPropertySetter
+    }
+
 val FirFunctionCall.functionCallArguments: List<FirExpression>
     get() = listOfNotNull(dispatchReceiver) + argumentList.arguments
 val FirFunctionSymbol<*>.effects: List<FirEffectDeclaration>

@@ -130,17 +130,15 @@ method global$fun_elvis_operator_return$fun_take$NT_Int$return$T_Int(local$x: Re
 }
 
 /nullable.kt:(730,739): info: Generated Viper text for safe_call:
-field pkg$kotlin$class_String$member_length: Ref
+field public$backing_field_length: Ref
 
 method global$fun_safe_call$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: Ref)
   returns (ret$0: Ref)
-  requires local$s != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
-  ensures local$s != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$s), dom$RuntimeType$nullable(dom$RuntimeType$T_class_pkg$kotlin$global$class_String()))
+  inhale local$s != dom$RuntimeType$nullValue() ==>
+    acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   if (local$s != dom$RuntimeType$nullValue()) {
     var anonymous$0: Ref
@@ -154,51 +152,39 @@ method pkg$kotlin$class_Any$fun_hashCode$fun_take$T_Any$return$T_Int(this: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_length(this: Ref) returns (ret: Ref)
 
 
 /nullable.kt:(779,797): info: Generated Viper text for safe_call_property:
-field pkg$kotlin$class_String$member_length: Ref
+field public$backing_field_length: Ref
 
 method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: Ref)
   returns (ret$0: Ref)
-  requires local$s != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
-  ensures local$s != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$l: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$s), dom$RuntimeType$nullable(dom$RuntimeType$T_class_pkg$kotlin$global$class_String()))
+  inhale local$s != dom$RuntimeType$nullValue() ==>
+    acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   if (local$s != dom$RuntimeType$nullValue()) {
     var anonymous$0: Ref
     unfold acc(T_class_pkg$kotlin$global$class_String(local$s), wildcard)
-    anonymous$0 := local$s.pkg$kotlin$class_String$member_length
+    anonymous$0 := local$s.public$backing_field_length
     local0$l := anonymous$0
   } else {
     local0$l := dom$RuntimeType$nullValue()}
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_length(this: Ref) returns (ret: Ref)
 
 
 /nullable.kt:(918,933): info: Generated Viper text for safe_call_chain:
-field class_Foo$member_v: Ref
+field public$backing_field_v: Ref
 
 method class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo(this: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_Foo(this), wildcard)
-  ensures acc(T_class_global$class_Foo(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Foo()))
   ensures ret != dom$RuntimeType$nullValue() ==>
     acc(T_class_global$class_Foo(ret), wildcard)
@@ -206,15 +192,13 @@ method class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_
 
 method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_Int(local$foo: Ref)
   returns (ret$0: Ref)
-  requires local$foo != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_Foo(local$foo), wildcard)
-  ensures local$foo != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
 {
   var anonymous$0: Ref
   var anonymous$1: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Foo()))
+  inhale local$foo != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Foo(local$foo), wildcard)
   if (local$foo != dom$RuntimeType$nullValue()) {
     anonymous$1 := class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo(local$foo)
   } else {
@@ -226,7 +210,7 @@ method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_I
   if (anonymous$0 != dom$RuntimeType$nullValue()) {
     var anonymous$2: Ref
     unfold acc(T_class_global$class_Foo(anonymous$0), wildcard)
-    anonymous$2 := anonymous$0.class_Foo$member_v
+    anonymous$2 := anonymous$0.public$backing_field_v
     ret$0 := anonymous$2
   } else {
     ret$0 := dom$RuntimeType$nullValue()}

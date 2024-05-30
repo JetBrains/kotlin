@@ -1,5 +1,5 @@
 /class_constructors.kt:(408,430): info: Generated Viper text for onlySecondConstructors:
-field class_Foo$member_a: Ref
+field public$backing_field_a: Ref
 
 method class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(local$b: Ref)
   returns (ret: Ref)
@@ -33,19 +33,19 @@ method global$fun_onlySecondConstructors$fun_take$$return$T_Unit()
   ret$0 := dom$RuntimeType$unitValue()
   local0$f1 := class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(dom$RuntimeType$boolToRef(true))
   unfold acc(T_class_global$class_Foo(local0$f1), wildcard)
-  local0$shouldBeOne := local0$f1.class_Foo$member_a
+  local0$shouldBeOne := local0$f1.public$backing_field_a
   local0$f2 := class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(dom$RuntimeType$intToRef(42))
   unfold acc(T_class_global$class_Foo(local0$f2), wildcard)
-  local0$shouldBeAnswer := local0$f2.class_Foo$member_a
+  local0$shouldBeAnswer := local0$f2.public$backing_field_a
   local0$f3 := class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(dom$RuntimeType$intToRef(10),
     dom$RuntimeType$intToRef(32))
   unfold acc(T_class_global$class_Foo(local0$f3), wildcard)
-  local0$test := local0$f3.class_Foo$member_a
+  local0$test := local0$f3.public$backing_field_a
   label label$ret$0
 }
 
 /class_constructors.kt:(609,636): info: Generated Viper text for primaryAndSecondConstructor:
-field class_Bar$member_a: Ref
+field public$backing_field_a: Ref
 
 method class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(local$b: Ref)
   returns (ret: Ref)
@@ -58,7 +58,8 @@ method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(loca
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Bar())
   ensures acc(T_class_global$class_Bar(ret), wildcard)
   ensures (unfolding acc(T_class_global$class_Bar(ret), wildcard) in
-      ret.class_Bar$member_a == local$a)
+      dom$RuntimeType$intFromRef(ret.public$backing_field_a) ==
+      dom$RuntimeType$intFromRef(local$a))
 
 
 method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()
@@ -72,9 +73,9 @@ method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()
   ret$0 := dom$RuntimeType$unitValue()
   local0$b1 := class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(dom$RuntimeType$boolToRef(false))
   unfold acc(T_class_global$class_Bar(local0$b1), wildcard)
-  local0$shouldBeZero := local0$b1.class_Bar$member_a
+  local0$shouldBeZero := local0$b1.public$backing_field_a
   local0$b2 := class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(dom$RuntimeType$intToRef(42))
   unfold acc(T_class_global$class_Bar(local0$b2), wildcard)
-  local0$shouldBeAnswer := local0$b2.class_Bar$member_a
+  local0$shouldBeAnswer := local0$b2.public$backing_field_a
   label label$ret$0
 }

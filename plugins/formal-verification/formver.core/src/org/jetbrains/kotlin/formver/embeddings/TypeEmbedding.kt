@@ -148,6 +148,8 @@ data object AnyTypeEmbedding : TypeEmbedding {
     override fun provenInvariants(): List<TypeInvariantEmbedding> = listOf(SubTypeInvariantEmbedding(this))
 }
 
+data object NullableAnyTypeEmbedding : TypeEmbedding by NullableTypeEmbedding(AnyTypeEmbedding)
+
 data object IntTypeEmbedding : TypeEmbedding {
     override val runtimeType = RuntimeTypeDomain.intType()
     override val name = object : MangledName {
@@ -273,9 +275,7 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName, val isInterface: 
     val runtimeTypeFunc = RuntimeTypeDomain.classTypeFunc(name)
     override val runtimeType: Exp = runtimeTypeFunc()
 
-    override fun findField(name: SimpleKotlinName): FieldEmbedding? = fields[name] ?: findAncestorField(name)
-
-    fun findAncestorField(name: SimpleKotlinName): FieldEmbedding? = superTypes.firstNotNullOfOrNull { it.findField(name) }
+    override fun findField(name: SimpleKotlinName): FieldEmbedding? = fields[name]
 
     override fun <R> flatMapFields(action: (SimpleKotlinName, FieldEmbedding) -> List<R>): List<R> =
         superTypes.flatMap { it.flatMapFields(action) } + fields.flatMap { (name, field) -> action(name, field) }
@@ -315,3 +315,23 @@ inline fun TypeEmbedding.injectionOr(default: () -> Injection): Injection = when
     BooleanTypeEmbedding -> RuntimeTypeDomain.boolInjection
     else -> default()
 }
+
+private fun TypeEmbedding.isCollectionTypeNamed(name: String): Boolean =
+    if (this !is ClassTypeEmbedding) false
+    else NameMatcher.matchGlobalScope(this.className) {
+        ifInCollectionsPkg {
+            ifClassName(name) {
+                return true
+            }
+        }
+        return false
+    }
+
+fun TypeEmbedding.isInheritorOfCollectionTypeNamed(name: String): Boolean =
+    if (this !is ClassTypeEmbedding) false else isCollectionTypeNamed(name) || superTypes.any {
+        it.isInheritorOfCollectionTypeNamed(name)
+    }
+
+val TypeEmbedding.isCollectionInheritor
+    get() = isInheritorOfCollectionTypeNamed("Collection")
+

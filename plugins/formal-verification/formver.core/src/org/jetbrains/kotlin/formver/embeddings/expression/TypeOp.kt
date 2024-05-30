@@ -127,3 +127,7 @@ class InhaleAccessAndProven(exp: ExpEmbedding) : InhaleInvariants(exp) {
 }
 
 fun ExpEmbedding.withAccessAndProvenInvariants(): ExpEmbedding = InhaleAccessAndProven(this).simplified
+
+fun ExpEmbedding.withNewTypeAccessAndProvenInvariants(newType: TypeEmbedding): ExpEmbedding =
+    if (this.type == newType) this
+    else InhaleAccessAndProven(this.withType(newType)).simplified

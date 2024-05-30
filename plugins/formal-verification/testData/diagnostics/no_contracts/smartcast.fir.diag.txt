@@ -15,18 +15,20 @@ method global$fun_smartcastReturn$fun_take$NT_Int$return$T_Int(local$n: Ref)
 /smartcast.kt:(88,106): info: Generated Viper text for isNullOrEmptyWrong:
 method global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_CharSequence$return$T_Boolean(local$seq: Ref)
   returns (ret$0: Ref)
-  requires local$seq != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$global$class_CharSequence(local$seq), wildcard)
-  ensures local$seq != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$global$class_CharSequence(local$seq), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$seq), dom$RuntimeType$nullable(dom$RuntimeType$T_class_pkg$kotlin$global$class_CharSequence()))
+  inhale local$seq != dom$RuntimeType$nullValue() ==>
+    acc(T_class_pkg$kotlin$global$class_CharSequence(local$seq), wildcard)
   if (local$seq == dom$RuntimeType$nullValue()) {
     var anonymous$0: Ref
     if (local$seq != dom$RuntimeType$nullValue()) {
       var anonymous$1: Ref
-      anonymous$1 := pkg$kotlin$class_CharSequence$getter_length(local$seq)
+      var anonymous$2: Ref
+      anonymous$2 := public$property_getter_length(local$seq)
+      anonymous$1 := anonymous$2
+      inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$1),
+        dom$RuntimeType$intType())
       anonymous$0 := anonymous$1
     } else {
       anonymous$0 := dom$RuntimeType$nullValue()}
@@ -38,8 +40,4 @@ method global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_C
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_length(this: Ref) returns (ret: Ref)

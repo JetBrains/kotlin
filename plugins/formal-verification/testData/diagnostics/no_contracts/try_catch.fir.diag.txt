@@ -1,10 +1,4 @@
 /try_catch.kt:(158,167): info: Generated Viper text for try_catch:
-field pkg$kotlin$class_String$member_length: Ref
-
-field pkg$kotlin$class_Throwable$member_cause: Ref
-
-field pkg$kotlin$class_Throwable$member_message: Ref
-
 method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
@@ -36,20 +30,13 @@ method global$fun_try_catch$fun_take$$return$T_Unit() returns (ret$0: Ref)
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_cause(this: Ref) returns (ret: Ref)
+
+
+method public$property_getter_message(this: Ref) returns (ret: Ref)
 
 
 /try_catch.kt:(272,288): info: Generated Viper text for nested_try_catch:
-field pkg$kotlin$class_String$member_length: Ref
-
-field pkg$kotlin$class_Throwable$member_cause: Ref
-
-field pkg$kotlin$class_Throwable$member_message: Ref
-
 method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
@@ -95,20 +82,13 @@ method global$fun_nested_try_catch$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_cause(this: Ref) returns (ret: Ref)
+
+
+method public$property_getter_message(this: Ref) returns (ret: Ref)
 
 
 /try_catch.kt:(578,599): info: Generated Viper text for try_catch_with_inline:
-field pkg$kotlin$class_String$member_length: Ref
-
-field pkg$kotlin$class_Throwable$member_cause: Ref
-
-field pkg$kotlin$class_Throwable$member_message: Ref
-
 method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
@@ -143,20 +123,13 @@ method global$fun_try_catch_with_inline$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_cause(this: Ref) returns (ret: Ref)
+
+
+method public$property_getter_message(this: Ref) returns (ret: Ref)
 
 
 /try_catch.kt:(693,712): info: Generated Viper text for try_catch_shadowing:
-field pkg$kotlin$class_String$member_length: Ref
-
-field pkg$kotlin$class_Throwable$member_cause: Ref
-
-field pkg$kotlin$class_Throwable$member_message: Ref
-
 method global$fun_try_catch_shadowing$fun_take$$return$T_Unit()
   returns (ret$0: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
@@ -184,20 +157,13 @@ method global$fun_try_catch_shadowing$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_cause(this: Ref) returns (ret: Ref)
+
+
+method public$property_getter_message(this: Ref) returns (ret: Ref)
 
 
 /try_catch.kt:(823,839): info: Generated Viper text for multiple_catches:
-field pkg$kotlin$class_String$member_length: Ref
-
-field pkg$kotlin$class_Throwable$member_cause: Ref
-
-field pkg$kotlin$class_Throwable$member_message: Ref
-
 method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
@@ -243,20 +209,13 @@ method global$fun_multiple_catches$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_cause(this: Ref) returns (ret: Ref)
+
+
+method public$property_getter_message(this: Ref) returns (ret: Ref)
 
 
 /try_catch.kt:(1055,1068): info: Generated Viper text for use_exception:
-field pkg$kotlin$class_String$member_length: Ref
-
-field pkg$kotlin$class_Throwable$member_cause: Ref
-
-field pkg$kotlin$class_Throwable$member_message: Ref
-
 method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
@@ -264,8 +223,6 @@ method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Ref)
 
 method global$fun_ignore$fun_take$T_class_pkg$java$lang$global$class_Exception$return$T_Unit(local$e: Ref)
   returns (ret: Ref)
-  requires acc(T_class_pkg$java$lang$global$class_Exception(local$e), wildcard)
-  ensures acc(T_class_pkg$java$lang$global$class_Exception(local$e), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 
@@ -294,8 +251,7 @@ method global$fun_use_exception$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_cause(this: Ref) returns (ret: Ref)
+
+
+method public$property_getter_message(this: Ref) returns (ret: Ref)

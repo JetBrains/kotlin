@@ -112,7 +112,7 @@ domain dom$RuntimeType  {
       t))
   }
 
-  axiom dom$RuntimeType$any_not_nullable {
+  axiom dom$RuntimeType$any_not_nullable_type_level {
     (forall t: dom$RuntimeType ::!dom$RuntimeType$isSubtype(dom$RuntimeType$nullable(t),
       dom$RuntimeType$anyType()))
   }
@@ -141,6 +141,11 @@ domain dom$RuntimeType  {
   axiom dom$RuntimeType$type_of_null {
     dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(dom$RuntimeType$nullValue()),
     dom$RuntimeType$nullable(dom$RuntimeType$nothingType()))
+  }
+
+  axiom dom$RuntimeType$any_not_nullable_value_level {
+    !dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(dom$RuntimeType$nullValue()),
+    dom$RuntimeType$anyType())
   }
 
   axiom dom$RuntimeType$type_of_unit {
@@ -198,7 +203,7 @@ domain dom$RuntimeType  {
   }
 }
 
-field class_Foo$member_x: Ref
+field public$backing_field_x: Ref
 
 field special$function_object_call_counter: Int
 
@@ -287,8 +292,8 @@ function special$timesInts(arg1: Ref, arg2: Ref): Ref
 
 
 predicate T_class_global$class_Foo(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_Foo$member_x, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_Foo$member_x),
+  acc(special$class$predicate$subject.public$backing_field_x, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
   dom$RuntimeType$intType())
 }
 
@@ -297,7 +302,8 @@ method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(loca
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(T_class_global$class_Foo(ret), wildcard)
   ensures (unfolding acc(T_class_global$class_Foo(ret), wildcard) in
-      ret.class_Foo$member_x == local$x)
+      dom$RuntimeType$intFromRef(ret.public$backing_field_x) ==
+      dom$RuntimeType$intFromRef(local$x))
 
 
 method global$fun_f$fun_take$$return$T_Unit() returns (ret$0: Ref)

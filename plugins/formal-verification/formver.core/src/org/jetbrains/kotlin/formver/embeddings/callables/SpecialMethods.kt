@@ -25,7 +25,7 @@ object InvokeFunctionObjectMethod : BuiltInMethod(SpecialName("invoke_function_o
     override val formalArgs: List<Declaration.LocalVarDecl> = listOf(thisArg.toLocalVarDecl())
     override val formalReturns: List<Declaration.LocalVarDecl> = listOf()
     override val pres: List<Exp> = thisArg.accessInvariants().pureToViper(toBuiltin = true)
-    override val posts: List<Exp> = (thisArg.accessInvariants() + calls).pureToViper(toBuiltin = true)
+    override val posts: List<Exp> = (thisArg.allAccessInvariants() + calls).pureToViper(toBuiltin = true)
 }
 
 object SpecialMethods {

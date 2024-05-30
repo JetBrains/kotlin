@@ -1,47 +1,44 @@
 /backing_field_getters.kt:(178,188): info: Generated Viper text for cascadeGet:
-field class_X$member_y: Ref
+field public$backing_field_y: Ref
 
-field class_Y$member_z: Ref
+field public$backing_field_z: Ref
 
 method global$fun_cascadeGet$fun_take$T_class_global$class_X$return$T_class_global$class_Z(local$x: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_X(local$x), wildcard)
-  ensures acc(T_class_global$class_X(local$x), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$T_class_global$class_Z())
   ensures acc(T_class_global$class_Z(ret$0), wildcard)
   ensures true
 {
   var anonymous$0: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$T_class_global$class_X())
+  inhale acc(T_class_global$class_X(local$x), wildcard)
   unfold acc(T_class_global$class_X(local$x), wildcard)
-  anonymous$0 := local$x.class_X$member_y
+  anonymous$0 := local$x.public$backing_field_y
   unfold acc(T_class_global$class_Y(anonymous$0), wildcard)
-  ret$0 := anonymous$0.class_Y$member_z
+  ret$0 := anonymous$0.public$backing_field_z
   goto label$ret$0
   label label$ret$0
 }
 
 /backing_field_getters.kt:(300,321): info: Generated Viper text for receiverNotNullProved:
-field class_X$member_y: Ref
+field public$backing_field_y: Ref
 
-field class_Y$member_z: Ref
+field public$backing_field_z: Ref
 
 method global$fun_receiverNotNullProved$fun_take$NT_class_global$class_X$return$T_Boolean(local$x: Ref)
   returns (ret$0: Ref)
-  requires local$x != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_X(local$x), wildcard)
-  ensures local$x != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_X(local$x), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
   ensures dom$RuntimeType$boolFromRef(ret$0) == true ==>
     local$x != dom$RuntimeType$nullValue()
 {
   var anonymous$0: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_X()))
+  inhale local$x != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_X(local$x), wildcard)
   if (local$x != dom$RuntimeType$nullValue()) {
     var anonymous$1: Ref
     unfold acc(T_class_global$class_X(local$x), wildcard)
-    anonymous$1 := local$x.class_X$member_y
+    anonymous$1 := local$x.public$backing_field_y
     anonymous$0 := anonymous$1
   } else {
     anonymous$0 := dom$RuntimeType$nullValue()}
@@ -52,16 +49,12 @@ method global$fun_receiverNotNullProved$fun_take$NT_class_global$class_X$return$
 }
 
 /backing_field_getters.kt:(560,578): info: Generated Viper text for cascadeNullableGet:
-field class_NullableX$member_y: Ref
+field public$backing_field_y: Ref
 
-field class_NullableY$member_z: Ref
+field public$backing_field_z: Ref
 
 method global$fun_cascadeNullableGet$fun_take$NT_class_global$class_NullableX$return$NT_class_global$class_Z(local$x: Ref)
   returns (ret$0: Ref)
-  requires local$x != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_NullableX(local$x), wildcard)
-  ensures local$x != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_NullableX(local$x), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Z()))
   ensures ret$0 != dom$RuntimeType$nullValue() ==>
     acc(T_class_global$class_Z(ret$0), wildcard)
@@ -70,14 +63,16 @@ method global$fun_cascadeNullableGet$fun_take$NT_class_global$class_NullableX$re
 {
   var anonymous$0: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_NullableX()))
+  inhale local$x != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_NullableX(local$x), wildcard)
   if (local$x != dom$RuntimeType$nullValue()) {
     unfold acc(T_class_global$class_NullableX(local$x), wildcard)
-    anonymous$0 := local$x.class_NullableX$member_y
+    anonymous$0 := local$x.public$backing_field_y
   } else {
     anonymous$0 := dom$RuntimeType$nullValue()}
   if (anonymous$0 != dom$RuntimeType$nullValue()) {
     unfold acc(T_class_global$class_NullableY(anonymous$0), wildcard)
-    ret$0 := anonymous$0.class_NullableY$member_z
+    ret$0 := anonymous$0.public$backing_field_z
   } else {
     ret$0 := dom$RuntimeType$nullValue()}
   goto label$ret$0
@@ -85,16 +80,12 @@ method global$fun_cascadeNullableGet$fun_take$NT_class_global$class_NullableX$re
 }
 
 /backing_field_getters.kt:(729,756): info: Generated Viper text for cascadeNullableSmartcastGet:
-field class_NullableX$member_y: Ref
+field public$backing_field_y: Ref
 
-field class_NullableY$member_z: Ref
+field public$backing_field_z: Ref
 
 method global$fun_cascadeNullableSmartcastGet$fun_take$NT_class_global$class_NullableX$return$NT_class_global$class_Z(local$x: Ref)
   returns (ret$0: Ref)
-  requires local$x != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_NullableX(local$x), wildcard)
-  ensures local$x != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_NullableX(local$x), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Z()))
   ensures ret$0 != dom$RuntimeType$nullValue() ==>
     acc(T_class_global$class_Z(ret$0), wildcard)
@@ -102,6 +93,8 @@ method global$fun_cascadeNullableSmartcastGet$fun_take$NT_class_global$class_Nul
     local$x != dom$RuntimeType$nullValue()
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_NullableX()))
+  inhale local$x != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_NullableX(local$x), wildcard)
   if (local$x == dom$RuntimeType$nullValue()) {
     var anonymous$0: Ref
     anonymous$0 := dom$RuntimeType$nullValue()
@@ -109,7 +102,7 @@ method global$fun_cascadeNullableSmartcastGet$fun_take$NT_class_global$class_Nul
   } else {
     var anonymous$1: Ref
     unfold acc(T_class_global$class_NullableX(local$x), wildcard)
-    anonymous$1 := local$x.class_NullableX$member_y
+    anonymous$1 := local$x.public$backing_field_y
     if (anonymous$1 == dom$RuntimeType$nullValue()) {
       var anonymous$2: Ref
       anonymous$2 := dom$RuntimeType$nullValue()
@@ -117,9 +110,9 @@ method global$fun_cascadeNullableSmartcastGet$fun_take$NT_class_global$class_Nul
     } else {
       var anonymous$3: Ref
       unfold acc(T_class_global$class_NullableX(local$x), wildcard)
-      anonymous$3 := local$x.class_NullableX$member_y
+      anonymous$3 := local$x.public$backing_field_y
       unfold acc(T_class_global$class_NullableY(anonymous$3), wildcard)
-      ret$0 := anonymous$3.class_NullableY$member_z
+      ret$0 := anonymous$3.public$backing_field_z
     }
   }
   goto label$ret$0
@@ -127,7 +120,7 @@ method global$fun_cascadeNullableSmartcastGet$fun_take$NT_class_global$class_Nul
 }
 
 /backing_field_getters.kt:(987,1017): info: Generated Viper text for nullableReceiverNotNullSafeGet:
-field class_Baz$member_x: Ref
+field public$backing_field_x: Ref
 
 method class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
   returns (ret: Ref)
@@ -148,7 +141,7 @@ method global$fun_nullableReceiverNotNullSafeGet$fun_take$$return$T_Boolean()
   if (local0$f != dom$RuntimeType$nullValue()) {
     var anonymous$2: Ref
     unfold acc(T_class_global$class_Baz(local0$f), wildcard)
-    anonymous$2 := local0$f.class_Baz$member_x
+    anonymous$2 := local0$f.public$backing_field_x
     anonymous$1 := anonymous$2
   } else {
     anonymous$1 := dom$RuntimeType$nullValue()}
@@ -159,7 +152,7 @@ method global$fun_nullableReceiverNotNullSafeGet$fun_take$$return$T_Boolean()
 }
 
 /backing_field_getters.kt:(1167,1194): info: Generated Viper text for nullableReceiverNullSafeGet:
-field class_Baz$member_x: Ref
+field public$backing_field_x: Ref
 
 method global$fun_nullableReceiverNullSafeGet$fun_take$$return$T_Boolean()
   returns (ret$0: Ref)
@@ -172,7 +165,7 @@ method global$fun_nullableReceiverNullSafeGet$fun_take$$return$T_Boolean()
   if (local0$f != dom$RuntimeType$nullValue()) {
     var anonymous$1: Ref
     unfold acc(T_class_global$class_Baz(local0$f), wildcard)
-    anonymous$1 := local0$f.class_Baz$member_x
+    anonymous$1 := local0$f.public$backing_field_x
     anonymous$0 := anonymous$1
   } else {
     anonymous$0 := dom$RuntimeType$nullValue()}
@@ -183,7 +176,7 @@ method global$fun_nullableReceiverNullSafeGet$fun_take$$return$T_Boolean()
 }
 
 /backing_field_getters.kt:(1377,1403): info: Generated Viper text for nonNullableReceiverSafeGet:
-field class_Baz$member_x: Ref
+field public$backing_field_x: Ref
 
 method class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
   returns (ret: Ref)
@@ -202,7 +195,7 @@ method global$fun_nonNullableReceiverSafeGet$fun_take$$return$T_Boolean()
   if (local0$f != dom$RuntimeType$nullValue()) {
     var anonymous$1: Ref
     unfold acc(T_class_global$class_Baz(local0$f), wildcard)
-    anonymous$1 := local0$f.class_Baz$member_x
+    anonymous$1 := local0$f.public$backing_field_x
     anonymous$0 := anonymous$1
   } else {
     anonymous$0 := dom$RuntimeType$nullValue()}
@@ -213,11 +206,11 @@ method global$fun_nonNullableReceiverSafeGet$fun_take$$return$T_Boolean()
 }
 
 /backing_field_getters.kt:(1681,1693): info: Generated Viper text for checkPrimary:
-field class_ClassI$member_x: Ref
+field public$backing_field_x: Ref
 
-field class_ClassI$member_y: Ref
+field public$backing_field_y: Ref
 
-field class_ClassI$member_z: Ref
+field public$backing_field_z: Ref
 
 method class_ClassI$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_ClassI(local$x: Ref,
   local$y: Ref)
@@ -225,8 +218,24 @@ method class_ClassI$constructor$fun_take$T_Int$T_Int$return$T_class_global$class
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_ClassI())
   ensures acc(T_class_global$class_ClassI(ret), wildcard)
   ensures (unfolding acc(T_class_global$class_ClassI(ret), wildcard) in
-      ret.class_ClassI$member_x == local$x &&
-      ret.class_ClassI$member_y == local$y)
+      dom$RuntimeType$intFromRef(ret.public$backing_field_x) ==
+      dom$RuntimeType$intFromRef(local$x) &&
+      dom$RuntimeType$intFromRef(ret.public$backing_field_y) ==
+      dom$RuntimeType$intFromRef(local$y))
+
+
+method class_ClassII$constructor$fun_take$T_class_global$class_Z$return$T_class_global$class_ClassII(local$z: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_ClassII())
+  ensures acc(T_class_global$class_ClassII(ret), wildcard)
+  ensures (unfolding acc(T_class_global$class_ClassII(ret), wildcard) in
+      ret.public$backing_field_z == local$z)
+
+
+method class_Z$constructor$fun_take$$return$T_class_global$class_Z()
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Z())
+  ensures acc(T_class_global$class_Z(ret), wildcard)
 
 
 method global$fun_checkPrimary$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref,
@@ -236,21 +245,38 @@ method global$fun_checkPrimary$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Re
   ensures dom$RuntimeType$boolFromRef(ret$0) == false ==> false
 {
   var local0$classI: Ref
+  var local0$z: Ref
+  var anonymous$0: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$intType())
   local0$classI := class_ClassI$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_ClassI(local$x,
     local$y)
-  if (!(local$x == local$y)) {
-    ret$0 := dom$RuntimeType$boolToRef(true)
+  local0$z := class_Z$constructor$fun_take$$return$T_class_global$class_Z()
+  if (!(dom$RuntimeType$intFromRef(local$x) ==
+  dom$RuntimeType$intFromRef(local$y))) {
+    anonymous$0 := dom$RuntimeType$boolToRef(true)
   } else {
-    var anonymous$0: Ref
     var anonymous$1: Ref
+    var anonymous$2: Ref
     unfold acc(T_class_global$class_ClassI(local0$classI), wildcard)
-    anonymous$0 := local0$classI.class_ClassI$member_x
+    anonymous$1 := local0$classI.public$backing_field_x
     unfold acc(T_class_global$class_ClassI(local0$classI), wildcard)
-    anonymous$1 := local0$classI.class_ClassI$member_y
-    ret$0 := dom$RuntimeType$boolToRef(anonymous$0 == anonymous$1)
+    anonymous$2 := local0$classI.public$backing_field_y
+    anonymous$0 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(anonymous$1) ==
+      dom$RuntimeType$intFromRef(anonymous$2))
   }
+  if (dom$RuntimeType$boolFromRef(anonymous$0)) {
+    var anonymous$3: Ref
+    var anonymous$4: Ref
+    anonymous$4 := class_ClassII$constructor$fun_take$T_class_global$class_Z$return$T_class_global$class_ClassII(local0$z)
+    unfold acc(T_class_global$class_ClassII(anonymous$4), wildcard)
+    anonymous$3 := anonymous$4.public$backing_field_z
+    ret$0 := dom$RuntimeType$boolToRef(anonymous$3 == local0$z)
+  } else {
+    ret$0 := dom$RuntimeType$boolToRef(false)}
   goto label$ret$0
   label label$ret$0
 }
+
+method public$property_getter_z(this: Ref) returns (ret: Ref)
+

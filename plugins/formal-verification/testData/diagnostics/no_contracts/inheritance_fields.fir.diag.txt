@@ -1,16 +1,10 @@
 /inheritance_fields.kt:(227,234): info: Generated Viper text for createB:
-field class_A$member_fieldNotOverride: Ref
-
-field class_A$member_fieldOverride: Ref
+field public$backing_field_fieldNotOverride: Ref
 
 method class_B$constructor$fun_take$T_class_global$class_FieldB$return$T_class_global$class_B(local$fieldOverride: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_FieldB(local$fieldOverride), wildcard)
-  ensures acc(T_class_global$class_FieldB(local$fieldOverride), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_B())
   ensures acc(T_class_global$class_B(ret), wildcard)
-  ensures (unfolding acc(T_class_global$class_B(ret), wildcard) in
-      ret.class_A$member_fieldOverride == local$fieldOverride)
 
 
 method class_FieldB$constructor$fun_take$$return$T_class_global$class_FieldB()
@@ -30,18 +24,22 @@ method global$fun_createB$fun_take$$return$T_Unit() returns (ret$0: Ref)
   ret$0 := dom$RuntimeType$unitValue()
   local0$fieldB := class_FieldB$constructor$fun_take$$return$T_class_global$class_FieldB()
   local0$b := class_B$constructor$fun_take$T_class_global$class_FieldB$return$T_class_global$class_B(local0$fieldB)
-  unfold acc(T_class_global$class_B(local0$b), wildcard)
-  unfold acc(T_class_global$class_A(local0$b), wildcard)
-  anonymous$0 := local0$b.class_A$member_fieldOverride
+  anonymous$0 := public$property_getter_fieldOverride(local0$b)
   local0$fieldOverride := anonymous$0
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$fieldOverride),
+    dom$RuntimeType$T_class_global$class_FieldB())
+  inhale acc(T_class_global$class_FieldB(local0$fieldOverride), wildcard)
   unfold acc(T_class_global$class_B(local0$b), wildcard)
   unfold acc(T_class_global$class_A(local0$b), wildcard)
-  local0$fieldNotOverride := local0$b.class_A$member_fieldNotOverride
+  local0$fieldNotOverride := local0$b.public$backing_field_fieldNotOverride
   label label$ret$0
 }
 
+method public$property_getter_fieldOverride(this: Ref) returns (ret: Ref)
+
+
 /inheritance_fields.kt:(699,715): info: Generated Viper text for createBFsAndNoBF:
-field class_FirstBackingFieldClass$member_x: Ref
+field public$backing_field_x: Ref
 
 method class_FirstBackingFieldClass$constructor$fun_take$$return$T_class_global$class_FirstBackingFieldClass()
   returns (ret: Ref)
@@ -55,18 +53,13 @@ method class_NoBackingFieldClass$constructor$fun_take$$return$T_class_global$cla
   ensures acc(T_class_global$class_NoBackingFieldClass(ret), wildcard)
 
 
-method class_NoBackingFieldClass$getter_x(this: Ref) returns (ret: Ref)
-  requires acc(T_class_global$class_NoBackingFieldClass(this), wildcard)
-  ensures acc(T_class_global$class_NoBackingFieldClass(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
-
-
 method class_SecondBackingFieldClass$constructor$fun_take$T_Int$return$T_class_global$class_SecondBackingFieldClass(local$x: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_SecondBackingFieldClass())
   ensures acc(T_class_global$class_SecondBackingFieldClass(ret), wildcard)
   ensures (unfolding acc(T_class_global$class_SecondBackingFieldClass(ret), wildcard) in
-      ret.class_FirstBackingFieldClass$member_x == local$x)
+      dom$RuntimeType$intFromRef(ret.public$backing_field_x) ==
+      dom$RuntimeType$intFromRef(local$x))
 
 
 method global$fun_createBFsAndNoBF$fun_take$$return$T_Unit()
@@ -75,26 +68,32 @@ method global$fun_createBFsAndNoBF$fun_take$$return$T_Unit()
 {
   var local0$fbf: Ref
   var local0$fbfx: Ref
+  var anonymous$0: Ref
   var local0$nbf: Ref
   var local0$nbfx: Ref
+  var anonymous$1: Ref
   var local0$sbf: Ref
   var local0$sbfx: Ref
   ret$0 := dom$RuntimeType$unitValue()
   local0$fbf := class_FirstBackingFieldClass$constructor$fun_take$$return$T_class_global$class_FirstBackingFieldClass()
-  unfold acc(T_class_global$class_FirstBackingFieldClass(local0$fbf), wildcard)
-  local0$fbfx := local0$fbf.class_FirstBackingFieldClass$member_x
+  anonymous$0 := public$property_getter_x(local0$fbf)
+  local0$fbfx := anonymous$0
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$fbfx), dom$RuntimeType$intType())
   local0$nbf := class_NoBackingFieldClass$constructor$fun_take$$return$T_class_global$class_NoBackingFieldClass()
-  local0$nbfx := class_NoBackingFieldClass$getter_x(local0$nbf)
+  anonymous$1 := public$property_getter_x(local0$nbf)
+  local0$nbfx := anonymous$1
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$nbfx), dom$RuntimeType$intType())
   local0$sbf := class_SecondBackingFieldClass$constructor$fun_take$T_Int$return$T_class_global$class_SecondBackingFieldClass(dom$RuntimeType$intToRef(10))
   unfold acc(T_class_global$class_SecondBackingFieldClass(local0$sbf), wildcard)
-  unfold acc(T_class_global$class_NoBackingFieldClass(local0$sbf), wildcard)
-  unfold acc(T_class_global$class_FirstBackingFieldClass(local0$sbf), wildcard)
-  local0$sbfx := local0$sbf.class_FirstBackingFieldClass$member_x
+  local0$sbfx := local0$sbf.public$backing_field_x
   label label$ret$0
 }
 
+method public$property_getter_x(this: Ref) returns (ret: Ref)
+
+
 /inheritance_fields.kt:(1038,1045): info: Generated Viper text for createY:
-field class_X$member_a: Ref
+field public$backing_field_a: Ref
 
 method class_Y$constructor$fun_take$T_Int$return$T_class_global$class_Y(local$a: Ref)
   returns (ret: Ref)
@@ -111,6 +110,6 @@ method global$fun_createY$fun_take$$return$T_Unit() returns (ret$0: Ref)
   local0$y := class_Y$constructor$fun_take$T_Int$return$T_class_global$class_Y(dom$RuntimeType$intToRef(10))
   unfold acc(T_class_global$class_Y(local0$y), wildcard)
   unfold acc(T_class_global$class_X(local0$y), wildcard)
-  local0$ya := local0$y.class_X$member_a
+  local0$ya := local0$y.public$backing_field_a
   label label$ret$0
 }

@@ -1,0 +1,224 @@
+/multiple_interfaces.kt:(826,831): info: Generated Viper text for take1:
+method global$fun_take1$fun_take$T_class_global$class_InterfaceWithImplementation1$return$T_Unit(local$obj: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+{
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$obj), dom$RuntimeType$T_class_global$class_InterfaceWithImplementation1())
+  inhale acc(T_class_global$class_InterfaceWithImplementation1(local$obj), wildcard)
+  ret$0 := dom$RuntimeType$unitValue()
+  anonymous$1 := public$property_getter_field(local$obj)
+  anonymous$0 := anonymous$1
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
+  label label$ret$0
+}
+
+method public$property_getter_field(this: Ref) returns (ret: Ref)
+
+
+/multiple_interfaces.kt:(890,895): info: Generated Viper text for take2:
+method global$fun_take2$fun_take$T_class_global$class_InterfaceWithoutImplementation2$return$T_Unit(local$obj: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+{
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$obj), dom$RuntimeType$T_class_global$class_InterfaceWithoutImplementation2())
+  inhale acc(T_class_global$class_InterfaceWithoutImplementation2(local$obj), wildcard)
+  ret$0 := dom$RuntimeType$unitValue()
+  anonymous$1 := public$property_getter_field(local$obj)
+  anonymous$0 := anonymous$1
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
+  label label$ret$0
+}
+
+method public$property_getter_field(this: Ref) returns (ret: Ref)
+
+
+/multiple_interfaces.kt:(957,962): info: Generated Viper text for take3:
+field public$backing_field_field: Ref
+
+method global$fun_take3$fun_take$T_class_global$class_AbstractWithFinalImplementation3$return$T_Unit(local$obj: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+{
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$obj), dom$RuntimeType$T_class_global$class_AbstractWithFinalImplementation3())
+  inhale acc(T_class_global$class_AbstractWithFinalImplementation3(local$obj), wildcard)
+  ret$0 := dom$RuntimeType$unitValue()
+  label label$ret$0
+}
+
+/multiple_interfaces.kt:(1025,1030): info: Generated Viper text for take4:
+method global$fun_take4$fun_take$T_class_global$class_AbstractWithOpenImplementation4$return$T_Unit(local$obj: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
+{
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$obj), dom$RuntimeType$T_class_global$class_AbstractWithOpenImplementation4())
+  inhale acc(T_class_global$class_AbstractWithOpenImplementation4(local$obj), wildcard)
+  ret$0 := dom$RuntimeType$unitValue()
+  anonymous$1 := public$property_getter_field(local$obj)
+  anonymous$0 := anonymous$1
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
+  label label$ret$0
+}
+
+method public$property_getter_field(this: Ref) returns (ret: Ref)
+
+
+/multiple_interfaces.kt:(1728,1739): info: Generated Viper text for createImpls:
+field public$backing_field_field: Ref
+
+method class_Impl12$constructor$fun_take$$return$T_class_global$class_Impl12()
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl12())
+  ensures acc(T_class_global$class_Impl12(ret), wildcard)
+
+
+method class_Impl14$constructor$fun_take$$return$T_class_global$class_Impl14()
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl14())
+  ensures acc(T_class_global$class_Impl14(ret), wildcard)
+
+
+method class_Impl23$constructor$fun_take$$return$T_class_global$class_Impl23()
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl23())
+  ensures acc(T_class_global$class_Impl23(ret), wildcard)
+
+
+method class_Impl24$constructor$fun_take$$return$T_class_global$class_Impl24()
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl24())
+  ensures acc(T_class_global$class_Impl24(ret), wildcard)
+
+
+method class_Impl3$constructor$fun_take$$return$T_class_global$class_Impl3()
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl3())
+  ensures acc(T_class_global$class_Impl3(ret), wildcard)
+
+
+method global$fun_create6$fun_take$$return$T_class_global$class_InheritingInterfaceWithoutImplementation6()
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_InheritingInterfaceWithoutImplementation6())
+  ensures acc(T_class_global$class_InheritingInterfaceWithoutImplementation6(ret), wildcard)
+
+
+method global$fun_createImpls$fun_take$$return$T_Boolean()
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(ret$0) == false ==> false
+{
+  var local0$impl12: Ref
+  var local0$start12: Ref
+  var anonymous$0: Ref
+  var anonymous$1: Ref
+  var anonymous$2: Ref
+  var local0$impl23: Ref
+  var local0$start23: Ref
+  var anonymous$3: Ref
+  var anonymous$4: Ref
+  var anonymous$5: Ref
+  var local0$impl3: Ref
+  var local0$start3: Ref
+  var anonymous$6: Ref
+  var anonymous$7: Ref
+  var local0$impl24: Ref
+  var local0$start24: Ref
+  var anonymous$8: Ref
+  var anonymous$9: Ref
+  var anonymous$10: Ref
+  var anonymous$11: Ref
+  var local0$impl14: Ref
+  var local0$start14: Ref
+  var anonymous$12: Ref
+  var anonymous$13: Ref
+  var anonymous$14: Ref
+  var local0$impl6: Ref
+  var local0$start6: Ref
+  var anonymous$15: Ref
+  var anonymous$16: Ref
+  var anonymous$17: Ref
+  local0$impl12 := class_Impl12$constructor$fun_take$$return$T_class_global$class_Impl12()
+  unfold acc(T_class_global$class_Impl12(local0$impl12), wildcard)
+  anonymous$0 := local0$impl12.public$backing_field_field
+  local0$start12 := special$minusInts(special$plusInts(anonymous$0, dom$RuntimeType$intToRef(1)),
+    dom$RuntimeType$intToRef(1))
+  anonymous$1 := global$fun_take1$fun_take$T_class_global$class_InterfaceWithImplementation1$return$T_Unit(local0$impl12)
+  anonymous$2 := global$fun_take2$fun_take$T_class_global$class_InterfaceWithoutImplementation2$return$T_Unit(local0$impl12)
+  local0$impl23 := class_Impl23$constructor$fun_take$$return$T_class_global$class_Impl23()
+  unfold acc(T_class_global$class_Impl23(local0$impl23), wildcard)
+  unfold acc(T_class_global$class_AbstractWithFinalImplementation3(local0$impl23), wildcard)
+  anonymous$3 := local0$impl23.public$backing_field_field
+  local0$start23 := special$minusInts(special$plusInts(anonymous$3, dom$RuntimeType$intToRef(1)),
+    dom$RuntimeType$intToRef(1))
+  anonymous$4 := global$fun_take2$fun_take$T_class_global$class_InterfaceWithoutImplementation2$return$T_Unit(local0$impl23)
+  anonymous$5 := global$fun_take3$fun_take$T_class_global$class_AbstractWithFinalImplementation3$return$T_Unit(local0$impl23)
+  local0$impl3 := class_Impl3$constructor$fun_take$$return$T_class_global$class_Impl3()
+  unfold acc(T_class_global$class_Impl3(local0$impl3), wildcard)
+  unfold acc(T_class_global$class_AbstractWithFinalImplementation3(local0$impl3), wildcard)
+  anonymous$6 := local0$impl3.public$backing_field_field
+  local0$start3 := special$minusInts(special$plusInts(anonymous$6, dom$RuntimeType$intToRef(1)),
+    dom$RuntimeType$intToRef(1))
+  anonymous$7 := global$fun_take3$fun_take$T_class_global$class_AbstractWithFinalImplementation3$return$T_Unit(local0$impl3)
+  local0$impl24 := class_Impl24$constructor$fun_take$$return$T_class_global$class_Impl24()
+  anonymous$9 := public$property_getter_field(local0$impl24)
+  anonymous$8 := anonymous$9
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$8), dom$RuntimeType$intType())
+  local0$start24 := special$minusInts(special$plusInts(anonymous$8, dom$RuntimeType$intToRef(1)),
+    dom$RuntimeType$intToRef(1))
+  anonymous$10 := global$fun_take2$fun_take$T_class_global$class_InterfaceWithoutImplementation2$return$T_Unit(local0$impl24)
+  anonymous$11 := global$fun_take4$fun_take$T_class_global$class_AbstractWithOpenImplementation4$return$T_Unit(local0$impl24)
+  local0$impl14 := class_Impl14$constructor$fun_take$$return$T_class_global$class_Impl14()
+  unfold acc(T_class_global$class_Impl14(local0$impl14), wildcard)
+  anonymous$12 := local0$impl14.public$backing_field_field
+  local0$start14 := special$minusInts(special$plusInts(anonymous$12, dom$RuntimeType$intToRef(1)),
+    dom$RuntimeType$intToRef(1))
+  anonymous$13 := global$fun_take1$fun_take$T_class_global$class_InterfaceWithImplementation1$return$T_Unit(local0$impl14)
+  anonymous$14 := global$fun_take4$fun_take$T_class_global$class_AbstractWithOpenImplementation4$return$T_Unit(local0$impl14)
+  local0$impl6 := global$fun_create6$fun_take$$return$T_class_global$class_InheritingInterfaceWithoutImplementation6()
+  anonymous$16 := public$property_getter_field(local0$impl6)
+  anonymous$15 := anonymous$16
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$15), dom$RuntimeType$intType())
+  local0$start6 := special$minusInts(special$plusInts(anonymous$15, dom$RuntimeType$intToRef(1)),
+    dom$RuntimeType$intToRef(1))
+  if (true) {
+    var anonymous$18: Ref
+    unfold acc(T_class_global$class_Impl14(local0$impl14), wildcard)
+    anonymous$18 := local0$impl14.public$backing_field_field
+    anonymous$17 := dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(local0$start14) ==
+      dom$RuntimeType$intFromRef(anonymous$18))
+  } else {
+    anonymous$17 := dom$RuntimeType$boolToRef(false)}
+  if (dom$RuntimeType$boolFromRef(anonymous$17)) {
+    ret$0 := dom$RuntimeType$boolToRef(true)
+  } else {
+    ret$0 := dom$RuntimeType$boolToRef(false)}
+  goto label$ret$0
+  label label$ret$0
+}
+
+method global$fun_take1$fun_take$T_class_global$class_InterfaceWithImplementation1$return$T_Unit(local$obj: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+
+
+method global$fun_take2$fun_take$T_class_global$class_InterfaceWithoutImplementation2$return$T_Unit(local$obj: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+
+
+method global$fun_take3$fun_take$T_class_global$class_AbstractWithFinalImplementation3$return$T_Unit(local$obj: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+
+
+method global$fun_take4$fun_take$T_class_global$class_AbstractWithOpenImplementation4$return$T_Unit(local$obj: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
+
+
+method public$property_getter_field(this: Ref) returns (ret: Ref)

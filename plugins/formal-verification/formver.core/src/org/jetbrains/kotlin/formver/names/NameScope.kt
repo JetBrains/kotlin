@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.name.FqName
 
 sealed interface NameScope : MangledName
 
-interface PackagePrefixScope : NameScope {
+sealed interface PackagePrefixScope : NameScope {
     val packageName: FqName
     val suffix: String
     override val mangled: String
@@ -27,11 +27,25 @@ data class GlobalScope(override val packageName: FqName) : PackagePrefixScope {
     constructor(segments: List<String>) : this(FqName.fromSegments(segments))
 }
 
-data class ClassScope(override val packageName: FqName, val className: ClassKotlinName) : PackagePrefixScope {
-    // We don't need to prefix this with "class_scope" since the class name will already be prefixed with "class".
-    override val suffix = className.mangled
+sealed interface ClassScope : PackagePrefixScope {
+    val className: ClassKotlinName
+}
 
-    constructor(packageSegments: List<String>, className: ClassKotlinName) : this(FqName.fromSegments(packageSegments), className)
+data class DefaultClassScope(override val packageName: FqName, override val className: ClassKotlinName, ) : ClassScope {
+    override val suffix = className.mangled
+}
+
+/**
+ * We do not want to mangle field names with class and package, hence introducing
+ * this special `NameScope`. Note that it still needs package and class for other purposes.
+ */
+data class PublicClassScope(override val packageName: FqName, override val className: ClassKotlinName) : ClassScope {
+    override val suffix = className.mangled + "_public"
+    override val mangled = "public"
+}
+
+data class PrivateClassScope(override val packageName: FqName, override val className: ClassKotlinName) : ClassScope {
+    override val suffix = className.mangled + "_private"
 }
 
 data object ParameterScope : NameScope {

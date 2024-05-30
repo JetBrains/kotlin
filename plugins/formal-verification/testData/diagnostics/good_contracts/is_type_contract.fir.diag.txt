@@ -1,5 +1,5 @@
 /is_type_contract.kt:(157,165): info: Generated Viper text for isString:
-field pkg$kotlin$class_String$member_length: Ref
+field public$backing_field_length: Ref
 
 method global$fun_isString$fun_take$NT_Any$return$T_Boolean(local$x: Ref)
   returns (ret$0: Ref)
@@ -14,15 +14,11 @@ method global$fun_isString$fun_take$NT_Any$return$T_Boolean(local$x: Ref)
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_length(this: Ref) returns (ret: Ref)
 
 
 /is_type_contract.kt:(509,517): info: Generated Viper text for isString:
-field pkg$kotlin$class_String$member_length: Ref
+field public$backing_field_length: Ref
 
 method global$fun_isString$fun_take$T_Any$return$T_Boolean(local$obj: Ref)
   returns (ret$0: Ref)
@@ -37,11 +33,7 @@ method global$fun_isString$fun_take$T_Any$return$T_Boolean(local$obj: Ref)
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_length(this: Ref) returns (ret: Ref)
 
 
 /is_type_contract.kt:(675,692): info: Generated Viper text for subtypeTransitive:
@@ -57,7 +49,7 @@ method global$fun_subtypeTransitive$fun_take$T_Unit$return$T_Unit(local$x: Ref)
 }
 
 /is_type_contract.kt:(870,891): info: Generated Viper text for constructorReturnType:
-field class_Foo$member_bar: Ref
+field public$backing_field_bar: Ref
 
 method class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
   returns (ret: Ref)
@@ -79,35 +71,33 @@ method global$fun_constructorReturnType$fun_take$$return$T_Boolean()
 }
 
 /is_type_contract.kt:(1016,1032): info: Generated Viper text for subtypeSuperType:
-field class_Foo$member_bar: Ref
+field public$backing_field_bar: Ref
 
 method global$fun_subtypeSuperType$fun_take$T_class_global$class_Bar$return$T_Unit(local$bar: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Bar(local$bar), wildcard)
-  ensures acc(T_class_global$class_Bar(local$bar), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
   ensures true ==>
     dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$bar), dom$RuntimeType$T_class_global$class_Foo())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$bar), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(local$bar), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   label label$ret$0
 }
 
 /is_type_contract.kt:(1149,1160): info: Generated Viper text for typeOfField:
-field class_Foo$member_bar: Ref
+field public$backing_field_bar: Ref
 
 method global$fun_typeOfField$fun_take$T_class_global$class_Foo$return$T_Boolean(local$foo: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Foo(local$foo), wildcard)
-  ensures acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
   ensures dom$RuntimeType$boolFromRef(ret$0) == true
 {
   var anonymous$0: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
+  inhale acc(T_class_global$class_Foo(local$foo), wildcard)
   unfold acc(T_class_global$class_Foo(local$foo), wildcard)
-  anonymous$0 := local$foo.class_Foo$member_bar
+  anonymous$0 := local$foo.public$backing_field_bar
   if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$T_class_global$class_Bar())) {
     ret$0 := dom$RuntimeType$boolToRef(true)
     goto label$ret$0

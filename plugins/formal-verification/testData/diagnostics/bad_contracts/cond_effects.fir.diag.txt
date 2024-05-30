@@ -44,18 +44,19 @@ method global$fun_mayReturnNull$fun_take$NT_Any$return$NT_Any(local$x: Ref)
 /cond_effects.kt:(723,741): info: Generated Viper text for isNullOrEmptyWrong:
 method global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_CharSequence$return$T_Boolean(local$seq: Ref)
   returns (ret$0: Ref)
-  requires local$seq != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$global$class_CharSequence(local$seq), wildcard)
-  ensures local$seq != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$global$class_CharSequence(local$seq), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
   ensures dom$RuntimeType$boolFromRef(ret$0) == false ==>
     local$seq != dom$RuntimeType$nullValue()
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$seq), dom$RuntimeType$nullable(dom$RuntimeType$T_class_pkg$kotlin$global$class_CharSequence()))
+  inhale local$seq != dom$RuntimeType$nullValue() ==>
+    acc(T_class_pkg$kotlin$global$class_CharSequence(local$seq), wildcard)
   if (!(local$seq == dom$RuntimeType$nullValue())) {
     var anonymous$0: Ref
-    anonymous$0 := pkg$kotlin$class_CharSequence$getter_length(local$seq)
+    var anonymous$1: Ref
+    anonymous$1 := public$property_getter_length(local$seq)
+    anonymous$0 := anonymous$1
+    inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$intType())
     ret$0 := special$notBool(dom$RuntimeType$boolToRef(dom$RuntimeType$intFromRef(anonymous$0) ==
       0))
   } else {
@@ -64,17 +65,13 @@ method global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_C
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_length(this: Ref) returns (ret: Ref)
 
 
 /cond_effects.kt:(796,832): warning: Cannot verify that if a false value is returned then seq != null.
 
 /cond_effects.kt:(925,942): info: Generated Viper text for recursiveContract:
-field pkg$kotlin$class_String$member_length: Ref
+field public$backing_field_length: Ref
 
 method global$fun_recursiveContract$fun_take$T_Int$NT_Any$return$T_Boolean(local$n: Ref,
   local$x: Ref)
@@ -95,11 +92,7 @@ method global$fun_recursiveContract$fun_take$T_Int$NT_Any$return$T_Boolean(local
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_length(this: Ref) returns (ret: Ref)
 
 
 /cond_effects.kt:(994,1029): warning: Cannot verify that if a true value is returned then x is String.

@@ -93,12 +93,6 @@ method global$fun_unknown$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(loca
 /calls_in_place.kt:(938,968): warning: Could not verify that function 'f: (Int) -> Int' is called at least once.
 
 /calls_in_place.kt:(1150,1183): info: Generated Viper text for incorrect_exactly_once_with_catch:
-field pkg$kotlin$class_String$member_length: Ref
-
-field pkg$kotlin$class_Throwable$member_cause: Ref
-
-field pkg$kotlin$class_Throwable$member_message: Ref
-
 method global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
   returns (ret$0: Ref)
   requires acc(local$f.special$function_object_call_counter, write)
@@ -132,22 +126,15 @@ method global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_cause(this: Ref) returns (ret: Ref)
+
+
+method public$property_getter_message(this: Ref) returns (ret: Ref)
 
 
 /calls_in_place.kt:(1232,1261): warning: Could not verify that function 'f: () -> Unit' is called exactly once.
 
 /calls_in_place.kt:(1478,1519): info: Generated Viper text for incorrect_exactly_once_with_call_in_catch:
-field pkg$kotlin$class_String$member_length: Ref
-
-field pkg$kotlin$class_Throwable$member_cause: Ref
-
-field pkg$kotlin$class_Throwable$member_message: Ref
-
 method global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
   returns (ret$0: Ref)
   requires acc(local$f.special$function_object_call_counter, write)
@@ -186,11 +173,10 @@ method global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$r
   label label$ret$0
 }
 
-method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Ref)
-  requires acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures acc(T_class_pkg$kotlin$global$class_CharSequence(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+method public$property_getter_cause(this: Ref) returns (ret: Ref)
+
+
+method public$property_getter_message(this: Ref) returns (ret: Ref)
 
 
 /calls_in_place.kt:(1568,1597): warning: Could not verify that function 'f: () -> Unit' is called exactly once.

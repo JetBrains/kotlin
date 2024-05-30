@@ -1,22 +1,18 @@
 /safe_call.kt:(142,154): info: Generated Viper text for testSafeCall:
-field class_Foo$member_x: Ref
+field public$backing_field_x: Ref
 
 method class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(this: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_Foo(this), wildcard)
-  ensures acc(T_class_global$class_Foo(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 
 method global$fun_testSafeCall$fun_take$NT_class_global$class_Foo$return$NT_Unit(local$foo: Ref)
   returns (ret$0: Ref)
-  requires local$foo != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_Foo(local$foo), wildcard)
-  ensures local$foo != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$unitType()))
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Foo()))
+  inhale local$foo != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Foo(local$foo), wildcard)
   if (local$foo != dom$RuntimeType$nullValue()) {
     var anonymous$0: Ref
     anonymous$0 := class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(local$foo)
@@ -28,22 +24,19 @@ method global$fun_testSafeCall$fun_take$NT_class_global$class_Foo$return$NT_Unit
 }
 
 /safe_call.kt:(217,240): info: Generated Viper text for testSafeCallNonNullable:
-field class_Foo$member_x: Ref
+field public$backing_field_x: Ref
 
 method class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(this: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_Foo(this), wildcard)
-  ensures acc(T_class_global$class_Foo(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$unitType())
 
 
 method global$fun_testSafeCallNonNullable$fun_take$T_class_global$class_Foo$return$NT_Unit(local$foo: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Foo(local$foo), wildcard)
-  ensures acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$unitType()))
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
+  inhale acc(T_class_global$class_Foo(local$foo), wildcard)
   if (local$foo != dom$RuntimeType$nullValue()) {
     var anonymous$0: Ref
     anonymous$0 := class_Foo$fun_f$fun_take$T_class_global$class_Foo$return$T_Unit(local$foo)
@@ -55,21 +48,19 @@ method global$fun_testSafeCallNonNullable$fun_take$T_class_global$class_Foo$retu
 }
 
 /safe_call.kt:(267,287): info: Generated Viper text for testSafeCallProperty:
-field class_Foo$member_x: Ref
+field public$backing_field_x: Ref
 
 method global$fun_testSafeCallProperty$fun_take$NT_class_global$class_Foo$return$NT_Int(local$foo: Ref)
   returns (ret$0: Ref)
-  requires local$foo != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_Foo(local$foo), wildcard)
-  ensures local$foo != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_Foo()))
+  inhale local$foo != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_Foo(local$foo), wildcard)
   if (local$foo != dom$RuntimeType$nullValue()) {
     var anonymous$0: Ref
     unfold acc(T_class_global$class_Foo(local$foo), wildcard)
-    anonymous$0 := local$foo.class_Foo$member_x
+    anonymous$0 := local$foo.public$backing_field_x
     ret$0 := anonymous$0
   } else {
     ret$0 := dom$RuntimeType$nullValue()}
@@ -78,19 +69,18 @@ method global$fun_testSafeCallProperty$fun_take$NT_class_global$class_Foo$return
 }
 
 /safe_call.kt:(354,385): info: Generated Viper text for testSafeCallPropertyNonNullable:
-field class_Foo$member_x: Ref
+field public$backing_field_x: Ref
 
 method global$fun_testSafeCallPropertyNonNullable$fun_take$T_class_global$class_Foo$return$NT_Int(local$foo: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Foo(local$foo), wildcard)
-  ensures acc(T_class_global$class_Foo(local$foo), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$nullable(dom$RuntimeType$intType()))
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$foo), dom$RuntimeType$T_class_global$class_Foo())
+  inhale acc(T_class_global$class_Foo(local$foo), wildcard)
   if (local$foo != dom$RuntimeType$nullValue()) {
     var anonymous$0: Ref
     unfold acc(T_class_global$class_Foo(local$foo), wildcard)
-    anonymous$0 := local$foo.class_Foo$member_x
+    anonymous$0 := local$foo.public$backing_field_x
     ret$0 := anonymous$0
   } else {
     ret$0 := dom$RuntimeType$nullValue()}

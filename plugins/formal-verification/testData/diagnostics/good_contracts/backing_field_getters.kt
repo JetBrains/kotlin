@@ -83,7 +83,6 @@ fun <!VIPER_TEXT!>checkPrimary<!>(x: Int, y: Int): Boolean {
         returns(false) implies false
     }
     val classI = ClassI(x, y)
-    // The second example doesn't work now but hopefully will be working with the upcoming PR.
-    // val z = Z()
-    return (x != y || classI.x == classI.y) // && ClassII(z).z == z
+    val z = Z()
+    return (x != y || classI.x == classI.y) && ClassII(z).z == z
 }

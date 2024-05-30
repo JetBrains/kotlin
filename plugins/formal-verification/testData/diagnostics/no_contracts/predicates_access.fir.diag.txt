@@ -1,31 +1,31 @@
 /predicates_access.kt:(249,272): info: Generated Viper text for accessSuperTypeProperty:
-field class_A$member_a: Ref
+field public$backing_field_a: Ref
 
-field class_B$member_b: Ref
+field public$backing_field_b: Ref
 
-field class_C$member_x: Ref
+field public$backing_field_x: Ref
 
-field class_C$member_y: Ref
+field public$backing_field_y: Ref
 
 predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_A$member_a, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_A$member_a),
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
   dom$RuntimeType$intType())
 }
 
 predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_B$member_b, wildcard) &&
+  acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
   acc(T_class_global$class_A(special$class$predicate$subject), wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_B$member_b),
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
   dom$RuntimeType$intType())
 }
 
 predicate T_class_global$class_C(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_C$member_x, wildcard) &&
-  acc(T_class_global$class_A(special$class$predicate$subject.class_C$member_x), wildcard) &&
+  acc(special$class$predicate$subject.public$backing_field_x, wildcard) &&
+  acc(T_class_global$class_A(special$class$predicate$subject.public$backing_field_x), wildcard) &&
   acc(T_class_global$class_D(special$class$predicate$subject), wildcard) &&
   acc(T_class_global$class_B(special$class$predicate$subject), wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_C$member_x),
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
   dom$RuntimeType$T_class_global$class_A())
 }
 
@@ -33,56 +33,52 @@ predicate T_class_global$class_D(special$class$predicate$subject: Ref) {
   true
 }
 
-method class_D$getter_d(this: Ref) returns (ret: Ref)
-  requires acc(T_class_global$class_D(this), wildcard)
-  ensures acc(T_class_global$class_D(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
-
-
 method global$fun_accessSuperTypeProperty$fun_take$T_class_global$class_C$return$T_Unit(local$c: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_C(local$c), wildcard)
-  ensures acc(T_class_global$class_C(local$c), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$temp: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$c), dom$RuntimeType$T_class_global$class_C())
+  inhale acc(T_class_global$class_C(local$c), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   unfold acc(T_class_global$class_C(local$c), wildcard)
   unfold acc(T_class_global$class_B(local$c), wildcard)
   unfold acc(T_class_global$class_A(local$c), wildcard)
-  local0$temp := local$c.class_A$member_a
+  local0$temp := local$c.public$backing_field_a
   label label$ret$0
 }
 
+method public$property_getter_d(this: Ref) returns (ret: Ref)
+
+
 /predicates_access.kt:(306,318): info: Generated Viper text for accessNested:
-field class_A$member_a: Ref
+field public$backing_field_a: Ref
 
-field class_B$member_b: Ref
+field public$backing_field_b: Ref
 
-field class_C$member_x: Ref
+field public$backing_field_x: Ref
 
-field class_C$member_y: Ref
+field public$backing_field_y: Ref
 
 predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_A$member_a, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_A$member_a),
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
   dom$RuntimeType$intType())
 }
 
 predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_B$member_b, wildcard) &&
+  acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
   acc(T_class_global$class_A(special$class$predicate$subject), wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_B$member_b),
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
   dom$RuntimeType$intType())
 }
 
 predicate T_class_global$class_C(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_C$member_x, wildcard) &&
-  acc(T_class_global$class_A(special$class$predicate$subject.class_C$member_x), wildcard) &&
+  acc(special$class$predicate$subject.public$backing_field_x, wildcard) &&
+  acc(T_class_global$class_A(special$class$predicate$subject.public$backing_field_x), wildcard) &&
   acc(T_class_global$class_D(special$class$predicate$subject), wildcard) &&
   acc(T_class_global$class_B(special$class$predicate$subject), wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_C$member_x),
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_x),
   dom$RuntimeType$T_class_global$class_A())
 }
 
@@ -90,119 +86,111 @@ predicate T_class_global$class_D(special$class$predicate$subject: Ref) {
   true
 }
 
-method class_D$getter_d(this: Ref) returns (ret: Ref)
-  requires acc(T_class_global$class_D(this), wildcard)
-  ensures acc(T_class_global$class_D(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
-
-
 method global$fun_accessNested$fun_take$T_class_global$class_C$return$T_Unit(local$c: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_C(local$c), wildcard)
-  ensures acc(T_class_global$class_C(local$c), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$temp: Ref
   var anonymous$0: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$c), dom$RuntimeType$T_class_global$class_C())
+  inhale acc(T_class_global$class_C(local$c), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   unfold acc(T_class_global$class_C(local$c), wildcard)
-  anonymous$0 := local$c.class_C$member_x
+  anonymous$0 := local$c.public$backing_field_x
   unfold acc(T_class_global$class_A(anonymous$0), wildcard)
-  local0$temp := anonymous$0.class_A$member_a
+  local0$temp := anonymous$0.public$backing_field_a
   label label$ret$0
 }
 
+method public$property_getter_d(this: Ref) returns (ret: Ref)
+
+
 /predicates_access.kt:(354,368): info: Generated Viper text for accessNullable:
-field class_A$member_a: Ref
+field public$backing_field_a: Ref
 
 predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_A$member_a, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_A$member_a),
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
   dom$RuntimeType$intType())
 }
 
 method global$fun_accessNullable$fun_take$NT_class_global$class_A$return$T_Unit(local$x: Ref)
   returns (ret$0: Ref)
-  requires local$x != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_A(local$x), wildcard)
-  ensures local$x != dom$RuntimeType$nullValue() ==>
-    acc(T_class_global$class_A(local$x), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$n: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$nullable(dom$RuntimeType$T_class_global$class_A()))
+  inhale local$x != dom$RuntimeType$nullValue() ==>
+    acc(T_class_global$class_A(local$x), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   if (!(local$x == dom$RuntimeType$nullValue())) {
     unfold acc(T_class_global$class_A(local$x), wildcard)
-    local0$n := local$x.class_A$member_a
+    local0$n := local$x.public$backing_field_a
   }
   label label$ret$0
 }
 
 /predicates_access.kt:(442,452): info: Generated Viper text for accessCast:
-field class_A$member_a: Ref
+field public$backing_field_a: Ref
 
-field class_B$member_b: Ref
+field public$backing_field_b: Ref
 
 predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_A$member_a, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_A$member_a),
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
   dom$RuntimeType$intType())
 }
 
 predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_B$member_b, wildcard) &&
+  acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
   acc(T_class_global$class_A(special$class$predicate$subject), wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_B$member_b),
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
   dom$RuntimeType$intType())
 }
 
 method global$fun_accessCast$fun_take$T_class_global$class_A$return$T_Unit(local$x: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_A(local$x), wildcard)
-  ensures acc(T_class_global$class_A(local$x), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$n: Ref
   var anonymous$0: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$T_class_global$class_A())
+  inhale acc(T_class_global$class_A(local$x), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   anonymous$0 := local$x
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$0), dom$RuntimeType$T_class_global$class_B())
   inhale acc(T_class_global$class_B(anonymous$0), wildcard)
   unfold acc(T_class_global$class_B(anonymous$0), wildcard)
-  local0$n := anonymous$0.class_B$member_b
+  local0$n := anonymous$0.public$backing_field_b
   label label$ret$0
 }
 
 /predicates_access.kt:(501,515): info: Generated Viper text for accessSafeCast:
-field class_A$member_a: Ref
+field public$backing_field_a: Ref
 
-field class_B$member_b: Ref
+field public$backing_field_b: Ref
 
 predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_A$member_a, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_A$member_a),
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
   dom$RuntimeType$intType())
 }
 
 predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_B$member_b, wildcard) &&
+  acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
   acc(T_class_global$class_A(special$class$predicate$subject), wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_B$member_b),
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
   dom$RuntimeType$intType())
 }
 
 method global$fun_accessSafeCast$fun_take$T_class_global$class_A$return$T_Unit(local$x: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_A(local$x), wildcard)
-  ensures acc(T_class_global$class_A(local$x), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$n: Ref
   var local0$y: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$T_class_global$class_A())
+  inhale acc(T_class_global$class_A(local$x), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   local0$n := dom$RuntimeType$intToRef(0)
   if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$T_class_global$class_B())) {
@@ -214,37 +202,36 @@ method global$fun_accessSafeCast$fun_take$T_class_global$class_A$return$T_Unit(l
     acc(T_class_global$class_B(local0$y), wildcard)
   if (!(local0$y == dom$RuntimeType$nullValue())) {
     unfold acc(T_class_global$class_B(local0$y), wildcard)
-    local0$n := local0$y.class_B$member_b
+    local0$n := local0$y.public$backing_field_b
   }
   label label$ret$0
 }
 
 /predicates_access.kt:(612,627): info: Generated Viper text for accessSmartCast:
-field class_A$member_a: Ref
+field public$backing_field_a: Ref
 
-field class_B$member_b: Ref
+field public$backing_field_b: Ref
 
 predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_A$member_a, wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_A$member_a),
+  acc(special$class$predicate$subject.public$backing_field_a, wildcard) &&
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_a),
   dom$RuntimeType$intType())
 }
 
 predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
-  acc(special$class$predicate$subject.class_B$member_b, wildcard) &&
+  acc(special$class$predicate$subject.public$backing_field_b, wildcard) &&
   acc(T_class_global$class_A(special$class$predicate$subject), wildcard) &&
-  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.class_B$member_b),
+  dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(special$class$predicate$subject.public$backing_field_b),
   dom$RuntimeType$intType())
 }
 
 method global$fun_accessSmartCast$fun_take$T_class_global$class_A$return$T_Unit(local$x: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_A(local$x), wildcard)
-  ensures acc(T_class_global$class_A(local$x), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   var local0$n: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$T_class_global$class_A())
+  inhale acc(T_class_global$class_A(local$x), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
   local0$n := dom$RuntimeType$intToRef(0)
   if (dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$T_class_global$class_B())) {
@@ -252,7 +239,7 @@ method global$fun_accessSmartCast$fun_take$T_class_global$class_A$return$T_Unit(
     anonymous$0 := local$x
     inhale acc(T_class_global$class_B(anonymous$0), wildcard)
     unfold acc(T_class_global$class_B(anonymous$0), wildcard)
-    local0$n := anonymous$0.class_B$member_b
+    local0$n := anonymous$0.public$backing_field_b
   }
   label label$ret$0
 }

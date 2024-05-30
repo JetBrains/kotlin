@@ -11,7 +11,8 @@ fun <!VIPER_TEXT!>createFoo<!>(): Foo {
 
 class Bar(val a: Bar?)
 
-fun <!VIPER_TEXT!>createBar<!>() {
+fun <!VIPER_TEXT!>createFooAndBar<!>() {
+    val f: Foo = Foo(10, 20)
     val b: Bar = Bar(null)
 }
 

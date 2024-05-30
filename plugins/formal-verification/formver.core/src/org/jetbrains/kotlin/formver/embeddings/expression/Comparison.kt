@@ -28,28 +28,21 @@ sealed interface AnyComparisonExpression : BinaryDirectResultExpEmbedding {
             info = sourceRole.asInfo
         )
 
-    override fun toViperBuiltinType(ctx: LinearizationContext): Exp {
-        // this check guarantees that leftExp and rightExp will be of the same Viper type
-        if (left.type == right.type) {
-            val leftExp = left.toViperBuiltinType(ctx)
-            val rightExp = right.toViperBuiltinType(ctx)
-            val basicComparison = comparisonOperation(leftExp, rightExp, pos = ctx.source.asPosition, info = sourceRole.asInfo)
-
-            val injection = left.type.injectionOr { return basicComparison }
-
-            // This optimization is included to avoid complex comparisons in form `intToRef(0) == intToRef(1)`.
-            // May be useful in some cases, e.g. constructor invariants and loop conditions.
-            return if (
-                leftExp is Exp.DomainFuncApp &&
-                rightExp is Exp.DomainFuncApp &&
-                leftExp.function == injection.fromRef &&
-                rightExp.function == injection.fromRef
-            ) comparisonOperation(leftExp.args[0], rightExp.args[0], pos = ctx.source.asPosition, info = sourceRole.asInfo)
-            else basicComparison
-        } else {
-            return comparisonOperation(left.toViper(ctx), right.toViper(ctx), pos = ctx.source.asPosition, info = sourceRole.asInfo)
-        }
-    }
+    override fun toViperBuiltinType(ctx: LinearizationContext): Exp =
+        // this check guarantees that arguments will be of the same Viper type
+        if (left.type == right.type)
+            comparisonOperation(
+                left.toViperBuiltinType(ctx),
+                right.toViperBuiltinType(ctx),
+                pos = ctx.source.asPosition,
+                info = sourceRole.asInfo
+            )
+        else comparisonOperation(
+            left.toViper(ctx),
+            right.toViper(ctx),
+            pos = ctx.source.asPosition,
+            info = sourceRole.asInfo
+        )
 }
 
 sealed interface IntComparisonExpression : OperationBaseExpEmbedding {

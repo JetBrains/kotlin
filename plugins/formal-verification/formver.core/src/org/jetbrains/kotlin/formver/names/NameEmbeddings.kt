@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.formver.names
 
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.formver.conversion.ProgramConversionContext
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
@@ -22,22 +24,32 @@ import org.jetbrains.kotlin.name.Name
 fun CallableId.embedScopeName(): NameScope =
     when (val id = this.classId) {
         null -> GlobalScope(packageName)
-        else -> ClassScope(packageName, ClassKotlinName(id.relativeClassName))
+        else -> DefaultClassScope(packageName, ClassKotlinName(id.relativeClassName))
     }
 
-fun CallableId.embedScoped(name: KotlinName) = ScopedKotlinName(embedScopeName(), name)
 fun CallableId.embedScopedWithType(type: TypeEmbedding, name: KotlinName) = ScopedKotlinName(embedScopeName(), name, type)
 
 fun ClassId.embedName(): ScopedKotlinName = ScopedKotlinName(GlobalScope(packageFqName), ClassKotlinName(relativeClassName))
-fun CallableId.embedGetterName(): ScopedKotlinName = embedScoped(GetterKotlinName(callableName))
-fun CallableId.embedSetterName(): ScopedKotlinName = embedScoped(SetterKotlinName(callableName))
 fun CallableId.embedExtensionGetterName(type: TypeEmbedding): ScopedKotlinName =
     embedScopedWithType(type, ExtensionGetterKotlinName(callableName))
+
 fun CallableId.embedExtensionSetterName(type: TypeEmbedding): ScopedKotlinName =
     embedScopedWithType(type, ExtensionSetterKotlinName(callableName))
 
-fun CallableId.embedLocalPropertyName(): KotlinName = SimpleKotlinName(callableName)
-fun CallableId.embedMemberPropertyName(): ScopedKotlinName = embedScoped(MemberKotlinName(callableName))
+private fun CallableId.embedMemberPropertyNameBase(isPrivate: Boolean, withAction: (Name) -> KotlinName): ScopedKotlinName {
+    val id = classId ?: error("Embedding non-member property $callableName as a member.")
+    val className = ClassKotlinName(id.relativeClassName)
+    val scope =
+        if (isPrivate) PrivateClassScope(packageName, className)
+        else PublicClassScope(packageName, className)
+    return ScopedKotlinName(scope, withAction(callableName))
+}
+
+fun CallableId.embedMemberPropertyName(isPrivate: Boolean) = embedMemberPropertyNameBase(isPrivate, ::PropertyKotlinName)
+fun CallableId.embedMemberGetterName(isPrivate: Boolean) = embedMemberPropertyNameBase(isPrivate, ::GetterKotlinName)
+fun CallableId.embedMemberSetterName(isPrivate: Boolean) = embedMemberPropertyNameBase(isPrivate, ::SetterKotlinName)
+fun CallableId.embedMemberBackingFieldName(isPrivate: Boolean) = embedMemberPropertyNameBase(isPrivate, ::BackingFieldKotlinName)
+
 fun CallableId.embedUnscopedPropertyName(): SimpleKotlinName = SimpleKotlinName(callableName)
 fun CallableId.embedFunctionName(type: TypeEmbedding): ScopedKotlinName =
     embedScopedWithType(type, FunctionKotlinName(callableName))
@@ -46,24 +58,26 @@ fun Name.embedScopedLocalName(scope: Int) = ScopedKotlinName(LocalScope(scope), 
 fun Name.embedParameterName() = ScopedKotlinName(ParameterScope, SimpleKotlinName(this))
 
 fun FirValueParameterSymbol.embedName(): ScopedKotlinName = ScopedKotlinName(ParameterScope, SimpleKotlinName(name))
-fun FirPropertyAccessorSymbol.embedName(ctx: ProgramConversionContext): ScopedKotlinName = when (propertySymbol.isExtension) {
-    true -> when {
-        isGetter -> propertySymbol.callableId.embedExtensionGetterName(ctx.embedType(this))
-        isSetter -> propertySymbol.callableId.embedExtensionSetterName(ctx.embedType(this))
-        else -> error("An extension property must be a setter or a getter!")
-    }
-    false -> when {
-        isGetter -> propertySymbol.callableId.embedGetterName()
-        isSetter -> propertySymbol.callableId.embedSetterName()
-        else -> error("A property accessor must be a setter or a getter!")
-    }
+
+fun FirPropertySymbol.embedGetterName(ctx: ProgramConversionContext): ScopedKotlinName = when (isExtension) {
+    true -> callableId.embedExtensionGetterName(ctx.embedType(getterSymbol!!))
+    false -> callableId.embedMemberGetterName(Visibilities.isPrivate(visibility))
 }
+
+fun FirPropertySymbol.embedSetterName(ctx: ProgramConversionContext): ScopedKotlinName = when (isExtension) {
+    true -> callableId.embedExtensionSetterName(ctx.embedType(setterSymbol ?: error("Embedding setter of read-only extension property.")))
+    false -> callableId.embedMemberSetterName(Visibilities.isPrivate(visibility))
+}
+
+fun FirPropertySymbol.embedMemberPropertyName() = callableId.embedMemberPropertyName(
+    Visibilities.isPrivate(this.visibility)
+)
 
 fun FirConstructorSymbol.embedName(ctx: ProgramConversionContext): ScopedKotlinName =
     callableId.embedScopedWithType(ctx.embedType(this), ConstructorKotlinName)
 
 fun FirFunctionSymbol<*>.embedName(ctx: ProgramConversionContext): ScopedKotlinName = when (this) {
-    is FirPropertyAccessorSymbol -> embedName(ctx)
+    is FirPropertyAccessorSymbol -> if (isGetter) propertySymbol.embedGetterName(ctx) else propertySymbol.embedSetterName(ctx)
     is FirConstructorSymbol -> embedName(ctx)
     else -> callableId.embedFunctionName(ctx.embedType(this))
 }

@@ -39,6 +39,10 @@ data object ThisReceiverName : MangledName {
         get() = "this"
 }
 
+data object SetterValueName : MangledName {
+    override val mangled = "value"
+}
+
 abstract class SpecialNameBase(name: String) : MangledName {
     override val mangled: String = "special\$$name"
 }

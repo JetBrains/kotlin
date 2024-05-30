@@ -1,5 +1,5 @@
 /as_type_contract.kt:(150,154): info: Generated Viper text for getX:
-field class_IntHolder$member_x: Ref
+field public$backing_field_x: Ref
 
 method global$fun_getX$fun_take$T_Any$return$NT_Int(local$a: Ref)
   returns (ret$0: Ref)
@@ -19,7 +19,7 @@ method global$fun_getX$fun_take$T_Any$return$NT_Int(local$a: Ref)
   if (anonymous$0 != dom$RuntimeType$nullValue()) {
     var anonymous$1: Ref
     unfold acc(T_class_global$class_IntHolder(anonymous$0), wildcard)
-    anonymous$1 := anonymous$0.class_IntHolder$member_x
+    anonymous$1 := anonymous$0.public$backing_field_x
     ret$0 := anonymous$1
   } else {
     ret$0 := dom$RuntimeType$nullValue()}

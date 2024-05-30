@@ -146,6 +146,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("custom_list.kt")
+    public void testCustom_list() {
+      runTest("plugins/formal-verification/testData/diagnostics/good_contracts/custom_list.kt");
+    }
+
+    @Test
     @TestMetadata("inline_correctness.kt")
     public void testInline_correctness() {
       runTest("plugins/formal-verification/testData/diagnostics/good_contracts/inline_correctness.kt");
@@ -176,9 +182,27 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("multiple_interfaces.kt")
+    public void testMultiple_interfaces() {
+      runTest("plugins/formal-verification/testData/diagnostics/good_contracts/multiple_interfaces.kt");
+    }
+
+    @Test
     @TestMetadata("nullability.kt")
     public void testNullability() {
       runTest("plugins/formal-verification/testData/diagnostics/good_contracts/nullability.kt");
+    }
+
+    @Test
+    @TestMetadata("override_properties_types.kt")
+    public void testOverride_properties_types() {
+      runTest("plugins/formal-verification/testData/diagnostics/good_contracts/override_properties_types.kt");
+    }
+
+    @Test
+    @TestMetadata("private_properties.kt")
+    public void testPrivate_properties() {
+      runTest("plugins/formal-verification/testData/diagnostics/good_contracts/private_properties.kt");
     }
 
     @Test
@@ -381,6 +405,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     @TestMetadata("member_functions.kt")
     public void testMember_functions() {
       runTest("plugins/formal-verification/testData/diagnostics/no_contracts/member_functions.kt");
+    }
+
+    @Test
+    @TestMetadata("multiple_interfaces.kt")
+    public void testMultiple_interfaces() {
+      runTest("plugins/formal-verification/testData/diagnostics/no_contracts/multiple_interfaces.kt");
     }
 
     @Test

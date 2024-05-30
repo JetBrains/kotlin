@@ -6,10 +6,8 @@ method global$fun_safe_binary_search$fun_take$T_class_pkg$kotlin$collections$glo
   returns (ret$0: Ref)
   requires acc(local$arr.special$size, write)
   requires dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
-  requires acc(T_class_pkg$kotlin$collections$global$class_List(local$arr), wildcard)
   ensures acc(local$arr.special$size, write)
   ensures dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
-  ensures acc(T_class_pkg$kotlin$collections$global$class_List(local$arr), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
   var local0$size: Ref
@@ -17,6 +15,7 @@ method global$fun_safe_binary_search$fun_take$T_class_pkg$kotlin$collections$glo
   var anonymous$0: Ref
   var anonymous$1: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$arr), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_List())
+  inhale acc(T_class_pkg$kotlin$collections$global$class_List(local$arr), wildcard)
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$target), dom$RuntimeType$intType())
   local0$size := local$arr.special$size
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$size), dom$RuntimeType$intType())
@@ -31,7 +30,8 @@ method global$fun_safe_binary_search$fun_take$T_class_pkg$kotlin$collections$glo
     var anonymous$2: Ref
     anonymous$2 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
       local0$mid)
-    if (anonymous$2 == local$target) {
+    if (dom$RuntimeType$intFromRef(anonymous$2) ==
+    dom$RuntimeType$intFromRef(local$target)) {
       ret$0 := dom$RuntimeType$boolToRef(true)
     } else {
       var anonymous$3: Ref
@@ -62,13 +62,11 @@ method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$col
   returns (ret: Ref)
   requires acc(this.special$size, write)
   requires dom$RuntimeType$intFromRef(this.special$size) >= 0
-  requires acc(T_class_pkg$kotlin$collections$global$class_List(this), wildcard)
   requires dom$RuntimeType$intFromRef(local$index) >= 0
   requires dom$RuntimeType$intFromRef(this.special$size) >
     dom$RuntimeType$intFromRef(local$index)
   ensures acc(this.special$size, write)
   ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
-  ensures acc(T_class_pkg$kotlin$collections$global$class_List(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
   ensures dom$RuntimeType$intFromRef(this.special$size) ==
     old(dom$RuntimeType$intFromRef(this.special$size))
@@ -78,10 +76,8 @@ method pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin
   returns (ret: Ref)
   requires acc(this.special$size, write)
   requires dom$RuntimeType$intFromRef(this.special$size) >= 0
-  requires acc(T_class_pkg$kotlin$collections$global$class_List(this), wildcard)
   ensures acc(this.special$size, write)
   ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
-  ensures acc(T_class_pkg$kotlin$collections$global$class_List(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
   ensures dom$RuntimeType$intFromRef(this.special$size) ==
     old(dom$RuntimeType$intFromRef(this.special$size))
@@ -96,7 +92,6 @@ method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin
   returns (ret: Ref)
   requires acc(this.special$size, write)
   requires dom$RuntimeType$intFromRef(this.special$size) >= 0
-  requires acc(T_class_pkg$kotlin$collections$global$class_List(this), wildcard)
   requires dom$RuntimeType$intFromRef(local$fromIndex) <=
     dom$RuntimeType$intFromRef(local$toIndex)
   requires dom$RuntimeType$intFromRef(local$fromIndex) >= 0
@@ -104,7 +99,6 @@ method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin
     dom$RuntimeType$intFromRef(this.special$size)
   ensures acc(this.special$size, write)
   ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
-  ensures acc(T_class_pkg$kotlin$collections$global$class_List(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_List())
   ensures acc(ret.special$size, write)
   ensures dom$RuntimeType$intFromRef(ret.special$size) >= 0
@@ -124,10 +118,8 @@ method global$fun_unsafe_binary_search_fixed$fun_take$T_class_pkg$kotlin$collect
   returns (ret$0: Ref)
   requires acc(local$arr.special$size, write)
   requires dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
-  requires acc(T_class_pkg$kotlin$collections$global$class_List(local$arr), wildcard)
   ensures acc(local$arr.special$size, write)
   ensures dom$RuntimeType$intFromRef(local$arr.special$size) >= 0
-  ensures acc(T_class_pkg$kotlin$collections$global$class_List(local$arr), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
   var anonymous$0: Ref
@@ -136,6 +128,7 @@ method global$fun_unsafe_binary_search_fixed$fun_take$T_class_pkg$kotlin$collect
   var anonymous$3: Ref
   var anonymous$4: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$arr), dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_List())
+  inhale acc(T_class_pkg$kotlin$collections$global$class_List(local$arr), wildcard)
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$target), dom$RuntimeType$intType())
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$left), dom$RuntimeType$intType())
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$right), dom$RuntimeType$intType())
@@ -162,7 +155,8 @@ method global$fun_unsafe_binary_search_fixed$fun_take$T_class_pkg$kotlin$collect
   local0$mid := special$plusInts(local$left, anonymous$3)
   anonymous$4 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
     local0$mid)
-  if (anonymous$4 == local$target) {
+  if (dom$RuntimeType$intFromRef(anonymous$4) ==
+  dom$RuntimeType$intFromRef(local$target)) {
     ret$0 := dom$RuntimeType$boolToRef(true)
   } else {
     var anonymous$5: Ref
@@ -186,13 +180,11 @@ method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$col
   returns (ret: Ref)
   requires acc(this.special$size, write)
   requires dom$RuntimeType$intFromRef(this.special$size) >= 0
-  requires acc(T_class_pkg$kotlin$collections$global$class_List(this), wildcard)
   requires dom$RuntimeType$intFromRef(local$index) >= 0
   requires dom$RuntimeType$intFromRef(this.special$size) >
     dom$RuntimeType$intFromRef(local$index)
   ensures acc(this.special$size, write)
   ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
-  ensures acc(T_class_pkg$kotlin$collections$global$class_List(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
   ensures dom$RuntimeType$intFromRef(this.special$size) ==
     old(dom$RuntimeType$intFromRef(this.special$size))

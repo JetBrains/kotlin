@@ -1,18 +1,13 @@
 /classes_getters.kt:(214,224): info: Generated Viper text for testGetter:
-field class_IntWrapper$member_n: Ref
+field public$backing_field_n: Ref
 
 method class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(local$n: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_IntWrapper())
   ensures acc(T_class_global$class_IntWrapper(ret), wildcard)
   ensures (unfolding acc(T_class_global$class_IntWrapper(ret), wildcard) in
-      ret.class_IntWrapper$member_n == local$n)
-
-
-method class_IntWrapper$getter_succ(this: Ref) returns (ret: Ref)
-  requires acc(T_class_global$class_IntWrapper(this), wildcard)
-  ensures acc(T_class_global$class_IntWrapper(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+      dom$RuntimeType$intFromRef(ret.public$backing_field_n) ==
+      dom$RuntimeType$intFromRef(local$n))
 
 
 method global$fun_testGetter$fun_take$$return$T_Unit() returns (ret$0: Ref)
@@ -20,27 +15,31 @@ method global$fun_testGetter$fun_take$$return$T_Unit() returns (ret$0: Ref)
 {
   var local0$wrapper: Ref
   var local0$succ: Ref
+  var anonymous$0: Ref
   ret$0 := dom$RuntimeType$unitValue()
   local0$wrapper := class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(dom$RuntimeType$intToRef(42))
-  local0$succ := class_IntWrapper$getter_succ(local0$wrapper)
+  anonymous$0 := public$property_getter_succ(local0$wrapper)
+  local0$succ := anonymous$0
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$succ), dom$RuntimeType$intType())
   label label$ret$0
 }
 
+method public$property_getter_succ(this: Ref) returns (ret: Ref)
+
+
 /classes_getters.kt:(297,314): info: Generated Viper text for testCascadeGetter:
-field class_Bar$member_f: Ref
+field public$backing_field_a: Ref
 
-field class_Foo$member_a: Ref
+field public$backing_field_b: Ref
 
-field class_Foo$member_b: Ref
+field public$backing_field_f: Ref
 
 method class_Bar$constructor$fun_take$T_class_global$class_Foo$return$T_class_global$class_Bar(local$f: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_Foo(local$f), wildcard)
-  ensures acc(T_class_global$class_Foo(local$f), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Bar())
   ensures acc(T_class_global$class_Bar(ret), wildcard)
   ensures (unfolding acc(T_class_global$class_Bar(ret), wildcard) in
-      ret.class_Bar$member_f == local$f)
+      ret.public$backing_field_f == local$f)
 
 
 method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$a: Ref,
@@ -49,8 +48,10 @@ method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Fo
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(T_class_global$class_Foo(ret), wildcard)
   ensures (unfolding acc(T_class_global$class_Foo(ret), wildcard) in
-      ret.class_Foo$member_a == local$a &&
-      ret.class_Foo$member_b == local$b)
+      dom$RuntimeType$intFromRef(ret.public$backing_field_a) ==
+      dom$RuntimeType$intFromRef(local$a) &&
+      dom$RuntimeType$intFromRef(ret.public$backing_field_b) ==
+      dom$RuntimeType$intFromRef(local$b))
 
 
 method global$fun_testCascadeGetter$fun_take$$return$T_Unit()
@@ -68,43 +69,36 @@ method global$fun_testCascadeGetter$fun_take$$return$T_Unit()
     dom$RuntimeType$intToRef(20))
   local0$bar := class_Bar$constructor$fun_take$T_class_global$class_Foo$return$T_class_global$class_Bar(local0$foo)
   unfold acc(T_class_global$class_Bar(local0$bar), wildcard)
-  anonymous$0 := local0$bar.class_Bar$member_f
+  anonymous$0 := local0$bar.public$backing_field_f
   unfold acc(T_class_global$class_Foo(anonymous$0), wildcard)
-  local0$bfa := anonymous$0.class_Foo$member_a
+  local0$bfa := anonymous$0.public$backing_field_a
   unfold acc(T_class_global$class_Bar(local0$bar), wildcard)
-  anonymous$1 := local0$bar.class_Bar$member_f
+  anonymous$1 := local0$bar.public$backing_field_f
   unfold acc(T_class_global$class_Foo(anonymous$1), wildcard)
-  local0$bfb := anonymous$1.class_Foo$member_b
+  local0$bfb := anonymous$1.public$backing_field_b
   label label$ret$0
 }
 
 /classes_getters.kt:(420,444): info: Generated Viper text for testCascadeCustomGetters:
-field class_IntWrapper$member_n: Ref
+field public$backing_field_i: Ref
 
-field class_IntWrapperContainer$member_i: Ref
+field public$backing_field_n: Ref
 
 method class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(local$n: Ref)
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_IntWrapper())
   ensures acc(T_class_global$class_IntWrapper(ret), wildcard)
   ensures (unfolding acc(T_class_global$class_IntWrapper(ret), wildcard) in
-      ret.class_IntWrapper$member_n == local$n)
-
-
-method class_IntWrapper$getter_succ(this: Ref) returns (ret: Ref)
-  requires acc(T_class_global$class_IntWrapper(this), wildcard)
-  ensures acc(T_class_global$class_IntWrapper(this), wildcard)
-  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
+      dom$RuntimeType$intFromRef(ret.public$backing_field_n) ==
+      dom$RuntimeType$intFromRef(local$n))
 
 
 method class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWrapper$return$T_class_global$class_IntWrapperContainer(local$i: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_IntWrapper(local$i), wildcard)
-  ensures acc(T_class_global$class_IntWrapper(local$i), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_IntWrapperContainer())
   ensures acc(T_class_global$class_IntWrapperContainer(ret), wildcard)
   ensures (unfolding acc(T_class_global$class_IntWrapperContainer(ret), wildcard) in
-      ret.class_IntWrapperContainer$member_i == local$i)
+      ret.public$backing_field_i == local$i)
 
 
 method global$fun_testCascadeCustomGetters$fun_take$$return$T_Unit()
@@ -115,11 +109,16 @@ method global$fun_testCascadeCustomGetters$fun_take$$return$T_Unit()
   var anonymous$0: Ref
   var local0$succ: Ref
   var anonymous$1: Ref
+  var anonymous$2: Ref
   ret$0 := dom$RuntimeType$unitValue()
   anonymous$0 := class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(dom$RuntimeType$intToRef(42))
   local0$wrapper := class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWrapper$return$T_class_global$class_IntWrapperContainer(anonymous$0)
   unfold acc(T_class_global$class_IntWrapperContainer(local0$wrapper), wildcard)
-  anonymous$1 := local0$wrapper.class_IntWrapperContainer$member_i
-  local0$succ := class_IntWrapper$getter_succ(anonymous$1)
+  anonymous$2 := local0$wrapper.public$backing_field_i
+  anonymous$1 := public$property_getter_succ(anonymous$2)
+  local0$succ := anonymous$1
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local0$succ), dom$RuntimeType$intType())
   label label$ret$0
 }
+
+method public$property_getter_succ(this: Ref) returns (ret: Ref)

@@ -6,22 +6,27 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCatch
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.symbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverridePropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.formver.embeddings.ClassPropertyAccess
-import org.jetbrains.kotlin.formver.embeddings.PropertyAccessEmbedding
-import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.asPropertyAccess
+import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.expression.*
+import org.jetbrains.kotlin.formver.isCustom
 import org.jetbrains.kotlin.formver.viper.ast.Label
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Interface for statement conversion.
@@ -71,19 +76,59 @@ fun StmtConversionContext.declareLocalVariable(symbol: FirVariableSymbol<*>, ini
 fun StmtConversionContext.declareAnonVar(type: TypeEmbedding, initializer: ExpEmbedding?): Declare =
     Declare(freshAnonVar(type), initializer)
 
+
+val FirIntersectionOverridePropertySymbol.propertyIntersections
+    get() = intersections.filterIsInstanceAnd<FirPropertySymbol> { it.isVal == isVal }
+
+/**
+ * Tries to find final property symbol actually declared in some class instead of
+ * (potentially) fake property symbol.
+ * Note that if some property is found it is fixed since
+ * 1. there can't be two non-abstract properties which don't subsume each other
+ * in the hierarchy (kotlin disallows that) and final properties can't be abstract;
+ * 2. final property can't subsume other final property as that means final property
+ * is overridden.
+ * //TODO: decide if we leave this lookup or consider it unsafe.
+ */
+fun FirPropertySymbol.findFinalParentProperty(): FirPropertySymbol? =
+    if (this !is FirIntersectionOverridePropertySymbol)
+        (isFinal && !isCustom).ifTrue { this }
+    else propertyIntersections.firstNotNullOfOrNull { it.findFinalParentProperty() }
+
+
+/**
+ * This is a key function when looking up properties.
+ * It translates a kotlin `receiver.field` expression to an `ExpEmbedding`.
+ *
+ * Note that in FIR this `field` may be represented as `FirIntersectionOverridePropertySymbol`
+ * which is necessary when the property could hypothetically inherit from multiple sources.
+ * However, we don't register such symbols in the context when traversing the class.
+ * Hence, some advanced logic is needed here.
+ *
+ * First, we try to find an actual backing field somewhere in the parents of the field with a
+ * dfs-like algorithm on `FirIntersectionOverridePropertySymbol`s (it also should be final).
+ *
+ * If final backing field is not found, we lazily create a getter/setter pair for this
+ * `FirIntersectionOverrideProperty`.
+ */
 fun StmtConversionContext.embedPropertyAccess(accessExpression: FirPropertyAccessExpression): PropertyAccessEmbedding =
     when (val calleeSymbol = accessExpression.calleeReference.symbol) {
         is FirValueParameterSymbol -> embedParameter(calleeSymbol).asPropertyAccess()
-        is FirPropertySymbol -> when {
-            accessExpression.dispatchReceiver != null -> {
-                val property = embedProperty(calleeSymbol)
-                ClassPropertyAccess(convert(accessExpression.dispatchReceiver!!), property)
+        is FirPropertySymbol -> {
+            val type = embedType(calleeSymbol.resolvedReturnType)
+            when {
+                accessExpression.dispatchReceiver != null -> {
+                    val property = calleeSymbol.findFinalParentProperty()?.let {
+                        embedProperty(it)
+                    } ?: embedProperty(calleeSymbol)
+                    ClassPropertyAccess(convert(accessExpression.dispatchReceiver!!), property, type)
+                }
+                accessExpression.extensionReceiver != null -> {
+                    val property = embedProperty(calleeSymbol)
+                    ClassPropertyAccess(convert(accessExpression.extensionReceiver!!), property, type)
+                }
+                else -> embedLocalProperty(calleeSymbol)
             }
-            accessExpression.extensionReceiver != null -> {
-                val property = embedProperty(calleeSymbol)
-                ClassPropertyAccess(convert(accessExpression.extensionReceiver!!), property)
-            }
-            else -> embedLocalProperty(calleeSymbol)
         }
         else -> error("Property access symbol $calleeSymbol has unsupported type.")
     }

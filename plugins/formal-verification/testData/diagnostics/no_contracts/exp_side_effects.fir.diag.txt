@@ -1,5 +1,5 @@
 /exp_side_effects.kt:(46,53): info: Generated Viper text for get_foo:
-field class_Foo$member_x: Ref
+field public$backing_field_x: Ref
 
 method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Ref)
   returns (ret: Ref)
@@ -27,7 +27,7 @@ method global$fun_side_effect$fun_take$$return$T_Int() returns (ret$0: Ref)
 }
 
 /exp_side_effects.kt:(102,106): info: Generated Viper text for test:
-field class_Foo$member_x: Ref
+field public$backing_field_x: Ref
 
 method global$fun_get_foo$fun_take$$return$T_class_global$class_Foo()
   returns (ret: Ref)
@@ -51,13 +51,13 @@ method global$fun_test$fun_take$$return$T_Unit() returns (ret$0: Ref)
   ret$0 := dom$RuntimeType$unitValue()
   anonymous$0 := global$fun_get_foo$fun_take$$return$T_class_global$class_Foo()
   anonymous$1 := global$fun_side_effect$fun_take$$return$T_Int()
-  inhale acc(anonymous$0.class_Foo$member_x, write)
-  anonymous$0.class_Foo$member_x := anonymous$1
-  exhale acc(anonymous$0.class_Foo$member_x, write)
+  inhale acc(anonymous$0.public$backing_field_x, write)
+  anonymous$0.public$backing_field_x := anonymous$1
+  exhale acc(anonymous$0.public$backing_field_x, write)
   anonymous$3 := global$fun_get_foo$fun_take$$return$T_class_global$class_Foo()
-  inhale acc(anonymous$3.class_Foo$member_x, write)
-  anonymous$2 := anonymous$3.class_Foo$member_x
-  exhale acc(anonymous$3.class_Foo$member_x, write)
+  inhale acc(anonymous$3.public$backing_field_x, write)
+  anonymous$2 := anonymous$3.public$backing_field_x
+  exhale acc(anonymous$3.public$backing_field_x, write)
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(anonymous$2), dom$RuntimeType$intType())
   anonymous$4 := global$fun_side_effect$fun_take$$return$T_Int()
   local0$y := special$plusInts(anonymous$2, anonymous$4)

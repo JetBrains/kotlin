@@ -106,20 +106,18 @@ method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$
     acc(local$collection.special$size, write)
   requires local$collection != dom$RuntimeType$nullValue() ==>
     dom$RuntimeType$intFromRef(local$collection.special$size) >= 0
-  requires local$collection != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$collections$global$class_Collection(local$collection), wildcard)
   ensures local$collection != dom$RuntimeType$nullValue() ==>
     acc(local$collection.special$size, write)
   ensures local$collection != dom$RuntimeType$nullValue() ==>
     dom$RuntimeType$intFromRef(local$collection.special$size) >= 0
-  ensures local$collection != dom$RuntimeType$nullValue() ==>
-    acc(T_class_pkg$kotlin$collections$global$class_Collection(local$collection), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
   ensures dom$RuntimeType$boolFromRef(ret$0) == false ==>
     local$collection != dom$RuntimeType$nullValue()
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$collection),
     dom$RuntimeType$nullable(dom$RuntimeType$T_class_pkg$kotlin$collections$global$class_Collection()))
+  inhale local$collection != dom$RuntimeType$nullValue() ==>
+    acc(T_class_pkg$kotlin$collections$global$class_Collection(local$collection), wildcard)
   if (local$collection == dom$RuntimeType$nullValue()) {
     ret$0 := dom$RuntimeType$boolToRef(true)
   } else {
@@ -132,10 +130,8 @@ method pkg$kotlin$collections$class_Collection$fun_isEmpty$fun_take$T_class_pkg$
   returns (ret: Ref)
   requires acc(this.special$size, write)
   requires dom$RuntimeType$intFromRef(this.special$size) >= 0
-  requires acc(T_class_pkg$kotlin$collections$global$class_Collection(this), wildcard)
   ensures acc(this.special$size, write)
   ensures dom$RuntimeType$intFromRef(this.special$size) >= 0
-  ensures acc(T_class_pkg$kotlin$collections$global$class_Collection(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$boolType())
   ensures dom$RuntimeType$intFromRef(this.special$size) ==
     old(dom$RuntimeType$intFromRef(this.special$size))

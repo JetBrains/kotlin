@@ -1,196 +1,184 @@
 /inheritance.kt:(93,97): info: Generated Viper text for getY:
-field class_Foo$member_b: Ref
+field public$backing_field_b: Ref
 
-field class_Foo$member_x: Ref
+field public$backing_field_x: Ref
 
-field class_Foo$member_y: Ref
+field public$backing_field_y: Ref
 
 method class_Foo$fun_getY$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Foo(this), wildcard)
-  ensures acc(T_class_global$class_Foo(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_Foo())
+  inhale acc(T_class_global$class_Foo(this), wildcard)
   unfold acc(T_class_global$class_Foo(this), wildcard)
-  ret$0 := this.class_Foo$member_y
+  ret$0 := this.public$backing_field_y
   goto label$ret$0
   label label$ret$0
 }
 
 /inheritance.kt:(190,193): info: Generated Viper text for sum:
-field class_Bar$member_z: Ref
+field public$backing_field_b: Ref
 
-field class_Foo$member_b: Ref
+field public$backing_field_x: Ref
 
-field class_Foo$member_x: Ref
+field public$backing_field_y: Ref
 
-field class_Foo$member_y: Ref
+field public$backing_field_z: Ref
 
 method class_Bar$fun_sum$fun_take$T_class_global$class_Bar$return$T_Int(this: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Bar(this), wildcard)
-  ensures acc(T_class_global$class_Bar(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
   var anonymous$0: Ref
   var anonymous$1: Ref
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(this), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(this), wildcard)
   unfold acc(T_class_global$class_Bar(this), wildcard)
   unfold acc(T_class_global$class_Foo(this), wildcard)
-  anonymous$0 := this.class_Foo$member_x
+  anonymous$0 := this.public$backing_field_x
   unfold acc(T_class_global$class_Bar(this), wildcard)
-  anonymous$1 := this.class_Bar$member_z
+  anonymous$1 := this.public$backing_field_z
   ret$0 := special$plusInts(anonymous$0, anonymous$1)
   goto label$ret$0
   label label$ret$0
 }
 
 /inheritance.kt:(236,251): info: Generated Viper text for callSuperMethod:
-field class_Bar$member_z: Ref
+field public$backing_field_b: Ref
 
-field class_Foo$member_b: Ref
+field public$backing_field_x: Ref
 
-field class_Foo$member_x: Ref
+field public$backing_field_y: Ref
 
-field class_Foo$member_y: Ref
+field public$backing_field_z: Ref
 
 method class_Foo$fun_getY$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_Foo(this), wildcard)
-  ensures acc(T_class_global$class_Foo(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
 method global$fun_callSuperMethod$fun_take$T_class_global$class_Bar$return$T_Int(local$bar: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Bar(local$bar), wildcard)
-  ensures acc(T_class_global$class_Bar(local$bar), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$bar), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(local$bar), wildcard)
   ret$0 := class_Foo$fun_getY$fun_take$T_class_global$class_Foo$return$T_Int(local$bar)
   goto label$ret$0
   label label$ret$0
 }
 
 /inheritance.kt:(298,314): info: Generated Viper text for accessSuperField:
-field class_Bar$member_z: Ref
+field public$backing_field_b: Ref
 
-field class_Foo$member_b: Ref
+field public$backing_field_x: Ref
 
-field class_Foo$member_x: Ref
+field public$backing_field_y: Ref
 
-field class_Foo$member_y: Ref
+field public$backing_field_z: Ref
 
 method global$fun_accessSuperField$fun_take$T_class_global$class_Bar$return$T_Boolean(local$bar: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Bar(local$bar), wildcard)
-  ensures acc(T_class_global$class_Bar(local$bar), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$bar), dom$RuntimeType$T_class_global$class_Bar())
-  inhale acc(local$bar.class_Foo$member_b, write)
-  ret$0 := local$bar.class_Foo$member_b
-  exhale acc(local$bar.class_Foo$member_b, write)
+  inhale acc(T_class_global$class_Bar(local$bar), wildcard)
+  inhale acc(local$bar.public$backing_field_b, write)
+  ret$0 := local$bar.public$backing_field_b
+  exhale acc(local$bar.public$backing_field_b, write)
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
   goto label$ret$0
   label label$ret$0
 }
 
 /inheritance.kt:(360,374): info: Generated Viper text for accessNewField:
-field class_Bar$member_z: Ref
+field public$backing_field_b: Ref
 
-field class_Foo$member_b: Ref
+field public$backing_field_x: Ref
 
-field class_Foo$member_x: Ref
+field public$backing_field_y: Ref
 
-field class_Foo$member_y: Ref
+field public$backing_field_z: Ref
 
 method global$fun_accessNewField$fun_take$T_class_global$class_Bar$return$T_Int(local$bar: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Bar(local$bar), wildcard)
-  ensures acc(T_class_global$class_Bar(local$bar), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$bar), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(local$bar), wildcard)
   unfold acc(T_class_global$class_Bar(local$bar), wildcard)
-  ret$0 := local$bar.class_Bar$member_z
+  ret$0 := local$bar.public$backing_field_z
   goto label$ret$0
   label label$ret$0
 }
 
 /inheritance.kt:(416,429): info: Generated Viper text for callNewMethod:
-field class_Bar$member_z: Ref
+field public$backing_field_b: Ref
 
-field class_Foo$member_b: Ref
+field public$backing_field_x: Ref
 
-field class_Foo$member_x: Ref
+field public$backing_field_y: Ref
 
-field class_Foo$member_y: Ref
+field public$backing_field_z: Ref
 
 method class_Bar$fun_sum$fun_take$T_class_global$class_Bar$return$T_Int(this: Ref)
   returns (ret: Ref)
-  requires acc(T_class_global$class_Bar(this), wildcard)
-  ensures acc(T_class_global$class_Bar(this), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
 
 
 method global$fun_callNewMethod$fun_take$T_class_global$class_Bar$return$T_Int(local$bar: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Bar(local$bar), wildcard)
-  ensures acc(T_class_global$class_Bar(local$bar), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$bar), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(local$bar), wildcard)
   ret$0 := class_Bar$fun_sum$fun_take$T_class_global$class_Bar$return$T_Int(local$bar)
   goto label$ret$0
   label label$ret$0
 }
 
 /inheritance.kt:(475,488): info: Generated Viper text for setSuperField:
-field class_Bar$member_z: Ref
+field public$backing_field_b: Ref
 
-field class_Foo$member_b: Ref
+field public$backing_field_x: Ref
 
-field class_Foo$member_x: Ref
+field public$backing_field_y: Ref
 
-field class_Foo$member_y: Ref
+field public$backing_field_z: Ref
 
 method global$fun_setSuperField$fun_take$T_class_global$class_Bar$return$T_Unit(local$bar: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Bar(local$bar), wildcard)
-  ensures acc(T_class_global$class_Bar(local$bar), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$unitType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$bar), dom$RuntimeType$T_class_global$class_Bar())
+  inhale acc(T_class_global$class_Bar(local$bar), wildcard)
   ret$0 := dom$RuntimeType$unitValue()
-  inhale acc(local$bar.class_Foo$member_b, write)
-  local$bar.class_Foo$member_b := dom$RuntimeType$boolToRef(true)
-  exhale acc(local$bar.class_Foo$member_b, write)
+  inhale acc(local$bar.public$backing_field_b, write)
+  local$bar.public$backing_field_b := dom$RuntimeType$boolToRef(true)
+  exhale acc(local$bar.public$backing_field_b, write)
   label label$ret$0
 }
 
 /inheritance.kt:(525,546): info: Generated Viper text for accessSuperSuperField:
-field class_Bar$member_z: Ref
+field public$backing_field_b: Ref
 
-field class_Foo$member_b: Ref
+field public$backing_field_x: Ref
 
-field class_Foo$member_x: Ref
+field public$backing_field_y: Ref
 
-field class_Foo$member_y: Ref
+field public$backing_field_z: Ref
 
 method global$fun_accessSuperSuperField$fun_take$T_class_global$class_Baz$return$T_Int(local$baz: Ref)
   returns (ret$0: Ref)
-  requires acc(T_class_global$class_Baz(local$baz), wildcard)
-  ensures acc(T_class_global$class_Baz(local$baz), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$intType())
 {
   inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$baz), dom$RuntimeType$T_class_global$class_Baz())
+  inhale acc(T_class_global$class_Baz(local$baz), wildcard)
   unfold acc(T_class_global$class_Baz(local$baz), wildcard)
   unfold acc(T_class_global$class_Bar(local$baz), wildcard)
   unfold acc(T_class_global$class_Foo(local$baz), wildcard)
-  ret$0 := local$baz.class_Foo$member_x
+  ret$0 := local$baz.public$backing_field_x
   goto label$ret$0
   label label$ret$0
 }
