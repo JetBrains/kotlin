@@ -37203,6 +37203,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("smartcastWithComplexFlexibleType.kt")
+      public void testSmartcastWithComplexFlexibleType() {
+        runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastWithComplexFlexibleType.kt");
+      }
+
+      @Test
       @TestMetadata("syntheticAccessorOnSmartcastedReceiver.kt")
       public void testSyntheticAccessorOnSmartcastedReceiver() {
         runTest("compiler/testData/diagnostics/tests/smartCasts/syntheticAccessorOnSmartcastedReceiver.kt");
