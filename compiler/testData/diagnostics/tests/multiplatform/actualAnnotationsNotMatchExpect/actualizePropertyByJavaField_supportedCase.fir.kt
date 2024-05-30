@@ -6,9 +6,9 @@
 // FILE: common.kt
 package kotlin.collections
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>public expect abstract class AbstractMutableList() {
-    <!EXPECT_ACTUAL_MISMATCH{JVM}!>protected var modCount: Int<!>
-}<!>
+public expect abstract class AbstractMutableList() {
+    protected var modCount: Int
+}
 
 // MODULE: jvm()()(common)
 // FILE: bar/JavaAbstractMutableList.java
@@ -21,4 +21,4 @@ public abstract class JavaAbstractMutableList {
 // FILE: jvm.kt
 package kotlin.collections
 
-public actual abstract class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>AbstractMutableList<!> actual constructor(): bar.JavaAbstractMutableList()
+public actual abstract class AbstractMutableList actual constructor(): bar.JavaAbstractMutableList()

@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 class IrExpectActualMap {
-    val regularSymbols = mutableMapOf<IrSymbol, IrSymbol>()
+    val regularSymbols: MutableMap<IrSymbol, IrSymbol> = mutableMapOf()
+    val propertyAccessorsActualizedByFields: MutableMap<IrSimpleFunctionSymbol, IrPropertySymbol> = mutableMapOf()
 }

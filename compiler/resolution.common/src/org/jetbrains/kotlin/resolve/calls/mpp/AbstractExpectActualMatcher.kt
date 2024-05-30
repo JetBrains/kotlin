@@ -144,7 +144,7 @@ object AbstractExpectActualMatcher {
             return ExpectActualMatchingCompatibility.CallableKind
         }
 
-        if (actualDeclaration.isJavaField) {
+        if (actualDeclaration.isJavaField && !expectDeclaration.canBeActualizedByJavaField) {
             return ExpectActualMatchingCompatibility.ActualJavaField
         }
 

@@ -1,0 +1,326 @@
+FILE fqName:kotlin.collections fileName:/jvm.kt
+  CLASS CLASS name:AbstractMutableList modality:ABSTRACT visibility:public superTypes:[bar.JavaAbstractMutableList]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kotlin.collections.AbstractMutableList
+    CONSTRUCTOR visibility:public <> () returnType:kotlin.collections.AbstractMutableList [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in bar.JavaAbstractMutableList'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractMutableList modality:ABSTRACT visibility:public superTypes:[bar.JavaAbstractMutableList]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in bar.JavaAbstractMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:getModCountAtJava visibility:public modality:OPEN <> ($this:bar.JavaAbstractMutableList) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun getModCountAtJava (): kotlin.Int declared in bar.JavaAbstractMutableList
+      $this: VALUE_PARAMETER name:<this> type:bar.JavaAbstractMutableList
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in bar.JavaAbstractMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:incrementModCountAtJava visibility:public modality:OPEN <> ($this:bar.JavaAbstractMutableList) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun incrementModCountAtJava (): kotlin.Unit declared in bar.JavaAbstractMutableList
+      $this: VALUE_PARAMETER name:<this> type:bar.JavaAbstractMutableList
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in bar.JavaAbstractMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount: kotlin.Int declared in bar.JavaAbstractMutableList
+FILE fqName:<root> fileName:/box.kt
+  FUN name:assertModCount visibility:private modality:FINAL <> ($receiver:kotlin.collections.MyMutableList, expected:kotlin.Int) returnType:kotlin.Unit
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.MyMutableList
+    VALUE_PARAMETER name:expected index:0 type:kotlin.Int
+    BLOCK_BODY
+      VAR name:modCountAtJava type:kotlin.Int [val]
+        CALL 'public open fun getModCountAtJava (): kotlin.Int declared in kotlin.collections.AbstractMutableList' type=kotlin.Int origin=GET_PROPERTY
+          $this: TYPE_OP type=kotlin.collections.AbstractMutableList origin=CAST typeOperand=kotlin.collections.AbstractMutableList
+            GET_VAR '<this>: kotlin.collections.MyMutableList declared in <root>.assertModCount' type=kotlin.collections.MyMutableList origin=null
+      VAR name:modCountAtAbstractMyMutableList type:kotlin.Int [val]
+        CALL 'public final fun getModCountAtAbstractMyMutableList (): kotlin.Int declared in kotlin.collections.MyMutableList' type=kotlin.Int origin=null
+          $this: GET_VAR '<this>: kotlin.collections.MyMutableList declared in <root>.assertModCount' type=kotlin.collections.MyMutableList origin=null
+      VAR name:modCountAtMyMutableList type:kotlin.Int [val]
+        CALL 'public final fun getModCountAtMyMutableList (): kotlin.Int declared in kotlin.collections.MyMutableList' type=kotlin.Int origin=null
+          $this: GET_VAR '<this>: kotlin.collections.MyMutableList declared in <root>.assertModCount' type=kotlin.collections.MyMutableList origin=null
+      VAR name:modCountViaReferenceAtAbstractMyMutableList type:kotlin.Int [val]
+        CALL 'public final fun getModCountViaReferenceAtAbstractMyMutableList (): kotlin.Int declared in kotlin.collections.MyMutableList' type=kotlin.Int origin=null
+          $this: GET_VAR '<this>: kotlin.collections.MyMutableList declared in <root>.assertModCount' type=kotlin.collections.MyMutableList origin=null
+      VAR name:modCountViaReferenceAtMyMutableList type:kotlin.Int [val]
+        CALL 'public final fun getModCountViaReferenceAtMyMutableList (): kotlin.Int declared in kotlin.collections.MyMutableList' type=kotlin.Int origin=null
+          $this: GET_VAR '<this>: kotlin.collections.MyMutableList declared in <root>.assertModCount' type=kotlin.collections.MyMutableList origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: WHEN type=kotlin.Boolean origin=OROR
+            BRANCH
+              if: WHEN type=kotlin.Boolean origin=OROR
+                BRANCH
+                  if: WHEN type=kotlin.Boolean origin=OROR
+                    BRANCH
+                      if: WHEN type=kotlin.Boolean origin=OROR
+                        BRANCH
+                          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                              arg0: GET_VAR 'expected: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                              arg1: GET_VAR 'val modCountAtJava: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                          then: CONST Boolean type=kotlin.Boolean value=true
+                        BRANCH
+                          if: CONST Boolean type=kotlin.Boolean value=true
+                          then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                              arg0: GET_VAR 'expected: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                              arg1: GET_VAR 'val modCountAtAbstractMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                      then: CONST Boolean type=kotlin.Boolean value=true
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                        $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                          arg0: GET_VAR 'expected: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                          arg1: GET_VAR 'val modCountAtMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                  then: CONST Boolean type=kotlin.Boolean value=true
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                    $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                      arg0: GET_VAR 'expected: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                      arg1: GET_VAR 'val modCountViaReferenceAtAbstractMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+              then: CONST Boolean type=kotlin.Boolean value=true
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                  arg0: GET_VAR 'expected: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                  arg1: GET_VAR 'val modCountViaReferenceAtMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+          then: BLOCK type=kotlin.Unit origin=null
+            THROW type=kotlin.Nothing
+              CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.Any?) declared in java.lang.AssertionError' type=java.lang.AssertionError origin=null
+                p0: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+                  $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+                    $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+                      $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+                        $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+                          $this: STRING_CONCATENATION type=kotlin.String
+                            CONST String type=kotlin.String value="expected: "
+                            GET_VAR 'expected: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                            CONST String type=kotlin.String value="\n"
+                          other: STRING_CONCATENATION type=kotlin.String
+                            CONST String type=kotlin.String value="modCountAtJava: "
+                            GET_VAR 'val modCountAtJava: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                            CONST String type=kotlin.String value="\n"
+                        other: STRING_CONCATENATION type=kotlin.String
+                          CONST String type=kotlin.String value="modCountAtAbstractMyMutableList: "
+                          GET_VAR 'val modCountAtAbstractMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                          CONST String type=kotlin.String value="\n"
+                      other: STRING_CONCATENATION type=kotlin.String
+                        CONST String type=kotlin.String value="modCountAtMyMutableList: "
+                        GET_VAR 'val modCountAtMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                        CONST String type=kotlin.String value="\n"
+                    other: STRING_CONCATENATION type=kotlin.String
+                      CONST String type=kotlin.String value="modCountViaReferenceAtAbstractMyMutableList: "
+                      GET_VAR 'val modCountViaReferenceAtAbstractMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                      CONST String type=kotlin.String value="\n"
+                  other: STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value="modCountViaReferenceAtMyMutableList: "
+                    GET_VAR 'val modCountViaReferenceAtMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:list type:kotlin.collections.MyMutableList [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.collections.MyMutableList' type=kotlin.collections.MyMutableList origin=null
+      CALL 'private final fun assertModCount (expected: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        $receiver: GET_VAR 'val list: kotlin.collections.MyMutableList declared in <root>.box' type=kotlin.collections.MyMutableList origin=null
+        expected: CONST Int type=kotlin.Int value=0
+      CALL 'public open fun incrementModCountAtJava (): kotlin.Unit declared in kotlin.collections.MyMutableList' type=kotlin.Unit origin=null
+        $this: GET_VAR 'val list: kotlin.collections.MyMutableList declared in <root>.box' type=kotlin.collections.MyMutableList origin=null
+      CALL 'private final fun assertModCount (expected: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        $receiver: GET_VAR 'val list: kotlin.collections.MyMutableList declared in <root>.box' type=kotlin.collections.MyMutableList origin=null
+        expected: CONST Int type=kotlin.Int value=1
+      CALL 'public final fun incrementModCountAtAbstractMyMutableList (): kotlin.Unit declared in kotlin.collections.MyMutableList' type=kotlin.Unit origin=null
+        $this: GET_VAR 'val list: kotlin.collections.MyMutableList declared in <root>.box' type=kotlin.collections.MyMutableList origin=null
+      CALL 'private final fun assertModCount (expected: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        $receiver: GET_VAR 'val list: kotlin.collections.MyMutableList declared in <root>.box' type=kotlin.collections.MyMutableList origin=null
+        expected: CONST Int type=kotlin.Int value=2
+      CALL 'public final fun incrementModCountAtMyMutableList (): kotlin.Unit declared in kotlin.collections.MyMutableList' type=kotlin.Unit origin=null
+        $this: GET_VAR 'val list: kotlin.collections.MyMutableList declared in <root>.box' type=kotlin.collections.MyMutableList origin=null
+      CALL 'private final fun assertModCount (expected: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        $receiver: GET_VAR 'val list: kotlin.collections.MyMutableList declared in <root>.box' type=kotlin.collections.MyMutableList origin=null
+        expected: CONST Int type=kotlin.Int value=3
+      CALL 'public final fun setModCountViaReferenceAtAbstractMyMutableList (newModCount: kotlin.Int): kotlin.Unit declared in kotlin.collections.MyMutableList' type=kotlin.Unit origin=null
+        $this: GET_VAR 'val list: kotlin.collections.MyMutableList declared in <root>.box' type=kotlin.collections.MyMutableList origin=null
+        newModCount: CONST Int type=kotlin.Int value=100
+      CALL 'private final fun assertModCount (expected: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        $receiver: GET_VAR 'val list: kotlin.collections.MyMutableList declared in <root>.box' type=kotlin.collections.MyMutableList origin=null
+        expected: CONST Int type=kotlin.Int value=100
+      CALL 'public final fun setModCountViaReferenceAtMyMutableList (newModCount: kotlin.Int): kotlin.Unit declared in kotlin.collections.MyMutableList' type=kotlin.Unit origin=null
+        $this: GET_VAR 'val list: kotlin.collections.MyMutableList declared in <root>.box' type=kotlin.collections.MyMutableList origin=null
+        newModCount: CONST Int type=kotlin.Int value=200
+      CALL 'private final fun assertModCount (expected: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        $receiver: GET_VAR 'val list: kotlin.collections.MyMutableList declared in <root>.box' type=kotlin.collections.MyMutableList origin=null
+        expected: CONST Int type=kotlin.Int value=200
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+FILE fqName:kotlin.collections fileName:/common.kt
+  CLASS CLASS name:AbstractMyMutableList modality:OPEN visibility:public superTypes:[kotlin.collections.AbstractMutableList]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kotlin.collections.AbstractMyMutableList
+    CONSTRUCTOR visibility:public <> () returnType:kotlin.collections.AbstractMyMutableList [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.collections.AbstractMutableList'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractMyMutableList modality:OPEN visibility:public superTypes:[kotlin.collections.AbstractMutableList]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.AbstractMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:getModCountAtJava visibility:public modality:OPEN <> ($this:bar.JavaAbstractMutableList) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun getModCountAtJava (): kotlin.Int declared in kotlin.collections.AbstractMutableList
+      $this: VALUE_PARAMETER name:<this> type:bar.JavaAbstractMutableList
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.collections.AbstractMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:incrementModCountAtJava visibility:public modality:OPEN <> ($this:bar.JavaAbstractMutableList) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun incrementModCountAtJava (): kotlin.Unit declared in kotlin.collections.AbstractMutableList
+      $this: VALUE_PARAMETER name:<this> type:bar.JavaAbstractMutableList
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.collections.AbstractMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:getModCountAtAbstractMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.AbstractMyMutableList) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMyMutableList
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun getModCountAtAbstractMyMutableList (): kotlin.Int declared in kotlin.collections.AbstractMyMutableList'
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Int origin=GET_PROPERTY
+            receiver: GET_VAR '<this>: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.getModCountAtAbstractMyMutableList' type=kotlin.collections.AbstractMyMutableList origin=null
+    FUN name:getModCountViaReferenceAtAbstractMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.AbstractMyMutableList) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMyMutableList
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun getModCountViaReferenceAtAbstractMyMutableList (): kotlin.Int declared in kotlin.collections.AbstractMyMutableList'
+          CALL 'private final fun getPropertyValue <T> (property: kotlin.reflect.KProperty0<T of kotlin.collections.getPropertyValue>): T of kotlin.collections.getPropertyValue declared in kotlin.collections' type=kotlin.Int origin=null
+            <T>: kotlin.Int
+            property: PROPERTY_REFERENCE 'protected/*protected and package*/ final modCount declared in kotlin.collections.AbstractMyMutableList' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMyMutableList' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+              $this: GET_VAR '<this>: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.getModCountViaReferenceAtAbstractMyMutableList' type=kotlin.collections.AbstractMyMutableList origin=null
+    FUN name:incrementModCountAtAbstractMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.AbstractMyMutableList) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMyMutableList
+      BLOCK_BODY
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          BLOCK type=kotlin.Int origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+              GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Int origin=POSTFIX_INCR
+                receiver: GET_VAR '<this>: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.incrementModCountAtAbstractMyMutableList' type=kotlin.collections.AbstractMyMutableList origin=null
+            SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Unit origin=POSTFIX_INCR
+              receiver: GET_VAR '<this>: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.incrementModCountAtAbstractMyMutableList' type=kotlin.collections.AbstractMyMutableList origin=null
+              value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                $this: GET_VAR 'val tmp_0: kotlin.Int declared in kotlin.collections.AbstractMyMutableList.incrementModCountAtAbstractMyMutableList' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_0: kotlin.Int declared in kotlin.collections.AbstractMyMutableList.incrementModCountAtAbstractMyMutableList' type=kotlin.Int origin=null
+    FUN name:setModCountViaReferenceAtAbstractMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.AbstractMyMutableList, newModCount:kotlin.Int) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMyMutableList
+      VALUE_PARAMETER name:newModCount index:0 type:kotlin.Int
+      BLOCK_BODY
+        CALL 'private final fun setPropertyValue <T> (property: kotlin.reflect.KMutableProperty0<T of kotlin.collections.setPropertyValue>, value: T of kotlin.collections.setPropertyValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
+          <T>: kotlin.Int
+          property: PROPERTY_REFERENCE 'protected/*protected and package*/ final modCount declared in kotlin.collections.AbstractMyMutableList' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMyMutableList' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+            $this: GET_VAR '<this>: kotlin.collections.AbstractMyMutableList declared in kotlin.collections.AbstractMyMutableList.setModCountViaReferenceAtAbstractMyMutableList' type=kotlin.collections.AbstractMyMutableList origin=null
+          value: GET_VAR 'newModCount: kotlin.Int declared in kotlin.collections.AbstractMyMutableList.setModCountViaReferenceAtAbstractMyMutableList' type=kotlin.Int origin=null
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount declared in kotlin.collections.AbstractMutableList
+  CLASS CLASS name:MyMutableList modality:FINAL visibility:public superTypes:[kotlin.collections.AbstractMyMutableList]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kotlin.collections.MyMutableList
+    CONSTRUCTOR visibility:public <> () returnType:kotlin.collections.MyMutableList [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.collections.AbstractMyMutableList'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyMutableList modality:FINAL visibility:public superTypes:[kotlin.collections.AbstractMyMutableList]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.AbstractMyMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:getModCountAtAbstractMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.AbstractMyMutableList) returnType:kotlin.Int [fake_override]
+      overridden:
+        public final fun getModCountAtAbstractMyMutableList (): kotlin.Int declared in kotlin.collections.AbstractMyMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMyMutableList
+    FUN FAKE_OVERRIDE name:getModCountAtJava visibility:public modality:OPEN <> ($this:bar.JavaAbstractMutableList) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun getModCountAtJava (): kotlin.Int declared in kotlin.collections.AbstractMyMutableList
+      $this: VALUE_PARAMETER name:<this> type:bar.JavaAbstractMutableList
+    FUN FAKE_OVERRIDE name:getModCountViaReferenceAtAbstractMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.AbstractMyMutableList) returnType:kotlin.Int [fake_override]
+      overridden:
+        public final fun getModCountViaReferenceAtAbstractMyMutableList (): kotlin.Int declared in kotlin.collections.AbstractMyMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMyMutableList
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.collections.AbstractMyMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:incrementModCountAtAbstractMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.AbstractMyMutableList) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public final fun incrementModCountAtAbstractMyMutableList (): kotlin.Unit declared in kotlin.collections.AbstractMyMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMyMutableList
+    FUN FAKE_OVERRIDE name:incrementModCountAtJava visibility:public modality:OPEN <> ($this:bar.JavaAbstractMutableList) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun incrementModCountAtJava (): kotlin.Unit declared in kotlin.collections.AbstractMyMutableList
+      $this: VALUE_PARAMETER name:<this> type:bar.JavaAbstractMutableList
+    FUN FAKE_OVERRIDE name:setModCountViaReferenceAtAbstractMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.AbstractMyMutableList, newModCount:kotlin.Int) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public final fun setModCountViaReferenceAtAbstractMyMutableList (newModCount: kotlin.Int): kotlin.Unit declared in kotlin.collections.AbstractMyMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMyMutableList
+      VALUE_PARAMETER name:newModCount index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.collections.AbstractMyMutableList
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:getModCountAtMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.MyMutableList) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MyMutableList
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun getModCountAtMyMutableList (): kotlin.Int declared in kotlin.collections.MyMutableList'
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Int origin=GET_PROPERTY
+            receiver: GET_VAR '<this>: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.getModCountAtMyMutableList' type=kotlin.collections.MyMutableList origin=null
+    FUN name:getModCountViaReferenceAtMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.MyMutableList) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MyMutableList
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun getModCountViaReferenceAtMyMutableList (): kotlin.Int declared in kotlin.collections.MyMutableList'
+          CALL 'private final fun getPropertyValue <T> (property: kotlin.reflect.KProperty0<T of kotlin.collections.getPropertyValue>): T of kotlin.collections.getPropertyValue declared in kotlin.collections' type=kotlin.Int origin=null
+            <T>: kotlin.Int
+            property: PROPERTY_REFERENCE 'protected/*protected and package*/ final modCount declared in kotlin.collections.MyMutableList' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.MyMutableList' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+              $this: GET_VAR '<this>: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.getModCountViaReferenceAtMyMutableList' type=kotlin.collections.MyMutableList origin=null
+    FUN name:incrementModCountAtMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.MyMutableList) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MyMutableList
+      BLOCK_BODY
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          BLOCK type=kotlin.Int origin=POSTFIX_INCR
+            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+              GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Int origin=POSTFIX_INCR
+                receiver: GET_VAR '<this>: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.incrementModCountAtMyMutableList' type=kotlin.collections.MyMutableList origin=null
+            SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.AbstractMutableList' type=kotlin.Unit origin=POSTFIX_INCR
+              receiver: GET_VAR '<this>: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.incrementModCountAtMyMutableList' type=kotlin.collections.MyMutableList origin=null
+              value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                $this: GET_VAR 'val tmp_1: kotlin.Int declared in kotlin.collections.MyMutableList.incrementModCountAtMyMutableList' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_1: kotlin.Int declared in kotlin.collections.MyMutableList.incrementModCountAtMyMutableList' type=kotlin.Int origin=null
+    FUN name:setModCountViaReferenceAtMyMutableList visibility:public modality:FINAL <> ($this:kotlin.collections.MyMutableList, newModCount:kotlin.Int) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MyMutableList
+      VALUE_PARAMETER name:newModCount index:0 type:kotlin.Int
+      BLOCK_BODY
+        CALL 'private final fun setPropertyValue <T> (property: kotlin.reflect.KMutableProperty0<T of kotlin.collections.setPropertyValue>, value: T of kotlin.collections.setPropertyValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
+          <T>: kotlin.Int
+          property: PROPERTY_REFERENCE 'protected/*protected and package*/ final modCount declared in kotlin.collections.MyMutableList' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:modCount type:kotlin.Int visibility:protected/*protected and package*/ declared in kotlin.collections.MyMutableList' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+            $this: GET_VAR '<this>: kotlin.collections.MyMutableList declared in kotlin.collections.MyMutableList.setModCountViaReferenceAtMyMutableList' type=kotlin.collections.MyMutableList origin=null
+          value: GET_VAR 'newModCount: kotlin.Int declared in kotlin.collections.MyMutableList.setModCountViaReferenceAtMyMutableList' type=kotlin.Int origin=null
+    PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final modCount declared in kotlin.collections.AbstractMyMutableList
+  FUN name:getPropertyValue visibility:private modality:FINAL <T> (property:kotlin.reflect.KProperty0<T of kotlin.collections.getPropertyValue>) returnType:T of kotlin.collections.getPropertyValue
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:property index:0 type:kotlin.reflect.KProperty0<T of kotlin.collections.getPropertyValue>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun getPropertyValue <T> (property: kotlin.reflect.KProperty0<T of kotlin.collections.getPropertyValue>): T of kotlin.collections.getPropertyValue declared in kotlin.collections'
+        CALL 'public abstract fun get (): V of kotlin.reflect.KProperty0 declared in kotlin.reflect.KProperty0' type=T of kotlin.collections.getPropertyValue origin=null
+          $this: GET_VAR 'property: kotlin.reflect.KProperty0<T of kotlin.collections.getPropertyValue> declared in kotlin.collections.getPropertyValue' type=kotlin.reflect.KProperty0<T of kotlin.collections.getPropertyValue> origin=null
+  FUN name:setPropertyValue visibility:private modality:FINAL <T> (property:kotlin.reflect.KMutableProperty0<T of kotlin.collections.setPropertyValue>, value:T of kotlin.collections.setPropertyValue) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:property index:0 type:kotlin.reflect.KMutableProperty0<T of kotlin.collections.setPropertyValue>
+    VALUE_PARAMETER name:value index:1 type:T of kotlin.collections.setPropertyValue
+    BLOCK_BODY
+      CALL 'public abstract fun set (value: V of kotlin.reflect.KMutableProperty0): kotlin.Unit declared in kotlin.reflect.KMutableProperty0' type=kotlin.Unit origin=null
+        $this: GET_VAR 'property: kotlin.reflect.KMutableProperty0<T of kotlin.collections.setPropertyValue> declared in kotlin.collections.setPropertyValue' type=kotlin.reflect.KMutableProperty0<T of kotlin.collections.setPropertyValue> origin=null
+        value: GET_VAR 'value: T of kotlin.collections.setPropertyValue declared in kotlin.collections.setPropertyValue' type=T of kotlin.collections.setPropertyValue origin=null

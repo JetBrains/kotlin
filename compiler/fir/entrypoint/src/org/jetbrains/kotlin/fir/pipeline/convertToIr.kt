@@ -283,6 +283,12 @@ private class Fir2IrPipeline(
 
     private fun Fir2IrConversionResult.resolveFakeOverrideSymbols(fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver) {
         mainIrFragment.acceptVoid(SpecialFakeOverrideSymbolsResolverVisitor(fakeOverrideResolver))
+
+        val expectActualMap = fakeOverrideResolver.expectActualMap
+        if (expectActualMap.propertyAccessorsActualizedByFields.isNotEmpty()) {
+            mainIrFragment.transform(SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(expectActualMap), null)
+        }
+
         @OptIn(Fir2IrSymbolsMappingForLazyClasses.SymbolRemapperInternals::class)
         componentsStorage.symbolsMappingForLazyClasses.initializeSymbolMap(fakeOverrideResolver)
     }
