@@ -21,38 +21,38 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibil
 internal fun recordActualForExpectDeclaration(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
-    destination: MutableMap<IrSymbol, IrSymbol>,
+    expectActualMap: IrExpectActualMap,
     diagnosticsReporter: IrDiagnosticReporter,
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclarationBase
     val actualDeclaration = actualSymbol.owner as IrDeclaration
-    val registeredActual = destination.put(expectSymbol, actualSymbol)
+    val registeredActual = expectActualMap.regularSymbols.put(expectSymbol, actualSymbol)
     if (registeredActual != null && registeredActual != actualSymbol) {
         diagnosticsReporter.reportAmbiguousActuals(expectDeclaration)
     }
     if (expectDeclaration is IrTypeParametersContainer) {
-        recordTypeParametersMapping(destination, expectDeclaration, actualDeclaration as IrTypeParametersContainer)
+        recordTypeParametersMapping(expectActualMap, expectDeclaration, actualDeclaration as IrTypeParametersContainer)
     }
     if (expectDeclaration is IrProperty) {
         val actualProperty = actualDeclaration as IrProperty
         expectDeclaration.getter!!.let {
             val getter = actualProperty.getter!!
-            destination[it.symbol] = getter.symbol
-            recordTypeParametersMapping(destination, it, getter)
+            expectActualMap.regularSymbols[it.symbol] = getter.symbol
+            recordTypeParametersMapping(expectActualMap, it, getter)
         }
-        expectDeclaration.setter?.symbol?.let { destination[it] = actualProperty.setter!!.symbol }
+        expectDeclaration.setter?.symbol?.let { expectActualMap.regularSymbols[it] = actualProperty.setter!!.symbol }
     }
 }
 
 private fun recordTypeParametersMapping(
-    destination: MutableMap<IrSymbol, IrSymbol>,
+    expectActualMap: IrExpectActualMap,
     expectTypeParametersContainer: IrTypeParametersContainer,
     actualTypeParametersContainer: IrTypeParametersContainer
 ) {
     expectTypeParametersContainer.typeParameters
         .zip(actualTypeParametersContainer.typeParameters)
         .forEach { (expectTypeParameter, actualTypeParameter) ->
-            destination[expectTypeParameter.symbol] = actualTypeParameter.symbol
+            expectActualMap.regularSymbols[expectTypeParameter.symbol] = actualTypeParameter.symbol
         }
 }
 

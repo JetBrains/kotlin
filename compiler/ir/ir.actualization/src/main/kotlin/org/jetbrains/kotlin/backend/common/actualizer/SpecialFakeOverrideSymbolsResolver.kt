@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * and we can't guarantee that all real symbols are some specific preferred overrides, as they were right after Fir2Ir.
  *
  */
-class SpecialFakeOverrideSymbolsResolver(private val expectActualMap: Map<IrSymbol, IrSymbol>) : SymbolRemapper.Empty() {
+class SpecialFakeOverrideSymbolsResolver(private val expectActualMap: IrExpectActualMap) : SymbolRemapper.Empty() {
     /**
      * Map from (class, declaration) -> declarationInsideClass
      *
@@ -90,7 +90,7 @@ class SpecialFakeOverrideSymbolsResolver(private val expectActualMap: Map<IrSymb
     }
 
     private fun IrSymbol.actualize(): IrSymbol {
-        return expectActualMap[this] ?: this
+        return expectActualMap.regularSymbols[this] ?: this
     }
 
     private fun processClass(irClass: IrClass) {

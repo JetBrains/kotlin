@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.fir.pipeline
 import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
-import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
-import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
-import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
-import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbolsResolver
-import org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbolsResolverVisitor
+import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -220,7 +216,7 @@ private class Fir2IrPipeline(
         val fakeOverrideBuilder = createFakeOverrideBuilder()
         buildFakeOverrides(fakeOverrideBuilder)
 
-        val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: emptyMap()
+        val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: IrExpectActualMap()
 
         val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(expectActualMap)
         resolveFakeOverrideSymbols(fakeOverrideResolver)
@@ -281,7 +277,7 @@ private class Fir2IrPipeline(
     }
 
     private fun Fir2IrConversionResult.buildFakeOverrides(fakeOverrideBuilder: IrFakeOverrideBuilder) {
-        val temporaryResolver = SpecialFakeOverrideSymbolsResolver(emptyMap())
+        val temporaryResolver = SpecialFakeOverrideSymbolsResolver(IrExpectActualMap())
         fakeOverrideBuilder.buildForAll(dependentIrFragments + mainIrFragment, temporaryResolver)
     }
 

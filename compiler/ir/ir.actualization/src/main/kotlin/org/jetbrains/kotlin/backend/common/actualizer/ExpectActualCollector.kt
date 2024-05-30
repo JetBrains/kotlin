@@ -58,7 +58,7 @@ internal class ExpectActualCollector(
         )
     }
 
-    fun matchAllExpectDeclarations(classActualizationInfo: ClassActualizationInfo): MutableMap<IrSymbol, IrSymbol> {
+    fun matchAllExpectDeclarations(classActualizationInfo: ClassActualizationInfo): IrExpectActualMap {
         val linkCollector = ExpectActualLinkCollector()
         val linkCollectorContext = ExpectActualLinkCollector.MatchingContext(
             typeSystemContext, diagnosticsReporter, expectActualTracker, classActualizationInfo, null
@@ -68,7 +68,7 @@ internal class ExpectActualCollector(
         // Thus relevant actuals are always missing for the last module
         // But the collector should be run anyway to detect and report "hanging" expect declarations
         linkCollector.collectAndCheckMapping(mainFragment, linkCollectorContext)
-        return linkCollectorContext.destination
+        return linkCollectorContext.expectActualMap
     }
 }
 
@@ -354,7 +354,7 @@ private class ExpectActualLinkCollector {
         private val expectActualTracker: ExpectActualTracker?,
         internal val classActualizationInfo: ClassActualizationInfo,
         private val currentExpectFile: IrFile?,
-        val destination: MutableMap<IrSymbol, IrSymbol> = mutableMapOf(),
+        val expectActualMap: IrExpectActualMap = IrExpectActualMap(),
     ) : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
 
         private val currentExpectIoFile by lazy(LazyThreadSafetyMode.PUBLICATION) { currentExpectFile?.toIoFile() }
@@ -363,18 +363,12 @@ private class ExpectActualLinkCollector {
 
         fun withNewCurrentFile(newCurrentFile: IrFile) =
             MatchingContext(
-                typeContext, diagnosticsReporter, expectActualTracker, classActualizationInfo, newCurrentFile, destination
+                typeContext, diagnosticsReporter, expectActualTracker, classActualizationInfo, newCurrentFile, expectActualMap
             )
 
-        override fun onMatchedClasses(expectClassSymbol: IrClassSymbol, actualClassSymbol: IrClassSymbol) {
-            destination[expectClassSymbol] = actualClassSymbol
-            expectActualTracker?.reportWithCurrentFile(actualClassSymbol)
-            recordActualForExpectDeclaration(expectClassSymbol, actualClassSymbol, destination, diagnosticsReporter)
-        }
-
-        override fun onMatchedCallables(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
+        override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
             expectActualTracker?.reportWithCurrentFile(actualSymbol)
-            recordActualForExpectDeclaration(expectSymbol, actualSymbol, destination, diagnosticsReporter)
+            recordActualForExpectDeclaration(expectSymbol, actualSymbol, expectActualMap, diagnosticsReporter)
         }
 
         override fun onIncompatibleMembersFromClassScope(

@@ -9,19 +9,18 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.remapSymbolParent
 
 internal class FunctionDefaultParametersActualizer(
     symbolRemapper: ActualizerSymbolRemapper,
-    private val expectActualMap: Map<IrSymbol, IrSymbol>
+    private val expectActualMap: IrExpectActualMap
 ) {
     private val visitor = FunctionDefaultParametersActualizerVisitor(symbolRemapper)
 
     fun actualize() {
-        for ((expect, actual) in expectActualMap) {
+        for ((expect, actual) in expectActualMap.regularSymbols) {
             if (expect is IrFunctionSymbol) {
                 actualize(expect.owner, (actual as IrFunctionSymbol).owner)
             }
