@@ -11,7 +11,7 @@ import org.jetbrains.dokka.analysis.java.util.from
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromClassLike
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.dokka.analysis.kotlin.internal.ClassHierarchy
@@ -36,7 +36,7 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
         return map
     }
 
-    private fun KtAnalysisSession.collectSupertypesFromKtType(
+    private fun KaSession.collectSupertypesFromKtType(
         driWithKType: Pair<DRI, KtType>,
         supersMap: MutableMap<DRI, Supertypes>
     ) {
@@ -125,7 +125,7 @@ internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClas
         return hierarchy
     }
 
-    private fun KtAnalysisSession.collectSupertypesWithKindFromKtType(
+    private fun KaSession.collectSupertypesWithKindFromKtType(
         typeTranslator: TypeTranslator,
         typeConstructorWithKindWithKType: Pair<TypeConstructorWithKind, KtType>,
         supersMap: MutableMap<DRI, SuperclassesWithKind>
