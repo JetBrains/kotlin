@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/privateInterface.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.C1 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:OPEN visibility:public superTypes:[<root>.I]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:OPEN visibility:public superTypes:[<root>.I]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bazString visibility:public modality:OPEN <> ($this:<root>.I) returnType:kotlin.String [fake_override]
       overridden:
         public open fun bazString (): kotlin.String declared in <root>.I
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/privateInterface.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.C2 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.C1]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.C1]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:barString visibility:public modality:OPEN <> ($this:<root>.C1) returnType:kotlin.String [fake_override]
       overridden:
         public open fun barString (): kotlin.String declared in <root>.C1

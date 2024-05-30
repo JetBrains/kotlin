@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
         DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in kotlin.collections.AbstractMutableMap'
           <K>: K of <root>.MyMap
           <V>: V of <root>.MyMap
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyMap modality:FINAL visibility:public superTypes:[kotlin.collections.AbstractMutableMap<K of <root>.MyMap, V of <root>.MyMap>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyMap modality:FINAL visibility:public superTypes:[kotlin.collections.AbstractMutableMap<K of <root>.MyMap, V of <root>.MyMap>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K of <root>.MyMap, V of <root>.MyMap>) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun clear (): kotlin.Unit declared in kotlin.collections.AbstractMutableMap

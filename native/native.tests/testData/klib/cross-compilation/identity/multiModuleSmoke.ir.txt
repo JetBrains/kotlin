@@ -13,7 +13,7 @@ MODULE_FRAGMENT name:<lib1>
         CONSTRUCTOR signature:lib1/I.Companion.<init>|<init>(){}[0] visibility:private <> () returnType:lib1.I.Companion [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:lib1/I.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion signature:lib1/I.Companion|null[0] modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
         PROPERTY name:companionObjectVal signature:lib1/I.Companion.companionObjectVal|{}companionObjectVal[0] visibility:public modality:FINAL [val]
           FIELD PROPERTY_BACKING_FIELD name:companionObjectVal signature:[ lib1/I.Companion.companionObjectVal|{}companionObjectVal[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:companionObjectVal type:kotlin.String visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
             EXPRESSION_BODY
@@ -58,13 +58,13 @@ MODULE_FRAGMENT name:<lib2>
       CONSTRUCTOR signature:lib2/Object.<init>|<init>(){}[0] visibility:private <> () returnType:lib2.Object [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Object signature:lib2/Object|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Object signature:lib2/Object|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
       CLASS OBJECT name:PrivateObject signature:lib2/Object.PrivateObject|null[0] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:lib2.Object.PrivateObject
         CONSTRUCTOR signature:lib2/Object.PrivateObject.<init>|<init>(){}[0] visibility:private <> () returnType:lib2.Object.PrivateObject [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:PrivateObject signature:lib2/Object.PrivateObject|null[0] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:PrivateObject signature:lib2/Object.PrivateObject|null[0] modality:FINAL visibility:private superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
         FUN name:foo signature:lib2/Object.PrivateObject.foo|foo(){}[0] visibility:public modality:FINAL <> ($this:lib2.Object.PrivateObject) returnType:<unbound IrClassSymbolImpl>
           $this: VALUE_PARAMETER name:<this> type:lib2.Object.PrivateObject
           BLOCK_BODY
@@ -83,7 +83,7 @@ MODULE_FRAGMENT name:<lib2>
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
               <1>: lib2.SealedInterface.Enum
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Enum signature:lib2/SealedInterface.Enum|null[0] modality:FINAL visibility:public superTypes:[lib2.SealedInterface; <unbound IrClassSymbolImpl><lib2.SealedInterface.Enum>]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Enum signature:lib2/SealedInterface.Enum|null[0] modality:FINAL visibility:public superTypes:[lib2.SealedInterface; <unbound IrClassSymbolImpl><lib2.SealedInterface.Enum>]' type=<unbound IrClassSymbolImpl>
         ENUM_ENTRY name:FOO signature:lib2/SealedInterface.Enum.FOO|null[0]
           init: EXPRESSION_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in lib2.SealedInterface.Enum'
@@ -118,7 +118,7 @@ MODULE_FRAGMENT name:<lib2>
         CONSTRUCTOR signature:lib2/SealedInterface.Object.<init>|<init>(){}[0] visibility:private <> () returnType:lib2.SealedInterface.Object [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Object signature:lib2/SealedInterface.Object|null[0] modality:FINAL visibility:public [data] superTypes:[lib2.SealedInterface]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Object signature:lib2/SealedInterface.Object|null[0] modality:FINAL visibility:public [data] superTypes:[lib2.SealedInterface]' type=<unbound IrClassSymbolImpl>
         PROPERTY name:v signature:lib2/SealedInterface.Object.v|{}v[0] visibility:public modality:OPEN [delegated,val]
           FIELD PROPERTY_DELEGATE name:v$delegate signature:[ lib2/SealedInterface.Object.v|{}v[0] <- Local[<BF>|FIELD PROPERTY_DELEGATE name:v$delegate type:kotlin.Lazy<kotlin.collections.HashSet<kotlin.Pair<kotlin.String, kotlin.Number>>> visibility:private [final]] ] type:<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl><<unbound IrClassSymbolImpl>, <unbound IrClassSymbolImpl>>>> visibility:private [final]
             EXPRESSION_BODY
@@ -207,7 +207,7 @@ MODULE_FRAGMENT name:<lib3>
       CONSTRUCTOR signature:lib3/IImpl.<init>|<init>(){}[0] visibility:public <> () returnType:lib3.IImpl [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IImpl signature:lib3/IImpl|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IImpl signature:lib3/IImpl|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
       FUN name:interfaceFun signature:lib3/IImpl.interfaceFun|interfaceFun(kotlin.Int){}[0] visibility:public modality:OPEN <> ($this:lib3.IImpl, default:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
         overridden:
           UNBOUND IrSimpleFunctionSymbolImpl

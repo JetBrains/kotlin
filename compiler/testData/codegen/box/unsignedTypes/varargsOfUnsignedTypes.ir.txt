@@ -104,7 +104,7 @@ FILE fqName:<root> fileName:/varargsOfUnsignedTypes.kt
       VALUE_PARAMETER name:args index:0 type:kotlin.UByteArray varargElementType:kotlin.UByte [vararg]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:AnnoUByte modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:AnnoUByte modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
@@ -135,7 +135,7 @@ FILE fqName:<root> fileName:/varargsOfUnsignedTypes.kt
       VALUE_PARAMETER name:args index:0 type:kotlin.UIntArray varargElementType:kotlin.UInt [vararg]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:AnnoUInt modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:AnnoUInt modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
@@ -166,7 +166,7 @@ FILE fqName:<root> fileName:/varargsOfUnsignedTypes.kt
       VALUE_PARAMETER name:args index:0 type:kotlin.ULongArray varargElementType:kotlin.ULong [vararg]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:AnnoULong modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:AnnoULong modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
@@ -197,7 +197,7 @@ FILE fqName:<root> fileName:/varargsOfUnsignedTypes.kt
       VALUE_PARAMETER name:args index:0 type:kotlin.UShortArray varargElementType:kotlin.UShort [vararg]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:AnnoUShort modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:AnnoUShort modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation

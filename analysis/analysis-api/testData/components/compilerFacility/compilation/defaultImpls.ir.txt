@@ -9,7 +9,7 @@ MODULE_FRAGMENT
               CONSTRUCTOR visibility:public <> () returnType:home.test.<no name provided> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[p3.KtInterfaceA]'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[p3.KtInterfaceA]' type=kotlin.Unit
               FUN FAKE_OVERRIDE name:defaultFun visibility:public modality:OPEN <> ($this:p3.KtInterfaceA) returnType:kotlin.Unit [fake_override]
                 overridden:
                   public open fun defaultFun (): kotlin.Unit declared in p3.KtInterfaceA
@@ -42,7 +42,7 @@ MODULE_FRAGMENT
               CONSTRUCTOR visibility:public <> () returnType:home.test.<no name provided> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[p2.KtInterfaceB]'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[p2.KtInterfaceB]' type=kotlin.Unit
               FUN FAKE_OVERRIDE name:defaultFun visibility:public modality:OPEN <> ($this:p2.KtInterfaceB) returnType:kotlin.Unit [fake_override]
                 overridden:
                   public open fun defaultFun (): kotlin.Unit declared in p2.KtInterfaceB

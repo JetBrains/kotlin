@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.LinkedList'
           <E>: kotlin.Int
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.LinkedList<kotlin.Int>; <root>.Java2; kotlin.collections.MutableCollection<kotlin.Int>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.LinkedList<kotlin.Int>; <root>.Java2; kotlin.collections.MutableCollection<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun add (p0: @[EnhancedNullability] E of java.util.LinkedList): kotlin.Boolean declared in java.util.LinkedList
@@ -311,7 +311,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun add (p0: @[EnhancedNullability] kotlin.Int): kotlin.Boolean declared in <root>.A
@@ -594,7 +594,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.LinkedList'
           <E>: kotlin.Int
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[java.util.LinkedList<kotlin.Int>; <root>.KotlinInterface; kotlin.collections.MutableCollection<kotlin.Int>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[java.util.LinkedList<kotlin.Int>; <root>.KotlinInterface; kotlin.collections.MutableCollection<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun add (p0: @[EnhancedNullability] E of java.util.LinkedList): kotlin.Boolean declared in java.util.LinkedList
@@ -900,7 +900,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.C]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.C]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun add (p0: @[EnhancedNullability] kotlin.Int): kotlin.Boolean declared in <root>.C
@@ -1182,7 +1182,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.AbstractMutableList<kotlin.Any?>, index:kotlin.Int, element:kotlin.Any?) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun add (index: kotlin.Int, element: kotlin.Any?): kotlin.Unit declared in <root>.Java1
@@ -1368,7 +1368,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.F [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.E'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[<root>.E]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[<root>.E]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.AbstractMutableList<kotlin.Any?>, index:kotlin.Int, element:kotlin.Any?) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun add (index: kotlin.Int, element: kotlin.Any?): kotlin.Unit declared in <root>.E
@@ -1554,7 +1554,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.KotlinInterface2; <root>.Java2]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.KotlinInterface2; <root>.Java2]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<kotlin.Int>, element:kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
         public abstract fun add (element: kotlin.Int): kotlin.Boolean declared in <root>.KotlinInterface2
@@ -1674,7 +1674,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:size index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.G'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:ABSTRACT visibility:public superTypes:[<root>.G]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:ABSTRACT visibility:public superTypes:[<root>.G]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<kotlin.Int>, element:kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
         public abstract fun add (element: kotlin.Int): kotlin.Boolean declared in <root>.G
@@ -1769,7 +1769,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.I [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:ABSTRACT visibility:public superTypes:[<root>.KotlinInterface3; <root>.Java3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:ABSTRACT visibility:public superTypes:[<root>.KotlinInterface3; <root>.Java3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT <> ($this:java.util.List<kotlin.Int>, p0:@[FlexibleNullability] kotlin.Int?) returnType:kotlin.Boolean [fake_override]
       overridden:
         public abstract fun add (p0: @[FlexibleNullability] kotlin.Int?): kotlin.Boolean declared in <root>.KotlinInterface3
@@ -1942,7 +1942,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.J [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java4'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:J modality:ABSTRACT visibility:public superTypes:[<root>.Java3; <root>.Java4]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:J modality:ABSTRACT visibility:public superTypes:[<root>.Java3; <root>.Java4]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.ArrayList<@[FlexibleNullability] kotlin.Int?>, p0:@[EnhancedNullability] @[FlexibleNullability] kotlin.Int?) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun add (p0: @[EnhancedNullability] @[FlexibleNullability] kotlin.Int?): kotlin.Boolean declared in <root>.Java4

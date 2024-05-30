@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashMap'
           <K>: @[FlexibleNullability] T of <root>.A?
           <V>: @[FlexibleNullability] T of <root>.A?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<T of <root>.A, T of <root>.A>; java.util.HashMap<T of <root>.A, T of <root>.A>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<T of <root>.A, T of <root>.A>; java.util.HashMap<T of <root>.A, T of <root>.A>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in java.util.SortedMap
@@ -231,7 +231,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashMap'
           <K>: @[FlexibleNullability] T of <root>.B?
           <V>: @[FlexibleNullability] T of <root>.B?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<T of <root>.B, T of <root>.B>; java.util.HashMap<T of <root>.B, T of <root>.B>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<T of <root>.B, T of <root>.B>; java.util.HashMap<T of <root>.B, T of <root>.B>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in java.util.SortedMap

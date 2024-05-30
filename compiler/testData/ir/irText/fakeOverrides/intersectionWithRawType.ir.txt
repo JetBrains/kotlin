@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/main.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JavaBase'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:ABSTRACT visibility:public superTypes:[<root>.JavaBase; <root>.KotlinInterface]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:ABSTRACT visibility:public superTypes:[<root>.JavaBase; <root>.KotlinInterface]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinInterface) returnType:kotlin.collections.List<kotlin.Any?> [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.JavaBase

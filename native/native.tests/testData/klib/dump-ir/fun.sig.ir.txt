@@ -5,7 +5,7 @@ MODULE_FRAGMENT name:<fun.kt>
       CONSTRUCTOR signature:test/A.<init>|<init>(){}[0] visibility:public <> () returnType:test.A [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
       FUN name:foo signature:test/A.foo|foo(){}[0] visibility:private modality:FINAL <> ($this:test.A) returnType:<unbound IrClassSymbolImpl>
         $this: VALUE_PARAMETER name:<this> type:test.A
         BLOCK_BODY

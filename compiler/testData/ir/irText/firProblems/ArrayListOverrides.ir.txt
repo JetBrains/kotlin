@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.ArrayList'
           <E>: @[FlexibleNullability] kotlin.String?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A1 modality:FINAL visibility:public superTypes:[java.util.ArrayList<kotlin.String>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A1 modality:FINAL visibility:public superTypes:[java.util.ArrayList<kotlin.String>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, element:@[EnhancedNullability] kotlin.String) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun add (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
@@ -197,7 +197,7 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.ArrayList'
           <E>: @[FlexibleNullability] kotlin.String?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A2 modality:FINAL visibility:public superTypes:[java.util.ArrayList<kotlin.String>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A2 modality:FINAL visibility:public superTypes:[java.util.ArrayList<kotlin.String>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.String>, element:@[EnhancedNullability] kotlin.String) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun add (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList

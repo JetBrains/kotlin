@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/internalStdlibOverride.kt
         DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in kotlin.collections.AbstractMap'
           <K>: kotlin.Int
           <V>: kotlin.Int
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyMap modality:FINAL visibility:public superTypes:[kotlin.collections.AbstractMap<kotlin.Int, kotlin.Int>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyMap modality:FINAL visibility:public superTypes:[kotlin.collections.AbstractMap<kotlin.Int, kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:OPEN <> ($this:kotlin.collections.AbstractMap<kotlin.Int, kotlin.Int>, key:kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun containsKey (key: K of kotlin.collections.AbstractMap): kotlin.Boolean declared in kotlin.collections.AbstractMap

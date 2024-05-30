@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       VALUE_PARAMETER name:x index:0 type:T of <root>.Test1
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test1<T of <root>.Test1>) returnType:T of <root>.Test1 [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1<T of <root>.Test1>
       BLOCK_BODY
@@ -117,7 +117,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       VALUE_PARAMETER name:x index:0 type:T of <root>.Test2
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2<T of <root>.Test2>) returnType:T of <root>.Test2 [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2<T of <root>.Test2>
       BLOCK_BODY
@@ -208,7 +208,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<T of <root>.Test3>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test3<T of <root>.Test3>) returnType:kotlin.collections.List<T of <root>.Test3> [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3<T of <root>.Test3>
       BLOCK_BODY
@@ -298,7 +298,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<kotlin.String>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test4 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test4 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test4) returnType:kotlin.collections.List<kotlin.String> [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test4
       BLOCK_BODY

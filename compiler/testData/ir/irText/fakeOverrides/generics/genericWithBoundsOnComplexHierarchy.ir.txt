@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java2]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java2]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:@[RawType] <root>.Java1<@[FlexibleNullability] kotlin.Number?>) returnType:@[FlexibleNullability] kotlin.Number? [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java2
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.KotlinClass'
           <T>: kotlin.Int
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[<root>.KotlinClass<kotlin.Int>; <root>.Java3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[<root>.KotlinClass<kotlin.Int>; <root>.Java3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java1<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] T of <root>.KotlinClass? declared in <root>.KotlinClass
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.KotlinClass'
           <T>: kotlin.Int
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.KotlinClass<kotlin.Int>; <root>.Java3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.KotlinClass<kotlin.Int>; <root>.Java3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java1<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] T of <root>.KotlinClass? declared in <root>.KotlinClass
@@ -113,7 +113,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java4'
           <T>: @[FlexibleNullability] kotlin.Any?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.Java4<kotlin.Any>; <root>.Java3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.Java4<kotlin.Any>; <root>.Java3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java1<@[FlexibleNullability] kotlin.Number?>) returnType:@[FlexibleNullability] kotlin.Number? [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java4
@@ -151,7 +151,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java4'
           <T>: @[FlexibleNullability] kotlin.Any?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java4<kotlin.Any>; <root>.Java3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java4<kotlin.Any>; <root>.Java3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java1<@[FlexibleNullability] kotlin.Number?>) returnType:@[FlexibleNullability] kotlin.Number? [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java4
@@ -190,7 +190,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
           <T>: @[FlexibleNullability] kotlin.Int?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[<root>.Java1<kotlin.Int>; <root>.Java5]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[<root>.Java1<kotlin.Int>; <root>.Java5]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java1<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
@@ -228,7 +228,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
           <T>: @[FlexibleNullability] kotlin.Int?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java1<kotlin.Int>; <root>.Java5]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java1<kotlin.Int>; <root>.Java5]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java1<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
@@ -266,7 +266,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.H [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface<kotlin.Any>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface<kotlin.Any>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:@[RawType] <root>.Java1<@[FlexibleNullability] kotlin.Number?>) returnType:@[FlexibleNullability] kotlin.Number? [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java2
@@ -304,7 +304,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.I [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface<kotlin.Any>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface<kotlin.Any>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:@[RawType] <root>.Java1<@[FlexibleNullability] kotlin.Number?>) returnType:@[FlexibleNullability] kotlin.Number? [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java2
@@ -345,7 +345,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
           <T>: @[FlexibleNullability] T of <root>.KotlinClass?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinClass modality:OPEN visibility:public superTypes:[<root>.Java1<T of <root>.KotlinClass>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinClass modality:OPEN visibility:public superTypes:[<root>.Java1<T of <root>.KotlinClass>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java1<T of <root>.KotlinClass>) returnType:@[FlexibleNullability] T of <root>.KotlinClass? [fake_override]
       overridden:
         public open fun bar (): @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1

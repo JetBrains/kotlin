@@ -3,7 +3,7 @@
     @2:0..4:1 CONSTRUCTOR visibility:public <> () returnType:<root>.Klass [primary]
       @2:0..4:1 BLOCK_BODY
         @2:0..4:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @2:0..4:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Klass modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        @2:0..4:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Klass modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @3:4..46 PROPERTY name:maybeThis visibility:public modality:FINAL [val]
       @3:4..46 FIELD PROPERTY_BACKING_FIELD name:maybeThis type:<root>.Klass? visibility:private [final]
         @3:20..46 EXPRESSION_BODY

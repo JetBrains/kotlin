@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/javaWildcardType.kt
       VALUE_PARAMETER name:k index:1 type:<root>.K
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.J; <root>.K]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.J; <root>.K]' type=kotlin.Unit
     FUN DELEGATED_MEMBER name:jf1 visibility:public modality:OPEN <> ($this:<root>.C) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] kotlin.CharSequence?>?
       overridden:
         public abstract fun jf1 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] kotlin.CharSequence?>? declared in <root>.J

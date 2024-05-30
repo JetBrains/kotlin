@@ -44,7 +44,7 @@ FILE fqName:foo fileName:/nativeNativeKotlin.kt
     CONSTRUCTOR visibility:public <> () returnType:foo.C [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.B'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[foo.B]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[foo.B]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:FINAL <> ($this:foo.B) returnType:kotlin.String [fake_override]
       overridden:
         public final fun bar (): kotlin.String declared in foo.B

@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
           CONST Int type=kotlin.Int value=0
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Counter modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Counter modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Counter) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Counter
       BLOCK_BODY
@@ -117,7 +117,7 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
           CONST Int type=kotlin.Int value=10
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CounterConfig modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CounterConfig modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.CounterConfig) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.CounterConfig
       BLOCK_BODY
@@ -211,7 +211,7 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.CounterConfig visibility:private [final] declared in <root>.CounterIterator' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.CounterIterator declared in <root>.CounterIterator' type=<root>.CounterIterator origin=null
           value: GET_VAR '$context_receiver_0: <root>.CounterConfig declared in <root>.CounterIterator.<init>' type=<root>.CounterConfig origin=null
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CounterIterator modality:FINAL visibility:public superTypes:[kotlin.collections.Iterator<kotlin.Int>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CounterIterator modality:FINAL visibility:public superTypes:[kotlin.collections.Iterator<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Iterator

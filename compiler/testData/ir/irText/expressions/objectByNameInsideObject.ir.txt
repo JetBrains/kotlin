@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/objectByNameInsideObject.kt
       VALUE_PARAMETER name:f1 index:0 type:kotlin.Function0<kotlin.Any>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/objectByNameInsideObject.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.Thing.<init>'
                   GET_OBJECT 'CLASS OBJECT name:Thing modality:FINAL visibility:public superTypes:[<root>.Base]' type=<root>.Thing
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Thing modality:FINAL visibility:public superTypes:[<root>.Base]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Thing modality:FINAL visibility:public superTypes:[<root>.Base]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base

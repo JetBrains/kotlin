@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashMap'
           <K>: @[FlexibleNullability] kotlin.Boolean?
           <V>: @[FlexibleNullability] kotlin.Boolean?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; java.util.HashMap<kotlin.Boolean, kotlin.Boolean>; <root>.Java1]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; java.util.HashMap<kotlin.Boolean, kotlin.Boolean>; <root>.Java1]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in java.util.SortedMap
@@ -237,7 +237,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashMap'
           <K>: @[FlexibleNullability] kotlin.Boolean?
           <V>: @[FlexibleNullability] kotlin.Boolean?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; java.util.HashMap<kotlin.Boolean, kotlin.Boolean>; <root>.Java1]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; java.util.HashMap<kotlin.Boolean, kotlin.Boolean>; <root>.Java1]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in java.util.SortedMap
@@ -471,7 +471,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashMap'
           <K>: @[FlexibleNullability] kotlin.Boolean?
           <V>: @[FlexibleNullability] kotlin.Boolean?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; java.util.HashMap<kotlin.Boolean, kotlin.Boolean>; <root>.KotlinInterface]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; java.util.HashMap<kotlin.Boolean, kotlin.Boolean>; <root>.KotlinInterface]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in java.util.SortedMap
@@ -702,7 +702,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashMap'
           <K>: @[FlexibleNullability] kotlin.Boolean?
           <V>: @[FlexibleNullability] kotlin.Boolean?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; java.util.HashMap<kotlin.Boolean, kotlin.Boolean>; <root>.KotlinInterface]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; java.util.HashMap<kotlin.Boolean, kotlin.Boolean>; <root>.KotlinInterface]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in java.util.SortedMap
@@ -934,7 +934,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; kotlin.collections.MutableMap<kotlin.Boolean, kotlin.Boolean>; <root>.KotlinInterface]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; kotlin.collections.MutableMap<kotlin.Boolean, kotlin.Boolean>; <root>.KotlinInterface]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in java.util.SortedMap
@@ -1162,7 +1162,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.F [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; kotlin.collections.MutableMap<kotlin.Boolean, kotlin.Boolean>; <root>.KotlinInterface]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>; kotlin.collections.MutableMap<kotlin.Boolean, kotlin.Boolean>; <root>.KotlinInterface]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in java.util.SortedMap
@@ -1393,7 +1393,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.I [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in <root>.Java2
@@ -1591,7 +1591,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.J [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:J modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:J modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in <root>.Java2
@@ -1792,7 +1792,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.K [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun clear (): kotlin.Unit declared in <root>.Java3
@@ -1966,7 +1966,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.L [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun clear (): kotlin.Unit declared in <root>.Java3
@@ -2143,7 +2143,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.M [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:M modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:M modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<kotlin.Boolean, kotlin.Boolean>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in <root>.KotlinInterface3
@@ -2313,7 +2313,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.N [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:N modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:N modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<kotlin.Boolean, kotlin.Boolean>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in <root>.KotlinInterface3

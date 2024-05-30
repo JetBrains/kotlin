@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
       VALUE_PARAMETER name:j index:0 type:<root>.J
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.J]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.J]' type=kotlin.Unit
     FUN DELEGATED_MEMBER name:returnNotNull visibility:public modality:OPEN <> ($this:<root>.Test) returnType:@[EnhancedNullability] kotlin.String
       annotations:
         NotNull(value = <null>)

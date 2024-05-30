@@ -134,7 +134,7 @@ FILE fqName:kotlin.collections fileName:/common.kt
     CONSTRUCTOR visibility:public <> () returnType:kotlin.collections.AbstractMyMutableList [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.collections.AbstractMutableList'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractMyMutableList modality:OPEN visibility:public superTypes:[kotlin.collections.AbstractMutableList]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractMyMutableList modality:OPEN visibility:public superTypes:[kotlin.collections.AbstractMutableList]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.AbstractMutableList
@@ -200,7 +200,7 @@ FILE fqName:kotlin.collections fileName:/common.kt
     CONSTRUCTOR visibility:public <> () returnType:kotlin.collections.MyMutableList [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.collections.AbstractMyMutableList'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyMutableList modality:FINAL visibility:public superTypes:[kotlin.collections.AbstractMyMutableList]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyMutableList modality:FINAL visibility:public superTypes:[kotlin.collections.AbstractMyMutableList]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.AbstractMyMutableList
@@ -299,7 +299,7 @@ FILE fqName:kotlin.collections fileName:/jvm.kt
     CONSTRUCTOR visibility:public <> () returnType:kotlin.collections.AbstractMutableList [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in bar.JavaAbstractMutableList'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractMutableList modality:ABSTRACT visibility:public superTypes:[bar.JavaAbstractMutableList]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AbstractMutableList modality:ABSTRACT visibility:public superTypes:[bar.JavaAbstractMutableList]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in bar.JavaAbstractMutableList

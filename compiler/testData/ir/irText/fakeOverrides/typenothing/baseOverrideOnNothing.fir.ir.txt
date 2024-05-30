@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:b index:1 type:kotlin.collections.List<kotlin.Nothing>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[<root>.Java1]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[<root>.Java1]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:kotlin.Nothing [fake_override]
       overridden:
         public abstract fun bar (): kotlin.Nothing declared in <root>.Java1

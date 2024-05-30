@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
       VALUE_PARAMETER name:action index:0 type:kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Tag modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Tag modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
       BLOCK_BODY

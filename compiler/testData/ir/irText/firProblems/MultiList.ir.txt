@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/MultiList.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.SomeList'
           <T>: kotlin.String
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FinalList modality:FINAL visibility:public superTypes:[<root>.SomeList<kotlin.String>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FinalList modality:FINAL visibility:public superTypes:[<root>.SomeList<kotlin.String>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<kotlin.String>>, element:@[EnhancedNullability] <root>.Some<kotlin.String>) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun add (element: @[EnhancedNullability] <root>.Some<T of <root>.SomeList>): kotlin.Boolean declared in <root>.SomeList
@@ -209,7 +209,7 @@ FILE fqName:<root> fileName:/MultiList.kt
       VALUE_PARAMETER name:value index:0 type:T of <root>.Some
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Some<T of <root>.Some>) returnType:T of <root>.Some [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Some<T of <root>.Some>
       BLOCK_BODY
@@ -298,7 +298,7 @@ FILE fqName:<root> fileName:/MultiList.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.ArrayList'
           <E>: @[FlexibleNullability] <root>.Some<T of <root>.SomeList>?
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SomeList modality:OPEN visibility:public superTypes:[<root>.MyList<T of <root>.SomeList>; java.util.ArrayList<<root>.Some<T of <root>.SomeList>>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SomeList modality:OPEN visibility:public superTypes:[<root>.MyList<T of <root>.SomeList>; java.util.ArrayList<<root>.Some<T of <root>.SomeList>>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>, element:@[EnhancedNullability] <root>.Some<T of <root>.SomeList>) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun add (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList

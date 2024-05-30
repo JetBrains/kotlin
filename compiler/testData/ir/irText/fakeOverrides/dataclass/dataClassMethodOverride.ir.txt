@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:a index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[<root>.Java1]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[<root>.Java1]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [operator]
       overridden:
         public open fun component1 (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
@@ -113,7 +113,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:a index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public [data] superTypes:[<root>.Java1; <root>.Java2]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public [data] superTypes:[<root>.Java1; <root>.Java2]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java1, i:@[FlexibleNullability] kotlin.Int?) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun foo (i: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.Java1
@@ -219,7 +219,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:a index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public [data] superTypes:[<root>.Java1; <root>.KotlinInterface]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public [data] superTypes:[<root>.Java1; <root>.KotlinInterface]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java1, i:@[FlexibleNullability] kotlin.Int?) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun foo (i: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.Java1
@@ -325,7 +325,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:a index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public [data] superTypes:[<root>.Java3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public [data] superTypes:[<root>.Java3]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.D) returnType:kotlin.Int [operator]
       overridden:
         public abstract fun component1 (): kotlin.Int declared in <root>.Java3

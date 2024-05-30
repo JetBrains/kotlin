@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/varargListOfJsStatement.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.Bar [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.SourceInfoAwareJsNode'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[<root>.SourceInfoAwareJsNode; <root>.SomeOtherInterface]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[<root>.SourceInfoAwareJsNode; <root>.SomeOtherInterface]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.SourceInfoAwareJsNode
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/varargListOfJsStatement.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.Foo [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.SourceInfoAwareJsNode'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[<root>.SourceInfoAwareJsNode; <root>.SomeOtherInterface]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[<root>.SourceInfoAwareJsNode; <root>.SomeOtherInterface]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.SourceInfoAwareJsNode
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/varargListOfJsStatement.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.JsExport [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.SourceInfoAwareJsNode'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JsExport modality:FINAL visibility:public superTypes:[<root>.SourceInfoAwareJsNode; <root>.JsStatement]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JsExport modality:FINAL visibility:public superTypes:[<root>.SourceInfoAwareJsNode; <root>.JsStatement]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.SourceInfoAwareJsNode
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/varargListOfJsStatement.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.JsNonJsNode [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.NonJsNode'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JsNonJsNode modality:FINAL visibility:public superTypes:[<root>.NonJsNode; <root>.JsStatement]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JsNonJsNode modality:FINAL visibility:public superTypes:[<root>.NonJsNode; <root>.JsStatement]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.NonJsNode
@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/varargListOfJsStatement.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.JsVars [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.SourceInfoAwareJsNode'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JsVars modality:FINAL visibility:public superTypes:[<root>.SourceInfoAwareJsNode; <root>.JsStatement]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:JsVars modality:FINAL visibility:public superTypes:[<root>.SourceInfoAwareJsNode; <root>.JsStatement]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.SourceInfoAwareJsNode
@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/varargListOfJsStatement.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.NonJsNode [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NonJsNode modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NonJsNode modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -133,7 +133,7 @@ FILE fqName:<root> fileName:/varargListOfJsStatement.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.SourceInfoAwareJsNode [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SourceInfoAwareJsNode modality:ABSTRACT visibility:public superTypes:[<root>.JsNode]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SourceInfoAwareJsNode modality:ABSTRACT visibility:public superTypes:[<root>.JsNode]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JsNode

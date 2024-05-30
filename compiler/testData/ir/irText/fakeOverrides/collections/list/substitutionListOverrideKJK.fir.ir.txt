@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
           <T>: T of <root>.A
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[<root>.Java1<T of <root>.A>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[<root>.Java1<T of <root>.A>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:<root>.Java1<T of <root>.A>, i:kotlin.Int, t:@[FlexibleNullability] T of <root>.A?) returnType:kotlin.Unit [fake_override]
       annotations:
         Override
@@ -194,7 +194,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
           <T>: T of <root>.B
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1<T of <root>.B>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1<T of <root>.B>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:<root>.Java1<T of <root>.B>, i:kotlin.Int, t:@[FlexibleNullability] T of <root>.B?) returnType:kotlin.Unit [fake_override]
       annotations:
         Override

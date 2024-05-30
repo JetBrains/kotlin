@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashSet'
           <E>: kotlin.Any
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.SortedSet<kotlin.Any>; java.util.HashSet<kotlin.Any>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.SortedSet<kotlin.Any>; java.util.HashSet<kotlin.Any>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, element:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
         public abstract fun add (element: @[FlexibleNullability] E of java.util.SortedSet?): kotlin.Boolean declared in java.util.SortedSet
@@ -169,7 +169,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashSet'
           <E>: kotlin.Any
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[java.util.SortedSet<kotlin.Any>; java.util.HashSet<kotlin.Any>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[java.util.SortedSet<kotlin.Any>; java.util.HashSet<kotlin.Any>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, element:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
         public abstract fun add (element: @[FlexibleNullability] E of java.util.SortedSet?): kotlin.Boolean declared in java.util.SortedSet

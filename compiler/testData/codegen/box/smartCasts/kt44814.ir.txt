@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.ASTNode [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/kt44814.kt
       VALUE_PARAMETER name:treeStructure index:1 type:<root>.FlyweightCapableTreeStructure
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirSourceElement'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirSourceElement
@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/kt44814.kt
             <Node>: <root>.LighterASTNode
             node: GET_VAR 'node: <root>.LighterASTNode declared in <root>.FirModifier.FirLightModifier.<init>' type=<root>.LighterASTNode origin=null
             token: GET_VAR 'token: <root>.KtModifierKeywordToken declared in <root>.FirModifier.FirLightModifier.<init>' type=<root>.KtModifierKeywordToken origin=null
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.LighterASTNode>]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.LighterASTNode>]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirModifier
@@ -159,7 +159,7 @@ FILE fqName:<root> fileName:/kt44814.kt
             <Node>: <root>.ASTNode
             node: GET_VAR 'node: <root>.ASTNode declared in <root>.FirModifier.FirPsiModifier.<init>' type=<root>.ASTNode origin=null
             token: GET_VAR 'token: <root>.KtModifierKeywordToken declared in <root>.FirModifier.FirPsiModifier.<init>' type=<root>.KtModifierKeywordToken origin=null
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.ASTNode>]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.ASTNode>]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirModifier
@@ -194,7 +194,7 @@ FILE fqName:<root> fileName:/kt44814.kt
       VALUE_PARAMETER name:token index:1 type:<root>.KtModifierKeywordToken
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirModifier modality:SEALED visibility:internal superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirModifier modality:SEALED visibility:internal superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -254,7 +254,7 @@ FILE fqName:<root> fileName:/kt44814.kt
         VALUE_PARAMETER name:tree index:1 type:<root>.FlyweightCapableTreeStructure
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirModifierList'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirLightModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirModifierList
@@ -293,7 +293,7 @@ FILE fqName:<root> fileName:/kt44814.kt
         VALUE_PARAMETER name:modifierList index:0 type:<root>.KtModifierList
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirModifierList'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirModifierList
@@ -320,7 +320,7 @@ FILE fqName:<root> fileName:/kt44814.kt
       CONSTRUCTOR visibility:private <> () returnType:<root>.FirModifierList.Companion [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -466,7 +466,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     CONSTRUCTOR visibility:protected <> () returnType:<root>.FirModifierList [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirModifierList modality:SEALED visibility:internal superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirModifierList modality:SEALED visibility:internal superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -529,7 +529,7 @@ FILE fqName:<root> fileName:/kt44814.kt
       VALUE_PARAMETER name:treeStructure index:2 type:<root>.FlyweightCapableTreeStructure
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.FirSourceElement'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirPsiSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FirSourceElement
@@ -551,7 +551,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     CONSTRUCTOR visibility:protected <> () returnType:<root>.FirSourceElement [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirSourceElement modality:SEALED visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FirSourceElement modality:SEALED visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -578,7 +578,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.FlyweightCapableTreeStructure [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FlyweightCapableTreeStructure modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FlyweightCapableTreeStructure modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -597,7 +597,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.KtModifierKeywordToken [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierKeywordToken modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierKeywordToken modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -616,7 +616,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.KtModifierList [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.PsiElement'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierList modality:FINAL visibility:public superTypes:[<root>.PsiElement]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierList modality:FINAL visibility:public superTypes:[<root>.PsiElement]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.PsiElement
@@ -646,7 +646,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.KtModifierListOwner [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.PsiElement'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierListOwner modality:FINAL visibility:public superTypes:[<root>.PsiElement]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierListOwner modality:FINAL visibility:public superTypes:[<root>.PsiElement]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.PsiElement
@@ -692,7 +692,7 @@ FILE fqName:<root> fileName:/kt44814.kt
             <T>: <root>.LighterASTNode?
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LighterASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:LighterASTNode modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -718,7 +718,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.PsiElement [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PsiElement modality:OPEN visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PsiElement modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -750,7 +750,7 @@ FILE fqName:<root> fileName:/kt44814.kt
       CONSTRUCTOR visibility:private <> () returnType:<root>.TokenType.Companion [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -767,7 +767,7 @@ FILE fqName:<root> fileName:/kt44814.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.TokenType [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenType modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TokenType modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

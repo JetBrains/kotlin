@@ -6,7 +6,7 @@ MODULE_FRAGMENT name:<constructor.kt>
         VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
       PROPERTY name:x visibility:public modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:x type:<unbound IrClassSymbolImpl> visibility:private [final]
           EXPRESSION_BODY
@@ -23,7 +23,7 @@ MODULE_FRAGMENT name:<constructor.kt>
         CONSTRUCTOR visibility:private <> () returnType:test.A.Companion [primary]
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
         FUN name:create visibility:public modality:FINAL <> ($this:test.A.Companion, x:<unbound IrClassSymbolImpl>) returnType:test.A
           $this: VALUE_PARAMETER name:<this> type:test.A.Companion
           VALUE_PARAMETER name:x index:0 type:<unbound IrClassSymbolImpl>

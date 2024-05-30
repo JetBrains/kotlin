@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/test.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun foo (): kotlin.Unit declared in <root>.Java1
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/test.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]' type=kotlin.Unit
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Unit
       overridden:
         public open fun foo (): kotlin.Unit declared in <root>.Java1
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/test.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java2]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java2]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun foo (): kotlin.Unit declared in <root>.Java2
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/test.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java2]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java2]' type=kotlin.Unit
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.D) returnType:kotlin.Unit
       overridden:
         public open fun foo (): kotlin.Unit declared in <root>.Java2
@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/test.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:foo visibility:protected/*protected and package*/ modality:OPEN <> ($this:<root>.Java3) returnType:kotlin.Unit [fake_override]
       overridden:
         protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java3
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/test.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.F [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java3]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java3]' type=kotlin.Unit
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.F) returnType:kotlin.Unit
       overridden:
         protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java3
@@ -87,7 +87,7 @@ FILE fqName:<root> fileName:/test.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java4'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java4]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java4]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:foo visibility:protected/*protected and package*/ modality:OPEN <> ($this:<root>.Java4) returnType:kotlin.Unit [fake_override]
       overridden:
         protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java4
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/test.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.H [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java4'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java4]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java4]' type=kotlin.Unit
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.H) returnType:kotlin.Unit
       overridden:
         protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java4
@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/test.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.I [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java5'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java5]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java5]' type=kotlin.Unit
   CLASS CLASS name:J modality:FINAL visibility:public superTypes:[<root>.Java5]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J
     PROPERTY name:a visibility:public modality:FINAL [val]
@@ -131,7 +131,7 @@ FILE fqName:<root> fileName:/test.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.J [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java5'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:J modality:FINAL visibility:public superTypes:[<root>.Java5]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:J modality:FINAL visibility:public superTypes:[<root>.Java5]' type=kotlin.Unit
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.J) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.J
       BLOCK_BODY

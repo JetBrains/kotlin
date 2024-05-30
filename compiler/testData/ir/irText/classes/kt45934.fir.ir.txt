@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/kt45934.kt
       VALUE_PARAMETER name:client index:0 type:<root>.J
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.I]' type=kotlin.Unit
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <C> ($this:<root>.C) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.C.foo?>?
       overridden:
         public abstract fun foo <C> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.I.foo?>? declared in <root>.I

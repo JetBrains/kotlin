@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test1 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.J'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.J]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.J]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.J) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun bar (): kotlin.Unit declared in <root>.J

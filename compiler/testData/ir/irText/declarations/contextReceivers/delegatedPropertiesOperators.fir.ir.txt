@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.Delegate [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -121,7 +121,7 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final] declared in <root>.Result' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result' type=<root>.Result origin=null
           value: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.Result.<init>' type=kotlin.Int origin=null
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Result modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Result modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

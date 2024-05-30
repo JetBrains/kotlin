@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.A
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1; kotlin.Enum<<root>.A>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1; kotlin.Enum<<root>.A>]' type=kotlin.Unit
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.A
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
@@ -69,7 +69,7 @@ FILE fqName:<root> fileName:/1.kt
         CONSTRUCTOR visibility:private <> () returnType:<root>.B.FIRST [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.B'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:FIRST modality:FINAL visibility:private superTypes:[<root>.B]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:FIRST modality:FINAL visibility:private superTypes:[<root>.B]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.B>, other:<root>.B) returnType:kotlin.Int [fake_override,operator]
           overridden:
             public final fun compareTo (other: <root>.B): kotlin.Int declared in <root>.B
@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.B
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:B modality:OPEN visibility:public superTypes:[<root>.Java1; kotlin.Enum<<root>.B>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:B modality:OPEN visibility:public superTypes:[<root>.Java1; kotlin.Enum<<root>.B>]' type=kotlin.Unit
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.B
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
@@ -180,7 +180,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.C
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java2; kotlin.Enum<<root>.C>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java2; kotlin.Enum<<root>.C>]' type=kotlin.Unit
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.C
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
@@ -244,7 +244,7 @@ FILE fqName:<root> fileName:/1.kt
         CONSTRUCTOR visibility:private <> () returnType:<root>.D.FIRST [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.D'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:FIRST modality:FINAL visibility:private superTypes:[<root>.D]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:FIRST modality:FINAL visibility:private superTypes:[<root>.D]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.D>, other:<root>.D) returnType:kotlin.Int [fake_override,operator]
           overridden:
             public final fun compareTo (other: <root>.D): kotlin.Int declared in <root>.D
@@ -291,7 +291,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.D
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:D modality:OPEN visibility:public superTypes:[<root>.Java2; kotlin.Enum<<root>.D>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:D modality:OPEN visibility:public superTypes:[<root>.Java2; kotlin.Enum<<root>.D>]' type=kotlin.Unit
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.D
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
@@ -352,7 +352,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.E
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java3; kotlin.Enum<<root>.E>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java3; kotlin.Enum<<root>.E>]' type=kotlin.Unit
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.E
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
@@ -424,7 +424,7 @@ FILE fqName:<root> fileName:/1.kt
         CONSTRUCTOR visibility:private <> () returnType:<root>.F.FIRST [primary]
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.F'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:FIRST modality:FINAL visibility:private superTypes:[<root>.F]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:FIRST modality:FINAL visibility:private superTypes:[<root>.F]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.F>, other:<root>.F) returnType:kotlin.Int [fake_override,operator]
           overridden:
             public final fun compareTo (other: <root>.F): kotlin.Int declared in <root>.F
@@ -476,7 +476,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.F
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:F modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java3; kotlin.Enum<<root>.F>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:F modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java3; kotlin.Enum<<root>.F>]' type=kotlin.Unit
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.F
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF

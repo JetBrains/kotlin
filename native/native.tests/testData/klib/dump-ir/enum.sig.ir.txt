@@ -7,7 +7,7 @@ MODULE_FRAGMENT name:<enum.kt>
         BLOCK_BODY
           ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
             <1>: test.Color
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Color signature:test/Color|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.Color>]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Color signature:test/Color|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.Color>]' type=<unbound IrClassSymbolImpl>
       PROPERTY name:rgb signature:test/Color.rgb|{}rgb[0] visibility:public modality:FINAL [val]
         FIELD PROPERTY_BACKING_FIELD name:rgb signature:[ test/Color.rgb|{}rgb[0] <- Local[<BF>|FIELD PROPERTY_BACKING_FIELD name:rgb type:kotlin.Int visibility:private [final]] ] type:<unbound IrClassSymbolImpl> visibility:private [final]
           EXPRESSION_BODY

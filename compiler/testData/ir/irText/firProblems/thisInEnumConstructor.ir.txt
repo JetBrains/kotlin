@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/thisInEnumConstructor.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.EE
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:EE modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.EE>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:EE modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.EE>]' type=kotlin.Unit
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.EE
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF

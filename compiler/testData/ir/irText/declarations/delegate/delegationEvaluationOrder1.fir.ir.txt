@@ -31,7 +31,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder1.kt
       VALUE_PARAMETER name:s index:0 type:kotlin.String
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseImpl modality:FINAL visibility:public superTypes:[foo.Base]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BaseImpl modality:FINAL visibility:public superTypes:[foo.Base]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.Base
@@ -72,7 +72,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder1.kt
     CONSTRUCTOR visibility:public <> () returnType:foo.Derived [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.DerivedBase'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[foo.DerivedBase; foo.Base]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[foo.DerivedBase; foo.Base]' type=kotlin.Unit
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:foo.Derived, x:kotlin.String) returnType:kotlin.String
       overridden:
         public abstract fun foo (x: kotlin.String): kotlin.String declared in foo.Base
@@ -114,7 +114,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder1.kt
     CONSTRUCTOR visibility:public <> () returnType:foo.Derived1 [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.DerivedBase'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[foo.Base; foo.DerivedBase]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[foo.Base; foo.DerivedBase]' type=kotlin.Unit
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:foo.Derived1, x:kotlin.String) returnType:kotlin.String
       overridden:
         public abstract fun foo (x: kotlin.String): kotlin.String declared in foo.Base
@@ -153,7 +153,7 @@ FILE fqName:foo fileName:/delegationEvaluationOrder1.kt
     CONSTRUCTOR visibility:public <> () returnType:foo.DerivedBase [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DerivedBase modality:OPEN visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DerivedBase modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

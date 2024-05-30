@@ -5,7 +5,7 @@ MODULE_FRAGMENT name:<typealias.kt>
       CONSTRUCTOR visibility:public <> () returnType:test.ClassName [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ClassName modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ClassName modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
     TYPEALIAS name:PublicTypeAlias visibility:public expandedType:test.ClassName
     TYPEALIAS name:InternalTypeAlias visibility:internal expandedType:test.ClassName
     TYPEALIAS name:PrivateTypeAlias visibility:private expandedType:test.ClassName

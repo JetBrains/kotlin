@@ -5,7 +5,7 @@ MODULE_FRAGMENT name:<stdlibReferences>
       CONSTRUCTOR signature:test/Foo.<init>|<init>(){}[0] visibility:public <> () returnType:test.Foo [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:test/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo signature:test/Foo|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>]' type=<unbound IrClassSymbolImpl>
     PROPERTY name:boolean signature:test/boolean|{}boolean[0] visibility:public modality:FINAL [val]
       FUN name:<get-boolean> signature:test/boolean.<get-boolean>|<get-boolean>(){}[0] visibility:public modality:FINAL <> () returnType:<unbound IrClassSymbolImpl>
         correspondingProperty: PROPERTY name:boolean signature:test/boolean|{}boolean[0] visibility:public modality:FINAL [val]
@@ -18,7 +18,7 @@ MODULE_FRAGMENT name:<stdlibReferences>
         BLOCK_BODY
           ENUM_CONSTRUCTOR_CALL 'UNBOUND IrConstructorSymbolImpl'
             <1>: test.E
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E signature:test/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.E>]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E signature:test/E|null[0] modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl><test.E>]' type=<unbound IrClassSymbolImpl>
       ENUM_ENTRY name:A signature:test/E.A|null[0]
         init: EXPRESSION_BODY
           ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in test.E'

@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/InnerClassInAnonymous.kt
                 VALUE_PARAMETER name:s index:0 type:kotlin.String
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:local [inner] superTypes:[kotlin.Any]'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:local [inner] superTypes:[kotlin.Any]' type=kotlin.Unit
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
                   public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/InnerClassInAnonymous.kt
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.box.<no name provided>.Base'
                     $this: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>.Some.<init>' type=<root>.box.<no name provided> origin=null
                     s: GET_VAR 's: kotlin.String declared in <root>.box.<no name provided>.Some.<init>' type=kotlin.String origin=null
-                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some modality:FINAL visibility:local [inner] superTypes:[<root>.box.<no name provided>.Base]'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some modality:FINAL visibility:local [inner] superTypes:[<root>.box.<no name provided>.Base]' type=kotlin.Unit
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
                   public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.box.<no name provided>.Base
@@ -91,7 +91,7 @@ FILE fqName:<root> fileName:/InnerClassInAnonymous.kt
             CONSTRUCTOR visibility:public <> () returnType:<root>.box.<no name provided> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]' type=kotlin.Unit
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
               overridden:
                 public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

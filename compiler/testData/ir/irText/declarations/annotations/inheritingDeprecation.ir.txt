@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.DefaultImpl [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DefaultImpl modality:FINAL visibility:public superTypes:[<root>.IFoo]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DefaultImpl modality:FINAL visibility:public superTypes:[<root>.IFoo]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IFoo
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
       VALUE_PARAMETER name:foo index:0 type:<root>.IFoo
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delegated modality:FINAL visibility:public superTypes:[<root>.IFoo]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delegated modality:FINAL visibility:public superTypes:[<root>.IFoo]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IFoo
@@ -95,7 +95,7 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.ExplicitOverride [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ExplicitOverride modality:FINAL visibility:public superTypes:[<root>.IFoo]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ExplicitOverride modality:FINAL visibility:public superTypes:[<root>.IFoo]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IFoo

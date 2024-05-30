@@ -4,7 +4,7 @@
     @0:0..2:1 CONSTRUCTOR visibility:public <> () returnType:<root>.A<T of <root>.A> [primary]
       @0:0..2:1 BLOCK_BODY
         @0:0..2:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @0:0..2:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
+        @0:0..2:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @1:4..27 FUN name:foo visibility:public modality:FINAL <> ($this:<root>.A<T of <root>.A>, x:T of <root>.A) returnType:kotlin.Unit
       @1:4..27 VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
       @1:12..16 VALUE_PARAMETER name:x index:0 type:T of <root>.A
@@ -21,7 +21,7 @@
     @4:0..6:1 CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
       @4:0..6:1 BLOCK_BODY
         @4:10..21 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
-        @4:0..6:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A<kotlin.String>]'
+        @4:0..6:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A<kotlin.String>]' type=kotlin.Unit
     @4:0..6:1 FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.A<kotlin.String>, x:kotlin.String) returnType:kotlin.Unit [fake_override]
       @4:0..6:1 VALUE_PARAMETER name:<this> type:<root>.A<kotlin.String>
       @4:0..6:1 VALUE_PARAMETER name:x index:0 type:kotlin.String

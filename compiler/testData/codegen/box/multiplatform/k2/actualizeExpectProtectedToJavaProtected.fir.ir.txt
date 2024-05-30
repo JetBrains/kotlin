@@ -4,7 +4,7 @@ FILE fqName:pkg fileName:/common.kt
     CONSTRUCTOR visibility:public <> () returnType:pkg.Bar [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in pkg.FooImpl'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[pkg.FooImpl]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Bar modality:FINAL visibility:public superTypes:[pkg.FooImpl]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in pkg.FooImpl
@@ -44,4 +44,4 @@ FILE fqName:pkg fileName:/jvm.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: GET_VAR 'val result: kotlin.String declared in pkg.box' type=kotlin.String origin=null
-  TYPEALIAS name:Foo visibility:public expandedType:pkg.FooImpl[actual]
+  TYPEALIAS name:Foo visibility:public expandedType:pkg.FooImpl[actual] 

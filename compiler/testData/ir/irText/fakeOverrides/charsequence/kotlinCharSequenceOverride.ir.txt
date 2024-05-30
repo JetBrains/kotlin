@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.CharSequence]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.CharSequence]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
       overridden:
         public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in kotlin.CharSequence
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[<root>.Java1]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[<root>.Java1]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
       overridden:
         public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
@@ -115,7 +115,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:length index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.B'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.B]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.B]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
       overridden:
         public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.B
@@ -159,7 +159,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
       overridden:
         public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
@@ -217,7 +217,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
       overridden:
         public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
@@ -297,7 +297,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:length index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[java.lang.CharSequence; kotlin.CharSequence; <root>.KotlinInterface]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[java.lang.CharSequence; kotlin.CharSequence; <root>.KotlinInterface]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:charAt visibility:public modality:ABSTRACT <> ($this:java.lang.CharSequence, p0:kotlin.Int) returnType:kotlin.Char [fake_override]
       overridden:
         public abstract fun charAt (p0: kotlin.Int): kotlin.Char declared in java.lang.CharSequence
@@ -376,7 +376,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
       overridden:
         public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
@@ -433,7 +433,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.H [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
       overridden:
         public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
@@ -515,7 +515,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:length index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:ABSTRACT visibility:public superTypes:[java.lang.CharSequence; kotlin.CharSequence]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:ABSTRACT visibility:public superTypes:[java.lang.CharSequence; kotlin.CharSequence]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:charAt visibility:public modality:ABSTRACT <> ($this:java.lang.CharSequence, p0:kotlin.Int) returnType:kotlin.Char [fake_override]
       overridden:
         public abstract fun charAt (p0: kotlin.Int): kotlin.Char declared in java.lang.CharSequence

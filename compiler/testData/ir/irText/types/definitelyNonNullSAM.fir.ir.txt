@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/definitelyNonNullSAM.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.AC<T of <root>.AC> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AC modality:ABSTRACT visibility:public superTypes:[<root>.I1<T of <root>.AC>; <root>.I2<T of <root>.AC>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AC modality:ABSTRACT visibility:public superTypes:[<root>.I1<T of <root>.AC>; <root>.I2<T of <root>.AC>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I1
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/definitelyNonNullSAM.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.AC'
           <T>: {T of <root>.AD & Any}
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AD modality:ABSTRACT visibility:public superTypes:[<root>.AC<{T of <root>.AD & Any}>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AD modality:ABSTRACT visibility:public superTypes:[<root>.AC<{T of <root>.AD & Any}>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.AC
@@ -102,7 +102,7 @@ FILE fqName:<root> fileName:/definitelyNonNullSAM.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test<S of <root>.Test> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -197,7 +197,7 @@ FILE fqName:<root> fileName:/definitelyNonNullSAM.kt
             CONSTRUCTOR visibility:public <> () returnType:<root>.bar.<no name provided><T of <root>.bar> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.FIn<{T of <root>.bar & Any}>]'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.FIn<{T of <root>.bar & Any}>]' type=kotlin.Unit
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
               overridden:
                 public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FIn

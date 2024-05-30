@@ -158,7 +158,7 @@ internal class ClassMemberGenerator(
 
                     if (delegatedConstructor?.isThis == false) {
                         val instanceInitializerCall = IrInstanceInitializerCallImpl(
-                            startOffset, endOffset, irClass.symbol, irFunction.constructedClassType
+                            startOffset, endOffset, irClass.symbol, builtins.unitType
                         )
                         body.statements += instanceInitializerCall
                     }

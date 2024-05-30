@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashMap'
           <K>: kotlin.Int
           <V>: kotlin.Int
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.HashMap<kotlin.Int, kotlin.Int>; java.util.SequencedMap<kotlin.Int, kotlin.Int>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.HashMap<kotlin.Int, kotlin.Int>; java.util.SequencedMap<kotlin.Int, kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:java.util.HashMap<kotlin.Int, kotlin.Int>) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun clear (): kotlin.Unit declared in java.util.HashMap
@@ -248,7 +248,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashMap'
           <K>: kotlin.Int
           <V>: kotlin.Int
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[java.util.HashMap<kotlin.Int, kotlin.Int>; java.util.SequencedMap<kotlin.Int, kotlin.Int>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[java.util.HashMap<kotlin.Int, kotlin.Int>; java.util.SequencedMap<kotlin.Int, kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:java.util.HashMap<kotlin.Int, kotlin.Int>) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun clear (): kotlin.Unit declared in java.util.HashMap

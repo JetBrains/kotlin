@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
       VALUE_PARAMETER name:impl index:0 type:<root>.IBase<TT of <root>.Test>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.IBase<TT of <root>.Test>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.IBase<TT of <root>.Test>]' type=kotlin.Unit
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.Test<TT of <root>.Test>, x:kotlin.Int) returnType:kotlin.Unit
       overridden:
         public abstract fun foo (x: kotlin.Int): kotlin.Unit declared in <root>.IBase

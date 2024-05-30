@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
       VALUE_PARAMETER name:i index:0 type:<root>.IBase<E of <root>.Test1>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.IBase<E of <root>.Test1>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.IBase<E of <root>.Test1>]' type=kotlin.Unit
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test1<E of <root>.Test1>, a:E of <root>.Test1, b:B of <root>.Test1.foo) returnType:kotlin.Unit
       overridden:
         public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase
@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
       VALUE_PARAMETER name:j index:0 type:<root>.IBase<kotlin.String>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.IBase<kotlin.String>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.IBase<kotlin.String>]' type=kotlin.Unit
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <B> ($this:<root>.Test2, a:kotlin.String, b:B of <root>.Test2.foo) returnType:kotlin.Unit
       overridden:
         public abstract fun foo <B> (a: A of <root>.IBase, b: B of <root>.IBase.foo): kotlin.Unit declared in <root>.IBase

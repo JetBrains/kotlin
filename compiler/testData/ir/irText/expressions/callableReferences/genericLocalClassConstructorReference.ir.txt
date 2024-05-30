@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
       VALUE_PARAMETER name:ll index:0 type:LL of <root>.L
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L modality:OPEN visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
       VALUE_PARAMETER name:rt index:0 type:T of <root>.Rec
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Rec modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Rec modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
             DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (ll: LL of <root>.L) declared in <root>.L'
               <LL>: LT of <root>.fn.FLocal
               ll: GET_VAR 'lt: LT of <root>.fn.FLocal declared in <root>.fn.FLocal.<init>' type=LT of <root>.fn.FLocal origin=null
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.fn.FLocal>]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.fn.FLocal>]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
           overridden:
             public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.L
@@ -161,7 +161,7 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
               DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (ll: LL of <root>.L) declared in <root>.L'
                 <LL>: LT of <root>.<get-p>.PLocal
                 ll: GET_VAR 'lt: LT of <root>.<get-p>.PLocal declared in <root>.<get-p>.PLocal.<init>' type=LT of <root>.<get-p>.PLocal origin=null
-              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.<get-p>.PLocal>]'
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PLocal modality:FINAL visibility:local superTypes:[<root>.L<LT of <root>.<get-p>.PLocal>]' type=kotlin.Unit
           FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
             overridden:
               public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.L

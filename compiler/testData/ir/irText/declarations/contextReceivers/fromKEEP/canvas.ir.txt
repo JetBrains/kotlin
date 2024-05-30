@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/canvas.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.Circle [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Circle modality:FINAL visibility:public superTypes:[<root>.Shape]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Circle modality:FINAL visibility:public superTypes:[<root>.Shape]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Shape
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/canvas.kt
     CONSTRUCTOR visibility:private <> () returnType:<root>.MyCanvas [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:MyCanvas modality:FINAL visibility:public superTypes:[<root>.Canvas]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:MyCanvas modality:FINAL visibility:public superTypes:[<root>.Canvas]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Canvas

@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.A<T of <root>.A> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<T of <root>.A, T of <root>.A>; kotlin.collections.Map<T of <root>.A, T of <root>.A>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<T of <root>.A, T of <root>.A>; kotlin.collections.Map<T of <root>.A, T of <root>.A>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in java.util.SortedMap
@@ -213,7 +213,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.B<T of <root>.B> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<T of <root>.B, T of <root>.B>; kotlin.collections.Map<T of <root>.B, T of <root>.B>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[java.util.SortedMap<T of <root>.B, T of <root>.B>; kotlin.collections.Map<T of <root>.B, T of <root>.B>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun clear (): kotlin.Unit declared in java.util.SortedMap

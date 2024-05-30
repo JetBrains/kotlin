@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/common.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:ABSTRACT visibility:public superTypes:[<root>.Base; <root>.OtherBase]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:ABSTRACT visibility:public superTypes:[<root>.Base; <root>.OtherBase]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/jvm.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.Platform [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Derived'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Platform modality:FINAL visibility:public superTypes:[<root>.Derived]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Platform modality:FINAL visibility:public superTypes:[<root>.Derived]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Derived
@@ -115,4 +115,4 @@ FILE fqName:<root> fileName:/jvm.kt
           d: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Platform' type=<root>.Platform origin=null
           e: CONST String type=kotlin.String value="O"
           f: CONST String type=kotlin.String value="K"
-  TYPEALIAS name:Expect visibility:public expandedType:kotlin.String[actual]
+  TYPEALIAS name:Expect visibility:public expandedType:kotlin.String[actual] 

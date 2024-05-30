@@ -45,7 +45,7 @@
     @39:0..41:1 CONSTRUCTOR visibility:private <> () returnType:<root>.E [primary]
       @39:0..41:1 BLOCK_BODY
         @39:0..41:1 ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
-        @39:0..41:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.E>]'
+        @39:0..41:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.E>]' type=kotlin.Unit
     @40:4..10 ENUM_ENTRY name:SINGLE
       @40:4..10 EXPRESSION_BODY
         @40:4..10 ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.E'
@@ -86,7 +86,7 @@
     @43:0..45:1 CONSTRUCTOR visibility:private <> () returnType:<root>.O [primary]
       @43:0..45:1 BLOCK_BODY
         @43:0..45:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @43:0..45:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        @43:0..45:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @44:4..16 FUN name:foo visibility:public modality:FINAL <> ($this:<root>.O) returnType:kotlin.Unit
       @44:4..16 VALUE_PARAMETER name:<this> type:<root>.O
       @44:14..16 BLOCK_BODY

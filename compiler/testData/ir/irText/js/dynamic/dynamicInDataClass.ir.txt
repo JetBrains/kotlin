@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/dynamicInDataClass.kt
       VALUE_PARAMETER name:b index:1 type:dynamic
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Some) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Some
       BLOCK_BODY

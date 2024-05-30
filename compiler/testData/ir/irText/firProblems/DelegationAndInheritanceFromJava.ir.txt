@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       VALUE_PARAMETER name:b index:0 type:<root>.Foo.B
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Impl modality:FINAL visibility:public superTypes:[<root>.Foo.A; <root>.Foo.B]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Impl modality:FINAL visibility:public superTypes:[<root>.Foo.A; <root>.Foo.B]' type=kotlin.Unit
     FUN DELEGATED_MEMBER name:add visibility:public modality:OPEN <> ($this:<root>.Impl, element:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean
       overridden:
         public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.A

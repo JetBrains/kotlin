@@ -143,20 +143,6 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
 
         val irBuiltIns = ir.irPluginContext.irBuiltIns
 
-        for (function in functionsUnderTest) {
-            // IrInstanceInitializerCall after Fir2Ir has the type of the owner class declaration.
-            // But after deserialization it always has Unit type. This is a hard-coded logic since 2019.
-            // To avoid discrepancies in comparison of proto bodies between fully linked and partially linked IR,
-            // let's explicitly set the type of IrInstanceInitializerCalls to Unit.
-            // TODO: Drop this workaround after the fix of KT-72627.
-            function.fullyLinkedIrFunction.transformChildrenVoid(object : IrElementTransformerVoid() {
-                override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression {
-                    expression.type = irBuiltIns.unitType
-                    return super.visitInstanceInitializerCall(expression)
-                }
-            })
-        }
-
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val libraries = (sequenceOf(info) + module.allDependencies.asSequence()

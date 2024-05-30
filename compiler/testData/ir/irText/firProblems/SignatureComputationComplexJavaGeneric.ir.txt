@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER name:x index:0 type:T of <root>.Inv
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inv modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inv modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/test.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JavaClass1'
           <T>: TT of <root>.Test_1
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test_1 modality:FINAL visibility:public superTypes:[<root>.JavaClass1<TT of <root>.Test_1>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test_1 modality:FINAL visibility:public superTypes:[<root>.JavaClass1<TT of <root>.Test_1>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaClass1
@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/test.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JavaClass2'
           <T>: TT of <root>.Test_2
           <R>: <root>.Inv<TT of <root>.Test_2>
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test_2 modality:FINAL visibility:public superTypes:[<root>.JavaClass2<TT of <root>.Test_2, <root>.Inv<TT of <root>.Test_2>>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test_2 modality:FINAL visibility:public superTypes:[<root>.JavaClass2<TT of <root>.Test_2, <root>.Inv<TT of <root>.Test_2>>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaClass2

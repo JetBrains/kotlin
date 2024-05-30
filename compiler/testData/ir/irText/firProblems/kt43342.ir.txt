@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/kt43342.kt
       VALUE_PARAMETER name:map index:0 type:kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ControlFlowInfo modality:OPEN visibility:public superTypes:[kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ControlFlowInfo modality:OPEN visibility:public superTypes:[kotlin.collections.Map<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>]' type=kotlin.Unit
     FUN DELEGATED_MEMBER name:containsKey visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>, key:K of <root>.ControlFlowInfo) returnType:kotlin.Boolean
       overridden:
         public abstract fun containsKey (key: K of kotlin.collections.Map): kotlin.Boolean declared in kotlin.collections.Map
@@ -135,7 +135,7 @@ FILE fqName:<root> fileName:/kt43342.kt
           <K>: kotlin.String
           <V>: kotlin.String
           map: GET_VAR 'map: kotlin.collections.Map<kotlin.String, kotlin.String> declared in <root>.StringFlowInfo.<init>' type=kotlin.collections.Map<kotlin.String, kotlin.String> origin=null
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:StringFlowInfo modality:FINAL visibility:public superTypes:[<root>.ControlFlowInfo<kotlin.String, kotlin.String>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:StringFlowInfo modality:FINAL visibility:public superTypes:[<root>.ControlFlowInfo<kotlin.String, kotlin.String>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<kotlin.String, kotlin.String>, key:kotlin.String) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun containsKey (key: K of <root>.ControlFlowInfo): kotlin.Boolean declared in <root>.ControlFlowInfo

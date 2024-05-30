@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/kt45236.kt
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.NetRequestStatus'
             <T>: T of <root>.NetRequestStatus.Error
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Error modality:FINAL visibility:public [data] superTypes:[<root>.NetRequestStatus<T of <root>.NetRequestStatus.Error>]'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Error modality:FINAL visibility:public [data] superTypes:[<root>.NetRequestStatus<T of <root>.NetRequestStatus.Error>]' type=kotlin.Unit
       FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>) returnType:kotlin.Throwable [operator]
         $this: VALUE_PARAMETER name:<this> type:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
         BLOCK_BODY
@@ -161,7 +161,7 @@ FILE fqName:<root> fileName:/kt45236.kt
     CONSTRUCTOR visibility:protected <> () returnType:<root>.NetRequestStatus<T of <root>.NetRequestStatus> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NetRequestStatus modality:SEALED visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NetRequestStatus modality:SEALED visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

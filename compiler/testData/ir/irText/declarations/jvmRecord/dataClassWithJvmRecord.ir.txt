@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/dataClassWithJvmRecord.kt
       VALUE_PARAMETER name:name index:0 type:kotlin.String
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'protected/*protected and package*/ constructor <init> () declared in java.lang.Record'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyRec modality:FINAL visibility:public [data] superTypes:[java.lang.Record]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyRec modality:FINAL visibility:public [data] superTypes:[java.lang.Record]' type=kotlin.Unit
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.MyRec) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.MyRec
       BLOCK_BODY

@@ -3,7 +3,7 @@
     @3:0..23:1 CONSTRUCTOR visibility:public <> () returnType:test.Test [primary]
       @3:0..23:1 BLOCK_BODY
         @3:0..23:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @3:0..23:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        @3:0..23:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @5:4..18 FUN name:test0 visibility:public modality:FINAL <> ($this:test.Test) returnType:kotlin.Unit
       @5:4..18 VALUE_PARAMETER name:<this> type:test.Test
       @5:16..18 BLOCK_BODY

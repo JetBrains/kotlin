@@ -3,7 +3,7 @@
     @5:0..13:1 CONSTRUCTOR visibility:public <> () returnType:<root>.MyClass [primary]
       @5:0..13:1 BLOCK_BODY
         @5:0..13:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @5:0..13:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        @5:0..13:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @6:4..8:5 PROPERTY name:lazyProp visibility:public modality:FINAL [delegated,val]
       @6:17..8:5 FIELD PROPERTY_DELEGATE name:lazyProp$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]
         @6:20..8:5 EXPRESSION_BODY

@@ -6,7 +6,7 @@
       @3:8..18 VALUE_PARAMETER name:z index:2 type:kotlin.Any
       @0:12..4:1 BLOCK_BODY
         @0:12..4:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @0:12..4:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
+        @0:12..4:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public [data] superTypes:[kotlin.Any]' type=kotlin.Unit
     @1:8..18 PROPERTY name:x visibility:public modality:FINAL [val]
       @1:8..18 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         @1:8..18 EXPRESSION_BODY

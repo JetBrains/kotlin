@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           BLOCK_BODY
             TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.A'
-            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Y modality:FINAL visibility:private superTypes:[<root>.A]'
+            INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Y modality:FINAL visibility:private superTypes:[<root>.A]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>, other:<root>.A) returnType:kotlin.Int [fake_override,operator]
           overridden:
             public final fun compareTo (other: <root>.A): kotlin.Int declared in <root>.A
@@ -138,7 +138,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.A
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]' type=kotlin.Unit
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
           value: CONST String type=kotlin.String value="default"
@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           <E>: <root>.A
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]' type=kotlin.Unit
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
           value: GET_VAR 'arg: kotlin.String declared in <root>.A.<init>' type=kotlin.String origin=null

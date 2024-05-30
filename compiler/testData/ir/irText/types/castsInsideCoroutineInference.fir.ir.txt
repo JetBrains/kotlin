@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
     CONSTRUCTOR visibility:public <> () returnType:<root>.ChannelCoroutine<E of <root>.ChannelCoroutine> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ChannelCoroutine modality:OPEN visibility:public superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ChannelCoroutine modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
       VALUE_PARAMETER name:collector index:0 type:<root>.FlowCollector<T of <root>.SafeCollector>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SafeCollector modality:FINAL visibility:public superTypes:[<root>.FlowCollector<T of <root>.SafeCollector>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SafeCollector modality:FINAL visibility:public superTypes:[<root>.FlowCollector<T of <root>.SafeCollector>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.FlowCollector

@@ -10,7 +10,7 @@
       @1:39..62 VALUE_PARAMETER name:description index:0 type:kotlin.String
       @1:38..63 BLOCK_BODY
         @0:0..1:63 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @0:0..1:63 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:internal superTypes:[kotlin.Annotation]'
+        @0:0..1:63 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:internal superTypes:[kotlin.Annotation]' type=kotlin.Unit
     @1:39..62 PROPERTY name:description visibility:public modality:FINAL [val]
       @1:39..62 FIELD PROPERTY_BACKING_FIELD name:description type:kotlin.String visibility:private [final]
         @1:39..62 EXPRESSION_BODY

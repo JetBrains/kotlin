@@ -3,7 +3,7 @@
     @2:0..77:1 CONSTRUCTOR visibility:public <> () returnType:test.Test [primary]
       @2:0..77:1 BLOCK_BODY
         @2:0..77:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @2:0..77:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]'
+        @2:0..77:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @4:4..18 PROPERTY name:test0 visibility:public modality:FINAL [val]
       @4:4..18 FIELD PROPERTY_BACKING_FIELD name:test0 type:kotlin.Int visibility:private [final]
         @4:16..18 EXPRESSION_BODY
