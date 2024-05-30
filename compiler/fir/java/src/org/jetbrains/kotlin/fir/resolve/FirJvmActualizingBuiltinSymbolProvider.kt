@@ -3,20 +3,24 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.session
+package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.hasAnnotationOrInsideAnnotatedClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * It's initialized on the top of module-based providers for platform source sets.
@@ -31,13 +35,25 @@ import org.jetbrains.kotlin.name.StandardClassIds
  *
  * Those actuals can be treated as declarations in a virtual file
  */
-class FirJvmActualizingBuiltinSymbolProvider(
+class FirJvmActualizingBuiltinSymbolProvider private constructor(
+    session: FirSession,
+    kotlinScopeProvider: FirKotlinScopeProvider,
     private val refinedSourceSymbolProviders: List<FirSymbolProvider>,
-    private val builtinSymbolProvider: FirBuiltinSymbolProvider,
-) : FirSymbolProvider(builtinSymbolProvider.session) {
-    init {
-        require(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation))
+) : FirSymbolProvider(session) {
+    companion object {
+        fun initializeIfNeeded(
+            session: FirSession,
+            kotlinScopeProvider: FirKotlinScopeProvider,
+            dependencies: List<FirSymbolProvider>,
+        ): FirJvmActualizingBuiltinSymbolProvider? {
+            return runIf(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && !session.moduleData.isCommon) {
+                val refinedSourceSymbolProviders = dependencies.filter { it.session.kind == FirSession.Kind.Source }
+                FirJvmActualizingBuiltinSymbolProvider(session, kotlinScopeProvider, refinedSourceSymbolProviders)
+            }
+        }
     }
+
+    val builtinSymbolProvider: FirBuiltinSymbolProvider = FirBuiltinSymbolProvider(session, session.moduleData, kotlinScopeProvider)
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         for (symbolProvider in refinedSourceSymbolProviders) {

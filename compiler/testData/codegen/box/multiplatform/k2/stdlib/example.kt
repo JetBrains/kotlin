@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2: ANY
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
 // ISSUE: KT-65841

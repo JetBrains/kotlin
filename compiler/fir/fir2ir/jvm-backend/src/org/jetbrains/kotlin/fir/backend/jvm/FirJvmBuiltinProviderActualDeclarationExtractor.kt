@@ -6,10 +6,16 @@
 package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.backend.Fir2IrClassifierStorage
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrDeclarationStorage
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.FirJvmActualizingBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -23,18 +29,33 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /*
  * Extracts actual top-level declarations from the builtin symbol provider
  * But only for expect declarations marked with `ActualizeByJvmBuiltinProvider` annotation
  */
-class FirJvmBuiltinProviderActualDeclarationExtractor(
-    val provider: FirBuiltinSymbolProvider,
+class FirJvmBuiltinProviderActualDeclarationExtractor private constructor(
+    private val provider: FirBuiltinSymbolProvider,
     private val classifierStorage: Fir2IrClassifierStorage,
     private val declarationStorage: Fir2IrDeclarationStorage,
 ) : IrExtraActualDeclarationExtractor() {
     companion object {
         val ActualizeByJvmBuiltinProviderFqName: FqName = StandardClassIds.Annotations.ActualizeByJvmBuiltinProvider.asSingleFqName()
+
+        fun initializeIfNeeded(platformComponents: Fir2IrComponents): IrExtraActualDeclarationExtractor? {
+            val session = platformComponents.session
+            return runIf(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+                val dependencyProviders = (session.symbolProvider as FirCachingCompositeSymbolProvider).providers
+                val firJvmActualizingBuiltinSymbolProvider =
+                    dependencyProviders.filterIsInstance<FirJvmActualizingBuiltinSymbolProvider>().single()
+                FirJvmBuiltinProviderActualDeclarationExtractor(
+                    firJvmActualizingBuiltinSymbolProvider.builtinSymbolProvider,
+                    platformComponents.classifierStorage,
+                    platformComponents.declarationStorage
+                )
+            }
+        }
     }
 
     override fun extract(expectIrClass: IrClass): IrClassSymbol? {

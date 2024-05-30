@@ -41,11 +41,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
-import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.jvm.initializeActualDeclarationExtractorIfStdlib
+import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.backend.utils.CodeFragmentConversionData
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
 import org.jetbrains.kotlin.fir.backend.utils.conversionData
@@ -286,7 +282,7 @@ internal class KaFirCompilerFacility(
             DefaultBuiltIns.Instance,
             ::JvmIrTypeSystemContext,
             JvmIrSpecialAnnotationSymbolProvider,
-            ::initializeActualDeclarationExtractorIfStdlib,
+            FirJvmBuiltinProviderActualDeclarationExtractor.Companion::initializeIfNeeded,
         )
     }
 
