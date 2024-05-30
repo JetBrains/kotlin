@@ -26047,6 +26047,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("kt68648.kt")
+      public void testKt68648() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/kt68648.kt");
+      }
+
+      @Test
       @TestMetadata("modifierApplicability.kt")
       public void testModifierApplicability() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/modifierApplicability.kt");
