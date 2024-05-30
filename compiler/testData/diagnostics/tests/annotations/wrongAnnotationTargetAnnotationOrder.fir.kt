@@ -12,14 +12,14 @@ public @interface GoodA {}
 
 // FILE: Main.kt
 interface Test {
-    <!WRONG_ANNOTATION_TARGET!>@BadA<!>
+    @BadA
     val badName: String
 
     @GoodA
     val goodName: String
 }
 
-@field:BadA
+<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:BadA<!>
 val fieldedBadName: String = "badField"
 
 <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:GoodA<!>

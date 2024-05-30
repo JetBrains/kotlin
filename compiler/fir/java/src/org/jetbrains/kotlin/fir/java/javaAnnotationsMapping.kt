@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.toKtPsiSourceElement
+import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
@@ -268,16 +271,20 @@ private fun buildFirAnnotation(
         JvmStandardClassIds.Annotations.Java.Deprecated -> StandardClassIds.Annotations.Deprecated
         else -> classId
     }?.toLookupTag()
+    val isJavaAnnotationMappedToKotlin = lookupTag != classId?.toLookupTag()
+    val sourceForTypeRef = source.butIf(isJavaAnnotationMappedToKotlin) {
+        it?.fakeElement(KtFakeSourceElementKind.JavaAnnotationMappedToKotlin)
+    }
     val annotationTypeRef = if (lookupTag != null) {
         buildResolvedTypeRef {
             type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
-            this.source = source
+            this.source = sourceForTypeRef
         }
     } else {
         val unresolvedName = classId?.shortClassName ?: SpecialNames.NO_NAME_PROVIDED
         buildErrorTypeRef {
             diagnostic = ConeUnresolvedReferenceError(unresolvedName)
-            this.source = source
+            this.source = sourceForTypeRef
         }
     }
 
