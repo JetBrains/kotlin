@@ -90,8 +90,9 @@ fun <Context, Data> findKotlinBackendIr(context: Context, data: Data): IrElement
 fun <Context : ErrorReportingContext, Data> getIrValidator(checkTypes: Boolean): Action<Data, Context> =
     fun(state: ActionState, data: Data, context: Context) {
         if (!state.isValidationNeeded()) return
+        val messageCollector = context.messageCollector
         if (context !is BackendContextHolder) {
-            context.messageCollector.report(
+            messageCollector.report(
                 CompilerMessageSeverity.LOGGING,
                 "Cannot verify IR ${state.beforeOrAfter} ${state.phase}: insufficient context."
             )
@@ -99,17 +100,16 @@ fun <Context : ErrorReportingContext, Data> getIrValidator(checkTypes: Boolean):
         }
         val element = findKotlinBackendIr(context, data)
         if (element == null) {
-            context.messageCollector.report(
+            messageCollector.report(
                 CompilerMessageSeverity.LOGGING,
                 "Cannot verify IR ${state.beforeOrAfter} ${state.phase}: IR not found."
             )
             return
         }
-        val backendContext = context.heldBackendContext
-        validateIr(backendContext, IrVerificationMode.ERROR) {
+        validateIr(messageCollector, IrVerificationMode.ERROR) {
             performBasicIrValidation(
                 element,
-                backendContext.irBuiltIns,
+                context.heldBackendContext.irBuiltIns,
                 phaseName = "${state.beforeOrAfter.name.toLowerCaseAsciiOnly()} ${state.phase}",
                 checkTypes = checkTypes,
             )

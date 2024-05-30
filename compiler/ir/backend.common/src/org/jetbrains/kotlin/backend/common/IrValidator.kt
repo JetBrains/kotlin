@@ -175,7 +175,7 @@ sealed interface IrValidationContext {
 }
 
 private class IrValidationContextImpl(
-    private val errorReportingContext: ErrorReportingContext,
+    private val messageCollector: MessageCollector,
     private val mode: IrVerificationMode
 ) : IrValidationContext {
 
@@ -190,11 +190,10 @@ private class IrValidationContextImpl(
         hasValidationErrors = true
         val phaseMessage = if (phaseName.isNotEmpty()) "$phaseName: " else ""
         // TODO: render all element's parents.
-        errorReportingContext.report(
+        messageCollector.report(
             severity,
-            element,
-            file,
             "[IR VALIDATION] ${phaseMessage}${"$message\n" + element.render()}",
+            file?.let(element::getCompilerMessageLocation),
         )
     }
 
@@ -206,18 +205,18 @@ private class IrValidationContextImpl(
 }
 
 /**
- * Logs validation errors encountered during the execution of the [runValidationRoutines] closure into [errorReportingContext].
+ * Logs validation errors encountered during the execution of the [runValidationRoutines] closure into [messageCollector].
  *
  * If [mode] is [IrVerificationMode.ERROR], throws [IrValidationError] after [runValidationRoutines] has finished,
  * thus allowing to collect as many errors as possible instead of aborting after the first one.
  */
 fun validateIr(
-    errorReportingContext: ErrorReportingContext,
+    messageCollector: MessageCollector,
     mode: IrVerificationMode,
     runValidationRoutines: IrValidationContext.() -> Unit,
 ) {
     if (mode == IrVerificationMode.NONE) return
-    val validationContext = IrValidationContextImpl(errorReportingContext, mode)
+    val validationContext = IrValidationContextImpl(messageCollector, mode)
     validationContext.runValidationRoutines()
     validationContext.throwValidationErrorIfNeeded()
 }

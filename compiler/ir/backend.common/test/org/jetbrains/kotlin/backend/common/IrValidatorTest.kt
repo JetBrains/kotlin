@@ -5,16 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.ir.Ir
-import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -36,7 +31,6 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
@@ -45,19 +39,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.utils.TestMessageCollector
 import org.jetbrains.kotlin.test.utils.TestMessageCollector.Message
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.reflect.KProperty
 import kotlin.test.*
 
 class IrValidatorTest {
 
     private lateinit var messageCollector: TestMessageCollector
-    private lateinit var context: TestBackendContext
 
     @BeforeTest
     fun setUp() {
         messageCollector = TestMessageCollector()
-        context = TestBackendContext(TestIrBuiltins, messageCollector)
     }
 
     private fun buildInvalidIrExpressionWithNoLocations(): IrElement {
@@ -105,10 +96,10 @@ class IrValidatorTest {
 
     private fun testValidation(mode: IrVerificationMode, tree: IrElement, expectedMessages: List<Message>) {
         runValidationAndAssert(mode) {
-            validateIr(context, mode) {
+            validateIr(messageCollector, mode) {
                 performBasicIrValidation(
                     tree,
-                    context.irBuiltIns,
+                    TestIrBuiltins,
                     phaseName = "IrValidatorTest",
                     checkTypes = true,
                 )
@@ -276,45 +267,6 @@ class IrValidatorTest {
             ),
         )
     }
-}
-
-private class TestBackendContext(
-    override val irBuiltIns: IrBuiltIns,
-    override val messageCollector: TestMessageCollector
-) : CommonBackendContext {
-    override val builtIns: KotlinBuiltIns
-        get() = shouldNotBeCalled()
-
-    override val ir: Ir<TestBackendContext>
-        get() = shouldNotBeCalled()
-
-    override val configuration: CompilerConfiguration
-        get() = shouldNotBeCalled()
-
-    override val scriptMode: Boolean
-        get() = shouldNotBeCalled()
-
-    override val mapping: Mapping
-        get() = shouldNotBeCalled()
-
-    override val innerClassesSupport: InnerClassesSupport
-        get() = shouldNotBeCalled()
-
-    override val typeSystem: IrTypeSystemContext
-        get() = shouldNotBeCalled()
-
-    override val sharedVariablesManager: SharedVariablesManager
-        get() = shouldNotBeCalled()
-
-    override val internalPackageFqn: FqName
-        get() = shouldNotBeCalled()
-
-    override val irFactory: IrFactory
-        get() = IrFactoryImpl
-
-    override var inVerbosePhase: Boolean
-        get() = shouldNotBeCalled()
-        set(_) = shouldNotBeCalled()
 }
 
 private object TestIrBuiltins : IrBuiltIns() {
