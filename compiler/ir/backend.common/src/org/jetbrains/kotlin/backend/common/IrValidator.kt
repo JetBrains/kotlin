@@ -109,7 +109,7 @@ class DuplicateIrNodeError(element: IrElement) : IrValidationError(element.rende
 /**
  * Verifies common IR invariants that should hold in all the backends.
  */
-fun performBasicIrValidation(
+private fun performBasicIrValidation(
     element: IrElement,
     irBuiltIns: IrBuiltIns,
     checkProperties: Boolean = false,
