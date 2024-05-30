@@ -387,6 +387,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object JavaRecordComponentField : KtFakeSourceElementKind()
 
     /**
+     * for Java annotations that have been replaced by an equivalent Kotlin version
+     */
+    object JavaAnnotationMappedToKotlin : KtFakeSourceElementKind()
+
+    /**
      * for the implicit field storing the delegated object for class delegation
      * with a fake source that refers to the KtExpression that creates the delegate
      */
