@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-68523
 
 data class Some<T>(val data: T & Any)
