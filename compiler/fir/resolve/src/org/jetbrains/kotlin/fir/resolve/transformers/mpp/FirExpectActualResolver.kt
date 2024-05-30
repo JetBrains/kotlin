@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.ExpectForActualMatchingData
@@ -60,8 +61,9 @@ object FirExpectActualResolver {
                     }
                     val transitiveDependsOn = actualSymbol.moduleData.allDependsOnDependencies
                     candidates.filter { expectSymbol ->
-                        actualSymbol != expectSymbol && (expectContainingClass != null /*match fake overrides*/ ||
-                                expectSymbol.isExpect && expectSymbol.moduleData in transitiveDependsOn)
+                        actualSymbol != expectSymbol &&
+                                (expectContainingClass != null && expectSymbol.visibility != Visibilities.Private /*match non-private fake overrides*/ ||
+                                        expectSymbol.isExpect && expectSymbol.moduleData in transitiveDependsOn)
                     }.groupBy { expectDeclaration ->
                         AbstractExpectActualMatcher.getCallablesMatchingCompatibility(
                             expectDeclaration,
