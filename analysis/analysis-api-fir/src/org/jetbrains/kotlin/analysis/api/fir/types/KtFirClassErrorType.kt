@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.types
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
@@ -55,7 +55,7 @@ internal class KaFirClassErrorType(
     @KaAnalysisNonPublicApi
     override val errorMessage: String get() = withValidityAssertion { coneDiagnostic.reason }
 
-    override val annotationsList: KaAnnotationsList by cached {
+    override val annotationsList: KaAnnotationList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
     }
 

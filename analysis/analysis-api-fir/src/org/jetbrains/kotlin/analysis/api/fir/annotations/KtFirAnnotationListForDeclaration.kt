@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KaFirAnnotationListForDeclaration private constructor(
     val firSymbol: FirBasedSymbol<*>,
     private val builder: KaSymbolByFirBuilder,
-) : KaAnnotationsList() {
+) : KaAnnotationList() {
     override val token: KaLifetimeToken get() = builder.token
     private val useSiteSession: FirSession get() = builder.rootSession
 
@@ -46,12 +46,12 @@ internal class KaFirAnnotationListForDeclaration private constructor(
         }
 
     companion object {
-        fun create(firSymbol: FirBasedSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationsList {
+        fun create(firSymbol: FirBasedSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationList {
             return when {
                 firSymbol is FirBackingFieldSymbol && firSymbol.propertySymbol.annotations.any { it.useSiteTarget == null } ->
                     KaFirAnnotationListForDeclaration(firSymbol, builder)
                 firSymbol.annotations.isEmpty() ->
-                    KaEmptyAnnotationsList(builder.token)
+                    KaEmptyAnnotationList(builder.token)
                 else ->
                     KaFirAnnotationListForDeclaration(firSymbol, builder)
             }

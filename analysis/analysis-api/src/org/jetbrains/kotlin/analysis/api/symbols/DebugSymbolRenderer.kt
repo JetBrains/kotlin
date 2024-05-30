@@ -316,7 +316,7 @@ public class DebugSymbolRenderer(
             is KaInitializerValue -> renderKtInitializerValue(value, printer)
             is KaContextReceiver -> renderContextReceiver(value, printer)
             is KaAnnotationApplication -> renderAnnotationApplication(value, printer)
-            is KaAnnotationsList -> renderAnnotationsList(value, printer)
+            is KaAnnotationList -> renderAnnotationsList(value, printer)
             is KtModule -> renderKtModule(value, printer)
             // Other custom values
             is Name -> printer.append(value.asString())
@@ -414,7 +414,7 @@ public class DebugSymbolRenderer(
         }
     }
 
-    private fun KaSession.renderAnnotationsList(value: KaAnnotationsList, printer: PrettyPrinter) {
+    private fun KaSession.renderAnnotationsList(value: KaAnnotationList, printer: PrettyPrinter) {
         renderList(value.annotations, printer, renderSymbolsFully = false)
     }
 

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types.base
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KaFe10AnnotationsList
+import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KaFe10AnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10DebugTypeRenderer
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -23,9 +23,9 @@ internal interface KaFe10Type : KaLifetimeOwner, KaAnnotated {
 
     val analysisContext: Fe10AnalysisContext
 
-    override val annotationsList: KaAnnotationsList
+    override val annotationsList: KaAnnotationList
         get() = withValidityAssertion {
-            KaFe10AnnotationsList.create(
+            KaFe10AnnotationList.create(
                 fe10Type.annotations,
                 analysisContext,
                 ignoreAnnotations = setOf(

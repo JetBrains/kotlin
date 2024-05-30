@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.ClassId
  * Entity which may have annotations applied inside. E.g, type or declaration
  */
 public interface KaAnnotated {
-    public val annotationsList: KaAnnotationsList
+    public val annotationsList: KaAnnotationList
 }
 
 public typealias KtAnnotated = KaAnnotated
@@ -21,7 +21,7 @@ public typealias KtAnnotated = KaAnnotated
  *
  * To check if annotation is present, please use [hasAnnotation].
  *
- * @see [KaAnnotationsList.annotations]
+ * @see [KaAnnotationList.annotations]
  */
 public val KaAnnotated.annotations: List<KaAnnotationApplication>
     get() = annotationsList.annotations
@@ -33,7 +33,7 @@ public val KaAnnotated.annotationInfos: List<KaAnnotationApplicationInfo>
 /**
  * Checks if entity has annotation with specified [classId] and filtered by [useSiteTargetFilter].
  *
- * @see [KaAnnotationsList.hasAnnotation]
+ * @see [KaAnnotationList.hasAnnotation]
  */
 public fun KaAnnotated.hasAnnotation(
     classId: ClassId,
@@ -43,7 +43,7 @@ public fun KaAnnotated.hasAnnotation(
 /**
  * A list of annotations applied with specified [classId] and filtered by [useSiteTargetFilter].
  *
- * @see [KaAnnotationsList.annotationClassIds]
+ * @see [KaAnnotationList.annotationClassIds]
  */
 public fun KaAnnotated.annotationsByClassId(
     classId: ClassId,
@@ -53,7 +53,7 @@ public fun KaAnnotated.annotationsByClassId(
 /**
  * A list of annotations applied.
  *
- * @see [KaAnnotationsList.annotationClassIds]
+ * @see [KaAnnotationList.annotationClassIds]
  */
 public val KaAnnotated.annotationClassIds: Collection<ClassId>
     get() = annotationsList.annotationClassIds

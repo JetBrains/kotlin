@@ -7,23 +7,23 @@ package org.jetbrains.kotlin.analysis.api.descriptors.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classIdForAnnotation
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.useSiteTarget
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 
-internal class KaFe10AnnotationsList private constructor(
+internal class KaFe10AnnotationList private constructor(
     private val fe10Annotations: Annotations,
     private val annotationsToIgnore: Set<ClassId>,
     private val analysisContext: Fe10AnalysisContext
-) : KaAnnotationsList() {
+) : KaAnnotationList() {
     override val token: KaLifetimeToken
         get() = analysisContext.token
 
@@ -84,11 +84,11 @@ internal class KaFe10AnnotationsList private constructor(
             fe10Annotations: Annotations,
             analysisContext: Fe10AnalysisContext,
             ignoreAnnotations: Set<ClassId> = emptySet(),
-        ): KaAnnotationsList {
+        ): KaAnnotationList {
             return if (!fe10Annotations.isEmpty()) {
-                KaFe10AnnotationsList(fe10Annotations, ignoreAnnotations, analysisContext)
+                KaFe10AnnotationList(fe10Annotations, ignoreAnnotations, analysisContext)
             } else {
-                KaEmptyAnnotationsList(analysisContext.token)
+                KaEmptyAnnotationList(analysisContext.token)
             }
         }
     }

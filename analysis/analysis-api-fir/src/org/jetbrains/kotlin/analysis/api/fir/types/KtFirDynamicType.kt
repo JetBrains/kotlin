@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
@@ -22,7 +22,7 @@ internal class KaFirDynamicType(
     private val builder: KaSymbolByFirBuilder,
 ) : KaDynamicType(), KaFirType {
     override val token: KaLifetimeToken get() = builder.token
-    override val annotationsList: KaAnnotationsList by cached {
+    override val annotationsList: KaAnnotationList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
     }
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }

@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
-import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KaFe10AnnotationsList
+import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KaFe10AnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.ktModality
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktMod
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.kaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.ktVisibility
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaPropertyGetterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -92,9 +92,9 @@ internal class KaFe10PsiDefaultPropertyGetterSymbol(
     override val visibility: Visibility
         get() = withValidityAssertion { propertyPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
-    override val annotationsList: KaAnnotationsList
+    override val annotationsList: KaAnnotationList
         get() = withValidityAssertion {
-            descriptor?.let { KaFe10AnnotationsList.create(it.annotations, analysisContext) } ?: KaEmptyAnnotationsList(token)
+            descriptor?.let { KaFe10AnnotationList.create(it.annotations, analysisContext) } ?: KaEmptyAnnotationList(token)
         }
 
     @OptIn(KaAnalysisApiInternals::class)

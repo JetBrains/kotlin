@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
  *
  * Annotation owners are usually implement [KaAnnotated]
  */
-public abstract class KaAnnotationsList : KaLifetimeOwner {
+public abstract class KaAnnotationList : KaLifetimeOwner {
     /**
      * A list of annotations applied.
      *
@@ -74,4 +74,6 @@ public abstract class KaAnnotationsList : KaLifetimeOwner {
     public abstract val annotationClassIds: Collection<ClassId>
 }
 
-public typealias KtAnnotationsList = KaAnnotationsList
+public typealias KtAnnotationsList = KaAnnotationList
+
+public typealias KaAnnotationsList = KaAnnotationList

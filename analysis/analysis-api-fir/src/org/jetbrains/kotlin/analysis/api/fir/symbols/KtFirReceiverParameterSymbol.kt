@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForReceiverParameter
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirReceiverParameterSymbolPointer
@@ -53,7 +53,7 @@ internal class KaFirReceiverParameterSymbol(
         KaFirReceiverParameterSymbolPointer(owningCallableSymbol.createPointer())
     }
 
-    override val annotationsList: KaAnnotationsList by cached {
+    override val annotationsList: KaAnnotationList by cached {
         KaFirAnnotationListForReceiverParameter.create(firSymbol, builder = analysisSession.firSymbolBuilder)
     }
 

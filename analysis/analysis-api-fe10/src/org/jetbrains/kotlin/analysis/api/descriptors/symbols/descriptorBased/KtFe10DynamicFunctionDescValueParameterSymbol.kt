@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
@@ -37,8 +37,8 @@ internal class KaFe10DynamicFunctionDescValueParameterSymbol(
     override val psi: PsiElement?
         get() = withValidityAssertion { null }
 
-    override val annotationsList: KaAnnotationsList
-        get() = withValidityAssertion { KaEmptyAnnotationsList(token) }
+    override val annotationsList: KaAnnotationList
+        get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 
     override val name: Name
         get() = withValidityAssertion { Name.identifier("args") }

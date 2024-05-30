@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 
 abstract class AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest : AbstractAnalysisApiAnnotationsOnDeclarationsTest() {
-    override fun renderAnnotations(analysisSession: KaSession, annotations: KaAnnotationsList): String {
+    override fun renderAnnotations(analysisSession: KaSession, annotations: KaAnnotationList): String {
         return TestAnnotationRenderer.renderAnnotationsWithMeta(analysisSession, annotations)
     }
 }

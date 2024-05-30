@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
@@ -76,8 +76,8 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
     override val visibility: Visibility
         get() = withValidityAssertion { propertyDescriptor.ktVisibility }
 
-    override val annotationsList: KaAnnotationsList
-        get() = withValidityAssertion { KaEmptyAnnotationsList(token) }
+    override val annotationsList: KaAnnotationList
+        get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 
     override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
         KaFe10NeverRestoringSymbolPointer()
@@ -117,8 +117,8 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
         override val psi: PsiElement?
             get() = withValidityAssertion { null }
 
-        override val annotationsList: KaAnnotationsList
-            get() = withValidityAssertion { KaEmptyAnnotationsList(token) }
+        override val annotationsList: KaAnnotationList
+            get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 
         override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
             KaFe10NeverRestoringSymbolPointer()

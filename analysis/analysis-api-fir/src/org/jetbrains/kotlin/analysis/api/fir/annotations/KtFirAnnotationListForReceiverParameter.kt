@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -21,7 +21,7 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
     private val firCallableSymbol: FirCallableSymbol<*>,
     private val receiverParameter: FirAnnotationContainer,
     private val builder: KaSymbolByFirBuilder,
-) : KaAnnotationsList() {
+) : KaAnnotationList() {
     private val useSiteSession: FirSession get() = builder.rootSession
     override val token: KaLifetimeToken get() = builder.token
 
@@ -47,10 +47,10 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
         }
 
     companion object {
-        fun create(firCallableSymbol: FirCallableSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationsList {
+        fun create(firCallableSymbol: FirCallableSymbol<*>, builder: KaSymbolByFirBuilder): KaAnnotationList {
             val receiverParameter = firCallableSymbol.receiverParameter
             return if (receiverParameter?.annotations?.isEmpty() != false) {
-                KaEmptyAnnotationsList(builder.token)
+                KaEmptyAnnotationList(builder.token)
             } else {
                 KaFirAnnotationListForReceiverParameter(firCallableSymbol, receiverParameter, builder)
             }

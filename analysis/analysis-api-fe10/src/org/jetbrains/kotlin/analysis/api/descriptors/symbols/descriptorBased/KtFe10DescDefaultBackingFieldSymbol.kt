@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KaFe10AnnotationsList
+import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KaFe10AnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KaFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KaFe10PsiDefaultBackingFieldSymbolPointer
@@ -39,8 +39,8 @@ internal class KaFe10DescDefaultBackingFieldSymbol(
     override val token: KaLifetimeToken
         get() = owningProperty.token
 
-    override val annotationsList: KaAnnotationsList
+    override val annotationsList: KaAnnotationList
         get() = withValidityAssertion {
-            KaFe10AnnotationsList.create(fieldDescriptor?.annotations ?: Annotations.EMPTY, analysisContext)
+            KaFe10AnnotationList.create(fieldDescriptor?.annotations ?: Annotations.EMPTY, analysisContext)
         }
 }

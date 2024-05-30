@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -45,7 +45,7 @@ internal class KaFirDestructuringDeclarationSymbol(
             }
         }
 
-    override val annotationsList: KaAnnotationsList
+    override val annotationsList: KaAnnotationList
         get() = withValidityAssertion { KaFirAnnotationListForDeclaration.create(firSymbol, builder) }
 
     override val entries: List<KaVariableSymbol>

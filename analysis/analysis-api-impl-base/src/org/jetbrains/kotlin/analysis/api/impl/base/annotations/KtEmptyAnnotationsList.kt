@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.analysis.api.impl.base.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 
-class KaEmptyAnnotationsList(override val token: KaLifetimeToken) : KaAnnotationsList() {
+class KaEmptyAnnotationList(override val token: KaLifetimeToken) : KaAnnotationList() {
     override val annotations: List<KaAnnotationApplication> get() = withValidityAssertion { emptyList() }
 
     override fun hasAnnotation(

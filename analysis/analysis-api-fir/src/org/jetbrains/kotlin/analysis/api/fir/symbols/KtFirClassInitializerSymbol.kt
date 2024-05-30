@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -33,5 +33,5 @@ internal class KaFirClassInitializerSymbol(
     override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.CLASS_MEMBER }
 
     override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
-    override val annotationsList: KaAnnotationsList get() = withValidityAssertion { KaEmptyAnnotationsList(token) }
+    override val annotationsList: KaAnnotationList get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 }

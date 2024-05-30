@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KaFirAnnotationListForType private constructor(
     val coneType: ConeKotlinType,
     private val builder: KaSymbolByFirBuilder,
-) : KaAnnotationsList() {
+) : KaAnnotationList() {
     override val token: KaLifetimeToken get() = builder.token
     private val useSiteSession: FirSession get() = builder.rootSession
 
@@ -63,9 +63,9 @@ internal class KaFirAnnotationListForType private constructor(
         }
 
     companion object {
-        fun create(coneType: ConeKotlinType, builder: KaSymbolByFirBuilder): KaAnnotationsList {
+        fun create(coneType: ConeKotlinType, builder: KaSymbolByFirBuilder): KaAnnotationList {
             return if (coneType.customAnnotations.isEmpty()) {
-                KaEmptyAnnotationsList(builder.token)
+                KaEmptyAnnotationList(builder.token)
             } else {
                 KaFirAnnotationListForType(coneType, builder)
             }
