@@ -196,4 +196,3 @@ method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$col
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$intType())
   ensures dom$RuntimeType$intFromRef(this.special$size) ==
     old(dom$RuntimeType$intFromRef(this.special$size))
-

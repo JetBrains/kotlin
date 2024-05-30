@@ -50,7 +50,8 @@ method class_Impl$constructor$fun_take$T_Int$return$T_class_global$class_Impl(lo
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Impl())
   ensures acc(T_class_global$class_Impl(ret), wildcard)
-  ensures ret.class_Impl$member_number == local$number
+  ensures (unfolding acc(T_class_global$class_Impl(ret), wildcard) in
+      ret.class_Impl$member_number == local$number)
 
 
 method class_Second$getter_number(this: Ref) returns (ret: Ref)

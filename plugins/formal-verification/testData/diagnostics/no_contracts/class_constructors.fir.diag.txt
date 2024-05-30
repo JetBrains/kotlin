@@ -57,7 +57,8 @@ method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(loca
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Bar())
   ensures acc(T_class_global$class_Bar(ret), wildcard)
-  ensures ret.class_Bar$member_a == local$a
+  ensures (unfolding acc(T_class_global$class_Bar(ret), wildcard) in
+      ret.class_Bar$member_a == local$a)
 
 
 method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()

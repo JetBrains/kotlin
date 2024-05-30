@@ -69,3 +69,21 @@ fun <!VIPER_TEXT!>nonNullableReceiverSafeGet<!>(): Boolean {
     val f: Baz = Baz()
     return f?.x == null
 }
+
+open class ClassI(val x: Int, val y: Int) {
+    open val z: Z = Z()
+}
+
+class ClassII(final override val z: Z) : ClassI(10, 10)
+
+
+@OptIn(ExperimentalContracts::class)
+fun <!VIPER_TEXT!>checkPrimary<!>(x: Int, y: Int): Boolean {
+    contract {
+        returns(false) implies false
+    }
+    val classI = ClassI(x, y)
+    // The second example doesn't work now but hopefully will be working with the upcoming PR.
+    // val z = Z()
+    return (x != y || classI.x == classI.y) // && ClassII(z).z == z
+}

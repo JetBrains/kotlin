@@ -9,7 +9,8 @@ method class_B$constructor$fun_take$T_class_global$class_FieldB$return$T_class_g
   ensures acc(T_class_global$class_FieldB(local$fieldOverride), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_B())
   ensures acc(T_class_global$class_B(ret), wildcard)
-  ensures ret.class_A$member_fieldOverride == local$fieldOverride
+  ensures (unfolding acc(T_class_global$class_B(ret), wildcard) in
+      ret.class_A$member_fieldOverride == local$fieldOverride)
 
 
 method class_FieldB$constructor$fun_take$$return$T_class_global$class_FieldB()
@@ -64,7 +65,8 @@ method class_SecondBackingFieldClass$constructor$fun_take$T_Int$return$T_class_g
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_SecondBackingFieldClass())
   ensures acc(T_class_global$class_SecondBackingFieldClass(ret), wildcard)
-  ensures ret.class_FirstBackingFieldClass$member_x == local$x
+  ensures (unfolding acc(T_class_global$class_SecondBackingFieldClass(ret), wildcard) in
+      ret.class_FirstBackingFieldClass$member_x == local$x)
 
 
 method global$fun_createBFsAndNoBF$fun_take$$return$T_Unit()

@@ -226,16 +226,19 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                         returnVariable.accessInvariants() +
                         contractVisitor.getPostconditions(ContractVisitorContext(returnVariable, symbol)) +
                         subSignature.stdLibPostConditions(returnVariable) +
-                        primaryConstructorInvariants(returnVariable)
+                        listOfNotNull(primaryConstructorInvariants(returnVariable))
 
-            fun primaryConstructorInvariants(returnVariable: VariableEmbedding) =
-                params.mapNotNull { param ->
+            fun primaryConstructorInvariants(returnVariable: VariableEmbedding): ExpEmbedding? {
+                val invariants = params.mapNotNull { param ->
                     constructorParamSymbolsToFields[param.symbol]?.let { field ->
                         (field.accessPolicy == AccessPolicy.ALWAYS_READABLE).ifTrue {
                             EqCmp(PrimitiveFieldAccess(returnVariable, field), param)
                         }
                     }
                 }
+                return if (invariants.isEmpty()) null
+                else UnfoldingClassPredicateEmbedding(returnVariable, invariants.toConjunction())
+            }
 
             override val declarationSource: KtSourceElement? = symbol.source
         }

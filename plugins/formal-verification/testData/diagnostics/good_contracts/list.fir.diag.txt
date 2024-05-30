@@ -275,4 +275,3 @@ method pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin
     dom$RuntimeType$intFromRef(this.special$size) == 0
   ensures !dom$RuntimeType$boolFromRef(ret) ==>
     dom$RuntimeType$intFromRef(this.special$size) > 0
-

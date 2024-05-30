@@ -48,7 +48,8 @@ method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(loca
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(T_class_global$class_Foo(ret), wildcard)
-  ensures ret.class_Foo$member_x == local$x
+  ensures (unfolding acc(T_class_global$class_Foo(ret), wildcard) in
+      ret.class_Foo$member_x == local$x)
 
 
 method global$ext_getter_succ$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
@@ -77,7 +78,8 @@ method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(loca
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(T_class_global$class_Foo(ret), wildcard)
-  ensures ret.class_Foo$member_x == local$x
+  ensures (unfolding acc(T_class_global$class_Foo(ret), wildcard) in
+      ret.class_Foo$member_x == local$x)
 
 
 method global$ext_getter_strange$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)

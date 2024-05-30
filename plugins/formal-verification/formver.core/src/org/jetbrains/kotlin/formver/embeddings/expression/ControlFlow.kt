@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.formver.embeddings.expression.debug.*
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.linearization.addLabel
 import org.jetbrains.kotlin.formver.linearization.pureToViper
-import org.jetbrains.kotlin.formver.viper.ast.Exp
-import org.jetbrains.kotlin.formver.viper.ast.Label
-import org.jetbrains.kotlin.formver.viper.ast.Stmt
+import org.jetbrains.kotlin.formver.viper.ast.*
 
 // TODO: make a nice BlockBuilder interface.
 data class Block(val exps: List<ExpEmbedding>) : OptionalResultExpEmbedding {
@@ -140,6 +138,35 @@ data class NonDeterministically(val exp: ExpEmbedding) : UnitResultExpEmbedding,
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
         get() = listOf(exp)
+}
+
+data class UnfoldingClassPredicateEmbedding(val predicated: VariableEmbedding, override val inner: ExpEmbedding) :
+    UnaryDirectResultExpEmbedding {
+    override val type: TypeEmbedding = inner.type
+    private fun toViperImpl(ctx: LinearizationContext, action: ExpEmbedding.() -> Exp): Exp {
+        val predicatedType = predicated.type
+        check(predicatedType is ClassTypeEmbedding) {
+            "Built-in types do not have predicates."
+        }
+        return Exp.Unfolding(
+            Exp.PredicateAccess(
+                predicatedType.predicate.name,
+                listOf(predicated.pureToViper(false)),
+                PermExp.WildcardPerm(),
+                pos = ctx.source.asPosition,
+                info = sourceRole.asInfo
+            ),
+            inner.action()
+        )
+    }
+
+    override fun toViper(ctx: LinearizationContext): Exp = toViperImpl(ctx) {
+        toViper(ctx)
+    }
+
+    override fun toViperBuiltinType(ctx: LinearizationContext): Exp = toViperImpl(ctx) {
+        toViperBuiltinType(ctx)
+    }
 }
 
 // Note: this is always a *real* Viper method call.

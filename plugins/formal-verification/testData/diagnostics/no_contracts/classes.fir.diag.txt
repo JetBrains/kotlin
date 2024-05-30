@@ -8,8 +8,9 @@ method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Fo
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(T_class_global$class_Foo(ret), wildcard)
-  ensures ret.class_Foo$member_a == local$a
-  ensures ret.class_Foo$member_b == local$b
+  ensures (unfolding acc(T_class_global$class_Foo(ret), wildcard) in
+      ret.class_Foo$member_a == local$a &&
+      ret.class_Foo$member_b == local$b)
 
 
 method global$fun_createFoo$fun_take$$return$T_class_global$class_Foo()
@@ -42,7 +43,8 @@ method class_Bar$constructor$fun_take$NT_class_global$class_Bar$return$T_class_g
     acc(T_class_global$class_Bar(local$a), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Bar())
   ensures acc(T_class_global$class_Bar(ret), wildcard)
-  ensures ret.class_Bar$member_a == local$a
+  ensures (unfolding acc(T_class_global$class_Bar(ret), wildcard) in
+      ret.class_Bar$member_a == local$a)
 
 
 method global$fun_createBar$fun_take$$return$T_Unit() returns (ret$0: Ref)
@@ -63,7 +65,8 @@ method class_Baz$constructor$fun_take$T_Int$return$T_class_global$class_Baz(loca
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Baz())
   ensures acc(T_class_global$class_Baz(ret), wildcard)
-  ensures ret.class_Baz$member_c == local$c
+  ensures (unfolding acc(T_class_global$class_Baz(ret), wildcard) in
+      ret.class_Baz$member_c == local$c)
 
 
 method global$fun_createBaz$fun_take$$return$T_Unit() returns (ret$0: Ref)

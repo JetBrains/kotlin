@@ -211,3 +211,46 @@ method global$fun_nonNullableReceiverSafeGet$fun_take$$return$T_Boolean()
   goto label$ret$0
   label label$ret$0
 }
+
+/backing_field_getters.kt:(1681,1693): info: Generated Viper text for checkPrimary:
+field class_ClassI$member_x: Ref
+
+field class_ClassI$member_y: Ref
+
+field class_ClassI$member_z: Ref
+
+method class_ClassI$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_ClassI(local$x: Ref,
+  local$y: Ref)
+  returns (ret: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_ClassI())
+  ensures acc(T_class_global$class_ClassI(ret), wildcard)
+  ensures (unfolding acc(T_class_global$class_ClassI(ret), wildcard) in
+      ret.class_ClassI$member_x == local$x &&
+      ret.class_ClassI$member_y == local$y)
+
+
+method global$fun_checkPrimary$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Ref,
+  local$y: Ref)
+  returns (ret$0: Ref)
+  ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret$0), dom$RuntimeType$boolType())
+  ensures dom$RuntimeType$boolFromRef(ret$0) == false ==> false
+{
+  var local0$classI: Ref
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$x), dom$RuntimeType$intType())
+  inhale dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(local$y), dom$RuntimeType$intType())
+  local0$classI := class_ClassI$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_ClassI(local$x,
+    local$y)
+  if (!(local$x == local$y)) {
+    ret$0 := dom$RuntimeType$boolToRef(true)
+  } else {
+    var anonymous$0: Ref
+    var anonymous$1: Ref
+    unfold acc(T_class_global$class_ClassI(local0$classI), wildcard)
+    anonymous$0 := local0$classI.class_ClassI$member_x
+    unfold acc(T_class_global$class_ClassI(local0$classI), wildcard)
+    anonymous$1 := local0$classI.class_ClassI$member_y
+    ret$0 := dom$RuntimeType$boolToRef(anonymous$0 == anonymous$1)
+  }
+  goto label$ret$0
+  label label$ret$0
+}

@@ -5,7 +5,8 @@ method class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_I
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_IntWrapper())
   ensures acc(T_class_global$class_IntWrapper(ret), wildcard)
-  ensures ret.class_IntWrapper$member_n == local$n
+  ensures (unfolding acc(T_class_global$class_IntWrapper(ret), wildcard) in
+      ret.class_IntWrapper$member_n == local$n)
 
 
 method class_IntWrapper$getter_succ(this: Ref) returns (ret: Ref)
@@ -38,7 +39,8 @@ method class_Bar$constructor$fun_take$T_class_global$class_Foo$return$T_class_gl
   ensures acc(T_class_global$class_Foo(local$f), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Bar())
   ensures acc(T_class_global$class_Bar(ret), wildcard)
-  ensures ret.class_Bar$member_f == local$f
+  ensures (unfolding acc(T_class_global$class_Bar(ret), wildcard) in
+      ret.class_Bar$member_f == local$f)
 
 
 method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$a: Ref,
@@ -46,8 +48,9 @@ method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Fo
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_Foo())
   ensures acc(T_class_global$class_Foo(ret), wildcard)
-  ensures ret.class_Foo$member_a == local$a
-  ensures ret.class_Foo$member_b == local$b
+  ensures (unfolding acc(T_class_global$class_Foo(ret), wildcard) in
+      ret.class_Foo$member_a == local$a &&
+      ret.class_Foo$member_b == local$b)
 
 
 method global$fun_testCascadeGetter$fun_take$$return$T_Unit()
@@ -84,7 +87,8 @@ method class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_I
   returns (ret: Ref)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_IntWrapper())
   ensures acc(T_class_global$class_IntWrapper(ret), wildcard)
-  ensures ret.class_IntWrapper$member_n == local$n
+  ensures (unfolding acc(T_class_global$class_IntWrapper(ret), wildcard) in
+      ret.class_IntWrapper$member_n == local$n)
 
 
 method class_IntWrapper$getter_succ(this: Ref) returns (ret: Ref)
@@ -99,7 +103,8 @@ method class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWr
   ensures acc(T_class_global$class_IntWrapper(local$i), wildcard)
   ensures dom$RuntimeType$isSubtype(dom$RuntimeType$typeOf(ret), dom$RuntimeType$T_class_global$class_IntWrapperContainer())
   ensures acc(T_class_global$class_IntWrapperContainer(ret), wildcard)
-  ensures ret.class_IntWrapperContainer$member_i == local$i
+  ensures (unfolding acc(T_class_global$class_IntWrapperContainer(ret), wildcard) in
+      ret.class_IntWrapperContainer$member_i == local$i)
 
 
 method global$fun_testCascadeCustomGetters$fun_take$$return$T_Unit()
