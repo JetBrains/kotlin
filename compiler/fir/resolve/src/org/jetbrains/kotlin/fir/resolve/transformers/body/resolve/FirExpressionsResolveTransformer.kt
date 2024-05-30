@@ -231,7 +231,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     ): FirExpression {
         return when (this) {
             is FirPropertyAccessExpression -> transformQualifiedAccessExpression(
-                this, resolutionMode, isUsedAsReceiver = true, isUsedAsGetClassReceiver = isUsedAsGetClassReceiver
+                this,
+                resolutionMode,
+                isUsedAsReceiver = isUsedAsGetClassReceiver || resolutionMode == ResolutionMode.ReceiverResolution.ForCallableReference,
+                isUsedAsGetClassReceiver = isUsedAsGetClassReceiver
             )
             else -> transformSingle(this@FirExpressionsResolveTransformer, resolutionMode)
         }
