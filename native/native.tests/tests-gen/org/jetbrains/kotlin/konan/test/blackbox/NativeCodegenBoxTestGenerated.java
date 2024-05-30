@@ -26720,6 +26720,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("innerWithDefaultArgumentGenericExtensionProperty.kt")
+      public void testInnerWithDefaultArgumentGenericExtensionProperty() {
+        runTest("compiler/testData/codegen/box/innerNested/innerWithDefaultArgumentGenericExtensionProperty.kt");
+      }
+
+      @Test
       @TestMetadata("innerWithDefaultInner.kt")
       public void testInnerWithDefaultInner() {
         runTest("compiler/testData/codegen/box/innerNested/innerWithDefaultInner.kt");

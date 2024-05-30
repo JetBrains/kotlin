@@ -26268,6 +26268,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/innerNested/innerWithDefaultArgument.kt");
     }
 
+    @TestMetadata("innerWithDefaultArgumentGenericExtensionProperty.kt")
+    public void testInnerWithDefaultArgumentGenericExtensionProperty() {
+      runTest("compiler/testData/codegen/box/innerNested/innerWithDefaultArgumentGenericExtensionProperty.kt");
+    }
+
     @TestMetadata("innerWithDefaultInner.kt")
     public void testInnerWithDefaultInner() {
       runTest("compiler/testData/codegen/box/innerNested/innerWithDefaultInner.kt");
