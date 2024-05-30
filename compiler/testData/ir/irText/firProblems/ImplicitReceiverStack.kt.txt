@@ -69,7 +69,7 @@ fun box(): String {
     val tmp_0: ImplicitReceiverValue<*>? = stack.get(name = null)
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> null
-      else -> tmp_0.<get-type>()
+      true -> tmp_0.<get-type>()
     }
   })
 }

@@ -44,7 +44,7 @@ fun foo(candidate: Candidate) {
   when {
     when {
       me is FirCallableMemberDeclaration<*> -> EQEQ(arg0 = me /*as FirCallableMemberDeclaration<*> */.<get-symbol>(), arg1 = null).not()
-      else -> false
+      true -> false
     } -> { // BLOCK
     }
   }

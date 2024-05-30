@@ -1,7 +1,7 @@
 class TestClass {
   val test: Int
     field = when {
-      else -> { // BLOCK
+      true -> { // BLOCK
         super<System>.#out /*!! PrintStream */.println(p0 = "TestClass/test")
         42
       }

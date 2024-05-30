@@ -34,7 +34,7 @@ data class TestData {
   override fun hashCode(): Int {
     return when {
       EQEQ(arg0 = <this>.#nn, arg1 = null) -> 0
-      else -> <this>.#nn.hashCode()
+      true -> <this>.#nn.hashCode()
     }
   }
 
@@ -69,7 +69,7 @@ value class TestInline {
   override fun hashCode(): Int {
     return when {
       EQEQ(arg0 = <this>.#nn, arg1 = null) -> 0
-      else -> <this>.#nn.hashCode()
+      true -> <this>.#nn.hashCode()
     }
   }
 

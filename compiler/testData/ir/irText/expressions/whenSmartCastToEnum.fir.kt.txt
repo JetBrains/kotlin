@@ -35,7 +35,7 @@ fun test() {
           }
           EQEQ(arg0 = tmp_0, arg1 = En.C) -> { // BLOCK
           }
-          else -> noWhenBranchMatchedException()
+          true -> noWhenBranchMatchedException()
         }
       }
     }
@@ -53,7 +53,7 @@ fun test() {
           }
           EQEQ(arg0 = tmp_1, arg1 = En.C) -> { // BLOCK
           }
-          else -> noWhenBranchMatchedException()
+          true -> noWhenBranchMatchedException()
         }
       }
     }

@@ -5,7 +5,7 @@ fun <T : Any?> asFoo(t: T): (T & Any) {
 inline fun <reified T : CharSequence?> implicitAsFoo(x: Any): Int {
   return when {
     x !is T -> 0
-    else -> x /*as (T & Any) */.<get-length>()
+    true -> x /*as (T & Any) */.<get-length>()
   }
 }
 

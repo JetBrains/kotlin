@@ -12,7 +12,7 @@ class A {
     get(): Int {
       return when {
         greater(arg0 = <this>.#invertedTypes.toInt(), arg1 = 10) -> <this>.#invertedTypes.toInt()
-        else -> 10
+        true -> 10
       }
     }
     set

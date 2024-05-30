@@ -49,28 +49,28 @@ fun test_3(x: Any) {
     val tmp_0: Any = x
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> materialize<Any>()
-      else -> tmp_0
+      true -> tmp_0
     }
   } /*as Foo<Any> */.foo()
   { // BLOCK
     val tmp_1: Any = x
     when {
       EQEQ(arg0 = tmp_1, arg1 = null) -> materialize<Any>()
-      else -> tmp_1
+      true -> tmp_1
     }
   } /*as Bar<Any> */.bar()
   { // BLOCK
     val tmp_2: Any = x
     when {
       EQEQ(arg0 = tmp_2, arg1 = null) -> materialize<Any>()
-      else -> tmp_2
+      true -> tmp_2
     }
   } /*as Foo<Any> */.extFoo<Any>()
   { // BLOCK
     val tmp_3: Any = x
     when {
       EQEQ(arg0 = tmp_3, arg1 = null) -> materialize<Any>()
-      else -> tmp_3
+      true -> tmp_3
     }
   } /*as Bar<Any> */.extBar<Any>()
 }

@@ -3,7 +3,7 @@ fun <T : Any?> elvisLike(x: T, y: (T & Any)): (T & Any) {
     val tmp_0: T = x
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> y
-      else -> tmp_0
+      true -> tmp_0
     }
   }
 }

@@ -46,7 +46,7 @@ data class Some {
     var result: Int = <this>.#a.hashCode()
     result = result.times(other = 31).plus(other = when {
       EQEQ(arg0 = <this>.#b, arg1 = null) -> 0
-      else -> <this>.#b.hashCode()
+      true -> <this>.#b.hashCode()
     })
     return result
   }

@@ -21,7 +21,7 @@ interface Foo<T : Any?> {
 inline fun <reified T : Any> Any.test1(): T? {
   return when {
     <this> is T -> <this> /*as T */
-    else -> null
+    true -> null
   }
 }
 
@@ -29,7 +29,7 @@ val <reified T : Any> Foo<T>.asT: T?
   inline get(): T? {
     return when {
       <this> is T -> <this> /*as T */
-      else -> null
+      true -> null
     }
   }
 

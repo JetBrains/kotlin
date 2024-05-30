@@ -36,7 +36,7 @@ interface K {
 fun testFlexible1() {
   val v: K? = when {
     true -> a()
-    else -> b()
+    true -> b()
   }
   v.ff()
 }
@@ -44,7 +44,7 @@ fun testFlexible1() {
 fun testFlexible2(a: A, b: B) {
   val v: K? = when {
     true -> id<@FlexibleNullability A?>(x = a)
-    else -> id<@FlexibleNullability B?>(x = b)
+    true -> id<@FlexibleNullability B?>(x = b)
   }
   v.ff()
 }
@@ -52,7 +52,7 @@ fun testFlexible2(a: A, b: B) {
 fun testIntersection(a: A, b: B) {
   val v: K = when {
     true -> a
-    else -> b
+    true -> b
   }
   v /*as I */.ff()
 }

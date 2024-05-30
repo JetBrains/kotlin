@@ -3,7 +3,7 @@ fun box(): String {
   when {
     EQEQ(arg0 = r, arg1 = "").not() -> { // BLOCK
     }
-    else -> r = r.plus(other = "O")
+    true -> r = r.plus(other = "O")
   }
   when {
     EQEQ(arg0 = r, arg1 = "O") -> r = r.plus(other = "K")

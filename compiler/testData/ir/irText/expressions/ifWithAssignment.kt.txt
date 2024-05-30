@@ -4,25 +4,25 @@ fun topLevelMethod() {
     true -> { // BLOCK
       z = 2
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       z = 3
     }
   }
   when {
     true -> z = 4
-    else -> z = 5
+    true -> z = 5
   }
   when {
     true -> { // BLOCK
       z = z.plus(other = 6)
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       z = z.plus(other = 7)
     }
   }
   when {
     true -> z = z.plus(other = 8)
-    else -> z = z.plus(other = 9)
+    true -> z = z.plus(other = 9)
   }
   { // BLOCK
     val tmp_0: Int = z
@@ -30,7 +30,7 @@ fun topLevelMethod() {
       EQEQ(arg0 = tmp_0, arg1 = 1) -> { // BLOCK
         z = 10
       }
-      else -> { // BLOCK
+      true -> { // BLOCK
         z = 11
       }
     }
@@ -39,7 +39,7 @@ fun topLevelMethod() {
     val tmp_1: Int = z
     when {
       EQEQ(arg0 = tmp_1, arg1 = 1) -> z = 12
-      else -> z = 13
+      true -> z = 13
     }
   }
   { // BLOCK
@@ -48,7 +48,7 @@ fun topLevelMethod() {
       EQEQ(arg0 = tmp_2, arg1 = 1) -> { // BLOCK
         z = z.plus(other = 14)
       }
-      else -> { // BLOCK
+      true -> { // BLOCK
         z = z.plus(other = 15)
       }
     }
@@ -57,7 +57,7 @@ fun topLevelMethod() {
     val tmp_3: Int = z
     when {
       EQEQ(arg0 = tmp_3, arg1 = 1) -> z = z.plus(other = 16)
-      else -> z = z.plus(other = 17)
+      true -> z = z.plus(other = 17)
     }
   }
 }

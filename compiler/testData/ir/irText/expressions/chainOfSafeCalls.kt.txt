@@ -23,22 +23,22 @@ fun test(nc: C?): C? {
           val tmp_3: C? = nc
           when {
             EQEQ(arg0 = tmp_3, arg1 = null) -> null
-            else -> tmp_3.foo()
+            true -> tmp_3.foo()
           }
         }
         when {
           EQEQ(arg0 = tmp_2, arg1 = null) -> null
-          else -> tmp_2.bar()
+          true -> tmp_2.bar()
         }
       }
       when {
         EQEQ(arg0 = tmp_1, arg1 = null) -> null
-        else -> tmp_1.foo()
+        true -> tmp_1.foo()
       }
     }
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> null
-      else -> tmp_0.foo()
+      true -> tmp_0.foo()
     }
   }
 }

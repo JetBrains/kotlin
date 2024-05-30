@@ -11,7 +11,7 @@ fun test1(a: Any?, b: Any): Any {
     val tmp_0: Any? = a
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> b
-      else -> tmp_0
+      true -> tmp_0
     }
   }
 }
@@ -21,7 +21,7 @@ fun test2(a: String?, b: Any): Any {
     val tmp_1: String? = a
     when {
       EQEQ(arg0 = tmp_1, arg1 = null) -> b
-      else -> tmp_1
+      true -> tmp_1
     }
   }
 }
@@ -37,7 +37,7 @@ fun test3(a: Any?, b: Any?): String {
     val tmp_2: String? = a /*as String? */
     when {
       EQEQ(arg0 = tmp_2, arg1 = null) -> b /*as String */
-      else -> tmp_2
+      true -> tmp_2
     }
   }
 }
@@ -47,7 +47,7 @@ fun test4(x: Any): Any {
     val tmp_3: Any? = <get-p>()
     when {
       EQEQ(arg0 = tmp_3, arg1 = null) -> x
-      else -> tmp_3
+      true -> tmp_3
     }
   }
 }
@@ -57,7 +57,7 @@ fun test5(x: Any): Any {
     val tmp_4: Any? = foo()
     when {
       EQEQ(arg0 = tmp_4, arg1 = null) -> x
-      else -> tmp_4
+      true -> tmp_4
     }
   }
 }

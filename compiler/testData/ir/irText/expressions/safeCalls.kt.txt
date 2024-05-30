@@ -24,7 +24,7 @@ fun box() {
     val tmp_0: Int = 42
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> null
-      else -> tmp_0.foo()
+      true -> tmp_0.foo()
     }
   } /*~> Unit */
 }
@@ -38,7 +38,7 @@ fun test1(x: String?): Int? {
     val tmp_1: String? = x
     when {
       EQEQ(arg0 = tmp_1, arg1 = null) -> null
-      else -> tmp_1.<get-length>()
+      true -> tmp_1.<get-length>()
     }
   }
 }
@@ -48,7 +48,7 @@ fun test2(x: String?): Int? {
     val tmp_2: String? = x
     when {
       EQEQ(arg0 = tmp_2, arg1 = null) -> null
-      else -> tmp_2.hashCode()
+      true -> tmp_2.hashCode()
     }
   }
 }
@@ -58,7 +58,7 @@ fun test3(x: String?, y: Any?): Boolean? {
     val tmp_3: String? = x
     when {
       EQEQ(arg0 = tmp_3, arg1 = null) -> null
-      else -> tmp_3.equals(other = y)
+      true -> tmp_3.equals(other = y)
     }
   }
 }
@@ -68,7 +68,7 @@ fun test4(x: Ref?) {
     val tmp_4: Ref? = x
     when {
       EQEQ(arg0 = tmp_4, arg1 = null) -> null /*~> Unit */
-      else -> tmp_4.<set-value>(<set-?> = 0)
+      true -> tmp_4.<set-value>(<set-?> = 0)
     }
   }
 }
@@ -78,7 +78,7 @@ fun IHost.test5(s: String?): Int? {
     val tmp_5: String? = s
     when {
       EQEQ(arg0 = tmp_5, arg1 = null) -> null
-      else -> (<this>, tmp_5).extLength()
+      true -> (<this>, tmp_5).extLength()
     }
   }
 }

@@ -4,13 +4,13 @@ fun topLevelMethod() {
     true -> { // BLOCK
       array.set(index = 0, value = 2)
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       array.set(index = 0, value = 3)
     }
   }
   when {
     true -> array.set(index = 0, value = 4)
-    else -> array.set(index = 0, value = 5)
+    true -> array.set(index = 0, value = 5)
   }
   when {
     true -> { // BLOCK
@@ -20,7 +20,7 @@ fun topLevelMethod() {
         tmp_0.set(index = tmp_1, value = tmp_0.get(index = tmp_1).plus(other = 6))
       }
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       { // BLOCK
         val tmp_2: IntArray = array
         val tmp_3: Int = 0
@@ -34,7 +34,7 @@ fun topLevelMethod() {
       val tmp_5: Int = 0
       tmp_4.set(index = tmp_5, value = tmp_4.get(index = tmp_5).plus(other = 8))
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       val tmp_6: IntArray = array
       val tmp_7: Int = 0
       tmp_6.set(index = tmp_7, value = tmp_6.get(index = tmp_7).plus(other = 9))
@@ -46,7 +46,7 @@ fun topLevelMethod() {
       EQEQ(arg0 = tmp_8, arg1 = 1) -> { // BLOCK
         array.set(index = 0, value = 10)
       }
-      else -> { // BLOCK
+      true -> { // BLOCK
         array.set(index = 0, value = 11)
       }
     }
@@ -55,7 +55,7 @@ fun topLevelMethod() {
     val tmp_9: Int = array.get(index = 0)
     when {
       EQEQ(arg0 = tmp_9, arg1 = 1) -> array.set(index = 0, value = 12)
-      else -> array.set(index = 0, value = 13)
+      true -> array.set(index = 0, value = 13)
     }
   }
   { // BLOCK
@@ -68,7 +68,7 @@ fun topLevelMethod() {
           tmp_11.set(index = tmp_12, value = tmp_11.get(index = tmp_12).plus(other = 14))
         }
       }
-      else -> { // BLOCK
+      true -> { // BLOCK
         { // BLOCK
           val tmp_13: IntArray = array
           val tmp_14: Int = 0
@@ -85,7 +85,7 @@ fun topLevelMethod() {
         val tmp_17: Int = 0
         tmp_16.set(index = tmp_17, value = tmp_16.get(index = tmp_17).plus(other = 16))
       }
-      else -> { // BLOCK
+      true -> { // BLOCK
         val tmp_18: IntArray = array
         val tmp_19: Int = 0
         tmp_18.set(index = tmp_19, value = tmp_18.get(index = tmp_19).plus(other = 17))

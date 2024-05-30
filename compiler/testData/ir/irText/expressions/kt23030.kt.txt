@@ -17,9 +17,9 @@ class C {
     return when {
       when {
         x is Int -> y is Char
-        else -> false
+        true -> false
       } -> less(arg0 = (<this>, x /*as Int */).compareTo(c = y /*as Char */), arg1 = 0)
-      else -> false
+      true -> false
     }
   }
 
@@ -33,9 +33,9 @@ fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
   return when {
     when {
       x is Int -> y is Char
-      else -> false
+      true -> false
     } -> EQEQ(arg0 = x, arg1 = y)
-    else -> false
+    true -> false
   }
 }
 
@@ -47,9 +47,9 @@ fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
   return when {
     when {
       x is Int -> y is Char
-      else -> false
+      true -> false
     } -> less(arg0 = x /*as Int */.compareTo(c = y /*as Char */), arg1 = 0)
-    else -> false
+    true -> false
   }
 }
 

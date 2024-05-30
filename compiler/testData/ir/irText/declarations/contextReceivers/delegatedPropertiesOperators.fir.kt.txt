@@ -56,7 +56,7 @@ fun box(): String {
   val returnValue: String = result.<get-s>()
   return when {
     EQEQ(arg0 = <get-operationScore>(), arg1 = 2) -> returnValue
-    else -> "fail"
+    true -> "fail"
   }
 }
 

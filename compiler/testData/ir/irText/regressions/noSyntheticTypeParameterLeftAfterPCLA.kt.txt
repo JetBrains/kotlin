@@ -23,7 +23,7 @@ fun box(b: Boolean) {
             b -> { // BLOCK
               someUnit()
             }
-            else -> { // BLOCK
+            true -> { // BLOCK
               $this$generate.yield(t = Unit)
             }
           }

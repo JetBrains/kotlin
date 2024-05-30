@@ -4,7 +4,7 @@ fun topLevelMethod() {
     true -> { // BLOCK
       array.set(index = 0, value = 2)
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       array.set(index = 0, value = 3)
     }
   }
@@ -12,7 +12,7 @@ fun topLevelMethod() {
     true -> { // BLOCK
       array.set(index = 0, value = 4)
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       array.set(index = 0, value = 5)
     }
   }
@@ -24,7 +24,7 @@ fun topLevelMethod() {
         tmp_0.set(index = tmp_1, value = tmp_0.get(index = tmp_1).plus(other = 6))
       }
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       { // BLOCK
         val tmp_2: IntArray = array
         val tmp_3: Int = 0
@@ -40,7 +40,7 @@ fun topLevelMethod() {
         tmp_4.set(index = tmp_5, value = tmp_4.get(index = tmp_5).plus(other = 8))
       }
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       { // BLOCK
         val tmp_6: IntArray = array
         val tmp_7: Int = 0
@@ -54,7 +54,7 @@ fun topLevelMethod() {
       EQEQ(arg0 = tmp_8, arg1 = 1) -> { // BLOCK
         array.set(index = 0, value = 10)
       }
-      else -> { // BLOCK
+      true -> { // BLOCK
         array.set(index = 0, value = 11)
       }
     }
@@ -65,7 +65,7 @@ fun topLevelMethod() {
       EQEQ(arg0 = tmp_9, arg1 = 1) -> { // BLOCK
         array.set(index = 0, value = 12)
       }
-      else -> { // BLOCK
+      true -> { // BLOCK
         array.set(index = 0, value = 13)
       }
     }
@@ -80,7 +80,7 @@ fun topLevelMethod() {
           tmp_11.set(index = tmp_12, value = tmp_11.get(index = tmp_12).plus(other = 14))
         }
       }
-      else -> { // BLOCK
+      true -> { // BLOCK
         { // BLOCK
           val tmp_13: IntArray = array
           val tmp_14: Int = 0
@@ -99,7 +99,7 @@ fun topLevelMethod() {
           tmp_16.set(index = tmp_17, value = tmp_16.get(index = tmp_17).plus(other = 16))
         }
       }
-      else -> { // BLOCK
+      true -> { // BLOCK
         { // BLOCK
           val tmp_18: IntArray = array
           val tmp_19: Int = 0

@@ -1,5 +1,5 @@
 fun test(): Int {
   return when {
-    else -> 42
+    true -> 42
   }
 }

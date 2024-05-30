@@ -60,9 +60,9 @@ fun box(): String {
   return when {
     when {
       EQEQ(arg0 = myContainer.<get-i>(), arg1 = 1) -> EQEQ(arg0 = <get-operationScore>(), arg1 = 3)
-      else -> false
+      true -> false
     } -> "OK"
-    else -> "fail"
+    true -> "fail"
   }
 }
 
@@ -70,7 +70,7 @@ operator fun MyContainer.get($context_receiver_0: Int, index: Int): Int {
   <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   return when {
     EQEQ(arg0 = index, arg1 = 0) -> <this>.<get-i>()
-    else -> -1
+    true -> -1
   }
 }
 

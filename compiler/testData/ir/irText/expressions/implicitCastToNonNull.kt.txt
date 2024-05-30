@@ -1,28 +1,28 @@
 fun test1(x: String?): Int {
   return when {
     EQEQ(arg0 = x, arg1 = null) -> 0
-    else -> x.<get-length>()
+    true -> x.<get-length>()
   }
 }
 
 fun <T : CharSequence?> test2(x: T): Int {
   return when {
     EQEQ(arg0 = x, arg1 = null) -> 0
-    else -> x.<get-length>()
+    true -> x.<get-length>()
   }
 }
 
 inline fun <reified T : CharSequence?> test3(x: Any): Int {
   return when {
     x !is T -> 0
-    else -> x /*as (T & Any) */.<get-length>()
+    true -> x /*as (T & Any) */.<get-length>()
   }
 }
 
 inline fun <reified T : CharSequence> test4(x: Any?): Int {
   return when {
     x !is T -> 0
-    else -> x /*as T */.<get-length>()
+    true -> x /*as T */.<get-length>()
   }
 }
 

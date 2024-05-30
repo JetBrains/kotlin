@@ -20,7 +20,7 @@ fun dump(data: IrElement, dumpStrategy: String): String {
 
       ::dumpKotlinLike
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       local fun dump(p0: IrElement): String {
         return p0.dump()
       }

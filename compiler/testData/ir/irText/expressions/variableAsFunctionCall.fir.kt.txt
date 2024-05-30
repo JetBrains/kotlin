@@ -23,12 +23,12 @@ fun test4(ns: String?): String? {
       val tmp_1: String? = ns
       when {
         EQEQ(arg0 = tmp_1, arg1 = null) -> null
-        else -> tmp_1.k()
+        true -> tmp_1.k()
       }
     }
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> null
-      else -> tmp_0.invoke()
+      true -> tmp_0.invoke()
     }
   }
 }

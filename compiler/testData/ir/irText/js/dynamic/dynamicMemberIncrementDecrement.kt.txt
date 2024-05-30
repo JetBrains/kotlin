@@ -10,28 +10,28 @@ fun testSafeMemberIncrementDecrement(d: dynamic) {
     val tmp_0: dynamic = d
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> null
-      else -> ++tmp_0.prefixIncr
+      true -> ++tmp_0.prefixIncr
     }
   }
   val t2: dynamic = { // BLOCK
     val tmp_1: dynamic = d
     when {
       EQEQ(arg0 = tmp_1, arg1 = null) -> null
-      else -> --tmp_1.prefixDecr
+      true -> --tmp_1.prefixDecr
     }
   }
   val t3: dynamic = { // BLOCK
     val tmp_2: dynamic = d
     when {
       EQEQ(arg0 = tmp_2, arg1 = null) -> null
-      else -> tmp_2.postfixIncr++
+      true -> tmp_2.postfixIncr++
     }
   }
   val t4: dynamic = { // BLOCK
     val tmp_3: dynamic = d
     when {
       EQEQ(arg0 = tmp_3, arg1 = null) -> null
-      else -> tmp_3.postfixDecr--
+      true -> tmp_3.postfixDecr--
     }
   }
 }

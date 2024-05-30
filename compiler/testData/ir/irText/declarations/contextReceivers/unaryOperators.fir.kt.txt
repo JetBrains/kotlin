@@ -71,9 +71,9 @@ fun box(): String {
   return when {
     when {
       EQEQ(arg0 = result.<get-i>(), arg1 = 1) -> EQEQ(arg0 = <get-operationScore>(), arg1 = 5)
-      else -> false
+      true -> false
     } -> "OK"
-    else -> "fail"
+    true -> "fail"
   }
 }
 
@@ -96,7 +96,7 @@ operator fun Result.unaryPlus($context_receiver_0: Int): Result {
   <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   return Result(i = when {
     less(arg0 = <this>.<get-i>(), arg1 = 0) -> <this>.<get-i>().unaryMinus()
-    else -> <this>.<get-i>()
+    true -> <this>.<get-i>()
   })
 }
 

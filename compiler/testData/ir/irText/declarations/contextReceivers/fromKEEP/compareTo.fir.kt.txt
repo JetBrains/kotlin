@@ -45,11 +45,11 @@ data class Pair<A : Any?, B : Any?> {
   override fun hashCode(): Int {
     var result: Int = when {
       EQEQ(arg0 = <this>.#first, arg1 = null) -> 0
-      else -> <this>.#first.hashCode()
+      true -> <this>.#first.hashCode()
     }
     result = result.times(other = 31).plus(other = when {
       EQEQ(arg0 = <this>.#second, arg1 = null) -> 0
-      else -> <this>.#second.hashCode()
+      true -> <this>.#second.hashCode()
     })
     return result
   }
@@ -65,9 +65,9 @@ fun box(): String {
     return when {
       when {
         EQEQ(arg0 = a, arg1 = null) -> true
-        else -> EQEQ(arg0 = b, arg1 = null)
+        true -> EQEQ(arg0 = b, arg1 = null)
       } -> 0
-      else -> a.<get-length>().compareTo(other = b.<get-length>())
+      true -> a.<get-length>().compareTo(other = b.<get-length>())
     }
   }
  /*-> Comparator<String> */
@@ -85,7 +85,7 @@ val <T : Any?> Pair<T, T>.min: T
   get($context_receiver_0: Comparator<T>): T {
     return when {
       less(arg0 = <this>.<get-first>().compareTo<T>($context_receiver_0 = $context_receiver_0, other = <this>.<get-second>()), arg1 = 0) -> <this>.<get-first>()
-      else -> <this>.<get-second>()
+      true -> <this>.<get-second>()
     }
   }
 

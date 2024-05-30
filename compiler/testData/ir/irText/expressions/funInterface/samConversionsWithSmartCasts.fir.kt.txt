@@ -32,7 +32,7 @@ fun test10(a: Any) {
   when {
     when {
       a is Unrelated -> a /*as Unrelated */ is Function0<Unit>
-      else -> false
+      true -> false
     } -> { // BLOCK
       run1(r = a /*as Function0<Unit> */ /*-> KRunnable */)
     }

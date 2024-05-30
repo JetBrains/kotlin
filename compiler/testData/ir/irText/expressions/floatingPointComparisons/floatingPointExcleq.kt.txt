@@ -33,14 +33,14 @@ fun test4f(x: Float, y: Number): Boolean {
 fun test5d(x: Double, y: Any): Boolean {
   return when {
     y is Double -> ieee754equals(arg0 = x, arg1 = y /*as Double */).not()
-    else -> false
+    true -> false
   }
 }
 
 fun test5f(x: Float, y: Any): Boolean {
   return when {
     y is Float -> ieee754equals(arg0 = x, arg1 = y /*as Float */).not()
-    else -> false
+    true -> false
   }
 }
 
@@ -48,9 +48,9 @@ fun test6d(x: Any, y: Any): Boolean {
   return when {
     when {
       x is Double -> y is Double
-      else -> false
+      true -> false
     } -> ieee754equals(arg0 = x /*as Double */, arg1 = y /*as Double */).not()
-    else -> false
+    true -> false
   }
 }
 
@@ -58,9 +58,9 @@ fun test6f(x: Any, y: Any): Boolean {
   return when {
     when {
       x is Float -> y is Float
-      else -> false
+      true -> false
     } -> ieee754equals(arg0 = x /*as Float */, arg1 = y /*as Float */).not()
-    else -> false
+    true -> false
   }
 }
 
@@ -68,9 +68,9 @@ fun testDF(x: Any, y: Any): Boolean {
   return when {
     when {
       x is Double -> y is Float
-      else -> false
+      true -> false
     } -> ieee754equals(arg0 = x /*as Double */, arg1 = y /*as Float */.toDouble()).not()
-    else -> false
+    true -> false
   }
 }
 
@@ -78,9 +78,9 @@ fun testFD(x: Any, y: Any): Boolean {
   return when {
     when {
       x is Float -> y is Double
-      else -> false
+      true -> false
     } -> ieee754equals(arg0 = x /*as Float */.toDouble(), arg1 = y /*as Double */).not()
-    else -> false
+    true -> false
   }
 }
 

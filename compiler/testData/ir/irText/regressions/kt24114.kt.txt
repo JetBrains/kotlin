@@ -15,7 +15,7 @@ fun test1(): Int {
             }
           }
         }
-        else -> return 3
+        true -> return 3
       }
     }
   }
@@ -32,7 +32,7 @@ fun test2(): Int {
             EQEQ(arg0 = tmp_3, arg1 = 2) -> return 2
           }
         }
-        else -> return 3
+        true -> return 3
       }
     }
   }

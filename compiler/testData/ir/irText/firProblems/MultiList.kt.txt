@@ -43,7 +43,7 @@ data class Some<T : Any?> {
   override fun hashCode(): Int {
     return when {
       EQEQ(arg0 = <this>.#value, arg1 = null) -> 0
-      else -> <this>.#value.hashCode()
+      true -> <this>.#value.hashCode()
     }
   }
 

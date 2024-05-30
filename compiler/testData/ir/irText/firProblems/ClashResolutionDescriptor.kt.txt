@@ -51,7 +51,7 @@ fun resolveClashesIfAny(container: ComponentContainer, clashResolvers: List<Plat
           val tmp_1: Collection<ComponentDescriptor>? = <get-registrationMap>().get(key = resolver.<get-applicableTo>()) as? Collection<ComponentDescriptor>
           when {
             EQEQ(arg0 = tmp_1, arg1 = null) -> continue
-            else -> tmp_1
+            true -> tmp_1
           }
         }
         val substituteDescriptor: ClashResolutionDescriptor<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>> = ClashResolutionDescriptor<PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>>(container = container, resolver = resolver, clashedComponents = clashedComponents.toList<ComponentDescriptor>())

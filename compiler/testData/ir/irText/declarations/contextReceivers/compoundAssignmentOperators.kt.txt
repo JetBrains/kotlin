@@ -59,9 +59,9 @@ fun box(): String {
   return when {
     when {
       EQEQ(arg0 = result.<get-i>(), arg1 = 1) -> EQEQ(arg0 = <get-operationScore>(), arg1 = 8)
-      else -> false
+      true -> false
     } -> "OK"
-    else -> "fail"
+    true -> "fail"
   }
 }
 

@@ -4,14 +4,14 @@ fun box(): String {
     val tmp_0: String? = test_1(value = 1)
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> return "fail 1"
-      else -> tmp_0
+      true -> tmp_0
     }
   })
   result = result.plus(other = { // BLOCK
     val tmp_1: String? = test_2(value = 1)
     when {
       EQEQ(arg0 = tmp_1, arg1 = null) -> return "fail 2"
-      else -> tmp_1
+      true -> tmp_1
     }
   })
   return result
@@ -22,7 +22,7 @@ fun test_1(value: Any?): String? {
     val tmp_2: Any? = value
     when {
       EQEQ(arg0 = tmp_2, arg1 = null) -> null
-      else -> tmp_2.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
+      true -> tmp_2.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
         return "O"
       }
 )
@@ -36,7 +36,7 @@ fun test_2(value: Any?): String? {
       val tmp_3: Any? = value
       when {
         EQEQ(arg0 = tmp_3, arg1 = null) -> null
-        else -> tmp_3.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
+        true -> tmp_3.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
           return "K"
         }
 )

@@ -12,7 +12,7 @@ fun test(x: Any) {
   when {
     when {
       x is IC1 -> x is IC2
-      else -> false
+      true -> false
     } -> { // BLOCK
       // COMPOSITE {
       val tmp_0: Any = x

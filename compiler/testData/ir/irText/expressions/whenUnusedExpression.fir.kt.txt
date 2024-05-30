@@ -5,11 +5,11 @@ fun test(b: Boolean, i: Int) {
         val tmp_0: Int = i
         when {
           EQEQ(arg0 = tmp_0, arg1 = 0) -> 1
-          else -> null
+          true -> null
         }
       }
     }
-    else -> null
+    true -> null
   } /*~> Unit */
 }
 

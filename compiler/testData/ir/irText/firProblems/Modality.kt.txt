@@ -59,7 +59,7 @@ object Owner : ResolutionPart {
     when {
       when {
         candidateDescriptor is MemberDescriptor -> EQEQ(arg0 = candidateDescriptor /*as MemberDescriptor */.getModality(), arg1 = null).not()
-        else -> false
+        true -> false
       } -> { // BLOCK
         return "OK"
       }

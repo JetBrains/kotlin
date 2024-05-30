@@ -6,7 +6,7 @@ fun test(b: Boolean) {
     b -> { // BLOCK
       3
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       throw Exception()
       0
     }

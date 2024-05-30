@@ -5,14 +5,14 @@ fun foo() {
   { // BLOCK
     val tmp_0: Int = x
     when {
-      else -> { // BLOCK
+      true -> { // BLOCK
       }
     }
   }
   val z: Unit = { // BLOCK
     val tmp_1: Int = x
     when {
-      else -> { // BLOCK
+      true -> { // BLOCK
       }
     }
   }
