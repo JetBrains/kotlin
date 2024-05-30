@@ -408,7 +408,9 @@ internal class DokkaSymbolVisitor(
         val syntheticJavaProperties =
             namedClassOrObjectSymbol.buildSelfClassType().getSyntheticJavaPropertiesScope()?.getCallableSignatures()
                 ?.map { it.symbol }
-                ?.filterIsInstance<KtSyntheticJavaPropertySymbol>() ?: emptySequence()
+                ?.filterIsInstance<KtSyntheticJavaPropertySymbol>()
+                ?.toList()
+                .orEmpty()
 
         fun List<KtJavaFieldSymbol>.filterOutSyntheticJavaPropBackingField() =
             filterNot { javaField -> syntheticJavaProperties.any { it.hasBackingField && javaField.name == it.name } }
