@@ -1,3 +1,4 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoArray : kotlin/Annotation {
  *
@@ -16,7 +17,6 @@
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoArray {
 
     public abstract int x();
@@ -24,9 +24,10 @@ public abstract @interface AnnoArray {
     public abstract java.lang.String[] a();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoBoolean : kotlin/Annotation {
  *
@@ -45,7 +46,6 @@ public abstract @interface AnnoArray {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoBoolean {
 
     public abstract int x();
@@ -53,9 +53,10 @@ public abstract @interface AnnoBoolean {
     public abstract boolean bool();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoChar : kotlin/Annotation {
  *
@@ -74,7 +75,6 @@ public abstract @interface AnnoBoolean {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoChar {
 
     public abstract int x();
@@ -82,9 +82,10 @@ public abstract @interface AnnoChar {
     public abstract char chr();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoClass : kotlin/Annotation {
  *
@@ -103,7 +104,6 @@ public abstract @interface AnnoChar {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoClass {
 
     public abstract int x();
@@ -111,9 +111,10 @@ public abstract @interface AnnoClass {
     public abstract java.lang.Class<Color> c();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoDouble : kotlin/Annotation {
  *
@@ -132,7 +133,6 @@ public abstract @interface AnnoClass {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoDouble {
 
     public abstract int x();
@@ -140,9 +140,10 @@ public abstract @interface AnnoDouble {
     public abstract double dbl();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoEnum : kotlin/Annotation {
  *
@@ -161,7 +162,6 @@ public abstract @interface AnnoDouble {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoEnum {
 
     public abstract int x();
@@ -169,9 +169,10 @@ public abstract @interface AnnoEnum {
     public abstract Color c();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoFloat : kotlin/Annotation {
  *
@@ -190,7 +191,6 @@ public abstract @interface AnnoEnum {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoFloat {
 
     public abstract int x();
@@ -198,9 +198,10 @@ public abstract @interface AnnoFloat {
     public abstract float flt();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoInt : kotlin/Annotation {
  *
@@ -219,7 +220,6 @@ public abstract @interface AnnoFloat {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoInt {
 
     public abstract int x();
@@ -227,9 +227,10 @@ public abstract @interface AnnoInt {
     public abstract int i();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoIntArray : kotlin/Annotation {
  *
@@ -248,7 +249,6 @@ public abstract @interface AnnoInt {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoIntArray {
 
     public abstract int x();
@@ -256,9 +256,10 @@ public abstract @interface AnnoIntArray {
     public abstract int[] b();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoLong : kotlin/Annotation {
  *
@@ -277,7 +278,6 @@ public abstract @interface AnnoIntArray {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoLong {
 
     public abstract int x();
@@ -285,9 +285,10 @@ public abstract @interface AnnoLong {
     public abstract long l();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoLongArray : kotlin/Annotation {
  *
@@ -306,7 +307,6 @@ public abstract @interface AnnoLong {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoLongArray {
 
     public abstract int x();
@@ -314,9 +314,10 @@ public abstract @interface AnnoLongArray {
     public abstract long[] b();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class AnnoString : kotlin/Annotation {
  *
@@ -335,7 +336,6 @@ public abstract @interface AnnoLongArray {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoString {
 
     public abstract int x();
@@ -343,8 +343,8 @@ public abstract @interface AnnoString {
     public abstract java.lang.String s();
 }
 
-
 ////////////////////
+
 
 /**
  * public final enum class Color : kotlin/Enum<Color> {
@@ -361,8 +361,7 @@ public abstract @interface AnnoString {
  */
 @kotlin.Metadata()
 public enum Color {
-    BLACK;
-
+    /*public static final*/ BLACK /* = new Color() */;
 
     Color() {
     }
@@ -373,8 +372,8 @@ public enum Color {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class Test : kotlin/Any {
@@ -413,9 +412,19 @@ public final class Test {
     }
 }
 
-
 ////////////////////
 
+
+@AnnoChar(x = 100, chr = 'c')
+@AnnoBoolean(x = 100, bool = false)
+@AnnoInt(x = 100, i = 5)
+@AnnoFloat(x = 100, flt = 1.0F)
+@AnnoDouble(x = 100, dbl = 4.0)
+@AnnoString(x = 100, s = "AAA")
+@AnnoIntArray(x = 100, b = {1, 2, 3})
+@AnnoLongArray(x = 100, b = {1L, 3L})
+@AnnoArray(x = 100, a = {"A", "B"})
+@AnnoClass(x = 100, c = Color.class)
 /**
  * public final class Test2 : kotlin/Any {
  *
@@ -426,19 +435,39 @@ public final class Test {
  * }
  */
 @kotlin.Metadata()
-@AnnoChar(x = 100, chr = 'c')
-@AnnoBoolean(x = 100, bool = false)
-@AnnoInt(x = 100, i = 5)
-@AnnoFloat(x = 100, flt = 1.0f)
-@AnnoDouble(x = 100, dbl = 4.0)
-@AnnoString(x = 100, s = "AAA")
-@AnnoIntArray(x = 100, b = {1, 2, 3})
-@AnnoLongArray(x = 100, b = {1L, 3L})
-@AnnoArray(x = 100, a = {"A", "B"})
-@AnnoClass(x = 100, c = Color.class)
 public final class Test2 {
 
     public Test2() {
         super();
+    }
+}
+
+////////////////////
+
+package lib;
+
+public @interface Anno {
+
+    String[] construct() default {};
+
+    String value();
+}
+
+////////////////////
+
+package lib;
+
+public class R {
+
+    public R() {
+        super();
+    }
+
+    public static class id {
+
+        public id() {
+            super();
+        }
+        public static final int textView = 100;
     }
 }

@@ -20,7 +20,6 @@ public final class B implements NonExisting {
     private final java.lang.String a$delegate = null;
 
     public B() {
-        super();
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -34,8 +33,8 @@ public final class B implements NonExisting {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public open class C : kotlin/Any {
@@ -54,8 +53,8 @@ public class C {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class D : I {
@@ -75,8 +74,8 @@ public final class D implements I {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class E : error/NonExistentClass {
@@ -92,12 +91,11 @@ public final class D implements I {
 public final class E implements NonExisting {
 
     public E() {
-        super();
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface I : kotlin/Any {
@@ -109,8 +107,8 @@ public final class E implements NonExisting {
 public abstract interface I {
 }
 
-
 ////////////////////
+
 
 /**
  * package {
@@ -125,7 +123,8 @@ public abstract interface I {
 public final class UnresolvedDelegateExpressionKt {
 
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String flaf(@org.jetbrains.annotations.NotNull() C $this$flaf) {
+    public static final java.lang.String flaf(@org.jetbrains.annotations.NotNull()
+    C $this$flaf) {
         return null;
     }
 }

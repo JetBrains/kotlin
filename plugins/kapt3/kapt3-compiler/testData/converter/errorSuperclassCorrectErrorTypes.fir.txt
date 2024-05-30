@@ -10,13 +10,42 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class Child extends kotlin.collections.AbstractList<java.lang.String> implements test.Parent<java.lang.String, java.lang.Integer>, java.util.List<java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+public final class Child extends AbstractList<String> implements Parent<String, Int>, List<String> {
 
     public Child() {
         super();
     }
-}
 
+    @java.lang.Override()
+    public final boolean contains(java.lang.Object element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public boolean contains(java.lang.String element) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public final int indexOf(java.lang.Object element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public int indexOf(java.lang.String element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public final int lastIndexOf(java.lang.Object element) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public int lastIndexOf(java.lang.String element) {
+        return 0;
+    }
+}
 
 ////////////////////
 
@@ -39,7 +68,6 @@ public class Cl {
     }
 }
 
-
 ////////////////////
 
 package test;
@@ -54,13 +82,11 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class Generics1 extends Foo<java.lang.String> {
+public final class Generics1 extends Foo<String> {
 
     public Generics1() {
-        super();
     }
 }
-
 
 ////////////////////
 
@@ -76,13 +102,11 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class Generics2 implements Foo<java.lang.String> {
+public final class Generics2 implements Foo<String> {
 
     public Generics2() {
-        super();
     }
 }
-
 
 ////////////////////
 
@@ -98,13 +122,11 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class Generics3 implements Foo<Bar, Baz, Boo<Baz, java.util.List<?>>, java.lang.String> {
+public final class Generics3 implements Foo<Bar, Baz, Boo<Baz, List<?>>, String> {
 
     public Generics3() {
-        super();
     }
 }
-
 
 ////////////////////
 
@@ -119,7 +141,6 @@ package test;
 @kotlin.Metadata()
 public abstract interface Intf {
 }
-
 
 ////////////////////
 
@@ -142,14 +163,14 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class MappedList<R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R>, kotlin.jvm.internal.markers.KMappedMarker {
+public final class MappedList<R extends java.lang.Object> extends AbstractList<R> implements List<R> {
 
     public MappedList() {
         super();
     }
 
-    @org.jetbrains.annotations.NotNull()
     @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
     public java.lang.Void get(int index) {
         return null;
     }
@@ -159,7 +180,6 @@ public final class MappedList<R extends java.lang.Object> extends kotlin.collect
         return 0;
     }
 }
-
 
 ////////////////////
 
@@ -175,7 +195,6 @@ package test;
 public abstract interface Parent<A extends java.lang.CharSequence, B extends java.lang.Object> {
 }
 
-
 ////////////////////
 
 package test;
@@ -190,13 +209,11 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TBarBazCl extends test.Cl implements Bar, Baz {
+public final class TBarBazCl implements Bar, Baz, Cl {
 
     public TBarBazCl() {
-        super();
     }
 }
-
 
 ////////////////////
 
@@ -212,13 +229,12 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TClBarBaz extends test.Cl implements Bar, Baz {
+public final class TClBarBaz implements Cl, Bar, Baz {
 
     public TClBarBaz() {
         super();
     }
 }
-
 
 ////////////////////
 
@@ -239,12 +255,12 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TFooBar extends Foo implements Bar, test.Intf {
+public final class TFooBar extends Foo implements Bar, Intf {
     @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
-    public TFooBar(@org.jetbrains.annotations.NotNull() X a) {
-        super();
+    public TFooBar(@org.jetbrains.annotations.NotNull()
+    X a) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -252,7 +268,6 @@ public final class TFooBar extends Foo implements Bar, test.Intf {
         return null;
     }
 }
-
 
 ////////////////////
 
@@ -277,8 +292,8 @@ public final class TFooBar2 implements Foo, Bar {
     @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
-    public TFooBar2(@org.jetbrains.annotations.NotNull() X a) {
-        super();
+    public TFooBar2(@org.jetbrains.annotations.NotNull()
+    X a) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -286,7 +301,6 @@ public final class TFooBar2 implements Foo, Bar {
         return null;
     }
 }
-
 
 ////////////////////
 
@@ -305,10 +319,8 @@ package test;
 public final class TFooBarBaz extends Foo implements Bar, Baz {
 
     public TFooBarBaz() {
-        super();
     }
 }
-
 
 ////////////////////
 
@@ -324,13 +336,11 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TFooBarBaz2 extends Foo implements Baz, test.Intf {
+public final class TFooBarBaz2 implements test.Intf {
 
     public TFooBarBaz2() {
-        super();
     }
 }
-
 
 ////////////////////
 
@@ -349,10 +359,8 @@ package test;
 public final class TFooBarBaz3 implements Foo, Bar, Baz {
 
     public TFooBarBaz3() {
-        super();
     }
 }
-
 
 ////////////////////
 
@@ -371,10 +379,8 @@ package test;
 public final class TFooBarBaz4 implements Foo, Bar, Baz {
 
     public TFooBarBaz4() {
-        super();
     }
 }
-
 
 ////////////////////
 
@@ -396,14 +402,12 @@ package test;
 public final class TFooBarBaz5 implements Foo, Bar, Baz {
 
     public TFooBarBaz5() {
-        super();
     }
 
-    public TFooBarBaz5(@org.jetbrains.annotations.NotNull() java.lang.String s) {
-        super();
+    public TFooBarBaz5(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
     }
 }
-
 
 ////////////////////
 
@@ -419,13 +423,12 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TFooBarBaz6 implements Foo, Bar, Baz {
+public final class TFooBarBaz6 extends Foo implements Bar, Baz {
 
-    public TFooBarBaz6(@org.jetbrains.annotations.NotNull() java.lang.String s) {
-        super();
+    public TFooBarBaz6(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
     }
 }
-
 
 ////////////////////
 
@@ -441,13 +444,11 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TxFooxBarxBaz extends x.Foo implements x.Bar, x.Baz, test.Intf {
+public final class TxFooxBarxBaz extends x.Foo implements x.Bar, x.Baz, Intf {
 
     public TxFooxBarxBaz() {
-        super();
     }
 }
-
 
 ////////////////////
 
@@ -463,9 +464,8 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class TxFooxBarxBaz2 extends x.Foo implements x.Bar {
+public final class TxFooxBarxBaz2 {
 
     public TxFooxBarxBaz2() {
-        super();
     }
 }
