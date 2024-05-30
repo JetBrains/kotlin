@@ -27,6 +27,7 @@ import org.jetbrains.dokka.plugability.query
 import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -101,19 +102,20 @@ private class SymbolSampleAnalysisEnvironment(
     private inline fun <reified PSI : PsiElement> KtSymbol.kotlinAndJavaSourcePsiSafe(): PSI? {
         // TODO: support Java sources after KT-53669
         val sourcePsi = when (origin) {
-            KtSymbolOrigin.SOURCE -> this.psi
-            KtSymbolOrigin.JAVA -> this.psi
+            KaSymbolOrigin.SOURCE -> this.psi
+            KaSymbolOrigin.JAVA -> this.psi
 
-            KtSymbolOrigin.SOURCE_MEMBER_GENERATED -> null
-            KtSymbolOrigin.LIBRARY -> null
-            KtSymbolOrigin.SAM_CONSTRUCTOR -> null
-            KtSymbolOrigin.INTERSECTION_OVERRIDE -> null
-            KtSymbolOrigin.SUBSTITUTION_OVERRIDE -> null
-            KtSymbolOrigin.DELEGATED -> null
-            KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY -> null
-            KtSymbolOrigin.PROPERTY_BACKING_FIELD -> null
-            KtSymbolOrigin.PLUGIN -> null
-            KtSymbolOrigin.JS_DYNAMIC -> null
+            KaSymbolOrigin.SOURCE_MEMBER_GENERATED -> null
+            KaSymbolOrigin.LIBRARY -> null
+            KaSymbolOrigin.SAM_CONSTRUCTOR -> null
+            KaSymbolOrigin.INTERSECTION_OVERRIDE -> null
+            KaSymbolOrigin.SUBSTITUTION_OVERRIDE -> null
+            KaSymbolOrigin.DELEGATED -> null
+            KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY -> null
+            KaSymbolOrigin.PROPERTY_BACKING_FIELD -> null
+            KaSymbolOrigin.PLUGIN -> null
+            KaSymbolOrigin.JS_DYNAMIC -> null
+            KaSymbolOrigin.NATIVE_FORWARD_DECLARATION -> null
         }
 
         return sourcePsi as? PSI

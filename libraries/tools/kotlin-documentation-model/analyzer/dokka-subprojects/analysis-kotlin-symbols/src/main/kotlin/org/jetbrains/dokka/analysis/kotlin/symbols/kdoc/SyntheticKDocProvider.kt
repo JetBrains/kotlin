@@ -7,22 +7,22 @@ package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
 import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser
 import org.jetbrains.dokka.model.doc.DocumentationNode
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaPossibleMemberSymbol
 import org.jetbrains.kotlin.builtins.StandardNames
 
 private const val ENUM_ENTRIES_TEMPLATE_PATH = "/dokka/docs/kdoc/EnumEntries.kt.template"
 private const val ENUM_VALUEOF_TEMPLATE_PATH = "/dokka/docs/kdoc/EnumValueOf.kt.template"
 private const val ENUM_VALUES_TEMPLATE_PATH = "/dokka/docs/kdoc/EnumValues.kt.template"
 
-internal fun KtAnalysisSession.hasGeneratedKDocDocumentation(symbol: KtSymbol): Boolean =
+internal fun KaSession.hasGeneratedKDocDocumentation(symbol: KaSymbol): Boolean =
     getDocumentationTemplatePath(symbol) != null
 
-private fun KtAnalysisSession.getDocumentationTemplatePath(symbol: KtSymbol): String? =
+private fun KaSession.getDocumentationTemplatePath(symbol: KaSymbol): String? =
     when (symbol) {
-        is KtPropertySymbol -> if (isEnumEntriesProperty(symbol)) ENUM_ENTRIES_TEMPLATE_PATH else null
-        is KtFunctionSymbol -> {
+        is KaPropertySymbol -> if (isEnumEntriesProperty(symbol)) ENUM_ENTRIES_TEMPLATE_PATH else null
+        is KaFunctionSymbol -> {
             when {
                 isEnumValuesMethod(symbol) -> ENUM_VALUES_TEMPLATE_PATH
                 isEnumValueOfMethod(symbol) -> ENUM_VALUEOF_TEMPLATE_PATH
@@ -33,25 +33,25 @@ private fun KtAnalysisSession.getDocumentationTemplatePath(symbol: KtSymbol): St
         else -> null
     }
 
-private fun KtAnalysisSession.isEnumSpecialMember(symbol: KtPossibleMemberSymbol): Boolean =
-    symbol.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED
-            && (symbol.getContainingSymbol() as? KtClassOrObjectSymbol)?.classKind == KtClassKind.ENUM_CLASS
+private fun KaSession.isEnumSpecialMember(symbol: KaPossibleMemberSymbol): Boolean =
+    symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED
+            && (symbol.getContainingSymbol() as? KaClassOrObjectSymbol)?.classKind == KaClassKind.ENUM_CLASS
 
-private fun KtAnalysisSession.isEnumEntriesProperty(symbol: KtPropertySymbol): Boolean =
+private fun KaSession.isEnumEntriesProperty(symbol: KaPropertySymbol): Boolean =
     symbol.name == StandardNames.ENUM_ENTRIES && isEnumSpecialMember(symbol)
 
-private fun KtAnalysisSession.isEnumValuesMethod(symbol: KtFunctionSymbol): Boolean =
+private fun KaSession.isEnumValuesMethod(symbol: KaFunctionSymbol): Boolean =
     symbol.name == StandardNames.ENUM_VALUES && isEnumSpecialMember(symbol)
 
-private fun KtAnalysisSession.isEnumValueOfMethod(symbol: KtFunctionSymbol): Boolean =
+private fun KaSession.isEnumValueOfMethod(symbol: KaFunctionSymbol): Boolean =
     symbol.name == StandardNames.ENUM_VALUE_OF && isEnumSpecialMember(symbol)
 
-internal fun KtAnalysisSession.getGeneratedKDocDocumentationFrom(symbol: KtSymbol): DocumentationNode? {
+internal fun KaSession.getGeneratedKDocDocumentationFrom(symbol: KaSymbol): DocumentationNode? {
     val templatePath = getDocumentationTemplatePath(symbol) ?: return null
     return loadTemplate(templatePath)
 }
 
-private fun KtAnalysisSession.loadTemplate(filePath: String): DocumentationNode? {
+private fun KaSession.loadTemplate(filePath: String): DocumentationNode? {
     val kdoc = loadContent(filePath) ?: return null
     val externalDriProvider = { link: String ->
         resolveKDocTextLinkToDRI(link)
