@@ -9,7 +9,9 @@ import org.jetbrains.kotlinx.dataframe.annotations.Present
 import org.jetbrains.kotlinx.dataframe.api.schema
 import org.jetbrains.kotlinx.dataframe.io.read
 import org.jetbrains.kotlinx.dataframe.io.readCSV
+import org.jetbrains.kotlinx.dataframe.io.readDelimStr
 import org.jetbrains.kotlinx.dataframe.io.readJson
+import org.jetbrains.kotlinx.dataframe.io.readJsonStr
 import java.io.File
 
 internal class Read0 : AbstractInterpreter<PluginDataFrameSchema>() {
@@ -80,3 +82,20 @@ private fun resolveFile(resolutionPath: String?, path: String): File? {
         }
     }
 }
+
+internal class ReadDelimStr : AbstractInterpreter<PluginDataFrameSchema>() {
+    val Arguments.text: String by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return DataFrame.readDelimStr(text).schema().toPluginDataFrameSchema()
+    }
+}
+
+internal class ReadJsonStr : AbstractInterpreter<PluginDataFrameSchema>() {
+    val Arguments.text: String by arg()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return DataFrame.readJsonStr(text).schema().toPluginDataFrameSchema()
+    }
+}
+
