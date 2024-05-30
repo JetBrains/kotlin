@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
@@ -23,9 +24,66 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 
 /**
- * A call to a function, a simple/compound access to a property, or a simple/compound access through `get` and `set` convention.
+ * Represents an attempt to resolve [KtResolvableCall][org.jetbrains.kotlin.resolution.KtResolvableCall].
+ *
+ * [KaCallResolutionAttempt] represents either a successful resolution call ([KaCall]) or an error ([KaCallResolutionError]).
+ *
+ * Usage Example:
+ * ```kotlin
+ * fun KaSession.findResolutionDiagnostic(expression: KtCallExpression): KaDiagnostic? {
+ *   val attempt = expression.attemptResolveCall() ?: return null
+ *   val error = attempt as? KaCallResolutionError ?: return null
+ *   return error.diagnostic
+ * }
+ *
+ * fun KaSession.resolveSymbol(expression: KtCallExpression): KaSymbol? {
+ *   val successfulCall = expression.resolveCall() ?: return null
+ *   val callableCall = successfulCall as? KaCallableMemberCall ?: return null
+ *   return callableCall.symbol
+ * }
+ * ```
+ *
+ * @see org.jetbrains.kotlin.analysis.api.components.KaResolverMixIn.attemptResolveCall
+ * @see org.jetbrains.kotlin.analysis.api.components.KaResolverMixIn.resolveCall
+ * @see KaCompoundAccessCall
+ **/
+public sealed interface KaCallResolutionAttempt : KaLifetimeOwner
+
+/**
+ * Represents an error that occurred during the resolution of a [KtResolvableCall][org.jetbrains.kotlin.resolution.KtResolvableCall].
+ *
+ * @property diagnostic The diagnostic associated with the error.
+ * @property candidateCalls The list of candidate calls that were considered during the resolution. Can be empty.
  */
-public sealed class KaCall : KaLifetimeOwner
+public class KaCallResolutionError(
+    diagnostic: KaDiagnostic,
+    candidateCalls: List<KaCall>,
+) : KaCallResolutionAttempt {
+    private val backedDiagnostic: KaDiagnostic = diagnostic
+
+    override val token: KaLifetimeToken get() = backedDiagnostic.token
+    public val diagnostic: KaDiagnostic get() = withValidityAssertion { backedDiagnostic }
+    public val candidateCalls: List<KaCall> by validityAsserted(candidateCalls)
+}
+
+/**
+ * Represents a resolved call.
+ */
+public sealed class KaCall : KaCallResolutionAttempt
+
+/**
+ * Returns a list of [KaCall].
+ *
+ * - If [this] is an instance of [KaCall], the list will contain only [this] call.
+ * - If [this] is an instance of [KaCallResolutionError], the list will contain [KaCallResolutionError.candidateCalls].
+ *
+ * @return the list of [KaCall]
+ */
+public val KaCallResolutionAttempt.calls: List<KaCall>
+    get() = when (this) {
+        is KaCall -> listOf(this)
+        is KaCallResolutionError -> candidateCalls
+    }
 
 /**
  * A call to a function, or a simple/compound access to a property.

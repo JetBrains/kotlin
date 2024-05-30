@@ -31,10 +31,12 @@ public class KaSuccessCallInfo(private val backingCall: KaCall) : KaCallInfo() {
 public class KaErrorCallInfo(
     candidateCalls: List<KaCall>,
     diagnostic: KaDiagnostic,
-    override val token: KaLifetimeToken,
 ) : KaCallInfo() {
+    private val backedDiagnostic: KaDiagnostic = diagnostic
+
+    override val token: KaLifetimeToken get() = backedDiagnostic.token
+    public val diagnostic: KaDiagnostic get() = withValidityAssertion { backedDiagnostic }
     public val candidateCalls: List<KaCall> by validityAsserted(candidateCalls)
-    public val diagnostic: KaDiagnostic by validityAsserted(diagnostic)
 }
 
 public val KaCallInfo.calls: List<KaCall>

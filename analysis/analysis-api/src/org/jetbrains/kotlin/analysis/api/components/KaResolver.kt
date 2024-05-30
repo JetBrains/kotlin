@@ -7,17 +7,26 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.resolution.KaCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionError
+import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.resolution.KtResolvable
+import org.jetbrains.kotlin.resolution.KtResolvableCall
 
 @KaAnalysisApiInternals
 public abstract class KaResolver : KaSessionComponent() {
     public abstract fun resolveToSymbols(reference: KtReference): Collection<KaSymbol>
 
-    public abstract fun resolveCall(psi: KtElement): KaCallInfo?
+    public abstract fun attemptResolveCall(psi: KtElement): KaCallResolutionAttempt?
     public abstract fun collectCallCandidates(psi: KtElement): List<KaCallCandidateInfo>
 }
 
@@ -26,19 +35,48 @@ public typealias KtCallResolver = KaResolver
 
 @OptIn(KaAnalysisApiInternals::class)
 public interface KaResolverMixIn : KaSessionMixIn {
+    public fun KtResolvable.attemptResolveSymbol(): KaSymbolResolutionAttempt? = withValidityAssertion {
+        null
+    }
+
+    public fun KtResolvable.resolveSymbol(): KaSymbol? = when (val attempt = attemptResolveSymbol()) {
+        is KaSymbolResolutionSuccess -> attempt.symbol
+        else -> null
+    }
+
+    public fun KtResolvableCall.attemptResolveCall(): KaCallResolutionAttempt? = withValidityAssertion {
+        if (this !is KtElement) return@withValidityAssertion null
+
+        return analysisSession.resolver.attemptResolveCall(this)
+    }
+
+    public fun KtResolvableCall.resolveCall(): KaCall? = attemptResolveCall() as? KaCall
+
+    public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidateInfo> = withValidityAssertion {
+        if (this !is KtElement) return@withValidityAssertion emptyList()
+
+        analysisSession.resolver.collectCallCandidates(this)
+    }
+
     @Deprecated(
         message = "The API will be changed soon. Use 'resolveCallOld()' in a transit period",
         replaceWith = ReplaceWith("resolveCallOld()"),
+        level = DeprecationLevel.HIDDEN,
     )
     public fun KtElement.resolveCall(): KaCallInfo? = resolveCallOld()
 
     public fun KtElement.resolveCallOld(): KaCallInfo? = withValidityAssertion {
-        analysisSession.resolver.resolveCall(this)
+        when (val attempt = analysisSession.resolver.attemptResolveCall(this)) {
+            is KaCallResolutionError -> KaErrorCallInfo(attempt.candidateCalls, attempt.diagnostic)
+            is KaCall -> KaSuccessCallInfo(attempt)
+            null -> null
+        }
     }
 
     @Deprecated(
         message = "The API will be changed soon. Use 'collectCallCandidatesOld()' in a transit period",
         replaceWith = ReplaceWith("collectCallCandidatesOld()"),
+        level = DeprecationLevel.HIDDEN,
     )
     public fun KtElement.collectCallCandidates(): List<KaCallCandidateInfo> = collectCallCandidatesOld()
 
