@@ -6,6 +6,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(kn_exp)
 
 # set common paths
+set(KN_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/..)
 set(INCL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(OUT_DIR__KN ${CMAKE_CURRENT_SOURCE_DIR}/out/kn)
 set(SOURCE__KN ${CMAKE_CURRENT_SOURCE_DIR}/kotlin/src/nativeMain/kotlin)
@@ -14,6 +15,8 @@ set(OBJ__KN_LIB_ORIGINAL ${OUT_DIR__KN}/libstatic.a.o)
 set(OBJ__KN_LIB ${OUT_DIR__KN}/libkn.o)
 set(OBJ__KN_HEADER__ORIGINAL ${CMAKE_CURRENT_SOURCE_DIR}/kotlin/build/bin/native/releaseShared/libkn_api.h)
 set(INCL__KN_HEADER ${INCL_DIR}/libkn.h)
+
+set(CMAKE_BUILD_TYPE Debug)
 
 
 add_custom_command(
@@ -24,13 +27,13 @@ add_custom_command(
   VERBATIM
 )
 
-add_custom_command(
-  OUTPUT ${INCL__KN_HEADER}
-  COMMAND gradle linkNative
-  COMMAND mv ${OBJ__KN_HEADER__ORIGINAL} ${INCL__KN_HEADER}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/kotlin
-  VERBATIM
-)
+# add_custom_command(
+#   OUTPUT ${INCL__KN_HEADER}
+#   COMMAND ${KN_ROOT}/gradlew linkNative
+#   COMMAND mv ${OBJ__KN_HEADER__ORIGINAL} ${INCL__KN_HEADER}
+#   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/kotlin
+#   VERBATIM
+# )
 
 add_library(kn_out ${OBJ__KN_LIB} ${INCL__KN_HEADER})
 
@@ -45,5 +48,5 @@ set_target_properties(kn_out PROPERTIES LINKER_LANGUAGE CXX)
 # set(HEADER_FILES ${OUT_DIR__KN}/libkn.h)
 
 target_include_directories(app PRIVATE ${INCL_DIR})
-target_sources(app PRIVATE ${SOURCE__NATIVE}/main.cpp)
+target_sources(app PRIVATE ${SOURCE__NATIVE}/main.cpp ${SOURCE__NATIVE}/polyfill.c)
 target_link_libraries(app PUBLIC kn_out)

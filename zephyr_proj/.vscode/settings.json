@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    "atomic": "cpp",
+    "atomic_types.h": "c"
+  }
+}

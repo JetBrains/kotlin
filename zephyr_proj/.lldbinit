@@ -1,0 +1,5 @@
+target create /Users/txie/zephyrproject/zephyr/build/zephyr/zephyr.elf
+target modules add /Users/txie/zephyr-sdk-0.16.5-1/arm-zephyr-eabi/arm-zephyr-eabi/lib/libstdc++.a
+settings set target.exec-search-paths /Users/txie/zephyr-sdk-0.16.5-1/arm-zephyr-eabi/arm-zephyr-eabi/lib/
+gdb-remote localhost:1234
+breakpoint set -E c++
