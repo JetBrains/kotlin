@@ -5,12 +5,12 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.translators
 
 import org.jetbrains.dokka.links.*
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -30,14 +30,14 @@ private fun CallableId.createDRI(receiver: TypeReference?, params: List<TypeRefe
     )
 )
 
-internal fun getDRIFromNonErrorClassType(nonErrorClassType: KtNonErrorClassType): DRI =
+internal fun getDRIFromNonErrorClassType(nonErrorClassType: KaNonErrorClassType): DRI =
     nonErrorClassType.classId.createDRI()
 
-private val KtCallableSymbol.callableId
+private val KaCallableSymbol.callableId
     get() = this.callableIdIfNonLocal ?: throw IllegalStateException("Can not get callable Id due to it is local")
 
 // because of compatibility with Dokka K1, DRI of entry is kept as non-callable
-internal fun getDRIFromEnumEntry(symbol: KtEnumEntrySymbol): DRI =
+internal fun getDRIFromEnumEntry(symbol: KaEnumEntrySymbol): DRI =
     symbol.callableId.let {
         DRI(
             packageName = it.packageName.asString(),
@@ -46,16 +46,16 @@ internal fun getDRIFromEnumEntry(symbol: KtEnumEntrySymbol): DRI =
     }.withEnumEntryExtra()
 
 
-internal fun KtAnalysisSession.getDRIFromTypeParameter(symbol: KtTypeParameterSymbol): DRI {
+internal fun KaSession.getDRIFromTypeParameter(symbol: KaTypeParameterSymbol): DRI {
     val containingSymbol =
-        (symbol.getContainingSymbol() as? KtSymbolWithTypeParameters)
+        (symbol.getContainingSymbol() as? KaSymbolWithTypeParameters)
             ?: throw IllegalStateException("Containing symbol is null for type parameter")
     val typeParameters = containingSymbol.typeParameters
     val index = typeParameters.indexOfFirst { symbol.name == it.name }
     return getDRIFromSymbol(containingSymbol).copy(target = PointingToGenericParameters(index))
 }
 
-internal fun KtAnalysisSession.getDRIFromConstructor(symbol: KtConstructorSymbol): DRI =
+internal fun KaSession.getDRIFromConstructor(symbol: KaConstructorSymbol): DRI =
     (symbol.containingClassIdIfNonLocal
         ?: throw IllegalStateException("Can not get class Id due to it is local")).createDRI().copy(
         callable = Callable(
@@ -63,14 +63,14 @@ internal fun KtAnalysisSession.getDRIFromConstructor(symbol: KtConstructorSymbol
             params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType) })
     )
 
-internal fun KtAnalysisSession.getDRIFromVariableLike(symbol: KtVariableLikeSymbol): DRI {
+internal fun KaSession.getDRIFromVariableLike(symbol: KaVariableLikeSymbol): DRI {
     val receiver = symbol.receiverType?.let {
         getTypeReferenceFrom(it)
     }
     return symbol.callableId.createDRI(receiver, emptyList())
 }
 
-internal fun KtAnalysisSession.getDRIFromFunctionLike(symbol: KtFunctionLikeSymbol): DRI {
+internal fun KaSession.getDRIFromFunctionLike(symbol: KaFunctionLikeSymbol): DRI {
     val params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType) }
     val receiver = symbol.receiverType?.let {
         getTypeReferenceFrom(it)
@@ -79,14 +79,14 @@ internal fun KtAnalysisSession.getDRIFromFunctionLike(symbol: KtFunctionLikeSymb
         ?: getDRIFromLocalFunction(symbol)
 }
 
-internal fun getDRIFromClassLike(symbol: KtClassLikeSymbol): DRI =
+internal fun getDRIFromClassLike(symbol: KaClassLikeSymbol): DRI =
     symbol.classIdIfNonLocal?.createDRI() ?: throw IllegalStateException("Can not get class Id due to it is local")
 
-internal fun getDRIFromPackage(symbol: KtPackageSymbol): DRI =
+internal fun getDRIFromPackage(symbol: KaPackageSymbol): DRI =
     DRI(packageName = symbol.fqName.asString())
 
-internal fun KtAnalysisSession.getDRIFromValueParameter(symbol: KtValueParameterSymbol): DRI {
-    val function = (symbol.getContainingSymbol() as? KtFunctionLikeSymbol)
+internal fun KaSession.getDRIFromValueParameter(symbol: KaValueParameterSymbol): DRI {
+    val function = (symbol.getContainingSymbol() as? KaFunctionLikeSymbol)
         ?: throw IllegalStateException("Containing symbol is null for type parameter")
     val index = function.valueParameters.indexOfFirst { it.name == symbol.name }
     val funDRI = getDRIFromFunctionLike(function)
@@ -96,41 +96,41 @@ internal fun KtAnalysisSession.getDRIFromValueParameter(symbol: KtValueParameter
 /**
  * @return [DRI] to receiver type
  */
-internal fun KtAnalysisSession.getDRIFromReceiverParameter(receiverParameterSymbol: KtReceiverParameterSymbol): DRI =
+internal fun KaSession.getDRIFromReceiverParameter(receiverParameterSymbol: KaReceiverParameterSymbol): DRI =
     getDRIFromReceiverType(receiverParameterSymbol.type)
 
-private fun KtAnalysisSession.getDRIFromReceiverType(type: KtType): DRI {
+private fun KaSession.getDRIFromReceiverType(type: KaType): DRI {
     return when(type) {
-        is KtNonErrorClassType -> getDRIFromNonErrorClassType(type)
-        is KtTypeParameterType -> getDRIFromTypeParameter(type.symbol)
-        is KtDefinitelyNotNullType -> getDRIFromReceiverType(type.original)
-        is KtTypeErrorType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type")
-        is KtClassErrorType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type")
-        is KtDynamicType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type") // prohibited by a compiler, but it's a possible input
+        is KaNonErrorClassType -> getDRIFromNonErrorClassType(type)
+        is KaTypeParameterType -> getDRIFromTypeParameter(type.symbol)
+        is KaDefinitelyNotNullType -> getDRIFromReceiverType(type.original)
+        is KaTypeErrorType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type")
+        is KaClassErrorType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type")
+        is KaDynamicType -> DRI(packageName = "", classNames = "$ERROR_CLASS_NAME $type") // prohibited by a compiler, but it's a possible input
 
-        is KtCapturedType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
-        is KtFlexibleType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
-        is KtIntegerLiteralType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
-        is KtIntersectionType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
+        is KaCapturedType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
+        is KaFlexibleType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
+        is KaIntegerLiteralType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
+        is KaIntersectionType -> throw IllegalStateException("Unexpected non-denotable type while creating DRI $type")
     }
 }
 
-internal fun KtAnalysisSession.getDRIFromSymbol(symbol: KtSymbol): DRI =
+internal fun KaSession.getDRIFromSymbol(symbol: KaSymbol): DRI =
     when (symbol) {
-        is KtEnumEntrySymbol -> getDRIFromEnumEntry(symbol)
-        is KtTypeParameterSymbol -> getDRIFromTypeParameter(symbol)
-        is KtConstructorSymbol -> getDRIFromConstructor(symbol)
-        is KtValueParameterSymbol -> getDRIFromValueParameter(symbol)
-        is KtVariableLikeSymbol -> getDRIFromVariableLike(symbol)
-        is KtFunctionLikeSymbol -> getDRIFromFunctionLike(symbol)
-        is KtClassLikeSymbol -> getDRIFromClassLike(symbol)
-        is KtPackageSymbol -> getDRIFromPackage(symbol)
-        is KtReceiverParameterSymbol -> getDRIFromReceiverParameter(symbol)
+        is KaEnumEntrySymbol -> getDRIFromEnumEntry(symbol)
+        is KaTypeParameterSymbol -> getDRIFromTypeParameter(symbol)
+        is KaConstructorSymbol -> getDRIFromConstructor(symbol)
+        is KaValueParameterSymbol -> getDRIFromValueParameter(symbol)
+        is KaVariableLikeSymbol -> getDRIFromVariableLike(symbol)
+        is KaFunctionLikeSymbol -> getDRIFromFunctionLike(symbol)
+        is KaClassLikeSymbol -> getDRIFromClassLike(symbol)
+        is KaPackageSymbol -> getDRIFromPackage(symbol)
+        is KaReceiverParameterSymbol -> getDRIFromReceiverParameter(symbol)
         else -> throw IllegalStateException("Unknown symbol while creating DRI $symbol")
     }
 
-private fun KtAnalysisSession.getDRIFromNonCallablePossibleLocalSymbol(symbol: KtSymbol): DRI {
-    if ((symbol as? KtSymbolWithKind)?.symbolKind == KtSymbolKind.LOCAL) {
+private fun KaSession.getDRIFromNonCallablePossibleLocalSymbol(symbol: KaSymbol): DRI {
+    if ((symbol as? KaSymbolWithKind)?.symbolKind == KaSymbolKind.LOCAL) {
         return symbol.getContainingSymbol()?.let { getDRIFromNonCallablePossibleLocalSymbol(it) }
             ?: throw IllegalStateException("Can't get containing symbol for local symbol")
     }
@@ -141,7 +141,7 @@ private fun KtAnalysisSession.getDRIFromNonCallablePossibleLocalSymbol(symbol: K
  * Currently, it's used only for functions from enum entry,
  * For its members: `memberSymbol.callableIdIfNonLocal=null`
  */
-private fun KtAnalysisSession.getDRIFromLocalFunction(symbol: KtFunctionLikeSymbol): DRI {
+private fun KaSession.getDRIFromLocalFunction(symbol: KaFunctionLikeSymbol): DRI {
     /**
      * A function is inside local object
      */
@@ -149,7 +149,7 @@ private fun KtAnalysisSession.getDRIFromLocalFunction(symbol: KtFunctionLikeSymb
         ?: throw IllegalStateException("Can't get containing symbol for local function")
     return containingSymbolDRI.copy(
         callable = Callable(
-            (symbol as? KtNamedSymbol)?.name?.asString() ?: "",
+            (symbol as? KaNamedSymbol)?.name?.asString() ?: "",
             params = symbol.valueParameters.map { getTypeReferenceFrom(it.returnType) },
             receiver = symbol.receiverType?.let {
                 getTypeReferenceFrom(it)
