@@ -25,6 +25,78 @@ public class FirLightTreeJvmIntegrationDiagnosticTestGenerated extends AbstractF
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/jvmIntegration/classpath")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Classpath {
+    @Test
+    public void testAllFilesPresentInClasspath() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/jvmIntegration/classpath"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classFromJdkInLibrary.kt")
+    public void testClassFromJdkInLibrary() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/classpath/classFromJdkInLibrary.kt");
+    }
+
+    @Test
+    @TestMetadata("dependencyOnItself.kt")
+    public void testDependencyOnItself() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/classpath/dependencyOnItself.kt");
+    }
+
+    @Test
+    @TestMetadata("prohibitNestedClassesByDollarName.kt")
+    public void testProhibitNestedClassesByDollarName() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/classpath/prohibitNestedClassesByDollarName.kt");
+    }
+
+    @Test
+    @TestMetadata("sameLibraryTwiceInClasspath.kt")
+    public void testSameLibraryTwiceInClasspath() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/classpath/sameLibraryTwiceInClasspath.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/jvmIntegration/inline")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Inline {
+    @Test
+    public void testAllFilesPresentInInline() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/jvmIntegration/inline"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("wrongInlineTarget.kt")
+    public void testWrongInlineTarget() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/inline/wrongInlineTarget.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/jvmIntegration/internal")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Internal {
+    @Test
+    public void testAllFilesPresentInInternal() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/jvmIntegration/internal"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("internalFromForeignModule.kt")
+    public void testInternalFromForeignModule() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/internal/internalFromForeignModule.kt");
+    }
+
+    @Test
+    @TestMetadata("internalFromFriendModule.kt")
+    public void testInternalFromFriendModule() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/internal/internalFromFriendModule.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/jvmIntegration/modules")
   @TestDataPath("$PROJECT_ROOT")
   public class Modules {
@@ -131,6 +203,44 @@ public class FirLightTreeJvmIntegrationDiagnosticTestGenerated extends AbstractF
       public void testUnknownReleaseVersion() {
         runTest("compiler/testData/diagnostics/jvmIntegration/modules/jdkReleaseFlag/unknownReleaseVersion.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/jvmIntegration/rawTypes")
+  @TestDataPath("$PROJECT_ROOT")
+  public class RawTypes {
+    @Test
+    public void testAllFilesPresentInRawTypes() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/jvmIntegration/rawTypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/rawTypes/simple.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/jvmIntegration/sealed")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Sealed {
+    @Test
+    public void testAllFilesPresentInSealed() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/jvmIntegration/sealed"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("sealedClassesAndInterfaces.kt")
+    public void testSealedClassesAndInterfaces() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/sealed/sealedClassesAndInterfaces.kt");
+    }
+
+    @Test
+    @TestMetadata("sealedInheritorInDifferentModule.kt")
+    public void testSealedInheritorInDifferentModule() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/sealed/sealedInheritorInDifferentModule.kt");
     }
   }
 }

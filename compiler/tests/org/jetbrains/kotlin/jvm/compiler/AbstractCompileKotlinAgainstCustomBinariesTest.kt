@@ -140,14 +140,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     // ------------------------------------------------------------------------------
 
-    fun testRawTypes() {
-        compileKotlin("main.kt", tmpdir, listOf(compileLibrary("library")))
-    }
-
-    fun testSameLibraryTwiceInClasspath() {
-        compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library-1"), compileLibrary("library-2")))
-    }
-
     // KT-62900 K2: Expected expression to be resolved during Fir2Ir
     fun testMissingEnumReferencedInAnnotationArgument() = muteForK2 {
         doTestBrokenLibrary("library", "a/E.class")
@@ -288,16 +280,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheckAllowUnstableDependencies() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xallow-unstable-dependencies", "-Xskip-prerelease-check")
-    }
-
-    // KT-61051 K1/K2 difference on extension functions with specific extension receiver types when compiling code that has itself as a dependency
-    fun testDependencyOnItself() {
-        val compiledLibrary = compileLibrary("library")
-        compileKotlin(
-            "library/sample.kt",
-            output = tmpdir,
-            classpath = listOf(compiledLibrary),
-        )
     }
 
     fun testWrongMetadataVersion() {
@@ -459,11 +441,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(usage, library2))
     }
 
-    fun testProhibitNestedClassesByDollarName() {
-        val library = compileLibrary("library")
-        compileKotlin("main.kt", tmpdir, listOf(library))
-    }
-
     fun testInnerClassPackageConflict() {
         val output = compileLibrary("library", destination = File(tmpdir, "library"))
         File(testDataDirectory, "library/test/Foo/x.txt").copyTo(File(output, "test/Foo/x.txt"))
@@ -490,12 +467,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(library1))
     }
 
-    fun testWrongInlineTarget() {
-        val library = compileLibrary("library", additionalOptions = listOf("-jvm-target", "11"))
-
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8"))
-    }
-
     fun testInlineFunctionsWithMatchingJvmSignatures() {
         val library = compileLibrary(
             "library",
@@ -517,20 +488,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             URLClassLoader(arrayOf(newLibrary.toURI().toURL(), tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
                 .loadClass("SourceKt").getDeclaredMethod("run").invoke(null) as String
         assertEquals("ABCAB", result)
-    }
-
-    fun testClassFromJdkInLibrary() {
-        val library = compileLibrary("library")
-        compileKotlin("source.kt", tmpdir, listOf(library))
-    }
-
-    fun testInternalFromForeignModule() {
-        compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
-    }
-
-    fun testInternalFromFriendModule() {
-        val library = compileLibrary("library")
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xfriend-paths=${library.path}"))
     }
 
     // KT-60791 K2: implement EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED(COMPATIBILITY)_MODE
@@ -684,18 +641,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             "source.kt", tmpdir, listOf(library),
             additionalOptions = listOf("-Xallow-unstable-dependencies", "-Xskip-metadata-version-check")
         )
-    }
-
-    fun testSealedClassesAndInterfaces() {
-        val features = listOf("-XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage", "-XXLanguage:+SealedInterfaces")
-        val library = compileLibrary("library", additionalOptions = features, checkKotlinOutput = {})
-        compileKotlin("main.kt", tmpdir, listOf(library), additionalOptions = features)
-    }
-
-    fun testSealedInheritorInDifferentModule() {
-        val features = listOf("-XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage", "-XXLanguage:+SealedInterfaces")
-        val library = compileLibrary("library", additionalOptions = features, checkKotlinOutput = {})
-        compileKotlin("main.kt", tmpdir, listOf(library), additionalOptions = features)
     }
 
     fun testUnreachableExtensionVarPropertyDeclaration() {
