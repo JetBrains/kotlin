@@ -348,7 +348,8 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                 val (symbol, hasDispatchReceiver) = when {
                     type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol to false
                     else -> {
-                        val classForType = when (val classifier = type.coerceToAny().toSymbol(session)?.fir) {
+                        val preparedType = type.unwrapFlexibleAndDefinitelyNotNull().coerceToAny()
+                        val classForType = when (val classifier = preparedType.toSymbol(session)?.fir) {
                             is FirRegularClass -> classifier
                             is FirTypeParameter -> classifier.erasedUpperBound
                             else -> error("Unknown classifier kind $classifier")
