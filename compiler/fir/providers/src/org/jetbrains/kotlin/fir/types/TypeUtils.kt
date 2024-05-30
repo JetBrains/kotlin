@@ -182,9 +182,10 @@ fun <T : ConeKotlinType> T.withNullability(
         withoutEnhanced.transformTypesWith { t -> t.withNullability(nullability, typeContext) } ?: withoutEnhanced
     }
 
-    if (this.nullability == nullability && this.attributes == theAttributes && this !is ConeIntersectionType) {
+    if (this.nullability == nullability && this.attributes == theAttributes && this.lowerBoundIfFlexible() !is ConeIntersectionType) {
         // Note: this is an optimization, but it's not applicable for ConeIntersectionType,
         // because ConeIntersectionType.nullability is always NOT_NULL, independent on real component nullabilities
+        // Second note: we can receive a flexible type with intersection types in bounds, so we need unwrap it first
         return this
     }
 
