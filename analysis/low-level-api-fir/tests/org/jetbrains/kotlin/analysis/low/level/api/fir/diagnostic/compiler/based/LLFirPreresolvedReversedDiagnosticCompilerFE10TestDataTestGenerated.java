@@ -26025,6 +26025,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("privateExpectFakeOverride.kt")
+      public void testPrivateExpectFakeOverride() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/privateExpectFakeOverride.kt");
+      }
+
+      @Test
       @TestMetadata("privateTopLevelDeclarations.kt")
       public void testPrivateTopLevelDeclarations() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/privateTopLevelDeclarations.kt");
