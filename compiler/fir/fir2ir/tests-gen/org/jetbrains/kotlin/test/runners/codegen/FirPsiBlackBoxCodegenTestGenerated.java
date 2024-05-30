@@ -39381,22 +39381,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
           runTest("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests/remap_expect_property_ref.kt");
         }
       }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/stdlib")
-      @TestDataPath("$PROJECT_ROOT")
-      public class Stdlib {
-        @Test
-        public void testAllFilesPresentInStdlib() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/stdlib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-        }
-
-        @Test
-        @TestMetadata("example.kt")
-        public void testExample() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/stdlib/example.kt");
-        }
-      }
     }
 
     @Nested

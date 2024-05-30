@@ -28341,16 +28341,6 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
           runTest("compiler/testData/codegen/box/multiplatform/k2/migratedOldTests/remap_expect_property_ref.kt");
         }
       }
-
-      @Nested
-      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/stdlib")
-      @TestDataPath("$PROJECT_ROOT")
-      public class Stdlib {
-        @Test
-        public void testAllFilesPresentInStdlib() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/stdlib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-        }
-      }
     }
 
     @Nested

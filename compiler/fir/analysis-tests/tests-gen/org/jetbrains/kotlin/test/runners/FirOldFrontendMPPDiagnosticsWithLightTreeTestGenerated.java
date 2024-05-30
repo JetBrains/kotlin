@@ -446,12 +446,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
   }
 
   @Test
-  @TestMetadata("stdlibWithActualizationErrors.kt")
-  public void testStdlibWithActualizationErrors() {
-    runTest("compiler/testData/diagnostics/tests/multiplatform/stdlibWithActualizationErrors.kt");
-  }
-
-  @Test
   @TestMetadata("superCallDefaultArguments.kt")
   public void testSuperCallDefaultArguments() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/superCallDefaultArguments.kt");
