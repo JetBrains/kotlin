@@ -189,13 +189,27 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         project.dependencies.registerTransform(BuildToolsApiClasspathEntrySnapshotTransform::class.java) {
             it.from.setAttribute(ARTIFACT_TYPE_ATTRIBUTE, JAR_ARTIFACT_TYPE)
             it.to.setAttribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
-            it.configureCommonParameters(kgpVersion, classLoadersCachingService, classpath, jvmToolchain, runKotlinCompilerViaBuildToolsApi, suppressVersionInconsistencyChecks)
+            it.configureCommonParameters(
+                kgpVersion,
+                classLoadersCachingService,
+                classpath,
+                jvmToolchain,
+                runKotlinCompilerViaBuildToolsApi,
+                suppressVersionInconsistencyChecks
+            )
             it.parameters.setupKotlinToolingDiagnosticsParameters(project)
         }
         project.dependencies.registerTransform(BuildToolsApiClasspathEntrySnapshotTransform::class.java) {
             it.from.setAttribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_ARTIFACT_TYPE)
             it.to.setAttribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
-            it.configureCommonParameters(kgpVersion, classLoadersCachingService, classpath, jvmToolchain, runKotlinCompilerViaBuildToolsApi, suppressVersionInconsistencyChecks)
+            it.configureCommonParameters(
+                kgpVersion,
+                classLoadersCachingService,
+                classpath,
+                jvmToolchain,
+                runKotlinCompilerViaBuildToolsApi,
+                suppressVersionInconsistencyChecks
+            )
             it.parameters.setupKotlinToolingDiagnosticsParameters(project)
         }
     }

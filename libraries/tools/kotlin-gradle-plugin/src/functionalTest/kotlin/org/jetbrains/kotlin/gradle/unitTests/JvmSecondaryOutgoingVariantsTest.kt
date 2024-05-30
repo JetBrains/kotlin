@@ -11,14 +11,24 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
 import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
+import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
 import kotlin.test.*
 
 class JvmSecondaryOutgoingVariantsTest {
 
+    private fun buildProjectWithJvmAndClassesVariant(
+        code: Project.() -> Unit = {}
+    ) = buildProjectWithJvm(
+        preApplyCode = {
+            project.enableSecondaryJvmClassesVariant()
+        },
+        code = code
+    )
+
     @Test
     fun shouldAddJvmSecondaryClassesVariantForDefaultApiConfigurations() {
-        val project = buildProjectWithJvm()
+        val project = buildProjectWithJvmAndClassesVariant()
 
         project.evaluate()
 
@@ -27,7 +37,7 @@ class JvmSecondaryOutgoingVariantsTest {
 
     @Test
     fun shouldWorkWithJavaLibraryPluginApplied() {
-        val project = buildProjectWithJvm {
+        val project = buildProjectWithJvmAndClassesVariant {
             plugins.apply("java-library")
         }
 
@@ -38,7 +48,7 @@ class JvmSecondaryOutgoingVariantsTest {
 
     @Test
     fun shouldAddJvmSecondaryClassesVariantForAllApiConfigurations() {
-        val project = buildProjectWithJvm {
+        val project = buildProjectWithJvmAndClassesVariant {
             plugins.apply("java-test-fixtures") // creates additional apiElements configuration for fixtures
 
             val featureSourceSet = javaSourceSets.create("someNewFeature") {
@@ -62,6 +72,17 @@ class JvmSecondaryOutgoingVariantsTest {
             val classesVariant = configuration.outgoing.variants.getByName(CLASSES_SECONDARY_VARIANT_NAME)
             assertNotNull(classesVariant)
             assertTrue(classesVariant.artifacts.size == 2)
+        }
+    }
+
+    @Test
+    fun shouldNotAddJvmSecondaryClassesVariantsByDefault() {
+        val project = buildProjectWithJvm()
+
+        project.evaluate()
+
+        project.apiConfigurations.forEach { configuration ->
+            assertNull(configuration.outgoing.variants.findByName(CLASSES_SECONDARY_VARIANT_NAME))
         }
     }
 

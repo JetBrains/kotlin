@@ -156,3 +156,7 @@ fun Project.mockXcodeVersion(version: XcodeVersion = XcodeVersion.maxTested) {
         resolve("xcode-version.txt").writeText(version.toString())
     }
 }
+
+fun Project.enableSecondaryJvmClassesVariant(enabled: Boolean = true) {
+    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JVM_ADD_CLASSES_VARIANT, enabled.toString())
+}

@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 
 const val COMPILE_ONLY = "compileOnly"
@@ -110,6 +111,8 @@ internal fun Configuration.addSecondaryOutgoingJvmClassesVariant(
     kotlinCompilation: KotlinCompilation<*>,
     addArtifactsToVariantCreatedByJavaLibraryPlugin: Boolean = false,
 ) {
+    if (!project.kotlinPropertiesProvider.addSecondaryClassesVariant) return
+
     val apiClassesVariant = outgoing.variants.maybeCreate(CLASSES_SECONDARY_VARIANT_NAME)
     apiClassesVariant.attributes.attribute(
         LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,

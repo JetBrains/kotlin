@@ -12,15 +12,26 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
 import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
 import kotlin.test.*
 
 class MultiplatformSecondaryOutgoingVariantsTest {
 
+    private fun buildProjectWithMPPAndJvmClassesVariant(
+        code: Project.() -> Unit = {}
+    ) = buildProjectWithMPP(
+        preApplyCode = {
+            project.enableSecondaryJvmClassesVariant()
+        },
+        code = code
+    )
+
+
     @Test
     fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurations() {
-        val project = buildProjectWithMPP {
+        val project = buildProjectWithMPPAndJvmClassesVariant {
             with(multiplatformExtension) {
                 jvm()
                 applyDefaultHierarchyTemplate()
@@ -37,7 +48,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
     @Test
     fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaEnabled() {
-        val project = buildProjectWithMPP {
+        val project = buildProjectWithMPPAndJvmClassesVariant {
             with(multiplatformExtension) {
                 jvm {
                     withJava()
@@ -53,7 +64,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
     @Test
     fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaEnabledAndJavaLibraryPluginApplied() {
-        val project = buildProjectWithMPP {
+        val project = buildProjectWithMPPAndJvmClassesVariant {
             plugins.apply("java-library")
 
             with(multiplatformExtension) {
@@ -71,7 +82,7 @@ class MultiplatformSecondaryOutgoingVariantsTest {
 
     @Test
     fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaTestFixturesApplied() {
-        val project = buildProjectWithMPP {
+        val project = buildProjectWithMPPAndJvmClassesVariant {
             plugins.apply("java-test-fixtures")
 
             with(multiplatformExtension) {
@@ -85,6 +96,22 @@ class MultiplatformSecondaryOutgoingVariantsTest {
         project.evaluate()
 
         project.assertJvmClassesVariants(expectedArtifactsSize = 2, isJavaCompilationEnabled = true)
+    }
+
+    @Test
+    fun shouldNotAddSecondaryJvmClassesVariantByDefault() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                jvm()
+                applyDefaultHierarchyTemplate()
+            }
+        }
+
+        project.evaluate()
+
+        project.jvmApiConfigurations.forEach { configuration ->
+            assertNull(configuration.outgoing.variants.findByName(CLASSES_SECONDARY_VARIANT_NAME))
+        }
     }
 
     private val Project.jvmApiConfigurations
