@@ -146,6 +146,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("delegationToExpectInterfacesWithClashingScopes.kt")
+  public void testDelegationToExpectInterfacesWithClashingScopes() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/delegationToExpectInterfacesWithClashingScopes.kt");
+  }
+
+  @Test
   @TestMetadata("expectAbstractToString.kt")
   public void testExpectAbstractToString() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/expectAbstractToString.kt");

@@ -38833,6 +38833,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("delegationToExpectInterface_noNewMembers.kt")
+      public void testDelegationToExpectInterface_noNewMembers() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/delegationToExpectInterface_noNewMembers.kt");
+      }
+
+      @Test
+      @TestMetadata("delegationToExpectInterface_noNewMembers_javaActualization.kt")
+      public void testDelegationToExpectInterface_noNewMembers_javaActualization() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/delegationToExpectInterface_noNewMembers_javaActualization.kt");
+      }
+
+      @Test
       @TestMetadata("expectAnnotationAsTypeAlias.kt")
       public void testExpectAnnotationAsTypeAlias() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/expectAnnotationAsTypeAlias.kt");

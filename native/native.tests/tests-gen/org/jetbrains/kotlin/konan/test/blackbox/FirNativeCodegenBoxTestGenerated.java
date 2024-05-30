@@ -30932,6 +30932,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Test
+        @TestMetadata("delegationToExpectInterface_noNewMembers.kt")
+        public void testDelegationToExpectInterface_noNewMembers() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/delegationToExpectInterface_noNewMembers.kt");
+        }
+
+        @Test
         @TestMetadata("expectValInInlineClass.kt")
         public void testExpectValInInlineClass() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/expectValInInlineClass.kt");
