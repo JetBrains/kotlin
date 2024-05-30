@@ -16,8 +16,8 @@ abstract class AbstractResolveCallTest : AbstractResolveTest() {
 
     override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String {
         return analyseForTest(mainElement) {
-            val call = mainElement.resolveCall()
-            val secondCall = mainElement.resolveCall()
+            val call = mainElement.resolveCallOld()
+            val secondCall = mainElement.resolveCallOld()
 
             ignoreStabilityIfNeeded(testServices.moduleStructure.allDirectives) {
                 assertStableResult(testServices, call, secondCall)

@@ -26,8 +26,13 @@ public typealias KtCallResolver = KaResolver
 
 @OptIn(KaAnalysisApiInternals::class)
 public interface KaResolverMixIn : KaSessionMixIn {
+    @Deprecated(
+        message = "The API will be changed soon. Use 'resolveCallOld()' in a transit period",
+        replaceWith = ReplaceWith("resolveCallOld()"),
+    )
+    public fun KtElement.resolveCall(): KaCallInfo? = resolveCallOld()
 
-    public fun KtElement.resolveCall(): KaCallInfo? = withValidityAssertion {
+    public fun KtElement.resolveCallOld(): KaCallInfo? = withValidityAssertion {
         analysisSession.resolver.resolveCall(this)
     }
 
@@ -35,7 +40,7 @@ public interface KaResolverMixIn : KaSessionMixIn {
      * Returns all the candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html) for the call
      * corresponding to this [KtElement].
      *
-     * [resolveCall] only returns the final result of overload resolution, i.e., the selected callable after considering candidate
+     * [resolveCallOld] only returns the final result of overload resolution, i.e., the selected callable after considering candidate
      * applicability and choosing the most specific candidate.
      */
     public fun KtElement.collectCallCandidates(): List<KaCallCandidateInfo> = withValidityAssertion {
