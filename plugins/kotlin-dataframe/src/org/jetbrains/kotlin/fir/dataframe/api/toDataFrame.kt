@@ -229,7 +229,7 @@ internal fun KotlinTypeFacade.toDataFrame(
     return when {
         arg.isStarProjection -> PluginDataFrameSchema(emptyList())
         else -> {
-            val classLike = arg.type as ConeClassLikeType
+            val classLike = arg.type as? ConeClassLikeType ?: return PluginDataFrameSchema(emptyList())
             val columns = convert(classLike, 0)
             PluginDataFrameSchema(columns)
         }
