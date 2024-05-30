@@ -19,21 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.k1.ComposeDescriptorSerializerContext
-import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunInterfaceLowering
-import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.ComposableLambdaAnnotator
-import androidx.compose.compiler.plugins.kotlin.lower.ComposableSymbolRemapper
-import androidx.compose.compiler.plugins.kotlin.lower.ComposableTargetAnnotationsTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.ComposerIntrinsicTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.ComposerLambdaMemoization
-import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.CopyDefaultValuesFromExpectLowering
-import androidx.compose.compiler.plugins.kotlin.lower.DurableFunctionKeyTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
-import androidx.compose.compiler.plugins.kotlin.lower.KlibAssignableParamTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.WrapJsComposableLambdaLowering
+import androidx.compose.compiler.plugins.kotlin.lower.*
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.CreateDecoysTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.RecordDecoySignaturesTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.SubstituteDecoyCallsTransformer
@@ -43,6 +29,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureFactory
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.backend.common.validateIr
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
@@ -91,7 +78,15 @@ class ComposeIrGenerationExtension(
 
         // Input check.  This should always pass, else something is horribly wrong upstream.
         // Necessary because oftentimes the issue is upstream (compiler bug, prior plugin, etc)
-        validateIr(moduleFragment, pluginContext.irBuiltIns, irVerificationMode)
+        validateIr(messageCollector, irVerificationMode) {
+            performBasicIrValidation(
+                moduleFragment,
+                pluginContext.irBuiltIns,
+                phaseName = "Before Compose Compiler Plugin",
+                checkProperties = true,
+                checkTypes = false,  // TODO: Re-enable checking types (KT-68663)
+            )
+        }
 
         // create a symbol remapper to be used across all transforms
         val symbolRemapper = ComposableSymbolRemapper()
@@ -290,6 +285,14 @@ class ComposeIrGenerationExtension(
         }
 
         // Verify that our transformations didn't break something
-        validateIr(moduleFragment, pluginContext.irBuiltIns, irVerificationMode)
+        validateIr(messageCollector, irVerificationMode) {
+            performBasicIrValidation(
+                moduleFragment,
+                pluginContext.irBuiltIns,
+                phaseName = "After Compose Compiler Plugin",
+                checkProperties = true,
+                checkTypes = false, // This should be enabled, the fact this doesn't work is a Compose bug.
+            )
+        }
     }
 }
