@@ -47,8 +47,7 @@ class ExtensionsGenerator(session: FirSession) : FirDeclarationGenerationExtensi
     }
 
     private val fields by lazy {
-        matchedClasses.flatMap { classSymbol ->
-            classSymbol.isLocal
+        matchedClasses.filterNot { it.isLocal }.flatMap { classSymbol ->
             classSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>().map { propertySymbol ->
                 val callableId = propertySymbol.callableId
                 DataSchemaField(
