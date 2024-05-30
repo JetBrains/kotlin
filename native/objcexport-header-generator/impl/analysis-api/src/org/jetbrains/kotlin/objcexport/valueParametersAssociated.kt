@@ -97,7 +97,7 @@ internal data class KtObjCParameterData(
  * 2. function extension of inner class
  * 3. property extension of inner class
  * 4. function extension of [isMappedObjCType], i.e. fun String.foo()
- * 5.
+ * 5. function extension of [Nothing], i.e. fun Nothing.foo()
  *
  * Members with non null [objCReceiverType] will have name `receiver`:
  * ```objective-c
@@ -119,6 +119,7 @@ internal val KtFunctionLikeSymbol.objCReceiverType: KtType?
         } else if (isExtension) {
             if (receiverParameter?.type?.isMappedObjCType == true) receiverParameter?.type
             else if ((getContainingSymbol() as? KtNamedClassOrObjectSymbol)?.isInner == true) receiverParameter?.type
+            else if (receiverParameter?.type?.isObjCNothing == true) return receiverParameter?.type
             else null
         } else if (this is KtPropertyGetterSymbol || this is KtPropertySetterSymbol) {
             val property = this.getContainingSymbol() as KtPropertySymbol
