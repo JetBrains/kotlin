@@ -150,6 +150,7 @@ fun <T> KotlinTypeFacade.interpret(
                     is FirPropertyAccessExpression -> {
                         (expression.calleeReference as? FirResolvedNamedReference)?.let {
                             val symbol = it.resolvedSymbol
+                            val literalInitializer = (symbol as? FirPropertySymbol)?.resolvedInitializer as? FirLiteralExpression
                             if (symbol is FirEnumEntrySymbol) {
                                 Interpreter.Success(
                                     DataFrameCallableId(
@@ -158,6 +159,8 @@ fun <T> KotlinTypeFacade.interpret(
                                         callableName = symbol.callableId.callableName.asString()
                                     )
                                 )
+                            } else if (literalInitializer != null) {
+                                Interpreter.Success(literalInitializer.value)
                             } else {
                                 Interpreter.Success(columnWithPathApproximations(expression))
                             }

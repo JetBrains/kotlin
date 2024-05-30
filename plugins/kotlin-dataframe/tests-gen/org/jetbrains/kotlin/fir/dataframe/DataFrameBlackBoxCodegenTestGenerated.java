@@ -202,6 +202,24 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("readJsonStr_const.kt")
+  public void testReadJsonStr_const() {
+    runTest("testData/box/readJsonStr_const.kt");
+  }
+
+  @Test
+  @TestMetadata("readJsonStr_localProperty.kt")
+  public void testReadJsonStr_localProperty() {
+    runTest("testData/box/readJsonStr_localProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("readJsonStr_memberProperty.kt")
+  public void testReadJsonStr_memberProperty() {
+    runTest("testData/box/readJsonStr_memberProperty.kt");
+  }
+
+  @Test
   @TestMetadata("remove.kt")
   public void testRemove() {
     runTest("testData/box/remove.kt");
