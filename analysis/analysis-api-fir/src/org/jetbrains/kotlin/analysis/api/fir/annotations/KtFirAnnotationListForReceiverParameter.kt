@@ -56,7 +56,7 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
         return annotationsByClassId(firCallableSymbol, classId, useSiteTargetFilter, builder, receiverParameter)
     }
 
-    override val annotationClassIds: Collection<ClassId>
+    override val classIds: Collection<ClassId>
         get() = withValidityAssertion {
             annotationClassIds(firCallableSymbol, useSiteSession, receiverParameter)
         }

@@ -55,7 +55,7 @@ internal class KaFe10AnnotationList private constructor(
         return backingAnnotations[index]
     }
 
-    override val annotationClassIds: Set<ClassId>
+    override val classIds: Set<ClassId>
         get() = withValidityAssertion {
             buildSet {
                 for (annotation in fe10Annotations) {

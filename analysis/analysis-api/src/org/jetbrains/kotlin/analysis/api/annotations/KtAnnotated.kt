@@ -43,7 +43,7 @@ public fun KaAnnotated.hasAnnotation(
 /**
  * A list of annotations applied with specified [classId] and filtered by [useSiteTargetFilter].
  *
- * @see [KaAnnotationList.annotationClassIds]
+ * @see [KaAnnotationList.classIds]
  */
 public fun KaAnnotated.annotationsByClassId(
     classId: ClassId,
@@ -53,7 +53,7 @@ public fun KaAnnotated.annotationsByClassId(
 /**
  * A list of annotations applied.
  *
- * @see [KaAnnotationList.annotationClassIds]
+ * @see [KaAnnotationList.classIds]
  */
 public val KaAnnotated.annotationClassIds: Collection<ClassId>
-    get() = annotationsList.annotationClassIds
+    get() = annotationsList.classIds

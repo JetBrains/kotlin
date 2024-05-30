@@ -66,7 +66,11 @@ public interface KaAnnotationList : List<KaAnnotationApplication>, KaLifetimeOwn
      * annotationsList.annotationClassIds == annotationsList.annotations.map { it.classId }
      * ```
      */
+    public val classIds: Collection<ClassId>
+
+    @Deprecated("Use 'classIds' instead.", replaceWith = ReplaceWith("classIds"))
     public val annotationClassIds: Collection<ClassId>
+        get() = classIds
 }
 
 public typealias KtAnnotationsList = KaAnnotationList

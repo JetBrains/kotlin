@@ -55,7 +55,7 @@ internal class KaFirAnnotationListForDeclaration private constructor(
         return annotationsByClassId(firSymbol, classId, useSiteTargetFilter, builder)
     }
 
-    override val annotationClassIds: Collection<ClassId>
+    override val classIds: Collection<ClassId>
         get() = withValidityAssertion {
             annotationClassIds(firSymbol, useSiteSession)
         }

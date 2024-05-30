@@ -35,6 +35,6 @@ class KaEmptyAnnotationList(override val token: KaLifetimeToken) : AbstractList<
         }
     }
 
-    override val annotationClassIds: Set<ClassId>
+    override val classIds: Set<ClassId>
         get() = withValidityAssertion { emptySet() }
 }

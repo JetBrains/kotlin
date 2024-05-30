@@ -76,7 +76,7 @@ internal class KaFirAnnotationListForType private constructor(
         }
     }
 
-    override val annotationClassIds: Collection<ClassId>
+    override val classIds: Collection<ClassId>
         get() = withValidityAssertion {
             coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).mapNotNull { it.toAnnotationClassId(useSiteSession) }
         }
