@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.tests
 
 import androidx.compose.compiler.plugins.kotlin.AbstractCompilerFacilityTestForComposeCompilerPlugin
 import org.jetbrains.kotlin.allopen.*
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 import org.jetbrains.kotlin.android.parcel.AbstractParcelBoxTest
 import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
 import org.jetbrains.kotlin.android.parcel.AbstractParcelIrBoxTest
@@ -30,9 +29,7 @@ import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.PURE_KOTLIN
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.WITH_JAVA
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.incrementalJvmTestData
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.AnalysisApiConfiguratorFactoryProvider
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestGenerator
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestModel
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jvm.abi.AbstractCompareJvmAbiTest
@@ -244,14 +241,6 @@ fun main(args: Array<String>) {
         testGroup("plugins/compose/compiler-hosted/tests-gen", "plugins/compose/compiler-hosted/testData") {
             testClass<AbstractCompilerFacilityTestForComposeCompilerPlugin> {
                 model("codegen")
-                val data = AnalysisApiTestConfiguratorFactoryData(
-                    FrontendKind.Fir,
-                    TestModuleKind.Source,
-                    AnalysisSessionMode.Normal,
-                    AnalysisApiMode.Ide
-                )
-                val factory = AnalysisApiConfiguratorFactoryProvider.getFactory(data) ?: return@testClass
-                method(FrontendConfiguratorTestModel(factory::class, data))
             }
         }
     }
