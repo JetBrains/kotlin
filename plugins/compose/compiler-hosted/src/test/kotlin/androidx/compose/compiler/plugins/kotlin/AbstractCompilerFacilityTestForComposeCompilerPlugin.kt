@@ -35,9 +35,18 @@ private const val COMPOSE_COMPILER_JAR_DIR = "plugins/compose/compiler-hosted/bu
 
 private fun flagToEnableComposeCompilerPlugin(): String {
     val libDir = File(COMPOSE_COMPILER_JAR_DIR)
-    if (libDir.exists() && libDir.isDirectory) {
-        return libDir.listFiles { _, name -> name.startsWith("compiler") && name.endsWith(".jar") }?.firstOrNull()
-            ?.let { "-Xplugin=${it.absolutePath}" } ?: error("Missing jar file started with \"compiler\" under $COMPOSE_COMPILER_JAR_DIR")
+    if (!libDir.exists() || !libDir.isDirectory) {
+        error("No directory \"$COMPOSE_COMPILER_JAR_DIR\" is found")
     }
-    error("No directory \"$COMPOSE_COMPILER_JAR_DIR\" is found")
+
+    return libDir.listFiles { _, name -> name.startsWith("compiler") && name.endsWith(".jar") }
+        .let { files ->
+            when {
+                files == null -> error("Can't read the directory $libDir")
+                files.isEmpty() -> error("Missing jar file started with \"compiler\" under $COMPOSE_COMPILER_JAR_DIR")
+                files.size > 1 -> error("Multiple jar files found ${files.joinToString { it.path }}")
+                else -> files.single()
+            }
+        }
+        .let { "-Xplugin=${it.absolutePath}" }
 }
