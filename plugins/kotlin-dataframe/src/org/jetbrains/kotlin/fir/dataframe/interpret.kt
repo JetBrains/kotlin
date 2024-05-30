@@ -275,7 +275,8 @@ fun KotlinTypeFacade.pluginDataFrameSchema(schemaTypeArg: ConeTypeProjection): P
     val schema = if (schemaTypeArg.isStarProjection) {
         PluginDataFrameSchema(emptyList())
     } else {
-        pluginDataFrameSchema(schemaTypeArg.type as ConeClassLikeType)
+        val coneClassLikeType = schemaTypeArg.type as? ConeClassLikeType ?: return PluginDataFrameSchema(emptyList())
+        pluginDataFrameSchema(coneClassLikeType)
     }
     return schema
 }
@@ -453,7 +454,7 @@ internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
             runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
                 val argumentName = Name.identifier(HasSchema::schemaArg.name)
                 val schemaArg = (it.findArgumentByName(argumentName) as FirLiteralExpression).value
-                ObjectWithSchema(schemaArg as Int, typeRef)
+                ObjectWithSchema((schemaArg as Number).toInt(), typeRef)
             }
         } ?: error("Annotate ${symbol} with @HasSchema")
     }
