@@ -8,12 +8,12 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.withEnumEntryExtra
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.ClassValue
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
@@ -25,14 +25,14 @@ import org.jetbrains.kotlin.psi.KtFile
  * Map [KtAnnotationApplication] to Dokka [Annotations.Annotation]
  */
 internal class AnnotationTranslator {
-    private fun KtAnalysisSession.getFileLevelAnnotationsFrom(symbol: KtSymbol) =
-        if (symbol.origin != KtSymbolOrigin.SOURCE)
+    private fun KaSession.getFileLevelAnnotationsFrom(symbol: KaSymbol) =
+        if (symbol.origin != KaSymbolOrigin.SOURCE)
             null
         else
             (symbol.psi?.containingFile as? KtFile)?.getFileSymbol()?.annotations
                 ?.map { toDokkaAnnotation(it) }
 
-    private fun KtAnalysisSession.getDirectAnnotationsFrom(annotated: KtAnnotated) =
+    private fun KaSession.getDirectAnnotationsFrom(annotated: KaAnnotated) =
         annotated.annotations.map { toDokkaAnnotation(it) }
 
     /**
@@ -40,15 +40,15 @@ internal class AnnotationTranslator {
      *
      * @return direct annotations, annotations from backing field and file-level annotations
      */
-    fun KtAnalysisSession.getAllAnnotationsFrom(annotated: KtAnnotated): List<Annotations.Annotation> {
+    fun KaSession.getAllAnnotationsFrom(annotated: KaAnnotated): List<Annotations.Annotation> {
         val directAnnotations = getDirectAnnotationsFrom(annotated)
         val backingFieldAnnotations =
-            (annotated as? KtPropertySymbol)?.backingFieldSymbol?.let { getDirectAnnotationsFrom(it) }.orEmpty()
-        val fileLevelAnnotations = (annotated as? KtSymbol)?.let { getFileLevelAnnotationsFrom(it) }.orEmpty()
+            (annotated as? KaPropertySymbol)?.backingFieldSymbol?.let { getDirectAnnotationsFrom(it) }.orEmpty()
+        val fileLevelAnnotations = (annotated as? KaSymbol)?.let { getFileLevelAnnotationsFrom(it) }.orEmpty()
         return directAnnotations + backingFieldAnnotations + fileLevelAnnotations
     }
 
-    private fun KtAnnotationApplication.isNoExistedInSource() = psi == null
+    private fun KaAnnotationApplication.isNoExistedInSource() = psi == null
     private fun AnnotationUseSiteTarget.toDokkaAnnotationScope(): Annotations.AnnotationScope = when (this) {
         AnnotationUseSiteTarget.PROPERTY_GETTER -> Annotations.AnnotationScope.DIRECT // due to compatibility with Dokka K1
         AnnotationUseSiteTarget.PROPERTY_SETTER -> Annotations.AnnotationScope.DIRECT // due to compatibility with Dokka K1
@@ -56,18 +56,18 @@ internal class AnnotationTranslator {
         else -> Annotations.AnnotationScope.DIRECT
     }
 
-    private fun KtAnalysisSession.mustBeDocumented(annotationApplication: KtAnnotationApplication): Boolean {
+    private fun KaSession.mustBeDocumented(annotationApplication: KaAnnotationApplication): Boolean {
         if (annotationApplication.isNoExistedInSource()) return false
         val annotationClass = getClassOrObjectSymbolByClassId(annotationApplication.classId ?: return false)
         return annotationClass?.hasAnnotation(mustBeDocumentedAnnotation)
             ?: false
     }
 
-    private fun KtAnalysisSession.toDokkaAnnotation(annotationApplication: KtAnnotationApplication) =
+    private fun KaSession.toDokkaAnnotation(annotationApplication: KaAnnotationApplication) =
         Annotations.Annotation(
             dri = annotationApplication.classId?.createDRI()
                 ?: DRI(packageName = "", classNames = ERROR_CLASS_NAME), // classId might be null on a non-existing annotation call,
-            params = if (annotationApplication is KtAnnotationApplicationWithArgumentsInfo) annotationApplication.arguments.associate {
+            params = if (annotationApplication is KaAnnotationApplicationWithArgumentsInfo) annotationApplication.arguments.associate {
                 it.name.asString() to toDokkaAnnotationValue(
                     it.expression
                 )
@@ -77,37 +77,37 @@ internal class AnnotationTranslator {
         )
 
     @OptIn(ExperimentalUnsignedTypes::class)
-    private fun KtAnalysisSession.toDokkaAnnotationValue(annotationValue: KtAnnotationValue): AnnotationParameterValue =
+    private fun KaSession.toDokkaAnnotationValue(annotationValue: KaAnnotationValue): AnnotationParameterValue =
         when (annotationValue) {
-            is KtConstantAnnotationValue -> {
+            is KaConstantAnnotationValue -> {
                 when (val value = annotationValue.constantValue) {
-                    is KtConstantValue.KtNullConstantValue -> NullValue
-                    is KtConstantValue.KtFloatConstantValue -> FloatValue(value.value)
-                    is KtConstantValue.KtDoubleConstantValue -> DoubleValue(value.value)
-                    is KtConstantValue.KtLongConstantValue -> LongValue(value.value)
-                    is KtConstantValue.KtIntConstantValue -> IntValue(value.value)
-                    is KtConstantValue.KtBooleanConstantValue -> BooleanValue(value.value)
-                    is KtConstantValue.KtByteConstantValue -> IntValue(value.value.toInt())
-                    is KtConstantValue.KtCharConstantValue -> StringValue(value.value.toString())
-                    is KtConstantValue.KtErrorConstantValue -> StringValue(value.renderAsKotlinConstant())
-                    is KtConstantValue.KtShortConstantValue -> IntValue(value.value.toInt())
-                    is KtConstantValue.KtStringConstantValue -> StringValue(value.value)
-                    is KtConstantValue.KtUnsignedByteConstantValue -> IntValue(value.value.toInt())
-                    is KtConstantValue.KtUnsignedIntConstantValue -> IntValue(value.value.toInt())
-                    is KtConstantValue.KtUnsignedLongConstantValue -> LongValue(value.value.toLong())
-                    is KtConstantValue.KtUnsignedShortConstantValue -> IntValue(value.value.toInt())
+                    is KaConstantValue.KaNullConstantValue -> NullValue
+                    is KaConstantValue.KaFloatConstantValue -> FloatValue(value.value)
+                    is KaConstantValue.KaDoubleConstantValue -> DoubleValue(value.value)
+                    is KaConstantValue.KaLongConstantValue -> LongValue(value.value)
+                    is KaConstantValue.KaIntConstantValue -> IntValue(value.value)
+                    is KaConstantValue.KaBooleanConstantValue -> BooleanValue(value.value)
+                    is KaConstantValue.KaByteConstantValue -> IntValue(value.value.toInt())
+                    is KaConstantValue.KaCharConstantValue -> StringValue(value.value.toString())
+                    is KaConstantValue.KaErrorConstantValue -> StringValue(value.renderAsKotlinConstant())
+                    is KaConstantValue.KaShortConstantValue -> IntValue(value.value.toInt())
+                    is KaConstantValue.KaStringConstantValue -> StringValue(value.value)
+                    is KaConstantValue.KaUnsignedByteConstantValue -> IntValue(value.value.toInt())
+                    is KaConstantValue.KaUnsignedIntConstantValue -> IntValue(value.value.toInt())
+                    is KaConstantValue.KaUnsignedLongConstantValue -> LongValue(value.value.toLong())
+                    is KaConstantValue.KaUnsignedShortConstantValue -> IntValue(value.value.toInt())
                 }
             }
 
-            is KtEnumEntryAnnotationValue -> EnumValue(
+            is KaEnumEntryAnnotationValue -> EnumValue(
                 with(annotationValue.callableId) { this?.className?.asString() + "." + this?.callableName?.asString() },
                 getDRIFrom(annotationValue)
             )
 
-            is KtArrayAnnotationValue -> ArrayValue(annotationValue.values.map { toDokkaAnnotationValue(it) })
-            is KtAnnotationApplicationValue -> AnnotationValue(toDokkaAnnotation(annotationValue.annotationValue))
-            is KtKClassAnnotationValue -> when (val type: KtType = annotationValue.type) {
-                is KtNonErrorClassType -> ClassValue(
+            is KaArrayAnnotationValue -> ArrayValue(annotationValue.values.map { toDokkaAnnotationValue(it) })
+            is KaAnnotationApplicationValue -> AnnotationValue(toDokkaAnnotation(annotationValue.annotationValue))
+            is KaKClassAnnotationValue -> when (val type: KaType = annotationValue.type) {
+                is KaNonErrorClassType -> ClassValue(
                     type.classId.relativeClassName.asString(),
                     type.classId.createDRI()
                 )
@@ -116,13 +116,13 @@ internal class AnnotationTranslator {
                     DRI(packageName = "", classNames = ERROR_CLASS_NAME)
                 )
             }
-            is KtUnsupportedAnnotationValue -> ClassValue(
+            is KaUnsupportedAnnotationValue -> ClassValue(
                 "<Unsupported Annotation Value>",
                 DRI(packageName = "", classNames = ERROR_CLASS_NAME)
             )
         }
 
-    private fun getDRIFrom(enumEntry: KtEnumEntryAnnotationValue): DRI {
+    private fun getDRIFrom(enumEntry: KaEnumEntryAnnotationValue): DRI {
         val callableId =
             enumEntry.callableId ?: throw IllegalStateException("Can't get `callableId` for enum entry from annotation")
         return DRI(
@@ -139,9 +139,9 @@ internal class AnnotationTranslator {
          * Functional types can have **generated** [ParameterName] annotation
          * @see ParameterName
          */
-        internal fun KtAnnotated.getPresentableName(): String? =
+        internal fun KaAnnotated.getPresentableName(): String? =
             this.annotationsByClassId(parameterNameAnnotation)
-                .firstOrNull()?.arguments?.firstOrNull { it.name == Name.identifier("name") }?.expression?.let { it as? KtConstantAnnotationValue }
+                .firstOrNull()?.arguments?.firstOrNull { it.name == Name.identifier("name") }?.expression?.let { it as? KaConstantAnnotationValue }
                 ?.let { it.constantValue.value.toString() }
     }
 }

@@ -9,9 +9,9 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.dokka.analysis.java.parsers.JavadocParser
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.utilities.DokkaLogger
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
@@ -23,18 +23,18 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-internal fun KtAnalysisSession.getJavaDocDocumentationFrom(
-    symbol: KtSymbol,
+internal fun KaSession.getJavaDocDocumentationFrom(
+    symbol: KaSymbol,
     javadocParser: JavadocParser
 ): DocumentationNode? {
-    if (symbol.origin == KtSymbolOrigin.JAVA) {
+    if (symbol.origin == KaSymbolOrigin.JAVA) {
         return (symbol.psi as? PsiNamedElement)?.let {
             javadocParser.parseDocumentation(it)
         }
-    } else if (symbol.origin == KtSymbolOrigin.SOURCE && symbol is KtCallableSymbol) {
+    } else if (symbol.origin == KaSymbolOrigin.SOURCE && symbol is KaCallableSymbol) {
         // Note: javadocParser searches in overridden JAVA declarations for JAVA method, not Kotlin
         symbol.getAllOverriddenSymbols().forEach { overrider ->
-            if (overrider.origin == KtSymbolOrigin.JAVA)
+            if (overrider.origin == KaSymbolOrigin.JAVA)
                 return@getJavaDocDocumentationFrom (overrider.psi as? PsiNamedElement)?.let {
                     javadocParser.parseDocumentation(it)
                 }
@@ -43,14 +43,14 @@ internal fun KtAnalysisSession.getJavaDocDocumentationFrom(
     return null
 }
 
-internal fun KtAnalysisSession.getKDocDocumentationFrom(symbol: KtSymbol, logger: DokkaLogger) = findKDoc(symbol)?.let { kDocContent ->
+internal fun KaSession.getKDocDocumentationFrom(symbol: KaSymbol, logger: DokkaLogger) = findKDoc(symbol)?.let { kDocContent ->
 
     val ktElement = symbol.psi
     val kdocLocation = ktElement?.containingFile?.name?.let {
         val name = when(symbol) {
-            is KtCallableSymbol -> symbol.callableIdIfNonLocal?.toString()
-            is KtClassOrObjectSymbol -> symbol.classIdIfNonLocal?.toString()
-            is KtNamedSymbol -> symbol.name.asString()
+            is KaCallableSymbol -> symbol.callableIdIfNonLocal?.toString()
+            is KaClassOrObjectSymbol -> symbol.classIdIfNonLocal?.toString()
+            is KaNamedSymbol -> symbol.name.asString()
             else -> null
         }?.replace('/', '.') // replace to be compatible with K1
 
@@ -76,7 +76,7 @@ internal data class KDocContent(
     val sections: List<KDocSection>
 )
 
-internal fun KtAnalysisSession.findKDoc(symbol: KtSymbol): KDocContent? {
+internal fun KaSession.findKDoc(symbol: KtSymbol): KDocContent? {
     // Dokka's HACK: primary constructors can be generated
     // so [KtSymbol.psi] is undefined for [KtSymbolOrigin.SOURCE_MEMBER_GENERATED] origin
     // we need to get psi of a containing class
