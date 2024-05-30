@@ -6,17 +6,21 @@
 package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
 import org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar
+import org.jetbrains.kotlin.kapt3.base.AptMode
 import org.jetbrains.kotlin.kapt3.base.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.kapt3.base.KaptFlag
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.PathUtil
@@ -65,11 +69,22 @@ class KaptEnvironmentConfigurator(
 
             processingOptions.putAll(processorOptions)
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
+            if (module.frontendKind == FrontendKinds.FIR) {
+                mode = AptMode.STUBS_AND_APT
+            }
+            configuration.put(KAPT_OPTIONS, this)
         }
 
         val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, "kotlin-annotation-processing-runtime.jar")
         configuration.addJvmClasspathRoot(runtimeLibrary)
         configuration.put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
+
+        if (module.frontendKind == FrontendKinds.FIR) {
+            configuration.put(JVMConfigurationKeys.SKIP_BODIES, true)
+
+            val moduleBuilder = ModuleBuilder(module.name, "", "test-module")
+            configuration.put(JVMConfigurationKeys.MODULES, listOf(moduleBuilder))
+        }
     }
 }
 
