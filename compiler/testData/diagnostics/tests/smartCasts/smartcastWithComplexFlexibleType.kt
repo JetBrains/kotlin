@@ -20,5 +20,5 @@ interface B {
 fun test(parent: Some) {
     val a = parent.a ?: return
     if (a !is B) return
-    val view = a.takeIf { true }?.<!UNSAFE_CALL!>foo<!>()
+    val view = a.takeIf { true }?.foo()
 }
