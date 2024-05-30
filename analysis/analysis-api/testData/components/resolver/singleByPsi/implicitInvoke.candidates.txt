@@ -1,3 +1,4 @@
+KtCallExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Boolean', but 'kotlin.Int' was expected.>
   candidate = KaSimpleFunctionCall:

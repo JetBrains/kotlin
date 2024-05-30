@@ -1,3 +1,4 @@
+KtCallExpression:
 KaErrorCallInfo:
   candidateCalls = []
   diagnostic = ERROR<null: Inapplicable candidate>

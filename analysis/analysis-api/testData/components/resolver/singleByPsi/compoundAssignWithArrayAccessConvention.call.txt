@@ -1,3 +1,4 @@
+KtBinaryExpression:
 KaSuccessCallInfo:
   call = KaCompoundArrayAccessCall:
     compoundAccess = CompoundAssign:

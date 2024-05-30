@@ -1,3 +1,4 @@
+KtArrayAccessExpression:
 KaSuccessCallInfo:
   call = KaSimpleFunctionCall:
     isImplicitInvoke = false

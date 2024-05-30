@@ -1,3 +1,4 @@
+KtArrayAccessExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: OTHER_ERROR with get>
   candidate = KaSimpleFunctionCall:

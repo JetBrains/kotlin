@@ -1,3 +1,4 @@
+KtArrayAccessExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /set' in 'set'.>
   candidate = KaSimpleFunctionCall:

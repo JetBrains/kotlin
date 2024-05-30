@@ -1,3 +1,4 @@
+KtConstructorDelegationCall:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public constructor(i: kotlin/Int, j: kotlin/Int): Sub'.>
   candidate = KaDelegatedConstructorCall:

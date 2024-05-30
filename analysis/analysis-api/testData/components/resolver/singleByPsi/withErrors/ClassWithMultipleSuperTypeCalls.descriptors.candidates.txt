@@ -1,3 +1,4 @@
+KtNameReferenceExpression:
 KaApplicableCallCandidateInfo:
   candidate = KaDelegatedConstructorCall:
     kind = SUPER_CALL

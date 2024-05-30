@@ -1,3 +1,4 @@
+KtCallExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A> generic(a: A): Unit>
   candidate = KaSimpleFunctionCall:

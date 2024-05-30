@@ -1,3 +1,4 @@
+KtNameReferenceExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: UNSAFE_CALL_ERROR with invoke>
   candidate = KaSimpleVariableAccessCall:

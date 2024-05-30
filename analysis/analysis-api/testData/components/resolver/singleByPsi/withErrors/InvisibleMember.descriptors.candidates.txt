@@ -1,3 +1,4 @@
+KtNameReferenceExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'i': it is private in 'A'>
   candidate = KaSimpleVariableAccessCall:

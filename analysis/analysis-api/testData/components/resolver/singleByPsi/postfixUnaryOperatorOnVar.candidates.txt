@@ -1,3 +1,4 @@
+KtPostfixExpression:
 KaApplicableCallCandidateInfo:
   candidate = KaCompoundVariableAccessCall:
     compoundAccess = IncOrDecOperation:

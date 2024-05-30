@@ -1,3 +1,4 @@
+KtWhenConditionInRange:
 KaApplicableCallCandidateInfo:
   candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false

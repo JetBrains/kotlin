@@ -1,3 +1,4 @@
+KtCallExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: OTHER_ERROR with generic>
   candidate = KaSimpleFunctionCall:

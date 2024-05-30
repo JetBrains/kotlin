@@ -1,19 +1,29 @@
-<caret_constructor_MyClass>: null
+<caret_constructor_MyClass>: KtNameReferenceExpression:
+null
 
-<caret_constructor_MyClass_fqn>: null
+<caret_constructor_MyClass_fqn>: KtNameReferenceExpression:
+null
 
-<caret_constructor_List>: null
+<caret_constructor_List>: KtNameReferenceExpression:
+null
 
-<caret_constructor_MutableList>: null
+<caret_constructor_MutableList>: KtNameReferenceExpression:
+null
 
-<caret_constructor_List_MyClass>: null
+<caret_constructor_List_MyClass>: KtNameReferenceExpression:
+null
 
-<caret_staticMember_MyClass>: null
+<caret_staticMember_MyClass>: KtNameReferenceExpression:
+null
 
-<caret_staticMember_MyClass_fqn>: null
+<caret_staticMember_MyClass_fqn>: KtNameReferenceExpression:
+null
 
-<caret_staticMember_List>: null
+<caret_staticMember_List>: KtNameReferenceExpression:
+null
 
-<caret_staticMember_MutableList>: null
+<caret_staticMember_MutableList>: KtNameReferenceExpression:
+null
 
-<caret_staticMember_List_MyClass>: null
+<caret_staticMember_List_MyClass>: KtNameReferenceExpression:
+null

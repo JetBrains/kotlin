@@ -1,3 +1,4 @@
+KtNameReferenceExpression:
 KaErrorCallInfo:
   candidateCalls = [
     KaSimpleFunctionCall:

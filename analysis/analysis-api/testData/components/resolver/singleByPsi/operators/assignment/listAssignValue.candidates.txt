@@ -1,3 +1,4 @@
+KtOperationReferenceExpression:
 KaApplicableCallCandidateInfo:
   candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false

@@ -36,11 +36,11 @@ abstract class AbstractResolveTest : AbstractAnalysisApiBasedTest() {
         val elementsToProcess = elementsToProcess(mainFile, mainModule, testServices)
         val actual = if (elementsToProcess.size == 1) {
             val mainElement = elementsToProcess.single().elementToProcess
-            generateResolveOutput(mainElement, testServices)
+            "${mainElement::class.simpleName}:\n" + generateResolveOutput(mainElement, testServices)
         } else {
             elementsToProcess.joinToString("\n\n") { (element, marker) ->
                 val output = generateResolveOutput(element, testServices)
-                "$marker: $output"
+                "$marker: ${element::class.simpleName}:\n$output"
             }
         }
 

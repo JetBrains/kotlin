@@ -1,3 +1,4 @@
+KtConstructorDelegationCall:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>
   candidate = KaDelegatedConstructorCall:

@@ -1,3 +1,4 @@
+KtArrayAccessExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public final operator fun /C.get(a: kotlin/Int, b: kotlin/String): kotlin/Boolean'.>
   candidate = KaSimpleFunctionCall:

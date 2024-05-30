@@ -1,19 +1,29 @@
-<caret_constructor_MyClass>: NO_CANDIDATES
+<caret_constructor_MyClass>: KtNameReferenceExpression:
+NO_CANDIDATES
 
-<caret_constructor_MyClass_fqn>: NO_CANDIDATES
+<caret_constructor_MyClass_fqn>: KtNameReferenceExpression:
+NO_CANDIDATES
 
-<caret_constructor_List>: NO_CANDIDATES
+<caret_constructor_List>: KtNameReferenceExpression:
+NO_CANDIDATES
 
-<caret_constructor_MutableList>: NO_CANDIDATES
+<caret_constructor_MutableList>: KtNameReferenceExpression:
+NO_CANDIDATES
 
-<caret_constructor_List_MyClass>: NO_CANDIDATES
+<caret_constructor_List_MyClass>: KtNameReferenceExpression:
+NO_CANDIDATES
 
-<caret_staticMember_MyClass>: NO_CANDIDATES
+<caret_staticMember_MyClass>: KtNameReferenceExpression:
+NO_CANDIDATES
 
-<caret_staticMember_MyClass_fqn>: NO_CANDIDATES
+<caret_staticMember_MyClass_fqn>: KtNameReferenceExpression:
+NO_CANDIDATES
 
-<caret_staticMember_List>: NO_CANDIDATES
+<caret_staticMember_List>: KtNameReferenceExpression:
+NO_CANDIDATES
 
-<caret_staticMember_MutableList>: NO_CANDIDATES
+<caret_staticMember_MutableList>: KtNameReferenceExpression:
+NO_CANDIDATES
 
-<caret_staticMember_List_MyClass>: NO_CANDIDATES
+<caret_staticMember_List_MyClass>: KtNameReferenceExpression:
+NO_CANDIDATES

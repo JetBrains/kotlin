@@ -1,3 +1,4 @@
+KtNameReferenceExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: OTHER_ERROR with <init>>
   candidate = KaSimpleFunctionCall:

@@ -1,3 +1,4 @@
+KtCollectionLiteralExpression:
 KaApplicableCallCandidateInfo:
   candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false

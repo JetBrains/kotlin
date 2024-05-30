@@ -1,3 +1,4 @@
+KtDotQualifiedExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'fun foo(): Unit': it is private in '/A'.>
   candidate = KaSimpleFunctionCall:

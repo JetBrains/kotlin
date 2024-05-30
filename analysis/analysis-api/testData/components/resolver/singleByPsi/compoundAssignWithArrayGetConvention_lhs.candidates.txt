@@ -1,3 +1,4 @@
+KtArrayAccessExpression:
 KaApplicableCallCandidateInfo:
   candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false

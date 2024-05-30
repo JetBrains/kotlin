@@ -1,3 +1,4 @@
+KtConstructorCalleeExpression:
 KaApplicableCallCandidateInfo:
   candidate = KaAnnotationCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

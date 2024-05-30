@@ -1,4 +1,5 @@
-<caret_1>: KaApplicableCallCandidateInfo:
+<caret_1>: KtNameReferenceExpression:
+KaApplicableCallCandidateInfo:
   candidate = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:
@@ -16,7 +17,8 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_2>: KaApplicableCallCandidateInfo:
+<caret_2>: KtNameReferenceExpression:
+KaApplicableCallCandidateInfo:
   candidate = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:
@@ -35,7 +37,8 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_3>: KaApplicableCallCandidateInfo:
+<caret_3>: KtNameReferenceExpression:
+KaApplicableCallCandidateInfo:
   candidate = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:
@@ -53,7 +56,8 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_4>: KaApplicableCallCandidateInfo:
+<caret_4>: KtNameReferenceExpression:
+KaApplicableCallCandidateInfo:
   candidate = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:
@@ -71,7 +75,8 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_5>: KaApplicableCallCandidateInfo:
+<caret_5>: KtNameReferenceExpression:
+KaApplicableCallCandidateInfo:
   candidate = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:
@@ -90,7 +95,8 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_6>: KaApplicableCallCandidateInfo:
+<caret_6>: KtNameReferenceExpression:
+KaApplicableCallCandidateInfo:
   candidate = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaImplicitReceiverValue:
@@ -114,7 +120,8 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_7>: KaApplicableCallCandidateInfo:
+<caret_7>: KtNameReferenceExpression:
+KaApplicableCallCandidateInfo:
   candidate = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaImplicitReceiverValue:
@@ -138,7 +145,8 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_8>: KaApplicableCallCandidateInfo:
+<caret_8>: KtNameReferenceExpression:
+KaApplicableCallCandidateInfo:
   candidate = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaImplicitReceiverValue:
@@ -163,7 +171,8 @@
     typeArgumentsMapping = {}
   isInBestCandidates = true
 
-<caret_9>: KaApplicableCallCandidateInfo:
+<caret_9>: KtNameReferenceExpression:
+KaApplicableCallCandidateInfo:
   candidate = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:

@@ -1,3 +1,4 @@
+KtPrefixExpression:
 KaSuccessCallInfo:
   call = KaCompoundArrayAccessCall:
     compoundAccess = IncOrDecOperation:

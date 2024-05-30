@@ -1,3 +1,4 @@
+KtDotQualifiedExpression:
 KaErrorCallInfo:
   candidateCalls = [
     KaSimpleFunctionCall:

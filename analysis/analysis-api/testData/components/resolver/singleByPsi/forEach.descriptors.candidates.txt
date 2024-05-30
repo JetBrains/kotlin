@@ -1,3 +1,4 @@
+KtDotQualifiedExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<null: RECEIVER_TYPE_ERROR with forEach>
   candidate = KaSimpleFunctionCall:

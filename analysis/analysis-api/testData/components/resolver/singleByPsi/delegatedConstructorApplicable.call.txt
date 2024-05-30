@@ -1,3 +1,4 @@
+KtConstructorCalleeExpression:
 KaSuccessCallInfo:
   call = KaDelegatedConstructorCall:
     kind = SUPER_CALL

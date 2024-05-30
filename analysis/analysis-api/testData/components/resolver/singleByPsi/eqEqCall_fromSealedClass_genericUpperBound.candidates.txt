@@ -1,3 +1,4 @@
+KtBinaryExpression:
 KaApplicableCallCandidateInfo:
   candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false

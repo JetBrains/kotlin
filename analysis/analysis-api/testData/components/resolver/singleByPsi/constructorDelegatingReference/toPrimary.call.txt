@@ -1,3 +1,4 @@
+KtConstructorDelegationReferenceExpression:
 KaSuccessCallInfo:
   call = KaDelegatedConstructorCall:
     kind = THIS_CALL

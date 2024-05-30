@@ -1,3 +1,4 @@
+KtConstructorCalleeExpression:
 KaErrorCallInfo:
   candidateCalls = [
     KaDelegatedConstructorCall:

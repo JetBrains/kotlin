@@ -1,3 +1,4 @@
+KtCallExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public fun foo(): Unit defined in root package in file simpleCallWithNonMatchingArgs.kt>
   candidate = KaSimpleFunctionCall:

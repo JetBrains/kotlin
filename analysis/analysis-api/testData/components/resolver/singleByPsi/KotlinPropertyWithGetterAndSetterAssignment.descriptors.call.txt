@@ -1,4 +1,5 @@
-<caret_1>: KaSuccessCallInfo:
+<caret_1>: KtNameReferenceExpression:
+KaSuccessCallInfo:
   call = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:
@@ -15,7 +16,8 @@
     simpleAccess = Read
     typeArgumentsMapping = {}
 
-<caret_2>: KaSuccessCallInfo:
+<caret_2>: KtNameReferenceExpression:
+KaSuccessCallInfo:
   call = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:
@@ -33,7 +35,8 @@
       value = 1
     typeArgumentsMapping = {}
 
-<caret_3>: KaSuccessCallInfo:
+<caret_3>: KtNameReferenceExpression:
+KaSuccessCallInfo:
   call = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:
@@ -50,7 +53,8 @@
     simpleAccess = Read
     typeArgumentsMapping = {}
 
-<caret_4>: KaSuccessCallInfo:
+<caret_4>: KtNameReferenceExpression:
+KaSuccessCallInfo:
   call = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:
@@ -67,7 +71,8 @@
     simpleAccess = Read
     typeArgumentsMapping = {}
 
-<caret_5>: KaSuccessCallInfo:
+<caret_5>: KtNameReferenceExpression:
+KaSuccessCallInfo:
   call = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:
@@ -84,7 +89,8 @@
     simpleAccess = Read
     typeArgumentsMapping = {}
 
-<caret_6>: KaSuccessCallInfo:
+<caret_6>: KtNameReferenceExpression:
+KaSuccessCallInfo:
   call = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaImplicitReceiverValue:
@@ -107,7 +113,8 @@
     simpleAccess = Read
     typeArgumentsMapping = {}
 
-<caret_7>: KaSuccessCallInfo:
+<caret_7>: KtNameReferenceExpression:
+KaSuccessCallInfo:
   call = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaImplicitReceiverValue:
@@ -130,7 +137,8 @@
     simpleAccess = Read
     typeArgumentsMapping = {}
 
-<caret_8>: KaSuccessCallInfo:
+<caret_8>: KtNameReferenceExpression:
+KaSuccessCallInfo:
   call = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaImplicitReceiverValue:
@@ -154,7 +162,8 @@
       value = 1
     typeArgumentsMapping = {}
 
-<caret_9>: KaSuccessCallInfo:
+<caret_9>: KtNameReferenceExpression:
+KaSuccessCallInfo:
   call = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       dispatchReceiver = KaExplicitReceiverValue:

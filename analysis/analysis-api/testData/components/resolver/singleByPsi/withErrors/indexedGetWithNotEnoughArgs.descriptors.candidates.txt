@@ -1,3 +1,4 @@
+KtArrayAccessExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'>
   candidate = KaSimpleFunctionCall:

@@ -1,3 +1,4 @@
+KtDotQualifiedExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<FUNCTION_CALL_EXPECTED: Function invocation 'action(...)' expected.>
   candidate = KaSimpleFunctionCall:

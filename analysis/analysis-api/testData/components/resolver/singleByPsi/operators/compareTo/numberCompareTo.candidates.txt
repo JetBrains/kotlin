@@ -1,3 +1,4 @@
+KtNameReferenceExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
   candidate = KaSimpleFunctionCall:

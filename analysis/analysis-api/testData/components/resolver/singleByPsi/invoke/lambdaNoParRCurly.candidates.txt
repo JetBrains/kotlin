@@ -1,1 +1,2 @@
+KtFunctionLiteral:
 NO_CANDIDATES

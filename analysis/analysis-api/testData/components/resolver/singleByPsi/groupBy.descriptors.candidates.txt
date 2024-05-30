@@ -1,3 +1,4 @@
+KtDotQualifiedExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public inline fun <T, K> Array<out T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> defined in kotlin.collections>
   candidate = KaSimpleFunctionCall:

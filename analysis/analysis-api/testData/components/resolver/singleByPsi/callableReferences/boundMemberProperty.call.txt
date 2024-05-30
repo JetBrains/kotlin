@@ -1,3 +1,4 @@
+KtCallableReferenceExpression:
 KaSuccessCallInfo:
   call = KaSimpleVariableAccessCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

@@ -1,3 +1,4 @@
+KtAnnotationEntry:
 KaApplicableCallCandidateInfo:
   candidate = KaAnnotationCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

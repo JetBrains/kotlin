@@ -1,1 +1,2 @@
+KtDestructuringDeclarationEntry:
 NO_CANDIDATES

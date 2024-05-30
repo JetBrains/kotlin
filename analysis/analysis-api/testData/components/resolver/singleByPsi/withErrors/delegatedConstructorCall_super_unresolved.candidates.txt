@@ -1,3 +1,4 @@
+KtConstructorDelegationCall:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
   candidate = KaDelegatedConstructorCall:

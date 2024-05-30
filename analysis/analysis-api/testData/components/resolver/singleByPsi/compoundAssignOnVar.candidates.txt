@@ -1,3 +1,4 @@
+KtBinaryExpression:
 KaApplicableCallCandidateInfo:
   candidate = KaCompoundVariableAccessCall:
     compoundAccess = CompoundAssign:

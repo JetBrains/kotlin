@@ -1,3 +1,4 @@
+KtDotQualifiedExpression:
 KaSuccessCallInfo:
   call = KaSimpleFunctionCall:
     isImplicitInvoke = true

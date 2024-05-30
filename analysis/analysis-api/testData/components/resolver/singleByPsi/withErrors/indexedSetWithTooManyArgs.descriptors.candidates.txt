@@ -1,3 +1,4 @@
+KtArrayAccessExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The floating-point literal does not conform to the expected type Boolean>
   candidate = KaSimpleFunctionCall:

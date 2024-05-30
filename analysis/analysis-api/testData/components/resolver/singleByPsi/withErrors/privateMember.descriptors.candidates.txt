@@ -1,3 +1,4 @@
+KtDotQualifiedExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'foo': it is private in 'A'>
   candidate = KaSimpleFunctionCall:

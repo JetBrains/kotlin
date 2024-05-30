@@ -1,3 +1,4 @@
+KtAnnotationEntry:
 KaSuccessCallInfo:
   call = KaAnnotationCall:
     partiallyAppliedSymbol = KaPartiallyAppliedSymbol:

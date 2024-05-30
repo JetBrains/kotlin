@@ -1,1 +1,2 @@
+KtProperty:
 NO_CANDIDATES

@@ -1,3 +1,4 @@
+KtCallExpression:
 KaSuccessCallInfo:
   call = KaSimpleFunctionCall:
     isImplicitInvoke = true

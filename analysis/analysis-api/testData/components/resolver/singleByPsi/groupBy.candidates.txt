@@ -1,3 +1,4 @@
+KtDotQualifiedExpression:
 KaApplicableCallCandidateInfo:
   candidate = KaSimpleFunctionCall:
     isImplicitInvoke = false

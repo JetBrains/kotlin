@@ -1,3 +1,4 @@
+KtCallExpression:
 KaInapplicableCallCandidateInfo:
   diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The boolean literal does not conform to the expected type Int>
   candidate = KaSimpleFunctionCall:
