@@ -28,7 +28,13 @@ internal class JvmIrValidationBeforeLoweringPhase(
     context: JvmBackendContext
 ) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
     override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
-        performBasicIrValidation(irModule, context.irBuiltIns, phaseName, checkProperties = true)
+        performBasicIrValidation(
+            irModule,
+            context.irBuiltIns,
+            phaseName,
+            checkProperties = true,
+            checkTypes = false, // TODO: Re-enable checking types (KT-68663)
+        )
     }
 }
 

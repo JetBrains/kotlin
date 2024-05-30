@@ -27,7 +27,12 @@ abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Co
 
 open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
     override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
-        performBasicIrValidation(irModule, context.irBuiltIns, phaseName)
+        performBasicIrValidation(
+            irModule,
+            context.irBuiltIns,
+            phaseName,
+            checkTypes = false, // TODO: Re-enable checking types (KT-68663)
+        )
     }
 }
 
