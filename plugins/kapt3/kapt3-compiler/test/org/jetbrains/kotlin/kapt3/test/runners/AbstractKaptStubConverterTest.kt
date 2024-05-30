@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.kapt3.test.KaptRegularExtensionForTestConfigurator
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
 import org.jetbrains.kotlin.kapt3.test.handlers.ClassFileToSourceKaptStubHandler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
@@ -27,9 +27,13 @@ open class AbstractKaptStubConverterTest : AbstractKotlinCompilerTest() {
         doOpenInternalPackagesIfRequired()
     }
 
+    protected open val frontendKind: FrontendKind<*> get() = FrontendKinds.ClassicFrontend
+    protected open val kaptFacade: Constructor<AbstractTestFacade<ResultingArtifact.Source, KaptContextBinaryArtifact>>
+        get() = { JvmCompilerWithKaptFacade(it) }
+
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
-            frontend = FrontendKinds.ClassicFrontend
+            frontend = frontendKind
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Binary
         }
@@ -46,7 +50,7 @@ open class AbstractKaptStubConverterTest : AbstractKotlinCompilerTest() {
             ::KaptRegularExtensionForTestConfigurator,
         )
 
-        facadeStep(::JvmCompilerWithKaptFacade)
+        facadeStep(kaptFacade)
         handlersStep(KaptContextBinaryArtifact.Kind) {
             useHandlers(::ClassFileToSourceKaptStubHandler)
         }

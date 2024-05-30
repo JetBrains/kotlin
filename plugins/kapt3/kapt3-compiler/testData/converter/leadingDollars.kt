@@ -1,4 +1,3 @@
-// FIR_BLOCKED: LC don't support names with $
 // CORRECT_ERROR_TYPES
 
 // FILE: $Test.java
