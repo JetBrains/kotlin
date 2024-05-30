@@ -1,3 +1,5 @@
-Resolved to:
-0: (in MyMap) operator fun set(k: K, v: V)
-1: (in MyMap) operator fun set(k: K, v: V)
+KtSimpleNameReference:
+  (in MyMap) operator fun set(k: K, v: V)
+
+KtSimpleNameReference:
+  (in MyMap) operator fun set(k: K, v: V)

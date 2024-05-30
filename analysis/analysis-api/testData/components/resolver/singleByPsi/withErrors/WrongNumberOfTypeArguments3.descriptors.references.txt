@@ -1,2 +1,4 @@
-Resolved to:
-0: (in foo.DD) constructor()
+KtSimpleNameReference:
+  (in foo.DD) constructor()
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

@@ -1,0 +1,6 @@
+KtSimpleNameReference:
+  0: (in ROOT) fun <T> function(t: T, a: kotlin.Char)
+  1: (in ROOT) fun <U> function(u: U, b: kotlin.Boolean)
+  2: (in ROOT) fun <V> function(v: V, c: kotlin.String)
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

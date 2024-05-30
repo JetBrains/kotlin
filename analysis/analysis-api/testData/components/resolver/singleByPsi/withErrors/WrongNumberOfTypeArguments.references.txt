@@ -1,2 +1,2 @@
-Resolved to:
-0: (in foo) class A
+KtSimpleNameReference:
+  (in foo) class A

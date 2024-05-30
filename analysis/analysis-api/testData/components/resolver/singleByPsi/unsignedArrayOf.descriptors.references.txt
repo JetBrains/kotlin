@@ -1,0 +1,6 @@
+KtSimpleNameReference:
+  (in kotlin) inline fun uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+
+KtInvokeFunctionReference: Nothing (Unresolved reference)

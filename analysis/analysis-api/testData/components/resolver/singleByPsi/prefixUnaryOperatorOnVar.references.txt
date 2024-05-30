@@ -1,3 +1,5 @@
-Resolved to:
-0: (in kotlin.Int) operator fun inc(): kotlin.Int
-1: (in kotlin.Int) operator fun inc(): kotlin.Int
+KtSimpleNameReference:
+  (in kotlin.Int) operator fun inc(): kotlin.Int
+
+KtSimpleNameReference:
+  (in kotlin.Int) operator fun inc(): kotlin.Int

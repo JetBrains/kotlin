@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Test) fun test(foo: Test.Foo)
+KtSimpleNameReference:
+  (in Test) fun test(foo: Test.Foo)

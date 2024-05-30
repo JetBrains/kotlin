@@ -1,2 +1,2 @@
-Resolved to:
-0: (in A) fun toName(): kotlin.String
+KDocReference:
+  (in A) fun toName(): kotlin.String

@@ -1,2 +1,2 @@
-Resolved to:
-0: b: main.B?
+KtSimpleNameReference:
+  b: main.B?

@@ -1,2 +1,2 @@
-Resolved to:
-0: s1: SealedClass
+KtSimpleNameReference:
+  s1: SealedClass

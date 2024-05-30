@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in AbstractModule) open fun install(builder: AbstractModule.Builder<*>!)
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

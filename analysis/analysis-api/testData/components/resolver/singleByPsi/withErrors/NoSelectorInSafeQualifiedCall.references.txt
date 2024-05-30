@@ -1,2 +1,2 @@
-Resolved to:
-0: (in testing) fun makeFoo(): testing.Foo
+KtSimpleNameReference:
+  (in testing) fun makeFoo(): testing.Foo

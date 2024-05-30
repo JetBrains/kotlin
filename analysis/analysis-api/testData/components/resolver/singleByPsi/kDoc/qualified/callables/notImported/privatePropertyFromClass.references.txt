@@ -1,2 +1,2 @@
-Resolved to:
-0: (in foo.Foo) private val foo: kotlin.Int
+KDocReference:
+  (in foo.Foo) private val foo: kotlin.Int

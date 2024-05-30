@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Ann0) constructor()
+KtSimpleNameReference:
+  (in Ann0) constructor()

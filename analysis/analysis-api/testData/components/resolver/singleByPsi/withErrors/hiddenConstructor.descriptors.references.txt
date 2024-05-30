@@ -1,2 +1,4 @@
-Resolved to:
-0: (in ROOT) object Obj
+KtSimpleNameReference:
+  (in ROOT) object Obj
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

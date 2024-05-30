@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Foo) constructor() [lib.kt]
+KtSimpleNameReference:
+  (in Foo) constructor() [lib.kt]

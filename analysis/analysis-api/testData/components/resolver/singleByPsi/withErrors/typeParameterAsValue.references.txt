@@ -1,2 +1,4 @@
-Resolved to:
-0: T
+KtSimpleNameReference:
+  T
+
+KtInvokeFunctionReference: Nothing (Unresolved reference)

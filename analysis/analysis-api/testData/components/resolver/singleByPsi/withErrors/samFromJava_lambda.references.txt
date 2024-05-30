@@ -1,2 +1,2 @@
-Resolved to:
-0: handler: test.pkg.MyHandler
+KtSimpleNameReference:
+  handler: test.pkg.MyHandler

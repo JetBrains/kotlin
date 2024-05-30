@@ -1,3 +1,5 @@
-Resolved to:
-0: (in Annotation) constructor(vararg strings: kotlin.String)
-1: value: Annotation
+KtSimpleNameReference:
+  (in Annotation) constructor(vararg strings: kotlin.String)
+
+KtDefaultAnnotationArgumentReference:
+  value: Annotation

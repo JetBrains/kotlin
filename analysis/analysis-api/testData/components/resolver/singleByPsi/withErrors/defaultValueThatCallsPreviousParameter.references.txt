@@ -1,2 +1,2 @@
-Resolved to:
-0: (in test.pkg.Context) open fun getString(id: kotlin.Int): kotlin.String!
+KtSimpleNameReference:
+  (in test.pkg.Context) open fun getString(id: kotlin.Int): kotlin.String!

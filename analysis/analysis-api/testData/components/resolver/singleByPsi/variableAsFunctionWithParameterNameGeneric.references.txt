@@ -1,2 +1,2 @@
-Resolved to:
-0: (in <local>: call) val x: (kotlin.Int) -> kotlin.Unit
+KtSimpleNameReference:
+  (in <local>: call) val x: (kotlin.Int) -> kotlin.Unit

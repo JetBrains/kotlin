@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  b1: B
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

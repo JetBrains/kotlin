@@ -1,2 +1,2 @@
-Resolved to:
-0: (in test.B) operator fun get(i: kotlin.Int): test.B
+KtArrayAccessReference:
+  (in test.B) operator fun get(i: kotlin.Int): test.B

@@ -1,2 +1,1 @@
-Resolved to:
-Nothing (Unresolved reference)
+KtInvokeFunctionReference: Nothing (Unresolved reference)

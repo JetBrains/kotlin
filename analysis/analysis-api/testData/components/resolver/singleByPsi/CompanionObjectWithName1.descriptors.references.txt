@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in my.sample.Inner) companion object Inner
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

@@ -1,2 +1,4 @@
-Resolved to:
-0: (in JavaEnum) fun getName(): kotlin.String!
+KtSimpleNameReference:
+  (in JavaEnum) fun getName(): kotlin.String!
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

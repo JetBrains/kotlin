@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) private fun processB(b: B): kotlin.Int
+KtSimpleNameReference:
+  (in ROOT) private fun processB(b: B): kotlin.Int

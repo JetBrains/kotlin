@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Bar) val foo: kotlin.Int
+KDocReference:
+  (in Bar) val foo: kotlin.Int

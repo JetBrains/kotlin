@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  s1: SealedClass
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

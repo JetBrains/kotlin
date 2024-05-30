@@ -1,2 +1,4 @@
-Resolved to:
-0: vararg a: test.A
+KtSimpleNameReference:
+  vararg a: test.A
+
+KtInvokeFunctionReference: Nothing (Unresolved reference)

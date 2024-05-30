@@ -1,2 +1,2 @@
-Resolved to:
-0: (in t) class A
+KtSimpleNameReference:
+  (in t) class A

@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  package kotlin
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

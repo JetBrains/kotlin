@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Foo) companion object
+KtSimpleNameReference:
+  (in Foo) companion object

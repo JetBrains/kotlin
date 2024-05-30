@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in MyClass) operator fun compareTo(value: MyClass): kotlin.Int
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

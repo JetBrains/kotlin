@@ -1,2 +1,2 @@
-Resolved to:
-0: name: kotlin.String [fake.kt]
+KtSimpleNameReference:
+  name: kotlin.String [fake.kt]

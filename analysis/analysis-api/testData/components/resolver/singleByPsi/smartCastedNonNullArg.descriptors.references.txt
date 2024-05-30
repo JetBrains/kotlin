@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in ROOT) private fun foo(s: kotlin.String)
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

@@ -1,2 +1,2 @@
-Resolved to:
-0: extension receiver with type AAA
+KDocReference:
+  extension receiver with type AAA

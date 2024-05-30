@@ -1,2 +1,4 @@
-Resolved to:
-0: (in BaseClass) var bar: kotlin.Int
+KtSimpleNameReference:
+  (in BaseClass) var bar: kotlin.Int
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

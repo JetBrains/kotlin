@@ -1,2 +1,2 @@
-Resolved to:
-0: (in test) val TOP_LEVEL: kotlin.Int
+KtSimpleNameReference:
+  (in test) val TOP_LEVEL: kotlin.Int

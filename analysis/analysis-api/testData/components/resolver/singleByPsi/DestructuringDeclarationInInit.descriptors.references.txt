@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in ROOT) var x: kotlin.Any
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Base) constructor(p1: kotlin.Int)
+KtConstructorDelegationReference:
+  (in Base) constructor(p1: kotlin.Int)

@@ -1,2 +1,2 @@
-Resolved to:
-0: name: kotlin.String [primaryConstructorParameter.kt]
+KtSimpleNameReference:
+  name: kotlin.String [primaryConstructorParameter.kt]

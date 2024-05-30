@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  package java.util
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

@@ -1,2 +1,2 @@
-Resolved to:
-0: package foo
+KtSimpleNameReference:
+  package foo

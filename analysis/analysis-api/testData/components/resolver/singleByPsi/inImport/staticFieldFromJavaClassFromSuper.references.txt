@@ -1,2 +1,2 @@
-Resolved to:
-0: (in BaseClass) open var bar: kotlin.Int
+KtSimpleNameReference:
+  (in BaseClass) open var bar: kotlin.Int

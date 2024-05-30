@@ -1,2 +1,2 @@
-Resolved to:
-0: (in kotlin.String) companion object
+KtSimpleNameReference:
+  (in kotlin.String) companion object

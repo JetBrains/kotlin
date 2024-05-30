@@ -1,2 +1,2 @@
-Resolved to:
-0: (in foo) fun kotlin.Any.myRun()
+KtSimpleNameReference:
+  (in foo) fun kotlin.Any.myRun()

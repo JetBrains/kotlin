@@ -1,2 +1,2 @@
-Resolved to:
-0: l: A
+KtSimpleNameReference:
+  l: A

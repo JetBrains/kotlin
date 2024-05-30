@@ -1,2 +1,2 @@
-Resolved to:
-0: (in F) fun peek(): F
+KtSimpleNameReference:
+  (in F) fun peek(): F

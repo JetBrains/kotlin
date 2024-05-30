@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in JavaClass) open fun javaMethod()
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

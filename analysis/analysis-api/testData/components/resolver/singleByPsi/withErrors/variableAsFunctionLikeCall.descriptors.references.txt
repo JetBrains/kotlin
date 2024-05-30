@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  x: kotlin.Int
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

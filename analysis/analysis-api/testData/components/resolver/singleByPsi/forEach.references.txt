@@ -1,2 +1,2 @@
-Resolved to:
-0: (in kotlin.collections) fun <T> listOf(vararg elements: T): kotlin.collections.List<T>
+KtSimpleNameReference:
+  (in kotlin.collections) fun <T> listOf(vararg elements: T): kotlin.collections.List<T>

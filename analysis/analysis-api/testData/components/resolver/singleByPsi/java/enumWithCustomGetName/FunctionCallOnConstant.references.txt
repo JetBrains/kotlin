@@ -1,2 +1,2 @@
-Resolved to:
-0: (in JavaEnum) open fun getName(): kotlin.String!
+KtSimpleNameReference:
+  (in JavaEnum) open fun getName(): kotlin.String!

@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ClassWithType) constructor(i: T)
+KtConstructorDelegationReference:
+  (in ClassWithType) constructor(i: T)

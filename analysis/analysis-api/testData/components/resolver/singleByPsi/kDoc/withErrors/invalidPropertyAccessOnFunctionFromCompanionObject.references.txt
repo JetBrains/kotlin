@@ -1,2 +1,2 @@
-Resolved to:
-0: (in A.Companion) fun toName(): kotlin.String
+KDocReference:
+  (in A.Companion) fun toName(): kotlin.String

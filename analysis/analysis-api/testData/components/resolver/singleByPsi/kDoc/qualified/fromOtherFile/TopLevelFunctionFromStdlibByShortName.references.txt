@@ -1,2 +1,2 @@
-Resolved to:
-0: (in b) fun bb()
+KDocReference:
+  (in b) fun bb()

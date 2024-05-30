@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in <local>: testFoo) class Conflict
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

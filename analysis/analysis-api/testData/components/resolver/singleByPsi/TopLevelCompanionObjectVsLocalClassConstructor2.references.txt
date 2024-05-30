@@ -1,2 +1,2 @@
-Resolved to:
-0: (in <local>: test.Conflict) constructor()
+KtSimpleNameReference:
+  (in <local>: test.Conflict) constructor()

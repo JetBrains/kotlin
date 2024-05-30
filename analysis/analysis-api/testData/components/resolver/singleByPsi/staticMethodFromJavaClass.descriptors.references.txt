@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in BaseClass) open fun foo()
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

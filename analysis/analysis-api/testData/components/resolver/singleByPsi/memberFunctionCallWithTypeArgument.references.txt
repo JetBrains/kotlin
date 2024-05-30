@@ -1,2 +1,2 @@
-Resolved to:
-0: (in A) fun <R> foo(r: R)
+KtSimpleNameReference:
+  (in A) fun <R> foo(r: R)

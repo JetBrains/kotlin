@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Foo) fun kotlin.String.foo()
+KtSimpleNameReference:
+  (in Foo) fun kotlin.String.foo()

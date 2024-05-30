@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Foo) private fun call() [privateFunction.kt]
+KtSimpleNameReference:
+  (in Foo) private fun call() [privateFunction.kt]

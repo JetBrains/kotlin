@@ -1,2 +1,2 @@
-Resolved to:
-0: (in <local>: call) fun x(b: kotlin.Boolean)
+KtSimpleNameReference:
+  (in <local>: call) fun x(b: kotlin.Boolean)

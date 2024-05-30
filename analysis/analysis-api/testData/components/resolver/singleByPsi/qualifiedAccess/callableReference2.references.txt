@@ -1,2 +1,2 @@
-Resolved to:
-0: (in foo.bar.baz.AA) companion object
+KtSimpleNameReference:
+  (in foo.bar.baz.AA) companion object

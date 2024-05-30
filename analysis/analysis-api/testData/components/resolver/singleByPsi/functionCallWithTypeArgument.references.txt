@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) fun <A, B> function(a: A, b: B)
+KtSimpleNameReference:
+  (in ROOT) fun <A, B> function(a: A, b: B)

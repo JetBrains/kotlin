@@ -1,2 +1,2 @@
-Resolved to:
-0: (in kotlin.LazyThreadSafetyMode) PUBLICATION
+KDocReference:
+  (in kotlin.LazyThreadSafetyMode) PUBLICATION

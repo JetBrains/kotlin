@@ -1,2 +1,2 @@
-Resolved to:
-0: (in KtClass) val foo: kotlin.Int
+KtSimpleNameReference:
+  (in KtClass) val foo: kotlin.Int

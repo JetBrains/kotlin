@@ -1,2 +1,2 @@
-Resolved to:
-0: (in A) operator fun invoke()
+KtSimpleNameReference:
+  (in A) operator fun invoke()

@@ -1,8 +1,10 @@
-<caret_1> resolved to:
-Nothing (Unresolved reference)
+<caret_1>:
+  KDocReference: Nothing (Unresolved reference)
 
-<caret_2> resolved to:
-0: (in Storage) open fun setValue(value: kotlin.String!)
+<caret_2>:
+  KDocReference:
+    (in Storage) open fun setValue(value: kotlin.String!)
 
-<caret_3> resolved to:
-0: (in Storage) open fun prop()
+<caret_3>:
+  KDocReference:
+    (in Storage) open fun prop()

@@ -1,2 +1,2 @@
-Resolved to:
-0: (in library4.MyInterface) fun check(list: kotlin.collections.List<library2.AsymmetricAlias<library1.BooleanAlias /* = kotlin.Boolean */, library1.IntAlias /* = kotlin.Int */> /* = kotlin.String */>)
+KtSimpleNameReference:
+  (in library4.MyInterface) fun check(list: kotlin.collections.List<library2.AsymmetricAlias<library1.BooleanAlias /* = kotlin.Boolean */, library1.IntAlias /* = kotlin.Int */> /* = kotlin.String */>)

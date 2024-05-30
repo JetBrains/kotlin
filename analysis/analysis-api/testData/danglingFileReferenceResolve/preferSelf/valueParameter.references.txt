@@ -1,2 +1,2 @@
-Resolved to:
-0: abc: kotlin.Int [fake.kt]
+KtSimpleNameReference:
+  abc: kotlin.Int [fake.kt]

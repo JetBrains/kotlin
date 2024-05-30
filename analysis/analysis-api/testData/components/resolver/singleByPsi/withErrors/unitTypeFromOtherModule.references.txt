@@ -1,2 +1,2 @@
-Resolved to:
-0: (in dependency.A) abstract fun foo()
+KtSimpleNameReference:
+  (in dependency.A) abstract fun foo()

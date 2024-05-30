@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in kotlin) class Array<T> : kotlin.Cloneable, java.io.Serializable
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

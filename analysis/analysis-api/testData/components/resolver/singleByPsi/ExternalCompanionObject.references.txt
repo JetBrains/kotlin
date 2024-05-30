@@ -1,2 +1,2 @@
-Resolved to:
-0: (in dependency.C) companion object
+KtSimpleNameReference:
+  (in dependency.C) companion object

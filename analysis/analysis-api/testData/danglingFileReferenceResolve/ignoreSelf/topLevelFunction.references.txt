@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) fun call() [topLevelFunction.kt]
+KtSimpleNameReference:
+  (in ROOT) fun call() [topLevelFunction.kt]

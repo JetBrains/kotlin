@@ -1,2 +1,2 @@
-Resolved to:
-0: (in one.two.TopLevelObject) val bar: kotlin.Int
+KtSimpleNameReference:
+  (in one.two.TopLevelObject) val bar: kotlin.Int

@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Bar) fun foo()
+KDocReference:
+  (in Bar) fun foo()

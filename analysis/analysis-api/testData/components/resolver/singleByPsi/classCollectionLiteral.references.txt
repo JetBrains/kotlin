@@ -1,3 +1,5 @@
-Resolved to:
-0: (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
-1: a: kotlin.Array<kotlin.reflect.KClass<*>>
+KtCollectionLiteralReference:
+  (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
+
+KtDefaultAnnotationArgumentReference:
+  a: kotlin.Array<kotlin.reflect.KClass<*>>

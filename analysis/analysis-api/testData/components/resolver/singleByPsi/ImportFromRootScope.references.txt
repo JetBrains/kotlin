@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) class Klass
+KtSimpleNameReference:
+  (in ROOT) class Klass

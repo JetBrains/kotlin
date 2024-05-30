@@ -1,2 +1,2 @@
-Resolved to:
-0: (in test.Annotation) constructor()
+KtSimpleNameReference:
+  (in test.Annotation) constructor()

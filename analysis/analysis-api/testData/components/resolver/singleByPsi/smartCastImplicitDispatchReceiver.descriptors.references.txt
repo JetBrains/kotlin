@@ -1,2 +1,4 @@
-Resolved to:
-0: (in kotlin.String) override val length: kotlin.Int
+KtSimpleNameReference:
+  (in kotlin.String) override val length: kotlin.Int
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

@@ -1,2 +1,2 @@
-Resolved to:
-0: reified T
+KtSimpleNameReference:
+  reified T

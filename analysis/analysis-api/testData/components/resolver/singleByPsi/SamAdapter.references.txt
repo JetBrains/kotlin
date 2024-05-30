@@ -1,2 +1,2 @@
-Resolved to:
-0: (in javax.swing.SwingUtilities) open fun invokeLater(p0: java.lang.Runnable!)
+KtSimpleNameReference:
+  (in javax.swing.SwingUtilities) open fun invokeLater(p0: java.lang.Runnable!)

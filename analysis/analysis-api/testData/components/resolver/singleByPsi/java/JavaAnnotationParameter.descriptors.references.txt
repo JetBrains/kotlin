@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  value: java.lang.annotation.RetentionPolicy
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

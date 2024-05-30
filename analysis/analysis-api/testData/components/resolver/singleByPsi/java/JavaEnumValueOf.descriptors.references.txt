@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in java.lang.annotation.RetentionPolicy) fun valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

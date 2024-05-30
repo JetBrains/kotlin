@@ -1,2 +1,2 @@
-Resolved to:
-0: (in bar.ClassWithCompanion.Companion) fun foo()
+KDocReference:
+  (in bar.ClassWithCompanion.Companion) fun foo()

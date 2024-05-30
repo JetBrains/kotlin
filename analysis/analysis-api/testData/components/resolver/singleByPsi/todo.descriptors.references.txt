@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in kotlin) inline fun TODO(reason: kotlin.String): kotlin.Nothing
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

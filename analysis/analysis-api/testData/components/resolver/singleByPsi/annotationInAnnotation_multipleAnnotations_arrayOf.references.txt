@@ -1,2 +1,2 @@
-Resolved to:
-0: vararg annos: Annotation
+KtSimpleNameReference:
+  vararg annos: Annotation

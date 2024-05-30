@@ -1,2 +1,2 @@
-Resolved to:
-0: (in C.X.Companion.YY) class ZZ
+KDocReference:
+  (in C.X.Companion.YY) class ZZ

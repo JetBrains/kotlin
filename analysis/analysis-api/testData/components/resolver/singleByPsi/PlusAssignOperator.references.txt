@@ -1,2 +1,2 @@
-Resolved to:
-0: (in test.WithOperator) operator fun plusAssign(f: test.Foo)
+KtSimpleNameReference:
+  (in test.WithOperator) operator fun plusAssign(f: test.Foo)

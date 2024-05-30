@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  vararg a: test.A
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

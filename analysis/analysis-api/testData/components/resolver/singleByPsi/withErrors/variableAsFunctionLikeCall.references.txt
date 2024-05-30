@@ -1,2 +1,2 @@
-Resolved to:
-0: x: kotlin.Int
+KtSimpleNameReference:
+  x: kotlin.Int

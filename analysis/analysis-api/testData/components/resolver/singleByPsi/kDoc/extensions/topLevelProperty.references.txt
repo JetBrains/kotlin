@@ -1,11 +1,15 @@
-<caret_1> resolved to:
-0: (in test) val test.Foo.extProp: kotlin.Int
+<caret_1>:
+  KDocReference:
+    (in test) val test.Foo.extProp: kotlin.Int
 
-<caret_2> resolved to:
-0: (in test) val test.Foo.extProp: kotlin.Int
+<caret_2>:
+  KDocReference:
+    (in test) val test.Foo.extProp: kotlin.Int
 
-<caret_3> resolved to:
-0: (in test) val test.Foo.extProp: kotlin.Int
+<caret_3>:
+  KDocReference:
+    (in test) val test.Foo.extProp: kotlin.Int
 
-<caret_4> resolved to:
-0: (in test) val test.Foo.extProp: kotlin.Int
+<caret_4>:
+  KDocReference:
+    (in test) val test.Foo.extProp: kotlin.Int

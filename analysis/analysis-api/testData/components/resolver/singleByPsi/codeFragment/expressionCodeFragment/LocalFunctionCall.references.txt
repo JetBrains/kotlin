@@ -1,2 +1,2 @@
-Resolved to:
-0: (in <local>: test) fun local()
+KtSimpleNameReference:
+  (in <local>: test) fun local()

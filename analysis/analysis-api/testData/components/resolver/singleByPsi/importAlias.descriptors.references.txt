@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in test.pkg) class R
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

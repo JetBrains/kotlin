@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) fun <A> generic(a: A)
+KtSimpleNameReference:
+  (in ROOT) fun <A> generic(a: A)

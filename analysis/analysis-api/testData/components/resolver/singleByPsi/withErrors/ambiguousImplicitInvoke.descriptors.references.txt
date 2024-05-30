@@ -1,0 +1,5 @@
+KtSimpleNameReference:
+  0: (in <local>: call) operator fun kotlin.Int.invoke(a: kotlin.String)
+  1: (in <local>: call) operator fun kotlin.Int.invoke(b: kotlin.Boolean)
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

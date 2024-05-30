@@ -1,2 +1,2 @@
-Resolved to:
-0: (in C) val aa: kotlin.Int
+KDocReference:
+  (in C) val aa: kotlin.Int

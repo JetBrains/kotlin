@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Foo) operator fun getValue(_this: kotlin.Any?, p: kotlin.Any?): kotlin.Int
+KtPropertyDelegationMethodsReference:
+  (in Foo) operator fun getValue(_this: kotlin.Any?, p: kotlin.Any?): kotlin.Int

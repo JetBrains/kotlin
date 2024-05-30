@@ -1,2 +1,2 @@
-Resolved to:
-0: (in kotlin.Suppress) constructor(vararg names: kotlin.String)
+KtSimpleNameReference:
+  (in kotlin.Suppress) constructor(vararg names: kotlin.String)

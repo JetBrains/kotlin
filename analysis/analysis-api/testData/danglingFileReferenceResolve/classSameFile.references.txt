@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Foo) constructor() [fake.kt]
+KtSimpleNameReference:
+  (in Foo) constructor() [fake.kt]

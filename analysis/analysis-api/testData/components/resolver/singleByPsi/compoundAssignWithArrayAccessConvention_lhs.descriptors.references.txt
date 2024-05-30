@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  m: MyMap<kotlin.String, kotlin.Int>
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

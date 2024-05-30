@@ -1,2 +1,2 @@
-Resolved to:
-0: (in testing) class ATest
+KtSimpleNameReference:
+  (in testing) class ATest

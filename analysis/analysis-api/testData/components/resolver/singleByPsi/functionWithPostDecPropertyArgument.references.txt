@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) fun foo(i: kotlin.Int)
+KtSimpleNameReference:
+  (in ROOT) fun foo(i: kotlin.Int)

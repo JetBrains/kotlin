@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Foo) expect constructor()
+KtSimpleNameReference:
+  (in Foo) expect constructor()

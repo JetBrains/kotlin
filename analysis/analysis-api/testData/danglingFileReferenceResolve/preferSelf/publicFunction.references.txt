@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Foo) fun call() [fake.kt]
+KtSimpleNameReference:
+  (in Foo) fun call() [fake.kt]

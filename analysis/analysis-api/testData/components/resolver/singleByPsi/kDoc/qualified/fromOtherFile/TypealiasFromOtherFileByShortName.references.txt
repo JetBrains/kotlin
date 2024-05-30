@@ -1,2 +1,2 @@
-Resolved to:
-0: (in b) typealias BB = kotlin.Int
+KDocReference:
+  (in b) typealias BB = kotlin.Int

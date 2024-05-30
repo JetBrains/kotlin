@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModu
 import org.jetbrains.kotlin.analysis.test.framework.services.CaretMarker
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -67,11 +68,16 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
 
         val actual = if (resolutionAtPositions.size == 1) {
             val (_, singleResolutionResult) = resolutionAtPositions.single()
-
-            "Resolved to:\n$singleResolutionResult"
+            singleResolutionResult
         } else {
-            resolutionAtPositions.joinToString(separator = "\n\n") { (caret, resolutionResult) ->
-                "${caret.fullTag} resolved to:\n$resolutionResult"
+            prettyPrint {
+                printCollection(resolutionAtPositions, separator = "\n\n") { (caret, referencesAtCaret) ->
+                    append(caret.fullTag)
+                    appendLine(':')
+                    withIndent {
+                        append(referencesAtCaret)
+                    }
+                }
             }
         }
 
@@ -86,19 +92,42 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     ): String {
         val ktReferences = findReferencesAtCaret(ktFile, caret.offset)
         if (ktReferences.isEmpty()) {
-            return "${caret.fullTag}: no references found"
+            return "no references found"
         }
 
-        val resolvedTo = analyzeReferenceElement(ktReferences.first().element, mainModule) {
-            val symbols = ktReferences.flatMap { it.resolveToSymbols() }
-            val symbolsAgain = ktReferences.flatMap { it.resolveToSymbols() }
-            testServices.assertions.assertEquals(symbols, symbolsAgain)
+        return prettyPrint {
+            analyzeReferenceElement(ktReferences.first().element, mainModule) {
+                printCollection(ktReferences, separator = "\n\n") { reference ->
+                    append(renderCommonClassName(reference))
+                    append(':')
 
-            val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in mainModule.testModule.directives
-            renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
+                    val symbols = reference.resolveToSymbols()
+                    val symbolsAgain = reference.resolveToSymbols()
+                    testServices.assertions.assertEquals(symbols, symbolsAgain)
+
+                    val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in mainModule.testModule.directives
+                    val symbolsAsText = renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
+                    if (symbols.isEmpty()) {
+                        append(' ')
+                        append(symbolsAsText)
+                    } else {
+                        appendLine()
+                        withIndent {
+                            append(symbolsAsText)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun renderCommonClassName(instance: Any): String {
+        var classToRender: Class<*> = instance::class.java
+        while (classToRender.simpleName.let { it.contains("Fir") || it.contains("Fe10") } == true) {
+            classToRender = classToRender.superclass
         }
 
-        return resolvedTo
+        return classToRender.simpleName
     }
 
     protected open fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KaSession.() -> R): R {

@@ -1,3 +1,5 @@
-Resolved to:
-0: (in <local>: main) var x: ERROR_TYPE(Unresolved name: listOf)
-1: (in <local>: main) var x: ERROR_TYPE(Unresolved name: listOf)
+KtSimpleNameReference:
+  (in <local>: main) var x: ERROR_TYPE(Unresolved name: listOf)
+
+KtSimpleNameReference:
+  (in <local>: main) var x: ERROR_TYPE(Unresolved name: listOf)

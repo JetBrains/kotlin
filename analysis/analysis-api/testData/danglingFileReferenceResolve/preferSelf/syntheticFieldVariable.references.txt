@@ -1,2 +1,2 @@
-Resolved to:
-0: (in <local>: x) field
+KtSimpleNameReference:
+  (in <local>: x) field

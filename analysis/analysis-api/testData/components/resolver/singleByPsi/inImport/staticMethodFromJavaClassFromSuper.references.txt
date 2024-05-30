@@ -1,2 +1,2 @@
-Resolved to:
-0: (in BaseClass) open fun foo()
+KtSimpleNameReference:
+  (in BaseClass) open fun foo()

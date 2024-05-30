@@ -1,3 +1,5 @@
-Resolved to:
-0: (in JavaClass) open fun getFoo(): kotlin.Int
-1: (in JavaClass) val JavaClass.foo: kotlin.Int
+KtSimpleNameReference:
+  (in JavaClass) val JavaClass.foo: kotlin.Int
+
+SyntheticPropertyAccessorReference:
+  (in JavaClass) open fun getFoo(): kotlin.Int

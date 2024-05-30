@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in foo.bar.baz) class AA
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

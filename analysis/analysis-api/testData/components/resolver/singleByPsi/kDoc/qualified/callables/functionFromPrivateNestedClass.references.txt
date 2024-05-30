@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Foo.Nested) fun foo()
+KDocReference:
+  (in Foo.Nested) fun foo()

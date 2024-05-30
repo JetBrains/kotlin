@@ -1,2 +1,2 @@
-Resolved to:
-0: (in <local>: f.C.X) class YY
+KDocReference:
+  (in <local>: f.C.X) class YY

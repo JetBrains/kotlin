@@ -1,2 +1,2 @@
-Resolved to:
-0: (in foo) class CC<T>
+KtSimpleNameReference:
+  (in foo) class CC<T>

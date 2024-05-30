@@ -1,2 +1,6 @@
-Resolved to:
-0: (in <local>: test) var i: kotlin.Int
+KtSimpleNameReference:
+  (in <local>: test) var i: kotlin.Int
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

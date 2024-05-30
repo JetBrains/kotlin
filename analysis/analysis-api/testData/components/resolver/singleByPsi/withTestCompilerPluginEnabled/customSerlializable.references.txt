@@ -1,2 +1,2 @@
-Resolved to:
-0: (in test.Serializer) fun serializeFirstTarget(x: test.FirstTarget)
+KtSimpleNameReference:
+  (in test.Serializer) fun serializeFirstTarget(x: test.FirstTarget)

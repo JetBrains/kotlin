@@ -1,2 +1,2 @@
-Resolved to:
-0: (in testPackage.testOtherPackage) class A
+KtSimpleNameReference:
+  (in testPackage.testOtherPackage) class A

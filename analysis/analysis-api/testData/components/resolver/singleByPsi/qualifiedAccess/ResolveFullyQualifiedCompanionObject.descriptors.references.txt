@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in foo.bar.baz.AA.BB) companion object
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

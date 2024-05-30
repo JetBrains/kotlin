@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) object Foo
+KtSimpleNameReference:
+  (in ROOT) object Foo

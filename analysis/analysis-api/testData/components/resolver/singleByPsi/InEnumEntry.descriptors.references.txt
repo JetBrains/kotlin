@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in test) val TOP_LEVEL: kotlin.Int
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

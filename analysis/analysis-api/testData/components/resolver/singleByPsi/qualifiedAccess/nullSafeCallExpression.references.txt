@@ -1,2 +1,2 @@
-Resolved to:
-0: (in A) val aa: A?
+KtSimpleNameReference:
+  (in A) val aa: A?

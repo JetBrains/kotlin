@@ -1,2 +1,2 @@
-Resolved to:
-0: a: (() -> kotlin.Unit)?
+KtSimpleNameReference:
+  a: (() -> kotlin.Unit)?

@@ -1,0 +1,6 @@
+KtSimpleNameReference:
+  (in ROOT) interface Foo
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+
+KtInvokeFunctionReference: Nothing (Unresolved reference)

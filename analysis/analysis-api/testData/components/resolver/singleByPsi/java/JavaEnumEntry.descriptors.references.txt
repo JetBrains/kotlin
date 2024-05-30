@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in java.lang.annotation.RetentionPolicy) RUNTIME
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

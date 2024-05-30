@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Server) companion object
+KtSimpleNameReference:
+  (in Server) companion object

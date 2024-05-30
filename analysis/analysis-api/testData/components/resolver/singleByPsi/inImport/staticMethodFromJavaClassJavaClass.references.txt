@@ -1,2 +1,2 @@
-Resolved to:
-0: (in java.lang) class Math
+KtSimpleNameReference:
+  (in java.lang) class Math

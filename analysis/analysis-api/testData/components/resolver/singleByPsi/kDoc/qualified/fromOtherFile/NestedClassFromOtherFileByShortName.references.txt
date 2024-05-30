@@ -1,2 +1,2 @@
-Resolved to:
-0: (in b.B) class XX
+KDocReference:
+  (in b.B) class XX

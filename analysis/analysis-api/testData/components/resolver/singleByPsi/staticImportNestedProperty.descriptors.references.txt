@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in one.two.TopLevelObject.Nested) val bar: kotlin.Int
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

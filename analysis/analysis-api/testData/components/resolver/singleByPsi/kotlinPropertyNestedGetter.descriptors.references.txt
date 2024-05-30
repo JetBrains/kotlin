@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in KtClass) val instance: KtSubClass
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

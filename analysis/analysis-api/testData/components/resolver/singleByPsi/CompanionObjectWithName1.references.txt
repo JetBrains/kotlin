@@ -1,2 +1,2 @@
-Resolved to:
-0: (in my.sample.Inner) companion object Inner
+KtSimpleNameReference:
+  (in my.sample.Inner) companion object Inner

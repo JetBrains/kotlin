@@ -1,2 +1,2 @@
-Resolved to:
-0: (in kotlin.annotation.AnnotationRetention) SOURCE
+KtSimpleNameReference:
+  (in kotlin.annotation.AnnotationRetention) SOURCE

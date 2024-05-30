@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Dependency.Nested) open fun foo()
+KtSimpleNameReference:
+  (in Dependency.Nested) open fun foo()

@@ -1,2 +1,2 @@
-Resolved to:
-0: action: test.Foo.() -> kotlin.Unit
+KtSimpleNameReference:
+  action: test.Foo.() -> kotlin.Unit

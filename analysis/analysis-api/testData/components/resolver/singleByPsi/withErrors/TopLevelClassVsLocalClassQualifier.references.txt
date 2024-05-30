@@ -1,2 +1,2 @@
-Resolved to:
-0: (in <local>: testFoo) class Conflict
+KtSimpleNameReference:
+  (in <local>: testFoo) class Conflict

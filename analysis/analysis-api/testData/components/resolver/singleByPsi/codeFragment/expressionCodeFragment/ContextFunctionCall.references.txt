@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) fun test()
+KtSimpleNameReference:
+  (in ROOT) fun test()

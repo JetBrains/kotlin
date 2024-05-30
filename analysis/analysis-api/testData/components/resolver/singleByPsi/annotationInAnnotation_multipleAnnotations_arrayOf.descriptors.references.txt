@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  vararg annos: Annotation
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

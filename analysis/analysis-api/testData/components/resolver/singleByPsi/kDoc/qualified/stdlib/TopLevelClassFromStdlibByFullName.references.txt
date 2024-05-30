@@ -1,2 +1,2 @@
-Resolved to:
-0: (in kotlin.collections) abstract class AbstractCollection<out E>protected constructor : kotlin.collections.Collection<E>
+KDocReference:
+  (in kotlin.collections) abstract class AbstractCollection<out E>protected constructor : kotlin.collections.Collection<E>

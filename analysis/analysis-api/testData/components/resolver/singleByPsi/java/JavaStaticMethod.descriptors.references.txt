@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in pkg.Foo) open fun bar()
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  handler: test.pkg.MyHandler
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

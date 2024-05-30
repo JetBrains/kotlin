@@ -1,2 +1,2 @@
-Resolved to:
-0: (in A) constructor(x: kotlin.Int)
+KtSimpleNameReference:
+  (in A) constructor(x: kotlin.Int)

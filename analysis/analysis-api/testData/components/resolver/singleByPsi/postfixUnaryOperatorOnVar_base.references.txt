@@ -1,3 +1,5 @@
-Resolved to:
-0: (in <local>: test) var i: kotlin.Int
-1: (in <local>: test) var i: kotlin.Int
+KtSimpleNameReference:
+  (in <local>: test) var i: kotlin.Int
+
+KtSimpleNameReference:
+  (in <local>: test) var i: kotlin.Int

@@ -1,2 +1,2 @@
-Resolved to:
-0: (in JavaClass) open val sub: JavaSubClass!
+KtSimpleNameReference:
+  (in JavaClass) open val sub: JavaSubClass!

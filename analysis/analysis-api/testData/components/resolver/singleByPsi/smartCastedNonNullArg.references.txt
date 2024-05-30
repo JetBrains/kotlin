@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) private fun foo(s: kotlin.String)
+KtSimpleNameReference:
+  (in ROOT) private fun foo(s: kotlin.String)

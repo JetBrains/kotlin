@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in test.Conflict) constructor()
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

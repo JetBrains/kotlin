@@ -1,2 +1,2 @@
-Resolved to:
-0: (in <local>: f.C) val bb: kotlin.Int
+KDocReference:
+  (in <local>: f.C) val bb: kotlin.Int

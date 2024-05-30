@@ -1,2 +1,2 @@
-Resolved to:
-0: (in main) fun foo(t: main.T /* = ERROR_TYPE(Symbol not found for A) */)
+KtSimpleNameReference:
+  (in main) fun foo(t: main.T /* = ERROR_TYPE(Symbol not found for A) */)

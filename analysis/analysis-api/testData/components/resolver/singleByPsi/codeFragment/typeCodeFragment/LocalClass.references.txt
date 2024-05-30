@@ -1,2 +1,2 @@
-Resolved to:
-0: (in <local>: test) class Local
+KtSimpleNameReference:
+  (in <local>: test) class Local

@@ -1,2 +1,2 @@
-Resolved to:
-0: (in dependency.A) fun foo(): kotlin.String
+KtSimpleNameReference:
+  (in dependency.A) fun foo(): kotlin.String

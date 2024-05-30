@@ -1,2 +1,2 @@
-Resolved to:
-0: (in JavaClass) open var something: kotlin.Int
+KtSimpleNameReference:
+  (in JavaClass) open var something: kotlin.Int

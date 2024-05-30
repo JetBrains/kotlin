@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) class Foo<T>(len: kotlin.Int)
+KtSimpleNameReference:
+  (in ROOT) class Foo<T>(len: kotlin.Int)

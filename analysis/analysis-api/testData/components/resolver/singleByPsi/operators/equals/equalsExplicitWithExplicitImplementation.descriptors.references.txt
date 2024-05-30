@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in MyClass) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

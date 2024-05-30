@@ -1,3 +1,5 @@
-Resolved to:
-0: (in ROOT) var <T : kotlin.Int> CInt32VarX<T>.value: T
-1: (in ROOT) var <T : kotlin.Int> CInt32VarX<T>.value: T
+KtSimpleNameReference:
+  (in ROOT) var <T : kotlin.Int> CInt32VarX<T>.value: T
+
+KtSimpleNameReference:
+  (in ROOT) var <T : kotlin.Int> CInt32VarX<T>.value: T

@@ -1,2 +1,2 @@
-Resolved to:
-0: (in library2.MyInterface) fun check(string: kotlin.String)
+KtSimpleNameReference:
+  (in library2.MyInterface) fun check(string: kotlin.String)

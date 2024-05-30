@@ -1,2 +1,2 @@
-Resolved to:
-0: (in one.two.TopLevelObject) fun foo()
+KtSimpleNameReference:
+  (in one.two.TopLevelObject) fun foo()

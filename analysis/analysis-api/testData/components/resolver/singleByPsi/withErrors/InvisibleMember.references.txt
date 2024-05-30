@@ -1,2 +1,2 @@
-Resolved to:
-0: (in A) private val i: kotlin.Int
+KtSimpleNameReference:
+  (in A) private val i: kotlin.Int

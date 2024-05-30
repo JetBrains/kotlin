@@ -1,2 +1,1 @@
-Resolved to:
-<caret_from_expression>: no references found
+no references found

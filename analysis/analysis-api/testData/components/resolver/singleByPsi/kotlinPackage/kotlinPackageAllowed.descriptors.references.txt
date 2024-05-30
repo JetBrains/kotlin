@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in kotlin.pckg) fun bar()
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

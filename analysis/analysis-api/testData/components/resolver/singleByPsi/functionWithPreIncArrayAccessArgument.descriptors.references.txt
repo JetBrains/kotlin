@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in ROOT) fun foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>)
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

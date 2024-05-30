@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in A) fun <R> foo(r: R)
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

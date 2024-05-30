@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Dependency.Nested) open var bar: kotlin.Int
+KtSimpleNameReference:
+  (in Dependency.Nested) open var bar: kotlin.Int

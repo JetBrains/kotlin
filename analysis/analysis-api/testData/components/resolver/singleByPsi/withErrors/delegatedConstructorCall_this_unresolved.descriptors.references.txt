@@ -1,3 +1,3 @@
-Resolved to:
-0: (in Sub) constructor(i: kotlin.Int, j: kotlin.Int)
-1: (in Sub) constructor(p: kotlin.Int)
+KtConstructorDelegationReference:
+  0: (in Sub) constructor(i: kotlin.Int, j: kotlin.Int)
+  1: (in Sub) constructor(p: kotlin.Int)

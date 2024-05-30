@@ -1,2 +1,2 @@
-Resolved to:
-0: extension receiver with type kotlin.String
+KtSimpleNameReference:
+  extension receiver with type kotlin.String

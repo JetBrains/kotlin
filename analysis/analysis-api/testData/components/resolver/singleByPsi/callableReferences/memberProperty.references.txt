@@ -1,2 +1,4 @@
-Resolved to:
-0: (in ROOT) class Foo
+KtSimpleNameReference:
+  (in ROOT) class Foo
+
+KtInvokeFunctionReference: Nothing (Unresolved reference)

@@ -1,2 +1,2 @@
-Resolved to:
-0: oldItem: T
+KtSimpleNameReference:
+  oldItem: T

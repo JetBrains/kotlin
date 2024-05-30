@@ -1,2 +1,2 @@
-Resolved to:
-0: (in library4.MyInterface) fun check(list: library2.ListAlias<kotlin.collections.Set<kotlin.String>> /* = kotlin.collections.List<kotlin.collections.Set<kotlin.String>> */)
+KtSimpleNameReference:
+  (in library4.MyInterface) fun check(list: library2.ListAlias<kotlin.collections.Set<kotlin.String>> /* = kotlin.collections.List<kotlin.collections.Set<kotlin.String>> */)

@@ -1,2 +1,2 @@
-Resolved to:
-0: (in test.WithGeneratedCompanion.Companion) fun foo(): kotlin.Int
+KtSimpleNameReference:
+  (in test.WithGeneratedCompanion.Companion) fun foo(): kotlin.Int

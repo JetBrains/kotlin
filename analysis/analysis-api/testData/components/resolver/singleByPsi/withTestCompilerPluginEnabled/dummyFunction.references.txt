@@ -1,2 +1,2 @@
-Resolved to:
-0: (in test) fun dummyTest(value: test.Test): kotlin.String
+KtSimpleNameReference:
+  (in test) fun dummyTest(value: test.Test): kotlin.String

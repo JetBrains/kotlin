@@ -1,2 +1,4 @@
-Resolved to:
-0: obj: Foo
+KtSimpleNameReference:
+  obj: Foo
+
+KtInvokeFunctionReference: Nothing (Unresolved reference)

@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in test.E) fun values(): kotlin.Array<test.E>
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

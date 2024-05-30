@@ -1,2 +1,2 @@
-Resolved to:
-0: (in kotlinx.pckg) fun bar()
+KtSimpleNameReference:
+  (in kotlinx.pckg) fun bar()

@@ -1,2 +1,2 @@
-Resolved to:
-0: nums: kotlin.IntArray
+KtSimpleNameReference:
+  nums: kotlin.IntArray

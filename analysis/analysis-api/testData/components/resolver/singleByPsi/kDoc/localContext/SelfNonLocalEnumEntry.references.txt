@@ -1,2 +1,2 @@
-Resolved to:
-0: (in E) AA
+KDocReference:
+  (in E) AA

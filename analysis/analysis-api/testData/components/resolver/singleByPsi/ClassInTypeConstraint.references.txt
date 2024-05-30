@@ -1,2 +1,2 @@
-Resolved to:
-0: (in resolve) open class AA
+KtSimpleNameReference:
+  (in resolve) open class AA

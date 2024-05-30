@@ -1,2 +1,2 @@
-Resolved to:
-0: m: MyMap<kotlin.String, kotlin.Int>
+KtSimpleNameReference:
+  m: MyMap<kotlin.String, kotlin.Int>

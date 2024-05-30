@@ -1,2 +1,4 @@
-Resolved to:
-0: (in ROOT) interface Foo<T>
+KtSimpleNameReference:
+  (in ROOT) interface Foo<T>
+
+KtInvokeFunctionReference: Nothing (Unresolved reference)

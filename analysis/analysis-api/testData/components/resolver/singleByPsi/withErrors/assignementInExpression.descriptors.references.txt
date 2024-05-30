@@ -1,2 +1,6 @@
-Resolved to:
-0: (in <local>: main) var x: ERROR(Not found recorded type for listOf(1,2,"three"))
+KtSimpleNameReference:
+  (in <local>: main) var x: ERROR(Not found recorded type for listOf(1,2,"three"))
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

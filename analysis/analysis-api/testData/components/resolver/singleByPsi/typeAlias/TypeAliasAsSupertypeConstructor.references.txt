@@ -1,2 +1,2 @@
-Resolved to:
-0: (in test) typealias CA = test.C
+KtSimpleNameReference:
+  (in test) typealias CA = test.C

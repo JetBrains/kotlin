@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in ROOT) fun <A, B, C> generic()
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

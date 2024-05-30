@@ -1,0 +1,4 @@
+KtSimpleNameReference:
+  (in java.util) <T : kotlin.Any!> Comparator(function: (T!, T!) -> kotlin.Int): java.util.Comparator<T>
+
+SyntheticPropertyAccessorReference: Nothing (Unresolved reference)

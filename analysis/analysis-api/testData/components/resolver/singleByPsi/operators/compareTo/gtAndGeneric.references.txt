@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) operator fun <T> T.compareTo(int: kotlin.Int): kotlin.Int
+KtSimpleNameReference:
+  (in ROOT) operator fun <T> T.compareTo(int: kotlin.Int): kotlin.Int

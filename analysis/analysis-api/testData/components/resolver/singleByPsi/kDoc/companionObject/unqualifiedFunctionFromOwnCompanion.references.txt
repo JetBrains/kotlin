@@ -1,2 +1,2 @@
-Resolved to:
-0: (in Base.Companion) fun foo()
+KDocReference:
+  (in Base.Companion) fun foo()

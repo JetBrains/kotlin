@@ -1,2 +1,2 @@
-Resolved to:
-0: (in ROOT) interface Y
+KtSimpleNameReference:
+  (in ROOT) interface Y

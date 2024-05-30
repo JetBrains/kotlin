@@ -1,2 +1,2 @@
-Resolved to:
-0: (in MyClass) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+KtSimpleNameReference:
+  (in MyClass) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
