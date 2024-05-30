@@ -21,8 +21,9 @@ internal actual fun secureRandomUUID(): UUID {
 /**
  * Converts this [java.util.UUID] value to the corresponding [kotlin.uuid.UUID] value.
  *
- * This function is convenient when one has a Java UUID and needs to interact with an API that accepts a Kotlin UUID.
- * It can also be used to format or retrieve information that the Java UUID does not provide, e.g., `javaUUID.toKotlinUUID().toByteArray()`.
+ * This function is convenient when one has a Java UUID and needs to interact with an API
+ * that accepts a Kotlin UUID. It can also be used to format or retrieve information that
+ * the Java UUID does not provide, e.g., `javaUUID.toKotlinUUID().toByteArray()`.
  *
  * @sample samples.uuid.UUIDs.toKotlinUUID
  */
@@ -35,8 +36,9 @@ public inline fun java.util.UUID.toKotlinUUID(): UUID =
 /**
  * Converts this [kotlin.uuid.UUID] value to the corresponding [java.util.UUID] value.
  *
- * This function is convenient when one has a Kotlin UUID and needs to interact with an API that accepts a Java UUID.
- * It can also be used to retrieve information that the Kotlin UUID does not provide, e.g., `kotlinUUID.toJavaUUID().variant()`.
+ * This function is convenient when one has a Kotlin UUID and needs to interact with an
+ * API that accepts a Java UUID. It can also be used to retrieve information that
+ * the Kotlin UUID does not provide, e.g., `kotlinUUID.toJavaUUID().variant()`.
  *
  * @sample samples.uuid.UUIDs.toJavaUUID
  */
@@ -50,24 +52,26 @@ public inline fun UUID.toJavaUUID(): java.util.UUID = toLongs { mostSignificantB
 /**
  * Reads a UUID value at this buffer's current position.
  *
- * This function reads the next 16 bytes at this buffer's current [position][Buffer.position],
- * composing them into a UUID value according to the current byte order.
- * As a result, the buffer's position is incremented by 16.
+ * This function reads the next 16 bytes at this buffer's current [position][Buffer.position]
+ * and assembles a UUID from them. As a result, the buffer's position is incremented by 16.
+ *
+ * Note that this function ignores the buffer's [byte order][ByteBuffer.order].
+ * The 16 bytes are read sequentially, with each byte representing the next 8 bits of the UUID,
+ * starting from the first byte representing the most significant 8 bits to the last byte
+ * representing the least significant 8 bits.
  *
  * The returned UUID is equivalent to:
  * ```kotlin
  * val bytes = ByteArray(16)
  * byteBuffer.get(bytes)
- * if (byteBuffer.order() == ByteOrder.LITTLE_ENDIAN) {
- *     bytes.reverse()
- * }
  * return UUID.fromByteArray(bytes)
  * ```
  *
  * @return The UUID value read at this buffer's current position.
  * @throws BufferUnderflowException If there are fewer than 16 bytes remaining in this buffer.
  *
- * @sample samples.uuid.UUIDs.byteBufferPutAndGetUUID
+ * @see UUID.toByteArray
+ * @sample samples.uuid.UUIDs.byteBufferGet
  */
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
@@ -76,14 +80,11 @@ public inline fun ByteBuffer.getUUID(): UUID {
     if (position() + 15 >= limit()) {
         throw BufferUnderflowException() // otherwise a partial read could occur
     }
-    val msb: Long
-    val lsb: Long
-    if (order() == ByteOrder.BIG_ENDIAN) {
-        msb = getLong()
-        lsb = getLong()
-    } else {
-        lsb = getLong()
-        msb = getLong()
+    var msb = getLong()
+    var lsb = getLong()
+    if (order() == ByteOrder.LITTLE_ENDIAN) {
+        msb = msb.reverseBytes()
+        lsb = lsb.reverseBytes()
     }
     return UUID.fromLongs(msb, lsb)
 }
@@ -91,26 +92,30 @@ public inline fun ByteBuffer.getUUID(): UUID {
 /**
  * Reads a UUID value at the specified [index].
  *
- * This function reads the next 16 bytes from this buffer at the specified [index],
- * composing them into a UUID value according to the current byte order.
- * Note that the buffer's [position][ByteBuffer.position] is not updated.
+ * This function reads the next 16 bytes from this buffer at the specified [index]
+ * and assembles a UUID from them. The buffer's [position][ByteBuffer.position], however, is not updated.
+ *
+ * Note that this function ignores the buffer's [byte order][ByteBuffer.order].
+ * The 16 bytes are read sequentially, with each byte representing the next 8 bits of the UUID,
+ * starting from the first byte representing the most significant 8 bits to the last byte
+ * representing the least significant 8 bits.
  *
  * The returned UUID is equivalent to:
  * ```kotlin
  * val bytes = ByteArray(16) { i ->
  *     byteBuffer.get(index + i)
  * }
- * if (byteBuffer.order() == ByteOrder.LITTLE_ENDIAN) {
- *     bytes.reverse()
- * }
  * return UUID.fromByteArray(bytes)
  * ```
+ * except that this function first checks that there are sufficient bytes in the buffer.
  *
  * @param index The index to read a UUID at.
  * @return The UUID value read at the specified [index].
- * @throws IndexOutOfBoundsException If [index] is negative or `index + 15` is not smaller than this buffer's [limit][Buffer.limit].
+ * @throws IndexOutOfBoundsException If [index] is negative or `index + 15` is not smaller than
+ *   this buffer's [limit][Buffer.limit].
  *
- * @sample samples.uuid.UUIDs.byteBufferPutAndGetUUID
+ * @see UUID.fromByteArray
+ * @sample samples.uuid.UUIDs.byteBufferGetByIndex
  */
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
@@ -121,14 +126,11 @@ public inline fun ByteBuffer.getUUID(index: Int): UUID {
     } else if (index + 15 >= limit()) {
         throw IndexOutOfBoundsException("Not enough bytes to read a UUID at index: $index, with limit: ${limit()} ")
     }
-    val msb: Long
-    val lsb: Long
-    if (order() == ByteOrder.BIG_ENDIAN) {
-        msb = getLong(index)
-        lsb = getLong(index + 8)
-    } else {
-        lsb = getLong(index)
-        msb = getLong(index + 8)
+    var msb = getLong(index)
+    var lsb = getLong(index + 8)
+    if (order() == ByteOrder.LITTLE_ENDIAN) {
+        msb = msb.reverseBytes()
+        lsb = lsb.reverseBytes()
     }
     return UUID.fromLongs(msb, lsb)
 }
@@ -136,17 +138,17 @@ public inline fun ByteBuffer.getUUID(index: Int): UUID {
 /**
  * Writes the specified UUID value at this buffer's current position.
  *
- * This function writes 16 bytes containing the given UUID value, in the current byte order,
- * into this buffer at the current [position][Buffer.position].
- * As a result, the buffer's position is incremented by 16.
+ * This function writes 16 bytes containing the given UUID value into this buffer at the current
+ * [position][Buffer.position]. As a result, the buffer's position is incremented by 16.
+ *
+ * Note that this function ignores the buffer's [byte order][ByteBuffer.order].
+ * The 16 bytes are written sequentially, with each byte representing the next 8 bits of the UUID,
+ * starting from the first byte representing the most significant 8 bits to the last byte
+ * representing the least significant 8 bits.
  *
  * This function is equivalent to:
  * ```kotlin
- * val bytes = uuid.toByteArray()
- * if (byteBuffer.order() == ByteOrder.LITTLE_ENDIAN) {
- *     bytes.reverse()
- * }
- * byteBuffer.put(bytes)
+ * byteBuffer.put(uuid.toByteArray())
  * ```
  *
  * @param uuid The UUID value to write.
@@ -154,7 +156,8 @@ public inline fun ByteBuffer.getUUID(index: Int): UUID {
  * @throws BufferOverflowException If there is insufficient space in this buffer for 16 bytes.
  * @throws ReadOnlyBufferException If this buffer is read-only.
  *
- * @sample samples.uuid.UUIDs.byteBufferPutAndGetUUID
+ * @see UUID.toByteArray
+ * @sample samples.uuid.UUIDs.byteBufferPut
  */
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
@@ -167,36 +170,40 @@ public inline fun ByteBuffer.putUUID(uuid: UUID): ByteBuffer = uuid.toLongs { ms
         putLong(msb)
         putLong(lsb)
     } else {
-        putLong(lsb)
-        putLong(msb)
+        putLong(msb.reverseBytes())
+        putLong(lsb.reverseBytes())
     }
 }
 
 /**
  * Writes the specified UUID value at the specified [index].
  *
- * This function writes 16 bytes containing the given UUID value, in the current byte order,
- * into this buffer at the specified [index].
- * Note that the buffer's [position][ByteBuffer.position] is not updated.
+ * This function writes 16 bytes containing the given UUID value into this buffer at the
+ * specified [index]. The buffer's [position][ByteBuffer.position], however, is not updated.
+ *
+ * Note that this function ignores the buffer's [byte order][ByteBuffer.order].
+ * The 16 bytes are written sequentially, with each byte representing the next 8 bits of the UUID,
+ * starting from the first byte representing the most significant 8 bits to the last byte
+ * representing the least significant 8 bits.
  *
  * This function is equivalent to:
  * ```kotlin
  * val bytes = uuid.toByteArray()
- * if (byteBuffer.order() == ByteOrder.LITTLE_ENDIAN) {
- *     bytes.reverse()
- * }
  * bytes.forEachIndexed { i, byte ->
  *     byteBuffer.put(index + i, byte)
  * }
  * ```
+ * except that this function first checks that there is sufficient space in the buffer.
  *
  * @param index The index to write the specified UUID value at.
  * @param uuid The UUID value to write.
  * @return This byte buffer.
- * @throws IndexOutOfBoundsException If [index] is negative or `index + 15` is not smaller than this buffer's [limit][Buffer.limit].
+ * @throws IndexOutOfBoundsException If [index] is negative or `index + 15` is not smaller than
+ *   this buffer's [limit][Buffer.limit].
  * @throws ReadOnlyBufferException If this buffer is read-only.
  *
- * @sample samples.uuid.UUIDs.byteBufferPutAndGetUUID
+ * @see UUID.toByteArray
+ * @sample samples.uuid.UUIDs.byteBufferPutAtIndex
  */
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
@@ -211,7 +218,11 @@ public inline fun ByteBuffer.putUUID(index: Int, uuid: UUID): ByteBuffer = uuid.
         putLong(index, msb)
         putLong(index + 8, lsb)
     } else {
-        putLong(index, lsb)
-        putLong(index + 8, msb)
+        putLong(index, msb.reverseBytes())
+        putLong(index + 8, lsb.reverseBytes())
     }
 }
+
+@PublishedApi
+@InlineOnly
+internal inline fun Long.reverseBytes(): Long = java.lang.Long.reverseBytes(this)

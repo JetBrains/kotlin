@@ -60,37 +60,24 @@ class UUIDJVMTest {
 
     @Test
     fun getUUID() {
-        ByteBuffer.allocate(32).apply {
-            put(byteValue) // index = 0
-            put(uuidByteArray) // index = 1
-            putInt(intValue) // index = 17
+        for (byteOrder in listOf(ByteOrder.BIG_ENDIAN, ByteOrder.LITTLE_ENDIAN)) {
+            ByteBuffer.allocate(32).apply {
+                order(byteOrder) // buffer's byte order does not affect uuid
 
-            position(0)
+                put(byteValue) // index = 0
+                put(uuidByteArray) // index = 1
+                putInt(intValue) // index = 17
 
-            assertEquals(byteValue, get())
-            assertEquals(uuid, getUUID())
-            assertEquals(intValue, getInt())
+                position(0)
 
-            assertEquals(21, position())
-            assertEquals(uuid, getUUID(1))
-            assertEquals(21, position()) // Hasn't changed
-        }
-        ByteBuffer.allocate(32).apply {
-            order(ByteOrder.LITTLE_ENDIAN)
+                assertEquals(byteValue, get())
+                assertEquals(uuid, getUUID())
+                assertEquals(intValue, getInt())
 
-            put(byteValue) // index = 0
-            put(uuidByteArray.reversedArray()) // index = 1
-            putInt(intValue) // index = 17
-
-            position(0)
-
-            assertEquals(byteValue, get())
-            assertEquals(uuid, getUUID())
-            assertEquals(intValue, getInt())
-
-            assertEquals(21, position())
-            assertEquals(uuid, getUUID(1))
-            assertEquals(21, position()) // Hasn't changed
+                assertEquals(21, position())
+                assertEquals(uuid, getUUID(1))
+                assertEquals(21, position()) // Hasn't changed
+            }
         }
         ByteBuffer.allocate(16).apply {
             put(uuidByteArray)
@@ -112,39 +99,25 @@ class UUIDJVMTest {
     @Test
     fun putUUID() {
         val uuid2 = UUID.parse("6ba7b811-9dad-11d1-80b4-00c04fd430c8")
-        ByteBuffer.allocate(32).apply {
-            put(byteValue) // index = 0
-            putUUID(uuid) // index = 1
-            putInt(intValue) // index = 17
+        for (byteOrder in listOf(ByteOrder.BIG_ENDIAN, ByteOrder.LITTLE_ENDIAN)) {
+            ByteBuffer.allocate(32).apply {
+                order(byteOrder) // buffer's byte order does not affect uuid
 
-            position(0)
+                put(byteValue) // index = 0
+                putUUID(uuid) // index = 1
+                putInt(intValue) // index = 17
 
-            assertEquals(byteValue, get())
-            assertContentEquals(uuidByteArray, ByteArray(16).also { get(it) })
-            assertEquals(intValue, getInt())
+                position(0)
 
-            assertEquals(21, position())
-            putUUID(1, uuid2)
-            assertEquals(21, position()) // Hasn't changed
-            assertEquals(uuid2, getUUID(1))
-        }
-        ByteBuffer.allocate(32).apply {
-            order(ByteOrder.LITTLE_ENDIAN)
+                assertEquals(byteValue, get())
+                assertContentEquals(uuidByteArray, ByteArray(16).also { get(it) })
+                assertEquals(intValue, getInt())
 
-            put(byteValue) // index = 0
-            putUUID(uuid) // index = 1
-            putInt(intValue) // index = 17
-
-            position(0)
-
-            assertEquals(byteValue, get())
-            assertContentEquals(uuidByteArray.reversedArray(), ByteArray(16).also { get(it) })
-            assertEquals(intValue, getInt())
-
-            assertEquals(21, position())
-            putUUID(1, uuid2)
-            assertEquals(21, position()) // Hasn't changed
-            assertEquals(uuid2, getUUID(1))
+                assertEquals(21, position())
+                putUUID(1, uuid2)
+                assertEquals(21, position()) // Hasn't changed
+                assertContentEquals(uuid2.toByteArray(), ByteArray(16) { i -> get(1 + i) })
+            }
         }
         ByteBuffer.allocate(16).apply {
             put(byteValue)
