@@ -1,15 +1,14 @@
 public enum Foo {
-    BLA;
-
+    /*public static final*/ BLA /* = new Foo() */;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String bla = null;
+
+    Foo(java.lang.String bla) {
+    }
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getBla() {
         return null;
-    }
-
-    Foo(java.lang.String bla) {
     }
 
     @org.jetbrains.annotations.NotNull()

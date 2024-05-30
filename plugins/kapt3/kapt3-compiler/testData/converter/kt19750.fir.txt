@@ -9,12 +9,14 @@ public final class Test<T extends java.lang.CharSequence, N extends java.lang.Nu
     }
 }
 
-
 ////////////////////
 
 package test;
 
 public abstract interface TypedListUpdateCallback<T extends java.lang.Object, C extends java.lang.Number> {
 
-    public abstract void onInserted(@org.jetbrains.annotations.NotNull() C position, @org.jetbrains.annotations.NotNull() C count, @org.jetbrains.annotations.NotNull() T item);
+    public abstract void onInserted(@org.jetbrains.annotations.NotNull()
+    C position, @org.jetbrains.annotations.NotNull()
+    C count, @org.jetbrains.annotations.NotNull()
+    T item);
 }

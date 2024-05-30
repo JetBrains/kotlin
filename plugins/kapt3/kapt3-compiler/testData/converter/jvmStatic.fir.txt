@@ -15,7 +15,8 @@ public abstract interface FooComponent {
 
     @kotlin.jvm.JvmStatic()
     @org.jetbrains.annotations.NotNull()
-    public static java.lang.String create(@org.jetbrains.annotations.NotNull() java.lang.String context) {
+    public static java.lang.String create(@org.jetbrains.annotations.NotNull()
+    java.lang.String context) {
         return null;
     }
 
@@ -40,14 +41,15 @@ public abstract interface FooComponent {
 
         @kotlin.jvm.JvmStatic()
         @org.jetbrains.annotations.NotNull()
-        public final java.lang.String create(@org.jetbrains.annotations.NotNull() java.lang.String context) {
+        public final java.lang.String create(@org.jetbrains.annotations.NotNull()
+        java.lang.String context) {
             return null;
         }
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class JvmStaticTest : kotlin/Any {
@@ -74,16 +76,11 @@ public abstract interface FooComponent {
 public final class JvmStaticTest {
     @org.jetbrains.annotations.NotNull()
     public static final JvmStaticTest.Companion Companion = null;
-
-    private static final int one = 1;
-
-    public static final int two = 2;
-
-    public static final char c = 'C';
-
-    public final byte three = 3;
-
-    public final char d = 'D';
+    public static final char c = '\u0000';
+    public final char d = '\u0000';
+    private static final int one = 0;
+    public final byte three = (byte)0;
+    public static final int two = 0;
 
     public JvmStaticTest() {
         super();
@@ -99,14 +96,17 @@ public final class JvmStaticTest {
      *   // signature: <init>()V
      *   private constructor()
      *
+     *   // field: c:C
      *   public final const val c: kotlin/Char (* = ... *)
      *     public final get
      *
+     *   // field: one:I
      *   // getter: getOne()I
      *   // synthetic method for annotations: getOne$annotations()V
      *   public final val one: kotlin/Int (* = ... *)
      *     public final get
      *
+     *   // field: two:I
      *   public final const val two: kotlin/Int (* = ... *)
      *     public final get
      *

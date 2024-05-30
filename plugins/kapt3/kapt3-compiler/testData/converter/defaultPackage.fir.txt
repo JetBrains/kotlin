@@ -15,9 +15,10 @@ public final class AnotherRootClass {
     }
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class RootAnnotation : kotlin/Annotation {
  *
@@ -28,12 +29,11 @@ public final class AnotherRootClass {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface RootAnnotation {
 }
 
-
 ////////////////////
+
 
 /**
  * public final class RootClass : kotlin/Any {
@@ -52,6 +52,21 @@ public final class RootClass {
     }
 }
 
+////////////////////
+
+package test;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
+
+@Target(value = {ElementType.TYPE, ElementType.METHOD})
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface ClassRefAnnotation {
+
+    Class<?>[] value();
+}
 
 ////////////////////
 
@@ -85,11 +100,12 @@ public abstract interface PackedClass {
     public abstract AnotherRootClass oneMoreMethod();
 }
 
-
 ////////////////////
 
 package test;
 
+@ClassRefAnnotation(value = {RootClass.class})
+@RootAnnotation()
 /**
  * public final class test/PackedWithAnnotation : kotlin/Any {
  *
@@ -100,8 +116,6 @@ package test;
  * }
  */
 @kotlin.Metadata()
-@ClassRefAnnotation(value = {RootClass.class})
-@RootAnnotation()
 public final class PackedWithAnnotation {
 
     public PackedWithAnnotation() {

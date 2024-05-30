@@ -20,11 +20,15 @@ public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
     @kotlin.Metadata()
     public static final class DefaultImpls {
 
-        public static <T extends java.lang.Object>void foo(@org.jetbrains.annotations.NotNull() foo.InterfaceWithDefaults<T> $this) {
+        public DefaultImpls() {
+            super();
+        }
+
+        public static <T extends java.lang.Object>void foo(@org.jetbrains.annotations.NotNull()
+        foo.InterfaceWithDefaults<T> $this) {
         }
     }
 }
-
 
 ////////////////////
 
@@ -38,4 +42,19 @@ package foo;
  */
 @kotlin.Metadata()
 public abstract interface SubInterface<T extends java.lang.Object> extends foo.InterfaceWithDefaults<T> {
+
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static final class DefaultImpls {
+
+        public DefaultImpls() {
+            super();
+        }
+
+        public static <T extends java.lang.Object>void foo(@org.jetbrains.annotations.NotNull()
+        foo.SubInterface<T> $this) {
+        }
+    }
 }

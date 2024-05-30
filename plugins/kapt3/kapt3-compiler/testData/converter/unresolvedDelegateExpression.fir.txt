@@ -1,10 +1,10 @@
 /**
- * public final class B : error/NonExistentClass {
+ * public final class B : kotlin/Any {
  *
  *   // signature: <init>()V
  *   public constructor()
  *
- *   // field: a$delegate:Ljava/lang/String;
+ *   // field: a$delegate:Lerror/NonExistentClass;
  *   // getter: getA()Ljava/lang/String;
  *   // synthetic method for annotations: getA$annotations()V
  *   public final (* delegated *) val a: kotlin/String
@@ -34,8 +34,8 @@ public final class B implements NonExisting {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public open class C : kotlin/Any {
@@ -54,8 +54,8 @@ public class C {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class D : I {
@@ -75,11 +75,11 @@ public final class D implements I {
     }
 }
 
-
 ////////////////////
 
+
 /**
- * public final class E : error/NonExistentClass {
+ * public final class E : kotlin/Any {
  *
  *   // signature: <init>()V
  *   public constructor()
@@ -96,8 +96,8 @@ public final class E implements NonExisting {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface I : kotlin/Any {
@@ -109,8 +109,8 @@ public final class E implements NonExisting {
 public abstract interface I {
 }
 
-
 ////////////////////
+
 
 /**
  * package {
@@ -125,7 +125,8 @@ public abstract interface I {
 public final class UnresolvedDelegateExpressionKt {
 
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String flaf(@org.jetbrains.annotations.NotNull() C $this$flaf) {
+    public static final java.lang.String flaf(@org.jetbrains.annotations.NotNull()
+    C $this$flaf) {
         return null;
     }
 }

@@ -54,7 +54,7 @@ class JvmCompilerWithKaptFacade(
             classBuilderFactory.origins,
             generationState
         )
-        return KaptContextBinaryArtifact(kaptContext)
+        return KaptContextBinaryArtifact(kaptContext, isFir = false)
     }
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
@@ -62,7 +62,9 @@ class JvmCompilerWithKaptFacade(
     }
 }
 
-class KaptContextBinaryArtifact(val kaptContext: KaptContextForStubGeneration) : ResultingArtifact.Binary<KaptContextBinaryArtifact>() {
+class KaptContextBinaryArtifact(val kaptContext: KaptContextForStubGeneration, val isFir: Boolean) :
+    ResultingArtifact.Binary<KaptContextBinaryArtifact>()
+{
     object Kind : BinaryKind<KaptContextBinaryArtifact>("KaptArtifact")
 
     override val kind: BinaryKind<KaptContextBinaryArtifact>

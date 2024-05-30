@@ -26,14 +26,14 @@ public final class Test {
     /**
      * private final inner class Test.FilterValueDelegate<T#0 (* T *)> : kotlin/Any {
      *
-     *   // signature: <init>()V
+     *   // signature: <init>(LTest;)V
      *   public constructor()
      *
      *   // module name: main
      * }
      */
     @kotlin.Metadata()
-    private final class FilterValueDelegate<T extends java.lang.Object> {
+    final class FilterValueDelegate<T extends java.lang.Object> {
 
         public FilterValueDelegate() {
             super();
@@ -41,8 +41,8 @@ public final class Test {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class Test2 : kotlin/Any {
@@ -65,7 +65,7 @@ public final class Test2 {
     /**
      * public final inner class Test2.FilterValueDelegate<T#0 (* T *)> : kotlin/Any {
      *
-     *   // signature: <init>()V
+     *   // signature: <init>(LTest2;)V
      *   public constructor()
      *
      *   // field: a:LTest2$FilterValueDelegate$Filter2;
@@ -88,9 +88,9 @@ public final class Test2 {
         }
 
         /**
-         * public final inner class Test2.FilterValueDelegate.Filter2<T#0 (* X *)> : kotlin/Any {
+         * public final inner class Test2.FilterValueDelegate.Filter2<T#1 (* X *)> : kotlin/Any {
          *
-         *   // signature: <init>()V
+         *   // signature: <init>(LTest2$FilterValueDelegate;)V
          *   public constructor()
          *
          *   // module name: main
@@ -106,8 +106,8 @@ public final class Test2 {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class Test3 : kotlin/Any {
@@ -144,7 +144,7 @@ public final class Test3 {
      * }
      */
     @kotlin.Metadata()
-    private static final class FilterValueDelegate<T extends java.lang.Object> {
+    static final class FilterValueDelegate<T extends java.lang.Object> {
 
         public FilterValueDelegate() {
             super();

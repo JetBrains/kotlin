@@ -14,13 +14,17 @@
 public abstract interface ABC {
 
     @org.jetbrains.annotations.NotNull()
-    public abstract <T extends java.lang.CharSequence>java.util.List<T> abc(@org.jetbrains.annotations.NotNull() T item, @org.jetbrains.annotations.NotNull() java.util.List<? extends T> items, @org.jetbrains.annotations.NotNull() T... otherItems);
+    public abstract <T extends java.lang.CharSequence>java.util.List<T> abc(@org.jetbrains.annotations.NotNull()
+    T item, @org.jetbrains.annotations.NotNull()
+    java.util.List<? extends T> items, @org.jetbrains.annotations.NotNull()
+    T... otherItems);
 
-    public abstract <X extends java.lang.Object>int bcd(@org.jetbrains.annotations.NotNull() char... a);
+    public abstract <X extends java.lang.Object>int bcd(@org.jetbrains.annotations.NotNull()
+    char... a);
 }
 
-
 ////////////////////
+
 
 /**
  * public open class BaseClass<T#0 (* B *) : kotlin/Any> : kotlin/Any {
@@ -39,8 +43,8 @@ public class BaseClass<B extends java.lang.Object> {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface Intf<T#0 (* I1 *), T#1 (* I2 *) : java/io/Serializable> : kotlin/Any {
@@ -52,8 +56,8 @@ public class BaseClass<B extends java.lang.Object> {
 public abstract interface Intf<I1 extends java.lang.Object, I2 extends java.io.Serializable> {
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface Intf2<out T#0 (* T *) : kotlin/collections/List<kotlin/String>, T#1 (* M *) : T#0> : kotlin/Any {
@@ -65,8 +69,8 @@ public abstract interface Intf<I1 extends java.lang.Object, I2 extends java.io.S
 public abstract interface Intf2<T extends java.util.List<? extends java.lang.String>, M extends T> {
 }
 
-
 ////////////////////
+
 
 /**
  * public final class MyClass<T#0 (* M1 *), T#1 (* M2 *)> : Intf<kotlin/Any, java/util/Date>, OtherIntf<kotlin/String>, BaseClass<java/lang/RuntimeException (* = kotlin/RuntimeException^ *)> {
@@ -97,8 +101,8 @@ public final class MyClass<M1 extends java.lang.Object, M2 extends java.lang.Obj
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface OtherIntf<T#0 (* O *) : kotlin/CharSequence> : kotlin/Any {

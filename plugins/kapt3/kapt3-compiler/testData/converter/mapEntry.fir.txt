@@ -15,7 +15,8 @@
 public abstract interface EntryHolder {
 
     @org.jetbrains.annotations.NotNull()
-    public abstract java.util.Map.Entry<java.lang.String, java.lang.Object> entry(@org.jetbrains.annotations.NotNull() java.util.Map.Entry<? extends java.lang.CharSequence, ? extends java.util.Map.Entry<java.lang.String, java.lang.Integer>> p);
+    public abstract java.util.Map.Entry<java.lang.String, java.lang.Object> entry(@org.jetbrains.annotations.NotNull()
+    java.util.Map.Entry<? extends java.lang.CharSequence, ? extends java.util.Map.Entry<java.lang.String, java.lang.Integer>> p);
 
     @org.jetbrains.annotations.NotNull()
     public abstract java.util.Map.Entry<java.lang.String, java.lang.Object> getEntryProperty();

@@ -29,14 +29,17 @@
  *   public open (* synthesized *) fun toString(): kotlin/String
  *
  *   // field: age:I
+ *   // getter: getAge()I
  *   public final val age: kotlin/Int
  *     public final get
  *
  *   // field: firstName:Ljava/lang/String;
+ *   // getter: getFirstName()Ljava/lang/String;
  *   public final val firstName: kotlin/String
  *     public final get
  *
  *   // field: secondName:Ljava/lang/String;
+ *   // getter: getSecondName()Ljava/lang/String;
  *   public final val secondName: kotlin/String
  *     public final get
  *
@@ -45,33 +48,15 @@
  */
 @kotlin.Metadata()
 public final class User {
+    private final int age = 0;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String firstName = null;
-
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String secondName = null;
 
-    private final int age = 0;
-
-    @org.jetbrains.annotations.NotNull()
-    public final User copy(@org.jetbrains.annotations.NotNull() java.lang.String firstName, @org.jetbrains.annotations.NotNull() java.lang.String secondName, int age) {
-        return null;
-    }
-
-    public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object other) {
-        return false;
-    }
-
-    public int hashCode() {
-        return 0;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public java.lang.String toString() {
-        return null;
-    }
-
-    public User(@org.jetbrains.annotations.NotNull() java.lang.String firstName, @org.jetbrains.annotations.NotNull() java.lang.String secondName, int age) {
+    public User(@org.jetbrains.annotations.NotNull()
+    java.lang.String firstName, @org.jetbrains.annotations.NotNull()
+    java.lang.String secondName, int age) {
         super();
     }
 
@@ -81,12 +66,33 @@ public final class User {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getFirstName() {
+    public final java.lang.String component2() {
         return null;
     }
 
+    public final int component3() {
+        return 0;
+    }
+
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String component2() {
+    public final User copy(@org.jetbrains.annotations.NotNull()
+    java.lang.String firstName, @org.jetbrains.annotations.NotNull()
+    java.lang.String secondName, int age) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    public final int getAge() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getFirstName() {
         return null;
     }
 
@@ -95,14 +101,17 @@ public final class User {
         return null;
     }
 
-    public final int component3() {
-        return 0;
-    }
-
-    public final int getAge() {
+    @java.lang.Override()
+    public int hashCode() {
         return 0;
     }
 
     public final void procedure() {
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
     }
 }

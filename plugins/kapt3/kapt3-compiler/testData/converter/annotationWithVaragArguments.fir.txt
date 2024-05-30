@@ -1,3 +1,4 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class A : kotlin/Annotation {
  *
@@ -12,14 +13,13 @@
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface A {
 
     public abstract int[] x();
 }
 
-
 ////////////////////
+
 
 /**
  * package {
@@ -39,6 +39,18 @@ public abstract @interface A {
 @kotlin.Metadata()
 public final class AnnotationWithVaragArgumentsKt {
 
+    public AnnotationWithVaragArgumentsKt() {
+        super();
+    }
+
+    @A(x = {})
+    @B(x = "x", z = "z", y = {})
+    @C(a = @A(x = {}), b = @B(x = "x", y = {}, z = "z"))
+    @D()
+    @E(d = @D())
+    public static final void foo() {
+    }
+
     @A(x = {1})
     @B(x = "x", y = {1}, z = "z")
     @C(a = @A(x = {1}), b = @B(x = "x", y = {1}, z = "z"))
@@ -50,19 +62,12 @@ public final class AnnotationWithVaragArgumentsKt {
     @C(a = @A(x = {1, 2}), b = @B(x = "x", y = {1, 2}, z = "z"))
     public static final void baz() {
     }
-
-    @A(x = {})
-    @B(x = "x", z = "z", y = {})
-    @C(a = @A(x = {}), b = @B(x = "x", z = "z", y = {}))
-    @D()
-    @E(d = @D())
-    public static final void foo() {
-    }
 }
-
 
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class B : kotlin/Annotation {
  *
@@ -85,7 +90,6 @@ public final class AnnotationWithVaragArgumentsKt {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface B {
 
     public abstract java.lang.String x();
@@ -95,9 +99,10 @@ public abstract @interface B {
     public abstract java.lang.String z();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class C : kotlin/Annotation {
  *
@@ -116,7 +121,6 @@ public abstract @interface B {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface C {
 
     public abstract A a();
@@ -124,9 +128,10 @@ public abstract @interface C {
     public abstract B b();
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class D : kotlin/Annotation {
  *
@@ -141,15 +146,15 @@ public abstract @interface C {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface D {
 
     public abstract java.lang.String[] x() default {"a", "b"};
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class E : kotlin/Annotation {
  *
@@ -164,7 +169,6 @@ public abstract @interface D {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface E {
 
     public abstract D d();

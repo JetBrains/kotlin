@@ -1,4 +1,29 @@
+package lib;
+
+public class File {
+
+    public File() {
+        super();
+    }
+}
+
+////////////////////
+
+package lib;
+
+public class IOException {
+
+    public IOException() {
+        super();
+    }
+}
+
+////////////////////
+
 package test;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * public final class test/TestA : kotlin/Any {
@@ -17,10 +42,12 @@ public final class TestA {
     }
 }
 
-
 ////////////////////
 
 package test;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * public abstract interface test/TestB : kotlin/Any {
@@ -56,11 +83,12 @@ public abstract interface TestB {
     public abstract lib.IOException d();
 }
 
-
 ////////////////////
 
 package test;
 
+import java.io.File;
+import java.io.IOException;
 import lib.FooBar;
 
 /**

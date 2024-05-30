@@ -1,3 +1,24 @@
+package androidx.annotation;
+
+public interface Box {
+
+    @RecentlyNullable()
+    public String foo();
+}
+
+////////////////////
+
+package androidx.annotation;
+
+import java.lang.annotation.*;
+
+@Retention(value = RetentionPolicy.CLASS)
+@Target(value = {ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD})
+@interface RecentlyNullable {
+}
+
+////////////////////
+
 package app;
 
 /**
@@ -22,14 +43,15 @@ public final class KBox implements androidx.annotation.Box {
     @org.jetbrains.annotations.NotNull()
     private final androidx.annotation.Box delegate = null;
 
-    @androidx.annotation.RecentlyNullable()
-    @java.lang.Override()
-    public java.lang.String foo() {
-        return null;
+    public KBox(@org.jetbrains.annotations.NotNull()
+    androidx.annotation.Box delegate) {
+        super();
     }
 
-    public KBox(@org.jetbrains.annotations.NotNull() androidx.annotation.Box delegate) {
-        super();
+    @java.lang.Override()
+    @androidx.annotation.RecentlyNullable()
+    public java.lang.String foo() {
+        return null;
     }
 
     @org.jetbrains.annotations.NotNull()

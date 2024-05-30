@@ -1,5 +1,7 @@
 package test;
 
+@Anno(value = "anno-class")
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class test/Anno : kotlin/Annotation {
  *
@@ -14,13 +16,10 @@ package test;
  * }
  */
 @kotlin.Metadata()
-@Anno(value = "anno-class")
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno {
 
     public abstract java.lang.String value();
 }
-
 
 ////////////////////
 
@@ -44,8 +43,13 @@ package test;
 @kotlin.jvm.JvmName(name = "AnnotationsTest")
 public final class AnnotationsTest {
 
+    public AnnotationsTest() {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver") int $this$topLevelVal) {
+    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
+    int $this$topLevelVal) {
         return null;
     }
 
@@ -55,15 +59,17 @@ public final class AnnotationsTest {
     }
 
     @Anno(value = "top-level-fun")
-    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver") @org.jetbrains.annotations.NotNull() java.lang.String $this$topLevelFun) {
+    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String $this$topLevelFun) {
     }
 }
-
 
 ////////////////////
 
 package test;
 
+@Anno(value = "enum")
 /**
  * public final enum class test/Enum : kotlin/Enum<test/Enum> {
  *
@@ -85,34 +91,33 @@ package test;
  * }
  */
 @kotlin.Metadata()
-@Anno(value = "enum")
 public enum Enum {
     @Anno(value = "white")
-    WHITE,
+    /*public static final*/ WHITE /* = new Enum() */,
     @Anno(value = "black")
-    BLACK;
-
+    /*public static final*/ BLACK /* = new Enum() */;
     private final int x = 0;
 
     @Anno(value = "enum-constructor")
-    Enum(@Anno(value = "x") int x) {
-    }
-
-    public final int getX() {
-        return 0;
+    Enum(@Anno(value = "x")
+    int x) {
     }
 
     @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<test.Enum> getEntries() {
         return null;
     }
-}
 
+    public final int getX() {
+        return 0;
+    }
+}
 
 ////////////////////
 
 package test;
 
+@Anno(value = "clazz")
 /**
  * public abstract class test/Test : kotlin/Any {
  *
@@ -139,14 +144,27 @@ package test;
  * }
  */
 @kotlin.Metadata()
-@Anno(value = "clazz")
 public abstract class Test {
     @org.jetbrains.annotations.NotNull()
     private java.lang.String v;
 
     @Anno(value = "test-constructor")
-    protected Test(@Anno(value = "v-param") @org.jetbrains.annotations.NotNull() java.lang.String v) {
+    protected Test(@Anno(value = "v-param")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String v) {
         super();
+    }
+
+    @Anno(value = "abstract-method")
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.String abstractMethod();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.String getAbstractVal();
+
+    @Anno(value = "abstract-val")
+    @java.lang.Deprecated()
+    public static void getAbstractVal$annotations() {
     }
 
     @Anno(value = "v-get")
@@ -161,18 +179,8 @@ public abstract class Test {
     }
 
     @Anno(value = "v-set")
-    public final void setV(@Anno(value = "v-setparam") @org.jetbrains.annotations.NotNull() java.lang.String p0) {
-    }
-
-    @Anno(value = "abstract-method")
+    public final void setV(@Anno(value = "v-setparam")
     @org.jetbrains.annotations.NotNull()
-    public abstract java.lang.String abstractMethod();
-
-    @org.jetbrains.annotations.NotNull()
-    public abstract java.lang.String getAbstractVal();
-
-    @Anno(value = "abstract-val")
-    @java.lang.Deprecated()
-    public static void getAbstractVal$annotations() {
+    java.lang.String p0) {
     }
 }

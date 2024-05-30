@@ -1,5 +1,25 @@
+package lib;
+
+public @interface Anno {
+
+    Class<?>[] impls() default {};
+}
+
+////////////////////
+
+package lib.impl;
+
+public class Impl {
+}
+
+////////////////////
+
 package test;
 
+import lib.Anno;
+import lib.impl.Impl;
+
+@lib.Anno(impls = {lib.impl.Impl.class, ABC.class})
 /**
  * public final class test/Bar : kotlin/Any {
  *
@@ -10,7 +30,6 @@ package test;
  * }
  */
 @kotlin.Metadata()
-@lib.Anno(impls = {lib.impl.Impl.class, ABC.class})
 public final class Bar {
 
     public Bar() {
@@ -18,11 +37,14 @@ public final class Bar {
     }
 }
 
-
 ////////////////////
 
 package test;
 
+import lib.Anno;
+import lib.impl.Impl;
+
+@lib.Anno(impls = {lib.impl.Impl.class})
 /**
  * public final class test/Boo : kotlin/Any {
  *
@@ -33,7 +55,6 @@ package test;
  * }
  */
 @kotlin.Metadata()
-@lib.Anno(impls = {lib.impl.Impl.class})
 public final class Boo {
 
     public Boo() {
@@ -41,11 +62,14 @@ public final class Boo {
     }
 }
 
-
 ////////////////////
 
 package test;
 
+import lib.Anno;
+import lib.impl.Impl;
+
+@lib.Anno(impls = {lib.impl.Impl.class})
 /**
  * public final class test/Foo : kotlin/Any {
  *
@@ -56,7 +80,6 @@ package test;
  * }
  */
 @kotlin.Metadata()
-@lib.Anno(impls = {lib.impl.Impl.class})
 public final class Foo {
 
     public Foo() {
@@ -64,10 +87,12 @@ public final class Foo {
     }
 }
 
-
 ////////////////////
 
 package test;
+
+import lib.Anno;
+import lib.impl.Impl;
 
 /**
  * package {

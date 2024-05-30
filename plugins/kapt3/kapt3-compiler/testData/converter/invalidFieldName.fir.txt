@@ -1,3 +1,5 @@
+@Anno(color = Color.InvalidFieldName)
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class Anno : kotlin/Annotation {
  *
@@ -12,15 +14,13 @@
  * }
  */
 @kotlin.Metadata()
-@Anno(color = Color.InvalidFieldName)
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno {
 
     public abstract Color color();
 }
 
-
 ////////////////////
+
 
 /**
  * public final enum class Color : kotlin/Enum<Color> {
@@ -39,8 +39,7 @@ public abstract @interface Anno {
  */
 @kotlin.Metadata()
 public enum Color {
-    BLACK;
-
+    /*public static final*/ BLACK /* = new Color() */;
 
     Color() {
     }

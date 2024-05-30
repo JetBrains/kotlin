@@ -24,7 +24,7 @@ public abstract interface MyInterface {
      * }
      */
     @kotlin.Metadata()
-    static final class MyDefaultInferface {
+    public static final class MyDefaultInferface {
 
         public MyDefaultInferface() {
             super();

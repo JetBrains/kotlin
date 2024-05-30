@@ -19,13 +19,13 @@ package test;
  * }
  */
 @kotlin.Metadata()
-public final class MutableEntry<K extends java.lang.Object, V extends java.lang.Object> implements java.util.Map.Entry<K, V> {
+public final class MutableEntry<K extends java.lang.Object, V extends java.lang.Object> implements java.util.Map.Entry<K, V>, kotlin.jvm.internal.markers.KMutableMap.Entry {
     @org.jetbrains.annotations.NotNull()
     private final java.util.Map<K, V> internal = null;
-
     private final K key = null;
 
-    public MutableEntry(@org.jetbrains.annotations.NotNull() java.util.Map<K, V> internal, K key, V value) {
+    public MutableEntry(@org.jetbrains.annotations.NotNull()
+    java.util.Map<K, V> internal, K key, V value) {
         super();
     }
 

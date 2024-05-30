@@ -5,7 +5,7 @@
  *   public constructor()
  *
  *   // field: notReally:Ljava/lang/Runnable;
- *   private final val notReally: .<anonymous>
+ *   private final val notReally: java/lang/Runnable
  *     private final get
  *
  *   // module name: main
@@ -21,8 +21,8 @@ public class CrashMe {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * package {
@@ -30,17 +30,17 @@ public class CrashMe {
  *   // signature: a()Ljava/lang/Runnable;
  *   public final fun a(): java/lang/Runnable
  *
- *   // signature: b()Ljava/io/Serializable;
- *   public final fun b(): java/io/Serializable
+ *   // signature: b()Ljava/lang/Object;
+ *   public final fun b(): kotlin/Any
  *
- *   // signature: c()LCrashMe;
- *   public final fun c(): CrashMe
+ *   // signature: c()Ljava/lang/Object;
+ *   public final fun c(): kotlin/Any
  *
  *   // signature: d()Ljava/util/List;
  *   public final fun d(): kotlin/collections/List<java/lang/Runnable>
  *
  *   // signature: e()[Ljava/lang/Runnable;
- *   public final fun e(): kotlin/Array<out java/lang/Runnable>
+ *   public final fun e(): kotlin/Array<java/lang/Runnable>
  *
  *   // signature: e1([Ljava/lang/CharSequence;)V
  *   public final fun e1(a: kotlin/Array<kotlin/CharSequence>): kotlin/Unit
@@ -61,18 +61,22 @@ public class CrashMe {
 @kotlin.Suppress(names = {"AMBIGUOUS_ANONYMOUS_TYPE_INFERRED"})
 public final class Kt14997Kt {
 
+    public Kt14997Kt() {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.Runnable a() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static final java.io.Serializable b() {
+    public static final java.lang.Object b() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static final CrashMe c() {
+    public static final java.lang.Object c() {
         return null;
     }
 
@@ -86,15 +90,19 @@ public final class Kt14997Kt {
         return null;
     }
 
-    public static final void e1(@org.jetbrains.annotations.NotNull() java.lang.CharSequence[] a) {
+    public static final void e1(@org.jetbrains.annotations.NotNull()
+    java.lang.CharSequence[] a) {
     }
 
-    public static final void e2(@org.jetbrains.annotations.NotNull() java.lang.Object[] a) {
+    public static final void e2(@org.jetbrains.annotations.NotNull()
+    java.lang.Object[] a) {
     }
 
-    public static final void e3(@org.jetbrains.annotations.NotNull() java.lang.CharSequence[] a) {
+    public static final void e3(@org.jetbrains.annotations.NotNull()
+    java.lang.CharSequence[] a) {
     }
 
-    public static final void e3(@org.jetbrains.annotations.NotNull() java.lang.Object[] a) {
+    public static final void e3(@org.jetbrains.annotations.NotNull()
+    java.lang.Object[] a) {
     }
 }

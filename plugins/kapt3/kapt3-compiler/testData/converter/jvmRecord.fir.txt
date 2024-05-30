@@ -1,3 +1,4 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class A : kotlin/Annotation {
  *
@@ -8,12 +9,11 @@
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface A {
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface I : kotlin/Any {
@@ -30,9 +30,10 @@ public abstract interface I {
     public abstract int foo();
 }
 
-
 ////////////////////
 
+
+@A()
 /**
  * public final data class R<T#0 (* T *)> : I, java/lang/Record {
  *
@@ -45,6 +46,12 @@ public abstract interface I {
  *   // signature: component1()I
  *   public final (* synthesized *) operator fun component1(): kotlin/Int
  *
+ *   // signature: component2()Ljava/lang/Object;
+ *   public final (* synthesized *) operator fun component2(): T#0
+ *
+ *   // signature: copy(ILjava/lang/Object;)LR;
+ *   public final (* synthesized *) fun copy(x: kotlin/Int (* = ... *), y: T#0 (* = ... *)): R<T#0>
+ *
  *   // signature: equals(Ljava/lang/Object;)Z
  *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
  *
@@ -54,18 +61,16 @@ public abstract interface I {
  *   // signature: hashCode()I
  *   public open (* synthesized *) fun hashCode(): kotlin/Int
  *
- *   public final (* synthesized *) operator fun component2(): T#0
- *
- *   public final (* synthesized *) fun copy(x: kotlin/Int (* = ... *), y: T#0 (* = ... *)): R<T#0>
- *
  *   // signature: toString()Ljava/lang/String;
  *   public open (* synthesized *) fun toString(): kotlin/String
  *
  *   // field: x:I
+ *   // getter: x()I
  *   public final val x: kotlin/Int
  *     public final get
  *
  *   // field: y:Ljava/lang/Object;
+ *   // getter: y()Ljava/lang/Object;
  *   public final val y: T#0
  *     public final get
  *
@@ -73,33 +78,21 @@ public abstract interface I {
  * }
  */
 @kotlin.Metadata()
-@A()
 @kotlin.jvm.JvmRecord()
-public record R<T extends java.lang.Object>(@A() int x, T y) implements I {
+public final class R<T extends java.lang.Object> extends java.lang.Record implements I {
+    private final int x = 0;
+    private final T y = null;
 
-    @org.jetbrains.annotations.NotNull()
-    public final R<T> copy(@A() int x, T y) {
-        return null;
+    public R(@A()
+    int x, T y) {
+        super();
     }
 
-    public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object other) {
-        return false;
-    }
-
-    public int hashCode() {
-        return 0;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public java.lang.String toString() {
-        return null;
+    public R(T y) {
+        super();
     }
 
     public final int component1() {
-        return 0;
-    }
-
-    public final int x() {
         return 0;
     }
 
@@ -107,16 +100,39 @@ public record R<T extends java.lang.Object>(@A() int x, T y) implements I {
         return null;
     }
 
-    public final T y() {
+    @org.jetbrains.annotations.NotNull()
+    public final R<T> copy(@A()
+    int x, T y) {
         return null;
     }
 
-    public R(T y) {
-        this(0, null);
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
     }
 
     @java.lang.Override()
     public int foo() {
         return 0;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+
+    public final int x() {
+        return 0;
+    }
+
+    public final T y() {
+        return null;
     }
 }

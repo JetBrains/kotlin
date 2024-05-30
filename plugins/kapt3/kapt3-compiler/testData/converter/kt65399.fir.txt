@@ -1,0 +1,39 @@
+package org.jetbrains;
+
+/**
+ * public final class org/jetbrains/C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: $serializer
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C {
+
+    public C() {
+        super();
+    }
+
+    /**
+     * public final object org/jetbrains/C.$serializer : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class $serializer {
+        @org.jetbrains.annotations.NotNull()
+        public static final org.jetbrains.C.$serializer INSTANCE = null;
+
+        private $serializer() {
+            super();
+        }
+    }
+}

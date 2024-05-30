@@ -23,10 +23,9 @@
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public enum E {
-    E1,
-    E2,
-    E3;
-
+    /*public static final*/ E1 /* = new E() */,
+    /*public static final*/ E2 /* = new E() */,
+    /*public static final*/ E3 /* = new E() */;
     @org.jetbrains.annotations.NotNull()
     private final I i = null;
 
@@ -34,18 +33,18 @@ public enum E {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final I getI() {
+    public static kotlin.enums.EnumEntries<E> getEntries() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static kotlin.enums.EnumEntries<E> getEntries() {
+    public final I getI() {
         return null;
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface I : kotlin/Any {

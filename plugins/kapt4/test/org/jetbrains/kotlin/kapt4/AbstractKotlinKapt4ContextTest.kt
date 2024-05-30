@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.kapt4
 
 import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
+import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.KaptEnvironmentConfigurator
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
+import org.jetbrains.kotlin.kapt3.test.handlers.ClassFileToSourceKaptStubHandler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
@@ -43,8 +45,8 @@ open class AbstractKotlinKapt4ContextTest : AbstractKotlinCompilerTest() {
 
         facadeStep(::Kapt4Facade)
 
-        handlersStep(Kapt4ContextBinaryArtifact.Kind) {
-            useHandlers(::Kapt4Handler)
+        handlersStep(KaptContextBinaryArtifact.Kind) {
+            useHandlers(::ClassFileToSourceKaptStubHandler)
         }
 
         useAfterAnalysisCheckers(::TemporaryKapt4Suppressor)

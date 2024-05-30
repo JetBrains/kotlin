@@ -25,9 +25,7 @@
 @kotlin.Metadata()
 public final class State {
     private final int someInt = 0;
-
     private final long someLong = 0L;
-
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String someString = null;
 
@@ -37,7 +35,8 @@ public final class State {
     }
 
     @kotlin.jvm.JvmOverloads()
-    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
+    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
         super();
     }
 
@@ -55,8 +54,8 @@ public final class State {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class State2 : kotlin/Any {
@@ -92,10 +91,8 @@ public final class State {
 public final class State2 {
     @kotlin.jvm.JvmField()
     public final int someInt = 0;
-
     @kotlin.jvm.JvmField()
     public final long someLong = 0L;
-
     @kotlin.jvm.JvmField()
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String someString = null;
@@ -111,8 +108,16 @@ public final class State2 {
     }
 
     @kotlin.jvm.JvmOverloads()
-    public State2(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
+    public State2(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
         super();
+    }
+
+    public final void methodWithoutArgs() {
+    }
+
+    public final void someMethod(@org.jetbrains.annotations.NotNull()
+    java.lang.String str) {
     }
 
     @kotlin.jvm.JvmOverloads()
@@ -126,13 +131,8 @@ public final class State2 {
     }
 
     @kotlin.jvm.JvmOverloads()
-    public final int test(int someInt, long someLong, @org.jetbrains.annotations.NotNull() java.lang.String someString) {
+    public final int test(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
         return 0;
-    }
-
-    public final void someMethod(@org.jetbrains.annotations.NotNull() java.lang.String str) {
-    }
-
-    public final void methodWithoutArgs() {
     }
 }

@@ -1,5 +1,8 @@
 package org.jetbrains;
 
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {})
 /**
  * public final annotation class org/jetbrains/A : kotlin/Annotation {
  *
@@ -10,12 +13,8 @@ package org.jetbrains;
  * }
  */
 @kotlin.Metadata()
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER})
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE, java.lang.annotation.ElementType.TYPE_PARAMETER})
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface A {
 }
-
 
 ////////////////////
 
@@ -57,7 +56,6 @@ public final class Outer {
     }
 }
 
-
 ////////////////////
 
 package org.jetbrains;
@@ -74,8 +72,14 @@ package org.jetbrains;
 @kotlin.Metadata()
 public final class TypeAnnotationsKt {
 
+    public TypeAnnotationsKt() {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String foo(@org.jetbrains.annotations.NotNull() java.util.List<java.lang.String> x, @org.jetbrains.annotations.NotNull() org.jetbrains.Outer.Inner y, int z) {
+    public static final java.lang.String foo(@org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.String> x, @org.jetbrains.annotations.NotNull()
+    org.jetbrains.Outer.Inner y, int z) {
         return null;
     }
 }

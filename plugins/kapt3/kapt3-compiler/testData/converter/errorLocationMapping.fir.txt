@@ -1,3 +1,6 @@
+import kotlin.reflect.KClass;
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class Anno : kotlin/Annotation {
  *
@@ -12,15 +15,17 @@
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno {
 
     public abstract java.lang.Class<java.lang.Object> a();
 }
 
-
 ////////////////////
 
+
+import kotlin.reflect.KClass;
+
+@Anno(a = ABC.class)
 /**
  * public final class ErrorInAnnotation : kotlin/Any {
  *
@@ -31,7 +36,6 @@ public abstract @interface Anno {
  * }
  */
 @kotlin.Metadata()
-@Anno(a = ABC.class)
 public final class ErrorInAnnotation {
 
     public ErrorInAnnotation() {
@@ -39,8 +43,10 @@ public final class ErrorInAnnotation {
     }
 }
 
-
 ////////////////////
+
+
+import kotlin.reflect.KClass;
 
 /**
  * public final class ErrorInConstructorParameter : kotlin/Any {
@@ -70,14 +76,15 @@ public final class ErrorInAnnotation {
 public final class ErrorInConstructorParameter {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
-
     @org.jetbrains.annotations.NotNull()
     private final ABC b = null;
-
     @org.jetbrains.annotations.NotNull()
     private final java.util.List<ABC> c = null;
 
-    public ErrorInConstructorParameter(@org.jetbrains.annotations.NotNull() java.lang.String a, @org.jetbrains.annotations.NotNull() ABC b, @org.jetbrains.annotations.NotNull() java.util.List<? extends ABC> c) {
+    public ErrorInConstructorParameter(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, @org.jetbrains.annotations.NotNull()
+    ABC b, @org.jetbrains.annotations.NotNull()
+    java.util.List<? extends ABC> c) {
         super();
     }
 
@@ -97,8 +104,10 @@ public final class ErrorInConstructorParameter {
     }
 }
 
-
 ////////////////////
+
+
+import kotlin.reflect.KClass;
 
 /**
  * public final class ErrorInDeclarations : kotlin/Any {
@@ -113,7 +122,7 @@ public final class ErrorInConstructorParameter {
  *   public final fun <T#0 (* T *) : kotlin/String> f2(): kotlin/Unit
  *
  *   // signature: f3()V
- *   public final fun <T#0 (* T *) : error/NonExistentClass> f3(): kotlin/Unit
+ *   public final fun <T#0 (* T *)> f3(): kotlin/Unit
  *
  *   // signature: f4()Lerror/NonExistentClass;
  *   public final fun f4(): error/NonExistentClass
@@ -158,11 +167,8 @@ public final class ErrorInConstructorParameter {
 @kotlin.Metadata()
 public final class ErrorInDeclarations {
     public java.lang.String p1;
-
     public ABC p2;
-
     public BCD<java.lang.String> p3;
-
     @org.jetbrains.annotations.NotNull()
     public static final ErrorInDeclarations.Companion Companion = null;
 
@@ -175,7 +181,8 @@ public final class ErrorInDeclarations {
         return null;
     }
 
-    public final void setP1(@org.jetbrains.annotations.NotNull() java.lang.String p0) {
+    public final void setP1(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -183,7 +190,8 @@ public final class ErrorInDeclarations {
         return null;
     }
 
-    public final void setP2(@org.jetbrains.annotations.NotNull() ABC p0) {
+    public final void setP2(@org.jetbrains.annotations.NotNull()
+    ABC p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -191,16 +199,21 @@ public final class ErrorInDeclarations {
         return null;
     }
 
-    public final void setP3(@org.jetbrains.annotations.NotNull() BCD<java.lang.String> p0) {
+    public final void setP3(@org.jetbrains.annotations.NotNull()
+    BCD<java.lang.String> p0) {
     }
 
-    public final void overloads(@org.jetbrains.annotations.NotNull() java.lang.String a) {
+    public final void overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
     }
 
-    public final void overloads(@org.jetbrains.annotations.NotNull() ABC a) {
+    public final void overloads(@org.jetbrains.annotations.NotNull()
+    ABC a) {
     }
 
-    public final void f1(@org.jetbrains.annotations.NotNull() java.lang.String a, @org.jetbrains.annotations.NotNull() ABC<java.util.List<java.lang.String>> b) {
+    public final void f1(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, @org.jetbrains.annotations.NotNull()
+    ABC<java.util.List<java.lang.String>> b) {
     }
 
     public final <T extends java.lang.String>void f2() {
@@ -209,21 +222,25 @@ public final class ErrorInDeclarations {
     public final <T extends java.lang.Object>void f3() {
     }
 
-    @org.jetbrains.annotations.NotNull()
+    @org.jetbrains.annotations.Nullable()
     public final ABC f4() {
         return null;
     }
 
     @kotlin.jvm.JvmOverloads()
-    public final void f5(@org.jetbrains.annotations.NotNull() ABC a) {
+    public final void f5(@org.jetbrains.annotations.NotNull()
+    ABC a) {
     }
 
     @kotlin.jvm.JvmOverloads()
-    public final void f5(@org.jetbrains.annotations.NotNull() ABC a, @org.jetbrains.annotations.NotNull() java.lang.String b) {
+    public final void f5(@org.jetbrains.annotations.NotNull()
+    ABC a, @org.jetbrains.annotations.NotNull()
+    java.lang.String b) {
     }
 
     @kotlin.jvm.JvmStatic()
-    public static final void f6(@org.jetbrains.annotations.NotNull() ABC a) {
+    public static final void f6(@org.jetbrains.annotations.NotNull()
+    ABC a) {
     }
 
     /**
@@ -246,16 +263,19 @@ public final class ErrorInDeclarations {
         }
 
         @kotlin.jvm.JvmStatic()
-        public final void f6(@org.jetbrains.annotations.NotNull() ABC a) {
+        public final void f6(@org.jetbrains.annotations.NotNull()
+        ABC a) {
         }
     }
 }
 
-
 ////////////////////
 
+
+import kotlin.reflect.KClass;
+
 /**
- * public final class ErrorInSupertype : error/NonExistentClass {
+ * public final class ErrorInSupertype : kotlin/Any {
  *
  *   // signature: <init>()V
  *   public constructor()
@@ -271,11 +291,13 @@ public final class ErrorInSupertype implements ABC {
     }
 }
 
-
 ////////////////////
 
+
+import kotlin.reflect.KClass;
+
 /**
- * public final class ErrorInSupertype2 : error/NonExistentClass {
+ * public final class ErrorInSupertype2 : kotlin/Any {
  *
  *   // signature: <init>()V
  *   public constructor()

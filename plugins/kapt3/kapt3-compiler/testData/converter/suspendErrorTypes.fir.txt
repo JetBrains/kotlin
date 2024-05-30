@@ -7,7 +7,9 @@
  *   // signature: a(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
  *   public final suspend fun a(): error/NonExistentClass
  *
- *   // signature: b()Lkotlin/Result;
+ *   // requires language version 1.4.0 (level=ERROR)
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // signature: b-IoAF18A(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
  *   public final suspend fun b(): kotlin/Result<error/NonExistentClass>
  *
  *   // module name: main
@@ -21,7 +23,8 @@ public final class Foo {
     }
 
     @org.jetbrains.annotations.Nullable()
-    public final java.lang.Object a(@org.jetbrains.annotations.NotNull() kotlin.coroutines.Continuation<? super ABC> $completion) {
+    public final java.lang.Object a(@org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<ABC> $completion) {
         return null;
     }
 }

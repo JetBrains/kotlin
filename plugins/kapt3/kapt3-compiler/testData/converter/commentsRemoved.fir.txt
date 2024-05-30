@@ -1,3 +1,6 @@
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {})
 /**
  * public final annotation class Anno : kotlin/Annotation {
  *
@@ -8,14 +11,11 @@
  * }
  */
 @kotlin.Metadata()
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
-@java.lang.annotation.Target(value = {})
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno {
 }
 
-
 ////////////////////
+
 
 /**
  * public final enum class EnumError : kotlin/Enum<EnumError> {
@@ -37,9 +37,8 @@ public abstract @interface Anno {
  */
 @kotlin.Metadata()
 public enum EnumError {
-    One,
-    Two;
-
+    /*public static final*/ One /* = new EnumError() */,
+    /*public static final*/ Two /* = new EnumError() */;
 
     EnumError() {
     }
@@ -53,8 +52,8 @@ public enum EnumError {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final object Obj : kotlin/Any {
@@ -75,8 +74,8 @@ public final class Obj {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class Test : kotlin/Any {
@@ -115,22 +114,12 @@ public final class Obj {
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String prop = "";
-
+    public final java.lang.String prop = null;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String prop2 = "";
+    private final java.lang.String prop2 = null;
 
     public Test() {
         super();
-    }
-
-    public final void method() {
-    }
-
-    public final void method(int a) {
-    }
-
-    public final void method(@org.jetbrains.annotations.NotNull() java.lang.String a) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -148,12 +137,23 @@ public final class Test {
         return null;
     }
 
-    public final void setProp3(@org.jetbrains.annotations.NotNull() java.lang.String v) {
+    public final void method() {
+    }
+
+    public final void method(int a) {
+    }
+
+    public final void method(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+    }
+
+    public final void setProp3(@org.jetbrains.annotations.NotNull()
+    java.lang.String v) {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class Test2 : kotlin/Any {
@@ -174,7 +174,8 @@ public final class Test2 {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
-    public Test2(@org.jetbrains.annotations.NotNull() java.lang.String a) {
+    public Test2(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
         super();
     }
 
@@ -184,8 +185,8 @@ public final class Test2 {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class Test3 : kotlin/Any {
@@ -206,7 +207,8 @@ public final class Test3 {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
-    protected Test3(@org.jetbrains.annotations.NotNull() java.lang.String a) {
+    protected Test3(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
         super();
     }
 
@@ -216,8 +218,8 @@ public final class Test3 {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class Test4 : kotlin/Any {
@@ -242,8 +244,8 @@ public final class Test4 {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface TestComponent : kotlin/Any {

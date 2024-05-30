@@ -15,9 +15,8 @@
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     public static final Test.A A = null;
-
     @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String test = "";
+    private static final java.lang.String test = null;
 
     public Test() {
         super();
@@ -34,6 +33,7 @@ public final class Test {
      *   // signature: <init>()V
      *   private constructor()
      *
+     *   // field: test:Ljava/lang/String;
      *   // getter: getTest()Ljava/lang/String;
      *   // synthetic method for annotations: getTest$annotations()V
      *   public final val test: kotlin/String (* = ... *)

@@ -15,8 +15,8 @@ public final class C<T1 extends I1 & I2, T2 extends I3 & I4> {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface I1 : kotlin/Any {
@@ -28,8 +28,8 @@ public final class C<T1 extends I1 & I2, T2 extends I3 & I4> {
 public abstract interface I1 {
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface I2 : kotlin/Any {
@@ -41,8 +41,8 @@ public abstract interface I1 {
 public abstract interface I2 {
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface I3 : kotlin/Any {
@@ -54,8 +54,8 @@ public abstract interface I2 {
 public abstract interface I3 {
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface I4 : kotlin/Any {

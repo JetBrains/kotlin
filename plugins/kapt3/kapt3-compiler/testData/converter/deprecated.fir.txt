@@ -1,5 +1,6 @@
 package deprecated;
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class deprecated/Anno : kotlin/Annotation {
  *
@@ -10,17 +11,15 @@ package deprecated;
  * }
  */
 @kotlin.Metadata()
-@kotlin.Deprecated(message = "Deprecated annotation")
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-@java.lang.Deprecated
+@java.lang.Deprecated()
 public abstract @interface Anno {
 }
-
 
 ////////////////////
 
 package deprecated;
 
+@Anno()
 /**
  * public final class deprecated/Foo : kotlin/Any {
  *
@@ -46,40 +45,34 @@ package deprecated;
  * }
  */
 @kotlin.Metadata()
-@kotlin.Deprecated(message = "Deprecated class")
-@Anno()
-@java.lang.Deprecated
+@java.lang.Deprecated()
 public final class Foo {
-    @java.lang.Deprecated
+    @java.lang.Deprecated()
     private final int prop = 0;
 
     public Foo() {
         super();
     }
 
-    @kotlin.Deprecated(message = "Deprecated function")
-    @java.lang.Deprecated
+    @java.lang.Deprecated()
     public final void foo(int a) {
     }
 
-    @java.lang.Deprecated
-    public final int getProp() {
-        return 0;
-    }
-
-    @kotlin.Deprecated(message = "Deprecated property")
     @java.lang.Deprecated()
-    public static void getProp$annotations() {
-    }
-
-    @kotlin.Deprecated(message = "Deprecated getter")
-    @java.lang.Deprecated
     public final int getFoo() {
         return 0;
     }
 
-    @kotlin.Deprecated(message = "Deprecated setter")
-    @java.lang.Deprecated
+    @java.lang.Deprecated()
+    public final int getProp() {
+        return 0;
+    }
+
+    @java.lang.Deprecated()
+    public static void getProp$annotations() {
+    }
+
+    @java.lang.Deprecated()
     public final void setFoo(int value) {
     }
 }

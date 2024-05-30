@@ -15,8 +15,8 @@ public final class AnotherRootClass {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final class RootClass : kotlin/Any {
@@ -35,7 +35,6 @@ public final class RootClass {
     }
 }
 
-
 ////////////////////
 
 package test;
@@ -48,6 +47,10 @@ package test;
  */
 @kotlin.Metadata()
 public final class M1 {
+
+    public M1() {
+        super();
+    }
 
     @org.jetbrains.annotations.Nullable()
     public static final AnotherRootClass bar() {

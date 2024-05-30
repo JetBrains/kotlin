@@ -1,3 +1,5 @@
+@Condition(condition = "value1")
+@Condition(condition = "value2")
 /**
  * public final class A : kotlin/Any {
  *
@@ -8,8 +10,6 @@
  * }
  */
 @kotlin.Metadata()
-@Condition(condition = "value1")
-@Condition(condition = "value2")
 public final class A {
 
     public A() {
@@ -17,9 +17,10 @@ public final class A {
     }
 }
 
-
 ////////////////////
 
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class Condition : kotlin/Annotation {
  *
@@ -34,7 +35,6 @@ public final class A {
  * }
  */
 @kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Condition {
 
     public abstract java.lang.String condition();

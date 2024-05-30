@@ -15,8 +15,8 @@ public final class A {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * package {
@@ -43,12 +43,14 @@ public final class A {
  */
 @kotlin.Metadata()
 public final class Kt66541Kt {
+
+    public Kt66541Kt() {
+        super();
+    }
     @org.jetbrains.annotations.NotNull()
     private static final kotlin.reflect.KClass<A> ref1 = null;
-
     @org.jetbrains.annotations.NotNull()
     private static final kotlin.reflect.KClass<A> ref2 = null;
-
     @org.jetbrains.annotations.NotNull()
     private static final kotlin.reflect.KClass<A> ref3 = null;
 

@@ -1,0 +1,62 @@
+public class $Test {
+
+    public $Test() {
+        super();
+    }
+
+    public static class $Inner {
+
+        public $Inner() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+public class Test$ {
+
+    public Test$() {
+        super();
+    }
+
+    public static class Inner$ {
+
+        public Inner$() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: test(L$Test$$Inner;)V
+ *   public final fun test(a: $Test.$Inner): kotlin/Unit
+ *
+ *   // signature: test(LTest$$Inner$;)V
+ *   public final fun test(a: Test$.Inner$): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class TestKt {
+
+    public TestKt() {
+        super();
+    }
+
+    public static final void test(@org.jetbrains.annotations.NotNull()
+    $Test.$Inner a) {
+    }
+
+    public static final void test(@org.jetbrains.annotations.NotNull()
+    Test$.Inner$ a) {
+    }
+}

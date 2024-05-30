@@ -20,13 +20,15 @@ public abstract class Base {
         super();
     }
 
-    protected abstract void doJob(@org.jetbrains.annotations.NotNull() java.lang.String job, int delay);
+    protected abstract void doJob(@org.jetbrains.annotations.NotNull()
+    java.lang.String job, int delay);
 
-    protected abstract <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull() T job, int delay);
+    protected abstract <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull()
+    T job, int delay);
 }
 
-
 ////////////////////
+
 
 /**
  * public final class Impl : Base {
@@ -51,10 +53,12 @@ public final class Impl extends Base {
     }
 
     @java.lang.Override()
-    protected void doJob(@org.jetbrains.annotations.NotNull() java.lang.String job, int delay) {
+    protected void doJob(@org.jetbrains.annotations.NotNull()
+    java.lang.String job, int delay) {
     }
 
     @java.lang.Override()
-    protected <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull() T job, int delay) {
+    protected <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull()
+    T job, int delay) {
     }
 }

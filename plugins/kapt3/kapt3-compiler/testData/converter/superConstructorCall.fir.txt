@@ -19,7 +19,8 @@ public abstract class A {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String s = null;
 
-    public A(@org.jetbrains.annotations.NotNull() java.lang.String s) {
+    public A(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
         super();
     }
 
@@ -28,7 +29,6 @@ public abstract class A {
         return null;
     }
 }
-
 
 ////////////////////
 

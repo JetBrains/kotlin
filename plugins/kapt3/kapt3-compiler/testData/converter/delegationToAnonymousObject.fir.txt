@@ -15,8 +15,8 @@ public final class C implements I {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface I : kotlin/Any {

@@ -83,7 +83,7 @@ class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHan
             }
         }
 
-        assertions.checkTxtAccordingToBackend(module, actual)
+        assertions.checkTxtAccordingToBackend(module, actual, if (info.isFir) ".fir" else "")
     }
 
     private fun String.toDirectiveView(): String = "// ${EXPECTED_ERROR.name}: $this"

@@ -20,7 +20,6 @@ public final class A {
     }
 }
 
-
 ////////////////////
 
 package javadoc;
@@ -87,6 +86,7 @@ package javadoc;
  */
 @kotlin.Metadata()
 public final class B {
+
     /**
      * Nested
      * member
@@ -182,21 +182,17 @@ public final class B {
     /**
      * A mutable property
      */
-    public final void setE(@org.jetbrains.annotations.NotNull() java.lang.String p0) {
+    public final void setE(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
     }
 
-    /**
-     * A property without a backing field
-     */
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getF() {
         return null;
     }
 
-    /**
-     * A property without a backing field
-     */
-    public final void setF(@org.jetbrains.annotations.NotNull() java.lang.String value) {
+    public final void setF(@org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
     }
 
     /**
@@ -207,10 +203,8 @@ public final class B {
         return null;
     }
 
-    /**
-     * A property with a backing field and an explicit setter
-     */
-    public final void setG(@org.jetbrains.annotations.NotNull() java.lang.String value) {
+    public final void setG(@org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
     }
 
     /**
@@ -221,9 +215,7 @@ public final class B {
         return null;
     }
 
-    /**
-     * A property with documentation for an accessor
-     */
-    public final void setH(@org.jetbrains.annotations.NotNull() java.lang.String value) {
+    public final void setH(@org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
     }
 }

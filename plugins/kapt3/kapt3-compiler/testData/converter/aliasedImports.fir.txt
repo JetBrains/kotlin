@@ -1,3 +1,5 @@
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import a.b.ABC;
 
 /**
@@ -42,11 +44,8 @@ import a.b.ABC;
 @kotlin.Metadata()
 public final class Test {
     public Test.MyDate date;
-
     public java.util.concurrent.TimeUnit timeUnit;
-
     public a.b.ABC abc;
-
     public bcd bcd;
 
     public Test() {
@@ -58,7 +57,8 @@ public final class Test {
         return null;
     }
 
-    public final void setDate(@org.jetbrains.annotations.NotNull() Test.MyDate p0) {
+    public final void setDate(@org.jetbrains.annotations.NotNull()
+    Test.MyDate p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -66,7 +66,8 @@ public final class Test {
         return null;
     }
 
-    public final void setTimeUnit(@org.jetbrains.annotations.NotNull() java.util.concurrent.TimeUnit p0) {
+    public final void setTimeUnit(@org.jetbrains.annotations.NotNull()
+    java.util.concurrent.TimeUnit p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -74,7 +75,8 @@ public final class Test {
         return null;
     }
 
-    public final void setAbc(@org.jetbrains.annotations.NotNull() a.b.ABC p0) {
+    public final void setAbc(@org.jetbrains.annotations.NotNull()
+    a.b.ABC p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -82,7 +84,8 @@ public final class Test {
         return null;
     }
 
-    public final void setBcd(@org.jetbrains.annotations.NotNull() bcd p0) {
+    public final void setBcd(@org.jetbrains.annotations.NotNull()
+    bcd p0) {
     }
 
     /**
@@ -114,13 +117,18 @@ public final class Test {
             return null;
         }
 
-        public final void setDate2(@org.jetbrains.annotations.NotNull() Test.MyDate p0) {
+        public final void setDate2(@org.jetbrains.annotations.NotNull()
+        Test.MyDate p0) {
         }
     }
 }
 
-
 ////////////////////
+
+
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import a.b.ABC;
 
 /**
  * public final class Test2 : kotlin/Any {
@@ -151,6 +159,7 @@ public final class Test2 {
         return null;
     }
 
-    public final void setDate(@org.jetbrains.annotations.NotNull() java.util.Date p0) {
+    public final void setDate(@org.jetbrains.annotations.NotNull()
+    java.util.Date p0) {
     }
 }

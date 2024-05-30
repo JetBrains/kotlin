@@ -17,7 +17,6 @@ public abstract interface Named {
     public abstract java.lang.String getName();
 }
 
-
 ////////////////////
 
 package secondary;
@@ -41,18 +40,20 @@ package secondary;
 @kotlin.Metadata()
 public final class Product2 implements secondary.Named {
     @org.jetbrains.annotations.Nullable()
-    private java.lang.String name = null;
+    private java.lang.String name;
 
-    @org.jetbrains.annotations.Nullable()
+    public Product2(@org.jetbrains.annotations.NotNull()
+    java.lang.String otherName) {
+        super();
+    }
+
     @java.lang.Override()
+    @org.jetbrains.annotations.Nullable()
     public java.lang.String getName() {
         return null;
     }
 
-    public void setName(@org.jetbrains.annotations.Nullable() java.lang.String p0) {
-    }
-
-    public Product2(@org.jetbrains.annotations.NotNull() java.lang.String otherName) {
-        super();
+    public void setName(@org.jetbrains.annotations.Nullable()
+    java.lang.String p0) {
     }
 }

@@ -20,16 +20,17 @@ public abstract class Cls {
         super();
     }
 
-    public abstract void foo(@org.jetbrains.annotations.NotNull() java.lang.String abc);
-
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String bar(int bcd) {
         return null;
     }
+
+    public abstract void foo(@org.jetbrains.annotations.NotNull()
+    java.lang.String abc);
 }
 
-
 ////////////////////
+
 
 /**
  * public abstract interface Intf : kotlin/Any {
@@ -46,10 +47,11 @@ public abstract class Cls {
 @kotlin.Metadata()
 public abstract interface Intf {
 
-    public abstract void foo(@org.jetbrains.annotations.NotNull() java.lang.String abc);
-
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String bar(int bcd);
+
+    public abstract void foo(@org.jetbrains.annotations.NotNull()
+    java.lang.String abc);
 
     /**
      * synthetic class
@@ -57,8 +59,13 @@ public abstract interface Intf {
     @kotlin.Metadata()
     public static final class DefaultImpls {
 
+        public DefaultImpls() {
+            super();
+        }
+
         @org.jetbrains.annotations.NotNull()
-        public static java.lang.String bar(@org.jetbrains.annotations.NotNull() Intf $this, int bcd) {
+        public static java.lang.String bar(@org.jetbrains.annotations.NotNull()
+        Intf $this, int bcd) {
             return null;
         }
     }

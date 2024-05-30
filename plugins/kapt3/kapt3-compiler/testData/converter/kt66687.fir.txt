@@ -19,14 +19,13 @@
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
+    public static final Test.Companion Companion = null;
+    private static final int a = 0;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String a$1 = null;
 
-    @org.jetbrains.annotations.NotNull()
-    public static final Test.Companion Companion = null;
-
-    private static final int a = 1;
-
-    public Test(@org.jetbrains.annotations.NotNull() java.lang.String a) {
+    public Test(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
         super();
     }
 
@@ -41,6 +40,7 @@ public final class Test {
      *   // signature: <init>()V
      *   private constructor()
      *
+     *   // field: a:I
      *   // getter: getA()I
      *   public final val a: kotlin/Int (* = ... *)
      *     public final get

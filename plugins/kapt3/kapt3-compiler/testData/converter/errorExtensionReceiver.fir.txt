@@ -41,19 +41,24 @@ public final class TypeHook {
         return null;
     }
 
-    public final void setCustomProperty(@org.jetbrains.annotations.NotNull() UnknownType value) {
+    public final void setCustomProperty(@org.jetbrains.annotations.NotNull()
+    UnknownType value) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final UnknownType getReceiverProperty(@org.jetbrains.annotations.NotNull() UnknownType $this$receiverProperty) {
+    public final UnknownType getReceiverProperty(@org.jetbrains.annotations.NotNull()
+    UnknownType $this$receiverProperty) {
         return null;
     }
 
-    public final void setReceiverProperty(@org.jetbrains.annotations.NotNull() UnknownType $this$receiverProperty, @org.jetbrains.annotations.NotNull() UnknownType value) {
+    public final void setReceiverProperty(@org.jetbrains.annotations.NotNull()
+    UnknownType $this$receiverProperty, @org.jetbrains.annotations.NotNull()
+    UnknownType value) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final UnknownType receiverFunction(@org.jetbrains.annotations.NotNull() UnknownType $this$receiverFunction) {
+    public final UnknownType receiverFunction(@org.jetbrains.annotations.NotNull()
+    UnknownType $this$receiverFunction) {
         return null;
     }
 
@@ -80,11 +85,14 @@ public final class TypeHook {
         }
 
         @org.jetbrains.annotations.NotNull()
-        public final UnknownType getExtensionProperty(@org.jetbrains.annotations.NotNull() UnknownType $this$extensionProperty) {
+        public final UnknownType getExtensionProperty(@org.jetbrains.annotations.NotNull()
+        UnknownType $this$extensionProperty) {
             return null;
         }
 
-        public final void setExtensionProperty(@org.jetbrains.annotations.NotNull() UnknownType $this$extensionProperty, @org.jetbrains.annotations.NotNull() UnknownType value) {
+        public final void setExtensionProperty(@org.jetbrains.annotations.NotNull()
+        UnknownType $this$extensionProperty, @org.jetbrains.annotations.NotNull()
+        UnknownType value) {
         }
     }
 }

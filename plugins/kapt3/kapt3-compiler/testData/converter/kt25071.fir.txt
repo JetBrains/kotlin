@@ -31,20 +31,13 @@ package kapt;
  */
 @kotlin.Metadata()
 public final class StaticImport {
-    private final java.util.Collection<java.lang.String> x = null;
-
     private final kapt.StaticMethod<java.lang.String> l = null;
-
     private final kapt.StaticMethod<java.lang.String> m = null;
-
+    private final java.util.Collection<java.lang.String> x = null;
     private final int y = 0;
 
     public StaticImport() {
         super();
-    }
-
-    public final java.util.Collection<java.lang.String> getX() {
-        return null;
     }
 
     public final kapt.StaticMethod<java.lang.String> getL() {
@@ -55,11 +48,38 @@ public final class StaticImport {
         return null;
     }
 
+    public final java.util.Collection<java.lang.String> getX() {
+        return null;
+    }
+
     public final int getY() {
         return 0;
     }
 }
 
+////////////////////
+
+package kapt;
+
+public class StaticMethod<T> {
+
+    public static <T>StaticMethod<T> of(T t1) {
+        return new StaticMethod<T>(t1);
+    }
+
+    public static <T>StaticMethod<T> of(T t1, T t2) {
+        return new StaticMethod<T>(t1, t2);
+    }
+
+    public static <T>StaticMethod<T> of2(T t1) {
+        return new StaticMethod<T>(t1);
+    }
+    private final T[] ts;
+
+    private StaticMethod(T... ts) {
+        this.ts = ts;
+    }
+}
 
 ////////////////////
 
@@ -77,7 +97,12 @@ package my.lib;
 @kotlin.Metadata()
 public final class LibKt {
 
-    public static final int func(@org.jetbrains.annotations.NotNull() java.lang.String $this$func) {
+    public LibKt() {
+        super();
+    }
+
+    public static final int func(@org.jetbrains.annotations.NotNull()
+    java.lang.String $this$func) {
         return 0;
     }
 }

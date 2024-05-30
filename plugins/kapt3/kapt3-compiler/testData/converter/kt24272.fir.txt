@@ -21,12 +21,12 @@
 @kotlin.Metadata()
 public final class Foo {
     @org.jetbrains.annotations.NotNull()
+    private final Foo.Bar bar = null;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String string = null;
 
-    @org.jetbrains.annotations.NotNull()
-    private final Foo.Bar bar = null;
-
-    public Foo(@org.jetbrains.annotations.NotNull() java.lang.String string) {
+    public Foo(@org.jetbrains.annotations.NotNull()
+    java.lang.String string) {
         super();
     }
 
@@ -59,18 +59,13 @@ public final class Foo {
     @kotlin.Metadata()
     public static final class Bar {
         @org.jetbrains.annotations.NotNull()
+        private final java.util.ArrayList<Foo.Bar.Bar> bars = null;
+        @org.jetbrains.annotations.NotNull()
         private final java.lang.String string = null;
 
-        @org.jetbrains.annotations.NotNull()
-        private final java.util.ArrayList<Foo.Bar.Bar> bars = null;
-
-        public Bar(@org.jetbrains.annotations.NotNull() java.lang.String string) {
+        public Bar(@org.jetbrains.annotations.NotNull()
+        java.lang.String string) {
             super();
-        }
-
-        @org.jetbrains.annotations.NotNull()
-        public final java.lang.String getString() {
-            return null;
         }
 
         @org.jetbrains.annotations.NotNull()
@@ -78,5 +73,9 @@ public final class Foo {
             return null;
         }
 
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getString() {
+            return null;
+        }
     }
 }

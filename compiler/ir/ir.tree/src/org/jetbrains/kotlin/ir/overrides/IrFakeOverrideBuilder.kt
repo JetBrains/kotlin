@@ -79,7 +79,7 @@ class IrFakeOverrideBuilder(
             // "exposed visibility" error. Accessing the method via the class A would result in an IllegalAccessError at runtime, thus
             // we need to generate a fake override in class B. This is only possible in case of superclasses, as static _interface_ members
             // are not inherited (see JLS 8.4.8 and 9.4.1).
-            val superClass = clazz.superTypes.filter { it.classOrFail.owner.isClass }
+            val superClass = clazz.superTypes.filter { it.classOrNull?.owner?.isClass == true }
             buildFakeOverridesForClassImpl(clazz, staticMembers, oldSignatures, superClass, isStaticMembers = true)
         }
     }
@@ -92,12 +92,12 @@ class IrFakeOverrideBuilder(
         isStaticMembers: Boolean,
     ) {
         val allFromSuper = supertypes.flatMap { superType ->
-            superType.classOrFail.owner.declarations
-                .filterIsInstanceAnd<IrOverridableMember> { it.isStaticMember == isStaticMembers }
-                .mapNotNull {
+            superType.classOrNull?.owner?.declarations
+                ?.filterIsInstanceAnd<IrOverridableMember> { it.isStaticMember == isStaticMembers }
+                ?.mapNotNull {
                     val fakeOverride = strategy.fakeOverrideMember(superType, it, clazz) ?: return@mapNotNull null
                     FakeOverride(fakeOverride, it)
-                }
+                } ?: emptyList()
         }
 
         val allFromSuperByName = allFromSuper.groupBy { it.override.name }

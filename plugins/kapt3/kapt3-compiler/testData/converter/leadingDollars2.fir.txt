@@ -1,0 +1,37 @@
+package te.st.a;
+
+public class JavaClass {
+
+    public JavaClass() {
+        super();
+    }
+}
+
+////////////////////
+
+package te.st.a;
+
+import te.st.a.$Test.Inner;
+import te.st.a.Test$.Inner$;
+
+/**
+ * package {
+ *
+ *   // signature: a(Lerror/NonExistentClass;)V
+ *   public final fun a(a: error/NonExistentClass): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class TestKt {
+
+    public TestKt() {
+        super();
+    }
+
+    public static final void a(@org.jetbrains.annotations.NotNull()
+    te.st.a.$Test.Inner a) {
+    }
+}

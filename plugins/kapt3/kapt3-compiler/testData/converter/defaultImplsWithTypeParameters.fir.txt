@@ -24,10 +24,16 @@ public abstract interface Foo<X extends java.lang.Object, Y extends java.lang.Ob
     @kotlin.Metadata()
     public static final class DefaultImpls {
 
-        public static <X extends java.lang.Object, Y extends java.lang.Object, Z extends java.lang.Object>void foo(@org.jetbrains.annotations.NotNull() Foo<X, Y> $this, X x, Y y, Z z) {
+        public DefaultImpls() {
+            super();
         }
 
-        public static <X extends java.lang.Object, Y extends java.lang.Object>int getX(@org.jetbrains.annotations.NotNull() Foo<X, Y> $this) {
+        public static <X extends java.lang.Object, Y extends java.lang.Object, Z extends java.lang.Object>void foo(@org.jetbrains.annotations.NotNull()
+        Foo<X, Y> $this, X x, Y y, Z z) {
+        }
+
+        public static <X extends java.lang.Object, Y extends java.lang.Object>int getX(@org.jetbrains.annotations.NotNull()
+        Foo<X, Y> $this) {
             return 0;
         }
     }

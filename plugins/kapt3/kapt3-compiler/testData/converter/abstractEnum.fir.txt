@@ -25,9 +25,8 @@
  */
 @kotlin.Metadata()
 public enum E {
-    X,
-    Y;
-
+    /*public static final*/ X /* = new E() */,
+    /*public static final*/ Y /* = new E() */;
 
     E() {
     }
@@ -40,6 +39,23 @@ public enum E {
     @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<E> getEntries() {
         return null;
+    }
+
+    /**
+     * public final class E.NestedClass : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class NestedClass {
+
+        public NestedClass() {
+            super();
+        }
     }
 
     /**
@@ -60,26 +76,10 @@ public enum E {
             super();
         }
     }
-    /**
-     * public final class E.NestedClass : kotlin/Any {
-     *
-     *   // signature: <init>()V
-     *   public constructor()
-     *
-     *   // module name: main
-     * }
-     */
-    @kotlin.Metadata()
-    public static final class NestedClass {
-
-        public NestedClass() {
-            super();
-        }
-    }
 }
 
-
 ////////////////////
+
 
 /**
  * public final enum class E2 : kotlin/Enum<E2> {
@@ -104,9 +104,8 @@ public enum E {
  */
 @kotlin.Metadata()
 public enum E2 {
-    X,
-    Y;
-
+    /*public static final*/ X /* = new E2() */,
+    /*public static final*/ Y /* = new E2() */;
 
     E2(int n) {
     }
@@ -122,8 +121,8 @@ public enum E2 {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final enum class E3 : kotlin/Enum<E3> {
@@ -147,9 +146,8 @@ public enum E2 {
  */
 @kotlin.Metadata()
 public enum E3 {
-    X,
-    Y;
-
+    /*public static final*/ X /* = new E3() */,
+    /*public static final*/ Y /* = new E3() */;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
@@ -167,8 +165,8 @@ public enum E3 {
     }
 }
 
-
 ////////////////////
+
 
 /**
  * public final enum class E4 : kotlin/Enum<E4> {
@@ -205,15 +203,11 @@ public enum E3 {
  */
 @kotlin.Metadata()
 public enum E4 {
-    X;
-
+    /*public static final*/ X /* = new E4() */;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
-
     private final int b = 0;
-
     private final long c = 0L;
-
     private final boolean d = false;
 
     E4(java.lang.String a, int b, long c, boolean d) {

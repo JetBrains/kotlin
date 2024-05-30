@@ -14,8 +14,8 @@ public abstract interface Callback {
     public abstract java.lang.String invoke();
 }
 
-
 ////////////////////
+
 
 /**
  * public final enum class Foo : kotlin/Enum<Foo> {
@@ -37,8 +37,7 @@ public abstract interface Callback {
  */
 @kotlin.Metadata()
 public enum Foo {
-    FOO;
-
+    /*public static final*/ FOO /* = new Foo() */;
     @org.jetbrains.annotations.NotNull()
     private final Callback callback = null;
 

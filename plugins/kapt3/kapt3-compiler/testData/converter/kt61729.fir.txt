@@ -1,5 +1,7 @@
 package a;
 
+@b.RestrictTo(value = {b.RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
  * public final annotation class a/LinkifyMask : kotlin/Annotation {
  *
@@ -10,11 +12,8 @@ package a;
  * }
  */
 @kotlin.Metadata()
-@b.RestrictTo(value = {b.RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface LinkifyMask {
 }
-
 
 ////////////////////
 
@@ -41,6 +40,24 @@ public final class SphinxLinkify {
         super();
     }
 
-    private final void addLinks(@LinkifyMask() int mask) {
+    private final void addLinks(@LinkifyMask()
+    int mask) {
+    }
+}
+
+////////////////////
+
+package b;
+
+public @interface RestrictTo {
+
+    Scope[] value();
+
+    public static enum Scope {
+        /*public static final*/ LIBRARY_GROUP_PREFIX /* = new Scope() */;
+
+        private Scope() {
+            super();
+        }
     }
 }

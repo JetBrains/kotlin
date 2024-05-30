@@ -17,8 +17,8 @@
 public final class NonExistentClassWIthoutCorrectionKt {
 }
 
-
 ////////////////////
+
 
 /**
  * public final object NonExistentType : kotlin/Any {
@@ -50,35 +50,35 @@ public final class NonExistentClassWIthoutCorrectionKt {
  *   // field: coocoo:Lerror/NonExistentClass;
  *   // getter: getCoocoo()Lerror/NonExistentClass;
  *   // setter: setCoocoo(Lerror/NonExistentClass;)V
- *   public final lateinit var coocoo: error/NonExistentClass (* = Coocoo^ *)
+ *   public final lateinit var coocoo: error/NonExistentClass
  *     public final get
  *     public final set
  *
  *   // field: coocoo2:Lerror/NonExistentClass;
  *   // getter: getCoocoo2()Lerror/NonExistentClass;
  *   // setter: setCoocoo2(Lerror/NonExistentClass;)V
- *   public final lateinit var coocoo2: error/NonExistentClass (* = Coocoo2^<kotlin/String> *)
+ *   public final lateinit var coocoo2: error/NonExistentClass
  *     public final get
  *     public final set
  *
  *   // field: coocoo21:Lerror/NonExistentClass;
  *   // getter: getCoocoo21()Lerror/NonExistentClass;
  *   // setter: setCoocoo21(Lerror/NonExistentClass;)V
- *   public final lateinit var coocoo21: error/NonExistentClass (* = Coocoo2^<error/NonExistentClass (* = Coocoo^ *)> *)
+ *   public final lateinit var coocoo21: error/NonExistentClass
  *     public final get
  *     public final set
  *
  *   // field: coocoo3:Lerror/NonExistentClass;
  *   // getter: getCoocoo3()Lerror/NonExistentClass;
  *   // setter: setCoocoo3(Lerror/NonExistentClass;)V
- *   public final lateinit var coocoo3: error/NonExistentClass (* = Coocoo3^<kotlin/String> *)
+ *   public final lateinit var coocoo3: error/NonExistentClass
  *     public final get
  *     public final set
  *
  *   // field: coocoo31:Lerror/NonExistentClass;
  *   // getter: getCoocoo31()Lerror/NonExistentClass;
  *   // setter: setCoocoo31(Lerror/NonExistentClass;)V
- *   public final lateinit var coocoo31: error/NonExistentClass (* = Coocoo3^<error/NonExistentClass (* = Coocoo2^<error/NonExistentClass (* = Coocoo^ *)> *)> *)
+ *   public final lateinit var coocoo31: error/NonExistentClass
  *     public final get
  *     public final set
  *
@@ -99,53 +99,43 @@ public final class NonExistentClassWIthoutCorrectionKt {
  */
 @kotlin.Metadata()
 public final class NonExistentType {
+    @org.jetbrains.annotations.Nullable()
+    private static final error.NonExistentClass a = null;
+    @org.jetbrains.annotations.Nullable()
+    private static final java.util.List<error.NonExistentClass> b = null;
+    @org.jetbrains.annotations.NotNull()
+    private static final kotlin.jvm.functions.Function1<error.NonExistentClass, kotlin.Unit> c = null;
+    @org.jetbrains.annotations.Nullable()
+    private static final error.NonExistentClass d = null;
+    public static java.lang.String string2;
+    public static error.NonExistentClass coocoo;
+    public static error.NonExistentClass coocoo2;
+    public static error.NonExistentClass coocoo21;
+    public static error.NonExistentClass coocoo3;
+    public static error.NonExistentClass coocoo31;
     @org.jetbrains.annotations.NotNull()
     public static final NonExistentType INSTANCE = null;
-
-    @org.jetbrains.annotations.NotNull()
-    private static final error.NonExistentClass a = null;
-
-    @org.jetbrains.annotations.Nullable()
-    private static final java.util.List b = null;
-
-    @org.jetbrains.annotations.NotNull()
-    private static final kotlin.jvm.functions.Function1 c = null;
-
-    @org.jetbrains.annotations.NotNull()
-    private static final error.NonExistentClass d = null;
-
-    public static java.lang.String string2;
-
-    public static error.NonExistentClass coocoo;
-
-    public static error.NonExistentClass coocoo2;
-
-    public static error.NonExistentClass coocoo21;
-
-    public static error.NonExistentClass coocoo3;
-
-    public static error.NonExistentClass coocoo31;
 
     private NonExistentType() {
         super();
     }
 
-    @org.jetbrains.annotations.NotNull()
+    @org.jetbrains.annotations.Nullable()
     public final error.NonExistentClass getA() {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable()
-    public final java.util.List getB() {
+    public final java.util.List<error.NonExistentClass> getB() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final kotlin.jvm.functions.Function1 getC() {
+    public final kotlin.jvm.functions.Function1<error.NonExistentClass, kotlin.Unit> getC() {
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull()
+    @org.jetbrains.annotations.Nullable()
     public final error.NonExistentClass getD() {
         return null;
     }
@@ -155,7 +145,8 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setString2(@org.jetbrains.annotations.NotNull() java.lang.String p0) {
+    public final void setString2(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -163,7 +154,8 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setCoocoo(@org.jetbrains.annotations.NotNull() error.NonExistentClass p0) {
+    public final void setCoocoo(@org.jetbrains.annotations.NotNull()
+    error.NonExistentClass p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -171,7 +163,8 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setCoocoo2(@org.jetbrains.annotations.NotNull() error.NonExistentClass p0) {
+    public final void setCoocoo2(@org.jetbrains.annotations.NotNull()
+    error.NonExistentClass p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -179,7 +172,8 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setCoocoo21(@org.jetbrains.annotations.NotNull() error.NonExistentClass p0) {
+    public final void setCoocoo21(@org.jetbrains.annotations.NotNull()
+    error.NonExistentClass p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -187,7 +181,8 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setCoocoo3(@org.jetbrains.annotations.NotNull() error.NonExistentClass p0) {
+    public final void setCoocoo3(@org.jetbrains.annotations.NotNull()
+    error.NonExistentClass p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -195,16 +190,27 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setCoocoo31(@org.jetbrains.annotations.NotNull() error.NonExistentClass p0) {
+    public final void setCoocoo31(@org.jetbrains.annotations.NotNull()
+    error.NonExistentClass p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final error.NonExistentClass a(@org.jetbrains.annotations.NotNull() error.NonExistentClass a, @org.jetbrains.annotations.NotNull() java.lang.String s) {
+    public final error.NonExistentClass a(@org.jetbrains.annotations.NotNull()
+    error.NonExistentClass a, @org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final error.NonExistentClass b(@org.jetbrains.annotations.NotNull() java.lang.String s) {
+    public final error.NonExistentClass b(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
         return null;
     }
+}
+
+////////////////////
+
+package error;
+
+public final class NonExistentClass {
 }

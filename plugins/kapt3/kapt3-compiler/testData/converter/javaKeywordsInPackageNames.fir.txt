@@ -17,7 +17,6 @@ public final class A {
     }
 }
 
-
 ////////////////////
 
 package a.b.typealias.c;

@@ -5,7 +5,6 @@ public abstract interface ListUpdateCallback {
     public abstract void onInserted(int position, int count);
 }
 
-
 ////////////////////
 
 package test;

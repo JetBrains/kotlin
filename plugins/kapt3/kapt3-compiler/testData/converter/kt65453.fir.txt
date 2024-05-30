@@ -1,3 +1,6 @@
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {})
 /**
  * public final annotation class A : kotlin/Annotation {
  *
@@ -8,14 +11,11 @@
  * }
  */
 @kotlin.Metadata()
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.TYPE})
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE_USE})
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface A {
 }
 
-
 ////////////////////
+
 
 /**
  * package {
@@ -29,6 +29,11 @@ public abstract @interface A {
 @kotlin.Metadata()
 public final class Kt65453Kt {
 
-    public static final void foo(@org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function1<? super kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.Unit> callback) {
+    public Kt65453Kt() {
+        super();
+    }
+
+    public static final void foo(@org.jetbrains.annotations.NotNull()
+    kotlin.jvm.functions.Function1<? super kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.Unit> callback) {
     }
 }

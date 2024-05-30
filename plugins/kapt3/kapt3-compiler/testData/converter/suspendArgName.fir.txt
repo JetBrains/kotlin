@@ -26,23 +26,29 @@ public class Test {
         super();
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public java.lang.String getTestNoSuspend(@org.jetbrains.annotations.NotNull() java.lang.String text) {
+    @org.jetbrains.annotations.Nullable()
+    public java.lang.Object getTest(@org.jetbrains.annotations.NotNull()
+    java.lang.String text, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super java.lang.String> $completion) {
         return null;
     }
 
     @org.jetbrains.annotations.Nullable()
-    public java.lang.Object getTest(@org.jetbrains.annotations.NotNull() java.lang.String text, @org.jetbrains.annotations.NotNull() kotlin.coroutines.Continuation<? super java.lang.String> $completion) {
+    public java.lang.Object getTestInvalid(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0_55085957, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super java.lang.String> $completion) {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public java.lang.String getTestNoSuspendInvalid(@org.jetbrains.annotations.NotNull() java.lang.String p0_55085957) {
+    public java.lang.String getTestNoSuspend(@org.jetbrains.annotations.NotNull()
+    java.lang.String text) {
         return null;
     }
 
-    @org.jetbrains.annotations.Nullable()
-    public java.lang.Object getTestInvalid(@org.jetbrains.annotations.NotNull() java.lang.String p0_55085957, @org.jetbrains.annotations.NotNull() kotlin.coroutines.Continuation<? super java.lang.String> $completion) {
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String getTestNoSuspendInvalid(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0_55085957) {
         return null;
     }
 }

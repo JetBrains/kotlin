@@ -19,7 +19,8 @@ public final class Bar {
     @org.jetbrains.annotations.NotNull()
     private final test.Delegate unknown$delegate = null;
 
-    public Bar(@org.jetbrains.annotations.NotNull() test.Delegate delegate) {
+    public Bar(@org.jetbrains.annotations.NotNull()
+    test.Delegate delegate) {
         super();
     }
 
@@ -27,7 +28,6 @@ public final class Bar {
         return null;
     }
 }
-
 
 ////////////////////
 
@@ -53,7 +53,9 @@ public final class Delegate {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.Object getValue(@org.jetbrains.annotations.NotNull() java.lang.Object thisRef, @org.jetbrains.annotations.NotNull() KProperty<?> property) {
+    public final java.lang.Object getValue(@org.jetbrains.annotations.NotNull()
+    java.lang.Object thisRef, @org.jetbrains.annotations.NotNull()
+    KProperty<?> property) {
         return null;
     }
 }
