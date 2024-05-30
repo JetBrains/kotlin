@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.wasm.lower.*
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
@@ -638,6 +639,12 @@ val constEvaluationPhase = makeIrModulePhase(
     prerequisite = setOf(functionInliningPhase)
 )
 
+val inlineCallableReferenceToLambdaPhase = makeIrModulePhase(
+    ::WasmInlineCallableReferenceToLambdaPhase,
+    name = "WasmInlineCallableReferenceToLambdaPhase",
+    description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
+)
+
 val loweringList = listOf(
     validateIrBeforeLowering,
     jsCodeCallsLowering,
@@ -656,6 +663,7 @@ val loweringList = listOf(
     localClassesInInlineFunctionsPhase,
     localClassesExtractionFromInlineFunctionsPhase,
 
+    inlineCallableReferenceToLambdaPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersPhase,
 
     functionInliningPhase,
