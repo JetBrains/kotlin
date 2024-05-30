@@ -7,7 +7,7 @@ KaJavaFieldSymbol:
   isVal: true
   modality: FINAL
   name: value
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -33,7 +33,7 @@ KaJavaFieldSymbol:
   isVal: false
   modality: OPEN
   name: hash
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -71,7 +71,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: hash32
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -99,7 +99,7 @@ KaJavaFieldSymbol:
   isVal: false
   modality: OPEN
   name: hash32
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -208,7 +208,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: isEmpty
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -247,7 +247,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: codePointAt
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -268,7 +268,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -311,7 +311,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: codePointBefore
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -332,7 +332,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -375,7 +375,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: codePointCount
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -396,7 +396,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -420,7 +420,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -463,7 +463,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: offsetByCodePoints
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -484,7 +484,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -508,7 +508,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -551,7 +551,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: getChars
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -572,7 +572,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -595,7 +595,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -638,7 +638,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: getChars
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -659,7 +659,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -683,7 +683,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -707,7 +707,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -730,7 +730,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -776,7 +776,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: getBytes
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -797,7 +797,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -821,7 +821,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -845,7 +845,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -868,7 +868,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -911,7 +911,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: getBytes
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -931,7 +931,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -973,7 +973,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: getBytes
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -993,7 +993,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -1035,7 +1035,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: getBytes
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -1073,7 +1073,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: equals
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1094,7 +1094,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -1137,7 +1137,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: contentEquals
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1158,7 +1158,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -1200,7 +1200,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: contentEquals
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1221,7 +1221,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -1263,7 +1263,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: equalsIgnoreCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1284,7 +1284,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -1326,7 +1326,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: compareTo
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1347,7 +1347,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -1389,7 +1389,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: compareToIgnoreCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1410,7 +1410,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -1452,7 +1452,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: regionMatches
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1473,7 +1473,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -1497,7 +1497,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -1520,7 +1520,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -1544,7 +1544,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -1587,7 +1587,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: regionMatches
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1608,7 +1608,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -1632,7 +1632,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -1656,7 +1656,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -1679,7 +1679,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -1703,7 +1703,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p4
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -1746,7 +1746,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: startsWith
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1767,7 +1767,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -1790,7 +1790,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -1833,7 +1833,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: startsWith
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1854,7 +1854,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -1896,7 +1896,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: endsWith
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1917,7 +1917,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -1959,7 +1959,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: hashCode
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -1998,7 +1998,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: indexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -2019,7 +2019,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2062,7 +2062,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: indexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -2083,7 +2083,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2107,7 +2107,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2150,7 +2150,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: indexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -2171,7 +2171,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -2213,7 +2213,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: indexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -2234,7 +2234,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -2257,7 +2257,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2300,7 +2300,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: indexOfSupplementary
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -2321,7 +2321,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2345,7 +2345,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2388,7 +2388,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: lastIndexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -2409,7 +2409,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2452,7 +2452,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: lastIndexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -2473,7 +2473,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2497,7 +2497,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2540,7 +2540,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: lastIndexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -2561,7 +2561,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -2603,7 +2603,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: lastIndexOf
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -2624,7 +2624,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -2647,7 +2647,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2690,7 +2690,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: lastIndexOfSupplementary
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -2711,7 +2711,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2735,7 +2735,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2778,7 +2778,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: substring
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -2798,7 +2798,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2841,7 +2841,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: substring
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -2861,7 +2861,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2885,7 +2885,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2928,7 +2928,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: subSequence
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -2949,7 +2949,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -2973,7 +2973,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -3016,7 +3016,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: concat
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3036,7 +3036,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3078,7 +3078,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: replace
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3098,7 +3098,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -3122,7 +3122,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -3165,7 +3165,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: replace
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3185,7 +3185,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3208,7 +3208,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3250,7 +3250,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: matches
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -3271,7 +3271,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3313,7 +3313,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: contains
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -3334,7 +3334,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3376,7 +3376,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: replaceFirst
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3396,7 +3396,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3419,7 +3419,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3461,7 +3461,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: replaceAll
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3481,7 +3481,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3504,7 +3504,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3546,7 +3546,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: split
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3566,7 +3566,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3589,7 +3589,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -3632,7 +3632,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: split
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3652,7 +3652,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3694,7 +3694,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: toLowerCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3714,7 +3714,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3756,7 +3756,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: toLowerCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3794,7 +3794,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: toUpperCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3814,7 +3814,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -3856,7 +3856,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: toUpperCase
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3894,7 +3894,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: trim
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -3932,7 +3932,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: toString
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -3971,7 +3971,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: toCharArray
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -4009,7 +4009,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: intern
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -4047,7 +4047,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: get
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4068,7 +4068,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4106,7 +4106,7 @@ KaNamedClassOrObjectSymbol:
   isInner: false
   modality: OPEN
   name: CaseInsensitiveComparator
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
       annotationsList: []
@@ -4143,7 +4143,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4168,7 +4168,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4189,7 +4189,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4217,7 +4217,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4238,7 +4238,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4266,7 +4266,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4287,7 +4287,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4310,7 +4310,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4334,7 +4334,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4363,7 +4363,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4384,7 +4384,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4407,7 +4407,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4431,7 +4431,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4463,7 +4463,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4484,7 +4484,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4507,7 +4507,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4531,7 +4531,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4555,7 +4555,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4587,7 +4587,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4608,7 +4608,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4631,7 +4631,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4660,7 +4660,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4681,7 +4681,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4704,7 +4704,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4728,7 +4728,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4752,7 +4752,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4780,7 +4780,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4801,7 +4801,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4824,7 +4824,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4848,7 +4848,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -4872,7 +4872,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p3
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4900,7 +4900,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4921,7 +4921,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4944,7 +4944,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -4972,7 +4972,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -4993,7 +4993,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -5016,7 +5016,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -5044,7 +5044,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -5065,7 +5065,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -5088,7 +5088,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -5112,7 +5112,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -5141,7 +5141,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -5162,7 +5162,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -5190,7 +5190,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -5211,7 +5211,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -5239,7 +5239,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -5260,7 +5260,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -5288,7 +5288,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -5309,7 +5309,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -5332,7 +5332,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -5364,7 +5364,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -5385,7 +5385,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -5409,7 +5409,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p1
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -5433,7 +5433,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p2
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []

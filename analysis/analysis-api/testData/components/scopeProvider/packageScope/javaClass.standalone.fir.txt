@@ -43,7 +43,7 @@ KaNamedClassOrObjectSymbol:
   isInner: false
   modality: ABSTRACT
   name: SuperClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
       annotationsList: []
@@ -77,7 +77,7 @@ KaNamedClassOrObjectSymbol:
   isInner: false
   modality: OPEN
   name: JavaClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
       annotationsList: []

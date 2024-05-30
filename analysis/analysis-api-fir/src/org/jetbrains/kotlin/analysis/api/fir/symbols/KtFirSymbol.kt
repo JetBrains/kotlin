@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.fir.declarations.*
@@ -57,9 +58,10 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
 
     FirDeclarationOrigin.Precompiled -> KaSymbolOrigin.SOURCE
     FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns -> KaSymbolOrigin.LIBRARY
-    is FirDeclarationOrigin.Java -> KaSymbolOrigin.JAVA
+    is FirDeclarationOrigin.Java.Source -> KaSymbolOrigin.JAVA_SOURCE
+    is FirDeclarationOrigin.Java.Library -> KaSymbolOrigin.JAVA_LIBRARY
     FirDeclarationOrigin.SamConstructor -> KaSymbolOrigin.SAM_CONSTRUCTOR
-    FirDeclarationOrigin.Enhancement -> KaSymbolOrigin.JAVA
+    FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> javaOriginBasedOnSessionKind()
     FirDeclarationOrigin.IntersectionOverride -> KaSymbolOrigin.INTERSECTION_OVERRIDE
     FirDeclarationOrigin.Delegated -> KaSymbolOrigin.DELEGATED
     FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk -> KaSymbolOrigin.LIBRARY
@@ -96,7 +98,6 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     }
 
     is FirDeclarationOrigin.Plugin -> KaSymbolOrigin.PLUGIN
-    FirDeclarationOrigin.RenamedForOverride -> KaSymbolOrigin.JAVA
     is FirDeclarationOrigin.SubstitutionOverride -> KaSymbolOrigin.SUBSTITUTION_OVERRIDE
     FirDeclarationOrigin.DynamicScope -> KaSymbolOrigin.JS_DYNAMIC
     is FirDeclarationOrigin.ScriptCustomization -> KaSymbolOrigin.PLUGIN
@@ -111,3 +112,9 @@ internal fun KaClassLikeSymbol.getSymbolKind(): KaSymbolKind {
     }
 }
 
+private fun FirDeclaration.javaOriginBasedOnSessionKind(): KaSymbolOrigin {
+    return when (moduleData.session.kind) {
+        FirSession.Kind.Source -> KaSymbolOrigin.JAVA_SOURCE
+        FirSession.Kind.Library -> KaSymbolOrigin.JAVA_LIBRARY
+    }
+}

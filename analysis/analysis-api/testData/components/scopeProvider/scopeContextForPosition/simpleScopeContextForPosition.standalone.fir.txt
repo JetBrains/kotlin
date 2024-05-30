@@ -558,7 +558,7 @@ scopes:
         isInner: true
         modality: OPEN
         name: NestedInJavaClass
-        origin: JAVA
+        origin: JAVA_SOURCE
         superTypes: [
           KaUsualClassType:
             annotationsList: []
@@ -804,7 +804,7 @@ scopes:
         isInner: true
         modality: OPEN
         name: NestedInJavaClass
-        origin: JAVA
+        origin: JAVA_SOURCE
         superTypes: [
           KaUsualClassType:
             annotationsList: []
@@ -934,7 +934,7 @@ scopes:
         isInner: false
         modality: OPEN
         name: JavaClass
-        origin: JAVA
+        origin: JAVA_SOURCE
         superTypes: [
           KaUsualClassType:
             annotationsList: []

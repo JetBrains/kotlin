@@ -10,7 +10,7 @@ KaJavaFieldSymbol:
   isVal: false
   modality: FINAL
   name: field
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: [

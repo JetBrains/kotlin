@@ -13,7 +13,7 @@ KaNamedClassOrObjectSymbol:
   isInner: false
   modality: FINAL
   name: String
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
       annotationsList: []

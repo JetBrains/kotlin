@@ -56,7 +56,9 @@ internal class KaFirPsiJavaClassSymbol(
     }
 
     override val origin: KaSymbolOrigin
-        get() = withValidityAssertion { KaSymbolOrigin.JAVA }
+        get() = withValidityAssertion {
+            if (javaClass.isFromSource) KaSymbolOrigin.JAVA_SOURCE else KaSymbolOrigin.JAVA_LIBRARY
+        }
 
     override val symbolKind: KaSymbolKind
         get() = withValidityAssertion {
@@ -86,7 +88,7 @@ internal class KaFirPsiJavaClassSymbol(
         // The parent Java class might contribute type parameters to the Java type parameter stack, but for this KtSymbol, parent type 
         // parameters aren't relevant.
         psi.typeParameters.mapIndexed { index, psiTypeParameter ->
-            KaFirPsiJavaTypeParameterSymbol(psiTypeParameter, analysisSession) {
+            KaFirPsiJavaTypeParameterSymbol(psiTypeParameter, analysisSession, origin) {
                 // `psi.typeParameters` should align with the list of regular `FirTypeParameter`s, making the use of `index` valid.
                 val firTypeParameter = firSymbol.fir.typeParameters.filterIsInstance<FirTypeParameter>().getOrNull(index)
                 require(firTypeParameter != null) {

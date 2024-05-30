@@ -700,7 +700,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: FINAL
   name: finalize
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []

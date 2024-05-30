@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base
 
+import com.intellij.psi.impl.compiled.ClsElementImpl
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
@@ -332,7 +333,7 @@ internal fun DeclarationDescriptor.getSymbolOrigin(analysisContext: Fe10Analysis
         is SyntheticJavaPropertyDescriptor -> return KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
         is SyntheticFieldDescriptor -> return KaSymbolOrigin.PROPERTY_BACKING_FIELD
         is SamConstructorDescriptor -> return KaSymbolOrigin.SAM_CONSTRUCTOR
-        is JavaClassDescriptor, is JavaCallableMemberDescriptor -> return KaSymbolOrigin.JAVA
+        is JavaClassDescriptor, is JavaCallableMemberDescriptor -> return javaOrigin()
         is DeserializedDescriptor -> return KaSymbolOrigin.LIBRARY
         is EnumEntrySyntheticClassDescriptor -> return containingDeclaration.getSymbolOrigin(analysisContext)
         is CallableMemberDescriptor -> when (kind) {
@@ -348,13 +349,13 @@ internal fun DeclarationDescriptor.getSymbolOrigin(analysisContext: Fe10Analysis
 
     val sourceElement = this.toSourceElement
     if (sourceElement is JavaSourceElement) {
-        return KaSymbolOrigin.JAVA
+        return javaOrigin()
     }
 
     val psi = sourceElement.getPsi()
     if (psi != null) {
         if (psi.language != KotlinLanguage.INSTANCE) {
-            return KaSymbolOrigin.JAVA
+            return javaOrigin()
         }
 
         val virtualFile = psi.containingFile.virtualFile
@@ -367,6 +368,11 @@ internal fun DeclarationDescriptor.getSymbolOrigin(analysisContext: Fe10Analysis
     }
 
     return KaSymbolOrigin.SOURCE
+}
+
+private fun DeclarationDescriptor.javaOrigin(): KaSymbolOrigin {
+    val psi = toSourceElement.getPsi()
+    return if (psi == null || psi is ClsElementImpl) KaSymbolOrigin.JAVA_LIBRARY else KaSymbolOrigin.JAVA_SOURCE
 }
 
 internal val KotlinType.ktNullability: KaTypeNullability

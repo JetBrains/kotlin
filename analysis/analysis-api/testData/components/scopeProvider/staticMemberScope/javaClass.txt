@@ -18,7 +18,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: bar
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -41,7 +41,7 @@ KaJavaFieldSymbol:
   isVal: false
   modality: OPEN
   name: superFoo
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -75,7 +75,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: superBar
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -98,7 +98,7 @@ KaJavaFieldSymbol:
   isVal: false
   modality: OPEN
   name: foo
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -127,7 +127,7 @@ KaNamedClassOrObjectSymbol:
   isInner: true
   modality: OPEN
   name: InnerClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
       annotationsList: []
@@ -157,7 +157,7 @@ KaNamedClassOrObjectSymbol:
   isInner: false
   modality: OPEN
   name: NestedClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
       annotationsList: []

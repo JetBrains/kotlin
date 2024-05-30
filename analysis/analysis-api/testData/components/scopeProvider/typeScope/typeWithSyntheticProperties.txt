@@ -62,7 +62,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: getValue
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []

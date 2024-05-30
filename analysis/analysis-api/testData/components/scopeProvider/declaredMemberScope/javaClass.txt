@@ -18,7 +18,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: hello
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -52,7 +52,7 @@ KaNamedClassOrObjectSymbol:
   isInner: true
   modality: OPEN
   name: InnerClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
       annotationsList: []
@@ -77,7 +77,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []

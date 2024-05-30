@@ -18,7 +18,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: foo
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -57,7 +57,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: doo
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -77,7 +77,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: i
-      origin: JAVA
+      origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -120,7 +120,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: getStringValue
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -290,7 +290,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []

@@ -7,7 +7,7 @@ KaJavaFieldSymbol:
   isVal: false
   modality: OPEN
   name: count
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []

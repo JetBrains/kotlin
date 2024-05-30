@@ -18,7 +18,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: hello
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -57,7 +57,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: method
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -80,7 +80,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: true
       name: classes
-      origin: JAVA
+      origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -125,7 +125,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: getActualRandomNumber
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -301,7 +301,7 @@ KaNamedClassOrObjectSymbol:
   isInner: false
   modality: OPEN
   name: NestedClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
       annotationsList: []
@@ -331,7 +331,7 @@ KaNamedClassOrObjectSymbol:
   isInner: true
   modality: OPEN
   name: InnerClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
       annotationsList: []
@@ -361,7 +361,7 @@ KaNamedClassOrObjectSymbol:
   isInner: false
   modality: OPEN
   name: NestedSuperClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
       annotationsList: []
@@ -391,7 +391,7 @@ KaNamedClassOrObjectSymbol:
   isInner: true
   modality: OPEN
   name: InnerSuperClass
-  origin: JAVA
+  origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
       annotationsList: []
@@ -416,7 +416,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []

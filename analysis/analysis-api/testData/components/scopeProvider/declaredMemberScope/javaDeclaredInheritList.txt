@@ -18,7 +18,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: add
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -39,7 +39,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: s
-      origin: JAVA
+      origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []
@@ -81,7 +81,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: removeAt
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -101,7 +101,7 @@ KaFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: index
-      origin: JAVA
+      origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
         annotationsList: []
@@ -134,7 +134,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []

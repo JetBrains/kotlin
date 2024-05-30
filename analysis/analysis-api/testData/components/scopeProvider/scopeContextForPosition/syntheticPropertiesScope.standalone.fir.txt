@@ -37,7 +37,7 @@ scopes:
         isTailRec: false
         modality: OPEN
         name: getValue
-        origin: JAVA
+        origin: JAVA_SOURCE
         receiverParameter: null
         returnType: KaFlexibleType:
           annotationsList: []
@@ -216,7 +216,7 @@ scopes:
         isExpect: false
         isExtension: false
         isPrimary: true
-        origin: JAVA
+        origin: JAVA_SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
           annotationsList: []
@@ -275,7 +275,7 @@ scopes:
         isInner: false
         modality: OPEN
         name: JavaClass
-        origin: JAVA
+        origin: JAVA_SOURCE
         superTypes: [
           KaUsualClassType:
             annotationsList: []

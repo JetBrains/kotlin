@@ -21,7 +21,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: foo
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []

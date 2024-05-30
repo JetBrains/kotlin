@@ -10,7 +10,7 @@ KaValueParameterSymbol:
   isNoinline: false
   isVararg: false
   name: name
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []

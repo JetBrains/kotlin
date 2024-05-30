@@ -8,7 +8,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -35,7 +35,7 @@ KaConstructorSymbol:
       isNoinline: false
       isVararg: false
       name: p0
-      origin: JAVA
+      origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
         annotationsList: []

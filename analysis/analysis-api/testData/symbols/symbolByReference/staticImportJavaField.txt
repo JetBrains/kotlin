@@ -7,7 +7,7 @@ KaJavaFieldSymbol:
   isVal: false
   modality: OPEN
   name: bar
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []

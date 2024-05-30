@@ -1,7 +1,7 @@
 KaFunctionSymbol:
   callableId: java/util/Collection.iterator
   name: iterator
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: kotlin/Any.equals
@@ -21,62 +21,62 @@ KaFunctionSymbol:
 KaFunctionSymbol:
   callableId: java/util/Collection.size
   name: size
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: java/util/Collection.isEmpty
   name: isEmpty
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: java/util/Collection.contains
   name: contains
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: java/util/Collection.toArray
   name: toArray
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: java/util/Collection.toArray
   name: toArray
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: java/util/Collection.add
   name: add
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: java/util/Collection.remove
   name: remove
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: java/util/Collection.containsAll
   name: containsAll
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: java/util/Collection.addAll
   name: addAll
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: java/util/Collection.removeAll
   name: removeAll
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: java/util/Collection.retainAll
   name: retainAll
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaFunctionSymbol:
   callableId: java/util/Collection.clear
   name: clear
-  origin: JAVA
+  origin: JAVA_LIBRARY
 
 KaConstructorSymbol:
   callableId: null

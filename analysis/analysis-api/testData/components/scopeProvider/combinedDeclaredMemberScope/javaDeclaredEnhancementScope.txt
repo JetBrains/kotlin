@@ -7,7 +7,7 @@ KaJavaFieldSymbol:
   isVal: false
   modality: OPEN
   name: field2
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -33,7 +33,7 @@ KaJavaFieldSymbol:
   isVal: false
   modality: OPEN
   name: field
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
@@ -71,7 +71,7 @@ KaFunctionSymbol:
   isTailRec: false
   modality: OPEN
   name: foo
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
     annotationsList: []
@@ -99,7 +99,7 @@ KaConstructorSymbol:
   isExpect: false
   isExtension: false
   isPrimary: true
-  origin: JAVA
+  origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotationsList: []
