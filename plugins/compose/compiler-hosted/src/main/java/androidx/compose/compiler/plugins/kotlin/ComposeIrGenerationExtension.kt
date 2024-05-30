@@ -70,7 +70,7 @@ class ComposeIrGenerationExtension(
     private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
     private val featureFlags: FeatureFlags,
     private val skipIfRuntimeNotFound: Boolean = false,
-    private val messageCollector: MessageCollector? = null,
+    private val messageCollector: MessageCollector,
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
         private set

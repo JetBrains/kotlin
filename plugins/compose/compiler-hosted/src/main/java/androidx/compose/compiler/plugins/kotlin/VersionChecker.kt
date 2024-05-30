@@ -30,7 +30,7 @@ enum class VersionCheckerResult {
     NOT_FOUND,
 }
 
-class VersionChecker(val context: IrPluginContext, private val messageCollector: MessageCollector? = null) {
+class VersionChecker(val context: IrPluginContext, private val messageCollector: MessageCollector) {
 
     companion object {
         /**
@@ -169,7 +169,7 @@ class VersionChecker(val context: IrPluginContext, private val messageCollector:
             // If it is a Compose app, it will depend on Compose runtime. Therefore, we must be
             // able to find ComposeVersion. If it is a non-Compose app, we skip this IR lowering.
             if (skipIfRuntimeNotFound) {
-                messageCollector?.report(
+                messageCollector.report(
                     CompilerMessageSeverity.WARNING, """
                         The Compose Compiler requires the Compose Runtime to be on the classpath, but
                         none could be found. Skipping transform because
