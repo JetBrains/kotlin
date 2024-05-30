@@ -28,7 +28,7 @@ public abstract class KaSessionProvider(public val project: Project) : Disposabl
 
     public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KaSession
 
-    // The `analyse` functions affect binary compatibility as they are inlined with every `analyze` call. To avoid breaking binary
+    // The `analyze` functions affect binary compatibility as they are inlined with every `analyze` call. To avoid breaking binary
     // compatibility, their implementations should not be changed unless absolutely necessary. It should be possible to put most
     // functionality into `beforeEnteringAnalysis` and/or `afterLeavingAnalysis`.
 
