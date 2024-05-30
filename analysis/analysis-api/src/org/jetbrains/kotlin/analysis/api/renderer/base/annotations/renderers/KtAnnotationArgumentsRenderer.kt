@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValueRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRenderer
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
@@ -41,8 +40,6 @@ public interface KaAnnotationArgumentsRenderer {
             annotationRenderer: KaAnnotationRenderer,
             printer: PrettyPrinter,
         ) {
-            if (annotation !is KaAnnotationApplicationWithArgumentsInfo) return
-
             if (annotation.arguments.isEmpty()) return
             printer.printCollection(annotation.arguments, prefix = "(", postfix = ")") { argument ->
                 append(argument.name.render())

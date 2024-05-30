@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
-import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
-import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationApplicationImpl
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -31,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -77,39 +75,24 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
 internal fun FirAnnotation.toKtAnnotationApplication(
     builder: KaSymbolByFirBuilder,
     index: Int,
-    arguments: List<KaNamedAnnotationValue> = FirAnnotationValueConverter.toNamedConstantValue(
-        builder.analysisSession,
-        mapAnnotationParameters(this),
-        builder,
-    )
-): KaAnnotationApplicationWithArgumentsInfo {
+    argumentsFactory: (ClassId?) -> List<KaNamedAnnotationValue>
+): KaAnnotationApplication {
     val constructorSymbol = (this as? FirAnnotationCall)?.calleeReference
         ?.toResolvedConstructorSymbol()
         ?.let(builder.functionLikeBuilder::buildConstructorSymbol)
 
-    return KaAnnotationApplicationWithArgumentsInfo(
-        classId = toAnnotationClassId(builder.rootSession),
+    val classId = toAnnotationClassId(builder.rootSession)
+
+    return KaAnnotationApplicationImpl(
+        classId = classId,
         psi = psi as? KtCallElement,
         useSiteTarget = useSiteTarget,
-        arguments = arguments,
+        lazyArguments = lazy { argumentsFactory(classId) },
         index = index,
-        constructorSymbolPointer = with(builder.analysisSession) { constructorSymbol?.createPointer() },
+        constructorSymbol = constructorSymbol,
         token = builder.token,
     )
 }
-
-internal fun FirAnnotation.toKtAnnotationInfo(
-    useSiteSession: FirSession,
-    index: Int,
-    token: KaLifetimeToken
-): KaAnnotationApplicationInfo = KaAnnotationApplicationInfo(
-    classId = toAnnotationClassId(useSiteSession),
-    psi = psi as? KtCallElement,
-    useSiteTarget = useSiteTarget,
-    isCallWithArguments = this is FirAnnotationCall && arguments.isNotEmpty(),
-    index = index,
-    token = token
-)
 
 /**
  * Implicit dispatch receiver is present when an extension function declared in object

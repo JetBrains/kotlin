@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
@@ -26,14 +25,9 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
     private val useSiteSession: FirSession get() = builder.rootSession
     override val token: KaLifetimeToken get() = builder.token
 
-    override val annotations: List<KaAnnotationApplicationWithArgumentsInfo>
+    override val annotations: List<KaAnnotationApplication>
         get() = withValidityAssertion {
             annotations(firCallableSymbol, builder, receiverParameter)
-        }
-
-    override val annotationInfos: List<KaAnnotationApplicationInfo>
-        get() = withValidityAssertion {
-            annotationInfos(firCallableSymbol, useSiteSession, token, receiverParameter)
         }
 
     override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
@@ -43,7 +37,7 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
     override fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KaAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
+    ): List<KaAnnotationApplication> = withValidityAssertion {
         annotationsByClassId(firCallableSymbol, classId, useSiteTargetFilter, builder, receiverParameter)
     }
 

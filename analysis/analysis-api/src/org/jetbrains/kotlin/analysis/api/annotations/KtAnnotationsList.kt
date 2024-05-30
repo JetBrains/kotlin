@@ -18,20 +18,14 @@ public abstract class KaAnnotationsList : KaLifetimeOwner {
      * A list of annotations applied.
      *
      * To check if annotation is present, please use [hasAnnotation].
-     * [annotationInfos] is more preferable if suits your needs as a lightweight.
      *
      * @see KaAnnotationApplication
      */
-    public abstract val annotations: List<KaAnnotationApplicationWithArgumentsInfo>
+    public abstract val annotations: List<KaAnnotationApplication>
 
-    /**
-     * A list of annotation infos.
-     *
-     * Can be used instead of [annotations] if applicable to reduce resolve.
-     *
-     * @see KaAnnotationApplicationInfo
-     */
-    public abstract val annotationInfos: List<KaAnnotationApplicationInfo>
+    @Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations"))
+    public val annotationInfos: List<KaAnnotationApplication>
+        get() = annotations
 
     /**
      * Checks if entity contains annotation with specified [classId] and filtered by [useSiteTargetFilter].
@@ -61,13 +55,11 @@ public abstract class KaAnnotationsList : KaLifetimeOwner {
      *   it.classId == classId && useSiteTargetFilter.isAllowed(it.useSiteTarget)
      * }
      * ```
-     *
-     * @see KaAnnotationApplicationWithArgumentsInfo
      */
     public abstract fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-    ): List<KaAnnotationApplicationWithArgumentsInfo>
+    ): List<KaAnnotationApplication>
 
     /**
      * A list of annotations [ClassId].

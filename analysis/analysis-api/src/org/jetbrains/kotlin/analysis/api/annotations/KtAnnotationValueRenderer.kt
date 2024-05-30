@@ -93,7 +93,7 @@ internal object KaAnnotationValueRenderer {
         renderAnnotationApplication(application.annotationValue)
     }
 
-    private fun StringBuilder.renderAnnotationApplication(value: KaAnnotationApplicationWithArgumentsInfo) {
+    private fun StringBuilder.renderAnnotationApplication(value: KaAnnotationApplication) {
         append(value.classId)
         if (value.arguments.isNotEmpty()) {
             append("(")

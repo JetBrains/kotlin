@@ -273,15 +273,11 @@ public class DebugSymbolRenderer(
         with(printer) {
             renderValue(call.classId, printer, renderSymbolsFully = false)
             append('(')
-            if (call is KaAnnotationApplicationWithArgumentsInfo) {
-                call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
-                    if (index > 0) {
-                        append(", ")
-                    }
-                    renderValue(value, printer, renderSymbolsFully = false)
+            call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
+                if (index > 0) {
+                    append(", ")
                 }
-            } else {
-                append("isCallWithArguments=${call.isCallWithArguments}")
+                renderValue(value, printer, renderSymbolsFully = false)
             }
             append(')')
 

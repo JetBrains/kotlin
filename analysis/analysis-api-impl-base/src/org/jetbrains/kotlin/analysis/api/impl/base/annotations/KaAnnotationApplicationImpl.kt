@@ -1,24 +1,22 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.annotations
+package org.jetbrains.kotlin.analysis.api.impl.base.annotations
 
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 import java.util.Objects
 
-/**
- * @see KaAnnotated.annotations
- * @see KaAnnotationApplicationInfo
- */
-public class KaAnnotationApplicationWithArgumentsInfo(
+class KaAnnotationApplicationImpl(
     classId: ClassId?,
     psi: KtCallElement?,
     useSiteTarget: AnnotationUseSiteTarget?,
@@ -26,36 +24,36 @@ public class KaAnnotationApplicationWithArgumentsInfo(
     /**
      * A list of annotation arguments which were applied when constructing annotation. Every argument is [KaAnnotationValue]
      */
-    arguments: List<KaNamedAnnotationValue>,
+    lazyArguments: Lazy<List<KaNamedAnnotationValue>>,
     index: Int?,
 
     /**
      * The constructor symbol into which this annotation resolves if the annotation is correctly resolved
      */
-    constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
-    public override val token: KaLifetimeToken
+    constructorSymbol: KaConstructorSymbol?,
+    override val token: KaLifetimeToken
 ) : KaAnnotationApplication {
     private val backingClassId: ClassId? = classId
 
-    public override val classId: ClassId?
+    override val classId: ClassId?
         get() = withValidityAssertion { backingClassId }
 
     private val backingPsi: KtCallElement? = psi
 
-    public override val psi: KtCallElement?
+    override val psi: KtCallElement?
         get() = withValidityAssertion { backingPsi }
 
     private val backingUseSiteTarget: AnnotationUseSiteTarget? = useSiteTarget
 
-    public override val useSiteTarget: AnnotationUseSiteTarget?
+    override val useSiteTarget: AnnotationUseSiteTarget?
         get() = withValidityAssertion { backingUseSiteTarget }
 
     override val isCallWithArguments: Boolean
         get() = withValidityAssertion { backingArguments.isNotEmpty() }
 
-    private val backingArguments: List<KaNamedAnnotationValue> = arguments
+    private val backingArguments: List<KaNamedAnnotationValue> by lazyArguments
 
-    public val arguments: List<KaNamedAnnotationValue>
+    override val arguments: List<KaNamedAnnotationValue>
         get() = withValidityAssertion { backingArguments }
 
     private val backingIndex: Int? = index
@@ -63,19 +61,19 @@ public class KaAnnotationApplicationWithArgumentsInfo(
     override val index: Int?
         get() = withValidityAssertion { backingIndex }
 
-    private val backingConstructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>? = constructorSymbolPointer
+    private val backingConstructorSymbol: KaConstructorSymbol? = constructorSymbol
 
-    public val constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?
-        get() = withValidityAssertion { backingConstructorSymbolPointer }
+    override val constructorSymbol: KaConstructorSymbol?
+        get() = withValidityAssertion { backingConstructorSymbol }
 
     override fun equals(other: Any?): Boolean {
-        return this === other || other is KaAnnotationApplicationWithArgumentsInfo &&
+        return this === other || other is KaAnnotationApplicationImpl &&
                 backingClassId == other.backingClassId &&
                 backingPsi == other.backingPsi &&
                 backingUseSiteTarget == other.backingUseSiteTarget &&
                 backingArguments == other.backingArguments &&
                 backingIndex == other.backingIndex &&
-                backingConstructorSymbolPointer == other.backingConstructorSymbolPointer
+                backingConstructorSymbol == other.backingConstructorSymbol
     }
 
     override fun hashCode(): Int {
@@ -85,15 +83,13 @@ public class KaAnnotationApplicationWithArgumentsInfo(
             backingUseSiteTarget,
             backingArguments,
             backingIndex,
-            backingConstructorSymbolPointer
+            backingConstructorSymbol
         )
     }
 
     override fun toString(): String {
         return "KaAnnotationApplicationWithArgumentsInfo(classId=" + backingClassId + ", psi=" + backingPsi + ", useSiteTarget=" +
-                backingUseSiteTarget + ", arguments=" + backingArguments + ", index=" + backingIndex + ", constructorSymbolPointer=" +
-                backingConstructorSymbolPointer + ")"
+                backingUseSiteTarget + ", arguments=" + backingArguments + ", index=" + backingIndex + ", constructorSymbol=" +
+                backingConstructorSymbol + ")"
     }
 }
-
-public typealias KtAnnotationApplicationWithArgumentsInfo = KaAnnotationApplicationWithArgumentsInfo

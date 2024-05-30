@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiD
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
 import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationApplicationImpl
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
@@ -493,13 +494,13 @@ internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisC
 
         is AnnotationValue -> {
             KaAnnotationApplicationValue(
-                KaAnnotationApplicationWithArgumentsInfo(
+                KaAnnotationApplicationImpl(
                     value.annotationClass?.classId,
                     psi = null,
                     useSiteTarget = null,
-                    arguments = value.getKtNamedAnnotationArguments(analysisContext),
+                    lazyArguments = lazy { value.getKtNamedAnnotationArguments(analysisContext) },
                     index = null,
-                    constructorSymbolPointer = null,
+                    constructorSymbol = null,
                     token = token
                 ),
                 token
@@ -682,28 +683,14 @@ internal fun createKtInitializerValue(
 internal fun AnnotationDescriptor.toKtAnnotationApplication(
     analysisContext: Fe10AnalysisContext,
     index: Int,
-): KaAnnotationApplicationWithArgumentsInfo {
-    return KaAnnotationApplicationWithArgumentsInfo(
+): KaAnnotationApplication {
+    return KaAnnotationApplicationImpl(
         classId = classIdForAnnotation,
         psi = psi,
         useSiteTarget = useSiteTarget,
-        arguments = getKtNamedAnnotationArguments(analysisContext),
+        lazyArguments = lazy { getKtNamedAnnotationArguments(analysisContext) },
         index = index,
-        constructorSymbolPointer = null,
-        token = analysisContext.token
-    )
-}
-
-internal fun AnnotationDescriptor.toKtAnnotationInfo(
-    analysisContext: Fe10AnalysisContext,
-    index: Int
-): KaAnnotationApplicationInfo {
-    return KaAnnotationApplicationInfo(
-        classId = classIdForAnnotation,
-        psi = psi,
-        useSiteTarget = useSiteTarget,
-        isCallWithArguments = allValueArguments.isNotEmpty(),
-        index = index,
+        constructorSymbol = null,
         token = analysisContext.token
     )
 }

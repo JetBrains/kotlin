@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -33,17 +31,10 @@ internal class KaFirAnnotationListForType private constructor(
     override val token: KaLifetimeToken get() = builder.token
     private val useSiteSession: FirSession get() = builder.rootSession
 
-    override val annotations: List<KaAnnotationApplicationWithArgumentsInfo>
+    override val annotations: List<KaAnnotationApplication>
         get() = withValidityAssertion {
             coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATION_ARGUMENTS).mapIndexed { index, annotation ->
                 annotation.toKtAnnotationApplication(builder, index)
-            }
-        }
-
-    override val annotationInfos: List<KaAnnotationApplicationInfo>
-        get() = withValidityAssertion {
-            coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).mapIndexed { index, annotation ->
-                annotation.toKtAnnotationInfo(useSiteSession, index, token)
             }
         }
 
@@ -56,7 +47,7 @@ internal class KaFirAnnotationListForType private constructor(
     override fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KaAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
+    ): List<KaAnnotationApplication> = withValidityAssertion {
         coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATION_ARGUMENTS).mapIndexedNotNull { index, annotation ->
             if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.toAnnotationClassId(useSiteSession) != classId) {
                 return@mapIndexedNotNull null

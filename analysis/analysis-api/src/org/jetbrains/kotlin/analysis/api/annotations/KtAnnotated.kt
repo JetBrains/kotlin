@@ -20,20 +20,15 @@ public typealias KtAnnotated = KaAnnotated
  * A list of annotations applied.
  *
  * To check if annotation is present, please use [hasAnnotation].
- * [annotationInfos] is more preferable if suits your needs because it is lightweight.
  *
  * @see [KaAnnotationsList.annotations]
  */
-public val KaAnnotated.annotations: List<KaAnnotationApplicationWithArgumentsInfo>
+public val KaAnnotated.annotations: List<KaAnnotationApplication>
     get() = annotationsList.annotations
 
-/**
- * A list of annotation infos.
- *
- * @see [KaAnnotationsList.annotationInfos]
- */
+@Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations"))
 public val KaAnnotated.annotationInfos: List<KaAnnotationApplicationInfo>
-    get() = annotationsList.annotationInfos
+    get() = annotationsList.annotations
 
 /**
  * Checks if entity has annotation with specified [classId] and filtered by [useSiteTargetFilter].
@@ -53,7 +48,7 @@ public fun KaAnnotated.hasAnnotation(
 public fun KaAnnotated.annotationsByClassId(
     classId: ClassId,
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): List<KaAnnotationApplicationWithArgumentsInfo> = annotationsList.annotationsByClassId(classId, useSiteTargetFilter)
+): List<KaAnnotationApplication> = annotationsList.annotationsByClassId(classId, useSiteTargetFilter)
 
 /**
  * A list of annotations applied.

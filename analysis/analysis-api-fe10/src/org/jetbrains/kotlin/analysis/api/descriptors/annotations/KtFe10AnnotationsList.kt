@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classIdForAnnotation
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.useSiteTarget
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -29,17 +27,10 @@ internal class KaFe10AnnotationsList private constructor(
     override val token: KaLifetimeToken
         get() = analysisContext.token
 
-    override val annotations: List<KaAnnotationApplicationWithArgumentsInfo>
+    override val annotations: List<KaAnnotationApplication>
         get() = withValidityAssertion {
             mapNotIgnoredAnnotationsWithIndex { index, annotation ->
                 annotation.toKtAnnotationApplication(analysisContext, index)
-            }
-        }
-
-    override val annotationInfos: List<KaAnnotationApplicationInfo>
-        get() = withValidityAssertion {
-            mapNotIgnoredAnnotationsWithIndex { index, annotation ->
-                annotation.toKtAnnotationInfo(analysisContext, index)
             }
         }
 
@@ -64,7 +55,7 @@ internal class KaFe10AnnotationsList private constructor(
     override fun annotationsByClassId(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KaAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
+    ): List<KaAnnotationApplication> = withValidityAssertion {
         if (classId in annotationsToIgnore) return@withValidityAssertion emptyList()
 
         fe10Annotations.mapIndexedNotNull { index, annotation ->

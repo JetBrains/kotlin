@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.signatures
 
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KaConstantAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -69,7 +69,7 @@ public abstract class KaVariableLikeSignature<out S : KaVariableLikeSymbol> : Ka
         return (constantArgumentValue.constantValue.value as? String)?.let(Name::identifier)
     }
 
-    private fun findParameterNameAnnotation(): KaAnnotationApplicationWithArgumentsInfo? {
+    private fun findParameterNameAnnotation(): KaAnnotationApplication? {
         val allParameterNameAnnotations = returnType.annotationsByClassId(StandardNames.FqNames.parameterNameClassId)
         val (explicitAnnotations, implicitAnnotations) = allParameterNameAnnotations.partition { it.psi != null }
 

@@ -44,24 +44,19 @@ internal data class AnnotationApplication(
     val index: Int?,
 )
 
+internal fun KaAnnotationApplication.toDumbLightClassAnnotationApplication(): AnnotationApplication {
+    val value = AnnotationValue.Annotation(
+        classId,
+        constructorSymbolPointer = null,
+        arguments = emptyList(),
+        sourcePsi = null
+    )
+
+    return AnnotationApplication(value, true, useSiteTarget, isCallWithArguments, index)
+}
+
 internal fun KaAnnotationApplication.toLightClassAnnotationApplication(): AnnotationApplication {
-    val value = when (this) {
-        is KaAnnotationApplicationWithArgumentsInfo -> {
-            toLightClassAnnotationValue()
-        }
-
-        else -> {
-            AnnotationValue.Annotation(
-                classId,
-                constructorSymbolPointer = null,
-                arguments = emptyList(),
-                sourcePsi = null
-            )
-        }
-    }
-
-    val isDumb = this is KaAnnotationApplicationInfo
-    return AnnotationApplication(value, isDumb, useSiteTarget, isCallWithArguments, index)
+    return AnnotationApplication(toLightClassAnnotationValue(), false, useSiteTarget, isCallWithArguments, index)
 }
 
 internal sealed class AnnotationValue {
@@ -161,7 +156,7 @@ internal fun KaKClassAnnotationValue.toLightClassAnnotationValue(): AnnotationVa
     }
 }
 
-internal fun KaAnnotationApplicationWithArgumentsInfo.toLightClassAnnotationValue(): AnnotationValue.Annotation {
+internal fun KaAnnotationApplication.toLightClassAnnotationValue(): AnnotationValue.Annotation {
     val arguments = arguments.map { AnnotationArgument(it.name, it.expression.toLightClassAnnotationValue()) }
-    return AnnotationValue.Annotation(classId, constructorSymbolPointer, arguments, psi)
+    return AnnotationValue.Annotation(classId, constructorSymbol?.createPointer(), arguments, psi)
 }

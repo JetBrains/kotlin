@@ -3,11 +3,11 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.annotationInfos
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSwiftNames
@@ -108,9 +108,7 @@ internal fun KtCallableSymbol.getSwiftPrivateAttribute(): String? =
 internal fun KtCallableSymbol.isRefinedInSwift(): Boolean = when {
     // Note: the front-end checker requires all overridden descriptors to be either refined or not refined.
     //overriddenDescriptors.isNotEmpty() -> overriddenDescriptors.first().isRefinedInSwift() //TODO: implement isRefinedInSwift
-    else -> annotationInfos.any { annotation ->
-        annotation.classId?.asSingleFqName() == KonanFqNames.refinesInSwift
-    }
+    else -> annotationsList.hasAnnotation(ClassId.topLevel(KonanFqNames.refinesInSwift))
 }
 
 context(KtAnalysisSession, KtObjCExportSession)

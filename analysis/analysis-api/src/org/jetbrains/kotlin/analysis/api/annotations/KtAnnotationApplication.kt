@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.annotations
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -17,11 +20,8 @@ import org.jetbrains.kotlin.psi.KtCallElement
  * - For declarations: `@Deprecated("Should not be used") fun foo(){}`
  * - For types: `fun foo(x: List<@A Int>){}`
  * - Inside another annotation (`B` is annotation here): `@A(B()) fun foo(){}
- *
- * @see KaAnnotationApplicationInfo
- * @see KaAnnotationApplicationWithArgumentsInfo
  */
-public sealed interface KaAnnotationApplication : KaLifetimeOwner {
+public interface KaAnnotationApplication : KaLifetimeOwner {
     /**
      * The [ClassId] of applied annotation. [ClassId] is a fully qualified name on annotation class.
      */
@@ -53,6 +53,28 @@ public sealed interface KaAnnotationApplication : KaLifetimeOwner {
      * An index of the annotation in an owner. `null` when annotation is used as an argument of other annotations
      */
     public val index: Int?
+
+    /**
+     * A list of explicitly provided annotation values.
+     */
+    public val arguments: List<KaNamedAnnotationValue>
+
+    /**
+     * An annotation constructor symbol.
+     */
+    public val constructorSymbol: KaConstructorSymbol?
+
+    @Deprecated("Use 'constructorSymbol' instead.")
+    public val constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?
+        get() = withValidityAssertion { constructorSymbol?.createPointer() }
 }
 
 public typealias KtAnnotationApplication = KaAnnotationApplication
+
+public typealias KaAnnotationApplicationInfo = KaAnnotationApplication
+
+public typealias KtAnnotationApplicationInfo = KaAnnotationApplicationInfo
+
+public typealias KaAnnotationApplicationWithArgumentsInfo = KtAnnotationApplication
+
+public typealias KtAnnotationApplicationWithArgumentsInfo = KaAnnotationApplicationWithArgumentsInfo

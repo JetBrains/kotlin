@@ -23,9 +23,9 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
     override fun annotationInfos(): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotationInfos
+        annotatedSymbol.annotations
             .filter { annotationUseSiteTargetFilter.isAllowed(it.useSiteTarget) }
-            .map { it.toLightClassAnnotationApplication() }
+            .map { it.toDumbLightClassAnnotationApplication() }
     }
 
     override fun get(classId: ClassId): Collection<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
