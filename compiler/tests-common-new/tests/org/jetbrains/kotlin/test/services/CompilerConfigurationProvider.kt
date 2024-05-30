@@ -140,6 +140,8 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
         configuration[CommonConfigurationKeys.USE_FIR] = true
     }
 
+    configuration.put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
+
     val messageCollector = PrintingMessageCollector(System.err, CompilerTestMessageRenderer(module), /*verbose=*/false)
     configuration.messageCollector = messageCollector
     configuration[IrMessageLogger.IR_MESSAGE_LOGGER] = IrMessageCollector(messageCollector)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -221,7 +221,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             configuration.putCustomPhaseConfigWithEnabledDump(module)
         }
 
-        configuration.put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
         configuration.put(JVMConfigurationKeys.VALIDATE_BYTECODE, true)
         configuration.configureJdkClasspathRoots()
 
