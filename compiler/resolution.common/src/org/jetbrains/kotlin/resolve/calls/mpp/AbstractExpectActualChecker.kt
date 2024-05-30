@@ -182,7 +182,9 @@ object AbstractExpectActualChecker {
 
         val actualMembersByName = actualClassSymbol.collectAllMembers(isActualDeclaration = true).groupBy { nameOf(it) }
 
-        outer@ for (expectMember in expectClassSymbol.collectAllMembers(isActualDeclaration = false)) {
+        val expectMembers = expectClassSymbol.collectAllMembers(isActualDeclaration = false)
+            .filterNot { it is CallableSymbolMarker && it.visibility == Visibilities.Private }
+        for (expectMember in expectMembers) {
             val actualMembers = getPossibleActualsByExpectName(expectMember, actualMembersByName)
 
             val matched = matchSingleExpectAgainstPotentialActuals(
