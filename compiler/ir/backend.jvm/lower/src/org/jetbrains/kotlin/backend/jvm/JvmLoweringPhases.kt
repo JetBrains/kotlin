@@ -142,6 +142,7 @@ val jvmLoweringPhases = SameTypeNamedCompilerPhase(
         ::FileClassLowering,
         ::JvmStaticInObjectLowering,
         ::RepeatedAnnotationLowering,
+        ::JvmInlineCallableReferenceToLambdaWithDefaultsPhase,
 
         ::JvmIrInliner,
         ::ApiVersionIsAtLeastEvaluationLowering,

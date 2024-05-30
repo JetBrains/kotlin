@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -18,10 +19,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeOrNull
-import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
-import org.jetbrains.kotlin.ir.util.inlineDeclaration
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.ir.util.isLambdaInlining
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -70,13 +68,17 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
             private val reifiedArguments = mutableListOf<IrType>()
             private var processingBeforeInlineDeclaration = false
 
+            private fun IrExpression?.isInlinable(): Boolean {
+                return this is IrFunctionExpression || this?.isLambdaBlock() == true
+            }
+
             fun IrInlinedFunctionBlock.getInlinableParameters(): List<IrValueParameter> {
                 val callee = this.inlineDeclaration
                 if (callee !is IrFunction) return emptyList()
                 // Must pass `callee` explicitly because there can be problems if call was created for fake override
                 return this.inlineCall.getAllArgumentsWithIr(callee)
                     .filter { (param, arg) ->
-                        param.isInlineParameter() && (arg ?: param.defaultValue?.expression) is IrFunctionExpression ||
+                        param.isInlineParameter() && (arg ?: param.defaultValue?.expression).isInlinable() ||
                                 arg is IrGetValue && arg.symbol.owner in inlinableParameters
                     }
                     .map { it.first }
@@ -124,6 +126,17 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
                 visitAnonymousDeclaration(expression)
             }
 
+            override fun visitBlock(expression: IrBlock) {
+                if (expression.isLambdaBlock()) {
+                    val function = expression.statements.first() as? IrAttributeContainer ?: return super.visitBlock(expression)
+                    val reference = expression.statements.last() as IrFunctionReference
+                    containersStack += reference
+                    visitAnonymousDeclaration(function)
+                    containersStack.removeLast()
+                }
+                super.visitBlock(expression)
+            }
+
             override fun visitGetValue(expression: IrGetValue) {
                 super.visitGetValue(expression)
                 if (
@@ -137,7 +150,6 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
             override fun visitCall(expression: IrCall) {
                 if (expression.symbol == context.ir.symbols.singleArgumentInlineFunction) {
                     when (val lambda = expression.getValueArgument(0)) {
-                        is IrBlock -> (lambda.statements.last() as IrFunctionReference).acceptVoid(this)
                         is IrFunctionExpression -> lambda.function.acceptVoid(this)
                         else -> lambda?.acceptVoid(this) // for example IrFunctionReference
                     }
