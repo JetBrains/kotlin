@@ -64,7 +64,7 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
     }
 
     override fun runTest(filePath: String) {
-        val muted = setOf("structuralCast.kt", "HistoryItem.kt")
+        val muted = setOf("HistoryItem.kt")
         Assumptions.assumeFalse(muted.any { filePath.contains(it) })
         super.runTest(filePath)
     }
