@@ -118,6 +118,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("groupBy_toDataFrame.kt")
+  public void testGroupBy_toDataFrame() {
+    runTest("testData/box/groupBy_toDataFrame.kt");
+  }
+
+  @Test
   @TestMetadata("injectAccessors.kt")
   public void testInjectAccessors() {
     runTest("testData/box/injectAccessors.kt");
