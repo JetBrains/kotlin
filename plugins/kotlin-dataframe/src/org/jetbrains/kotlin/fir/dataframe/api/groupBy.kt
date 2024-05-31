@@ -161,7 +161,7 @@ class GroupByToDataFrame : AbstractSchemaModificationInterpreter() {
     val Arguments.groupedColumnName: String? by arg(defaultValue = Present(null))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val grouped = listOf(SimpleFrameColumn(groupedColumnName ?: "group", receiver.df.columns(), false, anyDataFrame))
+        val grouped = listOf(SimpleFrameColumn(groupedColumnName ?: "group", receiver.df.columns(), anyDataFrame))
         return PluginDataFrameSchema(
             createPluginDataFrameSchema(receiver.keys, receiver.moveToTop).columns() + grouped
         )
