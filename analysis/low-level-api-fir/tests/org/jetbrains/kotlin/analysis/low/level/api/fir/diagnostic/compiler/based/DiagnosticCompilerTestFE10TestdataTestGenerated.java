@@ -25649,6 +25649,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       }
 
       @Test
+      @TestMetadata("privateExpectFakeOverride_incompatibleReturnType.kt")
+      public void testPrivateExpectFakeOverride_incompatibleReturnType() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/privateExpectFakeOverride_incompatibleReturnType.kt");
+      }
+
+      @Test
       @TestMetadata("privateTopLevelDeclarations.kt")
       public void testPrivateTopLevelDeclarations() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/privateTopLevelDeclarations.kt");
