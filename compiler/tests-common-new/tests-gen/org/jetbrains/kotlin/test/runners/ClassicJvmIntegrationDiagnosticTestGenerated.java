@@ -59,6 +59,28 @@ public class ClassicJvmIntegrationDiagnosticTestGenerated extends AbstractClassi
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/jvmIntegration/dataClassNonPublicConstructor")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DataClassNonPublicConstructor {
+    @Test
+    public void testAllFilesPresentInDataClassNonPublicConstructor() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/jvmIntegration/dataClassNonPublicConstructor"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("dataClassInternalConstructorUsageWillBecomeInaccessible.kt")
+    public void testDataClassInternalConstructorUsageWillBecomeInaccessible() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/dataClassNonPublicConstructor/dataClassInternalConstructorUsageWillBecomeInaccessible.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassNonPublicConstructorIrrelevantCopyFunctions.kt")
+    public void testDataClassNonPublicConstructorIrrelevantCopyFunctions() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/dataClassNonPublicConstructor/dataClassNonPublicConstructorIrrelevantCopyFunctions.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/jvmIntegration/inline")
   @TestDataPath("$PROJECT_ROOT")
   public class Inline {
