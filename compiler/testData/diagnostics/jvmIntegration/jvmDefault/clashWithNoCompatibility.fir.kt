@@ -1,3 +1,15 @@
+// MODULE: library
+// KOTLINC_ARGS: -Xjvm-default=disable
+// FILE: a.kt
+package base
+
+interface UExpression {
+    fun evaluate(): Any? = "fail"
+}
+
+// MODULE: main(library)
+// KOTLINC_ARGS: -Xjvm-default=all-compatibility
+// FILE: source.kt
 import base.*
 
 interface KotlinEvaluatableUElement : UExpression {

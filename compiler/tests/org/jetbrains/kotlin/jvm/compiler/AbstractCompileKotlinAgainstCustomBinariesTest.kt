@@ -490,57 +490,9 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         assertEquals("ABCAB", result)
     }
 
-    // KT-60791 K2: implement EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED(COMPATIBILITY)_MODE
-    fun testJvmDefaultClashWithOld() = muteForK2 {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xjvm-default=disable"))
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=all"))
-    }
-
     fun testContextualDeclarationUse() {
         val library = compileLibrary("library", additionalOptions = listOf("-Xcontext-receivers"))
         compileKotlin("contextualDeclarationUse.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xskip-prerelease-check"))
-    }
-
-    // KT-60791 K2: implement EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED(COMPATIBILITY)_MODE
-    fun testJvmDefaultClashWithNoCompatibility() = muteForK2 {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xjvm-default=disable"))
-        compileKotlin(
-            "source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=all-compatibility")
-        )
-    }
-
-    fun testJvmDefaultNonDefaultInheritanceSuperCall() {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xjvm-default=all"))
-        compileKotlin(
-            "source.kt",
-            tmpdir,
-            listOf(library),
-            additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=disable")
-        )
-    }
-
-    fun testJvmDefaultCompatibilityAgainstJava() {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xjvm-default=disable"))
-        compileKotlin(
-            "source.kt",
-            tmpdir,
-            listOf(library),
-            additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=all-compatibility")
-        )
-    }
-
-    fun testAnnotationsFromBinariesWithNonTrivialJvmDefaultConfiguration() {
-        val disabledJvmDefaults = compileLibrary(
-            "disabledJvmDefaults",
-            additionalOptions = listOf("-Xjvm-default=disable"),
-            extraClassPath = emptyList()
-        )
-        val enabledJvmDefaults = compileLibrary(
-            "enabledJvmDefaults",
-            additionalOptions = listOf("-Xjvm-default=all"),
-            extraClassPath = listOf(disabledJvmDefaults)
-        )
-        compileKotlin("source.kt", tmpdir, listOf(disabledJvmDefaults, enabledJvmDefaults))
     }
 
     // KT-60531 K2/JS: Report diagnostics before running FIR2IR

@@ -97,6 +97,46 @@ public class ClassicJvmIntegrationDiagnosticTestGenerated extends AbstractClassi
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/jvmIntegration/jvmDefault")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JvmDefault {
+    @Test
+    public void testAllFilesPresentInJvmDefault() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/jvmIntegration/jvmDefault"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("annotationsFromBinariesWithNonTrivialJvmDefaultConfiguration.kt")
+    public void testAnnotationsFromBinariesWithNonTrivialJvmDefaultConfiguration() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/jvmDefault/annotationsFromBinariesWithNonTrivialJvmDefaultConfiguration.kt");
+    }
+
+    @Test
+    @TestMetadata("clashWithNoCompatibility.kt")
+    public void testClashWithNoCompatibility() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/jvmDefault/clashWithNoCompatibility.kt");
+    }
+
+    @Test
+    @TestMetadata("clashWithOld.kt")
+    public void testClashWithOld() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/jvmDefault/clashWithOld.kt");
+    }
+
+    @Test
+    @TestMetadata("compatibilityAgainstJava.kt")
+    public void testCompatibilityAgainstJava() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/jvmDefault/compatibilityAgainstJava.kt");
+    }
+
+    @Test
+    @TestMetadata("nonDefaultInheritanceSuperCall.kt")
+    public void testNonDefaultInheritanceSuperCall() {
+      runTest("compiler/testData/diagnostics/jvmIntegration/jvmDefault/nonDefaultInheritanceSuperCall.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/jvmIntegration/modules")
   @TestDataPath("$PROJECT_ROOT")
   public class Modules {
