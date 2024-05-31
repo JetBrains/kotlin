@@ -1,0 +1,161 @@
+FILE: columnGroup.kt
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final data class Record : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+        public constructor(a: R|kotlin/String|, b: R|kotlin/Int|): R|Record| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = R|<local>/a|
+            public get(): R|kotlin/String|
+
+        public final val b: R|kotlin/Int| = R|<local>/b|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final operator fun component2(): R|kotlin/Int|
+
+        public final fun copy(a: R|kotlin/String| = this@R|/Record|.R|/Record.a|, b: R|kotlin/Int| = this@R|/Record|.R|/Record.b|): R|Record|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Record>| = R|kotlin/collections/List|<R|Record|>(Int(10), <L> = List@fun <anonymous>(it: R|@R|kotlin/ParameterName|(name = String(index))  kotlin/Int|): R|Record| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|/Record.Record|(R|<local>/it|.R|kotlin/Int.toString|(), R|<local>/it|)
+        }
+        ).R|kotlin/let|<R|kotlin/collections/List<Record>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<Record>|>(<L> = let@fun <anonymous>(it: R|kotlin/collections/List<Record>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<Record>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|<R|Record|>(vararg(*R|<local>/it|.R|kotlin/collections/toTypedArray|<R|Record|>()))
+        }
+        )
+        lval group: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_13>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/group|<R|Record|, R|it(kotlin/Comparable<*> & java/io/Serializable)|>(<L> = group@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<Record>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<Record>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<it(kotlin/Comparable<*> & java/io/Serializable)>| <inline=NoInline>  {
+            ^ (this@R|special/anonymous|, this@R|special/anonymous|.R|/a|).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl.and: R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<C>|>|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(this@R|special/anonymous|.R|/b|)
+        }
+        ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/GroupClause<Record, it(kotlin/Comparable<*> & java/io/Serializable)>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_13>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/GroupClause<Record, it(kotlin/Comparable<*> & java/io/Serializable)>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Into_13>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class Into_13I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
+
+                public constructor(): R|<local>/Into_13I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Into_13I>|.c: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/Into_13I>|.c: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/C_511>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/C_511>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class C_511 : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val b: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public constructor(): R|<local>/C_511|
+
+            }
+
+            local final class Scope1 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|.b: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/C_511>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_511>|.a: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/C_511>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public constructor(): R|<local>/Scope1|
+
+            }
+
+            local abstract class Into_13 : R|<local>/Into_13I| {
+                public abstract var scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
+
+                public abstract var scope1: R|<local>/Scope1|
+                    public get(): R|<local>/Scope1|
+                    public set(value: R|<local>/Scope1|): R|kotlin/Unit|
+
+                public constructor(): R|<local>/Into_13|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/into|<R|Record|, R|it(kotlin/Comparable<*> & java/io/Serializable)|>(String(c))
+        }
+        )
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/C_82>| = (this@R|/box|, R|<local>/group|).R|<local>/Scope0.c|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/C_511>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/C_82>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/C_511>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/C_82>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class C_82I : R|kotlin/Any| {
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(2)) public abstract val d: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(1)) public abstract val b: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public constructor(): R|<local>/C_82I|
+
+            }
+
+            local final class Scope0 : R|kotlin/Any| {
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_82I>|.d: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/C_82I>|.d: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_82I>|.b: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/C_82I>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/C_82I>|.a: R|kotlin/String|
+                    public get(): R|kotlin/String|
+
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/C_82I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+
+                public constructor(): R|<local>/Scope0|
+
+            }
+
+            local abstract class C_82 : R|<local>/C_82I| {
+                public abstract var scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
+                    public set(value: R|<local>/Scope0|): R|kotlin/Unit|
+
+                public constructor(): R|<local>/C_82|
+
+            }
+
+            ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|<local>/C_511|>(String(d), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<<local>/C_511>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<<local>/C_511>|): R|kotlin/Int| <inline=NoInline>  {
+                ^ Int(1)
+            }
+            )
+        }
+        )
+        (this@R|/box|, R|<local>/df1|).R|<local>/Scope0.a|
+        (this@R|/box|, R|<local>/df1|).R|<local>/Scope0.b|
+        (this@R|/box|, R|<local>/df1|).R|<local>/Scope0.d|
+        ^box String(OK)
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Record>|.a: R|kotlin/String|
+        public get(): R|kotlin/String|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Record>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Record>|.b: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Record>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|

@@ -22,6 +22,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("columnGroup.kt")
+  public void testColumnGroup() {
+    runTest("testData/box/columnGroup.kt");
+  }
+
+  @Test
   @TestMetadata("conflictingJvmDeclarations.kt")
   public void testConflictingJvmDeclarations() {
     runTest("testData/box/conflictingJvmDeclarations.kt");
