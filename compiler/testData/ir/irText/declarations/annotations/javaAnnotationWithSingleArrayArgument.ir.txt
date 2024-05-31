@@ -206,7 +206,7 @@ FILE fqName:<root> fileName:/C.kt
         Strings(value = ["OK"])
         Ints(value = [42])
         Enums(value = [GET_ENUM 'ENUM_ENTRY name:EA' type=<root>.E])
-        Classes(value = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.Double>])
+        Classes(value = [CLASS_REFERENCE 'CLASS CLASS name:Double modality:FINAL visibility:public superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.Double>])
       overridden:
         public open fun test (): kotlin.Unit declared in <root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.A

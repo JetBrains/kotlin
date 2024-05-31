@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/kt45022.kt
       VALUE_PARAMETER name:any index:0 type:kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun plusAssign (any: kotlin.Any): kotlin.Unit declared in <root>.X'
-          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun plusAssign (any: kotlin.Any): kotlin.Unit declared in <root>.X' type=kotlin.Unit origin=PLUSEQ

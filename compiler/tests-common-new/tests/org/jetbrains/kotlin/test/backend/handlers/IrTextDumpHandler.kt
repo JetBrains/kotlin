@@ -100,6 +100,10 @@ class IrTextDumpHandler(
             normalizeNames = true,
             printFacadeClassInFqNames = false,
             printFlagsInDeclarationReferences = false,
+            // External declarations origin differs between frontend-generated and deserialized IR,
+            // which prevents us from running irText tests against deserialized IR,
+            // since it uses the same golden data as when we run them against frontend-generated IR.
+            renderOriginForExternalDeclarations = false,
             // KT-60248 Abbreviations should not be rendered to make K2 IR dumps closer to K1 IR dumps during irText tests.
             // PSI2IR assigns field `abbreviation` with type abbreviation. It serves only debugging purposes, and no compiler functionality relies on it.
             // FIR2IR does not initialize field `abbreviation` at all.

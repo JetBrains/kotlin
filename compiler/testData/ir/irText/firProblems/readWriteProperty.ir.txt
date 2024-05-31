@@ -106,7 +106,7 @@ FILE fqName:<root> fileName:/readWriteProperty.kt
                         arg0: GET_VAR 'value: V of <root>.IdeWizard.setting? declared in <root>.IdeWizard.setting.<no name provided>.setValue' type=V of <root>.IdeWizard.setting? origin=null
                         arg1: CONST Null type=kotlin.Nothing? value=null
                       then: RETURN type=kotlin.Nothing from='public open fun setValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of <root>.IdeWizard.setting?): kotlin.Unit declared in <root>.IdeWizard.setting.<no name provided>'
-                        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                        GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
                   CALL 'public final fun <set-t> (<set-?>: T of <root>.SettingReference): kotlin.Unit declared in <root>.SettingReference' type=kotlin.Unit origin=EQ
                     $this: GET_VAR 'reference: <root>.SettingReference<V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting> declared in <root>.IdeWizard.setting' type=<root>.SettingReference<V of <root>.IdeWizard.setting, T of <root>.IdeWizard.setting> origin=null
                     <set-?>: TYPE_OP type=T of <root>.IdeWizard.setting origin=CAST typeOperand=T of <root>.IdeWizard.setting

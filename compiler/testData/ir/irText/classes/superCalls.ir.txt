@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/superCalls.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Base
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Base'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' superQualifier='CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public superTypes:[]' type=kotlin.Int origin=null
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' superQualifier='CLASS CLASS name:Any modality:OPEN visibility:public superTypes:[]' type=kotlin.Int origin=null
             $this: GET_VAR '<this>: <root>.Base declared in <root>.Base.hashCode' type=<root>.Base origin=null
   CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived

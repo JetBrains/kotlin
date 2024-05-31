@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/chainedFunSuspendConversionForSimpleExpression.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.bar'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:foo visibility:public modality:FINAL <> (s:<root>.SuspendRunnable) returnType:kotlin.Unit
     VALUE_PARAMETER name:s index:0 type:<root>.SuspendRunnable
     BLOCK_BODY

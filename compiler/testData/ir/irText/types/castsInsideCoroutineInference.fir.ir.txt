@@ -257,7 +257,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
     BLOCK_BODY
   FUN name:flow visibility:public modality:FINAL <T> (block:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>) returnType:<root>.Flow<T of <root>.flow>
     annotations:
-      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalTypeInference modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
+      OptIn(markerClass = [CLASS_REFERENCE 'CLASS ANNOTATION_CLASS name:ExperimentalTypeInference modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:block index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.flow>, kotlin.Unit>
     BLOCK_BODY
@@ -265,7 +265,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
         CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
   FUN name:flowScope visibility:public modality:FINAL <R> (block:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>) returnType:R of <root>.flowScope [suspend]
     annotations:
-      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalTypeInference modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
+      OptIn(markerClass = [CLASS_REFERENCE 'CLASS ANNOTATION_CLASS name:ExperimentalTypeInference modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:block index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.CoroutineScope, R of <root>.flowScope>
     BLOCK_BODY
@@ -298,7 +298,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                   action: GET_VAR 'action: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = "cause")] kotlin.Throwable?, kotlin.Unit> declared in <root>.onCompletion' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = "cause")] kotlin.Throwable?, kotlin.Unit> origin=null
   FUN name:onCompletion visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.onCompletion>, action:kotlin.coroutines.SuspendFunction1<@[ParameterName(name = "cause")] kotlin.Throwable?, kotlin.Unit>) returnType:<root>.Flow<T of <root>.onCompletion>
     annotations:
-      Deprecated(message = "binary compatibility with a version w/o FlowCollector receiver", replaceWith = <null>, level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:HIDDEN' type=kotlin.DeprecationLevel)
+      Deprecated(message = "binary compatibility with a version w/o FlowCollector receiver", replaceWith = <null>, level = GET_ENUM 'ENUM_ENTRY name:HIDDEN' type=kotlin.DeprecationLevel)
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Flow<T of <root>.onCompletion>
     VALUE_PARAMETER name:action index:0 type:kotlin.coroutines.SuspendFunction1<@[ParameterName(name = "cause")] kotlin.Throwable?, kotlin.Unit>
@@ -317,7 +317,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                   p1: GET_VAR 'it: @[ParameterName(name = "cause")] kotlin.Throwable? declared in <root>.onCompletion.<anonymous>' type=@[ParameterName(name = "cause")] kotlin.Throwable? origin=null
   FUN name:produce visibility:public modality:FINAL <E> ($receiver:<root>.CoroutineScope, block:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>) returnType:<root>.ReceiveChannel<E of <root>.produce>
     annotations:
-      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalTypeInference modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
+      OptIn(markerClass = [CLASS_REFERENCE 'CLASS ANNOTATION_CLASS name:ExperimentalTypeInference modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
     TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false
     $receiver: VALUE_PARAMETER name:<this> type:<root>.CoroutineScope
     VALUE_PARAMETER name:block index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>
@@ -326,7 +326,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
         CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
   FUN name:scopedFlow visibility:public modality:FINAL <R> (block:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit>) returnType:<root>.Flow<R of <root>.scopedFlow>
     annotations:
-      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalTypeInference modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
+      OptIn(markerClass = [CLASS_REFERENCE 'CLASS ANNOTATION_CLASS name:ExperimentalTypeInference modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
     TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:block index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit>
     BLOCK_BODY
@@ -351,7 +351,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                           p2: GET_VAR 'val collector: <root>.FlowCollector<R of <root>.scopedFlow> declared in <root>.scopedFlow.<anonymous>' type=<root>.FlowCollector<R of <root>.scopedFlow> origin=null
   FUN name:unsafeFlow visibility:public modality:FINAL <T> (block:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>) returnType:<root>.Flow<T of <root>.unsafeFlow> [inline]
     annotations:
-      OptIn(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalTypeInference modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
+      OptIn(markerClass = [CLASS_REFERENCE 'CLASS ANNOTATION_CLASS name:ExperimentalTypeInference modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.experimental.ExperimentalTypeInference>])
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:block index:0 type:@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit> [crossinline]
     BLOCK_BODY

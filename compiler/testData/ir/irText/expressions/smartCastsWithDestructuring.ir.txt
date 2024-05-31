@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.I2
             GET_VAR 'x: <root>.I1 declared in <root>.test' type=<root>.I1 origin=null
           then: RETURN type=kotlin.Nothing from='public final fun test (x: <root>.I1): kotlin.Unit declared in <root>'
-            GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+            GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.I2 [val]
           TYPE_OP type=<root>.I2 origin=IMPLICIT_CAST typeOperand=<root>.I2

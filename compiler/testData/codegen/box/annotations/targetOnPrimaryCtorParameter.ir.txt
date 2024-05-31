@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
   CLASS ANNOTATION_CLASS name:FieldOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FIELD' type=kotlin.annotation.AnnotationTarget])
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:FIELD' type=kotlin.annotation.AnnotationTarget])
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FieldOnly
     CONSTRUCTOR visibility:public <> () returnType:<root>.FieldOnly [primary]
       BLOCK_BODY
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:ParameterOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget])
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget])
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ParameterOnly
     CONSTRUCTOR visibility:public <> () returnType:<root>.ParameterOnly [primary]
       BLOCK_BODY
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:PropValueField modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FIELD' type=kotlin.annotation.AnnotationTarget])
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:PROPERTY' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY name:FIELD' type=kotlin.annotation.AnnotationTarget])
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PropValueField
     CONSTRUCTOR visibility:public <> () returnType:<root>.PropValueField [primary]
       BLOCK_BODY
@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:PropertyOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PropertyOnly
     CONSTRUCTOR visibility:public <> () returnType:<root>.PropertyOnly [primary]
       BLOCK_BODY
@@ -104,7 +104,7 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:PropertyOnly2 modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
-      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PropertyOnly2
     CONSTRUCTOR visibility:public <> () returnType:<root>.PropertyOnly2 [primary]
       BLOCK_BODY
