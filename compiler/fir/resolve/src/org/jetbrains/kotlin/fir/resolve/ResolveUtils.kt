@@ -669,7 +669,7 @@ internal fun FirFunction.forbiddenNamedArgumentsTargetOrNull(originScope: FirTyp
             ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION.takeUnless { symbol.hasOverrideThatAllowsNamedArguments(originScope) }
         }
 
-        FirDeclarationOrigin.BuiltIns -> ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
+        FirDeclarationOrigin.BuiltIns, FirDeclarationOrigin.BuiltInsFallback -> ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
         is FirDeclarationOrigin.Plugin -> null // TODO: figure out what to do with plugin generated functions
         else -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
     }

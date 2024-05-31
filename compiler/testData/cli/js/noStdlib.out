@@ -1,0 +1,22 @@
+compiler/testData/cli/js/noStdlib.kt:4:5: error: unresolved reference 'String'.
+    String::class
+    ^^^^^^
+compiler/testData/cli/js/noStdlib.kt:5:5: error: unresolved reference 'Void'.
+    Void::class
+    ^^^^
+compiler/testData/cli/js/noStdlib.kt:6:7: error: cannot access class 'kotlin.Unit'. Check your module classpath for missing or conflicting dependencies.
+    ::foo.name
+      ^^^
+compiler/testData/cli/js/noStdlib.kt:6:11: error: cannot access 'kotlin.reflect.KFunction' which is a supertype of 'kotlin.reflect.KFunction0'. Check your module classpath for missing or conflicting dependencies.
+    ::foo.name
+          ^^^^
+compiler/testData/cli/js/noStdlib.kt:6:11: error: cannot access 'kotlin.Function' which is a supertype of 'kotlin.reflect.KFunction0'. Check your module classpath for missing or conflicting dependencies.
+    ::foo.name
+          ^^^^
+compiler/testData/cli/js/noStdlib.kt:6:11: error: unresolved reference 'name'.
+    ::foo.name
+          ^^^^
+compiler/testData/cli/js/noStdlib.kt:7:5: error: unresolved reference 'listOf'.
+    listOf(42)
+    ^^^^^^
+COMPILATION_ERROR

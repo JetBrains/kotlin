@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -72,7 +70,15 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                         )
                     },
                     syntheticFunctionInterfaceProvider,
-                    FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
+                    FirBuiltinsSymbolProvider(
+                        session,
+                        FirClasspathBuiltinSymbolProvider(
+                            session,
+                            builtinsModuleData,
+                            kotlinScopeProvider
+                        ) { projectEnvironment.getKotlinClassFinder(librariesScope).findBuiltInsData(it) },
+                        FirFallbackBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider)
+                    ),
                     FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                 )

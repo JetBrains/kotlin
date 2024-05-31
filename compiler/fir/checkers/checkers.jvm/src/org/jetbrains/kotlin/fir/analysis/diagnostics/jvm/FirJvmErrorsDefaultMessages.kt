@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.NAME
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_FQ_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_SENTENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
@@ -62,6 +63,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_STATIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_SYNTHETIC_ON_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.LOCAL_JVM_RECORD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.MISSING_BUILT_IN_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_DATA_CLASS_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_FINAL_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_SOURCE_REPEATED_ANNOTATION
@@ -378,6 +380,12 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Java class ''{0}'' declaring this callable should not inherit directly or indirectly private Kotlin class ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE
+        )
+
+        map.put(
+            MISSING_BUILT_IN_DECLARATION,
+            "Cannot access built-in declaration ''{0}''. Ensure that you have a dependency on the Kotlin standard library",
+            DECLARATION_FQ_NAME
         )
     }
 }

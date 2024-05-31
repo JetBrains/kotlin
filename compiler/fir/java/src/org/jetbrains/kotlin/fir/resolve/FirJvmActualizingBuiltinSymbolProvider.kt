@@ -11,12 +11,15 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirClasspathBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinsSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -40,8 +43,23 @@ class FirJvmActualizingBuiltinSymbolProvider(
     session: FirSession,
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val refinedSourceSymbolProviders: List<FirSymbolProvider>,
+    private val kotlinClassFinder: KotlinClassFinder?,
 ) : FirSymbolProvider(session) {
-    val builtinSymbolProvider: FirBuiltinSymbolProvider = FirBuiltinSymbolProvider(session, session.moduleData, kotlinScopeProvider)
+
+    val builtinSymbolProvider: FirSymbolProvider = if (kotlinClassFinder == null) {
+        FirFallbackBuiltinSymbolProvider(session, session.moduleData, kotlinScopeProvider)
+    } else {
+        FirBuiltinsSymbolProvider(
+            session,
+            FirClasspathBuiltinSymbolProvider(
+                session,
+                session.moduleData,
+                kotlinScopeProvider
+            ) { kotlinClassFinder.findBuiltInsData(it) },
+            FirFallbackBuiltinSymbolProvider(session, session.moduleData, kotlinScopeProvider)
+        )
+    }
+
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         for (symbolProvider in refinedSourceSymbolProviders) {
@@ -55,7 +73,7 @@ class FirJvmActualizingBuiltinSymbolProvider(
             }
 
             // If there are multiple declarations with the same name, they will be reported as redeclarations by a checker
-            return builtinSymbolProvider.getClassLikeSymbolByClassId(classId)
+            return builtinSymbolProvider.getClassLikeSymbolByClassId(classId) as FirRegularClassSymbol
         }
 
         return null

@@ -355,7 +355,6 @@ class JpsKotlinCompilerRunner {
         with(settings) {
             buildFile = moduleFile.absolutePath
             destination = null
-            noStdlib = true
             noReflect = true
             noJdk = true
         }

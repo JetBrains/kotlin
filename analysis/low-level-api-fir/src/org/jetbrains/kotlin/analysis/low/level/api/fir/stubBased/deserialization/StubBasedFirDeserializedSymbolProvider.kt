@@ -176,7 +176,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
                 val containerSource =
                     deserializedContainerSourceProvider.getFacadeContainerSource(functionFile, functionStub?.origin, functionOrigin)
 
-                if (functionOrigin != FirDeclarationOrigin.BuiltIns &&
+                if (!functionOrigin.isBuiltIns &&
                     containerSource is FacadeClassSource &&
                     containerSource.className.internalName in KotlinBuiltins
                 ) {

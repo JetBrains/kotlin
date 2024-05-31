@@ -107,7 +107,13 @@ kotlin {
             val compileOnlyDeclarations by creating {
                 compileTaskProvider.configure {
                     compilerOptions {
-                        freeCompilerArgs.set(listOfNotNull("-Xallow-kotlin-package", diagnosticNamesArg))
+                        freeCompilerArgs.set(
+                            listOfNotNull(
+                                "-Xallow-kotlin-package",
+                                "-Xsuppress-missing-builtins-error",
+                                diagnosticNamesArg
+                            )
+                        )
                     }
                 }
             }

@@ -1103,9 +1103,14 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/noReflect.args");
     }
 
-    @TestMetadata("noStdlib.args")
-    public void testNoStdlib() {
-      runTest("compiler/testData/cli/jvm/noStdlib.args");
+    @TestMetadata("noStdlibK1.args")
+    public void testNoStdlibK1() {
+      runTest("compiler/testData/cli/jvm/noStdlibK1.args");
+    }
+
+    @TestMetadata("noStdlibK2.args")
+    public void testNoStdlibK2() {
+      runTest("compiler/testData/cli/jvm/noStdlibK2.args");
     }
 
     @TestMetadata("nonExistingClassPathAndAnnotationsPath.args")
@@ -1494,6 +1499,11 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("libraryDirNotFound.args")
     public void testLibraryDirNotFound() {
       runTest("compiler/testData/cli/js/libraryDirNotFound.args");
+    }
+
+    @TestMetadata("noStdlib.args")
+    public void testNoStdlib() {
+      runTest("compiler/testData/cli/js/noStdlib.args");
     }
 
     @TestMetadata("nonExistingKotlinHome.args")

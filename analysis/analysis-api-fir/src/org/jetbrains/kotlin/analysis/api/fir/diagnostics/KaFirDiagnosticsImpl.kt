@@ -5002,6 +5002,12 @@ internal class JavaFieldShadowedByKotlinPropertyImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JavaFieldShadowedByKotlinProperty
 
+internal class MissingBuiltInDeclarationImpl(
+    override val symbol: KaSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MissingBuiltInDeclaration
+
 internal class ImplementingFunctionInterfaceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
