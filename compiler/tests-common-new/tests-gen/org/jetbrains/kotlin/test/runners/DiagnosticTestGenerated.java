@@ -29694,9 +29694,27 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("kt68546.kt")
+        public void testKt68546() {
+          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt68546.kt");
+        }
+
+        @Test
+        @TestMetadata("kt68626.kt")
+        public void testKt68626() {
+          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt68626.kt");
+        }
+
+        @Test
         @TestMetadata("kt9550.kt")
         public void testKt9550() {
           runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt9550.kt");
+        }
+
+        @Test
+        @TestMetadata("noFalsePositiveConflictingOverloadsOnSubstitution.kt")
+        public void testNoFalsePositiveConflictingOverloadsOnSubstitution() {
+          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/noFalsePositiveConflictingOverloadsOnSubstitution.kt");
         }
 
         @Test
