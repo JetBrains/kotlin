@@ -40,7 +40,7 @@ internal class LLDBSessionSpec private constructor(private val expectedSteps: Li
     }
 
     fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean {
-        val blocks = output.split(LLDB_OUTPUT_SEPARATOR).filterNot(String::isBlank)
+        val blocks = output.split(LLDB_OUTPUT_SEPARATOR).filterNot(String::isBlank).dropWhile { !it.startsWith("(lldb)") }
 
         val meaningfulBlocks = if (nativeTargets.testTarget == nativeTargets.hostTarget) {
             // TODO: why are these two leading blocks only checked for the host target?
