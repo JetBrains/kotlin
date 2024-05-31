@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package kotlin.collections
@@ -32,6 +32,8 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
      */
     @JsName("toArray")
     protected open fun toArray(): Array<Any?> = collectionToArray(this)
+
+    internal fun toArrayInternal(): Array<Any?> = toArray()
 
     /**
      * Fills the provided [array] or creates new array of the same type
