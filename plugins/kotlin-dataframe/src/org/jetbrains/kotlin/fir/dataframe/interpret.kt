@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
@@ -308,7 +309,7 @@ fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType)
     if (propertySymbols.size == annotations.size) {
         propertySymbols = propertySymbols.zip(annotations).sortedBy { it.second }.map { it.first }
     }
-    val columns = propertySymbols.map { propertySymbol ->
+    val columns = propertySymbols.mapNotNull { propertySymbol ->
         columnOf(propertySymbol, mapping)
     }
 
@@ -339,7 +340,7 @@ private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAcc
     }
 }
 
-private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTypeParameterSymbol, ConeTypeProjection>): SimpleCol =
+private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTypeParameterSymbol, ConeTypeProjection>): SimpleCol? =
     when {
         shouldBeConvertedToFrameColumn(it) -> {
                 val nestedColumns = it.resolvedReturnType.typeArguments[0].type
@@ -347,7 +348,7 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTyp
                     ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
                     ?.collectAllProperties()
                     ?.filterIsInstance<FirPropertySymbol>()
-                    ?.map { columnOf(it, mapping) }
+                    ?.mapNotNull { columnOf(it, mapping) }
                     ?: emptyList()
 
                 SimpleFrameColumn(it.name.identifier, nestedColumns, anyDataFrame)
@@ -359,17 +360,23 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTyp
                 ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
                 ?.collectAllProperties()
                 ?.filterIsInstance<FirPropertySymbol>()
-                ?.map { columnOf(it, mapping) }
+                ?.mapNotNull { columnOf(it, mapping) }
                 ?: emptyList()
             SimpleColumnGroup(it.name.identifier, nestedColumns, anyRow)
         }
         else -> {
             val type = when (val type = it.resolvedReturnType) {
-                is ConeTypeParameterType -> mapping[type.lookupTag.typeParameterSymbol] as ConeKotlinType
+                is ConeTypeParameterType -> {
+                    val projection = mapping[type.lookupTag.typeParameterSymbol]
+                    if (projection is ConeStarProjection) {
+                        type.lookupTag.typeParameterSymbol.resolvedBounds.singleOrNull()?.type
+                    } else {
+                        projection as? ConeKotlinType
+                    }
+                }
                 else -> type
             }
-
-            SimpleCol(it.name.identifier, TypeApproximation(type))
+            type?.let { type -> SimpleCol(it.name.identifier, TypeApproximation(type)) }
         }
     }
 
