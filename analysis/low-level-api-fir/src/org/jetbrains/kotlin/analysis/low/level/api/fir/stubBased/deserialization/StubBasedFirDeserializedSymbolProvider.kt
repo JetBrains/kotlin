@@ -176,7 +176,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
                 val containerSource = getContainerSource(functionFile, functionStub?.origin)
                 val functionOrigin = getDeclarationOriginFor(functionFile)
 
-                if (functionOrigin != FirDeclarationOrigin.BuiltIns &&
+                if (!functionOrigin.isBuiltIns &&
                     containerSource is FacadeClassSource &&
                     containerSource.className.internalName in KotlinBuiltins
                 ) {
@@ -212,7 +212,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     }
 
     private fun getContainerSource(file: KtFile, origin: KotlinStubOrigin?): DeserializedContainerSource {
-        if (getDeclarationOriginFor(file) == FirDeclarationOrigin.BuiltIns) {
+        if (getDeclarationOriginFor(file).isBuiltIns) {
             require(origin is KotlinStubOrigin.Facade) {
                 "Expected builtins file to have Facade origin, got origin=$origin instead"
             }

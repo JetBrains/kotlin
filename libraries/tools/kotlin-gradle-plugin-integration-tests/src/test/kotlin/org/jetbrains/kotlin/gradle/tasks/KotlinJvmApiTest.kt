@@ -45,6 +45,7 @@ class KotlinJvmApiTest : KGPBaseTest() {
                                                 
                         apiPlugin.registerKotlinJvmCompileTask("foo").configure {
                             it.source("src/main")
+                            it.libraries.from(configurations.compileClasspath)
                             it.multiPlatformEnabled.set(false)
                             it.moduleName.set("main")
                             it.sourceSetName.set("main")

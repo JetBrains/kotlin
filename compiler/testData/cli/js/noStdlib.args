@@ -1,4 +1,6 @@
 -no-stdlib
 $TESTDATA_DIR$/noStdlib.kt
--d
+-ir-output-dir
 $TEMP_DIR$
+-ir-output-name
+out

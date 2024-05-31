@@ -1,0 +1,16 @@
+compiler/testData/cli/jvm/noStdlibK1.kt:4:5: error: cannot access built-in declaration 'kotlin.String'. Ensure that you have a dependency on the Kotlin standard library
+    String::class.primaryConstructor
+    ^^^^^^
+compiler/testData/cli/jvm/noStdlibK1.kt:4:19: error: unresolved reference: primaryConstructor
+    String::class.primaryConstructor
+                  ^^^^^^^^^^^^^^^^^^
+compiler/testData/cli/jvm/noStdlibK1.kt:6:7: error: cannot access built-in declaration 'kotlin.Unit'. Ensure that you have a dependency on the Kotlin standard library
+    ::foo.name
+      ^^^
+compiler/testData/cli/jvm/noStdlibK1.kt:6:11: error: cannot access built-in declaration 'kotlin.reflect.KFunction0'. Ensure that you have a dependency on the Kotlin standard library
+    ::foo.name
+          ^^^^
+compiler/testData/cli/jvm/noStdlibK1.kt:7:5: error: unresolved reference: listOf
+    listOf(42)
+    ^^^^^^
+COMPILATION_ERROR

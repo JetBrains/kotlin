@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -233,6 +234,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
         val JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirPropertySymbol>("kotlinProperty")
+        }
+        val MISSING_BUILT_IN_DECLARATION by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<FirBasedSymbol<*>>("symbol")
         }
     }
 }

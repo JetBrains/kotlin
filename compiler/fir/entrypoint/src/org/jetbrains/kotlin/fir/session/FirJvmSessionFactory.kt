@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProv
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.FirJvmActualizingBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
@@ -48,6 +48,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         predefinedJavaComponents: FirSharableJavaComponents?,
         registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
+        val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(scope)
         return createLibrarySession(
             mainModuleName,
             sessionProvider,
@@ -67,11 +68,18 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                         moduleDataProvider,
                         kotlinScopeProvider,
                         packagePartProvider,
-                        projectEnvironment.getKotlinClassFinder(scope),
+                        kotlinClassFinder,
                         projectEnvironment.getFirJavaFacade(session, moduleDataProvider.allModuleData.last(), scope)
                     ),
                     runUnless(languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-                        FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider)
+                        FirBuiltinsSymbolProvider(
+                            session, FirClasspathBuiltinSymbolProvider(
+                                session,
+                                builtinsModuleData,
+                                kotlinScopeProvider
+                            ) { kotlinClassFinder.findBuiltInsData(it) },
+                            FirFallbackBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider)
+                        )
                     },
                     FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
                     syntheticFunctionInterfaceProvider,
@@ -161,10 +169,10 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         return runIf(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation) && !session.moduleData.isCommon) {
             if (session.moduleData.dependsOnDependencies.isNotEmpty()) {
                 val refinedSourceSymbolProviders = dependencies.filter { it.session.kind == FirSession.Kind.Source }
-                FirJvmActualizingBuiltinSymbolProvider(session, kotlinScopeProvider, refinedSourceSymbolProviders)
+                FirJvmActualizingBuiltinSymbolProvider(session, kotlinScopeProvider, refinedSourceSymbolProviders, kotlinClassFinder = null)
             } else {
-                // `FirBuiltinSymbolProvider` is needed anyway for jvm-only modules that don't have common dependencies (jdk7, jdk8)
-                FirBuiltinSymbolProvider(session, session.moduleData, kotlinScopeProvider)
+                // `FirFallbackBuiltinSymbolProvider` is needed anyway for jvm-only modules that don't have common dependencies (jdk7, jdk8)
+                FirFallbackBuiltinSymbolProvider(session, session.moduleData, kotlinScopeProvider)
             }
         }
     }

@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.getTopLevelClassifierNamesInPackage
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DefaultImportProvider
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -16,7 +17,7 @@ object FirJvmDefaultImportProvider : DefaultImportProvider() {
         result.add(ImportPath.fromString("kotlin.jvm.*"))
 
         for (builtInsPackage in StandardClassIds.builtInsPackagesWithDefaultNamedImport) {
-            FirBuiltinSymbolProvider.getTopLevelClassifierNamesInPackage(builtInsPackage).forEach {
+            getTopLevelClassifierNamesInPackage(FirFallbackBuiltinSymbolProvider.builtInsPackageFragments, builtInsPackage).forEach {
                 result.add(ImportPath(builtInsPackage.child(it), false))
             }
         }
