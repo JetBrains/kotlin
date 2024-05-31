@@ -66,6 +66,7 @@ fun Project.objCExportHeaderGeneratorTest(
 
             dependencies {
                 testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+                testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3")
                 testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
                 testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
             }

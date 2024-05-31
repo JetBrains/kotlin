@@ -22,10 +22,15 @@ val testLibraryBKlibFile
         ?: error("Missing 'testLibraryB' in 'testDependencyKlibs' System Property")
 
 
-val testLibraryKotlinxSerialization
+val testLibraryKotlinxSerializationJson
     get() = testDependencyKlibs.firstOrNull {
-        it.pathString.contains("serialization")
-    } ?: error("Missing 'kotlinx-serialization' in 'testDependencyKlibs' System Property")
+        it.pathString.contains("serialization-json")
+    } ?: error("Missing 'kotlinx-serialization-json' in 'testDependencyKlibs' System Property")
+
+val testLibraryKotlinxSerializationCore
+    get() = testDependencyKlibs.firstOrNull {
+        it.pathString.contains("serialization-core")
+    } ?: error("Missing 'kotlinx-serialization-core' in 'testDependencyKlibs' System Property")
 
 val testLibraryKotlinxDatetime
     get() = testDependencyKlibs.firstOrNull {

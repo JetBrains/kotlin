@@ -61,8 +61,8 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     fun `test - kotlinxSerialization`() {
         doTest(
             dependenciesDir.resolve("kotlinxSerialization"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOfNotNull(testLibraryKotlinxSerialization),
-                exportedDependencies = setOf(testLibraryKotlinxSerialization)
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationJson),
+                exportedDependencies = setOf(testLibraryKotlinxSerializationJson)
             )
         )
     }
@@ -91,6 +91,15 @@ class ObjCExportDependenciesHeaderGeneratorTest(
             dependenciesDir.resolve("kotlinxCoroutines"), configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testLibraryKotlinxCoroutines),
                 exportedDependencies = setOf(testLibraryKotlinxCoroutines)
+            )
+        )
+    }
+
+    @Test
+    fun `test - propertyAnnotation`() {
+        doTest(
+            dependenciesDir.resolve("propertyAnnotation"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationCore, testLibraryKotlinxSerializationJson)
             )
         )
     }
