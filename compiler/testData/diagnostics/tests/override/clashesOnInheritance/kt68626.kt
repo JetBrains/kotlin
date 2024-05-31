@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-68626
 interface MyType<T : Comparable<T>>
 
