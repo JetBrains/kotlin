@@ -46,6 +46,12 @@ public class FirStandaloneNormalAnalysisLibraryBinaryDecompiledModulePsiDeclarat
   }
 
   @Test
+  @TestMetadata("constructorWithGeneric.kt")
+  public void testConstructorWithGeneric() {
+    runTest("analysis/analysis-api/testData/standalone/binary/constructorWithGeneric.kt");
+  }
+
+  @Test
   @TestMetadata("multifileFacade.kt")
   public void testMultifileFacade() {
     runTest("analysis/analysis-api/testData/standalone/binary/multifileFacade.kt");
