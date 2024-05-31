@@ -38841,6 +38841,18 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     @TestDataPath("$PROJECT_ROOT")
     public class K2 {
       @Test
+      @TestMetadata("01_failure.kt")
+      public void test01_failure() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/01_failure.kt");
+      }
+
+      @Test
+      @TestMetadata("01_success.kt")
+      public void test01_success() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/01_success.kt");
+      }
+
+      @Test
       @TestMetadata("actualInnerClassesFirMemberMapping.kt")
       public void testActualInnerClassesFirMemberMapping() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/actualInnerClassesFirMemberMapping.kt");
