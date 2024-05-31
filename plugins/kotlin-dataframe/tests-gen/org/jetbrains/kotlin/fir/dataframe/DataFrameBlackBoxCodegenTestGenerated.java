@@ -88,6 +88,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("extractDataSchemaWithStarProjection.kt")
+  public void testExtractDataSchemaWithStarProjection() {
+    runTest("testData/box/extractDataSchemaWithStarProjection.kt");
+  }
+
+  @Test
   @TestMetadata("extractDataSchemaWithTypeParameter.kt")
   public void testExtractDataSchemaWithTypeParameter() {
     runTest("testData/box/extractDataSchemaWithTypeParameter.kt");
