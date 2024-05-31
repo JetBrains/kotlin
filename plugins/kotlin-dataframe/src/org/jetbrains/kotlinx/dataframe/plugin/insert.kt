@@ -120,8 +120,7 @@ private fun List<SimpleCol>.asString(indent: String = ""): String {
     return joinToString("\n") {
         val col = when (it) {
             is SimpleFrameColumn -> {
-                val nullability = if (it.nullable) "?" else ""
-                "${it.name}$nullability*\n" + it.columns().asString("$indent   ")
+                "${it.name}*\n" + it.columns().asString("$indent   ")
             }
             is SimpleColumnGroup -> {
                 "${it.name}\n" + it.columns().asString("$indent   ")
@@ -193,7 +192,6 @@ public enum class SimpleColumnKind {
 public data class SimpleFrameColumn(
     private val name1: String,
     @Contextual private val columns: List<SimpleCol>,
-    val nullable: Boolean,
     // probably shouldn't be called at all?
     // exists only because SimpleCol has it
     // but in fact it's for `materialize` to decide what should be the type of the property / accessors
@@ -204,7 +202,7 @@ public data class SimpleFrameColumn(
     }
 
     override fun rename(s: String): SimpleFrameColumn {
-        return SimpleFrameColumn(name1, columns, nullable, anyFrameType)
+        return SimpleFrameColumn(name1, columns, anyFrameType)
     }
 
     override fun kind(): SimpleColumnKind {

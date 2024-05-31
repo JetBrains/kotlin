@@ -216,7 +216,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                     if (type.isValueType()) {
                         SimpleCol(name, TypeApproximation(StandardClassIds.List.constructClassLikeType(arrayOf(type), resolvedReturnType.isNullable)))
                     } else {
-                        SimpleFrameColumn(name, convert(type, depth + 1), nullable = false, anyDataFrame)
+                        SimpleFrameColumn(name, convert(type, depth + 1), anyDataFrame)
                     }
                 } else {
                     SimpleColumnGroup(name, convert(resolvedReturnType, depth + 1), anyRow)

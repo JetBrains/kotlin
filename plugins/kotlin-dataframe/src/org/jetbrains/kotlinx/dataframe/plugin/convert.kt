@@ -69,7 +69,7 @@ internal fun KotlinTypeFacade.convertImpl(
         // TODO: AnyRow
         if (unwrappedType is ConeClassLikeType && unwrappedType.classId == Names.DF_CLASS_ID && !unwrappedType.isNullable) {
             val f = unwrappedType.typeArguments.single()
-            SimpleFrameColumn(column.name, pluginDataFrameSchema(f).columns(), false, anyDataFrame)
+            SimpleFrameColumn(column.name, pluginDataFrameSchema(f).columns(), anyDataFrame)
         } else {
             column.changeType(type)
         }
@@ -121,7 +121,6 @@ internal fun SimpleFrameColumn.map(transform: ColumnMapper, selected: ColumnsSet
     return SimpleFrameColumn(
         name,
         f(columns(), transform, selected, path),
-        nullable,
         anyFrameType
     )
 }

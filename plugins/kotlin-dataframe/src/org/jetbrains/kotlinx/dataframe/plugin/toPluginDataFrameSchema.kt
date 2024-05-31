@@ -35,7 +35,11 @@ public val KotlinTypeFacade.toPluginDataFrameSchema: DataFrameSchema.() -> Plugi
                     // generateInterface(schema)
                 }
                 is ColumnSchema.Group -> SimpleColumnGroup(name, columnSchema.schema.toPluginDataFrameSchema().columns(), anyRow)
-                is ColumnSchema.Frame -> SimpleFrameColumn(name, columnSchema.schema.toPluginDataFrameSchema().columns(), columnSchema.nullable, anyDataFrame)
+                is ColumnSchema.Frame -> SimpleFrameColumn(
+                    name,
+                    columnSchema.schema.toPluginDataFrameSchema().columns(),
+                    anyDataFrame
+                )
                 else -> TODO()
             }
         }
@@ -58,7 +62,11 @@ public val KotlinTypeFacade.deserializeToPluginDataFrameSchema: SerializableSche
                     // generateInterface(schema)
                 }
                 is ColumnGroup -> SimpleColumnGroup(it.name, SerializableSchema(it.columns).deserializeToPluginDataFrameSchema().columns(), anyRow)
-                is FrameColumn -> SimpleFrameColumn(it.name, SerializableSchema(it.columns).deserializeToPluginDataFrameSchema().columns(), false, anyDataFrame)
+                is FrameColumn -> SimpleFrameColumn(
+                    it.name,
+                    SerializableSchema(it.columns).deserializeToPluginDataFrameSchema().columns(),
+                    anyDataFrame
+                )
                 else -> TODO()
             }
         }

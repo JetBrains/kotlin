@@ -262,7 +262,7 @@ class FunctionCallTransformer(
                             ConeClassLikeTypeImpl(
                                 ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID),
                                 typeArguments = arrayOf(nestedClassMarker.schema.defaultType()),
-                                isNullable = it.nullable
+                                isNullable = false
                             )
 
                         SchemaProperty(

@@ -81,7 +81,6 @@ internal fun SimpleFrameColumn.map(selected: ColumnsSet, path: List<String>, nex
     return SimpleFrameColumn(
         name,
         f(columns(), nextName, selected, path),
-        nullable,
         anyFrameType
     )
 }

@@ -350,7 +350,7 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol, mapping: Map<FirTyp
                     ?.map { columnOf(it, mapping) }
                     ?: emptyList()
 
-                SimpleFrameColumn(it.name.identifier, nestedColumns, false, anyDataFrame)
+                SimpleFrameColumn(it.name.identifier, nestedColumns, anyDataFrame)
             }
         shouldBeConvertedToColumnGroup(it) -> {
             val type = if (isDataRow(it)) it.resolvedReturnType.typeArguments[0].type!! else it.resolvedReturnType
