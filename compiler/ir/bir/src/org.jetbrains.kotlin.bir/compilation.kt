@@ -194,7 +194,8 @@ class BirCompilation {
             input: IrModuleFragment,
         ): IrModuleFragment {
             val filePhaserState = phaserState.changePhaserStateType<IrModuleFragment, IrFile>()
-            lowerByModule(phaseConfig, input, filePhaserState, context, phaserState)
+            //lowerByModule(phaseConfig, input, filePhaserState, context, phaserState)
+            lowerByFile(phaseConfig, input, filePhaserState, context, phaserState)
 
             return input
         }
