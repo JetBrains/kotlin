@@ -16,14 +16,15 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderMerger
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinAlwaysAccessibleLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModificationService
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderMerger
-import org.jetbrains.kotlin.analysis.api.platform.KotlinPsiDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinByModulesResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
-import org.jetbrains.kotlin.analysis.api.platform.impl.KotlinStaticPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneDeclarationProviderMerger
@@ -47,9 +48,6 @@ import org.jetbrains.kotlin.analysis.project.structure.impl.KtSourceModuleImpl
 import org.jetbrains.kotlin.analysis.project.structure.impl.buildKtModuleProviderByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.project.structure.impl.getPsiFilesFromPaths
 import org.jetbrains.kotlin.analysis.project.structure.impl.getSourceFilePaths
-import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinAlwaysAccessibleLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinByModulesResolutionScopeProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
@@ -173,15 +171,6 @@ public class StandaloneAnalysisAPISessionBuilder(
         }
     }
 
-    private fun registerPsiDeclarationFromBinaryModuleProvider() {
-        kotlinCoreProjectEnvironment.project.apply {
-            registerService(
-                KotlinPsiDeclarationProviderFactory::class.java,
-                KotlinStaticPsiDeclarationProviderFactory::class.java
-            )
-        }
-    }
-
     public fun <T : Any> registerProjectService(serviceInterface: Class<T>, serviceImplementation: T) {
         kotlinCoreProjectEnvironment.project.apply {
             registerService(serviceInterface, serviceImplementation)
@@ -194,35 +183,22 @@ public class StandaloneAnalysisAPISessionBuilder(
         }
     }
 
-    public fun build(
-        withPsiDeclarationFromBinaryModuleProvider: Boolean = false,
-    ): StandaloneAnalysisAPISession {
+    public fun build(): StandaloneAnalysisAPISession {
         StandaloneProjectFactory.registerServicesForProjectEnvironment(
             kotlinCoreProjectEnvironment,
             projectStructureProvider,
         )
+
         val sourceKtFiles = projectStructureProvider.allSourceFiles.filterIsInstance<KtFile>()
         val libraryRoots = StandaloneProjectFactory.getAllBinaryRoots(
             projectStructureProvider.allKtModules,
             kotlinCoreProjectEnvironment,
         )
 
-        val createPackagePartProvider =
-            StandaloneProjectFactory.createPackagePartsProvider(
-                libraryRoots,
-            )
-        registerProjectServices(
-            sourceKtFiles,
-            createPackagePartProvider,
-        )
-        if (withPsiDeclarationFromBinaryModuleProvider) {
-            registerPsiDeclarationFromBinaryModuleProvider()
-        }
+        val createPackagePartProvider = StandaloneProjectFactory.createPackagePartsProvider(libraryRoots)
+        registerProjectServices(sourceKtFiles, createPackagePartProvider)
 
-        return StandaloneAnalysisAPISession(
-            kotlinCoreProjectEnvironment,
-            createPackagePartProvider,
-        ) {
+        return StandaloneAnalysisAPISession(kotlinCoreProjectEnvironment) {
             projectStructureProvider.allKtModules.mapNotNull { ktModule ->
                 if (ktModule !is KtSourceModule) return@mapNotNull null
                 check(ktModule is KtSourceModuleImpl)
@@ -261,7 +237,6 @@ internal object StandaloneSessionServiceRegistrar : AnalysisApiSimpleServiceRegi
 public inline fun buildStandaloneAnalysisAPISession(
     projectDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project"),
     unitTestMode: Boolean = false,
-    withPsiDeclarationFromBinaryModuleProvider: Boolean = false,
     classLoader: ClassLoader = MockProject::class.java.classLoader,
     init: StandaloneAnalysisAPISessionBuilder.() -> Unit,
 ): StandaloneAnalysisAPISession {
@@ -272,7 +247,5 @@ public inline fun buildStandaloneAnalysisAPISession(
         projectDisposable,
         unitTestMode,
         classLoader
-    ).apply(init).build(
-        withPsiDeclarationFromBinaryModuleProvider,
-    )
+    ).apply(init).build()
 }

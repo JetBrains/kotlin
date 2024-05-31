@@ -1,2 +1,0 @@
-Resolved to:
-PsiMethod:add(p: PsiType:E): PsiType:void

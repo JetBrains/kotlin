@@ -81,7 +81,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAbbr
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
-import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
@@ -163,13 +162,6 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     }
 
     generateAnalysisApiNonComponentsTests()
-
-    group(
-        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibraryBinaryDecompiled) and
-                analysisApiModeIs(AnalysisApiMode.Standalone)
-    ) {
-        generateAnalysisApiStandaloneTests()
-    }
 }
 
 private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
@@ -324,22 +316,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
         test<AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest> {
             model("sessionInvalidation")
-        }
-    }
-}
-
-private fun AnalysisApiTestGroup.generateAnalysisApiStandaloneTests() {
-    group("standalone") {
-        test<AbstractPsiDeclarationProviderTest>(
-            filter = testModuleKindIs(TestModuleKind.Source)
-        ) {
-            model(it, "source")
-        }
-
-        test<AbstractPsiDeclarationProviderTest>(
-            filter = testModuleKindIs(TestModuleKind.LibraryBinaryDecompiled)
-        ) {
-            model(it, "binary")
         }
     }
 }

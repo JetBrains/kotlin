@@ -1,2 +1,0 @@
-Resolved to:
-PsiMethod:getColor-ywy1UOY(): PsiType:int
