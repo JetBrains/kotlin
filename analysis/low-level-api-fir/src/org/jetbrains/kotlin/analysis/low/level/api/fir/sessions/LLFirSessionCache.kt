@@ -227,6 +227,7 @@ class LLFirSessionCache(private val project: Project) : Disposable {
         val sessionFactory = createPlatformAwareSessionFactory(module)
         return when (module) {
             is KaSourceModule -> sessionFactory.createSourcesSession(module)
+            is KaBuiltinsModule -> sessionFactory.createLibrarySession(module)
             is KaLibraryModule -> {
                 if (module.isSdk) {
                     sessionFactory.createBinaryLibrarySession(module)

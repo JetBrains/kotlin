@@ -367,8 +367,8 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         module: KaModule,
         additionalSessionConfiguration: LLFirLibraryOrLibrarySourceResolvableModuleSession.(context: LibrarySessionCreationContext) -> Unit
     ): LLFirLibraryOrLibrarySourceResolvableModuleSession {
-        val libraryModule = when (module) {
-            is KaLibraryModule -> module
+        val binaryModule = when (module) {
+            is KaLibraryModule, is KaBuiltinsModule -> module
             is KaLibrarySourceModule -> module.binaryLibrary
             else -> errorWithAttachment("Unexpected module ${module::class.simpleName}") {
                 withKaModuleEntry("module", module)
@@ -413,13 +413,15 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             val dependencyProvider = LLFirDependenciesSymbolProvider(this) {
                 buildList {
-                    add(builtinsSession.symbolProvider)
+                    if (module !is KaBuiltinsModule) {
+                        add(builtinsSession.symbolProvider)
+                    }
 
                     // Script dependencies are self-contained and should not depend on other libraries
                     if (module !is KaScriptDependencyModule) {
                         // Add all libraries excluding the current one
                         val librariesSearchScope = ProjectScope.getLibrariesScope(project)
-                            .intersectWith(GlobalSearchScope.notScope(libraryModule.contentScope))
+                            .intersectWith(GlobalSearchScope.notScope(binaryModule.contentScope))
 
                         val restLibrariesProvider = createProjectLibraryProvidersForScope(
                             session,
@@ -433,12 +435,15 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
                         addAll(restLibrariesProvider)
 
-                        KotlinAnchorModuleProvider.getInstance(project)?.getAnchorModule(libraryModule)?.let { anchorModule ->
-                            val anchorModuleSession = LLFirSessionCache.getInstance(project).getSession(anchorModule)
-                            val anchorModuleSymbolProvider = anchorModuleSession.symbolProvider as LLFirModuleWithDependenciesSymbolProvider
+                        if (binaryModule is KaLibraryModule) {
+                            KotlinAnchorModuleProvider.getInstance(project)?.getAnchorModule(binaryModule)?.let { anchorModule ->
+                                val anchorModuleSession = LLFirSessionCache.getInstance(project).getSession(anchorModule)
+                                val anchorModuleSymbolProvider =
+                                    anchorModuleSession.symbolProvider as LLFirModuleWithDependenciesSymbolProvider
 
-                            addAll(anchorModuleSymbolProvider.providers)
-                            addAll(anchorModuleSymbolProvider.dependencyProvider.providers)
+                                addAll(anchorModuleSymbolProvider.providers)
+                                addAll(anchorModuleSymbolProvider.dependencyProvider.providers)
+                            }
                         }
                     }
                 }

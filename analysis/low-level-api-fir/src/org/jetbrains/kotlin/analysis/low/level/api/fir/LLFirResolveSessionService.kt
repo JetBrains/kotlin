@@ -60,7 +60,7 @@ class LLFirResolveSessionService(project: Project) {
     private fun createResolutionStrategyProvider(module: KaModule, moduleProvider: LLModuleProvider): LLModuleResolutionStrategyProvider {
         return when (module) {
             is KaSourceModule -> LLSourceModuleResolutionStrategyProvider
-            is KaLibraryModule, is KaLibrarySourceModule -> LLLibraryModuleResolutionStrategyProvider(module)
+            is KaLibraryModule, is KaBuiltinsModule, is KaLibrarySourceModule -> LLBinaryModuleResolutionStrategyProvider(module)
             is KaScriptModule -> LLScriptModuleResolutionStrategyProvider(module)
             is KaDanglingFileModule -> {
                 val contextModule = module.contextModule
@@ -102,7 +102,8 @@ private object LLSourceModuleResolutionStrategyProvider : LLModuleResolutionStra
     }
 }
 
-private class LLLibraryModuleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
+
+private class LLBinaryModuleResolutionStrategyProvider(private val useSiteModule: KaModule) : LLModuleResolutionStrategyProvider {
     override fun getKind(module: KaModule): LLModuleResolutionStrategy {
         LLFirLibraryOrLibrarySourceResolvableModuleSession.checkIsValidKtModule(module)
         return if (module == useSiteModule) LLModuleResolutionStrategy.LAZY else LLModuleResolutionStrategy.STATIC
