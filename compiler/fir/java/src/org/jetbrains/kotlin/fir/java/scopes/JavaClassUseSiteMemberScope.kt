@@ -981,7 +981,7 @@ class JavaClassUseSiteMemberScope(
             this is FirJavaClass -> superConeTypes.any { type ->
                 type.toFir(session)?.hasKotlinSuper(session, visited) == true
             }
-            isInterface || origin == FirDeclarationOrigin.BuiltIns -> false
+            isInterface || origin.isBuiltIns -> false
             else -> true
         }
 

@@ -117,6 +117,14 @@ object FirDiagnosticRenderers {
         name.asString()
     }
 
+    val DECLARATION_FQ_NAME = Renderer { symbol: FirBasedSymbol<*> ->
+        when (symbol) {
+            is FirCallableSymbol<*> -> symbol.name.asString()
+            is FirClassLikeSymbol<*> -> symbol.classId.asFqNameString()
+            else -> return@Renderer "???"
+        }
+    }
+
     val RENDER_CLASS_OR_OBJECT_QUOTED = Renderer { classSymbol: FirClassSymbol<*> ->
         val name = classSymbol.classId.relativeClassName.asString()
         val classOrObject = when (classSymbol.classKind) {

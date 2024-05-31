@@ -5935,6 +5935,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.MISSING_BUILT_IN_DECLARATION) { firDiagnostic ->
+        MissingBuiltInDeclarationImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE) { firDiagnostic ->
         ImplementingFunctionInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,

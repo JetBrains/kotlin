@@ -4139,6 +4139,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val kotlinProperty: KaVariableSymbol
     }
 
+    interface MissingBuiltInDeclaration : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MissingBuiltInDeclaration::class
+        val symbol: KaSymbol
+    }
+
     interface ImplementingFunctionInterface : KaFirDiagnostic<KtClassOrObject> {
         override val diagnosticClass get() = ImplementingFunctionInterface::class
     }
