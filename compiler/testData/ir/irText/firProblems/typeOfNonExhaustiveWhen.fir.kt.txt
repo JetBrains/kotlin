@@ -1,0 +1,27 @@
+fun box(): String {
+  val result: List<Int> = buildList<Int>(builderAction = local fun MutableList<Int>.<anonymous>() {
+    var index: Int = 0
+    while (lessOrEqual(arg0 = index, arg1 = 10)) { // BLOCK
+      when {
+        greater(arg0 = index, arg1 = 4) -> { // BLOCK
+          when {
+            EQEQ(arg0 = index, arg1 = 5) -> break
+          }
+        }
+        else -> { // BLOCK
+          when {
+            EQEQ(arg0 = index, arg1 = 3) -> break
+          }
+        }
+      }
+      $this$buildList.add(element = index) /*~> Unit */
+      { // BLOCK
+        val tmp_0: Int = index
+        index = tmp_0.inc()
+        tmp_0
+      } /*~> Unit */
+    }
+  }
+)
+  return "OK"
+}
