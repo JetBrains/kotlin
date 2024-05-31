@@ -28,7 +28,7 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
     }
 
     private fun KaSession.returnTypesMatch(psi: PsiMethod, symbol: KaCallableSymbol): Boolean {
-        if (symbol is KaConstructorSymbol) return true
+        if (symbol is KaConstructorSymbol) return psi.isConstructor
         return psi.returnType?.let {
             isTheSameTypes(
                 psi,
@@ -40,6 +40,8 @@ internal object PsiDeclarationAndKtSymbolEqualityChecker {
     }
 
     private fun typeParametersMatch(psi: PsiMethod, symbol: KaCallableSymbol): Boolean {
+        // PsiMethod for constructor won't have type parameters
+        if (symbol is KaConstructorSymbol) return psi.isConstructor
         if (psi.typeParameters.size != symbol.typeParameters.size) return false
         psi.typeParameters.zip(symbol.typeParameters) { psiTypeParameter, typeParameterSymbol ->
             if (psiTypeParameter.name != typeParameterSymbol.name.asString()) return false
