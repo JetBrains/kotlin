@@ -115,6 +115,7 @@ internal inline fun <reified T> String.load(): T {
         "GroupByInto" -> GroupByInto()
         "ReadJsonStr" -> ReadJsonStr()
         "ReadDelimStr" -> ReadDelimStr()
+        "GroupByToDataFrame" -> GroupByToDataFrame()
         else -> error("$this")
     } as T
 }

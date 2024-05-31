@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.dataframe.api.CreateDataFrameConfiguration
 import org.jetbrains.kotlin.fir.dataframe.api.TraverseConfiguration
-import org.jetbrains.kotlin.fir.dataframe.api.groupBy
+import org.jetbrains.kotlin.fir.dataframe.api.aggregate
 import org.jetbrains.kotlin.fir.dataframe.api.toDataFrame
 import org.jetbrains.kotlin.fir.dataframe.utils.Names.DF_CLASS_ID
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -80,7 +80,7 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
                 val groupByCall = call.explicitReceiver as? FirFunctionCall
                 val interpreter = groupByCall?.loadInterpreter(session)
                 if (interpreter != null) {
-                    groupBy(groupByCall, interpreter, reporter, call)
+                    aggregate(groupByCall, interpreter, reporter, call)
                 } else {
                     PluginDataFrameSchema(emptyList())
                 }
