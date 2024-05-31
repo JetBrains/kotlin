@@ -51,6 +51,22 @@ class Fir2IrCommonMemberStorage(val mangler: FirMangler) {
     val irForFirSessionDependantDeclarationMap: MutableMap<Fir2IrDeclarationStorage.FakeOverrideIdentifier, IrSymbol> = mutableMapOf()
 
     /**
+     * This map contains information about classes, which implement interfaces by delegation
+     *
+     * ```
+     * class Some(val a: A, b: B) : A by a, B by b
+     * ```
+     *
+     * delegatedClassesMap = {
+     *     Some -> {
+     *         A -> backingField of val a,
+     *         B -> field for delegate b
+     *     }
+     * }
+     */
+    val delegatedClassesInfo: MutableMap<IrClassSymbol, MutableMap<IrClassSymbol, IrFieldSymbol>> = mutableMapOf()
+
+    /**
      * Contains information about synthetic methods generated for data and value classes
      * It will be used to generate bodies of those methods after fir2ir conversion is over
      */

@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
@@ -198,6 +200,7 @@ class Fir2IrDeclarationStorage(
     private val delegatedReverseCache: ConcurrentHashMap<IrSymbol, FirDeclaration> = ConcurrentHashMap()
 
     private val fieldForDelegatedSupertypeCache: ConcurrentHashMap<FirField, IrFieldSymbol> = ConcurrentHashMap()
+    private val delegatedClassesMap: MutableMap<IrClassSymbol, MutableMap<IrClassSymbol, IrFieldSymbol>> = commonMemberStorage.delegatedClassesInfo
 
     private val localStorage: Fir2IrLocalCallableStorage by threadLocal { Fir2IrLocalCallableStorage() }
 
@@ -361,12 +364,12 @@ class Fir2IrDeclarationStorage(
         if (
             parentIsExternal ||
             function !is FirSimpleFunction ||
-            !function.isFakeOverride(fakeOverrideOwnerLookupTag)
+            !function.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag)
         ) {
             return createFunctionSymbol()
         }
         val containingClassSymbol = findContainingIrClassSymbol(function, fakeOverrideOwnerLookupTag)
-        val originalFirFunction = function.unwrapFakeOverrides()
+        val originalFirFunction = function.unwrapFakeOverridesOrDelegated()
         val originalSymbol = getIrFunctionSymbol(originalFirFunction.symbol) as IrSimpleFunctionSymbol
         return IrFunctionFakeOverrideSymbol(originalSymbol, containingClassSymbol, idSignature = null)
     }
@@ -940,6 +943,13 @@ class Fir2IrDeclarationStorage(
 
     fun recordSupertypeDelegateFieldMappedToBackingField(field: FirField, irFieldSymbol: IrFieldSymbol) {
         fieldForDelegatedSupertypeCache[field] = irFieldSymbol
+    }
+
+    fun recordSupertypeDelegationInformation(irClass: IrClass, superType: IrType, irFieldSymbol: IrFieldSymbol) {
+        val delegateMapForClass = delegatedClassesMap.getOrPut(irClass.symbol) { mutableMapOf() }
+        val delegatedSuperClass = superType.classOrNull ?: error("No symbol for type $superType")
+        require(delegatedSuperClass !in delegateMapForClass) { "Delegate info for supertype $superType already stored" }
+        delegateMapForClass[delegatedSuperClass] = irFieldSymbol
     }
 
     internal fun createSupertypeDelegateIrField(field: FirField, irClass: IrClass): IrField {

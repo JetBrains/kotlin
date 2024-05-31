@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -93,7 +94,6 @@ class Fir2IrConverter(
 
         //   4. Body processing
         //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
-        delegatedMemberGenerator.generateBodies()
         for (firFile in allFirFiles) {
             withFileAnalysisExceptionWrapping(firFile) {
                 firFile.accept(fir2irVisitor, null)
@@ -501,12 +501,6 @@ class Fir2IrConverter(
                         val backingField = irProperty.backingField!!
                         for (delegateField in delegateFields) {
                             declarationStorage.recordSupertypeDelegateFieldMappedToBackingField(delegateField, backingField.symbol)
-                            delegatedMemberGenerator.generateWithBodiesIfNeeded(
-                                firField = delegateField,
-                                irField = backingField,
-                                containingClass!!,
-                                parent as IrClass
-                            )
                         }
                     }
                 }
@@ -519,12 +513,17 @@ class Fir2IrConverter(
                 requireNotNull(delegateFieldToPropertyMap)
                 require(parent is IrClass)
                 val correspondingClassProperty = declaration.findCorrespondingDelegateProperty(containingClass)
-                if (correspondingClassProperty == null || correspondingClassProperty.isVar) {
-                    val irField = declarationStorage.createSupertypeDelegateIrField(declaration, parent)
-                    delegatedMemberGenerator.generateWithBodiesIfNeeded(declaration, irField, containingClass, parent)
+                val irFieldSymbol = if (correspondingClassProperty == null || correspondingClassProperty.isVar) {
+                    declarationStorage.createSupertypeDelegateIrField(declaration, parent).symbol
                 } else {
                     delegateFieldToPropertyMap.putValue(correspondingClassProperty, declaration)
+                    val correspondingIrProperty = declarationStorage.getIrPropertySymbol(correspondingClassProperty.symbol)
+                    declarationStorage.findBackingFieldOfProperty(correspondingIrProperty as IrPropertySymbol)
+                        ?: error("Backing field not found for property ${correspondingClassProperty.returnTypeRef}")
                 }
+                val delegationTargetType = declaration.returnTypeRef.toIrType(c)
+                declarationStorage.recordSupertypeDelegationInformation(parent, delegationTargetType, irFieldSymbol)
+
             }
             is FirConstructor -> if (!declaration.isPrimary) {
                 // the primary constructor was already created in `processClassMembers` function
