@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.dataframe.api.flatten
 import org.jetbrains.kotlin.fir.dataframe.pluginDataFrameSchema
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
@@ -52,6 +54,7 @@ private class Checker(val cache: FirCache<String, PluginDataFrameSchema, KotlinT
         val ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.DEFAULT)
         val CAST_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
         val CAST_ID = CallableId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api")), Name.identifier("cast"))
+        val CHECK = ClassId(FqName("org.jetbrains.kotlinx.dataframe.annotations"), Name.identifier("Check"))
     }
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -74,15 +77,17 @@ private class Checker(val cache: FirCache<String, PluginDataFrameSchema, KotlinT
 
     private fun KotlinTypeFacadeImpl.analyzeCast(expression: FirFunctionCall, reporter: DiagnosticReporter, context: CheckerContext) {
         val calleeReference = expression.calleeReference
-        if (calleeReference !is FirResolvedNamedReference || calleeReference.toResolvedCallableSymbol()?.callableId != CAST_ID) {
+        if (calleeReference !is FirResolvedNamedReference
+            || calleeReference.toResolvedCallableSymbol()?.callableId != CAST_ID
+            || !calleeReference.resolvedSymbol.hasAnnotation(CHECK, session)) {
             return
         }
         val coneType = expression.explicitReceiver?.resolvedType
         if (coneType != null) {
-            val sourceType = coneType.fullyExpandedType(session).typeArguments[0].type as? ConeClassLikeType
+            val sourceType = coneType.fullyExpandedType(session).typeArguments.getOrNull(0)?.type as? ConeClassLikeType
                 ?: return
             val source = pluginDataFrameSchema(sourceType)
-            val targetProjection = expression.typeArguments[0] as? FirTypeProjectionWithVariance ?: return
+            val targetProjection = expression.typeArguments.getOrNull(0) as? FirTypeProjectionWithVariance ?: return
             val targetType = targetProjection.typeRef.coneType as? ConeClassLikeType ?: return
             val target = pluginDataFrameSchema(targetType)
             val sourceColumns = source.flatten()

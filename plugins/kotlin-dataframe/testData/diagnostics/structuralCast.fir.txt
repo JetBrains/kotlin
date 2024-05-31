@@ -1,0 +1,37 @@
+FILE: structuralCast.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface A : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface B : R|kotlin/Any| {
+        public abstract val b: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract val b1: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun check(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/A>|): R|kotlin/Unit| {
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/B|>()
+    }
+    public final fun checkAny(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|kotlin/Unit| {
+        R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/B|>()
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/A>|.a: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/A>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/B>|.b: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/B>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/B>|.b1: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/B>|.b1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
