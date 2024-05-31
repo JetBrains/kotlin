@@ -434,21 +434,9 @@ They should be a subset of sources passed as free arguments."""
     @Argument(
         value = "-Xverify-ir",
         valueDescription = "{none|warning|error}",
-        description = "IR verification mode (the default is 'none' for Kotlin/JVM and 'error' for Kotlin/Native, Kotlin/Wasm and Kotlin/JS)."
+        description = "IR verification mode (no verification by default)."
     )
     var verifyIr: String? = null
-
-    protected open fun defaultIrVerificationMode(): IrVerificationMode = IrVerificationMode.ERROR
-
-    fun parseIrVerificationMode(messageCollector: MessageCollector): IrVerificationMode {
-        return verifyIr?.let { verifyIrString ->
-            IrVerificationMode.resolveMode(verifyIrString).also {
-                if (it == null) {
-                    messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
-                }
-            }
-        } ?: defaultIrVerificationMode()
-    }
 
     @Argument(
         value = "-Xprofile-phases",

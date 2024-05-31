@@ -240,7 +240,7 @@ where advanced options include:
   -Xuse-k2                   Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
   -Xverbose-phases           Be verbose while performing the given backend phases.
   -Xverify-ir={none|warning|error}
-                             IR verification mode (the default is 'none' for Kotlin/JVM and 'error' for Kotlin/Native, Kotlin/Wasm and Kotlin/JS).
+                             IR verification mode (no verification by default).
   -Xwhen-guards              Enable language support for when guards.
 
 Advanced options are non-standard and may be changed or removed without any notice.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,7 +34,17 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, incrementalCompilationIsEnabled(arguments))
     put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, arguments.allowAnyScriptsInSourceRoots)
     put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
-    put(CommonConfigurationKeys.VERIFY_IR, arguments.parseIrVerificationMode(messageCollector))
+
+    put(
+        CommonConfigurationKeys.VERIFY_IR,
+        arguments.verifyIr?.let { verifyIrString ->
+            IrVerificationMode.resolveMode(verifyIrString).also {
+                if (it == null) {
+                    messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
+                }
+            }
+        } ?: IrVerificationMode.NONE
+    )
 
     val metadataVersionString = arguments.metadataVersion
     if (metadataVersionString != null) {

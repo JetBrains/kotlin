@@ -837,8 +837,6 @@ This option is deprecated and will be deleted in future versions."""
             field = value
         }
 
-    override fun defaultIrVerificationMode(): IrVerificationMode = IrVerificationMode.NONE
-
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
