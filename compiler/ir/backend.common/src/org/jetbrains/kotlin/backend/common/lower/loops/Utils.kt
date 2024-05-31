@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -167,6 +169,7 @@ internal fun DeclarationIrBuilder.createLoopTemporaryVariableIfNecessary(
         Pair(null, expression)
     }
 
+// `this` may be of nullable type, while targetClass is assumed to be non-nullable
 internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
     when {
         // This expression's type could be Nothing from an exception throw.
@@ -183,29 +186,44 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
                 else -> error("Cannot cast expression of type ${type.render()} to ${targetType.render()}")
             }
         }
-        type.getClass() == null -> {
-            // In case it's not a class -> it should be a type parameter or script, with a classifier.
-            // Only strict subtype is supported now without a cast. Should a good use-case be found for cast -> feel free to implement it.
-            require((type as IrSimpleType).classifier.isSubtypeOf(targetClass.symbol)) {
-                "${type.render()} has to be a subtype of ${targetClass.defaultType.render()}"
-            }
-            this
-        }
         else -> {
-            val numberCastFunctionName = Name.identifier("to${targetClass.name.asString()}")
-            val irClass = type.getClass() ?: error("Has to be a class ${type.render()}")
-            val castFun = irClass.functions.single {
-                it.name == numberCastFunctionName &&
-                        it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
+            val classifier = (type as IrSimpleType).classifier
+            // Nullable type is not a subtype of assumed non-nullable type of targetClass
+            if (!type.isNullable() && classifier.isSubtypeOf(targetClass.symbol)) this
+            else {
+                require(classifier is IrClassSymbol) { "Expected a class symbol to invoke .to${targetClass.name.asString()}(), but got $classifier" }
+                makeIrCallConversionToTargetClass(this, classifier.owner, targetClass)
             }
-            IrCallImpl(
-                startOffset, endOffset,
-                castFun.returnType, castFun.symbol,
-                typeArgumentsCount = 0,
-                valueArgumentsCount = 0
-            ).apply { dispatchReceiver = this@castIfNecessary }
         }
     }
+
+// For a class, returns `this`,
+// For a type parameter, finds nearest class ancestor, assuming linear inheritance.
+private fun IrClassifierSymbol.selfOrSingleSuperClass(): IrClassSymbol =
+    if (this is IrClassSymbol && !owner.isInterface)
+        this
+    else
+        superTypes().singleOrNull()?.classifierOrFail?.selfOrSingleSuperClass()
+            ?: error("Traversing of exactly one supertype is supported. Feel free to support more, if necessary.")
+
+
+private fun IrExpression.makeIrCallConversionToTargetClass(
+    receiver: IrExpression,
+    sourceClass: IrClass,
+    targetClass: IrClass,
+): IrExpression {
+    val numberCastFunctionName = Name.identifier("to${targetClass.name.asString()}")
+    val castFun = sourceClass.functions.single {
+        it.name == numberCastFunctionName &&
+                it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
+    }
+    return IrCallImpl(
+        startOffset, endOffset,
+        castFun.returnType, castFun.symbol,
+        typeArgumentsCount = 0,
+        valueArgumentsCount = 0
+    ).apply { dispatchReceiver = receiver }
+}
 
 // Gets type of the deepest EXPRESSION from possible recursive snippet `IrGetValue(IrVariable(initializer=EXPRESSION))`.
 // In case it cannot be unwrapped, just returns back type of `expression` parameter
@@ -233,4 +251,3 @@ internal fun IrExpression.getMostPreciseTypeFromValInitializer(): IrType {
             ?: return temp.type
     } while (true)
 }
-
