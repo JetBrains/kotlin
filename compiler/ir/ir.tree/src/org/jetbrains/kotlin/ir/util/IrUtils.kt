@@ -329,6 +329,21 @@ fun IrClass.isSubclassOf(ancestor: IrClass): Boolean {
     return this.hasAncestorInSuperTypes()
 }
 
+fun IrClassifierSymbol.isSubtypeOf(ancestor: IrClassifierSymbol): Boolean {
+    val alreadyVisited = mutableSetOf<IrClassifierSymbol>()
+
+    fun IrClassifierSymbol.hasAncestorInSuperTypes(): Boolean = when {
+        this === ancestor -> true
+        this in alreadyVisited -> false
+        else -> {
+            alreadyVisited.add(this)
+            superTypes().any { it.classifierOrFail.hasAncestorInSuperTypes() }
+        }
+    }
+
+    return hasAncestorInSuperTypes()
+}
+
 val IrClass.isAnnotationClass get() = kind == ClassKind.ANNOTATION_CLASS
 val IrClass.isEnumClass get() = kind == ClassKind.ENUM_CLASS
 val IrClass.isEnumEntry get() = kind == ClassKind.ENUM_ENTRY

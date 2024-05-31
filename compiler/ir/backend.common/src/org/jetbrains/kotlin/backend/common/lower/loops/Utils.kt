@@ -183,10 +183,18 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
                 else -> error("Cannot cast expression of type ${type.render()} to ${targetType.render()}")
             }
         }
+        type.getClass() == null -> {
+            // In case it's not a class -> it should be a type parameter or script, with a classifier.
+            // Only strict subtype is supported now without a cast. Should a good use-case be found for cast -> feel free to implement it.
+            require((type as IrSimpleType).classifier.isSubtypeOf(targetClass.symbol)) {
+                "${type.render()} has to be a subtype of ${targetClass.defaultType.render()}"
+            }
+            this
+        }
         else -> {
             val numberCastFunctionName = Name.identifier("to${targetClass.name.asString()}")
-            val classifier = type.getClass() ?: error("Has to be a class ${type.render()}")
-            val castFun = classifier.functions.single {
+            val irClass = type.getClass() ?: error("Has to be a class ${type.render()}")
+            val castFun = irClass.functions.single {
                 it.name == numberCastFunctionName &&
                         it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
             }
