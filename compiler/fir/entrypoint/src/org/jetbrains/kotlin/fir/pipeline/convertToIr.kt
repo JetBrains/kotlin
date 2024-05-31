@@ -389,17 +389,13 @@ private class Fir2IrPipeline(
         }
     }
 
-    /** If `stdlibCompilation` mode is enabled, there are files with synthetic declarations, at least for non-JVM platforms.
-     * JVM stdlib has some FuncitonN declarations declared in source code (`libraries/stdlib/jvm/runtime/kotlin/jvm/functions/Functions.kt`)
-     * That's why synthetic declarations might not be generated.
-     * For non-JVM all synthetic builtins declarations should be generated before FIR2II conversion and removed after the actualizaiton.
+    /** If `stdlibCompilation` mode is enabled, there are files with synthetic declarations.
+     *  All of them should be generated before FIR2IR conversion and removed after the actualizaiton.
      */
     private fun Fir2IrConversionResult.removeGeneratedBuiltinsDeclarationsIfNeeded() {
         if (fir2IrConfiguration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-            val filesAreRemoved = mainIrFragment.files.removeAll { it.name == generatedBuiltinsDeclarationsFileName }
-            if (!componentsStorage.session.moduleData.platform.isJvm()) {
-                require(filesAreRemoved)
-            }
+            val isAnyFileRemoved = mainIrFragment.files.removeAll { it.name == generatedBuiltinsDeclarationsFileName }
+            require(isAnyFileRemoved)
         }
     }
 }
