@@ -28,6 +28,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("columnWithStarProjection.kt")
+  public void testColumnWithStarProjection() {
+    runTest("testData/box/columnWithStarProjection.kt");
+  }
+
+  @Test
   @TestMetadata("conflictingJvmDeclarations.kt")
   public void testConflictingJvmDeclarations() {
     runTest("testData/box/conflictingJvmDeclarations.kt");

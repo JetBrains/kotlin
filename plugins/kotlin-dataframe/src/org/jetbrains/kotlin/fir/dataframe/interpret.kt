@@ -318,14 +318,16 @@ fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType)
 
 private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAccessExpression): List<ColumnWithPathApproximation> {
     return result.resolvedType.let {
-        val column = when {
-            it.classId == Names.DATA_COLUMN_CLASS_ID -> {
-                val arg = it.typeArguments.single() as ConeClassLikeType
-                SimpleCol(f(result),Marker(arg))
+        val column = when (it.classId) {
+            Names.DATA_COLUMN_CLASS_ID -> {
+                val type = when (val arg = it.typeArguments.single()) {
+                    is ConeStarProjection -> session.builtinTypes.nullableAnyType.type
+                    else -> arg as ConeClassLikeType
+                }
+                SimpleCol(f(result), Marker(type))
             }
-
-            it.classId == Names.COLUM_GROUP_CLASS_ID -> {
-                val arg: ConeClassLikeType = it.typeArguments.single() as ConeClassLikeType
+            Names.COLUM_GROUP_CLASS_ID -> {
+                val arg = it.typeArguments.single()
                 val path = f(result)
                 SimpleColumnGroup(path, pluginDataFrameSchema(arg).columns(), anyRow)
             }
