@@ -102,7 +102,7 @@ sealed class ClangArgs(
             else -> configurables.targetTriple.toString()
         }
         if (configurables is ZephyrConfigurables) {
-            add(listOf("-target", "thumb", "-mfloat-abi=soft", "-mcpu=cortex-m55"))
+            add(listOf("-target", "thumb", "-mfloat-abi=soft", "-mcpu=cortex-m55", "-D__GLIBC_USE\\(...\\)=0"))
         } else {
             add(listOf("-target", targetString))
         }

@@ -127,6 +127,8 @@
 
 #endif	 /* !_LIBC_LIMITS_H_ */
 
+#define _GCC_LIMITS_H_
+
 #if defined __GNUC__ && !defined _GCC_LIMITS_H_
 /* `_GCC_LIMITS_H_' is what GCC's file defines.  */
 # include_next <limits.h>
@@ -144,4 +146,8 @@
 
 #ifndef PATH_MAX
 #define PATH_MAX	4096
+#endif
+
+#ifndef CHAR_BIT
+#define CHAR_BIT 8
 #endif

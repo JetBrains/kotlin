@@ -16,13 +16,12 @@ set(OBJ__KN_LIB ${OUT_DIR__KN}/libkn.o)
 set(OBJ__KN_HEADER__ORIGINAL ${CMAKE_CURRENT_SOURCE_DIR}/kotlin/build/bin/native/releaseShared/libkn_api.h)
 set(INCL__KN_HEADER ${INCL_DIR}/libkn.h)
 
-set(CMAKE_BUILD_TYPE Debug)
-
+set(KOTLINC_NATIVE_BIN ${CMAKE_CURRENT_SOURCE_DIR}/../kotlin-native/dist/bin/kotlinc-native)
 
 add_custom_command(
   OUTPUT ${OBJ__KN_LIB}
   COMMAND rm -rf ${OUT_DIR__KN}
-  COMMAND kotlinc-native ${SOURCE__KN}/lib.kt -target zephyr_m55 -produce static -Xtemporary-files-dir=${OUT_DIR__KN} -module-name libkn
+  COMMAND ${KOTLINC_NATIVE_BIN} ${SOURCE__KN}/lib.kt -target zephyr_m55 -produce static -Xtemporary-files-dir=${OUT_DIR__KN} -module-name libkn
   COMMAND mv ${OBJ__KN_LIB_ORIGINAL} ${OBJ__KN_LIB}
   VERBATIM
 )
