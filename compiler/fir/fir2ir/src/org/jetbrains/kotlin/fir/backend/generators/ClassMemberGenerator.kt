@@ -260,9 +260,11 @@ internal class ClassMemberGenerator(
     ) {
         val irField = backingField ?: return
         if (configuration.skipBodies) {
-            irField.initializer = irFactory.createExpressionBody(
-                startOffset, endOffset, IrConstImpl.defaultValueForType(startOffset, endOffset, irField.type)
-            )
+            if (!isLateinit) {
+                irField.initializer = irFactory.createExpressionBody(
+                    startOffset, endOffset, IrConstImpl.defaultValueForType(startOffset, endOffset, irField.type)
+                )
+            }
         } else {
             conversionScope.withParent(irField) {
                 declarationStorage.enterScope(this@initializeBackingField.symbol)
