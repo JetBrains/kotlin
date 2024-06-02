@@ -9,11 +9,7 @@ import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
-import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.kotlin.dsl.accessors.runtime.addDependencyTo
-import org.gradle.kotlin.dsl.accessors.runtime.addExternalModuleDependencyTo
-import org.gradle.kotlin.dsl.add
 
 val NamedDomainObjectContainer<Configuration>.embedded: NamedDomainObjectProvider<Configuration>
     get() = named("embedded")
@@ -24,5 +20,9 @@ fun DependencyHandler.embedded(dependencyNotation: Any): Dependency? =
 val NamedDomainObjectContainer<Configuration>.implicitDependencies: NamedDomainObjectProvider<Configuration>
     get() = named("implicitDependencies")
 
-fun DependencyHandler.implicitDependencies(dependencyNotation: Any): Dependency? =
-    add("implicitDependencies", dependencyNotation)
+fun DependencyHandler.implicitDependencies(dependencyNotation: Any, configure: Action<ExternalModuleDependency>? = null): Dependency? =
+    add("implicitDependencies", dependencyNotation)?.also {
+        if (it is ExternalModuleDependency) {
+            configure?.execute(it)
+        }
+    }

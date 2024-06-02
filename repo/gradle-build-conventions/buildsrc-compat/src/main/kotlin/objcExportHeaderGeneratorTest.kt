@@ -62,6 +62,18 @@ fun Project.objCExportHeaderGeneratorTest(
                 testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3")
                 testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
                 testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+                implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") {
+                    because("workaround for KTIJ-30065, remove after its resolution")
+                }
+                implicitDependencies("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0") {
+                    because("workaround for KTIJ-30065, remove after its resolution")
+                }
+                implicitDependencies("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1") {
+                    because("workaround for KTIJ-30065, remove after its resolution")
+                }
+                implicitDependencies("org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.8.1") {
+                    because("workaround for KTIJ-30065, remove after its resolution")
+                }
             }
         }
     return nativeTest(
