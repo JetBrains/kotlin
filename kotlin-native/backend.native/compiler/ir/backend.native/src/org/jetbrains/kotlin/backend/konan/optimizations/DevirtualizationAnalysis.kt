@@ -699,7 +699,7 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
-            println("During DevirtualizationAnalysisPhase: $maxMemoryUsage")
+//            println("During DevirtualizationAnalysisPhase: $maxMemoryUsage")
 
             return AnalysisResult(result.asSequence().associateBy({ it.key }, { it.value.first }).toMutableMap(), typeHierarchy)
         }

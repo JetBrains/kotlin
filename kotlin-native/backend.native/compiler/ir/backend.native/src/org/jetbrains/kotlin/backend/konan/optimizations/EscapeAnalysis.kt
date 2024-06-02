@@ -436,7 +436,7 @@ internal object EscapeAnalysis {
                 }
             }
 
-            println("During EscapeAnalysisPhase: $maxMemoryUsage")
+//            println("During EscapeAnalysisPhase: $maxMemoryUsage")
 
         }
 

@@ -337,7 +337,7 @@ internal class BackendInliner(
             }
         }
 
-        println("During BackendInlinerPhase: $maxMemoryUsage")
+//        println("During BackendInlinerPhase: $maxMemoryUsage")
 
     }
 
