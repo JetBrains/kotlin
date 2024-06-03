@@ -36,6 +36,17 @@ open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(conte
     }
 }
 
+class IrValidationAfterInliningPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
+    override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
+        performBasicIrValidation(
+            irModule,
+            context.irBuiltIns,
+            phaseName,
+            checkTypes = false, // TODO: Re-enable checking types (KT-68663)
+        )
+    }
+}
+
 open class IrValidationAfterLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
     override fun IrValidationContext.validate(irModule: IrModuleFragment, phaseName: String) {
         performBasicIrValidation(irModule, context.irBuiltIns, phaseName)

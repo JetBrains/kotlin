@@ -320,16 +320,19 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
     val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
 
-    // We run IR validation before and after lowering _all_ modules because, unfortunately, lowering a module on Native may mutate
-    // dependency modules.
-    // For example, lowering a cross-module inline function call causes the body of that inline function to be lowered.
-    allModulesToLower.forEach {
-        runPhase(validateIrBeforeLowering, it)
-    }
-    allModulesToLower.forEach(this::runAllLowerings)
-    allModulesToLower.forEach {
-        runPhase(validateIrAfterLowering, it)
-    }
+    // In Kotlin/Native, lowerings are run not over modules, but over individual files.
+    // This means that there is no guarantee that after running a lowering in file A, the same lowering has already been run in file B,
+    // and vice versa.
+    // However, in order to validate IR after inlining, we have to make sure that all the modules being compiled are lowered to the same
+    // stage, because otherwise we may be actually validating a partially lowered IR that may not pass certain checks
+    // (like IR visibility checks).
+    // This is what we call a 'lowering synchronization point'.
+    runIrValidationPhase(validateIrBeforeLowering, allModulesToLower)
+    runLowerings(getLoweringsUpToAndIncludingInlining(), allModulesToLower)
+    runIrValidationPhase(validateIrAfterInlining, allModulesToLower)
+    runLowerings(getLoweringsAfterInlining(), allModulesToLower)
+    runIrValidationPhase(validateIrAfterLowering, allModulesToLower)
+
     mergeDependencies(module, dependenciesToCompile)
 }
 

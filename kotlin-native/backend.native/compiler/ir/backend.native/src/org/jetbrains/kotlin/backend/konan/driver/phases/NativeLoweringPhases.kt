@@ -35,16 +35,25 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-/**
- * Run whole IR lowering pipeline over [irModuleFragment].
- */
-internal fun PhaseEngine<NativeGenerationState>.runAllLowerings(irModuleFragment: IrModuleFragment) {
-    val lowerings = getAllLowerings()
-    irModuleFragment.files.forEach { file ->
-        context.fileLowerState = FileLowerState()
-        lowerings.fold(file) { loweredFile, lowering ->
-            runPhase(lowering, loweredFile)
+internal typealias LoweringList = List<AbstractNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>
+
+internal fun PhaseEngine<NativeGenerationState>.runLowerings(lowerings: LoweringList, modules: List<IrModuleFragment>) {
+    for (module in modules) {
+        for (file in module.files) {
+            context.fileLowerState = FileLowerState()
+            lowerings.fold(file) { loweredFile, lowering ->
+                runPhase(lowering, loweredFile)
+            }
         }
+    }
+}
+
+internal fun PhaseEngine<NativeGenerationState>.runIrValidationPhase(
+        lowering: SimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, Unit>,
+        modules: List<IrModuleFragment>
+) {
+    for (module in modules) {
+        runPhase(lowering, module)
     }
 }
 
@@ -52,6 +61,12 @@ internal val validateIrBeforeLowering = createSimpleNamedCompilerPhase<NativeGen
         name = "ValidateIrBeforeLowering",
         description = "Validate IR before lowering",
         op = { context, module -> IrValidationBeforeLoweringPhase(context.context).lower(module) }
+)
+
+internal val validateIrAfterInlining = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
+        name = "ValidateIrBeforeLowering",
+        description = "Validate IR before lowering",
+        op = { context, module -> IrValidationAfterInliningPhase(context.context).lower(module) }
 )
 
 internal val validateIrAfterLowering = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
@@ -541,7 +556,7 @@ private val constEvaluationPhase = createFileLoweringPhase(
         prerequisite = setOf(inlinePhase)
 )
 
-private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull<AbstractNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>(
+internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingInlining(): LoweringList = listOfNotNull(
         lowerBeforeInlinePhase,
         arrayConstructorPhase,
         lateinitPhase,
@@ -550,6 +565,9 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         extractLocalClassesFromInlineBodies,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
         inlinePhase,
+)
+
+internal fun PhaseEngine<NativeGenerationState>.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
         assertsRemovalPhase.takeUnless { context.config.assertsEnabled },
