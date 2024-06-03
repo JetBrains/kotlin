@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -19,7 +17,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.formver.ErrorCollector
 import org.jetbrains.kotlin.formver.PluginConfiguration
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
-import org.jetbrains.kotlin.formver.domains.*
+import org.jetbrains.kotlin.formver.domains.RuntimeTypeDomain
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.*
 import org.jetbrains.kotlin.formver.embeddings.expression.*
@@ -29,7 +27,6 @@ import org.jetbrains.kotlin.formver.linearization.SeqnBuilder
 import org.jetbrains.kotlin.formver.linearization.SharedLinearizationState
 import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Program
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -44,6 +41,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private val methods: MutableMap<MangledName, FunctionEmbedding> = SpecialKotlinFunctions.byName.toMutableMap()
     private val classes: MutableMap<MangledName, ClassTypeEmbedding> = mutableMapOf()
     private val properties: MutableMap<MangledName, PropertyEmbedding> = mutableMapOf()
+    private val fields: MutableMap<MangledName, FieldEmbedding> = mutableMapOf()
 
     // Cast is valid since we check that values are not null. We specify the type for `filterValues` explicitly to ensure there's no
     // loss of type information earlier.
@@ -65,14 +63,10 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     val program: Program
         get() = Program(
             domains = listOf(RuntimeTypeDomain(classes.values.toList())),
-            fields = SpecialFields.all.map { it.toViper() } + properties.mapNotNull {
-                val property = it.value
-                when {
-                    property.getter is BackingFieldGetter -> property.getter.field
-                    property.setter is BackingFieldSetter -> property.setter.field
-                    else -> null
-                }
-            }.distinctBy { it.name.mangled }.map { it.toViper() },
+            // We need to deduplicate fields since public fields with the same name are represented differently
+            // at `FieldEmbedding` level but map to the same Viper.
+            fields = SpecialFields.all.map { it.toViper() } +
+                    fields.values.distinctBy { it.name.mangled }.map { it.toViper() },
             functions = SpecialFunctions.all,
             methods = SpecialMethods.all + methods.values.mapNotNull { it.viperMethod }.distinctBy { it.name.mangled },
             predicates = classes.values.map { it.predicate }
@@ -319,17 +313,15 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private fun processProperty(symbol: FirPropertySymbol, embedding: ClassTypeEmbedding) {
         val unscopedName = symbol.callableId.embedUnscopedPropertyName()
         val backingField = embedding.findField(unscopedName)
-        val getter: GetterEmbedding = embedGetter(symbol, backingField)
-        val setter: SetterEmbedding? = symbol.isVar.ifTrue { embedSetter(symbol, backingField) }
-        val propertyEmbedding = PropertyEmbedding(getter, setter)
-        properties[symbol.embedMemberPropertyName()] = propertyEmbedding
+        backingField?.let { fields.put(it.name, it) }
+        properties[symbol.embedMemberPropertyName()] = embedProperty(symbol, backingField)
     }
 
-    private fun embedCustomProperty(symbol: FirPropertySymbol) =
-        PropertyEmbedding(
-            embedGetter(symbol, null),
-            symbol.isVar.ifTrue { embedSetter(symbol, null) }
-        )
+    private fun embedCustomProperty(symbol: FirPropertySymbol) = embedProperty(symbol, null)
+
+    private fun embedProperty(symbol: FirPropertySymbol, backingField: FieldEmbedding?) =
+        PropertyEmbedding(embedGetter(symbol, backingField),
+                          symbol.isVar.ifTrue { embedSetter(symbol, backingField) })
 
     private fun embedGetter(symbol: FirPropertySymbol, backingField: FieldEmbedding?): GetterEmbedding =
         if (backingField != null) {
