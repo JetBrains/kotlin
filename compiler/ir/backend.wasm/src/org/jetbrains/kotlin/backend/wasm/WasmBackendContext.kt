@@ -51,7 +51,6 @@ class WasmBackendContext(
     override val builtIns = module.builtIns
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
     override var inVerbosePhase: Boolean = false
-    override val scriptMode = false
     override val irFactory: IrFactory = symbolTable.irFactory
 
     val isWasmJsTarget: Boolean = configuration.wasmTarget == WasmTarget.JS

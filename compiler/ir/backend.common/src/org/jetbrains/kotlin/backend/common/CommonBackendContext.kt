@@ -30,7 +30,6 @@ interface CommonBackendContext : BackendContext, LoggingContext, ErrorReportingC
         get() = this
 
     val configuration: CompilerConfiguration
-    val scriptMode: Boolean
 
     override val messageCollector: MessageCollector
         get() = configuration.messageCollector

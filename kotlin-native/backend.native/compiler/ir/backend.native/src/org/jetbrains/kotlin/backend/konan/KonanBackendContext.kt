@@ -20,8 +20,6 @@ internal abstract class KonanBackendContext(config: KonanConfig) : BasicPhaseCon
 
     abstract override val ir: KonanIr
 
-    override val scriptMode: Boolean = false
-
     override val sharedVariablesManager by lazy {
         // Creating lazily because builtIns module seems to be incomplete during `link` test;
         // TODO: investigate this.

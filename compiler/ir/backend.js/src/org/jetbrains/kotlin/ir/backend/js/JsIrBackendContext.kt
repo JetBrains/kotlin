@@ -75,7 +75,6 @@ class JsIrBackendContext(
     val granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
     val incrementalCacheEnabled: Boolean = false,
 ) : JsCommonBackendContext {
-    override val scriptMode: Boolean get() = false
 
     val polyfills = JsPolyfills()
     val fieldToInitializer = WeakHashMap<IrField, IrExpression>()
