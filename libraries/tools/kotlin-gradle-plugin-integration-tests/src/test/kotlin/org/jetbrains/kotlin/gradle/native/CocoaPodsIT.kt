@@ -1064,6 +1064,30 @@ class CocoaPodsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Build succeeded when embedAndSign task is used with pod-dependencies and diagnostic supressed with property")
+    @GradleTest
+    fun testEmbedAndSignNotUsedWithPodDepsDiagnosticDisabled(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to tempDir.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "frameworks",
+                "BUILT_PRODUCTS_DIR" to tempDir.absolutePathString(),
+            )
+        ) {
+
+            buildGradleKts.addKotlinBlock("iosArm64()")
+            buildGradleKts.addCocoapodsBlock("""pod("Base64", version="1.1.2")""")
+
+            build(":embedAndSignPodAppleFrameworkForXcode", "-Pkotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies=true") {
+                assertNoDiagnostic(CocoapodsPluginDiagnostics.EmbedAndSignUsedWithPodDependencies)
+            }
+        }
+    }
+
     internal class GradleAndIsStaticArgumentsProvider : GradleArgumentsProvider() {
         override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
             return super.provideArguments(context).flatMap { arguments ->
