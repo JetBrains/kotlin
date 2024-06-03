@@ -1,4 +1,4 @@
-FILE: columnGroup.kt
+FILE: columnGroupApi.kt
     @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final data class Record : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
         public constructor(a: R|kotlin/String|, b: R|kotlin/Int|): R|Record| {
             super<R|kotlin/Any|>()
