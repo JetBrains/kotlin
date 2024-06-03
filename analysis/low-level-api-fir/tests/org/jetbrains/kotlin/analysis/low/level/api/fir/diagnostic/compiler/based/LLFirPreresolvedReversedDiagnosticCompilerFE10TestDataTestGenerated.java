@@ -16985,6 +16985,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("kt68570.kt")
+      public void testKt68570() {
+        runTest("compiler/testData/diagnostics/tests/inference/kt68570.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaArgumentWithLabel.kt")
       public void testLambdaArgumentWithLabel() {
         runTest("compiler/testData/diagnostics/tests/inference/lambdaArgumentWithLabel.kt");
