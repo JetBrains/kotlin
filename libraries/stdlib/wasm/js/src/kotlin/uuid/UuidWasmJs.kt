@@ -5,9 +5,12 @@
 
 package kotlin.uuid
 
+private fun jsRandomUUID(): String =
+    js("crypto.randomUUID()")
+
 @ExperimentalStdlibApi
-internal actual fun secureRandomUUID(): UUID {
-    val randomBytes = ByteArray(16)
-    js("crypto.getRandomValues(randomBytes)")
-    return uuidFromRandomBytes(randomBytes)
+internal actual fun secureRandomUuid(): UUID {
+    val uuidString = jsRandomUUID()
+    return UUID.parse(uuidString)
 }
+

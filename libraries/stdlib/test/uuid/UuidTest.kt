@@ -9,7 +9,7 @@ import kotlin.random.Random
 import kotlin.test.*
 import kotlin.uuid.UUID
 
-class UUIDTest {
+class UuidTest {
     private val mostSignificantBits = 0x550e8400e29b41d4uL
     private val leastSignificantBits = 0xa716446655440000uL
     private val uuidByteArray = byteArrayOf(

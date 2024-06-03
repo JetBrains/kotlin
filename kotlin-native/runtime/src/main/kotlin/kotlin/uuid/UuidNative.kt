@@ -11,7 +11,7 @@ import kotlin.native.internal.GCUnsafeCall
 private external fun fillWithRandomBytes(byteArray: ByteArray, size: Int): Unit
 
 @ExperimentalStdlibApi
-internal actual fun secureRandomUUID(): UUID {
+internal actual fun secureRandomUuid(): UUID {
     val randomBytes = ByteArray(UUID.SIZE_BYTES)
     fillWithRandomBytes(randomBytes, randomBytes.size)
     return uuidFromRandomBytes(randomBytes)

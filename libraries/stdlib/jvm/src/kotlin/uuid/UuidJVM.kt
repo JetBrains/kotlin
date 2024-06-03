@@ -12,7 +12,7 @@ import kotlin.internal.InlineOnly
 private val secureRandom by lazy { SecureRandom() }
 
 @ExperimentalStdlibApi
-internal actual fun secureRandomUUID(): UUID {
+internal actual fun secureRandomUuid(): UUID {
     val randomBytes = ByteArray(UUID.SIZE_BYTES)
     secureRandom.nextBytes(randomBytes)
     return uuidFromRandomBytes(randomBytes)
@@ -30,7 +30,7 @@ internal actual fun secureRandomUUID(): UUID {
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
 @InlineOnly
-public inline fun java.util.UUID.toKotlinUUID(): UUID =
+public inline fun java.util.UUID.toKotlinUuid(): UUID =
     UUID.fromLongs(mostSignificantBits, leastSignificantBits)
 
 /**
@@ -45,7 +45,7 @@ public inline fun java.util.UUID.toKotlinUUID(): UUID =
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
 @InlineOnly
-public inline fun UUID.toJavaUUID(): java.util.UUID = toLongs { mostSignificantBits, leastSignificantBits ->
+public inline fun UUID.toJavaUuid(): java.util.UUID = toLongs { mostSignificantBits, leastSignificantBits ->
     java.util.UUID(mostSignificantBits, leastSignificantBits)
 }
 
@@ -76,7 +76,7 @@ public inline fun UUID.toJavaUUID(): java.util.UUID = toLongs { mostSignificantB
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
 @InlineOnly
-public inline fun ByteBuffer.getUUID(): UUID {
+public inline fun ByteBuffer.getUuid(): UUID {
     if (position() + 15 >= limit()) {
         throw BufferUnderflowException() // otherwise a partial read could occur
     }
@@ -120,7 +120,7 @@ public inline fun ByteBuffer.getUUID(): UUID {
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
 @InlineOnly
-public inline fun ByteBuffer.getUUID(index: Int): UUID {
+public inline fun ByteBuffer.getUuid(index: Int): UUID {
     if (index < 0) {
         throw IndexOutOfBoundsException("Negative index: $index")
     } else if (index + 15 >= limit()) {
@@ -162,7 +162,7 @@ public inline fun ByteBuffer.getUUID(index: Int): UUID {
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
 @InlineOnly
-public inline fun ByteBuffer.putUUID(uuid: UUID): ByteBuffer = uuid.toLongs { msb, lsb ->
+public inline fun ByteBuffer.putUuid(uuid: UUID): ByteBuffer = uuid.toLongs { msb, lsb ->
     if (position() + 15 >= limit()) {
         throw BufferOverflowException() // otherwise a partial write could occur
     }
@@ -208,7 +208,7 @@ public inline fun ByteBuffer.putUUID(uuid: UUID): ByteBuffer = uuid.toLongs { ms
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
 @InlineOnly
-public inline fun ByteBuffer.putUUID(index: Int, uuid: UUID): ByteBuffer = uuid.toLongs { msb, lsb ->
+public inline fun ByteBuffer.putUuid(index: Int, uuid: UUID): ByteBuffer = uuid.toLongs { msb, lsb ->
     if (index < 0) {
         throw IndexOutOfBoundsException("Negative index: $index")
     } else if (index + 15 >= limit()) {

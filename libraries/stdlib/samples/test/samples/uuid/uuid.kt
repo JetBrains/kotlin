@@ -12,20 +12,20 @@ import kotlin.uuid.*
 class UUIDs {
 
     @Sample
-    fun toKotlinUUID() {
+    fun toKotlinUuid() {
         val urlNamespace = UUID.parse("6ba7b811-9dad-11d1-80b4-00c04fd430c8").toByteArray()
         val url = "https://kotlinlang.org/api/core/kotlin-stdlib/".encodeToByteArray()
         val javaUUID = java.util.UUID.nameUUIDFromBytes(urlNamespace + url)
 
         assertPrints(javaUUID, "49953a09-8fa4-3071-bcd4-d9d3bc84e5b2")
-        assertPrints(javaUUID.toKotlinUUID().toHexString(), "49953a098fa43071bcd4d9d3bc84e5b2")
+        assertPrints(javaUUID.toKotlinUuid().toHexString(), "49953a098fa43071bcd4d9d3bc84e5b2")
     }
 
     @Sample
-    fun toJavaUUID() {
+    fun toJavaUuid() {
         val hexString = "550e8400e29b41d4a716446655440000"
         val kotlinUUID = UUID.parseHex(hexString)
-        val javaUUID = kotlinUUID.toJavaUUID()
+        val javaUUID = kotlinUUID.toJavaUuid()
 
         assertPrints(javaUUID, "550e8400-e29b-41d4-a716-446655440000")
         assertPrints(javaUUID.version(), "4")
@@ -36,7 +36,7 @@ class UUIDs {
         val uuid = UUID.parse("550e8400-e29b-41d4-a716-446655440000")
         val bytes = ByteArray(16)
         val buffer = ByteBuffer.wrap(bytes)
-        buffer.putUUID(uuid)
+        buffer.putUuid(uuid)
 
         // The written 16 bytes are exactly equal to the UUID bytes
         assertPrints(bytes.contentEquals(uuid.toByteArray()), "true")
@@ -47,7 +47,7 @@ class UUIDs {
         val uuid = UUID.parse("550e8400-e29b-41d4-a716-446655440000")
         val bytes = ByteArray(20)
         val buffer = ByteBuffer.wrap(bytes)
-        buffer.putUUID(index = 2, uuid)
+        buffer.putUuid(index = 2, uuid)
 
         // The written 16 bytes are exactly equal to the UUID bytes
         val writtenBytes = bytes.sliceArray(2..<18)
@@ -61,7 +61,7 @@ class UUIDs {
             0xa7.toByte(), 0x16, 0x44, 0x66, 0x55, 0x44, 0x00, 0x00
         )
         val buffer = ByteBuffer.wrap(uuidBytes)
-        val uuid = buffer.getUUID()
+        val uuid = buffer.getUuid()
 
         // The UUID has exactly the same 16 bytes
         assertPrints(uuid.toByteArray().contentEquals(uuidBytes), "true")
@@ -75,7 +75,7 @@ class UUIDs {
             0x41, 0xd4.toByte(), 0xa7.toByte(), 0x16, 0x44, 0x66, 0x55, 0x44, 0x00, 0x00
         )
         val buffer = ByteBuffer.wrap(bytes)
-        val uuid = buffer.getUUID(index = 2)
+        val uuid = buffer.getUuid(index = 2)
 
         // The UUID has exactly the same 16 bytes
         val uuidBytes = bytes.sliceArray(2..<18)

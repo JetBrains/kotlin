@@ -309,7 +309,7 @@ public class UUID internal constructor(
          * @sample samples.uuid.UUIDs.random
          */
         public fun random(): UUID =
-            secureRandomUUID()
+            secureRandomUuid()
 
         /**
          * A Comparator that lexically orders UUIDs.
@@ -335,7 +335,7 @@ public class UUID internal constructor(
 }
 
 @ExperimentalStdlibApi
-internal expect fun secureRandomUUID(): UUID
+internal expect fun secureRandomUuid(): UUID
 
 @ExperimentalStdlibApi
 internal fun uuidFromRandomBytes(randomBytes: ByteArray): UUID {

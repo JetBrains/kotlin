@@ -119,7 +119,7 @@ val jsMainSources by task<Sync> {
             "kotlinx/dom/**",
             "kotlinx/browser/**",
             "kotlin/enums/**",
-            "kotlin/uuid/UUIDJs.kt",
+            "kotlin/uuid/UuidJs.kt",
         )
     }
     from {
