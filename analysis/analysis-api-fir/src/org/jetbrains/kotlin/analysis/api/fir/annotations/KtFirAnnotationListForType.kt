@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KaFirAnnotationListForType private constructor(
     val coneType: ConeKotlinType,
     private val builder: KaSymbolByFirBuilder,
-) : AbstractList<KaAnnotationApplication>(), KaAnnotationList {
-    private val backingAnnotations: List<KaAnnotationApplication> by lazy {
+) : AbstractList<KaAnnotation>(), KaAnnotationList {
+    private val backingAnnotations: List<KaAnnotation> by lazy {
         coneType.customAnnotations.mapIndexed { index, firAnnotation ->
             val containingSymbol = (firAnnotation as? FirAnnotationCall)?.containingDeclarationSymbol
 
@@ -57,11 +57,11 @@ internal class KaFirAnnotationListForType private constructor(
     override val size: Int
         get() = withValidityAssertion { coneType.customAnnotations.size }
 
-    override fun iterator(): Iterator<KaAnnotationApplication> = withValidityAssertion {
+    override fun iterator(): Iterator<KaAnnotation> = withValidityAssertion {
         return backingAnnotations.iterator()
     }
 
-    override fun get(index: Int): KaAnnotationApplication = withValidityAssertion {
+    override fun get(index: Int): KaAnnotation = withValidityAssertion {
         return backingAnnotations[index]
     }
 
@@ -69,7 +69,7 @@ internal class KaFirAnnotationListForType private constructor(
         return backingAnnotations.any { it.classId == classId }
     }
 
-    override fun annotationsByClassId(classId: ClassId): List<KaAnnotationApplication> = withValidityAssertion {
+    override fun annotationsByClassId(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
         return backingAnnotations.filter { it.classId == classId }
     }
 

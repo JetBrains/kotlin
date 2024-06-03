@@ -23,7 +23,7 @@ public typealias KtAnnotated = KaAnnotated
  *
  * @see [KaAnnotationList.annotations]
  */
-public val KaAnnotated.annotations: List<KaAnnotationApplication>
+public val KaAnnotated.annotations: List<KaAnnotation>
     get() = annotationsList
 
 @Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations"))
@@ -44,7 +44,7 @@ public fun KaAnnotated.hasAnnotation(classId: ClassId): Boolean {
  *
  * @see [KaAnnotationList.classIds]
  */
-public fun KaAnnotated.annotationsByClassId(classId: ClassId): List<KaAnnotationApplication> {
+public fun KaAnnotated.annotationsByClassId(classId: ClassId): List<KaAnnotation> {
     return annotationsList.annotationsByClassId(classId)
 }
 

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValueFactory
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationApplicationImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -141,7 +141,7 @@ internal object FirAnnotationValueConverter {
                             }
 
                             KaAnnotationApplicationValue(
-                                KaAnnotationApplicationImpl(
+                                KaAnnotationImpl(
                                     classId = resolvedSymbol.callableId.classId,
                                     psi = psi as? KtCallElement,
                                     useSiteTarget = null,

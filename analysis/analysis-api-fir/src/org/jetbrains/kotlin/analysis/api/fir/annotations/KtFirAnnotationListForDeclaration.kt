@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KaFirAnnotationListForDeclaration private constructor(
     val firSymbol: FirBasedSymbol<*>,
     private val builder: KaSymbolByFirBuilder,
-) : AbstractList<KaAnnotationApplication>(), KaAnnotationList {
+) : AbstractList<KaAnnotation>(), KaAnnotationList {
     private val backingAnnotations by lazy { annotations(firSymbol, builder) }
 
     override val token: KaLifetimeToken
@@ -38,11 +38,11 @@ internal class KaFirAnnotationListForDeclaration private constructor(
     override val size: Int
         get() = withValidityAssertion { backingAnnotations.size }
 
-    override fun iterator(): Iterator<KaAnnotationApplication> = withValidityAssertion {
+    override fun iterator(): Iterator<KaAnnotation> = withValidityAssertion {
         return backingAnnotations.iterator()
     }
 
-    override fun get(index: Int): KaAnnotationApplication = withValidityAssertion {
+    override fun get(index: Int): KaAnnotation = withValidityAssertion {
         return backingAnnotations[index]
     }
 
@@ -50,7 +50,7 @@ internal class KaFirAnnotationListForDeclaration private constructor(
         return hasAnnotation(firSymbol, classId, useSiteSession)
     }
 
-    override fun annotationsByClassId(classId: ClassId): List<KaAnnotationApplication> = withValidityAssertion {
+    override fun annotationsByClassId(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
         return annotationsByClassId(firSymbol, classId, builder)
     }
 

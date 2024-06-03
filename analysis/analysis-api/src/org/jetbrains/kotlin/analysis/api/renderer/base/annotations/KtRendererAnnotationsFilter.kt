@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.analysis.api.renderer.base.annotations
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 
 public interface KaRendererAnnotationsFilter {
-    public fun filter(analysisSession: KaSession, annotation: KaAnnotationApplication, owner: KaAnnotated): Boolean
+    public fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean
 
     public infix fun and(other: KaRendererAnnotationsFilter): KaRendererAnnotationsFilter =
         KaRendererAnnotationsFilter filter@{ annotation, owner ->
@@ -27,35 +27,35 @@ public interface KaRendererAnnotationsFilter {
         }
 
     public object ALL : KaRendererAnnotationsFilter {
-        override fun filter(analysisSession: KaSession, annotation: KaAnnotationApplication, owner: KaAnnotated): Boolean {
+        override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
             return true
         }
     }
 
     public object NO_NULLABILITY : KaRendererAnnotationsFilter {
-        override fun filter(analysisSession: KaSession, annotation: KaAnnotationApplication, owner: KaAnnotated): Boolean {
+        override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
             return annotation.classId?.asSingleFqName() !in NULLABILITY_ANNOTATIONS
         }
     }
 
     public object NO_PARAMETER_NAME : KaRendererAnnotationsFilter {
-        override fun filter(analysisSession: KaSession, annotation: KaAnnotationApplication, owner: KaAnnotated): Boolean {
+        override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
             return annotation.classId?.asSingleFqName() != StandardNames.FqNames.parameterName
         }
     }
 
 
     public object NONE : KaRendererAnnotationsFilter {
-        override fun filter(analysisSession: KaSession, annotation: KaAnnotationApplication, owner: KaAnnotated): Boolean {
+        override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
             return false
         }
     }
 
     public companion object {
         public operator fun invoke(
-            predicate: KaSession.(annotation: KaAnnotationApplication, owner: KaAnnotated) -> Boolean
+            predicate: KaSession.(annotation: KaAnnotation, owner: KaAnnotated) -> Boolean
         ): KaRendererAnnotationsFilter = object : KaRendererAnnotationsFilter {
-            override fun filter(analysisSession: KaSession, annotation: KaAnnotationApplication, owner: KaAnnotated): Boolean {
+            override fun filter(analysisSession: KaSession, annotation: KaAnnotation, owner: KaAnnotated): Boolean {
                 return predicate(analysisSession, annotation, owner)
             }
         }

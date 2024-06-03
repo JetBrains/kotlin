@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.base.annotations.renderers
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValueRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRenderer
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.renderer.render
 public interface KaAnnotationArgumentsRenderer {
     public fun renderAnnotationArguments(
         analysisSession: KaSession,
-        annotation: KaAnnotationApplication,
+        annotation: KaAnnotation,
         owner: KaAnnotated,
         annotationRenderer: KaAnnotationRenderer,
         printer: PrettyPrinter,
@@ -25,7 +25,7 @@ public interface KaAnnotationArgumentsRenderer {
     public object NONE : KaAnnotationArgumentsRenderer {
         override fun renderAnnotationArguments(
             analysisSession: KaSession,
-            annotation: KaAnnotationApplication,
+            annotation: KaAnnotation,
             owner: KaAnnotated,
             annotationRenderer: KaAnnotationRenderer,
             printer: PrettyPrinter,
@@ -35,7 +35,7 @@ public interface KaAnnotationArgumentsRenderer {
     public object IF_ANY : KaAnnotationArgumentsRenderer {
         override fun renderAnnotationArguments(
             analysisSession: KaSession,
-            annotation: KaAnnotationApplication,
+            annotation: KaAnnotation,
             owner: KaAnnotated,
             annotationRenderer: KaAnnotationRenderer,
             printer: PrettyPrinter,

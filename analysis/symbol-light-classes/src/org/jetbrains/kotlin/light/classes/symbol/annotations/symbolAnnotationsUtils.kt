@@ -121,7 +121,7 @@ internal fun KaAnnotatedSymbol.hasJvmWildcardAnnotation(): Boolean = hasAnnotati
 internal fun KaAnnotatedSymbol.findAnnotation(
     classId: ClassId,
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): KaAnnotationApplication? {
+): KaAnnotation? {
     if (!hasAnnotation(classId, useSiteTargetFilter)) return null
 
     return annotationsByClassId(classId, useSiteTargetFilter).firstOrNull()
@@ -141,7 +141,7 @@ internal fun KaAnnotatedSymbol.hasAnnotation(
 internal fun KaAnnotatedSymbol.annotationsByClassId(
     classId: ClassId,
     useSiteTargetFilter: AnnotationUseSiteTargetFilter
-): List<KaAnnotationApplication> {
+): List<KaAnnotation> {
     if (hasAnnotation(classId)) {
         return annotationsByClassId(classId).filter { useSiteTargetFilter.isAllowed(it.useSiteTarget) }
     }

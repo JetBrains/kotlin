@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationApplicationImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -76,14 +76,14 @@ internal fun FirAnnotation.toKtAnnotationApplication(
     builder: KaSymbolByFirBuilder,
     index: Int,
     argumentsFactory: (ClassId?) -> List<KaNamedAnnotationValue>
-): KaAnnotationApplication {
+): KaAnnotation {
     val constructorSymbol = (this as? FirAnnotationCall)?.calleeReference
         ?.toResolvedConstructorSymbol()
         ?.let(builder.functionLikeBuilder::buildConstructorSymbol)
 
     val classId = toAnnotationClassId(builder.rootSession)
 
-    return KaAnnotationApplicationImpl(
+    return KaAnnotationImpl(
         classId = classId,
         psi = psi as? KtCallElement,
         useSiteTarget = useSiteTarget,

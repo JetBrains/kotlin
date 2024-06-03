@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.name.ClassId
  *
  * Annotation owners are usually implement [KaAnnotated]
  */
-public interface KaAnnotationList : List<KaAnnotationApplication>, KaLifetimeOwner {
+public interface KaAnnotationList : List<KaAnnotation>, KaLifetimeOwner {
     @Deprecated("Use the annotation list as a 'List'.")
-    public val annotations: List<KaAnnotationApplication>
+    public val annotations: List<KaAnnotation>
         get() = this
 
     @Deprecated("Use the annotation list as a 'List'.")
-    public val annotationInfos: List<KaAnnotationApplication>
+    public val annotationInfos: List<KaAnnotation>
         get() = this
 
     /**
@@ -43,7 +43,7 @@ public interface KaAnnotationList : List<KaAnnotationApplication>, KaLifetimeOwn
      * annotationsList.annotationsByClassId(classId) == annotationsList.annotations.filter { it.classId == classId }
      * ```
      */
-    public fun annotationsByClassId(classId: ClassId): List<KaAnnotationApplication>
+    public fun annotationsByClassId(classId: ClassId): List<KaAnnotation>
 
     /**
      * A list of annotations [ClassId].

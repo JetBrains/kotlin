@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
@@ -20,7 +20,7 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
     private val firCallableSymbol: FirCallableSymbol<*>,
     private val receiverParameter: FirAnnotationContainer,
     private val builder: KaSymbolByFirBuilder,
-) : AbstractList<KaAnnotationApplication>(), KaAnnotationList {
+) : AbstractList<KaAnnotation>(), KaAnnotationList {
     private val backingAnnotations by lazy { annotations(firCallableSymbol, builder, receiverParameter) }
 
     private val useSiteSession: FirSession
@@ -39,11 +39,11 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
     override val size: Int
         get() = withValidityAssertion { receiverParameter.annotations.size }
 
-    override fun iterator(): Iterator<KaAnnotationApplication> = withValidityAssertion {
+    override fun iterator(): Iterator<KaAnnotation> = withValidityAssertion {
         return backingAnnotations.iterator()
     }
 
-    override fun get(index: Int): KaAnnotationApplication = withValidityAssertion {
+    override fun get(index: Int): KaAnnotation = withValidityAssertion {
         return backingAnnotations[index]
     }
 
@@ -51,7 +51,7 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
         return hasAnnotation(firCallableSymbol, classId, useSiteSession, receiverParameter)
     }
 
-    override fun annotationsByClassId(classId: ClassId, ): List<KaAnnotationApplication> = withValidityAssertion {
+    override fun annotationsByClassId(classId: ClassId, ): List<KaAnnotation> = withValidityAssertion {
         return annotationsByClassId(firCallableSymbol, classId, builder, receiverParameter)
     }
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 import java.util.Objects
 
-class KaAnnotationApplicationImpl(
+class KaAnnotationImpl(
     classId: ClassId?,
     psi: KtCallElement?,
     useSiteTarget: AnnotationUseSiteTarget?,
@@ -32,7 +32,7 @@ class KaAnnotationApplicationImpl(
      */
     constructorSymbol: KaConstructorSymbol?,
     override val token: KaLifetimeToken
-) : KaAnnotationApplication {
+) : KaAnnotation {
     private val backingClassId: ClassId? = classId
 
     override val classId: ClassId?
@@ -67,7 +67,7 @@ class KaAnnotationApplicationImpl(
         get() = withValidityAssertion { backingConstructorSymbol }
 
     override fun equals(other: Any?): Boolean {
-        return this === other || other is KaAnnotationApplicationImpl &&
+        return this === other || other is KaAnnotationImpl &&
                 backingClassId == other.backingClassId &&
                 backingPsi == other.backingPsi &&
                 backingUseSiteTarget == other.backingUseSiteTarget &&

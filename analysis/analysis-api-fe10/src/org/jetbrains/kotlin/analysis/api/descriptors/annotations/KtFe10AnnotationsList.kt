@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classIdForAnnotation
@@ -20,8 +20,8 @@ internal class KaFe10AnnotationList private constructor(
     private val fe10Annotations: Annotations,
     private val analysisContext: Fe10AnalysisContext,
     private val ignoredAnnotations: Set<ClassId> = emptySet()
-) : AbstractList<KaAnnotationApplication>(), KaAnnotationList {
-    private val backingAnnotations: List<KaAnnotationApplication> by lazy {
+) : AbstractList<KaAnnotation>(), KaAnnotationList {
+    private val backingAnnotations: List<KaAnnotation> by lazy {
         buildList {
             fe10Annotations.forEachIndexed { index, annotationDescriptor ->
                 if (annotationDescriptor.classIdForAnnotation !in ignoredAnnotations) {
@@ -45,11 +45,11 @@ internal class KaFe10AnnotationList private constructor(
     override val size: Int
         get() = withValidityAssertion { backingAnnotations.size }
 
-    override fun iterator(): Iterator<KaAnnotationApplication> = withValidityAssertion {
+    override fun iterator(): Iterator<KaAnnotation> = withValidityAssertion {
         return backingAnnotations.iterator()
     }
 
-    override fun get(index: Int): KaAnnotationApplication = withValidityAssertion {
+    override fun get(index: Int): KaAnnotation = withValidityAssertion {
         return backingAnnotations[index]
     }
 
@@ -68,7 +68,7 @@ internal class KaFe10AnnotationList private constructor(
         fe10Annotations.hasAnnotation(classId.asSingleFqName())
     }
 
-    override fun annotationsByClassId(classId: ClassId): List<KaAnnotationApplication> = withValidityAssertion {
+    override fun annotationsByClassId(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
         if (classId in ignoredAnnotations) return@withValidityAssertion emptyList()
 
         fe10Annotations.mapIndexedNotNull { index, annotation ->

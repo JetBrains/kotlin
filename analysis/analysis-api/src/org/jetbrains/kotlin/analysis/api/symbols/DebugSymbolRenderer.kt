@@ -53,7 +53,7 @@ public class DebugSymbolRenderer(
         return prettyPrint { analysisSession.renderSymbol(symbol, this@prettyPrint) }
     }
 
-    public fun renderAnnotationApplication(analysisSession: KaSession, application: KaAnnotationApplication): String {
+    public fun renderAnnotationApplication(analysisSession: KaSession, application: KaAnnotation): String {
         return prettyPrint { analysisSession.renderAnnotationApplication(application, this@prettyPrint) }
     }
 
@@ -269,7 +269,7 @@ public class DebugSymbolRenderer(
         }
     }
 
-    private fun KaSession.renderAnnotationApplication(call: KaAnnotationApplication, printer: PrettyPrinter) {
+    private fun KaSession.renderAnnotationApplication(call: KaAnnotation, printer: PrettyPrinter) {
         with(printer) {
             renderValue(call.classId, printer, renderSymbolsFully = false)
             append('(')
@@ -315,7 +315,7 @@ public class DebugSymbolRenderer(
             is KaNamedAnnotationValue -> renderNamedConstantValue(value, printer)
             is KaInitializerValue -> renderKtInitializerValue(value, printer)
             is KaContextReceiver -> renderContextReceiver(value, printer)
-            is KaAnnotationApplication -> renderAnnotationApplication(value, printer)
+            is KaAnnotation -> renderAnnotationApplication(value, printer)
             is KaAnnotationList -> renderAnnotationsList(value, printer)
             is KtModule -> renderKtModule(value, printer)
             // Other custom values

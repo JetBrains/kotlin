@@ -70,10 +70,10 @@ public typealias KtArrayAnnotationValue = KaArrayAnnotationValue
  * Other annotation used as argument. E.g: `@A(B)` where `B` is annotation too
  */
 public class KaAnnotationApplicationValue @KaAnalysisApiInternals constructor(
-    annotationValue: KaAnnotationApplication,
+    annotationValue: KaAnnotation,
     token: KaLifetimeToken
 ) : KaAnnotationValue(token) {
-    public val annotationValue: KaAnnotationApplication = annotationValue
+    public val annotationValue: KaAnnotation = annotationValue
         get() = withValidityAssertion { field }
 
     override val sourcePsi: KtElement?

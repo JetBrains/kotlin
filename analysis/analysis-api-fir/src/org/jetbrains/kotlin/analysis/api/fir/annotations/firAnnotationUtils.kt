@@ -46,7 +46,7 @@ internal fun annotationsByClassId(
     classId: ClassId,
     builder: KaSymbolByFirBuilder,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): List<KaAnnotationApplication> {
+): List<KaAnnotation> {
     if (firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATION_ARGUMENTS) {
         when (classId) {
             StandardClassIds.Annotations.Target -> annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
@@ -98,8 +98,8 @@ internal fun computeAnnotationArguments(
 private inline fun List<FirAnnotation>.mapIndexedToAnnotationApplication(
     useSiteSession: FirSession,
     classId: ClassId,
-    transformer: (index: Int, annotation: FirAnnotation) -> KaAnnotationApplication?,
-): List<KaAnnotationApplication> = mapIndexedNotNull { index, annotation ->
+    transformer: (index: Int, annotation: FirAnnotation) -> KaAnnotation?,
+): List<KaAnnotation> = mapIndexedNotNull { index, annotation ->
     if (annotation.toAnnotationClassId(useSiteSession) != classId) {
         return@mapIndexedNotNull null
     }
@@ -141,7 +141,7 @@ private fun computeTargetAnnotationArguments(
     return emptyList()
 }
 
-private fun computeKotlinTargetAnnotation(annotation: FirAnnotation, builder: KaSymbolByFirBuilder, index: Int): KaAnnotationApplication {
+private fun computeKotlinTargetAnnotation(annotation: FirAnnotation, builder: KaSymbolByFirBuilder, index: Int): KaAnnotation {
     return annotation.toKtAnnotationApplication(builder, index) {
         computeKotlinTargetAnnotationArguments(annotation, builder)
     }
@@ -153,7 +153,7 @@ private fun computeKotlinTargetAnnotationArguments(annotation: FirAnnotation, bu
     return computeTargetAnnotationArguments(annotation, builder, enumClassId, parameterName) { KotlinTarget.valueOrNull(it)?.name }
 }
 
-private fun computeJavaTargetAnnotation(annotation: FirAnnotation, builder: KaSymbolByFirBuilder, index: Int): KaAnnotationApplication {
+private fun computeJavaTargetAnnotation(annotation: FirAnnotation, builder: KaSymbolByFirBuilder, index: Int): KaAnnotation {
     return annotation.toKtAnnotationApplication(builder, index) {
         computeJavaTargetAnnotationArguments(annotation, builder)
     }
@@ -187,7 +187,7 @@ internal fun annotations(
     firSymbol: FirBasedSymbol<*>,
     builder: KaSymbolByFirBuilder,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): List<KaAnnotationApplication> =
+): List<KaAnnotation> =
     annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapIndexed { index, annotation ->
         annotation.toKtAnnotationApplication(builder, index) { classId ->
             computeAnnotationArguments(firSymbol, annotationContainer, classId, index, builder)

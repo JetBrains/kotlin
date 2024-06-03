@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtCallElement
  * - For types: `fun foo(x: List<@A Int>){}`
  * - Inside another annotation (`B` is annotation here): `@A(B()) fun foo(){}
  */
-public interface KaAnnotationApplication : KaLifetimeOwner {
+public interface KaAnnotation : KaLifetimeOwner {
     /**
      * The [ClassId] of applied annotation. [ClassId] is a fully qualified name on annotation class.
      */
@@ -69,9 +69,11 @@ public interface KaAnnotationApplication : KaLifetimeOwner {
         get() = withValidityAssertion { constructorSymbol?.createPointer() }
 }
 
-public typealias KtAnnotationApplication = KaAnnotationApplication
+public typealias KtAnnotationApplication = KaAnnotation
 
-public typealias KaAnnotationApplicationInfo = KaAnnotationApplication
+public typealias KaAnnotationApplication = KaAnnotation
+
+public typealias KaAnnotationApplicationInfo = KaAnnotation
 
 public typealias KtAnnotationApplicationInfo = KaAnnotationApplicationInfo
 

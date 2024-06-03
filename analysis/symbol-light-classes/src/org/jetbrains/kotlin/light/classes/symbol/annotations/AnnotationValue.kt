@@ -44,7 +44,7 @@ internal data class AnnotationApplication(
     val index: Int?,
 )
 
-internal fun KaAnnotationApplication.toDumbLightClassAnnotationApplication(): AnnotationApplication {
+internal fun KaAnnotation.toDumbLightClassAnnotationApplication(): AnnotationApplication {
     val value = AnnotationValue.Annotation(
         classId,
         constructorSymbolPointer = null,
@@ -55,7 +55,7 @@ internal fun KaAnnotationApplication.toDumbLightClassAnnotationApplication(): An
     return AnnotationApplication(value, true, useSiteTarget, isCallWithArguments, index)
 }
 
-internal fun KaAnnotationApplication.toLightClassAnnotationApplication(): AnnotationApplication {
+internal fun KaAnnotation.toLightClassAnnotationApplication(): AnnotationApplication {
     return AnnotationApplication(toLightClassAnnotationValue(), false, useSiteTarget, isCallWithArguments, index)
 }
 
@@ -156,7 +156,7 @@ internal fun KaKClassAnnotationValue.toLightClassAnnotationValue(): AnnotationVa
     }
 }
 
-internal fun KaAnnotationApplication.toLightClassAnnotationValue(): AnnotationValue.Annotation {
+internal fun KaAnnotation.toLightClassAnnotationValue(): AnnotationValue.Annotation {
     val arguments = arguments.map { AnnotationArgument(it.name, it.expression.toLightClassAnnotationValue()) }
     return AnnotationValue.Annotation(classId, constructorSymbol?.createPointer(), arguments, psi)
 }

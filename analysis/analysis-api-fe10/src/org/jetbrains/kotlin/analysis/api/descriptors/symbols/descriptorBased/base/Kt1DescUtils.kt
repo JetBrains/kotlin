@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.KaFe10PsiD
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.types.*
 import org.jetbrains.kotlin.analysis.api.impl.base.KaContextReceiverImpl
-import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationApplicationImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaAnnotationImpl
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
@@ -494,7 +494,7 @@ internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisC
 
         is AnnotationValue -> {
             KaAnnotationApplicationValue(
-                KaAnnotationApplicationImpl(
+                KaAnnotationImpl(
                     value.annotationClass?.classId,
                     psi = null,
                     useSiteTarget = null,
@@ -683,8 +683,8 @@ internal fun createKtInitializerValue(
 internal fun AnnotationDescriptor.toKtAnnotationApplication(
     analysisContext: Fe10AnalysisContext,
     index: Int,
-): KaAnnotationApplication {
-    return KaAnnotationApplicationImpl(
+): KaAnnotation {
+    return KaAnnotationImpl(
         classId = classIdForAnnotation,
         psi = psi,
         useSiteTarget = useSiteTarget,
