@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.fir.test.cases.generated.cases.components.callResolver;
+package org.jetbrains.kotlin.analysis.api.fir.test.cases.generated.cases.components.resolver;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCallTest;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi")
 @TestDataPath("$PROJECT_ROOT")
-public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated extends AbstractResolveCallTest {
+public class FirIdeNormalAnalysisScriptSourceModuleResolveCandidatesTestGenerated extends AbstractResolveCandidatesTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {

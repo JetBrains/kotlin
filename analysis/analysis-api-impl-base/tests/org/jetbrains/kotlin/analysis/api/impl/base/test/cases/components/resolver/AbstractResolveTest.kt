@@ -3,11 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver
+package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveTest.Directives.IGNORE_STABILITY
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveTest.Directives.IGNORE_STABILITY_K1
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveTest.Directives.IGNORE_STABILITY_K2
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderFrontendIndependentKClassNameOf
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -130,9 +127,9 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
     }
 
     protected fun RegisteredDirectives.doNotCheckSymbolRestoreDirective(): StringDirective? = findSpecificDirective(
-        commonDirective = IGNORE_STABILITY,
-        k1Directive = IGNORE_STABILITY_K1,
-        k2Directive = IGNORE_STABILITY_K2,
+        commonDirective = Directives.IGNORE_STABILITY,
+        k1Directive = Directives.IGNORE_STABILITY_K1,
+        k2Directive = Directives.IGNORE_STABILITY_K2,
     )
 
     protected fun ignoreStabilityIfNeeded(directives: RegisteredDirectives, body: () -> Unit) {
