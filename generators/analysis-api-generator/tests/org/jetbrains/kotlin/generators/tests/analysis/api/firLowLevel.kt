@@ -102,6 +102,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("lazyResolveStdlibSources")
         }
 
+        testClass<AbstractBuiltinsBinaryLazyDeclarationResolveTest> {
+            model("lazyResolveBuiltinsBinary")
+        }
+
         testClass<AbstractSourceLazyDeclarationResolveScopeBasedTest> {
             model("lazyResolveScopes", pattern = TestGeneratorUtil.KT)
         }
