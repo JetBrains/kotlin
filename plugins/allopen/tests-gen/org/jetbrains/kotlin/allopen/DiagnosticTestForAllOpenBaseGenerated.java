@@ -30,6 +30,12 @@ public class DiagnosticTestForAllOpenBaseGenerated extends AbstractDiagnosticTes
   }
 
   @Test
+  @TestMetadata("kjkHierarchy.kt")
+  public void testKjkHierarchy() {
+    runTest("plugins/allopen/testData/diagnostics/kjkHierarchy.kt");
+  }
+
+  @Test
   @TestMetadata("kt54260.kt")
   public void testKt54260() {
     runTest("plugins/allopen/testData/diagnostics/kt54260.kt");
