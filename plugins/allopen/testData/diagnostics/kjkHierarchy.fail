@@ -1,1 +1,0 @@
-java.lang.ClassCastException: org.jetbrains.kotlin.fir.types.impl.FirUserTypeRefImpl cannot be cast to org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
