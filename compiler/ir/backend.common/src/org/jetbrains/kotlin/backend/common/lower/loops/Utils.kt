@@ -197,16 +197,6 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
         }
     }
 
-// For a class, returns `this`,
-// For a type parameter, finds nearest class ancestor, assuming linear inheritance.
-private fun IrClassifierSymbol.selfOrSingleSuperClass(): IrClassSymbol =
-    if (this is IrClassSymbol && !owner.isInterface)
-        this
-    else
-        superTypes().singleOrNull()?.classifierOrFail?.selfOrSingleSuperClass()
-            ?: error("Traversing of exactly one supertype is supported. Feel free to support more, if necessary.")
-
-
 private fun IrExpression.makeIrCallConversionToTargetClass(
     receiver: IrExpression,
     sourceClass: IrClass,

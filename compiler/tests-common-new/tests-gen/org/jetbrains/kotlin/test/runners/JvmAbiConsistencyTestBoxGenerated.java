@@ -43061,6 +43061,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("smartCastOnBothEndsGeneric.kt")
+      public void testSmartCastOnBothEndsGeneric() {
+        runTest("compiler/testData/codegen/box/ranges/contains/smartCastOnBothEndsGeneric.kt");
+      }
+
+      @Test
       @TestMetadata("uintInUByteRangeWithPossibleOverflow.kt")
       public void testUintInUByteRangeWithPossibleOverflow() {
         runTest("compiler/testData/codegen/box/ranges/contains/uintInUByteRangeWithPossibleOverflow.kt");
