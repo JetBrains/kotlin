@@ -57788,6 +57788,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Test
+    @TestMetadata("generic.kt")
+    public void testGeneric() {
+      runTest("compiler/testData/codegen/box/unsignedTypes/generic.kt");
+    }
+
+    @Test
     @TestMetadata("implicitIntegerCoercionNamedArg.kt")
     public void testImplicitIntegerCoercionNamedArg() {
       runTest("compiler/testData/codegen/box/unsignedTypes/implicitIntegerCoercionNamedArg.kt");
