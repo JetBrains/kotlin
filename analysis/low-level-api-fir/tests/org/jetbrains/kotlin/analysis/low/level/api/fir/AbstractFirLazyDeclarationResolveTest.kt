@@ -25,7 +25,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        doLazyResolveTest(mainFile, testServices, renderAllFiles = true) { firResolveSession ->
+        doLazyResolveTest(mainFile, testServices, outputRenderingMode = OutputRenderingMode.ALL_FILES_FROM_ALL_MODULES) { firResolveSession ->
             findFirDeclarationToResolve(mainFile, testServices, firResolveSession)
         }
     }
