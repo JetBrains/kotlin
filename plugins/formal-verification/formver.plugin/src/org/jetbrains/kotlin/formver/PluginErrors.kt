@@ -23,6 +23,8 @@ object PluginErrors {
     val POSSIBLE_INDEX_OUT_OF_BOUND by warning2<PsiElement, String, String>()
     val INVALID_SUBLIST_RANGE by warning2<PsiElement, String, String>()
 
+    val UNIQUENESS_VIOLATION by error1<PsiElement, String>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FormalVerificationPluginErrorMessages)
     }

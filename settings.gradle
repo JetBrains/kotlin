@@ -177,7 +177,8 @@ include ":kotlin-formver-compiler-plugin",
         ":kotlin-formver-compiler-plugin.common",
         ":kotlin-formver-compiler-plugin.core",
         ":kotlin-formver-compiler-plugin.plugin",
-        ":kotlin-formver-compiler-plugin.viper"
+        ":kotlin-formver-compiler-plugin.viper",
+        ":kotlin-formver-compiler-plugin.uniqueness"
 
 include ":kotlin-noarg-compiler-plugin",
         ":kotlin-noarg-compiler-plugin.embeddable",
@@ -792,6 +793,7 @@ project(':kotlin-formver-compiler-plugin.core').projectDir = "$rootDir/plugins/f
 project(':kotlin-formver-compiler-plugin.plugin').projectDir = "$rootDir/plugins/formal-verification/formver.plugin" as File
 project(':kotlin-formver-compiler-plugin.viper').projectDir = "$rootDir/plugins/formal-verification/formver.viper" as File
 project(':kotlin-formver-compiler-plugin.annotations').projectDir = "$rootDir/plugins/formal-verification/formver.annotations" as File
+project(':kotlin-formver-compiler-plugin.uniqueness').projectDir = "$rootDir/plugins/formal-verification/formver.uniqueness" as File
 
 project(':kotlin-lombok-compiler-plugin').projectDir = "$rootDir/plugins/lombok" as File
 project(':kotlin-lombok-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/lombok/lombok.embeddable" as File

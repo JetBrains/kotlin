@@ -491,4 +491,46 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
       runTest("plugins/formal-verification/testData/diagnostics/no_contracts/when.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("plugins/formal-verification/testData/diagnostics/uniqueness")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Uniqueness {
+    @Test
+    public void testAllFilesPresentInUniqueness() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/uniqueness"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("plugins/formal-verification/testData/diagnostics/uniqueness/bad_unique")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Bad_unique {
+      @Test
+      public void testAllFilesPresentInBad_unique() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/uniqueness/bad_unique"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("direct_pass_shared_to_unique.kt")
+      public void testDirect_pass_shared_to_unique() {
+        runTest("plugins/formal-verification/testData/diagnostics/uniqueness/bad_unique/direct_pass_shared_to_unique.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("plugins/formal-verification/testData/diagnostics/uniqueness/good_unique")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Good_unique {
+      @Test
+      public void testAllFilesPresentInGood_unique() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/uniqueness/good_unique"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("shared_to_shared.kt")
+      public void testShared_to_shared() {
+        runTest("plugins/formal-verification/testData/diagnostics/uniqueness/good_unique/shared_to_shared.kt");
+      }
+    }
+  }
 }

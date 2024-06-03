@@ -14,6 +14,7 @@ repositories {
 dependencies {
     embedded(project(":kotlin-formver-compiler-plugin.cli")) { isTransitive = false }
     embedded(project(":kotlin-formver-compiler-plugin.common")) { isTransitive = false }
+    embedded(project(":kotlin-formver-compiler-plugin.uniqueness")) { isTransitive = false }
     embedded(project(":kotlin-formver-compiler-plugin.core")) { isTransitive = false }
     embedded(project(":kotlin-formver-compiler-plugin.plugin")) { isTransitive = false }
     embedded(project(":kotlin-formver-compiler-plugin.viper")) { isTransitive = true }
@@ -26,6 +27,8 @@ dependencies {
 
     testImplementation(project(":kotlin-formver-compiler-plugin.plugin"))
     testImplementation(project(":kotlin-formver-compiler-plugin.common"))
+
+    testImplementation(project(":kotlin-formver-compiler-plugin.uniqueness"))
 
     testRuntimeOnly(project(":kotlin-formver-compiler-plugin.core"))
     testRuntimeOnly(project(":kotlin-formver-compiler-plugin.viper"))

@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":kotlin-formver-compiler-plugin.core"))
+    compileOnly(project(":kotlin-formver-compiler-plugin.uniqueness"))
     compileOnly(project(":kotlin-formver-compiler-plugin.common"))
     compileOnly(project(":kotlin-formver-compiler-plugin.viper"))
 

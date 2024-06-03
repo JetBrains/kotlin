@@ -37,6 +37,8 @@ jobs:
       uses: gradle/gradle-build-action@v2
     - name: Run test without contract
       run: ./gradlew :kotlin-formver-compiler-plugin:test --tests org.jetbrains.kotlin.formver.plugin.runners.FirLightTreeFormVerPluginDiagnosticsTestGenerated\$No_contracts
+    - name: Run test for unique check
+      run: ./gradlew :kotlin-formver-compiler-plugin:test --tests org.jetbrains.kotlin.formver.plugin.runners.FirLightTreeFormVerPluginDiagnosticsTestGenerated\$Uniqueness
     - name: Report failing test results
       uses: mikepenz/action-junit-report@v4
       if: failure()
