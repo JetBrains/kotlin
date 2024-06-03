@@ -40,6 +40,7 @@ public val KaAnnotated.annotationInfos: List<KaAnnotationApplicationInfo>
  *
  * @see [KaAnnotationList.contains]
  */
+@Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("classId in annotations"))
 public fun KaAnnotated.hasAnnotation(classId: ClassId): Boolean {
     return annotations.contains(classId)
 }
@@ -49,6 +50,7 @@ public fun KaAnnotated.hasAnnotation(classId: ClassId): Boolean {
  *
  * @see [KaAnnotationList.classIds]
  */
+@Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations[classId]"))
 public fun KaAnnotated.annotationsByClassId(classId: ClassId): List<KaAnnotation> {
     return annotations[classId]
 }
@@ -58,5 +60,6 @@ public fun KaAnnotated.annotationsByClassId(classId: ClassId): List<KaAnnotation
  *
  * @see [KaAnnotationList.classIds]
  */
+@Deprecated("Use 'annotations' instead.", replaceWith = ReplaceWith("annotations.classIds"))
 public val KaAnnotated.annotationClassIds: Collection<ClassId>
     get() = annotations.classIds

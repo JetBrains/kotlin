@@ -71,9 +71,9 @@ class KaAnnotationImpl(
                 backingClassId == other.backingClassId &&
                 backingPsi == other.backingPsi &&
                 backingUseSiteTarget == other.backingUseSiteTarget &&
-                backingArguments == other.backingArguments &&
                 backingIndex == other.backingIndex &&
-                backingConstructorSymbol == other.backingConstructorSymbol
+                backingConstructorSymbol == other.backingConstructorSymbol &&
+                backingArguments == other.backingArguments
     }
 
     override fun hashCode(): Int {
@@ -81,15 +81,15 @@ class KaAnnotationImpl(
             backingClassId,
             backingPsi,
             backingUseSiteTarget,
-            backingArguments,
             backingIndex,
-            backingConstructorSymbol
+            backingConstructorSymbol,
+            backingArguments,
         )
     }
 
     override fun toString(): String {
         return "KaAnnotationApplicationWithArgumentsInfo(classId=" + backingClassId + ", psi=" + backingPsi + ", useSiteTarget=" +
-                backingUseSiteTarget + ", arguments=" + backingArguments + ", index=" + backingIndex + ", constructorSymbol=" +
-                backingConstructorSymbol + ")"
+                backingUseSiteTarget + ", index=" + backingIndex + ", constructorSymbol=" + backingConstructorSymbol + ", arguments=" +
+                backingArguments + ")"
     }
 }
