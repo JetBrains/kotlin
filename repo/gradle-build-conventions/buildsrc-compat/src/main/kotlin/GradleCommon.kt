@@ -159,7 +159,6 @@ private val internalPlugins = setOf(
     "android-test-fixes",
     "gradle-warnings-detector",
     "kotlin-compiler-args-properties",
-    "fus-statistics-gradle-plugin",
 )
 
 private val testPlugins = internalPlugins + setOf(
@@ -657,7 +656,6 @@ fun Project.addBomCheckTask() {
             project(":gradle:kotlin-compiler-args-properties").path,
             project(":kotlin-gradle-build-metrics").path,
             project(":kotlin-gradle-statistics").path,
-            project(":libraries:tools:gradle:fus-statistics-gradle-plugin").path
         )
         val projectPath = this@addBomCheckTask.path
 
