@@ -21,6 +21,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends AbstractFirLightTreeWithActualizerDiagnosticsTest {
   @Test
+  @TestMetadata("abstractEnumInIr.kt")
+  public void testAbstractEnumInIr() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/abstractEnumInIr.kt");
+  }
+
+  @Test
   @TestMetadata("actualClassDelegationWithImplicitType.kt")
   public void testActualClassDelegationWithImplicitType() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassDelegationWithImplicitType.kt");
