@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in Foo) val name: kotlin.String [fake.kt]
+KtNameReferenceExpression(62,66): 'name'
+  KtSimpleNameReference:
+    (in Foo) val name: kotlin.String [fake.kt]

@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  nums: kotlin.IntArray
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(263,267): 'nums'
+  KtSimpleNameReference:
+    nums: kotlin.IntArray
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

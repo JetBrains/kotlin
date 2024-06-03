@@ -1,5 +1,6 @@
-KtSimpleNameReference:
-  (in JavaClass) val JavaClass.sub: JavaSubClass!
-
-SyntheticPropertyAccessorReference:
-  (in JavaClass) open fun getSub(): JavaSubClass!
+KtNameReferenceExpression(76,79): 'sub'
+  KtSimpleNameReference:
+    (in JavaClass) val JavaClass.sub: JavaSubClass!
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun getSub(): JavaSubClass!

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in foo) class CC<T>
+KtNameReferenceExpression(54,56): 'CC'
+  KtSimpleNameReference:
+    (in foo) class CC<T>

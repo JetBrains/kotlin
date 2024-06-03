@@ -1,1 +1,3 @@
-KtPropertyDelegationMethodsReference: Nothing (Unresolved reference)
+KtPropertyDelegate(13,21): 'by Bar()'
+  KtPropertyDelegationMethodsReference:
+    Nothing (Unresolved reference)

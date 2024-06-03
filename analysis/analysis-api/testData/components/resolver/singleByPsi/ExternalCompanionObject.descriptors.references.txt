@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in dependency.C) companion object
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(48,57): 'Companion'
+  KtSimpleNameReference:
+    (in dependency.C) companion object
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  obj: kotlin.Any
+KtNameReferenceExpression(173,176): 'obj'
+  KtSimpleNameReference:
+    obj: kotlin.Any

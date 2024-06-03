@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in javax.swing.SwingUtilities) open fun invokeLater(p0: java.lang.Runnable!)
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(35,46): 'invokeLater'
+  KtSimpleNameReference:
+    (in javax.swing.SwingUtilities) open fun invokeLater(p0: java.lang.Runnable!)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -1,2 +1,3 @@
-KtArrayAccessReference:
-  (in ROOT) fun kotlin.Int.set(index: kotlin.Int, value: kotlin.Int): kotlin.Int
+KtArrayAccessExpression(59,63): '1[2]'
+  KtArrayAccessReference:
+    (in ROOT) fun kotlin.Int.set(index: kotlin.Int, value: kotlin.Int): kotlin.Int

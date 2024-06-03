@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  x: kotlin.Int
+KtNameReferenceExpression(68,69): 'x'
+  KtSimpleNameReference:
+    x: kotlin.Int

@@ -1,1 +1,3 @@
-KtSimpleNameReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(86,93): 'arrayOf'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

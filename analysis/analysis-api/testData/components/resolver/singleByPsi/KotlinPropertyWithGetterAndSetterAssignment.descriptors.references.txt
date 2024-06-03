@@ -1,63 +1,86 @@
 <caret_1>:
-  KtSimpleNameReference:
-    (in A) var something: kotlin.Int
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+  KtNameReferenceExpression(107,116): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
 
 <caret_2>:
-  KtSimpleNameReference:
-    (in A) var something: kotlin.Int
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+  KtNameReferenceExpression(124,133): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
 
 <caret_3>:
-  KtSimpleNameReference:
-    (in A) var something: kotlin.Int
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+  KtNameReferenceExpression(144,153): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
 
 <caret_4>:
-  KtSimpleNameReference:
-    (in A) var something: kotlin.Int
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+  KtNameReferenceExpression(165,174): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
 
 <caret_5>:
-  KtSimpleNameReference:
-    (in A) var something: kotlin.Int
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+  KtNameReferenceExpression(185,194): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
 
 <caret_6>:
-  KtSimpleNameReference:
-    (in A) var something: kotlin.Int
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+  KtNameReferenceExpression(200,209): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
 
 <caret_7>:
-  KtSimpleNameReference:
-    (in A) var something: kotlin.Int
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+  KtNameReferenceExpression(217,226): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
 
 <caret_8>:
-  KtSimpleNameReference:
-    (in A) var something: kotlin.Int
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+  KtNameReferenceExpression(235,244): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
 
 <caret_9>:
-  KtSimpleNameReference:
-    (in A) var something: kotlin.Int
-  
-  SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+  KtNameReferenceExpression(257,266): 'something'
+    KtSimpleNameReference:
+      (in A) var something: kotlin.Int
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)

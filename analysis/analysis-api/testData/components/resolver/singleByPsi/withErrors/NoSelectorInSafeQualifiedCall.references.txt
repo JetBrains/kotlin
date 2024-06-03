@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in testing) fun makeFoo(): testing.Foo
+KtNameReferenceExpression(108,115): 'makeFoo'
+  KtSimpleNameReference:
+    (in testing) fun makeFoo(): testing.Foo

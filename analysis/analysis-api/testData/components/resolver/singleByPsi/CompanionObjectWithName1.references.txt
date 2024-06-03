@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in my.sample.Inner) companion object Inner
+KtNameReferenceExpression(65,70): 'Inner'
+  KtSimpleNameReference:
+    (in my.sample.Inner) companion object Inner

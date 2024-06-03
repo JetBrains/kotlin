@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in test.pkg.Context) open fun getString(id: kotlin.Int): kotlin.String!
+KtNameReferenceExpression(270,279): 'getString'
+  KtSimpleNameReference:
+    (in test.pkg.Context) open fun getString(id: kotlin.Int): kotlin.String!

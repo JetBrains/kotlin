@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in test.A) constructor()
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(69,70): 'A'
+  KtSimpleNameReference:
+    (in test.A) constructor()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

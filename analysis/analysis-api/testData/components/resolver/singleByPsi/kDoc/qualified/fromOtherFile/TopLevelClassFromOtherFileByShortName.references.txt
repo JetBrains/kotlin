@@ -1,2 +1,3 @@
-KDocReference:
-  (in b) class BB
+KDocName(34,36): 'BB'
+  KDocReference:
+    (in b) class BB

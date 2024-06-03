@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  package my.sample
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(58,64): 'sample'
+  KtSimpleNameReference:
+    package my.sample
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

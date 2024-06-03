@@ -1,4 +1,5 @@
-KtSimpleNameReference:
-  0: (in ROOT) fun <T> function(t: T, a: kotlin.Char)
-  1: (in ROOT) fun <U> function(u: U, b: kotlin.Boolean)
-  2: (in ROOT) fun <V> function(v: V, c: kotlin.String)
+KtNameReferenceExpression(128,136): 'function'
+  KtSimpleNameReference:
+    0: (in ROOT) fun <T> function(t: T, a: kotlin.Char)
+    1: (in ROOT) fun <U> function(u: U, b: kotlin.Boolean)
+    2: (in ROOT) fun <V> function(v: V, c: kotlin.String)

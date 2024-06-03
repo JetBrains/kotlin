@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in t.A) companion object : t.Trait
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(144,145): 'A'
+  KtSimpleNameReference:
+    (in t.A) companion object : t.Trait
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

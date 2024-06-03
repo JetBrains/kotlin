@@ -1,6 +1,10 @@
-KtSimpleNameReference:
-  T
+KtNameReferenceExpression(88,89): 'T'
+  KtSimpleNameReference:
+    T
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
 
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
-
-KtInvokeFunctionReference: Nothing (Unresolved reference)
+KtCallExpression(80,90): 'println(T)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

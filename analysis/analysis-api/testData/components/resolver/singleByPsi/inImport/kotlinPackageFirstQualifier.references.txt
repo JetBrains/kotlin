@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  package kotlin
+KtNameReferenceExpression(7,13): 'kotlin'
+  KtSimpleNameReference:
+    package kotlin

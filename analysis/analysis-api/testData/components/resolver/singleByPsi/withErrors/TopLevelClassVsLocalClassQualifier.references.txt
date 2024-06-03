@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in <local>: testFoo) class Conflict
+KtNameReferenceExpression(70,78): 'Conflict'
+  KtSimpleNameReference:
+    (in <local>: testFoo) class Conflict

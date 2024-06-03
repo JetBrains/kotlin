@@ -1,39 +1,49 @@
 <caret_constructor_MyClass>:
-  KtSimpleNameReference:
-    (in test) class MyClass
+  KtNameReferenceExpression(109,116): 'MyClass'
+    KtSimpleNameReference:
+      (in test) class MyClass
 
 <caret_constructor_MyClass_fqn>:
-  KtSimpleNameReference:
-    (in test) class MyClass
+  KtNameReferenceExpression(139,146): 'MyClass'
+    KtSimpleNameReference:
+      (in test) class MyClass
 
 <caret_constructor_List>:
-  KtSimpleNameReference:
-    (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+  KtNameReferenceExpression(165,169): 'List'
+    KtSimpleNameReference:
+      (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 <caret_constructor_MutableList>:
-  KtSimpleNameReference:
-    (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
+  KtNameReferenceExpression(196,207): 'MutableList'
+    KtSimpleNameReference:
+      (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
 
 <caret_constructor_List_MyClass>:
-  KtSimpleNameReference:
-    (in test) class MyClass
+  KtNameReferenceExpression(240,247): 'MyClass'
+    KtSimpleNameReference:
+      (in test) class MyClass
 
 <caret_staticMember_MyClass>:
-  KtSimpleNameReference:
-    (in test) class MyClass
+  KtNameReferenceExpression(303,310): 'MyClass'
+    KtSimpleNameReference:
+      (in test) class MyClass
 
 <caret_staticMember_MyClass_fqn>:
-  KtSimpleNameReference:
-    (in test) class MyClass
+  KtNameReferenceExpression(346,353): 'MyClass'
+    KtSimpleNameReference:
+      (in test) class MyClass
 
 <caret_staticMember_List>:
-  KtSimpleNameReference:
-    (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+  KtNameReferenceExpression(385,389): 'List'
+    KtSimpleNameReference:
+      (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
 
 <caret_staticMember_MutableList>:
-  KtSimpleNameReference:
-    (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
+  KtNameReferenceExpression(429,440): 'MutableList'
+    KtSimpleNameReference:
+      (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>
 
 <caret_staticMember_List_MyClass>:
-  KtSimpleNameReference:
-    (in test) class MyClass
+  KtNameReferenceExpression(486,493): 'MyClass'
+    KtSimpleNameReference:
+      (in test) class MyClass

@@ -1,23 +1,29 @@
 <caret_1>:
-  KDocReference:
-    package one
+  KDocName(54,57): 'one'
+    KDocReference:
+      package one
 
 <caret_2>:
-  KDocReference:
-    package one.two
+  KDocName(71,78): 'one.two'
+    KDocReference:
+      package one.two
 
 <caret_3>:
-  KDocReference:
-    (in one.two) class Foo
+  KDocName(91,94): 'Foo'
+    KDocReference:
+      (in one.two) class Foo
 
 <caret_4>:
-  KDocReference:
-    (in one.two) class Foo
+  KDocName(104,115): 'one.two.Foo'
+    KDocReference:
+      (in one.two) class Foo
 
 <caret_5>:
-  KDocReference:
-    package one
+  KDocName(128,131): 'one'
+    KDocReference:
+      package one
 
 <caret_6>:
-  KDocReference:
-    package one.two
+  KDocName(149,156): 'one.two'
+    KDocReference:
+      package one.two

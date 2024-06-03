@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in ROOT) class Foo : A
+KtLabelReferenceExpression(76,80): '@Foo'
+  KtSimpleNameReference:
+    (in ROOT) class Foo : A

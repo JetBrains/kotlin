@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(86,93): 'arrayOf'
+  KtSimpleNameReference:
+    (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

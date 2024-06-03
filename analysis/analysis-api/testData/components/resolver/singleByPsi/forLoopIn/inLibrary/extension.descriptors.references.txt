@@ -1,4 +1,5 @@
-KtForLoopInReference:
-  0: (in kotlin.collections.CharIterator) override operator fun next(): kotlin.Char
-  1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
-  2: (in kotlin.text) operator fun kotlin.CharSequence.iterator(): kotlin.collections.CharIterator
+KtForExpression(30,46): 'for (i in "") {}'
+  KtForLoopInReference:
+    0: (in kotlin.collections.CharIterator) override operator fun next(): kotlin.Char
+    1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+    2: (in kotlin.text) operator fun kotlin.CharSequence.iterator(): kotlin.collections.CharIterator

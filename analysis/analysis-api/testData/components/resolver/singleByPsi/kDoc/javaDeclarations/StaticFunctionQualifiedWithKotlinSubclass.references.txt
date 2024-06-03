@@ -1,1 +1,3 @@
-KDocReference: Nothing (Unresolved reference)
+KDocName(85,106): 'KotlinChild.staticFun'
+  KDocReference:
+    Nothing (Unresolved reference)

@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(62,68): 'equals'
+  KtSimpleNameReference:
+    (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

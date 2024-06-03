@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in <local>: test.Conflict) constructor()
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(92,100): 'Conflict'
+  KtSimpleNameReference:
+    (in <local>: test.Conflict) constructor()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

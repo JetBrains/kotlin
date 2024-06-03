@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>
+KtNameReferenceExpression(132,136): 'List'
+  KtSimpleNameReference:
+    (in kotlin.collections) interface List<out E> : kotlin.collections.Collection<E>

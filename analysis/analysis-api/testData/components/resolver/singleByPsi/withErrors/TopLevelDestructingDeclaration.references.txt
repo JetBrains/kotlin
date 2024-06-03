@@ -1,1 +1,3 @@
-KtDestructuringDeclarationReference: Nothing (Unresolved reference)
+KtDestructuringDeclarationEntry(120,124): 'val1'
+  KtDestructuringDeclarationReference:
+    Nothing (Unresolved reference)

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in generated) fun kotlin.String.generatedTopLevelExtensionFunction1(boolean: kotlin.Boolean): kotlin.Int [origin = SOURCE]
+KtNameReferenceExpression(73,108): 'generatedTopLevelExtensionFunction1'
+  KtSimpleNameReference:
+    (in generated) fun kotlin.String.generatedTopLevelExtensionFunction1(boolean: kotlin.Boolean): kotlin.Int [origin = SOURCE]

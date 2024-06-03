@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  package my.sample
+KtNameReferenceExpression(58,64): 'sample'
+  KtSimpleNameReference:
+    package my.sample

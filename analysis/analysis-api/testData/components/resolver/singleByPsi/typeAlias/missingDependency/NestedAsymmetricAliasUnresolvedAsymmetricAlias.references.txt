@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in library4.MyInterface) fun check(list: library3.AsymmetricAlias2<library1.IntAlias /* = kotlin.Int */, kotlin.String> /* = kotlin.collections.List<kotlin.String> */)
+KtNameReferenceExpression(176,181): 'check'
+  KtSimpleNameReference:
+    (in library4.MyInterface) fun check(list: library3.AsymmetricAlias2<library1.IntAlias /* = kotlin.Int */, kotlin.String> /* = kotlin.collections.List<kotlin.String> */)

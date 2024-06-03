@@ -1,2 +1,3 @@
-KDocReference:
-  (in C.X) class YY
+KDocName(100,104): 'X.YY'
+  KDocReference:
+    (in C.X) class YY

@@ -1,1 +1,3 @@
-KtArrayAccessReference: Nothing (Unresolved reference)
+KtArrayAccessExpression(119,123): 'a[2]'
+  KtArrayAccessReference:
+    Nothing (Unresolved reference)

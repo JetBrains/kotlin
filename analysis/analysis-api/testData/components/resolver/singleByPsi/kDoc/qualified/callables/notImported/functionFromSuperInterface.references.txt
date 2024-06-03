@@ -1,2 +1,3 @@
-KDocReference:
-  (in foo.Bar) fun foo()
+KDocName(48,59): 'foo.Foo.foo'
+  KDocReference:
+    (in foo.Bar) fun foo()

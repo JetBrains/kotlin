@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in ROOT) val foo: kotlin.String
+KtNameReferenceExpression(140,143): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) val foo: kotlin.String

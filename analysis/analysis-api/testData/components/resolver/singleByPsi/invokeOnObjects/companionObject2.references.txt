@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in foo.Foo) companion object
+KtNameReferenceExpression(133,136): 'Foo'
+  KtSimpleNameReference:
+    (in foo.Foo) companion object

@@ -1,2 +1,3 @@
-KDocReference:
-  (in ClassWithCompanion.Companion) fun foo()
+KDocName(34,56): 'ClassWithCompanion.foo'
+  KDocReference:
+    (in ClassWithCompanion.Companion) fun foo()

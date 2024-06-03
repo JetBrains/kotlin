@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in kotlin.Enum) val name: kotlin.String
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(54,58): 'name'
+  KtSimpleNameReference:
+    (in kotlin.Enum) val name: kotlin.String
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

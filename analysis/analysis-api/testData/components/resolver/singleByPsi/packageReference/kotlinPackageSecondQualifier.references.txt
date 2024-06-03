@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  package kotlin.text
+KtNameReferenceExpression(29,33): 'text'
+  KtSimpleNameReference:
+    package kotlin.text

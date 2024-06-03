@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in Dependency.Nested) open fun foo()
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(95,98): 'foo'
+  KtSimpleNameReference:
+    (in Dependency.Nested) open fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin.String) open val length: kotlin.Int
+KtNameReferenceExpression(51,57): 'length'
+  KtSimpleNameReference:
+    (in kotlin.String) open val length: kotlin.Int

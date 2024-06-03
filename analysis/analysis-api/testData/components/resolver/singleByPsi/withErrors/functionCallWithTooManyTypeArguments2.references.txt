@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in ROOT) fun <A> generic(a: A)
+KtNameReferenceExpression(43,50): 'generic'
+  KtSimpleNameReference:
+    (in ROOT) fun <A> generic(a: A)

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in C) override fun foo()
+KtNameReferenceExpression(110,113): 'foo'
+  KtSimpleNameReference:
+    (in C) override fun foo()

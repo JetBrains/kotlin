@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in <local>: test) class Local
+KtNameReferenceExpression(134,139): 'Local'
+  KtSimpleNameReference:
+    (in <local>: test) class Local

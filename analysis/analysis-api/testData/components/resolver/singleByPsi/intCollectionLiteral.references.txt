@@ -1,5 +1,7 @@
-KtCollectionLiteralReference:
-  (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+KtCollectionLiteralExpression(91,100): '[1, 2, 3]'
+  KtCollectionLiteralReference:
+    (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
-KtDefaultAnnotationArgumentReference:
-  arr: kotlin.IntArray
+KtValueArgument(91,100): '[1, 2, 3]'
+  KtDefaultAnnotationArgumentReference:
+    arr: kotlin.IntArray

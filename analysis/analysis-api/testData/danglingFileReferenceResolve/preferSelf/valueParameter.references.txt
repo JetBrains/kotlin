@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  abc: kotlin.Int [fake.kt]
+KtNameReferenceExpression(24,27): 'abc'
+  KtSimpleNameReference:
+    abc: kotlin.Int [fake.kt]

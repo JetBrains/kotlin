@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in KtClass) val instance: KtSubClass
+KtNameReferenceExpression(53,61): 'instance'
+  KtSimpleNameReference:
+    (in KtClass) val instance: KtSubClass

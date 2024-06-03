@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in BaseClass) open fun foo()
+KtNameReferenceExpression(81,84): 'foo'
+  KtSimpleNameReference:
+    (in BaseClass) open fun foo()

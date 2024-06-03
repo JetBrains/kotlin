@@ -1,3 +1,4 @@
-KtDestructuringDeclarationReference:
-  0: (in <local>: main) val b: kotlin.Int
-  1: (in a) operator fun a.A.component2(): kotlin.Int
+KtDestructuringDeclarationEntry(135,136): 'b'
+  KtDestructuringDeclarationReference:
+    0: (in <local>: main) val b: kotlin.Int
+    1: (in a) operator fun a.A.component2(): kotlin.Int

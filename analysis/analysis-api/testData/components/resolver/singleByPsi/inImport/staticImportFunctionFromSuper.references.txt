@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in one.two.BaseClass) fun foo()
+KtNameReferenceExpression(73,76): 'foo'
+  KtSimpleNameReference:
+    (in one.two.BaseClass) fun foo()

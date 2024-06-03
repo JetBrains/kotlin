@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in JavaClass) open fun javaMethod()
+KtNameReferenceExpression(76,86): 'javaMethod'
+  KtSimpleNameReference:
+    (in JavaClass) open fun javaMethod()

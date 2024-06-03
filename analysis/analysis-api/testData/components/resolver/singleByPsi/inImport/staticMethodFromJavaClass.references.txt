@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in java.lang.Math) open fun sin(p0: kotlin.Double): kotlin.Double
+KtNameReferenceExpression(22,25): 'sin'
+  KtSimpleNameReference:
+    (in java.lang.Math) open fun sin(p0: kotlin.Double): kotlin.Double

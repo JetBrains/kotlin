@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in testPackage.testOtherPackage) class A
+KtNameReferenceExpression(74,75): 'A'
+  KtSimpleNameReference:
+    (in testPackage.testOtherPackage) class A

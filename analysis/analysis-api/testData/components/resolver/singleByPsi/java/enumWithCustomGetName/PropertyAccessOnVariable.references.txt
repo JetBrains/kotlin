@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin.Enum) val name: kotlin.String
+KtNameReferenceExpression(62,66): 'name'
+  KtSimpleNameReference:
+    (in kotlin.Enum) val name: kotlin.String

@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in A) private val i: kotlin.Int
+KtNameReferenceExpression(63,64): 'i'
+  KtSimpleNameReference:
+    (in A) private val i: kotlin.Int

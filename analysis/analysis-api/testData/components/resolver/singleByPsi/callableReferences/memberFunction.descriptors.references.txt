@@ -1,6 +1,10 @@
-KtSimpleNameReference:
-  (in ROOT) interface Foo
+KtNameReferenceExpression(64,67): 'Foo'
+  KtSimpleNameReference:
+    (in ROOT) interface Foo
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
 
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
-
-KtInvokeFunctionReference: Nothing (Unresolved reference)
+KtCallExpression(56,73): 'consume(Foo::foo)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

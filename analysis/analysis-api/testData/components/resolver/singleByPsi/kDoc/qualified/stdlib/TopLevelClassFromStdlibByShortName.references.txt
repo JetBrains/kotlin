@@ -1,2 +1,3 @@
-KDocReference:
-  (in kotlin.collections) abstract class AbstractCollection<out E>protected constructor : kotlin.collections.Collection<E>
+KDocName(54,72): 'AbstractCollection'
+  KDocReference:
+    (in kotlin.collections) abstract class AbstractCollection<out E>protected constructor : kotlin.collections.Collection<E>

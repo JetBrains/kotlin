@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  vararg annos: Annotation
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(138,143): 'annos'
+  KtSimpleNameReference:
+    vararg annos: Annotation
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

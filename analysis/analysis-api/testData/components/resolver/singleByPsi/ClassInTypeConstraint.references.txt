@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in resolve) open class AA
+KtNameReferenceExpression(47,49): 'AA'
+  KtSimpleNameReference:
+    (in resolve) open class AA

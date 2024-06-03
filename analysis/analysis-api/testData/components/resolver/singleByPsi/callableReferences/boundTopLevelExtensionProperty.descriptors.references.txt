@@ -1,6 +1,10 @@
-KtSimpleNameReference:
-  obj: Foo
+KtNameReferenceExpression(84,87): 'obj'
+  KtSimpleNameReference:
+    obj: Foo
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
 
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
-
-KtInvokeFunctionReference: Nothing (Unresolved reference)
+KtCallExpression(76,93): 'consume(obj::foo)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

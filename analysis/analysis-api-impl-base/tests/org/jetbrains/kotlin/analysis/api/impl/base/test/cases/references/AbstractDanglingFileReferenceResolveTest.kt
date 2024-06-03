@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -47,7 +48,11 @@ abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResol
         return containingFile.name
     }
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+    override fun collectElementsToResolve(
+        mainFile: KtFile,
+        mainModule: KtTestModule,
+        testServices: TestServices
+    ): Collection<ResolveTestCaseContext<KtReference?>> {
         val caretPositions = testServices.expressionMarkerProvider.getAllCarets(mainFile)
 
         val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = true)
@@ -57,7 +62,7 @@ abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResol
             fakeKtFile.originalFile = mainFile
         }
 
-        doTestByFileStructure(fakeKtFile, caretPositions, mainModule, testServices)
+        return collectElementsToResolve(caretPositions, fakeKtFile)
     }
 
     override fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KaSession.() -> R): R {

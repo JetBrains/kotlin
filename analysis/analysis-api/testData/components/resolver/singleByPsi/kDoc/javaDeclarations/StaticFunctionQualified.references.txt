@@ -1,2 +1,3 @@
-KDocReference:
-  (in dependency.JavaClass) open fun staticFun()
+KDocName(54,73): 'JavaClass.staticFun'
+  KDocReference:
+    (in dependency.JavaClass) open fun staticFun()

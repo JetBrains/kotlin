@@ -1,2 +1,3 @@
-KDocReference:
-  (in C) class Nested
+KDocName(44,50): 'Nested'
+  KDocReference:
+    (in C) class Nested

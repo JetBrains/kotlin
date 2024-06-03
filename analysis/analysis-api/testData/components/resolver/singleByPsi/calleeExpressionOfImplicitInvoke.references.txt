@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  f: () -> kotlin.Unit
+KtNameReferenceExpression(30,31): 'f'
+  KtSimpleNameReference:
+    f: () -> kotlin.Unit

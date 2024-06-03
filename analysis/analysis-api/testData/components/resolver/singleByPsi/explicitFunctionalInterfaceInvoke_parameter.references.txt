@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in A) operator fun invoke()
+KtNameReferenceExpression(77,83): 'invoke'
+  KtSimpleNameReference:
+    (in A) operator fun invoke()

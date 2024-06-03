@@ -1,2 +1,3 @@
-KDocReference:
-  (in kotlin.collections) typealias ArrayList<E> = java.util.ArrayList<E>
+KDocName(8,36): 'kotlin.collections.ArrayList'
+  KDocReference:
+    (in kotlin.collections) typealias ArrayList<E> = java.util.ArrayList<E>

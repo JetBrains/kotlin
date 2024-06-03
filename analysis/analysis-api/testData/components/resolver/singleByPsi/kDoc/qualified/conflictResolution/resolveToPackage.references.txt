@@ -1,2 +1,3 @@
-KDocReference:
-  package pp
+KDocName(37,39): 'pp'
+  KDocReference:
+    package pp

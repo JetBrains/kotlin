@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin.Int) open operator fun compareTo(other: kotlin.Int): kotlin.Int
+KtNameReferenceExpression(20,29): 'compareTo'
+  KtSimpleNameReference:
+    (in kotlin.Int) open operator fun compareTo(other: kotlin.Int): kotlin.Int

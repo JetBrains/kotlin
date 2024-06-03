@@ -1,4 +1,7 @@
-KtSimpleNameReference:
-  (in ROOT) interface Foo
+KtNameReferenceExpression(76,79): 'Foo'
+  KtSimpleNameReference:
+    (in ROOT) interface Foo
 
-KtInvokeFunctionReference: Nothing (Unresolved reference)
+KtCallExpression(68,85): 'consume(Foo::foo)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

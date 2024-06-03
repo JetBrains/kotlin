@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in kotlin.jvm.JvmName) constructor(name: kotlin.String)
+KtNameReferenceExpression(49,56): 'JvmName'
+  KtSimpleNameReference:
+    (in kotlin.jvm.JvmName) constructor(name: kotlin.String)

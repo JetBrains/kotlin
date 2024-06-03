@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in ROOT) class Test<T>
+KtNameReferenceExpression(327,331): 'Test'
+  KtSimpleNameReference:
+    (in ROOT) class Test<T>

@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in test.pkg.Context) fun getString(id: kotlin.Int): kotlin.String!
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(270,279): 'getString'
+  KtSimpleNameReference:
+    (in test.pkg.Context) fun getString(id: kotlin.Int): kotlin.String!
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

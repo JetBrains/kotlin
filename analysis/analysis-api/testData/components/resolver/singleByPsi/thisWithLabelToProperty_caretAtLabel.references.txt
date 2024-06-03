@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in Foo) val kotlin.String.foo: kotlin.Any
+KtLabelReferenceExpression(68,72): '@foo'
+  KtSimpleNameReference:
+    (in Foo) val kotlin.String.foo: kotlin.Any

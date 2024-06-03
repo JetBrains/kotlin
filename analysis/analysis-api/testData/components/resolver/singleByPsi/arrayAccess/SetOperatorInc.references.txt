@@ -1,2 +1,3 @@
-KtArrayAccessReference:
-  (in test.B) operator fun get(i: kotlin.Int): test.B
+KtArrayAccessExpression(205,209): 'a[2]'
+  KtArrayAccessReference:
+    (in test.B) operator fun get(i: kotlin.Int): test.B

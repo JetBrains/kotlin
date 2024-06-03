@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in ROOT) interface X
+KtNameReferenceExpression(96,97): 'X'
+  KtSimpleNameReference:
+    (in ROOT) interface X

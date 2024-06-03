@@ -1,2 +1,3 @@
-KtCollectionLiteralReference:
-  (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
+KtCollectionLiteralExpression(10,19): '[1, 2, 3]'
+  KtCollectionLiteralReference:
+    (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>

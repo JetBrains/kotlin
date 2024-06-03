@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in library4.MyInterface) fun check(list: kotlin.collections.List<kotlin.String>)
+KtNameReferenceExpression(166,171): 'check'
+  KtSimpleNameReference:
+    (in library4.MyInterface) fun check(list: kotlin.collections.List<kotlin.String>)

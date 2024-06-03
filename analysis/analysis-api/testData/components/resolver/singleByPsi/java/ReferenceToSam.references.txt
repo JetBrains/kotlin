@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in JavaTest.SomeJavaClass) open fun setListener(listener: JavaTest.SAMInterface!)
+KtNameReferenceExpression(83,94): 'setListener'
+  KtSimpleNameReference:
+    (in JavaTest.SomeJavaClass) open fun setListener(listener: JavaTest.SAMInterface!)

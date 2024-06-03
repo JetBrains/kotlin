@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  package test1.test2.test3
+KtNameReferenceExpression(64,69): 'test3'
+  KtSimpleNameReference:
+    package test1.test2.test3

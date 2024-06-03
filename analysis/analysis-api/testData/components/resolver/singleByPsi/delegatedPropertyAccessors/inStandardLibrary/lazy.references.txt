@@ -1,2 +1,3 @@
-KtPropertyDelegationMethodsReference:
-  (in kotlin) inline operator fun <T> kotlin.Lazy<T>.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+KtPropertyDelegate(26,37): 'by lazy {1}'
+  KtPropertyDelegationMethodsReference:
+    (in kotlin) inline operator fun <T> kotlin.Lazy<T>.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T

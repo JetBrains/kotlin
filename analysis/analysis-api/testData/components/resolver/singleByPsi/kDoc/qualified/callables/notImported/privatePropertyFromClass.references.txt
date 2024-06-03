@@ -1,2 +1,3 @@
-KDocReference:
-  (in foo.Foo) private val foo: kotlin.Int
+KDocName(46,57): 'foo.Foo.foo'
+  KDocReference:
+    (in foo.Foo) private val foo: kotlin.Int

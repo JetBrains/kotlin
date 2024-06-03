@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in Foo) object Helper
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(96,102): 'Helper'
+  KtSimpleNameReference:
+    (in Foo) object Helper
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

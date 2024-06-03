@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in test) fun dummyTest(value: test.Test): kotlin.String
+KtNameReferenceExpression(123,132): 'dummyTest'
+  KtSimpleNameReference:
+    (in test) fun dummyTest(value: test.Test): kotlin.String

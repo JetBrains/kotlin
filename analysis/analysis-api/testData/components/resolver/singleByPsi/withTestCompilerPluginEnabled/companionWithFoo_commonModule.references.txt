@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in test.WithGeneratedCompanion.Companion) fun foo(): kotlin.Int
+KtNameReferenceExpression(168,171): 'foo'
+  KtSimpleNameReference:
+    (in test.WithGeneratedCompanion.Companion) fun foo(): kotlin.Int

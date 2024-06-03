@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in one.two.TopLevelObject.Nested) fun foo()
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(104,107): 'foo'
+  KtSimpleNameReference:
+    (in one.two.TopLevelObject.Nested) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

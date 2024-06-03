@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  action: test.Foo.() -> kotlin.Unit
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(81,87): 'action'
+  KtSimpleNameReference:
+    action: test.Foo.() -> kotlin.Unit
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

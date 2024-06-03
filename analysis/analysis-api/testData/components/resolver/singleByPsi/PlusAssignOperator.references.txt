@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in test.WithOperator) operator fun plusAssign(f: test.Foo)
+KtOperationReferenceExpression(159,161): '+='
+  KtSimpleNameReference:
+    (in test.WithOperator) operator fun plusAssign(f: test.Foo)

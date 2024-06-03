@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  vararg annos: Annotation
+KtNameReferenceExpression(138,143): 'annos'
+  KtSimpleNameReference:
+    vararg annos: Annotation

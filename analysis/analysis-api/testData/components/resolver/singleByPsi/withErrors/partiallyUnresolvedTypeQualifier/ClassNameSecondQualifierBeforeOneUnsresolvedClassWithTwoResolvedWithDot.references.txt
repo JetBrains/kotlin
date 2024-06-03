@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in Foo) class Bar
+KtNameReferenceExpression(57,60): 'Bar'
+  KtSimpleNameReference:
+    (in Foo) class Bar

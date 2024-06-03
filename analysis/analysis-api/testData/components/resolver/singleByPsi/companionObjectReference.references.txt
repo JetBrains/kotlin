@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in Server) companion object
+KtNameReferenceExpression(122,128): 'Server'
+  KtSimpleNameReference:
+    (in Server) companion object

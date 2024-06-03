@@ -1,2 +1,3 @@
-KDocReference:
-  (in b) fun bb()
+KDocName(22,26): 'b.bb'
+  KDocReference:
+    (in b) fun bb()

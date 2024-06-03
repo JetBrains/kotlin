@@ -1,2 +1,3 @@
-KDocReference:
-  aa: kotlin.Int
+KDocName(26,28): 'aa'
+  KDocReference:
+    aa: kotlin.Int

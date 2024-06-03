@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in main) fun foo(t: main.T /* = ERROR_TYPE(Symbol not found for A) */)
+KtNameReferenceExpression(67,70): 'foo'
+  KtSimpleNameReference:
+    (in main) fun foo(t: main.T /* = ERROR_TYPE(Symbol not found for A) */)

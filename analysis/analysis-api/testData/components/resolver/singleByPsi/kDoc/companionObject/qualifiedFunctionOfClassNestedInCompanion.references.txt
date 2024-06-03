@@ -1,2 +1,3 @@
-KDocReference:
-  (in C.X.Companion.YY) fun aa()
+KDocName(149,156): 'X.YY.aa'
+  KDocReference:
+    (in C.X.Companion.YY) fun aa()

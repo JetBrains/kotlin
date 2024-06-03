@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in test.pkg) class R
+KtNameReferenceExpression(99,104): 'coreR'
+  KtSimpleNameReference:
+    (in test.pkg) class R

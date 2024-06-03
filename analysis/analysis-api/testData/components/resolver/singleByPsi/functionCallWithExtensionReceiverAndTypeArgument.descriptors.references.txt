@@ -1,4 +1,6 @@
-KtSimpleNameReference:
-  (in ROOT) fun <A, B> A.function(a: B)
-
-SyntheticPropertyAccessorReference: Nothing (Unresolved reference)
+KtNameReferenceExpression(54,62): 'function'
+  KtSimpleNameReference:
+    (in ROOT) fun <A, B> A.function(a: B)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

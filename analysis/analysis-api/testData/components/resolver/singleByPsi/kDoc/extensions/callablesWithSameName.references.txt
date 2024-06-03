@@ -1,19 +1,23 @@
 <caret_1>:
-  KDocReference:
-    0: (in test) fun test.Foo.ext()
-    1: (in test) val test.Foo.ext: kotlin.Int
+  KDocName(80,88): 'test.ext'
+    KDocReference:
+      0: (in test) fun test.Foo.ext()
+      1: (in test) val test.Foo.ext: kotlin.Int
 
 <caret_2>:
-  KDocReference:
-    0: (in test) fun test.Foo.ext()
-    1: (in test) val test.Foo.ext: kotlin.Int
+  KDocName(94,97): 'ext'
+    KDocReference:
+      0: (in test) fun test.Foo.ext()
+      1: (in test) val test.Foo.ext: kotlin.Int
 
 <caret_3>:
-  KDocReference:
-    0: (in test) fun test.Foo.ext()
-    1: (in test) val test.Foo.ext: kotlin.Int
+  KDocName(106,113): 'Foo.ext'
+    KDocReference:
+      0: (in test) fun test.Foo.ext()
+      1: (in test) val test.Foo.ext: kotlin.Int
 
 <caret_4>:
-  KDocReference:
-    0: (in test) fun test.Foo.ext()
-    1: (in test) val test.Foo.ext: kotlin.Int
+  KDocName(119,131): 'test.Foo.ext'
+    KDocReference:
+      0: (in test) fun test.Foo.ext()
+      1: (in test) val test.Foo.ext: kotlin.Int

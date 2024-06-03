@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in Foo.Bar) constructor() [fake.kt]
+KtNameReferenceExpression(97,100): 'Bar'
+  KtSimpleNameReference:
+    (in Foo.Bar) constructor() [fake.kt]

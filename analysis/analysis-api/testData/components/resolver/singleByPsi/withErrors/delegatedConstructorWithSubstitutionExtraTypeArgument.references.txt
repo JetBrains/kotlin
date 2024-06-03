@@ -1,2 +1,3 @@
-KtConstructorDelegationReference:
-  (in kotlin.Any) constructor()
+KtConstructorDelegationReferenceExpression(103,108): 'super'
+  KtConstructorDelegationReference:
+    (in kotlin.Any) constructor()

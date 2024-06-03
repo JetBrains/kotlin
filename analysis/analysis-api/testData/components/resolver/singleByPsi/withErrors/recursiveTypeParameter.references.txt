@@ -1,2 +1,3 @@
-KtSimpleNameReference:
-  (in AbstractModule) open fun install(builder: AbstractModule.Builder<*>!)
+KtNameReferenceExpression(96,103): 'install'
+  KtSimpleNameReference:
+    (in AbstractModule) open fun install(builder: AbstractModule.Builder<*>!)
