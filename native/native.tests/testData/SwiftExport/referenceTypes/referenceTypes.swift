@@ -169,6 +169,35 @@ func permanentObjectsTravelBridgeAsAny() throws {
     try assertFalse(isMainPermanentObject(obj: getMainObject()))
 }
 
+func objectsHashProperly() throws {
+    let one: KotlinBase = getHashableObject(value: 1)
+    let ein: KotlinBase = getHashableObject(value: 1)
+    let two: KotlinBase = getHashableObject(value: 2)
+
+    try assertFalse(one === ein)
+    try assertTrue(one == ein)
+    try assertFalse(one == two)
+    try assertFalse(ein == two)
+
+    func testEquality(_ lhs: KotlinBase, _ rhs: KotlinBase) throws {
+        try assertTrue((getHash(obj: lhs) == lhs.hashValue))
+        try assertTrue(lhs == lhs && isEqual(lhs: lhs, rhs: lhs))
+        try assertTrue((getHash(obj: rhs) == rhs.hashValue))
+        try assertTrue(rhs == rhs && isEqual(lhs: rhs, rhs: rhs))
+        try assertTrue(rhs == rhs)
+
+        let expectedEquality = lhs == rhs
+
+        try assertEquals(actual: (getHash(obj: lhs) == getHash(obj: rhs)), expected: expectedEquality)
+        try assertEquals(actual: (lhs.hashValue == rhs.hashValue), expected: expectedEquality)
+        try assertEquals(actual: isEqual(lhs: lhs, rhs: rhs), expected: expectedEquality)
+    }
+
+    try testEquality(one, ein)
+    try testEquality(one, two)
+    try testEquality(ein, two)
+}
+
 class ReferenceTypesTests : TestProvider {
     var tests: [TestCase] = []
 
