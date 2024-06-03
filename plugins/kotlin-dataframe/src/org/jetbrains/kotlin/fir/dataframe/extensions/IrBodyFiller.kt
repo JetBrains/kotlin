@@ -169,7 +169,10 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun visitProperty(declaration: IrProperty): IrStatement {
         val origin = declaration.origin
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin)) return declaration
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin)) {
+            declaration.transformChildren(this, null)
+            return declaration
+        }
         val getter = declaration.getter ?: return declaration
 
         val constructors = context.referenceConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
