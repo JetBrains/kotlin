@@ -46,11 +46,11 @@ internal class KaFirAnnotationListForDeclaration private constructor(
         return backingAnnotations[index]
     }
 
-    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+    override fun contains(classId: ClassId): Boolean = withValidityAssertion {
         return hasAnnotation(firSymbol, classId, useSiteSession)
     }
 
-    override fun annotationsByClassId(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
+    override fun get(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
         return annotationsByClassId(firSymbol, classId, builder)
     }
 

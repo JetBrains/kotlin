@@ -47,11 +47,11 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
         return backingAnnotations[index]
     }
 
-    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+    override fun contains(classId: ClassId): Boolean = withValidityAssertion {
         return hasAnnotation(firCallableSymbol, classId, useSiteSession, receiverParameter)
     }
 
-    override fun annotationsByClassId(classId: ClassId, ): List<KaAnnotation> = withValidityAssertion {
+    override fun get(classId: ClassId, ): List<KaAnnotation> = withValidityAssertion {
         return annotationsByClassId(firCallableSymbol, classId, builder, receiverParameter)
     }
 

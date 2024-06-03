@@ -12,7 +12,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaSymbolWithMembers
@@ -573,8 +572,8 @@ internal fun KaSymbolWithMembers.createInnerClasses(
 
     if (containingClass is SymbolLightClassForAnnotationClass &&
         this is KaNamedClassOrObjectSymbol &&
-        hasAnnotation(StandardClassIds.Annotations.Repeatable) &&
-        !hasAnnotation(JvmStandardClassIds.Annotations.Java.Repeatable)
+        StandardClassIds.Annotations.Repeatable in annotations &&
+        JvmStandardClassIds.Annotations.Java.Repeatable !in annotations
     ) {
         result.add(SymbolLightClassForRepeatableAnnotationContainer(containingClass))
     }

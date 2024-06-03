@@ -38,10 +38,10 @@ public val KaAnnotated.annotationInfos: List<KaAnnotationApplicationInfo>
 /**
  * Checks if entity has annotation with specified [classId].
  *
- * @see [KaAnnotationList.hasAnnotation]
+ * @see [KaAnnotationList.contains]
  */
 public fun KaAnnotated.hasAnnotation(classId: ClassId): Boolean {
-    return annotations.hasAnnotation(classId)
+    return annotations.contains(classId)
 }
 
 /**
@@ -50,7 +50,7 @@ public fun KaAnnotated.hasAnnotation(classId: ClassId): Boolean {
  * @see [KaAnnotationList.classIds]
  */
 public fun KaAnnotated.annotationsByClassId(classId: ClassId): List<KaAnnotation> {
-    return annotations.annotationsByClassId(classId)
+    return annotations[classId]
 }
 
 /**

@@ -23,5 +23,5 @@ import org.jetbrains.kotlin.name.ClassId
  */
 internal val KtCallableSymbol.hasThrowsAnnotation: Boolean
     get() {
-        return annotations.hasAnnotation(ClassId.topLevel(KonanFqNames.throws))
+        return ClassId.topLevel(KonanFqNames.throws) in annotations
     }

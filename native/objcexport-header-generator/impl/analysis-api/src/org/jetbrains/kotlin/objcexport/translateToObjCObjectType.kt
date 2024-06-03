@@ -83,7 +83,7 @@ private fun KtClassOrObjectSymbol.isObjCProtocolClass(): Boolean {
 
 context(KtAnalysisSession)
 private fun KtClassOrObjectSymbol.isExternalObjCClass(): Boolean {
-    return hasAnnotation(NativeStandardInteropNames.externalObjCClassClassId)
+    return NativeStandardInteropNames.externalObjCClassClassId in annotations
 }
 
 context(KtAnalysisSession)

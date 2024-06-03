@@ -64,11 +64,11 @@ internal class KaFe10AnnotationList private constructor(
             }
         }
 
-    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+    override fun contains(classId: ClassId): Boolean = withValidityAssertion {
         fe10Annotations.hasAnnotation(classId.asSingleFqName())
     }
 
-    override fun annotationsByClassId(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
+    override fun get(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
         if (classId in ignoredAnnotations) return@withValidityAssertion emptyList()
 
         fe10Annotations.mapIndexedNotNull { index, annotation ->

@@ -24,11 +24,11 @@ class KaEmptyAnnotationList(override val token: KaLifetimeToken) : AbstractList<
         throw IndexOutOfBoundsException("Index $index out of bounds")
     }
 
-    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+    override fun contains(classId: ClassId): Boolean = withValidityAssertion {
         return false
     }
 
-    override fun annotationsByClassId(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
+    override fun get(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
         return emptyList()
     }
 

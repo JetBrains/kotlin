@@ -70,7 +70,7 @@ public abstract class KaVariableLikeSignature<out S : KaVariableLikeSymbol> : Ka
     }
 
     private fun findParameterNameAnnotation(): KaAnnotation? {
-        val allParameterNameAnnotations = returnType.annotationsByClassId(StandardNames.FqNames.parameterNameClassId)
+        val allParameterNameAnnotations = returnType.annotations[StandardNames.FqNames.parameterNameClassId]
         val (explicitAnnotations, implicitAnnotations) = allParameterNameAnnotations.partition { it.psi != null }
 
         return if (explicitAnnotations.isNotEmpty()) {

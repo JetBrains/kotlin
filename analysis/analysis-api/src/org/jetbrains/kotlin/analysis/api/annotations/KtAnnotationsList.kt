@@ -31,24 +31,30 @@ public interface KaAnnotationList : List<KaAnnotation>, KaLifetimeOwner {
      * ```
      * @param classId [ClassId] to search
      */
-    public fun hasAnnotation(classId: ClassId): Boolean
+    public operator fun contains(classId: ClassId): Boolean
+
+    @Deprecated("Use 'contains' instead.", replaceWith = ReplaceWith("contains(classId)"))
+    public fun hasAnnotation(classId: ClassId): Boolean = contains(classId)
 
     /**
      * A list of annotations applied with specified [classId].
      *
-     * To check if annotation is present, please use [hasAnnotation].
+     * To check if annotation is present, please use [contains].
      *
      * The semantic is equivalent to
      * ```
      * annotationsList.annotationsByClassId(classId) == annotationsList.annotations.filter { it.classId == classId }
      * ```
      */
-    public fun annotationsByClassId(classId: ClassId): List<KaAnnotation>
+    public operator fun get(classId: ClassId): List<KaAnnotation>
+
+    @Deprecated("Use 'get' instead.", replaceWith = ReplaceWith("get(classId)"))
+    public fun annotationsByClassId(classId: ClassId): List<KaAnnotation> = get(classId)
 
     /**
      * A list of annotations [ClassId].
      *
-     * To check if annotation is present, please use [hasAnnotation].
+     * To check if annotation is present, please use [contains].
      *
      * The semantic is equivalent to
      * ```
