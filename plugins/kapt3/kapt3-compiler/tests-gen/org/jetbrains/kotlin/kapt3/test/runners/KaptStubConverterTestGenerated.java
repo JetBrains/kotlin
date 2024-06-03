@@ -300,6 +300,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("importNestedClass.kt")
+  public void testImportNestedClass() {
+    runTest("plugins/kapt3/kapt3-compiler/testData/converter/importNestedClass.kt");
+  }
+
+  @Test
   @TestMetadata("importsForErrorTypes.kt")
   public void testImportsForErrorTypes() {
     runTest("plugins/kapt3/kapt3-compiler/testData/converter/importsForErrorTypes.kt");
