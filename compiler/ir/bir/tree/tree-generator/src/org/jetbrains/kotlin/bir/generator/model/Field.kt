@@ -49,10 +49,15 @@ sealed class Field(
         super.updateFieldsInCopy(copy)
         copy.customSetter = customSetter
         copy.symbolFieldRole = symbolFieldRole
-        copy.isReadWriteTrackedProperty = isReadWriteTrackedProperty
+        copy.trackForwardReferences = trackForwardReferences
     }
 
-    var isReadWriteTrackedProperty = false
+    override fun updatePropertiesFromOverriddenFields(parentFields: List<Field>) {
+        super.updatePropertiesFromOverriddenFields(parentFields)
+        trackForwardReferences = trackForwardReferences || parentFields.any { it.trackForwardReferences }
+    }
+
+    var trackForwardReferences = false
     val backingFieldName: String
         get() = "_$name"
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.bir.generator.model.Element
 import org.jetbrains.kotlin.bir.generator.model.Field
 import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.SingleField
+import org.jetbrains.kotlin.bir.generator.model.symbol.Symbol
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
@@ -94,7 +95,32 @@ fun ImportCollectingPrinter.printElement(element: Element) {
             print("${element.withArgs().render()}::class.java")
             print(", ${element.classId}")
             print(", ${element.implementations.isNotEmpty()}")
-            println(")")
+            print(")")
+
+            val trackedForwardRefs = element.allFields.filter { it.trackForwardReferences }
+            if (trackedForwardRefs.isNotEmpty()) {
+                printBlock {
+                    for (field in trackedForwardRefs) {
+                        print("val ${field.name} = ${type(Packages.tree, "BirElementBackReferencesKey").render()}")
+                        print("<${element.withStarArgs().render()}, _>")
+                        print("{ (it as? ${element.withStarArgs().render()})?.${field.name}")
+
+                        var type: TypeRef? = field.typeRef
+                        if (type is NamedTypeParameterRef) {
+                            type = (type.origin as TypeVariable).bounds.singleOrNull()
+                        }
+                        when {
+                            type is ElementOrRef<*> && type.element is Symbol ->
+                                print("?.owner")
+                            type is ElementOrRef<*> -> {}
+                            else -> error(type ?: "null")
+                        }
+                        println(" }")
+                    }
+                }
+            } else {
+                println()
+            }
         }
     }
 

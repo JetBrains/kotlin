@@ -669,7 +669,9 @@ object BirTree : AbstractTreeBuilder() {
 
         +field("dispatchReceiver", expression, nullable = true)
         +field("extensionReceiver", expression, nullable = true)
-        +referencedSymbol(s, mutable = false)
+        +referencedSymbol(s, mutable = false) {
+            trackForwardReferences = true
+        }
         +field("origin", statementOriginType, nullable = true)
         +listField("valueArguments", expression.copy(nullable = true), mutability = MutableList)
         +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Var)
@@ -951,7 +953,9 @@ object BirTree : AbstractTreeBuilder() {
         parent(expression)
 
         +field("value", expression)
-        +referencedSymbol("returnTargetSymbol", returnTargetSymbol)
+        +referencedSymbol("returnTargetSymbol", returnTargetSymbol) {
+            trackForwardReferences = true
+        }
     }
     val stringConcatenation: Element by element(Expression) {
         parent(expression)
@@ -1020,7 +1024,9 @@ object BirTree : AbstractTreeBuilder() {
 
         parent(declarationReference)
 
-        +referencedSymbol(valueSymbol)
+        +referencedSymbol(valueSymbol) {
+            trackForwardReferences = true
+        }
         +field("origin", statementOriginType, nullable = true)
     }
     val getValue: Element by element(Expression) {

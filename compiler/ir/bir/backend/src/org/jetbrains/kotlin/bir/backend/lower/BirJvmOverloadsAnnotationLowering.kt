@@ -21,16 +21,14 @@ context(JvmBirBackendContext)
 class BirJvmOverloadsAnnotationLowering : BirLoweringPhase() {
     private val JvmOverloadsAnnotation by lz { birBuiltIns.findClass(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME) }
 
-    private val overloadsAnnotations = registerIndexKey(BirConstructorCall, false) {
-        it.constructedClass == JvmOverloadsAnnotation
-    }
-
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(overloadsAnnotations).forEach { annotation ->
-            val function = annotation.parent as? BirFunction ?: return@forEach
-            val parentClass = function.parent as? BirClass ?: return@forEach
+        getAllElementsOfClass(BirConstructorCall, false).forEach { annotation ->
+            if(annotation.constructedClass == JvmOverloadsAnnotation) {
+                val function = annotation.parent as? BirFunction ?: return@forEach
+                val parentClass = function.parent as? BirClass ?: return@forEach
 
-            generateWrappers(function, parentClass)
+                generateWrappers(function, parentClass)
+            }
         }
     }
 

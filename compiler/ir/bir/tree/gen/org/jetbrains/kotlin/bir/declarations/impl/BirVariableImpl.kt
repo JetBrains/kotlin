@@ -62,126 +62,36 @@ class BirVariableImpl(
     override val isBound: Boolean
         get() = true
 
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
     override val signature: IdSignature? = signature
 
-    private var _annotations: List<BirConstructorCall> = annotations
-    override var annotations: List<BirConstructorCall>
-        get() {
-            recordPropertyRead()
-            return _annotations
-        }
-        set(value) {
-            if (_annotations != value) {
-                _annotations = value
-                invalidate()
-            }
-        }
+    override var annotations: List<BirConstructorCall> = annotations
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
     override val symbol: BirVariableSymbol
         get() = this
 
-    private var _isVar: Boolean = isVar
-    override var isVar: Boolean
-        get() {
-            recordPropertyRead()
-            return _isVar
-        }
-        set(value) {
-            if (_isVar != value) {
-                _isVar = value
-                invalidate()
-            }
-        }
+    override var isVar: Boolean = isVar
 
-    private var _isConst: Boolean = isConst
-    override var isConst: Boolean
-        get() {
-            recordPropertyRead()
-            return _isConst
-        }
-        set(value) {
-            if (_isConst != value) {
-                _isConst = value
-                invalidate()
-            }
-        }
+    override var isConst: Boolean = isConst
 
-    private var _isLateinit: Boolean = isLateinit
-    override var isLateinit: Boolean
-        get() {
-            recordPropertyRead()
-            return _isLateinit
-        }
-        set(value) {
-            if (_isLateinit != value) {
-                _isLateinit = value
-                invalidate()
-            }
-        }
+    override var isLateinit: Boolean = isLateinit
 
     private var _initializer: BirExpression? = initializer
     override var initializer: BirExpression?
         get() {
-            recordPropertyRead()
             return _initializer
         }
         set(value) {
             if (_initializer !== value) {
                 childReplaced(_initializer, value)
                 _initializer = value
-                invalidate()
             }
         }
 

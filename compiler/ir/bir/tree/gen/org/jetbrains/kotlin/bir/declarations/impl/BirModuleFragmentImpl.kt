@@ -20,18 +20,7 @@ class BirModuleFragmentImpl(
     sourceSpan: SourceSpan,
     descriptor: ModuleDescriptor,
 ) : BirModuleFragment() {
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
     override val descriptor: ModuleDescriptor = descriptor
 

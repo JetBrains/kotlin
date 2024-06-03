@@ -68,59 +68,15 @@ class BirScriptImpl(
     override val isBound: Boolean
         get() = true
 
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
     override val signature: IdSignature? = signature
 
-    private var _annotations: List<BirConstructorCall> = annotations
-    override var annotations: List<BirConstructorCall>
-        get() {
-            recordPropertyRead()
-            return _annotations
-        }
-        set(value) {
-            if (_annotations != value) {
-                _annotations = value
-                invalidate()
-            }
-        }
+    override var annotations: List<BirConstructorCall> = annotations
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
     override val symbol: BirScriptSymbol
         get() = this
@@ -128,121 +84,40 @@ class BirScriptImpl(
     private var _thisReceiver: BirValueParameter? = thisReceiver
     override var thisReceiver: BirValueParameter?
         get() {
-            recordPropertyRead()
             return _thisReceiver
         }
         set(value) {
             if (_thisReceiver !== value) {
                 childReplaced(_thisReceiver, value)
                 _thisReceiver = value
-                invalidate()
             }
         }
 
-    private var _baseClass: BirType? = baseClass
-    override var baseClass: BirType?
-        get() {
-            recordPropertyRead()
-            return _baseClass
-        }
-        set(value) {
-            if (_baseClass != value) {
-                _baseClass = value
-                invalidate()
-            }
-        }
+    override var baseClass: BirType? = baseClass
 
-    private var _providedProperties: List<BirPropertySymbol> = providedProperties
-    override var providedProperties: List<BirPropertySymbol>
-        get() {
-            recordPropertyRead()
-            return _providedProperties
-        }
-        set(value) {
-            if (_providedProperties != value) {
-                _providedProperties = value
-                invalidate()
-            }
-        }
+    override var providedProperties: List<BirPropertySymbol> = providedProperties
 
-    private var _resultProperty: BirPropertySymbol? = resultProperty
-    override var resultProperty: BirPropertySymbol?
-        get() {
-            recordPropertyRead()
-            return _resultProperty
-        }
-        set(value) {
-            if (_resultProperty !== value) {
-                _resultProperty = value
-                invalidate()
-            }
-        }
+    override var resultProperty: BirPropertySymbol? = resultProperty
 
     private var _earlierScriptsParameter: BirValueParameter? = earlierScriptsParameter
     override var earlierScriptsParameter: BirValueParameter?
         get() {
-            recordPropertyRead()
             return _earlierScriptsParameter
         }
         set(value) {
             if (_earlierScriptsParameter !== value) {
                 childReplaced(_earlierScriptsParameter, value)
                 _earlierScriptsParameter = value
-                invalidate()
             }
         }
 
-    private var _importedScripts: List<BirScriptSymbol>? = importedScripts
-    override var importedScripts: List<BirScriptSymbol>?
-        get() {
-            recordPropertyRead()
-            return _importedScripts
-        }
-        set(value) {
-            if (_importedScripts != value) {
-                _importedScripts = value
-                invalidate()
-            }
-        }
+    override var importedScripts: List<BirScriptSymbol>? = importedScripts
 
-    private var _earlierScripts: List<BirScriptSymbol>? = earlierScripts
-    override var earlierScripts: List<BirScriptSymbol>?
-        get() {
-            recordPropertyRead()
-            return _earlierScripts
-        }
-        set(value) {
-            if (_earlierScripts != value) {
-                _earlierScripts = value
-                invalidate()
-            }
-        }
+    override var earlierScripts: List<BirScriptSymbol>? = earlierScripts
 
-    private var _targetClass: BirClassSymbol? = targetClass
-    override var targetClass: BirClassSymbol?
-        get() {
-            recordPropertyRead()
-            return _targetClass
-        }
-        set(value) {
-            if (_targetClass !== value) {
-                _targetClass = value
-                invalidate()
-            }
-        }
+    override var targetClass: BirClassSymbol? = targetClass
 
-    private var _constructor: BirConstructor? = constructor
-    override var constructor: BirConstructor?
-        get() {
-            recordPropertyRead()
-            return _constructor
-        }
-        set(value) {
-            if (_constructor !== value) {
-                _constructor = value
-                invalidate()
-            }
-        }
+    override var constructor: BirConstructor? = constructor
 
     override val statements: BirImplChildElementList<BirStatement> = BirImplChildElementList(this, 1, false)
 

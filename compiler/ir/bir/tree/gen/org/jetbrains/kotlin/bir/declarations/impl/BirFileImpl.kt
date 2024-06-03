@@ -44,62 +44,18 @@ class BirFileImpl(
     override val isBound: Boolean
         get() = true
 
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
     override val signature: IdSignature? = signature
 
-    private var _packageFqName: FqName = packageFqName
-    override var packageFqName: FqName
-        get() {
-            recordPropertyRead()
-            return _packageFqName
-        }
-        set(value) {
-            if (_packageFqName != value) {
-                _packageFqName = value
-                invalidate()
-            }
-        }
+    override var packageFqName: FqName = packageFqName
 
-    private var _annotations: List<BirConstructorCall> = annotations
-    override var annotations: List<BirConstructorCall>
-        get() {
-            recordPropertyRead()
-            return _annotations
-        }
-        set(value) {
-            if (_annotations != value) {
-                _annotations = value
-                invalidate()
-            }
-        }
+    override var annotations: List<BirConstructorCall> = annotations
 
     override val symbol: BirFileSymbol
         get() = this
 
-    private var _fileEntry: IrFileEntry = fileEntry
-    override var fileEntry: IrFileEntry
-        get() {
-            recordPropertyRead()
-            return _fileEntry
-        }
-        set(value) {
-            if (_fileEntry != value) {
-                _fileEntry = value
-                invalidate()
-            }
-        }
+    override var fileEntry: IrFileEntry = fileEntry
 
     override val declarations: BirImplChildElementList<BirDeclaration> = BirImplChildElementList(this, 1, false)
 

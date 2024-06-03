@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.bir.expressions.BirEnumConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
 import org.jetbrains.kotlin.bir.types.BirType
+import org.jetbrains.kotlin.bir.util.ForwardReferenceRecorder
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirEnumConstructorCallImpl(
@@ -28,122 +29,51 @@ class BirEnumConstructorCallImpl(
     contextReceiversCount: Int,
     symbol: BirConstructorSymbol,
 ) : BirEnumConstructorCall() {
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
-    private var _attributeOwnerId: BirAttributeContainer = this
-    override var attributeOwnerId: BirAttributeContainer
-        get() {
-            recordPropertyRead()
-            return _attributeOwnerId
-        }
-        set(value) {
-            if (_attributeOwnerId !== value) {
-                _attributeOwnerId = value
-                invalidate()
-            }
-        }
+    override var attributeOwnerId: BirAttributeContainer = this
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
     private var _dispatchReceiver: BirExpression? = dispatchReceiver
     override var dispatchReceiver: BirExpression?
         get() {
-            recordPropertyRead()
             return _dispatchReceiver
         }
         set(value) {
             if (_dispatchReceiver !== value) {
                 childReplaced(_dispatchReceiver, value)
                 _dispatchReceiver = value
-                invalidate()
             }
         }
 
     private var _extensionReceiver: BirExpression? = extensionReceiver
     override var extensionReceiver: BirExpression?
         get() {
-            recordPropertyRead()
             return _extensionReceiver
         }
         set(value) {
             if (_extensionReceiver !== value) {
                 childReplaced(_extensionReceiver, value)
                 _extensionReceiver = value
-                invalidate()
             }
         }
 
-    private var _origin: IrStatementOrigin? = origin
-    override var origin: IrStatementOrigin?
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrStatementOrigin? = origin
 
-    private var _typeArguments: List<BirType?> = typeArguments
-    override var typeArguments: List<BirType?>
-        get() {
-            recordPropertyRead()
-            return _typeArguments
-        }
-        set(value) {
-            if (_typeArguments != value) {
-                _typeArguments = value
-                invalidate()
-            }
-        }
+    override var typeArguments: List<BirType?> = typeArguments
 
-    private var _contextReceiversCount: Int = contextReceiversCount
-    override var contextReceiversCount: Int
-        get() {
-            recordPropertyRead()
-            return _contextReceiversCount
-        }
-        set(value) {
-            if (_contextReceiversCount != value) {
-                _contextReceiversCount = value
-                invalidate()
-            }
-        }
+    override var contextReceiversCount: Int = contextReceiversCount
 
     private var _symbol: BirConstructorSymbol = symbol
     override var symbol: BirConstructorSymbol
         get() {
-            recordPropertyRead()
             return _symbol
         }
         set(value) {
             if (_symbol !== value) {
                 _symbol = value
-                invalidate()
+                forwardReferencePropertyChanged()
             }
         }
 
@@ -178,5 +108,9 @@ class BirEnumConstructorCallImpl(
             1 -> this.valueArguments
             else -> throwChildrenListWithIdNotFound(id)
         }
+    }
+
+    override fun getForwardReferences(recorder: ForwardReferenceRecorder) {
+        recorder.recordReference(symbol)
     }
 }

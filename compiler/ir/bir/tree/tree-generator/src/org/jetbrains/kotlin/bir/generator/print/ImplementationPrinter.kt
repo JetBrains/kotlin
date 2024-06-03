@@ -105,7 +105,7 @@ fun ImportCollectingPrinter.printElementImplementation(implementation: Implement
                 val defaultValue = field.implementationDefaultStrategy as? AbstractField.ImplementationDefaultStrategy.DefaultValue
                 val isLateinit = field.implementationDefaultStrategy is AbstractField.ImplementationDefaultStrategy.Lateinit
 
-                val hasBackingField = isLateinit || field.isReadWriteTrackedProperty
+                val hasBackingField = isLateinit || field is SingleField && field.isChild || field.trackForwardReferences
                 if (hasBackingField) {
                     printPropertyDeclaration(
                         name = field.backingFieldName,
@@ -138,15 +138,14 @@ fun ImportCollectingPrinter.printElementImplementation(implementation: Implement
                 )
                 println()
 
-                if (field.isReadWriteTrackedProperty) {
+                if (hasBackingField) {
                     withIndent {
                         print("get()")
                         printBlock {
-                            println("recordPropertyRead()")
                             print("return ${field.backingFieldName}")
                             if (field.isChild && !field.nullable) {
                                 print(" ?: throwChildElementRemoved(\"${field.name}\")")
-                            } else if(isLateinit) {
+                            } else if (isLateinit) {
                                 print(" ?: throwLateinitPropertyUninitialized(\"${field.name}\")")
                             }
                             println()
@@ -159,7 +158,10 @@ fun ImportCollectingPrinter.printElementImplementation(implementation: Implement
                                     println("childReplaced(${field.backingFieldName}, value)")
                                 }
                                 println("${field.backingFieldName} = value")
-                                println("invalidate()")
+
+                                if (field.trackForwardReferences) {
+                                    println("forwardReferencePropertyChanged()")
+                                }
                             }
                         }
                     }
@@ -251,6 +253,21 @@ fun ImportCollectingPrinter.printElementImplementation(implementation: Implement
                             println("${index + 1} -> this.${field.name}")
                         }
                         println("else -> throwChildrenListWithIdNotFound(id)")
+                    }
+                }
+            }
+
+            val trackedForwardRefs = allFields.filter { it.trackForwardReferences }
+            if (trackedForwardRefs.isNotEmpty()) {
+                println()
+                printFunctionWithBlockBody(
+                    "getForwardReferences",
+                    parameters = listOf(FunctionParameter("recorder", type(Packages.tree + ".util", "ForwardReferenceRecorder"))),
+                    returnType = StandardTypes.unit,
+                    override = true,
+                ) {
+                    trackedForwardRefs.forEach { field ->
+                        println("recorder.recordReference(${field.name})")
                     }
                 }
             }

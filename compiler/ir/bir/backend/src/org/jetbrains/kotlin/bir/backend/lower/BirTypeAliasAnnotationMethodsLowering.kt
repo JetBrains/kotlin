@@ -21,22 +21,22 @@ import org.jetbrains.kotlin.name.Name
 
 context(JvmBirBackendContext)
 class BirTypeAliasAnnotationMethodsLowering : BirLoweringPhase() {
-    private val annotatedTypeAliases = registerIndexKey<BirTypeAlias>(BirTypeAlias, false) { it.annotations.isNotEmpty() }
-
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(annotatedTypeAliases).forEach { alias ->
-            val parentClass = alias.parent as? BirClass ?: return@forEach
+        getAllElementsOfClass(BirTypeAlias, false).forEach { alias ->
+            if (alias.annotations.isNotEmpty()) {
+                val parentClass = alias.parent as? BirClass ?: return@forEach
 
-            val function = BirSimpleFunction.build {
-                name = Name.identifier(JvmAbi.getSyntheticMethodNameForAnnotatedTypeAlias(alias.name))
-                visibility = alias.visibility
-                returnType = birBuiltIns.unitType
-                modality = Modality.OPEN
-                origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS
-                body = BirBlockBodyImpl(SourceSpan.UNDEFINED)
-                annotations += alias.annotations
+                val function = BirSimpleFunction.build {
+                    name = Name.identifier(JvmAbi.getSyntheticMethodNameForAnnotatedTypeAlias(alias.name))
+                    visibility = alias.visibility
+                    returnType = birBuiltIns.unitType
+                    modality = Modality.OPEN
+                    origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS
+                    body = BirBlockBodyImpl(SourceSpan.UNDEFINED)
+                    annotations += alias.annotations
+                }
+                parentClass.declarations += function
             }
-            parentClass.declarations += function
         }
     }
 }

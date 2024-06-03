@@ -64,128 +64,56 @@ class BirLocalDelegatedPropertyImpl(
     override val isBound: Boolean
         get() = true
 
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
     override val signature: IdSignature? = signature
 
-    private var _annotations: List<BirConstructorCall> = annotations
-    override var annotations: List<BirConstructorCall>
-        get() {
-            recordPropertyRead()
-            return _annotations
-        }
-        set(value) {
-            if (_annotations != value) {
-                _annotations = value
-                invalidate()
-            }
-        }
+    override var annotations: List<BirConstructorCall> = annotations
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
     override val symbol: BirLocalDelegatedPropertySymbol
         get() = this
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
-    private var _isVar: Boolean = isVar
-    override var isVar: Boolean
-        get() {
-            recordPropertyRead()
-            return _isVar
-        }
-        set(value) {
-            if (_isVar != value) {
-                _isVar = value
-                invalidate()
-            }
-        }
+    override var isVar: Boolean = isVar
 
     private var _delegate: BirVariable? = delegate
     override var delegate: BirVariable
         get() {
-            recordPropertyRead()
             return _delegate ?: throwChildElementRemoved("delegate")
         }
         set(value) {
             if (_delegate !== value) {
                 childReplaced(_delegate, value)
                 _delegate = value
-                invalidate()
             }
         }
 
     private var _getter: BirSimpleFunction? = getter
     override var getter: BirSimpleFunction
         get() {
-            recordPropertyRead()
             return _getter ?: throwChildElementRemoved("getter")
         }
         set(value) {
             if (_getter !== value) {
                 childReplaced(_getter, value)
                 _getter = value
-                invalidate()
             }
         }
 
     private var _setter: BirSimpleFunction? = setter
     override var setter: BirSimpleFunction?
         get() {
-            recordPropertyRead()
             return _setter
         }
         set(value) {
             if (_setter !== value) {
                 childReplaced(_setter, value)
                 _setter = value
-                invalidate()
             }
         }
 

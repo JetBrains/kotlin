@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.bir.backend.lower
 
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.CompressedSourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.*
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
@@ -37,21 +37,21 @@ import org.jetbrains.kotlin.types.Variance
 
 context(JvmBirBackendContext)
 class BirMainMethodGenerationLowering : BirLoweringPhase() {
-    private val mainishFunctions = registerIndexKey(BirSimpleFunction, false) { function ->
-        function.extensionReceiverParameter == null
-                && function.valueParameters.size <= 1
-                && function.typeParameters.isEmpty()
-                && function.getJvmName().asString() == "main"
-                && function.returnType.isUnit()
-    }
-
     override fun lower(module: BirModuleFragment) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)) return
 
-        getAllElementsWithIndex(mainishFunctions).forEach { mainMethod ->
-            val parentClass = mainMethod.parent as? BirClass ?: return@forEach
-            if (!parentClass.isFileClass) return@forEach
-            val isParametrized = mainMethod.isParameterizedMainMethod() ?: return@forEach
+        for (mainMethod in getAllElementsOfClass(BirSimpleFunction, false)) {
+            if (!(mainMethod.extensionReceiverParameter == null
+                        && mainMethod.valueParameters.size <= 1
+                        && mainMethod.typeParameters.isEmpty()
+                        && mainMethod.getJvmName().asString() == "main"
+                        && mainMethod.returnType.isUnit()
+                        )
+            ) continue
+
+            val parentClass = mainMethod.parent as? BirClass ?: continue
+            if (!parentClass.isFileClass) continue
+            val isParametrized = mainMethod.isParameterizedMainMethod() ?: continue
 
             birBodyScope {
                 var newMainMethod: BirSimpleFunction? = null

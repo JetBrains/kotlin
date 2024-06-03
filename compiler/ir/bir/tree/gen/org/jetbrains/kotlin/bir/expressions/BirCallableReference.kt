@@ -8,11 +8,14 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirElementBackReferencesKey
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 
 abstract class BirCallableReference<S : BirSymbol>() : BirMemberAccessExpression<S>() {
     abstract override var symbol: S
 
-    companion object : BirElementClass<BirCallableReference<*>>(BirCallableReference::class.java, 10, false)
+    companion object : BirElementClass<BirCallableReference<*>>(BirCallableReference::class.java, 10, false) {
+        val symbol = BirElementBackReferencesKey<BirCallableReference<*>, _>{ (it as? BirCallableReference<*>)?.symbol?.owner }
+    }
 }

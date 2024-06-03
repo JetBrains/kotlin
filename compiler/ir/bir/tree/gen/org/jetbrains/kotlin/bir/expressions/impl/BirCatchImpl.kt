@@ -23,44 +23,29 @@ class BirCatchImpl(
     catchParameter: BirVariable,
     result: BirExpression,
 ) : BirCatch() {
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
     private var _catchParameter: BirVariable? = catchParameter
     override var catchParameter: BirVariable
         get() {
-            recordPropertyRead()
             return _catchParameter ?: throwChildElementRemoved("catchParameter")
         }
         set(value) {
             if (_catchParameter !== value) {
                 childReplaced(_catchParameter, value)
                 _catchParameter = value
-                invalidate()
             }
         }
 
     private var _result: BirExpression? = result
     override var result: BirExpression
         get() {
-            recordPropertyRead()
             return _result ?: throwChildElementRemoved("result")
         }
         set(value) {
             if (_result !== value) {
                 childReplaced(_result, value)
                 _result = value
-                invalidate()
             }
         }
 

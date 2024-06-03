@@ -18,30 +18,8 @@ class BirSyntheticBodyImpl(
     sourceSpan: SourceSpan,
     kind: IrSyntheticBodyKind,
 ) : BirSyntheticBody() {
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
-    private var _kind: IrSyntheticBodyKind = kind
-    override var kind: IrSyntheticBodyKind
-        get() {
-            recordPropertyRead()
-            return _kind
-        }
-        set(value) {
-            if (_kind != value) {
-                _kind = value
-                invalidate()
-            }
-        }
+    override var kind: IrSyntheticBodyKind = kind
 
 }

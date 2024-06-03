@@ -56,113 +56,25 @@ class BirTypeParameterImpl(
     override val isBound: Boolean
         get() = true
 
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
     override val signature: IdSignature? = signature
 
-    private var _annotations: List<BirConstructorCall> = annotations
-    override var annotations: List<BirConstructorCall>
-        get() {
-            recordPropertyRead()
-            return _annotations
-        }
-        set(value) {
-            if (_annotations != value) {
-                _annotations = value
-                invalidate()
-            }
-        }
+    override var annotations: List<BirConstructorCall> = annotations
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
     override val symbol: BirTypeParameterSymbol
         get() = this
 
-    private var _variance: Variance = variance
-    override var variance: Variance
-        get() {
-            recordPropertyRead()
-            return _variance
-        }
-        set(value) {
-            if (_variance != value) {
-                _variance = value
-                invalidate()
-            }
-        }
+    override var variance: Variance = variance
 
-    private var _index: Int = index
-    override var index: Int
-        get() {
-            recordPropertyRead()
-            return _index
-        }
-        set(value) {
-            if (_index != value) {
-                _index = value
-                invalidate()
-            }
-        }
+    override var index: Int = index
 
-    private var _isReified: Boolean = isReified
-    override var isReified: Boolean
-        get() {
-            recordPropertyRead()
-            return _isReified
-        }
-        set(value) {
-            if (_isReified != value) {
-                _isReified = value
-                invalidate()
-            }
-        }
+    override var isReified: Boolean = isReified
 
-    private var _superTypes: List<BirType> = superTypes
-    override var superTypes: List<BirType>
-        get() {
-            recordPropertyRead()
-            return _superTypes
-        }
-        set(value) {
-            if (_superTypes != value) {
-                _superTypes = value
-                invalidate()
-            }
-        }
+    override var superTypes: List<BirType> = superTypes
 
 }

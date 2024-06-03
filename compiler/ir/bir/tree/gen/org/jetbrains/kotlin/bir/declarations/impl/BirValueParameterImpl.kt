@@ -68,154 +68,42 @@ class BirValueParameterImpl(
     override val isBound: Boolean
         get() = true
 
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
     override val signature: IdSignature? = signature
 
-    private var _annotations: List<BirConstructorCall> = annotations
-    override var annotations: List<BirConstructorCall>
-        get() {
-            recordPropertyRead()
-            return _annotations
-        }
-        set(value) {
-            if (_annotations != value) {
-                _annotations = value
-                invalidate()
-            }
-        }
+    override var annotations: List<BirConstructorCall> = annotations
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
     override val isAssignable: Boolean = isAssignable
 
     override val symbol: BirValueParameterSymbol
         get() = this
 
-    private var _index: Int = index
-    override var index: Int
-        get() {
-            recordPropertyRead()
-            return _index
-        }
-        set(value) {
-            if (_index != value) {
-                _index = value
-                invalidate()
-            }
-        }
+    override var index: Int = index
 
-    private var _varargElementType: BirType? = varargElementType
-    override var varargElementType: BirType?
-        get() {
-            recordPropertyRead()
-            return _varargElementType
-        }
-        set(value) {
-            if (_varargElementType != value) {
-                _varargElementType = value
-                invalidate()
-            }
-        }
+    override var varargElementType: BirType? = varargElementType
 
-    private var _isCrossinline: Boolean = isCrossinline
-    override var isCrossinline: Boolean
-        get() {
-            recordPropertyRead()
-            return _isCrossinline
-        }
-        set(value) {
-            if (_isCrossinline != value) {
-                _isCrossinline = value
-                invalidate()
-            }
-        }
+    override var isCrossinline: Boolean = isCrossinline
 
-    private var _isNoinline: Boolean = isNoinline
-    override var isNoinline: Boolean
-        get() {
-            recordPropertyRead()
-            return _isNoinline
-        }
-        set(value) {
-            if (_isNoinline != value) {
-                _isNoinline = value
-                invalidate()
-            }
-        }
+    override var isNoinline: Boolean = isNoinline
 
-    private var _isHidden: Boolean = isHidden
-    override var isHidden: Boolean
-        get() {
-            recordPropertyRead()
-            return _isHidden
-        }
-        set(value) {
-            if (_isHidden != value) {
-                _isHidden = value
-                invalidate()
-            }
-        }
+    override var isHidden: Boolean = isHidden
 
     private var _defaultValue: BirExpressionBody? = defaultValue
     override var defaultValue: BirExpressionBody?
         get() {
-            recordPropertyRead()
             return _defaultValue
         }
         set(value) {
             if (_defaultValue !== value) {
                 childReplaced(_defaultValue, value)
                 _defaultValue = value
-                invalidate()
             }
         }
 

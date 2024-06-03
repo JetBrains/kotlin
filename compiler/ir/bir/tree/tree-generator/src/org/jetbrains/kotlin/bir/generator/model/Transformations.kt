@@ -56,7 +56,6 @@ fun Model.setClassIds() {
 fun Model.computeFieldProperties() {
     for (element in elements) {
         for (field in element.allFields) {
-            field.isReadWriteTrackedProperty = field.isMutable && !(field is ListField && field.isChild)
         }
     }
 }

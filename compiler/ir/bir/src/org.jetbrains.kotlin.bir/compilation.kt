@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.types.IdSignatureValues.result
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformFlat
 import java.util.IdentityHashMap
@@ -346,17 +347,11 @@ class BirCompilation {
                 input.birModule!!.countAllElementsInTree()
             }
 
-            compiledBir.activateNewRegisteredIndices(true)
-            externalBir.activateNewRegisteredIndices(true)
             invokePhaseMeasuringTime("BIR", "index BIR one time") {
                 compiledBir.attachRootElement(input.birModule!!)
             }
 
-            compiledBir.activateNewRegisteredIndices(false)
-            externalBir.activateNewRegisteredIndices(false)
-            invokePhaseMeasuringTime("BIR", "index BIR scalable") {
-                compiledBir.reindexAllElements(true)
-            }
+            invokePhaseMeasuringTime("BIR", "index BIR scalable") {}
 
             dumpBirPhase(context, phaseConfig, input, null, "Initial")
             for (phase in input.backendContext.loweringPhases) {

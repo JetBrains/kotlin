@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.bir.backend.builders.*
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.jvm.birArray
 import org.jetbrains.kotlin.bir.backend.jvm.isInlineFunctionCall
-import org.jetbrains.kotlin.bir.backend.utils.JvmInlineFunctionResolver
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.BirSimpleFunctionImpl
 import org.jetbrains.kotlin.bir.expressions.*
@@ -30,19 +29,15 @@ import org.jetbrains.kotlin.name.Name
 
 context(JvmBirBackendContext)
 class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
-    private val inlineFunctions = registerIndexKey(BirFunction, true) { inlineFunctionResolver.needsInlining(it) }
-    private val functionAccesses =
-        registerBackReferencesKey_functionSymbol(BirFunctionAccessExpression, BirFunctionAccessExpression::symbol)
-
-    private val inlineFunctionResolver = JvmInlineFunctionResolver()
-
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(inlineFunctions).forEach { function ->
-            val accesses by lazy { function.getBackReferences(functionAccesses) }
-            for (parameter in function.valueParameters) {
-                if (parameter.isInlineParameter()) {
-                    accesses.forEach { access ->
-                        transferInlineArgument(access.valueArguments[parameter.index])
+        getAllElementsOfClass(BirFunction, true).forEach { function ->
+            if (function.isInlineFunctionCall()) {
+                val accesses by lazy { function.getBackReferences(BirFunctionAccessExpression.symbol) }
+                for (parameter in function.valueParameters) {
+                    if (parameter.isInlineParameter()) {
+                        accesses.forEach { access ->
+                            transferInlineArgument(access.valueArguments[parameter.index])
+                        }
                     }
                 }
             }

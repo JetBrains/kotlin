@@ -22,44 +22,29 @@ class BirElseBranchImpl(
     condition: BirExpression,
     result: BirExpression,
 ) : BirElseBranch() {
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
     private var _condition: BirExpression? = condition
     override var condition: BirExpression
         get() {
-            recordPropertyRead()
             return _condition ?: throwChildElementRemoved("condition")
         }
         set(value) {
             if (_condition !== value) {
                 childReplaced(_condition, value)
                 _condition = value
-                invalidate()
             }
         }
 
     private var _result: BirExpression? = result
     override var result: BirExpression
         get() {
-            recordPropertyRead()
             return _result ?: throwChildElementRemoved("result")
         }
         set(value) {
             if (_result !== value) {
                 childReplaced(_result, value)
                 _result = value
-                invalidate()
             }
         }
 

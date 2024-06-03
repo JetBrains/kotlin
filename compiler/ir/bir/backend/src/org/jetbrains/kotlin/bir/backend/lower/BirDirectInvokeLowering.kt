@@ -37,32 +37,27 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 context(JvmBirBackendContext)
 class BirDirectInvokeLowering : BirLoweringPhase() {
-    private val valueAccesses = registerBackReferencesKey_valueSymbol(BirValueAccessExpression, BirValueAccessExpression::symbol)
-    private val returnTargets = registerBackReferencesKey_returnTargetSymbol(BirReturn, BirReturn::returnTargetSymbol)
-    private val invokeFunctions = registerIndexKey(BirSimpleFunction, false) {
-        it.name == OperatorNameConventions.INVOKE
-    }
-    private val functionCalls = registerBackReferencesKey(BirCall, BirCall::symbol)
-
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(invokeFunctions).forEach { function ->
-            function.getBackReferences(functionCalls).forEach { call ->
-                val receiver = call.dispatchReceiver
-                val result = when {
-                    // TODO deal with type parameters somehow?
-                    // It seems we can't encounter them in the code written by user,
-                    // but this might be important later if we actually perform inlining and optimizations on IR.
-                    receiver is BirFunctionReference && receiver.symbol.owner.typeParameters.isEmpty() ->
-                        visitFunctionReferenceInvoke(call, receiver)
-                    receiver is BirBlock ->
-                        receiver.asInlinableFunctionReference()
-                            ?.takeIf { it.extensionReceiver == null }
-                            ?.let { reference -> visitLambdaInvoke(call, reference) }
-                            ?: call
-                    else -> call
-                }
+        getAllElementsOfClass(BirSimpleFunction, false).forEach { function ->
+            if (function.name == OperatorNameConventions.INVOKE) {
+                function.getBackReferences(BirCall.symbol).forEach { call ->
+                    val receiver = call.dispatchReceiver
+                    val result = when {
+                        // TODO deal with type parameters somehow?
+                        // It seems we can't encounter them in the code written by user,
+                        // but this might be important later if we actually perform inlining and optimizations on IR.
+                        receiver is BirFunctionReference && receiver.symbol.owner.typeParameters.isEmpty() ->
+                            visitFunctionReferenceInvoke(call, receiver)
+                        receiver is BirBlock ->
+                            receiver.asInlinableFunctionReference()
+                                ?.takeIf { it.extensionReceiver == null }
+                                ?.let { reference -> visitLambdaInvoke(call, reference) }
+                                ?: call
+                        else -> call
+                    }
 
-                call.replaceWith(result)
+                    call.replaceWith(result)
+                }
             }
         }
     }
@@ -146,12 +141,12 @@ class BirDirectInvokeLowering : BirLoweringPhase() {
         arguments: Map<BirValueParameter, BirValueDeclaration>,
     ): BirBody {
         arguments.forEach { (oldParam, newParam) ->
-            oldParam.getBackReferences(valueAccesses).forEach { paramUsage ->
+            oldParam.getBackReferences(BirValueAccessExpression.symbol).forEach { paramUsage ->
                 paramUsage.symbol = newParam.symbol
             }
         }
 
-        source.getBackReferences(returnTargets).forEach { returnElement ->
+        source.getBackReferences(BirReturn.returnTargetSymbol).forEach { returnElement ->
             returnElement.returnTargetSymbol = targetSymbol
         }
 

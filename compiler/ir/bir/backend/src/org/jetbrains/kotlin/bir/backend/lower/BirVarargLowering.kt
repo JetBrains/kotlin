@@ -25,30 +25,24 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 context(JvmBirBackendContext)
 class BirVarargLowering : BirLoweringPhase() {
-    private val functionAccessesWithMissingArgument = registerIndexKey(BirFunctionAccessExpression, false) { expression ->
-        expression.valueArguments.any { it == null }
-    }
-
-    private val varargs = registerIndexKey(BirVararg, false)
-
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(functionAccessesWithMissingArgument).forEach { expression ->
-            if (expression.isInsideAnnotation()) return@forEach
-
-            for (i in expression.valueArguments.indices) {
-                if (expression.valueArguments[i] == null) {
+        for (expression in getAllElementsOfClass(BirFunctionAccessExpression, false)) {
+            expression.valueArguments.forEachIndexed { i, arg ->
+                if (arg == null) {
                     val parameter = expression.symbol.owner.valueParameters[i]
                     if (parameter.varargElementType != null && !parameter.hasDefaultValue()) {
-                        val arrayType = parameter.type.substitute(expression.typeSubstitutionMap).makeNotNull()
-                        expression.valueArguments[i] = birBodyScope { birArrayOf(arrayType, emptyList()) }
+                        if (!expression.isInsideAnnotation()) {
+                            val arrayType = parameter.type.substitute(expression.typeSubstitutionMap).makeNotNull()
+                            expression.valueArguments[i] = birBodyScope { birArrayOf(arrayType, emptyList()) }
+                        }
                     }
                 }
             }
         }
 
         // todo: does it work with nested varargs properly?
-        getAllElementsWithIndex(varargs).forEach { vararg ->
-            if (vararg.isInsideAnnotation()) return@forEach
+        for (vararg in getAllElementsOfClass(BirVararg, false)) {
+            if (vararg.isInsideAnnotation()) continue
 
             val array = birBodyScope {
                 sourceSpan = vararg.sourceSpan

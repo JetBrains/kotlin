@@ -24,83 +24,17 @@ class BirInlinedFunctionBlockImpl(
     inlineCall: BirFunctionAccessExpression,
     inlinedElement: BirElement,
 ) : BirInlinedFunctionBlock() {
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
-    private var _attributeOwnerId: BirAttributeContainer = this
-    override var attributeOwnerId: BirAttributeContainer
-        get() {
-            recordPropertyRead()
-            return _attributeOwnerId
-        }
-        set(value) {
-            if (_attributeOwnerId !== value) {
-                _attributeOwnerId = value
-                invalidate()
-            }
-        }
+    override var attributeOwnerId: BirAttributeContainer = this
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
-    private var _origin: IrStatementOrigin? = origin
-    override var origin: IrStatementOrigin?
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrStatementOrigin? = origin
 
-    private var _inlineCall: BirFunctionAccessExpression = inlineCall
-    override var inlineCall: BirFunctionAccessExpression
-        get() {
-            recordPropertyRead()
-            return _inlineCall
-        }
-        set(value) {
-            if (_inlineCall !== value) {
-                _inlineCall = value
-                invalidate()
-            }
-        }
+    override var inlineCall: BirFunctionAccessExpression = inlineCall
 
-    private var _inlinedElement: BirElement = inlinedElement
-    override var inlinedElement: BirElement
-        get() {
-            recordPropertyRead()
-            return _inlinedElement
-        }
-        set(value) {
-            if (_inlinedElement !== value) {
-                _inlinedElement = value
-                invalidate()
-            }
-        }
+    override var inlinedElement: BirElement = inlinedElement
 
     override val statements: BirImplChildElementList<BirStatement> = BirImplChildElementList(this, 1, false)
 

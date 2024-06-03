@@ -32,29 +32,24 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
     private val KotlinRepeatableAnnotation by lz { birBuiltIns.findClass(StandardNames.FqNames.repeatable) }
     private val JavaRepeatableAnnotation by lz { birBuiltIns.findClass(JvmAnnotationNames.REPEATABLE_ANNOTATION)!! }
 
-    private val declaredAnnotations = registerIndexKey(BirClass, false) {
-        it.kind == ClassKind.ANNOTATION_CLASS
-    }
-    private val elementsWithMultipleAnnotations = registerIndexKey(BirMutableAnnotationContainer, false) {
-        it.annotations.size >= 2
-    }
-
     private val repeatedAnnotationSyntheticContainerKey = createLocalIrProperty<_, BirClass>(BirClass)
 
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(declaredAnnotations).forEach { annotationClass ->
-            if (
-                KotlinRepeatableAnnotation?.let { annotationClass.hasAnnotation(it) } == true
-                && !annotationClass.hasAnnotation(JavaRepeatableAnnotation)
-            ) {
-                val repeatedAnnotationSyntheticContainer = createRepeatedAnnotationSyntheticContainer(annotationClass)
-                annotationClass.declarations += repeatedAnnotationSyntheticContainer
-                annotationClass[repeatedAnnotationSyntheticContainerKey] = repeatedAnnotationSyntheticContainer
+        getAllElementsOfClass(BirClass, false).forEach { annotationClass ->
+            if (annotationClass.kind == ClassKind.ANNOTATION_CLASS) {
+                if (
+                    KotlinRepeatableAnnotation?.let { annotationClass.hasAnnotation(it) } == true
+                    && !annotationClass.hasAnnotation(JavaRepeatableAnnotation)
+                ) {
+                    val repeatedAnnotationSyntheticContainer = createRepeatedAnnotationSyntheticContainer(annotationClass)
+                    annotationClass.declarations += repeatedAnnotationSyntheticContainer
+                    annotationClass[repeatedAnnotationSyntheticContainerKey] = repeatedAnnotationSyntheticContainer
+                }
             }
         }
 
         if (generationState.classBuilderMode.generateBodies) {
-            getAllElementsWithIndex(elementsWithMultipleAnnotations).forEach { element ->
+            getAllElementsOfClass(BirMutableAnnotationContainer, false).forEach { element ->
                 transformMultipleAnnotations(element.annotations)?.let {
                     element.annotations = it
                 }

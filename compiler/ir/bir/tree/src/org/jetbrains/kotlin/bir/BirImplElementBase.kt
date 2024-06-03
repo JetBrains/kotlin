@@ -5,21 +5,7 @@
 
 package org.jetbrains.kotlin.bir
 
-abstract class BirImplElementBase : BirElementBase() {
-    final override val parent: BirElementBase?
-        get() {
-            recordPropertyRead()
-            return super.parent
-        }
-
-    internal fun setParentWithInvalidation(new: BirElementParent?) {
-        if (_parent !== new) {
-            _parent = new
-            invalidate()
-        }
-    }
-
-
+abstract class BirImplElementBase() : BirElementBase() {
     protected fun initChild(new: BirElement?) {
         childReplaced(null, new)
     }
@@ -28,7 +14,7 @@ abstract class BirImplElementBase : BirElementBase() {
         if (old != null) {
             old as BirImplElementBase
 
-            old.setParentWithInvalidation(null)
+            old._parent = null
             _containingDatabase?.elementDetached(old)
         }
 
@@ -57,7 +43,6 @@ abstract class BirImplElementBase : BirElementBase() {
         replacedWithInternal(new as BirImplElementBase?)
         if (parent is BirImplElementBase) {
             parent.childReplaced(this, new)
-            parent.invalidate()
         }
     }
 

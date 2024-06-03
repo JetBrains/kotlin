@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElementBackReferencesKey
 import org.jetbrains.kotlin.bir.BirElementClass
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 import org.jetbrains.kotlin.bir.types.BirType
@@ -27,5 +28,7 @@ abstract class BirMemberAccessExpression<S : BirSymbol>() : BirDeclarationRefere
 
     abstract var typeArguments: List<BirType?>
 
-    companion object : BirElementClass<BirMemberAccessExpression<*>>(BirMemberAccessExpression::class.java, 64, false)
+    companion object : BirElementClass<BirMemberAccessExpression<*>>(BirMemberAccessExpression::class.java, 64, false) {
+        val symbol = BirElementBackReferencesKey<BirMemberAccessExpression<*>, _>{ (it as? BirMemberAccessExpression<*>)?.symbol?.owner }
+    }
 }

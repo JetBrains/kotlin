@@ -22,69 +22,14 @@ class BirClassReferenceImpl(
     symbol: BirClassifierSymbol,
     classType: BirType,
 ) : BirClassReference() {
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
-    private var _attributeOwnerId: BirAttributeContainer = this
-    override var attributeOwnerId: BirAttributeContainer
-        get() {
-            recordPropertyRead()
-            return _attributeOwnerId
-        }
-        set(value) {
-            if (_attributeOwnerId !== value) {
-                _attributeOwnerId = value
-                invalidate()
-            }
-        }
+    override var attributeOwnerId: BirAttributeContainer = this
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
-    private var _symbol: BirClassifierSymbol = symbol
-    override var symbol: BirClassifierSymbol
-        get() {
-            recordPropertyRead()
-            return _symbol
-        }
-        set(value) {
-            if (_symbol !== value) {
-                _symbol = value
-                invalidate()
-            }
-        }
+    override var symbol: BirClassifierSymbol = symbol
 
-    private var _classType: BirType = classType
-    override var classType: BirType
-        get() {
-            recordPropertyRead()
-            return _classType
-        }
-        set(value) {
-            if (_classType != value) {
-                _classType = value
-                invalidate()
-            }
-        }
+    override var classType: BirType = classType
 
 }

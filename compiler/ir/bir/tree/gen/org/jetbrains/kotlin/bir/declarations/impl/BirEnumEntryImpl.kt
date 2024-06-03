@@ -49,59 +49,15 @@ class BirEnumEntryImpl(
     override val isBound: Boolean
         get() = true
 
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
     override val signature: IdSignature? = signature
 
-    private var _annotations: List<BirConstructorCall> = annotations
-    override var annotations: List<BirConstructorCall>
-        get() {
-            recordPropertyRead()
-            return _annotations
-        }
-        set(value) {
-            if (_annotations != value) {
-                _annotations = value
-                invalidate()
-            }
-        }
+    override var annotations: List<BirConstructorCall> = annotations
 
-    private var _origin: IrDeclarationOrigin = origin
-    override var origin: IrDeclarationOrigin
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrDeclarationOrigin = origin
 
-    private var _name: Name = name
-    override var name: Name
-        get() {
-            recordPropertyRead()
-            return _name
-        }
-        set(value) {
-            if (_name != value) {
-                _name = value
-                invalidate()
-            }
-        }
+    override var name: Name = name
 
     override val symbol: BirEnumEntrySymbol
         get() = this
@@ -109,28 +65,24 @@ class BirEnumEntryImpl(
     private var _initializerExpression: BirExpressionBody? = initializerExpression
     override var initializerExpression: BirExpressionBody?
         get() {
-            recordPropertyRead()
             return _initializerExpression
         }
         set(value) {
             if (_initializerExpression !== value) {
                 childReplaced(_initializerExpression, value)
                 _initializerExpression = value
-                invalidate()
             }
         }
 
     private var _correspondingClass: BirClass? = correspondingClass
     override var correspondingClass: BirClass?
         get() {
-            recordPropertyRead()
             return _correspondingClass
         }
         set(value) {
             if (_correspondingClass !== value) {
                 childReplaced(_correspondingClass, value)
                 _correspondingClass = value
-                invalidate()
             }
         }
 

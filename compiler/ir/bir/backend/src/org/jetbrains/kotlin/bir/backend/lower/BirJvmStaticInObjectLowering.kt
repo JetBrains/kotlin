@@ -31,29 +31,28 @@ context(JvmBirBackendContext)
 class BirJvmStaticInObjectLowering : BirLoweringPhase() {
     private val JvmStaticAnnotation by lz { birBuiltIns.findClass(JVM_STATIC_ANNOTATION_FQ_NAME) }
 
-    private val staticDeclarations = registerIndexKey<BirDeclaration>(BirSimpleFunction or BirProperty, true) { declaration ->
-        val annotation = JvmStaticAnnotation ?: return@registerIndexKey false
-        declaration.hasAnnotation(annotation) ||
-                (declaration as? BirSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(annotation) == true ||
-                (declaration as? BirProperty)?.getter?.hasAnnotation(annotation) == true
-    }
-    private val memberAccesses =
-        registerBackReferencesKeyWithUntypedSymbolProperty(BirMemberAccessExpression, BirMemberAccessExpression<*>::symbol)
-    private val valueReads = registerBackReferencesKey_valueSymbol(BirGetValue, BirGetValue::symbol)
-
     override fun lower(module: BirModuleFragment) {
-        getAllElementsWithIndex(staticDeclarations).forEach { declaration ->
-            val parent = declaration.parent
-            if (parent is BirClass && parent.kind == ClassKind.OBJECT && !parent.isCompanion) {
-                declaration.getBackReferences(memberAccesses).forEach { call ->
-                    call.replaceWithStatic(replaceCallee = null)
-                }
+        getAllElementsOfClass(BirSimpleFunction or BirProperty, true).forEach { declaration ->
+            if (declaration.isStaticDeclaration()) {
+                val parent = declaration.parent
+                if (parent is BirClass && parent.kind == ClassKind.OBJECT && !parent.isCompanion) {
+                    declaration.getBackReferences(BirMemberAccessExpression.symbol).forEach { call ->
+                        call.replaceWithStatic(replaceCallee = null)
+                    }
 
-                if (declaration is BirSimpleFunction && declaration.getContainingDatabase() == compiledBir) {
-                    declaration.removeStaticDispatchReceiver(parent)
+                    if (declaration is BirSimpleFunction && declaration.getContainingDatabase() == compiledBir) {
+                        declaration.removeStaticDispatchReceiver(parent)
+                    }
                 }
             }
         }
+    }
+
+    private fun BirDeclaration.isStaticDeclaration(): Boolean {
+        val annotation = JvmStaticAnnotation ?: return false
+        return hasAnnotation(annotation) ||
+                (this as? BirSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(annotation) == true ||
+                (this as? BirProperty)?.getter?.hasAnnotation(annotation) == true
     }
 
     private fun BirSimpleFunction.removeStaticDispatchReceiver(parentObject: BirClass) {
@@ -89,7 +88,7 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
         oldThisReceiverParameter: BirValueParameter,
     ) {
         val field = JvmCachedDeclarations.getPrivateFieldForObjectInstance(birClass)
-        oldThisReceiverParameter.getBackReferences(valueReads).forEach { getValue ->
+        oldThisReceiverParameter.getBackReferences(BirGetValue.symbol).forEach { getValue ->
             val new = BirGetFieldImpl(getValue.sourceSpan, birClass.defaultType, field.symbol, null, null, null)
             getValue.replaceWith(new)
         }

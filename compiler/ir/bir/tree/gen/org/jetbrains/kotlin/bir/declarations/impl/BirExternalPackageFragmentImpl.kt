@@ -41,33 +41,11 @@ class BirExternalPackageFragmentImpl(
     override val isBound: Boolean
         get() = true
 
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
     override val signature: IdSignature? = signature
 
-    private var _packageFqName: FqName = packageFqName
-    override var packageFqName: FqName
-        get() {
-            recordPropertyRead()
-            return _packageFqName
-        }
-        set(value) {
-            if (_packageFqName != value) {
-                _packageFqName = value
-                invalidate()
-            }
-        }
+    override var packageFqName: FqName = packageFqName
 
     override val symbol: BirExternalPackageFragmentSymbol
         get() = this

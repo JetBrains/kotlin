@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirSetValue
 import org.jetbrains.kotlin.bir.symbols.BirValueSymbol
 import org.jetbrains.kotlin.bir.types.BirType
+import org.jetbrains.kotlin.bir.util.ForwardReferenceRecorder
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirSetValueImpl(
@@ -28,82 +29,35 @@ class BirSetValueImpl(
     origin: IrStatementOrigin?,
     value: BirExpression,
 ) : BirSetValue() {
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
-    private var _attributeOwnerId: BirAttributeContainer = this
-    override var attributeOwnerId: BirAttributeContainer
-        get() {
-            recordPropertyRead()
-            return _attributeOwnerId
-        }
-        set(value) {
-            if (_attributeOwnerId !== value) {
-                _attributeOwnerId = value
-                invalidate()
-            }
-        }
+    override var attributeOwnerId: BirAttributeContainer = this
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
     private var _symbol: BirValueSymbol = symbol
     override var symbol: BirValueSymbol
         get() {
-            recordPropertyRead()
             return _symbol
         }
         set(value) {
             if (_symbol !== value) {
                 _symbol = value
-                invalidate()
+                forwardReferencePropertyChanged()
             }
         }
 
-    private var _origin: IrStatementOrigin? = origin
-    override var origin: IrStatementOrigin?
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrStatementOrigin? = origin
 
     private var _value: BirExpression? = value
     override var value: BirExpression
         get() {
-            recordPropertyRead()
             return _value ?: throwChildElementRemoved("value")
         }
         set(value) {
             if (_value !== value) {
                 childReplaced(_value, value)
                 _value = value
-                invalidate()
             }
         }
 
@@ -123,5 +77,9 @@ class BirSetValueImpl(
             }
             else -> throwChildForReplacementNotFound(old)
         }
+    }
+
+    override fun getForwardReferences(recorder: ForwardReferenceRecorder) {
+        recorder.recordReference(symbol)
     }
 }

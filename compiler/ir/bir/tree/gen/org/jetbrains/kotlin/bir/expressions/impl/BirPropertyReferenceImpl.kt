@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.bir.symbols.BirFieldSymbol
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
 import org.jetbrains.kotlin.bir.types.BirType
+import org.jetbrains.kotlin.bir.util.ForwardReferenceRecorder
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirPropertyReferenceImpl(
@@ -32,150 +33,57 @@ class BirPropertyReferenceImpl(
     getter: BirSimpleFunctionSymbol?,
     setter: BirSimpleFunctionSymbol?,
 ) : BirPropertyReference() {
-    private var _sourceSpan: SourceSpan = sourceSpan
-    override var sourceSpan: SourceSpan
-        get() {
-            recordPropertyRead()
-            return _sourceSpan
-        }
-        set(value) {
-            if (_sourceSpan != value) {
-                _sourceSpan = value
-                invalidate()
-            }
-        }
+    override var sourceSpan: SourceSpan = sourceSpan
 
-    private var _attributeOwnerId: BirAttributeContainer = this
-    override var attributeOwnerId: BirAttributeContainer
-        get() {
-            recordPropertyRead()
-            return _attributeOwnerId
-        }
-        set(value) {
-            if (_attributeOwnerId !== value) {
-                _attributeOwnerId = value
-                invalidate()
-            }
-        }
+    override var attributeOwnerId: BirAttributeContainer = this
 
-    private var _type: BirType = type
-    override var type: BirType
-        get() {
-            recordPropertyRead()
-            return _type
-        }
-        set(value) {
-            if (_type != value) {
-                _type = value
-                invalidate()
-            }
-        }
+    override var type: BirType = type
 
     private var _dispatchReceiver: BirExpression? = dispatchReceiver
     override var dispatchReceiver: BirExpression?
         get() {
-            recordPropertyRead()
             return _dispatchReceiver
         }
         set(value) {
             if (_dispatchReceiver !== value) {
                 childReplaced(_dispatchReceiver, value)
                 _dispatchReceiver = value
-                invalidate()
             }
         }
 
     private var _extensionReceiver: BirExpression? = extensionReceiver
     override var extensionReceiver: BirExpression?
         get() {
-            recordPropertyRead()
             return _extensionReceiver
         }
         set(value) {
             if (_extensionReceiver !== value) {
                 childReplaced(_extensionReceiver, value)
                 _extensionReceiver = value
-                invalidate()
             }
         }
 
-    private var _origin: IrStatementOrigin? = origin
-    override var origin: IrStatementOrigin?
-        get() {
-            recordPropertyRead()
-            return _origin
-        }
-        set(value) {
-            if (_origin != value) {
-                _origin = value
-                invalidate()
-            }
-        }
+    override var origin: IrStatementOrigin? = origin
 
-    private var _typeArguments: List<BirType?> = typeArguments
-    override var typeArguments: List<BirType?>
-        get() {
-            recordPropertyRead()
-            return _typeArguments
-        }
-        set(value) {
-            if (_typeArguments != value) {
-                _typeArguments = value
-                invalidate()
-            }
-        }
+    override var typeArguments: List<BirType?> = typeArguments
 
     private var _symbol: BirPropertySymbol = symbol
     override var symbol: BirPropertySymbol
         get() {
-            recordPropertyRead()
             return _symbol
         }
         set(value) {
             if (_symbol !== value) {
                 _symbol = value
-                invalidate()
+                forwardReferencePropertyChanged()
             }
         }
 
-    private var _field: BirFieldSymbol? = field
-    override var field: BirFieldSymbol?
-        get() {
-            recordPropertyRead()
-            return _field
-        }
-        set(value) {
-            if (_field !== value) {
-                _field = value
-                invalidate()
-            }
-        }
+    override var field: BirFieldSymbol? = field
 
-    private var _getter: BirSimpleFunctionSymbol? = getter
-    override var getter: BirSimpleFunctionSymbol?
-        get() {
-            recordPropertyRead()
-            return _getter
-        }
-        set(value) {
-            if (_getter !== value) {
-                _getter = value
-                invalidate()
-            }
-        }
+    override var getter: BirSimpleFunctionSymbol? = getter
 
-    private var _setter: BirSimpleFunctionSymbol? = setter
-    override var setter: BirSimpleFunctionSymbol?
-        get() {
-            recordPropertyRead()
-            return _setter
-        }
-        set(value) {
-            if (_setter !== value) {
-                _setter = value
-                invalidate()
-            }
-        }
+    override var setter: BirSimpleFunctionSymbol? = setter
 
     override val valueArguments: BirImplChildElementList<BirExpression?> = BirImplChildElementList(this, 1, true)
 
@@ -208,5 +116,9 @@ class BirPropertyReferenceImpl(
             1 -> this.valueArguments
             else -> throwChildrenListWithIdNotFound(id)
         }
+    }
+
+    override fun getForwardReferences(recorder: ForwardReferenceRecorder) {
+        recorder.recordReference(symbol)
     }
 }
