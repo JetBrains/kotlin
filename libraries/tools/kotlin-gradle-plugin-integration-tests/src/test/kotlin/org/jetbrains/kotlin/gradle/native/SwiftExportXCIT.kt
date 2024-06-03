@@ -33,7 +33,7 @@ class SwiftExportXCIT : KGPBaseTest() {
                     xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
                     destination = "platform=iOS Simulator,id=${simulator.udid}",
                     buildMode = XcodeBuildMode.TEST,
-                    extraArguments = mapOf("VALID_ARCHS" to "arm64")
+                    buildSettingOverrides = mapOf("VALID_ARCHS" to "arm64")
                 )
             }
         }

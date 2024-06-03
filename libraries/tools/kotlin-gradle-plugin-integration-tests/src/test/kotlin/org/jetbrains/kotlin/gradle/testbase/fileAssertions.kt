@@ -122,6 +122,24 @@ fun TestProject.assertSymlinkInProjectExists(
 }
 
 /**
+ * Asserts symlink under [pathToFile] relative to the test project exists and points to [pathToPointee].
+ */
+fun TestProject.assertSymlinkInProjectPointsToProjectPath(
+    pathToSymlink: String,
+    pathToPointee: String,
+) {
+    val pointeePath = projectPath.resolve(pathToPointee).toFile().canonicalFile
+    val symlinkPath = projectPath.resolve(pathToSymlink).toFile()
+    val symlinkPointeePath = symlinkPath.canonicalFile
+    assertSymlinkExists(symlinkPath.toPath())
+    assertEquals(
+        pointeePath,
+        symlinkPointeePath,
+        "Symlink '${symlinkPointeePath}' points to '${symlinkPointeePath}', but was expected to point to '${pointeePath}'"
+    )
+}
+
+/**
  * Asserts directory under [pathToDir] relative to the test project exists and is a directory.
  */
 fun GradleProject.assertDirectoryInProjectExists(
