@@ -52,8 +52,13 @@ annotation class JsGradlePluginTests
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-@Tag("NativeKGP")
+@Tag("NotNativeKGP")
 annotation class NativeGradlePluginTests
+
+@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@Tag("NativeKGP")
+annotation class NativeGradlePluginTestsTemp
 
 /**
  * Add it to tests covering Swift Export Kotlin Gradle Plugin/Native platform.

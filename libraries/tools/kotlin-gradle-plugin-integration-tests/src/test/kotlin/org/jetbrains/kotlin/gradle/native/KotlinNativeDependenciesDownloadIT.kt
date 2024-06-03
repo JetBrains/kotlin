@@ -23,7 +23,7 @@ import kotlin.io.path.appendText
     supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.MAC, OS.LINUX]
 )
 @DisplayName("This test class contains different scenarios with downloading dependencies for Kotlin Native Compiler during build.")
-@NativeGradlePluginTests
+@NativeGradlePluginTestsTemp
 class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
 
     @TempDir
@@ -78,10 +78,13 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
             projectName, gradleVersion,
             environmentVariables = EnvironmentalVariables(Pair("KONAN_USE_INTERNAL_SERVER", "1")),
             buildOptions = defaultBuildOptions.withBundledKotlinNative().copy(
-                konanDataDir = konanDirectory
+                konanDataDir = konanDirectory,
             ),
         ) {
-            build(task) {
+            build(
+                task,
+                forceOutput = true
+            ) {
                 val file = projectPath.resolve("new.m").toFile().also { it.createNewFile() }
                 val dependencies = konanDirectory.resolve("dependencies").toFile()
                 assertTrue(dependencies.exists())
