@@ -814,6 +814,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
 
     private fun checkEmbedAndSignNotUsedTogetherWithPodDependencies(project: Project, cocoapodsExtension: CocoapodsExtension) {
+        if (project.kotlinPropertiesProvider.appleAllowEmbedAndSignWithCocoapods) {
+            return
+        }
+
         cocoapodsExtension.pods.all {
             SingleActionPerProject.run(project, "assertEmbedAndSignNotUsedTogetherWithPodDependencies") {
                 project.tasks.withType<EmbedAndSignTask>().all { embedAndSignTask ->
