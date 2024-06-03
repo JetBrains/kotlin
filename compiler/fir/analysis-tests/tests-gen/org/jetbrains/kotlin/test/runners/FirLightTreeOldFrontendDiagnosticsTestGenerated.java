@@ -17265,6 +17265,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("kt68570.kt")
+      public void testKt68570() {
+        runTest("compiler/testData/diagnostics/tests/inference/kt68570.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaAgainstSimpleTypeMismatch.kt")
       public void testLambdaAgainstSimpleTypeMismatch() {
         runTest("compiler/testData/diagnostics/tests/inference/lambdaAgainstSimpleTypeMismatch.kt");
