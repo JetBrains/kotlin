@@ -460,7 +460,6 @@ tasks.withType<Test> {
     dependsOn(":gradle:android-test-fixes:install")
     dependsOn(":gradle:gradle-warnings-detector:install")
     dependsOn(":gradle:kotlin-compiler-args-properties:install")
-    dependsOn(":libraries:tools:gradle:fus-statistics-gradle-plugin:install")
     dependsOn(":examples:annotation-processor-example:install")
     dependsOn(":kotlin-dom-api-compat:install")
     if (project.kotlinBuildProperties.isTeamcityBuild) {
