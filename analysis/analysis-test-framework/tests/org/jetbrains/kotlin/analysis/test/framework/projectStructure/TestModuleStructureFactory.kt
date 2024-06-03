@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -112,8 +113,8 @@ object TestModuleStructureFactory {
         modulesByName: ModulesByName,
         libraryCache: LibraryCache,
     ) = when (ktModule) {
-        is KaNotUnderContentRootModule -> {
-            // Not-under-content-root modules have no external dependencies on purpose
+        is KaNotUnderContentRootModule, is KaBuiltinsModule -> {
+            // Not-under-content-root and builtin modules have no external dependencies on purpose
         }
         is KaDanglingFileModule -> {
             // Dangling file modules get dependencies from their context

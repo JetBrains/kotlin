@@ -36,7 +36,7 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
         val classDeclaration = findRegularClass(classId, mainModule.ktModule, resolveSession).findPsi() as KtClassOrObject
         val file = classDeclaration.containingFile as KtFile
 
-        doLazyResolveTest(file, testServices) { firSession ->
+        doLazyResolveTest(file, testServices, outputRenderingMode) { firSession ->
             val regularClass = findRegularClass(classId, mainModule.ktModule, firSession)
             val declarationToResolve = chooseMemberDeclarationIfNeeded(regularClass, testServices.moduleStructure, firSession)
             declarationToResolve.fir to fun(phase: FirResolvePhase) {
@@ -44,6 +44,8 @@ abstract class AbstractByQualifiedNameLazyDeclarationResolveTest : AbstractFirLa
             }
         }
     }
+
+    open val outputRenderingMode: OutputRenderingMode = OutputRenderingMode.USE_SITE_AND_DESIGNATION_FILES
 
     private fun findRegularClass(classId: ClassId, module: KaModule, firSession: LLFirResolveSession): FirRegularClassSymbol {
         val symbolProvider = firSession.getSessionFor(module).symbolProvider
