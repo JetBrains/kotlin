@@ -171,6 +171,10 @@ internal constructor(
     val fatFramework: File
         get() = destinationDirProperty.file(fatFrameworkName + ".framework").getFile()
 
+    @get:Internal
+    internal val frameworkLayout: FrameworkLayout
+        get() = FrameworkLayout(fatFramework, getFatFrameworkFamily() == Family.OSX)
+
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
     @get:InputFiles
@@ -445,7 +449,7 @@ internal constructor(
 
     @TaskAction
     protected fun createFatFramework() {
-        val outFramework = FrameworkLayout(fatFramework, getFatFrameworkFamily() == Family.OSX)
+        val outFramework = frameworkLayout
         if (outFramework.exists()) outFramework.rootDir.deleteRecursively()
 
         outFramework.mkdirs()

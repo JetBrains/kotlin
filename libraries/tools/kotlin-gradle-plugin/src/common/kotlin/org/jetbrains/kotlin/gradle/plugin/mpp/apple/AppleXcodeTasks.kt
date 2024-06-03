@@ -71,27 +71,67 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework, env
         return null
     }
 
-    return when {
-        !isRequestedFramework -> locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->
+    val symbolicLinkTask = registerSymbolicLinkTask(
+        frameworkCopyTaskName = frameworkTaskName,
+        builtProductsDir = builtProductsDir(frameworkTaskName, environment),
+    )
+
+    if (!isRequestedFramework) {
+        return locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->
             task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
             task.isEnabled = false
         }
+    }
+
+    val frameworkPath: Provider<File>
+    val dsymPath: Provider<File>
+
+    val assembleFrameworkTask = when {
         needFatFramework -> locateOrRegisterTask<FatFrameworkTask>(frameworkTaskName) { task ->
             task.description = "Packs $frameworkBuildType fat framework for Xcode"
             task.baseName = framework.baseName
             task.destinationDirProperty.fileProvider(appleFrameworkDir(frameworkTaskName, environment))
             task.isEnabled = !project.kotlinPropertiesProvider.swiftExportEnabled && frameworkBuildType == envBuildType
-        }.also {
-            it.configure { task -> task.from(framework) }
+            task.dependsOn(symbolicLinkTask)
+        }.also { taskProvider ->
+            taskProvider.configure { task -> task.from(framework) }
+            frameworkPath = taskProvider.map { it.fatFramework }
+            dsymPath = taskProvider.map { it.frameworkLayout.dSYM.rootDir }
         }
         else -> registerTask<FrameworkCopy>(frameworkTaskName) { task ->
             task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
             task.isEnabled = !project.kotlinPropertiesProvider.swiftExportEnabled && frameworkBuildType == envBuildType
-            task.sourceFramework.fileProvider(framework.linkTaskProvider.flatMap { it.outputFile })
+            task.sourceFramework.fileProvider(framework.linkTaskProvider.map { it.outputFile.get() })
             task.sourceDsym.fileProvider(dsymFile(task.sourceFramework.mapToFile()))
-            task.dependsOn(framework.linkTaskProvider)
             task.destinationDirectory.fileProvider(appleFrameworkDir(frameworkTaskName, environment))
+            task.dependsOn(symbolicLinkTask)
+        }.also { taskProvider ->
+            frameworkPath = taskProvider.map { it.destinationFramework }
+            dsymPath = taskProvider.map { it.destinationDsym }
         }
+    }
+
+    symbolicLinkTask.configure {
+        it.frameworkPath.set(frameworkPath)
+        it.dsymPath.set(dsymPath)
+        it.shouldDsymLinkExist.set(!framework.isStatic)
+    }
+
+    return assembleFrameworkTask
+}
+
+private fun Project.registerSymbolicLinkTask(
+    frameworkCopyTaskName: String,
+    builtProductsDir: Provider<File>,
+): TaskProvider<SymbolicLinkToFrameworkTask> {
+    return locateOrRegisterTask<SymbolicLinkToFrameworkTask>(
+        lowerCamelCaseName(
+            "symbolicLinkTo",
+            frameworkCopyTaskName
+        )
+    ) {
+        it.enabled = kotlinPropertiesProvider.appleCreateSymbolicLinkToFrameworkInBuiltProductsDir
+        it.builtProductsDirectory.set(builtProductsDir)
     }
 }
 
@@ -258,13 +298,13 @@ private val Framework.namePrefix: String
  * Or if [XcodeEnvironment.frameworkSearchDir] is absolute use it, otherwise make it relative to buildDir/xcode-frameworks
  */
 private fun Project.appleFrameworkDir(frameworkTaskName: String, environment: XcodeEnvironment): Provider<File> {
-    return if (project.kotlinPropertiesProvider.appleCopyFrameworkToBuiltProductsDir) {
-        project.provider { environment.builtProductsDir ?: fireEnvException(frameworkTaskName, environment) }
-    } else {
-        layout.buildDirectory.dir("xcode-frameworks").map {
-            it.asFile.resolve(environment.frameworkSearchDir ?: fireEnvException(frameworkTaskName, environment))
-        }
+    return layout.buildDirectory.dir("xcode-frameworks").map {
+        it.asFile.resolve(environment.frameworkSearchDir ?: fireEnvException(frameworkTaskName, environment))
     }
+}
+
+private fun Project.builtProductsDir(frameworkTaskName: String, environment: XcodeEnvironment) = project.provider {
+    environment.builtProductsDir ?: fireEnvException(frameworkTaskName, environment)
 }
 
 
@@ -292,23 +332,27 @@ internal abstract class FrameworkCopy : DefaultTask() {
     @get:OutputDirectory
     abstract val destinationDirectory: DirectoryProperty
 
+    @get:Internal
+    internal val destinationFramework get() = destinationDirectory.getFile().resolve(sourceFramework.getFile().name)
+
+    @get:Internal
+    internal val destinationDsym get() = destinationDirectory.getFile().resolve(sourceDsym.getFile().name)
+
     @TaskAction
     open fun copy() {
-        copy(sourceFramework)
+        copy(sourceFramework.getFile(), destinationFramework)
         if (sourceDsym.isPresent && sourceDsym.getFile().exists()) {
-            copy(sourceDsym)
+            copy(sourceDsym.getFile(), destinationDsym)
         }
     }
 
-    private fun copy(sourceProperty: DirectoryProperty) {
-        val source = sourceProperty.getFile()
-        val destination = destinationDirectory.getFile()
-
-        val destinationFile = File(destination, source.name)
-        if (destinationFile.exists()) {
-            execOperations.exec { it.commandLine("rm", "-r", destinationFile.absolutePath) }
+    private fun copy(
+        source: File,
+        destination: File,
+    ) {
+        if (destination.exists()) {
+            execOperations.exec { it.commandLine("rm", "-r", destination.absolutePath) }
         }
-
         execOperations.exec { it.commandLine("cp", "-R", source.absolutePath, destination.absolutePath) }
     }
 
