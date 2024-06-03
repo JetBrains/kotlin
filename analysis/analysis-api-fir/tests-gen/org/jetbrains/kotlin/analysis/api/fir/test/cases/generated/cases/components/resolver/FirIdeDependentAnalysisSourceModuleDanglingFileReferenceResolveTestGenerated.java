@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.fir.test.cases.generated.cases.references;
+package org.jetbrains.kotlin.analysis.api.fir.test.cases.generated.cases.components.resolver;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractDanglingFileReferenceResolveTest;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractDanglingFileReferenceResolveTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/danglingFileReferenceResolve")
 @TestDataPath("$PROJECT_ROOT")
-public class FirIdeNormalAnalysisSourceModuleDanglingFileReferenceResolveTestGenerated extends AbstractDanglingFileReferenceResolveTest {
+public class FirIdeDependentAnalysisSourceModuleDanglingFileReferenceResolveTestGenerated extends AbstractDanglingFileReferenceResolveTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
@@ -35,7 +35,7 @@ public class FirIdeNormalAnalysisSourceModuleDanglingFileReferenceResolveTestGen
       new AnalysisApiTestConfiguratorFactoryData(
         FrontendKind.Fir,
         TestModuleKind.Source,
-        AnalysisSessionMode.Normal,
+        AnalysisSessionMode.Dependent,
         AnalysisApiMode.Ide
       )
     );

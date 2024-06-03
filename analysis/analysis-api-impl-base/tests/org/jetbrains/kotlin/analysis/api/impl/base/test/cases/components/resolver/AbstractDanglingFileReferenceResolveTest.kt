@@ -3,12 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
+package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.analyzeCopy
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractDanglingFileReferenceResolveTest.Directives.COPY_RESOLUTION_MODE
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.project.structure.DanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -30,13 +29,13 @@ abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResol
             useDirectives(Directives)
             forTestsMatching("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/*") {
                 defaultDirectives {
-                    COPY_RESOLUTION_MODE.with(DanglingFileResolutionMode.IGNORE_SELF)
+                    Directives.COPY_RESOLUTION_MODE.with(DanglingFileResolutionMode.IGNORE_SELF)
                 }
             }
 
             forTestsMatching("analysis/analysis-api/testData/danglingFileReferenceResolve/preferSelf/*") {
                 defaultDirectives {
-                    COPY_RESOLUTION_MODE.with(DanglingFileResolutionMode.PREFER_SELF)
+                    Directives.COPY_RESOLUTION_MODE.with(DanglingFileResolutionMode.PREFER_SELF)
                 }
             }
         }
@@ -58,7 +57,7 @@ abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResol
         val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = true)
         val fakeKtFile = ktPsiFactory.createFile("fake.kt", mainFile.text)
 
-        if (mainModule.testModule.directives.contains(COPY_RESOLUTION_MODE)) {
+        if (mainModule.testModule.directives.contains(Directives.COPY_RESOLUTION_MODE)) {
             fakeKtFile.originalFile = mainFile
         }
 
@@ -66,7 +65,7 @@ abstract class AbstractDanglingFileReferenceResolveTest : AbstractReferenceResol
     }
 
     override fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KaSession.() -> R): R {
-        val resolutionMode = mainModule.testModule.directives.singleOrZeroValue(COPY_RESOLUTION_MODE)
+        val resolutionMode = mainModule.testModule.directives.singleOrZeroValue(Directives.COPY_RESOLUTION_MODE)
         return if (resolutionMode != null) {
             analyzeCopy(element, resolutionMode) { action() }
         } else {
