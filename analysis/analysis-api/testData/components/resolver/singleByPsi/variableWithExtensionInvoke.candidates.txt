@@ -1,35 +1,35 @@
-KtCallExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = f
-        isSafeNavigation = false
-        type = Foo
-      signature = KaFunctionLikeSignature:
-        receiverType = Foo
-        returnType = kotlin.Unit
-        symbol = /invoke(<extension receiver>: Foo, t: T): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = t
-            receiverType = null
-            returnType = kotlin.String
-            symbol = t: T
-            callableId = null
-        ]
-        callableId = /invoke
-    typeArgumentsMapping = {
-      T -> (kotlin.String)
-    }
-    argumentMapping = {
-      "" -> (KaVariableLikeSignature:
-        name = t
-        receiverType = null
-        returnType = kotlin.String
-        symbol = t: T
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtCallExpression(76,81): 'f("")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = Foo
+        signature = KaFunctionLikeSignature:
+          receiverType = Foo
+          returnType = kotlin.Unit
+          symbol = /invoke(<extension receiver>: Foo, t: T): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = t
+              receiverType = null
+              returnType = kotlin.String
+              symbol = t: T
+              callableId = null
+          ]
+          callableId = /invoke
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      argumentMapping = {
+        "" -> (KaVariableLikeSignature:
+          name = t
+          receiverType = null
+          returnType = kotlin.String
+          symbol = t: T
+          callableId = null)
+      }
+    isInBestCandidates = true

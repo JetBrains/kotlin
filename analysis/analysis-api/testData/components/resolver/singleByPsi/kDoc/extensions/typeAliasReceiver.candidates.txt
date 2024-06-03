@@ -1,14 +1,19 @@
-<caret_1>: KDocName:
-NO_CANDIDATES
+<caret_1>:
+  KDocName(167,182): 'FooAlias.fooExt'
+    NO_CANDIDATES
 
-<caret_2>: KDocName:
-NO_CANDIDATES
+<caret_2>:
+  KDocName(191,206): 'Foo.fooAliasExt'
+    NO_CANDIDATES
 
-<caret_3>: KDocName:
-NO_CANDIDATES
+<caret_3>:
+  KDocName(212,232): 'FooAlias.fooAliasExt'
+    NO_CANDIDATES
 
-<caret_4>: KDocName:
-NO_CANDIDATES
+<caret_4>:
+  KDocName(241,256): 'FooAlias.anyExt'
+    NO_CANDIDATES
 
-<caret_5>: KDocName:
-NO_CANDIDATES
+<caret_5>:
+  KDocName(262,279): 'FooAlias.otherExt'
+    NO_CANDIDATES

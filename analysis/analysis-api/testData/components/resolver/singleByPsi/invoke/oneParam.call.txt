@@ -1,32 +1,32 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = f
-        isSafeNavigation = false
-        type = Foo
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /Foo.invoke(<dispatch receiver>: Foo, vararg a: kotlin.Any): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.Any
-            symbol = vararg a: kotlin.Any
-            callableId = null
-        ]
-        callableId = /Foo.invoke
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = a
-        receiverType = null
-        returnType = kotlin.Any
-        symbol = vararg a: kotlin.Any
-        callableId = null)
-    }
+KtCallExpression(76,80): 'f(1)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = Foo
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /Foo.invoke(<dispatch receiver>: Foo, vararg a: kotlin.Any): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Any
+              symbol = vararg a: kotlin.Any
+              callableId = null
+          ]
+          callableId = /Foo.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = vararg a: kotlin.Any
+          callableId = null)
+      }

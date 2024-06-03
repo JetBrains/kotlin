@@ -1,29 +1,39 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(86,93): 'Foo.ext'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(99,102): 'Foo'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(115,131): 'Foo.depExtShared'
+    null
 
-<caret_4>: KDocName:
-null
+<caret_4>:
+  KDocName(137,140): 'Foo'
+    null
 
-<caret_5>: KDocName:
-null
+<caret_5>:
+  KDocName(162,173): 'Foo.depExt1'
+    null
 
-<caret_6>: KDocName:
-null
+<caret_6>:
+  KDocName(179,182): 'Foo'
+    null
 
-<caret_7>: KDocName:
-null
+<caret_7>:
+  KDocName(199,210): 'Foo.depExt2'
+    null
 
-<caret_8>: KDocName:
-null
+<caret_8>:
+  KDocName(216,219): 'Foo'
+    null
 
-<caret_9>: KDocName:
-null
+<caret_9>:
+  KDocName(236,244): 'dep1.Foo'
+    null
 
-<caret_10>: KDocName:
-null
+<caret_10>:
+  KDocName(254,262): 'dep2.Foo'
+    null

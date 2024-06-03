@@ -1,32 +1,32 @@
-KtConstructorCalleeExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = A
-          symbol = <constructor>(x: kotlin.String): A
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = x
-              receiverType = null
-              returnType = kotlin.String
-              symbol = x: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        5 -> (KaVariableLikeSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.String
-          symbol = x: kotlin.String
-          callableId = null)
-      }
-  ]
-  diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
+KtConstructorCalleeExpression(40,41): 'A'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaDelegatedConstructorCall:
+        kind = SUPER_CALL
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = A
+            symbol = <constructor>(x: kotlin.String): A
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = x
+                receiverType = null
+                returnType = kotlin.String
+                symbol = x: kotlin.String
+                callableId = null
+            ]
+            callableId = null
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          5 -> (KaVariableLikeSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>

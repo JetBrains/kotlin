@@ -1,2 +1,2 @@
-KtLabelReferenceExpression:
-null
+KtLabelReferenceExpression(68,72): '@foo'
+  null

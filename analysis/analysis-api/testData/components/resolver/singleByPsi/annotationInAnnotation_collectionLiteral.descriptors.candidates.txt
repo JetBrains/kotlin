@@ -1,30 +1,30 @@
-KtCallExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = Annotation
-        symbol = <constructor>(vararg strings: kotlin.String): Annotation
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = strings
-            receiverType = null
-            returnType = kotlin.String
-            symbol = vararg strings: kotlin.String
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      ["v1", "v2"] -> (KaVariableLikeSignature:
-        name = strings
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg strings: kotlin.String
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtCallExpression(131,155): 'Annotation(["v1", "v2"])'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Annotation
+          symbol = <constructor>(vararg strings: kotlin.String): Annotation
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = strings
+              receiverType = null
+              returnType = kotlin.String
+              symbol = vararg strings: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        ["v1", "v2"] -> (KaVariableLikeSignature:
+          name = strings
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg strings: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true

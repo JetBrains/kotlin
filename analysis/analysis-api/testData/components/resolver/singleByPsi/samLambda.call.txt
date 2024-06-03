@@ -1,31 +1,31 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaImplicitReceiverValue:
-        symbol = /Test
-        type = Test
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /Test.test(<dispatch receiver>: Test, foo: Test.Foo): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = foo
-            receiverType = null
-            returnType = Test.Foo
-            symbol = foo: Test.Foo
-            callableId = null
-        ]
-        callableId = /Test.test
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      { uiMethod() } -> (KaVariableLikeSignature:
-        name = foo
-        receiverType = null
-        returnType = Test.Foo
-        symbol = foo: Test.Foo
-        callableId = null)
-    }
+KtCallExpression(143,162): 'test { uiMethod() }'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = /Test
+          type = Test
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /Test.test(<dispatch receiver>: Test, foo: Test.Foo): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = foo
+              receiverType = null
+              returnType = Test.Foo
+              symbol = foo: Test.Foo
+              callableId = null
+          ]
+          callableId = /Test.test
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { uiMethod() } -> (KaVariableLikeSignature:
+          name = foo
+          receiverType = null
+          returnType = Test.Foo
+          symbol = foo: Test.Foo
+          callableId = null)
+      }

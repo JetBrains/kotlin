@@ -1,32 +1,32 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = m
-        isSafeNavigation = false
-        type = library4.MyInterface
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = library4/MyInterface.check(<dispatch receiver>: library4.MyInterface, list: {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = list
-            receiverType = null
-            returnType = {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
-            symbol = list: {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
-            callableId = null
-        ]
-        callableId = library4/MyInterface.check
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      emptyList() -> (KaVariableLikeSignature:
-        name = list
-        receiverType = null
-        returnType = {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
-        symbol = list: {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
-        callableId = null)
-    }
+KtNameReferenceExpression(165,170): 'check'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = library4.MyInterface
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = library4/MyInterface.check(<dispatch receiver>: library4.MyInterface, list: {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = list
+              receiverType = null
+              returnType = {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
+              symbol = list: {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
+              callableId = null
+          ]
+          callableId = library4/MyInterface.check
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        emptyList() -> (KaVariableLikeSignature:
+          name = list
+          receiverType = null
+          returnType = {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
+          symbol = list: {library2.ListAlias<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{library3.SetAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{library1.StringAlias=} kotlin.String>>
+          callableId = null)
+      }

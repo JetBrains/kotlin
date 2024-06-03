@@ -1,2 +1,2 @@
-KtCallExpression:
-null
+KtCallExpression(31,44): 'Array<String>'
+  null

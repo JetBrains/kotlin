@@ -1,35 +1,35 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = Annotation
-        symbol = <constructor>(vararg strings: kotlin.String): Annotation
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = strings
-            receiverType = null
-            returnType = kotlin.String
-            symbol = vararg strings: kotlin.String
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      "v1" -> (KaVariableLikeSignature:
-        name = strings
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg strings: kotlin.String
-        callableId = null),
-      "v2" -> (KaVariableLikeSignature:
-        name = strings
-        receiverType = null
-        returnType = kotlin.String
-        symbol = vararg strings: kotlin.String
-        callableId = null)
-    }
+KtCallExpression(131,153): 'Annotation("v1", "v2")'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Annotation
+          symbol = <constructor>(vararg strings: kotlin.String): Annotation
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = strings
+              receiverType = null
+              returnType = kotlin.String
+              symbol = vararg strings: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "v1" -> (KaVariableLikeSignature:
+          name = strings
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg strings: kotlin.String
+          callableId = null),
+        "v2" -> (KaVariableLikeSignature:
+          name = strings
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg strings: kotlin.String
+          callableId = null)
+      }

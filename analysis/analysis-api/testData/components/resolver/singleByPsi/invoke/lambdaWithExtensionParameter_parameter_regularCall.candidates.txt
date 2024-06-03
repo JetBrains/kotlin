@@ -1,15 +1,15 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = action
-        receiverType = null
-        returnType = @ExtensionFunctionType kotlin.Function1<test.Foo, kotlin.Unit>
-        symbol = action: @ExtensionFunctionType kotlin.Function1<test.Foo, kotlin.Unit>
-        callableId = null
-    simpleAccess = Read
-    typeArgumentsMapping = {}
-  isInBestCandidates = true
+KtNameReferenceExpression(79,85): 'action'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = @ExtensionFunctionType kotlin.Function1<test.Foo, kotlin.Unit>
+          symbol = action: @ExtensionFunctionType kotlin.Function1<test.Foo, kotlin.Unit>
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

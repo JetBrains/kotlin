@@ -1,37 +1,37 @@
-KtCollectionLiteralExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Array<kotlin.reflect.KClass<*>>
-        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = elements
-            receiverType = null
-            returnType = kotlin.reflect.KClass<*>
-            symbol = vararg elements: T
-            callableId = null
-        ]
-        callableId = kotlin/arrayOf
-    typeArgumentsMapping = {
-      T -> (kotlin.reflect.KClass<*>)
-    }
-    argumentMapping = {
-      AnnoWithKClass::class -> (KaVariableLikeSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.reflect.KClass<*>
-        symbol = vararg elements: T
-        callableId = null),
-      one.AnnoWithKClass::class -> (KaVariableLikeSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.reflect.KClass<*>
-        symbol = vararg elements: T
-        callableId = null)
-    }
+KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Array<kotlin.reflect.KClass<*>>
+          symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.reflect.KClass<*>
+              symbol = vararg elements: T
+              callableId = null
+          ]
+          callableId = kotlin/arrayOf
+      typeArgumentsMapping = {
+        T -> (kotlin.reflect.KClass<*>)
+      }
+      argumentMapping = {
+        AnnoWithKClass::class -> (KaVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.reflect.KClass<*>
+          symbol = vararg elements: T
+          callableId = null),
+        one.AnnoWithKClass::class -> (KaVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.reflect.KClass<*>
+          symbol = vararg elements: T
+          callableId = null)
+      }

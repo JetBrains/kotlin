@@ -1,45 +1,45 @@
-KtDotQualifiedExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = handler
-        isSafeNavigation = false
-        type = test.pkg.MyHandler
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = test/pkg/MyHandler.stash(<dispatch receiver>: test.pkg.MyHandler, actor: test.pkg.MyInterface!, actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = actor
-            receiverType = null
-            returnType = test.pkg.MyInterface!
-            symbol = actor: test.pkg.MyInterface!
-            callableId = null,
-          KaVariableLikeSignature:
-            name = actors
-            receiverType = null
-            returnType = (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
-            symbol = actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
-            callableId = null
-        ]
-        callableId = test/pkg/MyHandler.stash
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      lambda -> (KaVariableLikeSignature:
-        name = actor
-        receiverType = null
-        returnType = test.pkg.MyInterface!
-        symbol = actor: test.pkg.MyInterface!
-        callableId = null),
-      list -> (KaVariableLikeSignature:
-        name = actors
-        receiverType = null
-        returnType = (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
-        symbol = actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = handler
+          isSafeNavigation = false
+          type = test.pkg.MyHandler
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = test/pkg/MyHandler.stash(<dispatch receiver>: test.pkg.MyHandler, actor: test.pkg.MyInterface!, actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = actor
+              receiverType = null
+              returnType = test.pkg.MyInterface!
+              symbol = actor: test.pkg.MyInterface!
+              callableId = null,
+            KaVariableLikeSignature:
+              name = actors
+              receiverType = null
+              returnType = (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
+              symbol = actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
+              callableId = null
+          ]
+          callableId = test/pkg/MyHandler.stash
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        lambda -> (KaVariableLikeSignature:
+          name = actor
+          receiverType = null
+          returnType = test.pkg.MyInterface!
+          symbol = actor: test.pkg.MyInterface!
+          callableId = null),
+        list -> (KaVariableLikeSignature:
+          name = actors
+          receiverType = null
+          returnType = (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
+          symbol = actors: (kotlin.collections.MutableList<test.pkg.MyInterface!>..kotlin.collections.List<test.pkg.MyInterface!>?)
+          callableId = null)
+      }
+    isInBestCandidates = true

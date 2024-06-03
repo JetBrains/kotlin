@@ -1,14 +1,14 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = bar
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = var bar: kotlin.Int
-        callableId = /Dependency.Nested.bar
-    simpleAccess = Read
-    typeArgumentsMapping = {}
+KtNameReferenceExpression(89,92): 'bar'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = bar
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var bar: kotlin.Int
+          callableId = /Dependency.Nested.bar
+      simpleAccess = Read
+      typeArgumentsMapping = {}

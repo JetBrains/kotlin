@@ -1,35 +1,35 @@
-KtBinaryExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = 1
-        isSafeNavigation = false
-        type = kotlin.Int
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.Int
-        returnType = kotlin.Int
-        symbol = /to(<extension receiver>: A, other: B): A
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = other
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = other: B
-            callableId = null
-        ]
-        callableId = /to
-    typeArgumentsMapping = {
-      A -> (kotlin.Int),
-      B -> (kotlin.Int)
-    }
-    argumentMapping = {
-      2 -> (KaVariableLikeSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = other: B
-        callableId = null)
-    }
+KtBinaryExpression(75,81): '1 to 2'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = 1
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Int
+          symbol = /to(<extension receiver>: A, other: B): A
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: B
+              callableId = null
+          ]
+          callableId = /to
+      typeArgumentsMapping = {
+        A -> (kotlin.Int),
+        B -> (kotlin.Int)
+      }
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: B
+          callableId = null)
+      }

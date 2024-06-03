@@ -1,33 +1,33 @@
-KtNameReferenceExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = testing/test(): kotlin.Unit
-          valueParameters = []
-          callableId = testing/test
-      typeArgumentsMapping = {}
-      argumentMapping = {},
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = testing/test(): kotlin.Unit
-          valueParameters = []
-          callableId = testing/test
-      typeArgumentsMapping = {}
-      argumentMapping = {}
-  ]
-  diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
-  fun test(): Unit
-  fun test(): Unit>
+KtNameReferenceExpression(159,163): 'test'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = testing/test(): kotlin.Unit
+            valueParameters = []
+            callableId = testing/test
+        typeArgumentsMapping = {}
+        argumentMapping = {},
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = testing/test(): kotlin.Unit
+            valueParameters = []
+            callableId = testing/test
+        typeArgumentsMapping = {}
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun test(): Unit
+    fun test(): Unit>

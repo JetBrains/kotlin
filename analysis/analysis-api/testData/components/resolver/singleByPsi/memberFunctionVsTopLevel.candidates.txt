@@ -1,34 +1,34 @@
-KtCallExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaImplicitReceiverValue:
-        symbol = test/A
-        type = test.A
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = test/A.foo(<dispatch receiver>: test.A): kotlin.Unit
-        valueParameters = []
-        callableId = test/A.foo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
-
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = test/foo(): kotlin.Unit
-        valueParameters = []
-        callableId = test/foo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = false
+KtCallExpression(68,73): 'foo()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = test/A
+          type = test.A
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = test/A.foo(<dispatch receiver>: test.A): kotlin.Unit
+          valueParameters = []
+          callableId = test/A.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = test/foo(): kotlin.Unit
+          valueParameters = []
+          callableId = test/foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false

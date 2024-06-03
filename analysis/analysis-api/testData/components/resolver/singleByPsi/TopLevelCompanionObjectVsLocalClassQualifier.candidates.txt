@@ -1,32 +1,32 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = <local>.Conflict
-        symbol = <constructor>(): <local>.Conflict
-        valueParameters = []
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
-
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = test.Conflict
-        symbol = <constructor>(): test.Conflict
-        valueParameters = []
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = false
+KtNameReferenceExpression(92,100): 'Conflict'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = <local>.Conflict
+          symbol = <constructor>(): <local>.Conflict
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = test.Conflict
+          symbol = <constructor>(): test.Conflict
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false

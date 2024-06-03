@@ -1,4 +1,4 @@
-KtSuperTypeCallEntry:
-KaErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Unresolved>
+KtSuperTypeCallEntry(41,54): 'Unresolved(p)'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Unresolved>

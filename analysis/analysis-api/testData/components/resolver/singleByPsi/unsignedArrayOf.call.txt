@@ -1,29 +1,29 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.UIntArray
-        symbol = kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = elements
-            receiverType = null
-            returnType = kotlin.UInt
-            symbol = vararg elements: kotlin.UInt
-            callableId = null
-        ]
-        callableId = kotlin/uintArrayOf
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      42u -> (KaVariableLikeSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.UInt
-        symbol = vararg elements: kotlin.UInt
-        callableId = null)
-    }
+KtCallExpression(39,55): 'uintArrayOf(42u)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.UIntArray
+          symbol = kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.UInt
+              symbol = vararg elements: kotlin.UInt
+              callableId = null
+          ]
+          callableId = kotlin/uintArrayOf
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        42u -> (KaVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.UInt
+          symbol = vararg elements: kotlin.UInt
+          callableId = null)
+      }

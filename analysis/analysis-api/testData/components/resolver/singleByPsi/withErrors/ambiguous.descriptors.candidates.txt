@@ -1,93 +1,93 @@
-KtCallExpression:
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Char>
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /function(a: kotlin.Char): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.Char
-            symbol = a: kotlin.Char
-            callableId = null
-        ]
-        callableId = /function
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = a
-        receiverType = null
-        returnType = kotlin.Char
-        symbol = a: kotlin.Char
-        callableId = null)
-    }
-  isInBestCandidates = true
-
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Boolean>
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /function(b: kotlin.Boolean): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = b
-            receiverType = null
-            returnType = kotlin.Boolean
-            symbol = b: kotlin.Boolean
-            callableId = null
-        ]
-        callableId = /function
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Boolean
-        symbol = b: kotlin.Boolean
-        callableId = null)
-    }
-  isInBestCandidates = true
-
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /function(c: kotlin.String): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = c
-            receiverType = null
-            returnType = kotlin.String
-            symbol = c: kotlin.String
-            callableId = null
-        ]
-        callableId = /function
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = c
-        receiverType = null
-        returnType = kotlin.String
-        symbol = c: kotlin.String
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtCallExpression(98,109): 'function(1)'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Char>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(a: kotlin.Char): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Char
+              symbol = a: kotlin.Char
+              callableId = null
+          ]
+          callableId = /function
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = a: kotlin.Char
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type Boolean>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(b: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = b: kotlin.Boolean
+              callableId = null
+          ]
+          callableId = /function
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = b: kotlin.Boolean
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(c: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = c
+              receiverType = null
+              returnType = kotlin.String
+              symbol = c: kotlin.String
+              callableId = null
+          ]
+          callableId = /function
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = c
+          receiverType = null
+          returnType = kotlin.String
+          symbol = c: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true

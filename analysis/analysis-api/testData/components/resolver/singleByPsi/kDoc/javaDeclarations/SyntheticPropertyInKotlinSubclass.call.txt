@@ -1,5 +1,7 @@
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(53,57): 'prop'
+    null
 
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(63,79): 'KotlinChild.prop'
+    null

@@ -1,19 +1,19 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = E
-        isSafeNavigation = false
-        type = kotlin.Unit
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Array<test.E>
-        symbol = test/E.values(): kotlin.Array<test.E>
-        valueParameters = []
-        callableId = test/E.values
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
+KtNameReferenceExpression(55,61): 'values'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = E
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Array<test.E>
+          symbol = test/E.values(): kotlin.Array<test.E>
+          valueParameters = []
+          callableId = test/E.values
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

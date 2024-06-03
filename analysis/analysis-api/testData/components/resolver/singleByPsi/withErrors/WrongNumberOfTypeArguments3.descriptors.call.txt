@@ -1,18 +1,18 @@
-KtNameReferenceExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = foo.DD<ERROR_TYPE, ERROR_TYPE>
-          symbol = <constructor>(): foo.DD<T, T2>
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
-  ]
-  diagnostic = ERROR<null: OTHER_ERROR with <init>>
+KtNameReferenceExpression(51,53): 'DD'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = foo.DD<ERROR_TYPE, ERROR_TYPE>
+            symbol = <constructor>(): foo.DD<T, T2>
+            valueParameters = []
+            callableId = null
+        typeArgumentsMapping = {}
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<null: OTHER_ERROR with <init>>

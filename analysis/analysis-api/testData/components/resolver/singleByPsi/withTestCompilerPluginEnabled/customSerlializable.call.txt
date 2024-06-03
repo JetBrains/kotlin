@@ -1,32 +1,32 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = serializer
-        isSafeNavigation = false
-        type = test.Serializer
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = test/Serializer.serializeFirstTarget(<dispatch receiver>: test.Serializer, x: test.FirstTarget): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = x
-            receiverType = null
-            returnType = test.FirstTarget
-            symbol = x: test.FirstTarget
-            callableId = null
-        ]
-        callableId = test/Serializer.serializeFirstTarget
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      target -> (KaVariableLikeSignature:
-        name = x
-        receiverType = null
-        returnType = test.FirstTarget
-        symbol = x: test.FirstTarget
-        callableId = null)
-    }
+KtNameReferenceExpression(319,339): 'serializeFirstTarget'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = serializer
+          isSafeNavigation = false
+          type = test.Serializer
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = test/Serializer.serializeFirstTarget(<dispatch receiver>: test.Serializer, x: test.FirstTarget): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = x
+              receiverType = null
+              returnType = test.FirstTarget
+              symbol = x: test.FirstTarget
+              callableId = null
+          ]
+          callableId = test/Serializer.serializeFirstTarget
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        target -> (KaVariableLikeSignature:
+          name = x
+          receiverType = null
+          returnType = test.FirstTarget
+          symbol = x: test.FirstTarget
+          callableId = null)
+      }

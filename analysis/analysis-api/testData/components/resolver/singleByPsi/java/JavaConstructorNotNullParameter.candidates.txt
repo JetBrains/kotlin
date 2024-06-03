@@ -1,30 +1,30 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = JavaClass
-        symbol = <constructor>(s: @EnhancedNullability kotlin.String): JavaClass
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = s
-            receiverType = null
-            returnType = @EnhancedNullability kotlin.String
-            symbol = s: @EnhancedNullability kotlin.String
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      "" -> (KaVariableLikeSignature:
-        name = s
-        receiverType = null
-        returnType = @EnhancedNullability kotlin.String
-        symbol = s: @EnhancedNullability kotlin.String
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtNameReferenceExpression(51,60): 'JavaClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = JavaClass
+          symbol = <constructor>(s: @EnhancedNullability kotlin.String): JavaClass
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = s
+              receiverType = null
+              returnType = @EnhancedNullability kotlin.String
+              symbol = s: @EnhancedNullability kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "" -> (KaVariableLikeSignature:
+          name = s
+          receiverType = null
+          returnType = @EnhancedNullability kotlin.String
+          symbol = s: @EnhancedNullability kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true

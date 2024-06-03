@@ -1,11 +1,15 @@
-<caret_1>: KDocName:
-NO_CANDIDATES
+<caret_1>:
+  KDocName(78,91): 'Foo.nonExtFun'
+    NO_CANDIDATES
 
-<caret_2>: KDocName:
-NO_CANDIDATES
+<caret_2>:
+  KDocName(97,115): 'test.Foo.nonExtFun'
+    NO_CANDIDATES
 
-<caret_3>: KDocName:
-NO_CANDIDATES
+<caret_3>:
+  KDocName(124,138): 'Foo.nonExtProp'
+    NO_CANDIDATES
 
-<caret_4>: KDocName:
-NO_CANDIDATES
+<caret_4>:
+  KDocName(144,163): 'test.Foo.nonExtProp'
+    NO_CANDIDATES

@@ -1,2 +1,2 @@
-KtFunctionLiteral:
-null
+KtFunctionLiteral(69,71): '{}'
+  null

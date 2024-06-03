@@ -1,2 +1,2 @@
-KtSecondaryConstructor:
-null
+KtSecondaryConstructor(14,64): '/**'
+  null

@@ -1,35 +1,35 @@
-KtArrayAccessExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionLikeSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Int
-          symbol = /get(<extension receiver>: kotlin.Int, index: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = index
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = index: kotlin.Int
-              callableId = null
-          ]
-          callableId = /get
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableLikeSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          callableId = null)
-      }
-  ]
-  diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /get' in 'get'.>
+KtArrayAccessExpression(44,48): '1[2]'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = 1
+            isSafeNavigation = false
+            type = kotlin.Int
+          signature = KaFunctionLikeSignature:
+            receiverType = kotlin.Int
+            returnType = kotlin.Int
+            symbol = /get(<extension receiver>: kotlin.Int, index: kotlin.Int): kotlin.Int
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = index
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = index: kotlin.Int
+                callableId = null
+            ]
+            callableId = /get
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          2 -> (KaVariableLikeSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /get' in 'get'.>

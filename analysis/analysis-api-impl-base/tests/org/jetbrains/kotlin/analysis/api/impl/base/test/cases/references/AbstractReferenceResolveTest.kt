@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderFrontendIndependentKClassNameOf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.TestReferenceResolveResultRenderer.renderResolvedTo
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaRendererAnnotationsFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
@@ -98,7 +99,7 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
         return prettyPrint {
             analyzeReferenceElement(ktReferences.first().element, mainModule) {
                 printCollection(ktReferences, separator = "\n\n") { reference ->
-                    append(renderCommonClassName(reference))
+                    append(renderFrontendIndependentKClassNameOf(reference))
                     append(':')
 
                     val symbols = reference.resolveToSymbols()
@@ -119,15 +120,6 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
                 }
             }
         }
-    }
-
-    private fun renderCommonClassName(instance: Any): String {
-        var classToRender: Class<*> = instance::class.java
-        while (classToRender.simpleName.let { it.contains("Fir") || it.contains("Fe10") } == true) {
-            classToRender = classToRender.superclass
-        }
-
-        return classToRender.simpleName
     }
 
     protected open fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KaSession.() -> R): R {

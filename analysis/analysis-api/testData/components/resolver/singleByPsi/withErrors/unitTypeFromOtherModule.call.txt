@@ -1,20 +1,20 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaSmartCastedReceiverValue:
-        original = KaExplicitReceiverValue:
-          expression = b
-          isSafeNavigation = false
-          type = main.B?
-        type = main.B
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = dependency/A.foo(<dispatch receiver>: dependency.A<T>): kotlin.Unit
-        valueParameters = []
-        callableId = dependency/A.foo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
+KtNameReferenceExpression(168,171): 'foo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaExplicitReceiverValue:
+            expression = b
+            isSafeNavigation = false
+            type = main.B?
+          type = main.B
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = dependency/A.foo(<dispatch receiver>: dependency.A<T>): kotlin.Unit
+          valueParameters = []
+          callableId = dependency/A.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}

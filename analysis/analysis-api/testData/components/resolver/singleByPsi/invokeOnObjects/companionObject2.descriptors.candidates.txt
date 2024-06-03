@@ -1,17 +1,17 @@
-KtNameReferenceExpression:
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<null: OTHER_ERROR with <init>>
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = foo.Foo
-        symbol = <constructor>(): foo.Foo
-        valueParameters = []
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = false
+KtNameReferenceExpression(133,136): 'Foo'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<null: OTHER_ERROR with <init>>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = foo.Foo
+          symbol = <constructor>(): foo.Foo
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false

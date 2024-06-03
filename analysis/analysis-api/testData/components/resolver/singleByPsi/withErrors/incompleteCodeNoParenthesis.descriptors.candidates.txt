@@ -1,16 +1,16 @@
-KtCallExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = ALE<kotlin.String>
-        symbol = <constructor>(): ALE<T>
-        valueParameters = []
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
+KtCallExpression(64,75): 'ALE<String>'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = ALE<kotlin.String>
+          symbol = <constructor>(): ALE<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

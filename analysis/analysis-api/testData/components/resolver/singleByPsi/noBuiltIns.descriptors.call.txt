@@ -1,32 +1,32 @@
-KtBinaryExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = 1
-        isSafeNavigation = false
-        type = kotlin.Int
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Boolean
-        symbol = kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = other
-            receiverType = null
-            returnType = kotlin.Any?
-            symbol = other: kotlin.Any?
-            callableId = null
-        ]
-        callableId = kotlin/Int.equals
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      2 -> (KaVariableLikeSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        callableId = null)
-    }
+KtBinaryExpression(32,38): '1 == 2'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = 1
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Int.equals(<dispatch receiver>: kotlin.Int, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Int.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }

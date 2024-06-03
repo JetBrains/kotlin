@@ -1,31 +1,31 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = java.util.Comparator<kotlin.Int!>
-        symbol = java/util/Comparator(function: kotlin.Function2<T!, T!, kotlin.Int>): java.util.Comparator<T>
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = function
-            receiverType = null
-            returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
-            symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
-            callableId = null
-        ]
-        callableId = java/util/Comparator
-    typeArgumentsMapping = {
-      T -> (kotlin.Int!)
-    }
-    argumentMapping = {
-      {x: Int, y: Int -> 1} -> (KaVariableLikeSignature:
-        name = function
-        receiverType = null
-        returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
-        symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
-        callableId = null)
-    }
+KtCallExpression(43,75): 'Comparator {x: Int, y: Int -> 1}'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = java.util.Comparator<kotlin.Int!>
+          symbol = java/util/Comparator(function: kotlin.Function2<T!, T!, kotlin.Int>): java.util.Comparator<T>
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = function
+              receiverType = null
+              returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
+              symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
+              callableId = null
+          ]
+          callableId = java/util/Comparator
+      typeArgumentsMapping = {
+        T -> (kotlin.Int!)
+      }
+      argumentMapping = {
+        {x: Int, y: Int -> 1} -> (KaVariableLikeSignature:
+          name = function
+          receiverType = null
+          returnType = kotlin.Function2<kotlin.Int!, kotlin.Int!, kotlin.Int>
+          symbol = function: kotlin.Function2<T!, T!, kotlin.Int>
+          callableId = null)
+      }

@@ -1,29 +1,39 @@
-<caret_1>: KDocName:
-NO_CANDIDATES
+<caret_1>:
+  KDocName(86,93): 'Foo.ext'
+    NO_CANDIDATES
 
-<caret_2>: KDocName:
-NO_CANDIDATES
+<caret_2>:
+  KDocName(99,102): 'Foo'
+    NO_CANDIDATES
 
-<caret_3>: KDocName:
-NO_CANDIDATES
+<caret_3>:
+  KDocName(115,131): 'Foo.depExtShared'
+    NO_CANDIDATES
 
-<caret_4>: KDocName:
-NO_CANDIDATES
+<caret_4>:
+  KDocName(137,140): 'Foo'
+    NO_CANDIDATES
 
-<caret_5>: KDocName:
-NO_CANDIDATES
+<caret_5>:
+  KDocName(162,173): 'Foo.depExt1'
+    NO_CANDIDATES
 
-<caret_6>: KDocName:
-NO_CANDIDATES
+<caret_6>:
+  KDocName(179,182): 'Foo'
+    NO_CANDIDATES
 
-<caret_7>: KDocName:
-NO_CANDIDATES
+<caret_7>:
+  KDocName(199,210): 'Foo.depExt2'
+    NO_CANDIDATES
 
-<caret_8>: KDocName:
-NO_CANDIDATES
+<caret_8>:
+  KDocName(216,219): 'Foo'
+    NO_CANDIDATES
 
-<caret_9>: KDocName:
-NO_CANDIDATES
+<caret_9>:
+  KDocName(236,244): 'dep1.Foo'
+    NO_CANDIDATES
 
-<caret_10>: KDocName:
-NO_CANDIDATES
+<caret_10>:
+  KDocName(254,262): 'dep2.Foo'
+    NO_CANDIDATES

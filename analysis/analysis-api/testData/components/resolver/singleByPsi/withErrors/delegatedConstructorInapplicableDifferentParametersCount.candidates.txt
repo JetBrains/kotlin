@@ -1,17 +1,17 @@
-KtConstructorCalleeExpression:
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public constructor(): A'.>
-  candidate = KaDelegatedConstructorCall:
-    kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = A
-        symbol = <constructor>(): A
-        valueParameters = []
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
+KtConstructorCalleeExpression(31,32): 'A'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public constructor(): A'.>
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = A
+          symbol = <constructor>(): A
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

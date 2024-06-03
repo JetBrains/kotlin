@@ -1,2 +1,2 @@
-KtPostfixExpression:
-null
+KtPostfixExpression(24,27): 'a!!'
+  null

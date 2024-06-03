@@ -1,16 +1,16 @@
-KtConstructorDelegationReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaDelegatedConstructorCall:
-    kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Any
-        symbol = <constructor>(): kotlin.Any
-        valueParameters = []
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
+KtConstructorDelegationReferenceExpression(136,136): ''
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = <constructor>(): kotlin.Any
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

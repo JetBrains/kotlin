@@ -1,17 +1,17 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaImplicitReceiverValue:
-        symbol = test/A
-        type = test.A
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = test/A.foo(<dispatch receiver>: test.A): kotlin.Unit
-        valueParameters = []
-        callableId = test/A.foo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
+KtCallExpression(68,73): 'foo()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = test/A
+          type = test.A
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = test/A.foo(<dispatch receiver>: test.A): kotlin.Unit
+          valueParameters = []
+          callableId = test/A.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}

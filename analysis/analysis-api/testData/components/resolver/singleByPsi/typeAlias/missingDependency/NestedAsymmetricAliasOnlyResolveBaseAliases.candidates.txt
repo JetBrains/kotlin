@@ -1,33 +1,33 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = m
-        isSafeNavigation = false
-        type = library4.MyInterface
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = library4/MyInterface.check(<dispatch receiver>: library4.MyInterface, list: {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = list
-            receiverType = null
-            returnType = {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
-            symbol = list: {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
-            callableId = null
-        ]
-        callableId = library4/MyInterface.check
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      emptyList() -> (KaVariableLikeSignature:
-        name = list
-        receiverType = null
-        returnType = {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
-        symbol = list: {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtNameReferenceExpression(166,171): 'check'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = library4.MyInterface
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = library4/MyInterface.check(<dispatch receiver>: library4.MyInterface, list: {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = list
+              receiverType = null
+              returnType = {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
+              symbol = list: {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
+              callableId = null
+          ]
+          callableId = library4/MyInterface.check
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        emptyList() -> (KaVariableLikeSignature:
+          name = list
+          receiverType = null
+          returnType = {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
+          symbol = list: {library3.AsymmetricAlias2<{library1.IntAlias=} kotlin.Int, {library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>=} kotlin.collections.List<{library2.AsymmetricAlias<{library1.BooleanAlias=} kotlin.Boolean, {library1.IntAlias=} kotlin.Int>=} kotlin.String>
+          callableId = null)
+      }
+    isInBestCandidates = true

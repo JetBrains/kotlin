@@ -1,15 +1,15 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = x
-        receiverType = null
-        returnType = kotlin.Any
-        symbol = var x: kotlin.Any
-        callableId = /x
-    simpleAccess = Read
-    typeArgumentsMapping = {}
-  isInBestCandidates = true
+KtNameReferenceExpression(141,142): 'x'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = var x: kotlin.Any
+          callableId = /x
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

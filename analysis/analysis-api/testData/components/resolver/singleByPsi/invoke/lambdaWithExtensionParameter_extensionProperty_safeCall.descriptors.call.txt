@@ -1,20 +1,20 @@
-KtNameReferenceExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaSimpleVariableAccessCall:
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = foo
-          isSafeNavigation = true
-          type = test.Foo?
-        signature = KaVariableLikeSignature:
-          name = action
-          receiverType = test.Foo
-          returnType = kotlin.Function0<kotlin.Unit>
-          symbol = val action: kotlin.Function0<kotlin.Unit>
-          callableId = test/action
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-  ]
-  diagnostic = ERROR<null: UNSAFE_CALL_ERROR with invoke>
+KtNameReferenceExpression(96,102): 'action'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleVariableAccessCall:
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = foo
+            isSafeNavigation = true
+            type = test.Foo?
+          signature = KaVariableLikeSignature:
+            name = action
+            receiverType = test.Foo
+            returnType = kotlin.Function0<kotlin.Unit>
+            symbol = val action: kotlin.Function0<kotlin.Unit>
+            callableId = test/action
+        simpleAccess = Read
+        typeArgumentsMapping = {}
+    ]
+    diagnostic = ERROR<null: UNSAFE_CALL_ERROR with invoke>

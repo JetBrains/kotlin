@@ -1,30 +1,30 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = javax/swing/SwingUtilities.invokeLater(p0: java.lang.Runnable!): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = p0
-            receiverType = null
-            returnType = java.lang.Runnable!
-            symbol = p0: java.lang.Runnable!
-            callableId = null
-        ]
-        callableId = javax/swing/SwingUtilities.invokeLater
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      {  } -> (KaVariableLikeSignature:
-        name = p0
-        receiverType = null
-        returnType = java.lang.Runnable!
-        symbol = p0: java.lang.Runnable!
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtNameReferenceExpression(35,46): 'invokeLater'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = javax/swing/SwingUtilities.invokeLater(p0: java.lang.Runnable!): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = p0
+              receiverType = null
+              returnType = java.lang.Runnable!
+              symbol = p0: java.lang.Runnable!
+              callableId = null
+          ]
+          callableId = javax/swing/SwingUtilities.invokeLater
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {  } -> (KaVariableLikeSignature:
+          name = p0
+          receiverType = null
+          returnType = java.lang.Runnable!
+          symbol = p0: java.lang.Runnable!
+          callableId = null)
+      }
+    isInBestCandidates = true

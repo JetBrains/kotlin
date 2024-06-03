@@ -1,18 +1,18 @@
-KtConstructorDelegationCall:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Any
-          symbol = <constructor>(): kotlin.Any
-          valueParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
-  ]
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Any() defined in kotlin.Any>
+KtConstructorDelegationCall(106,118): 'super(1, "")'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaDelegatedConstructorCall:
+        kind = SUPER_CALL
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Any
+            symbol = <constructor>(): kotlin.Any
+            valueParameters = []
+            callableId = null
+        typeArgumentsMapping = {}
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Any() defined in kotlin.Any>

@@ -1,2 +1,2 @@
-KtPostfixExpression:
-NO_CANDIDATES
+KtPostfixExpression(33,36): 'a!!'
+  NO_CANDIDATES

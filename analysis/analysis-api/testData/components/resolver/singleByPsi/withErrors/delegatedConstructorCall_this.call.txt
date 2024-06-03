@@ -1,29 +1,29 @@
-KtConstructorDelegationCall:
-KaSuccessCallInfo:
-  call = KaDelegatedConstructorCall:
-    kind = THIS_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = Sub
-        symbol = <constructor>(p1: kotlin.Int): Sub
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = p1
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = p1: kotlin.Int
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      s.length -> (KaVariableLikeSignature:
-        name = p1
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = p1: kotlin.Int
-        callableId = null)
-    }
+KtConstructorDelegationCall(111,125): 'this(s.length)'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Sub
+          symbol = <constructor>(p1: kotlin.Int): Sub
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = p1
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p1: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        s.length -> (KaVariableLikeSignature:
+          name = p1
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p1: kotlin.Int
+          callableId = null)
+      }

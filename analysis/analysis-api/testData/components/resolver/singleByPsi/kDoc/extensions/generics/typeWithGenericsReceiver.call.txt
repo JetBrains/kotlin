@@ -1,5 +1,7 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(121,140): 'WithGenerics.intExt'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(146,168): 'WithGenerics.stringExt'
+    null

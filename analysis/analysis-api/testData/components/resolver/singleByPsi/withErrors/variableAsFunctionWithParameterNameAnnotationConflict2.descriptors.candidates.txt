@@ -1,33 +1,33 @@
-KtCallExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = x
-        isSafeNavigation = false
-        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(first)) @R|kotlin.ParameterName|(name = String(second))  kotlin.Int, kotlin.Unit>
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = first
-            receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(first)) @R|kotlin.ParameterName|(name = String(second))  kotlin.Int
-            symbol = p1: P1
-            callableId = null
-        ]
-        callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = first
-        receiverType = null
-        returnType = @R|kotlin.ParameterName|(name = String(first)) @R|kotlin.ParameterName|(name = String(second))  kotlin.Int
-        symbol = p1: P1
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtCallExpression(165,169): 'x(1)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(first)) @R|kotlin.ParameterName|(name = String(second))  kotlin.Int, kotlin.Unit>
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = first
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(first)) @R|kotlin.ParameterName|(name = String(second))  kotlin.Int
+              symbol = p1: P1
+              callableId = null
+          ]
+          callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = first
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(first)) @R|kotlin.ParameterName|(name = String(second))  kotlin.Int
+          symbol = p1: P1
+          callableId = null)
+      }
+    isInBestCandidates = true

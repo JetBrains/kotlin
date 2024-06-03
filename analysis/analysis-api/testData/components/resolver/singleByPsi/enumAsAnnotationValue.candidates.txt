@@ -1,29 +1,29 @@
-KtAnnotationEntry:
-KaApplicableCallCandidateInfo:
-  candidate = KaAnnotationCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = Annotation
-        symbol = <constructor>(color: Color): Annotation
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = color
-            receiverType = null
-            returnType = Color
-            symbol = color: Color
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      Color.R -> (KaVariableLikeSignature:
-        name = color
-        receiverType = null
-        returnType = Color
-        symbol = color: Color
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtAnnotationEntry(90,110): '@Annotation(Color.R)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Annotation
+          symbol = <constructor>(color: Color): Annotation
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = color
+              receiverType = null
+              returnType = Color
+              symbol = color: Color
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        Color.R -> (KaVariableLikeSignature:
+          name = color
+          receiverType = null
+          returnType = Color
+          symbol = color: Color
+          callableId = null)
+      }
+    isInBestCandidates = true

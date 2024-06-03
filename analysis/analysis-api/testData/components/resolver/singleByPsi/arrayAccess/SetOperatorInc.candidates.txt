@@ -1,33 +1,33 @@
-KtArrayAccessExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = a
-        isSafeNavigation = false
-        type = test.B
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = test.B
-        symbol = test/B.get(<dispatch receiver>: test.B, i: kotlin.Int): test.B
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = i
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = i: kotlin.Int
-            callableId = null
-        ]
-        callableId = test/B.get
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      2 -> (KaVariableLikeSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtArrayAccessExpression(205,209): 'a[2]'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = false
+          type = test.B
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = test.B
+          symbol = test/B.get(<dispatch receiver>: test.B, i: kotlin.Int): test.B
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = test/B.get
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true

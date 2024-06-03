@@ -1,17 +1,17 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = a
-        isSafeNavigation = false
-        type = A
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = f
-        receiverType = null
-        returnType = kotlin.Function0<kotlin.Unit>
-        symbol = val f: kotlin.Function0<kotlin.Unit>
-        callableId = /A.f
-    simpleAccess = Read
-    typeArgumentsMapping = {}
+KtNameReferenceExpression(61,62): 'f'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = false
+          type = A
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = f
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.Unit>
+          symbol = val f: kotlin.Function0<kotlin.Unit>
+          callableId = /A.f
+      simpleAccess = Read
+      typeArgumentsMapping = {}

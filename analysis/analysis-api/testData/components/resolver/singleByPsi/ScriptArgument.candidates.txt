@@ -1,15 +1,15 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = args
-        receiverType = null
-        returnType = kotlin.Array<kotlin.String>
-        symbol = val args: kotlin.Array<kotlin.String>
-        callableId = kotlin/script/templates/standard/ScriptTemplateWithArgs.args
-    simpleAccess = Read
-    typeArgumentsMapping = {}
-  isInBestCandidates = true
+KtNameReferenceExpression(16,20): 'args'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = args
+          receiverType = null
+          returnType = kotlin.Array<kotlin.String>
+          symbol = val args: kotlin.Array<kotlin.String>
+          callableId = kotlin/script/templates/standard/ScriptTemplateWithArgs.args
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

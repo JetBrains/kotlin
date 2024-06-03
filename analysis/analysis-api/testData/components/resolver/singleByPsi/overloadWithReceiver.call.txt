@@ -1,17 +1,17 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaImplicitReceiverValue:
-        symbol = foo/Foo
-        type = foo.Foo
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.Any
-        returnType = kotlin.Unit
-        symbol = foo/myRun(<extension receiver>: kotlin.Any): kotlin.Unit
-        valueParameters = []
-        callableId = foo/myRun
-    typeArgumentsMapping = {}
-    argumentMapping = {}
+KtCallExpression(50,57): 'myRun()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = foo/Foo
+          type = foo.Foo
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.Any
+          returnType = kotlin.Unit
+          symbol = foo/myRun(<extension receiver>: kotlin.Any): kotlin.Unit
+          valueParameters = []
+          callableId = foo/myRun
+      typeArgumentsMapping = {}
+      argumentMapping = {}

@@ -1,46 +1,46 @@
-KtArrayAccessExpression:
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final operator fun get(a: Int, b: String): Boolean defined in C>
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = c
-        isSafeNavigation = false
-        type = C
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Boolean
-        symbol = /C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = a: kotlin.Int
-            callableId = null,
-          KaVariableLikeSignature:
-            name = b
-            receiverType = null
-            returnType = kotlin.String
-            symbol = b: kotlin.String
-            callableId = null
-        ]
-        callableId = /C.get
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = a
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = a: kotlin.Int
-        callableId = null),
-      "foo" -> (KaVariableLikeSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.String
-        symbol = b: kotlin.String
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtArrayAccessExpression(100,118): 'c[1, "foo", false]'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final operator fun get(a: Int, b: String): Boolean defined in C>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = c
+          isSafeNavigation = false
+          type = C
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = a: kotlin.Int
+              callableId = null,
+            KaVariableLikeSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.String
+              symbol = b: kotlin.String
+              callableId = null
+          ]
+          callableId = /C.get
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          callableId = null),
+        "foo" -> (KaVariableLikeSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true

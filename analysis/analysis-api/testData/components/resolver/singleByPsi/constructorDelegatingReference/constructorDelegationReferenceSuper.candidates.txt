@@ -1,54 +1,54 @@
-KtConstructorDelegationReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaDelegatedConstructorCall:
-    kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = r.BaseClass
-        symbol = <constructor>(i: kotlin.Int): r.BaseClass
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = i
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = i: kotlin.Int
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      ci -> (KaVariableLikeSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
-        callableId = null)
-    }
-  isInBestCandidates = true
-
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
-  candidate = KaDelegatedConstructorCall:
-    kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = r.BaseClass
-        symbol = <constructor>(s: kotlin.String): r.BaseClass
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = s
-            receiverType = null
-            returnType = kotlin.String
-            symbol = s: kotlin.String
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = false
+KtConstructorDelegationReferenceExpression(145,150): 'super'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(i: kotlin.Int): r.BaseClass
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        ci -> (KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(s: kotlin.String): r.BaseClass
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false

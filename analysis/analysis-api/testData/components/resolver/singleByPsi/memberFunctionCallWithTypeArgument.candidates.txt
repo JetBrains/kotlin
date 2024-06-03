@@ -1,35 +1,35 @@
-KtCallExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = a
-        isSafeNavigation = false
-        type = A<kotlin.String>
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /A.foo(<dispatch receiver>: A<T>, r: R): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = r
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = r: R
-            callableId = null
-        ]
-        callableId = /A.foo
-    typeArgumentsMapping = {
-      R -> (kotlin.Int)
-    }
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = r
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = r: R
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtCallExpression(71,77): 'foo(1)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = false
+          type = A<kotlin.String>
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /A.foo(<dispatch receiver>: A<T>, r: R): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = r
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = r: R
+              callableId = null
+          ]
+          callableId = /A.foo
+      typeArgumentsMapping = {
+        R -> (kotlin.Int)
+      }
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = r
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = r: R
+          callableId = null)
+      }
+    isInBestCandidates = true

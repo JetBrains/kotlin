@@ -1,47 +1,47 @@
-KtArrayAccessExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionLikeSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Int
-          symbol = /set(<extension receiver>: kotlin.Int, index: kotlin.Int, value: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = index
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = index: kotlin.Int
-              callableId = null,
-            KaVariableLikeSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = value: kotlin.Int
-              callableId = null
-          ]
-          callableId = /set
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        2 -> (KaVariableLikeSignature:
-          name = index
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = index: kotlin.Int
-          callableId = null),
-        42 -> (KaVariableLikeSignature:
-          name = value
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = value: kotlin.Int
-          callableId = null)
-      }
-  ]
-  diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /set' in 'set'.>
+KtArrayAccessExpression(59,63): '1[2]'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = 1
+            isSafeNavigation = false
+            type = kotlin.Int
+          signature = KaFunctionLikeSignature:
+            receiverType = kotlin.Int
+            returnType = kotlin.Int
+            symbol = /set(<extension receiver>: kotlin.Int, index: kotlin.Int, value: kotlin.Int): kotlin.Int
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = index
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = index: kotlin.Int
+                callableId = null,
+              KaVariableLikeSignature:
+                name = value
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = value: kotlin.Int
+                callableId = null
+            ]
+            callableId = /set
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          2 -> (KaVariableLikeSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            callableId = null),
+          42 -> (KaVariableLikeSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = value: kotlin.Int
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'FirNamedFunctionSymbol /set' in 'set'.>

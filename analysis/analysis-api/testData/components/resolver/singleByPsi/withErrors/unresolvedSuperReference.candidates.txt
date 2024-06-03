@@ -1,2 +1,2 @@
-KtSuperTypeCallEntry:
-NO_CANDIDATES
+KtSuperTypeCallEntry(41,54): 'Unresolved(p)'
+  NO_CANDIDATES

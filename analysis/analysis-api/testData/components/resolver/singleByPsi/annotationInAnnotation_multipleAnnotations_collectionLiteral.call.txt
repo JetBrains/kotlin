@@ -1,28 +1,28 @@
-KtAnnotationEntry:
-KaSuccessCallInfo:
-  call = KaAnnotationCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = AnnotationArray
-        symbol = <constructor>(vararg annos: Annotation): AnnotationArray
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = annos
-            receiverType = null
-            returnType = Annotation
-            symbol = vararg annos: Annotation
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      [Annotation("v1", "v2"), Annotation(["v3", "v4"])] -> (KaVariableLikeSignature:
-        name = annos
-        receiverType = null
-        returnType = Annotation
-        symbol = vararg annos: Annotation
-        callableId = null)
-    }
+KtAnnotationEntry(121,197): '@AnnotationArray(annos = [Annotation("v1", "v2"), Annotation(["v3", "v4"])])'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = AnnotationArray
+          symbol = <constructor>(vararg annos: Annotation): AnnotationArray
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = annos
+              receiverType = null
+              returnType = Annotation
+              symbol = vararg annos: Annotation
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        [Annotation("v1", "v2"), Annotation(["v3", "v4"])] -> (KaVariableLikeSignature:
+          name = annos
+          receiverType = null
+          returnType = Annotation
+          symbol = vararg annos: Annotation
+          callableId = null)
+      }

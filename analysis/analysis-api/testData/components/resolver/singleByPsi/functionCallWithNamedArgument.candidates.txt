@@ -1,42 +1,42 @@
-KtCallExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /function(a: kotlin.Int, b: kotlin.String): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = a: kotlin.Int
-            callableId = null,
-          KaVariableLikeSignature:
-            name = b
-            receiverType = null
-            returnType = kotlin.String
-            symbol = b: kotlin.String
-            callableId = null
-        ]
-        callableId = /function
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      "foo" -> (KaVariableLikeSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.String
-        symbol = b: kotlin.String
-        callableId = null),
-      1 -> (KaVariableLikeSignature:
-        name = a
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = a: kotlin.Int
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtCallExpression(53,79): 'function(b = "foo", a = 1)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(a: kotlin.Int, b: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = a: kotlin.Int
+              callableId = null,
+            KaVariableLikeSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.String
+              symbol = b: kotlin.String
+              callableId = null
+          ]
+          callableId = /function
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "foo" -> (KaVariableLikeSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          callableId = null),
+        1 -> (KaVariableLikeSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true

@@ -1,32 +1,32 @@
-KtBinaryExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = i
-        isSafeNavigation = false
-        type = kotlin.Int
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = other
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = other: kotlin.Int
-            callableId = null
-        ]
-        callableId = kotlin/Int.compareTo
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      j -> (KaVariableLikeSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = other: kotlin.Int
-        callableId = null)
-    }
+KtBinaryExpression(31,36): 'i < j'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/Int.compareTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        j -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }

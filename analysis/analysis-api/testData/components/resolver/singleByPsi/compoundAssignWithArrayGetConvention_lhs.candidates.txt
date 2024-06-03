@@ -1,33 +1,33 @@
-KtArrayAccessExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = m
-        isSafeNavigation = false
-        type = MyMap<kotlin.String, A>
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = A
-        symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = k
-            receiverType = null
-            returnType = kotlin.String
-            symbol = k: K
-            callableId = null
-        ]
-        callableId = /MyMap.get
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      "a" -> (KaVariableLikeSignature:
-        name = k
-        receiverType = null
-        returnType = kotlin.String
-        symbol = k: K
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtArrayAccessExpression(146,152): 'm["a"]'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MyMap<kotlin.String, A>
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = A
+          symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = k
+              receiverType = null
+              returnType = kotlin.String
+              symbol = k: K
+              callableId = null
+          ]
+          callableId = /MyMap.get
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "a" -> (KaVariableLikeSignature:
+          name = k
+          receiverType = null
+          returnType = kotlin.String
+          symbol = k: K
+          callableId = null)
+      }
+    isInBestCandidates = true

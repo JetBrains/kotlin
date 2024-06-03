@@ -1,31 +1,31 @@
-KtConstructorDelegationCall:
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
-  candidate = KaDelegatedConstructorCall:
-    kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = Base
-        symbol = <constructor>(p1: kotlin.Int): Base
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = p1
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = p1: kotlin.Int
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      s -> (KaVariableLikeSignature:
-        name = p1
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = p1: kotlin.Int
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtConstructorDelegationCall(108,116): 'super(s)'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Int' was expected.>
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Base
+          symbol = <constructor>(p1: kotlin.Int): Base
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = p1
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p1: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        s -> (KaVariableLikeSignature:
+          name = p1
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p1: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true

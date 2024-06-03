@@ -1,18 +1,18 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = JavaEnum.A
-        isSafeNavigation = false
-        type = JavaEnum
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.String!
-        symbol = /JavaEnum.getName(<dispatch receiver>: JavaEnum): kotlin.String!
-        valueParameters = []
-        callableId = /JavaEnum.getName
-    typeArgumentsMapping = {}
-    argumentMapping = {}
+KtNameReferenceExpression(54,61): 'getName'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = JavaEnum.A
+          isSafeNavigation = false
+          type = JavaEnum
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.String!
+          symbol = /JavaEnum.getName(<dispatch receiver>: JavaEnum): kotlin.String!
+          valueParameters = []
+          callableId = /JavaEnum.getName
+      typeArgumentsMapping = {}
+      argumentMapping = {}

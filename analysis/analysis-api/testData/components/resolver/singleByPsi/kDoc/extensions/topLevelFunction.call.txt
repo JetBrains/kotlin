@@ -1,11 +1,15 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(54,65): 'test.extFun'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(71,77): 'extFun'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(86,96): 'Foo.extFun'
+    null
 
-<caret_4>: KDocName:
-null
+<caret_4>:
+  KDocName(102,117): 'test.Foo.extFun'
+    null

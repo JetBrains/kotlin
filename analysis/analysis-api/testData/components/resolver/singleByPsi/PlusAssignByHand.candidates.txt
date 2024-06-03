@@ -1,16 +1,16 @@
-KtOperationReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = variable
-        receiverType = null
-        returnType = test.WithOperator
-        symbol = var variable: test.WithOperator
-        callableId = null
-    simpleAccess = Write:
-      value = variable + foo
-    typeArgumentsMapping = {}
-  isInBestCandidates = true
+KtOperationReferenceExpression(195,196): '='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = variable
+          receiverType = null
+          returnType = test.WithOperator
+          symbol = var variable: test.WithOperator
+          callableId = null
+      simpleAccess = Write:
+        value = variable + foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

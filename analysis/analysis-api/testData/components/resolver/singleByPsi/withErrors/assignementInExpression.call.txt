@@ -1,4 +1,4 @@
-KtBinaryExpression:
-KaErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'divAssign'.>
+KtBinaryExpression(76,82): 'x /= x'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'divAssign'.>

@@ -1,33 +1,33 @@
-KtOperationReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = b1
-        isSafeNavigation = false
-        type = Child
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Boolean
-        symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = other
-            receiverType = null
-            returnType = kotlin.Any?
-            symbol = other: kotlin.Any?
-            callableId = null
-        ]
-        callableId = /Child.equals
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      b2 -> (KaVariableLikeSignature:
-        name = other
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = other: kotlin.Any?
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtOperationReferenceExpression(184,186): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = b1
+          isSafeNavigation = false
+          type = Child
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /Child.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        b2 -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true

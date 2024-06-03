@@ -1,17 +1,17 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaImplicitReceiverValue:
-        symbol = /Dependency.Nested
-        type = kotlin.Unit
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = bar
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = var bar: kotlin.Int
-        callableId = /Dependency.Nested.bar
-    simpleAccess = Read
-    typeArgumentsMapping = {}
-  isInBestCandidates = true
+KtNameReferenceExpression(89,92): 'bar'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = /Dependency.Nested
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = bar
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var bar: kotlin.Int
+          callableId = /Dependency.Nested.bar
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

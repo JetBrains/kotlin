@@ -1,2 +1,2 @@
-KtDestructuringDeclarationEntry:
-NO_CANDIDATES
+KtDestructuringDeclarationEntry(162,163): 'b'
+  NO_CANDIDATES

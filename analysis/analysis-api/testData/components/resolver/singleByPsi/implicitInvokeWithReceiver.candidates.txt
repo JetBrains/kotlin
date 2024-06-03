@@ -1,67 +1,67 @@
-KtDotQualifiedExpression:
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Boolean' was expected.>
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = a
-        isSafeNavigation = false
-        type = A
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /A.x(<dispatch receiver>: A, b: kotlin.Boolean): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = b
-            receiverType = null
-            returnType = kotlin.Boolean
-            symbol = b: kotlin.Boolean
-            callableId = null
-        ]
-        callableId = /A.x
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Boolean
-        symbol = b: kotlin.Boolean
-        callableId = null)
-    }
-  isInBestCandidates = false
-
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = x
-        isSafeNavigation = false
-        type = kotlin.Int
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.Int
-        returnType = kotlin.Unit
-        symbol = /invoke(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = i
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = i: kotlin.Int
-            callableId = null
-        ]
-        callableId = /invoke
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtDotQualifiedExpression(107,113): 'a.x(1)'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Boolean' was expected.>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = false
+          type = A
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /A.x(<dispatch receiver>: A, b: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = b: kotlin.Boolean
+              callableId = null
+          ]
+          callableId = /A.x
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = b: kotlin.Boolean
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Unit
+          symbol = /invoke(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = /invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true

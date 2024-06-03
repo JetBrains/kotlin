@@ -1,60 +1,60 @@
-KtCallExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /generic(a: A, b: B, c: C): kotlin.Unit
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.String
-              symbol = a: A
-              callableId = null,
-            KaVariableLikeSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.String
-              symbol = b: B
-              callableId = null,
-            KaVariableLikeSignature:
-              name = c
-              receiverType = null
-              returnType = kotlin.String
-              symbol = c: C
-              callableId = null
-          ]
-          callableId = /generic
-      typeArgumentsMapping = {
-        A -> (kotlin.String),
-        B -> (kotlin.String),
-        C -> (kotlin.String)
-      }
-      argumentMapping = {
-        "a" -> (KaVariableLikeSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.String
-          symbol = a: A
-          callableId = null),
-        "b" -> (KaVariableLikeSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.String
-          symbol = b: B
-          callableId = null),
-        "c" -> (KaVariableLikeSignature:
-          name = c
-          receiverType = null
-          returnType = kotlin.String
-          symbol = c: C
-          callableId = null)
-      }
-  ]
-  diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A, B, C> generic(a: A, b: B, c: C): Unit>
+KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /generic(a: A, b: B, c: C): kotlin.Unit
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = a
+                receiverType = null
+                returnType = kotlin.String
+                symbol = a: A
+                callableId = null,
+              KaVariableLikeSignature:
+                name = b
+                receiverType = null
+                returnType = kotlin.String
+                symbol = b: B
+                callableId = null,
+              KaVariableLikeSignature:
+                name = c
+                receiverType = null
+                returnType = kotlin.String
+                symbol = c: C
+                callableId = null
+            ]
+            callableId = /generic
+        typeArgumentsMapping = {
+          A -> (kotlin.String),
+          B -> (kotlin.String),
+          C -> (kotlin.String)
+        }
+        argumentMapping = {
+          "a" -> (KaVariableLikeSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.String
+            symbol = a: A
+            callableId = null),
+          "b" -> (KaVariableLikeSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: B
+            callableId = null),
+          "c" -> (KaVariableLikeSignature:
+            name = c
+            receiverType = null
+            returnType = kotlin.String
+            symbol = c: C
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A, B, C> generic(a: A, b: B, c: C): Unit>

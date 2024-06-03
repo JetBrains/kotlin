@@ -1,2 +1,2 @@
-KtEnumEntry:
-NO_CANDIDATES
+KtEnumEntry(19,50): '/**'
+  NO_CANDIDATES

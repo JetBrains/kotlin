@@ -1,17 +1,17 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = enum
-        isSafeNavigation = false
-        type = JavaEnum
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = name
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val name: kotlin.String
-        callableId = kotlin/Enum.name
-    simpleAccess = Read
-    typeArgumentsMapping = {}
+KtNameReferenceExpression(62,66): 'name'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = enum
+          isSafeNavigation = false
+          type = JavaEnum
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val name: kotlin.String
+          callableId = kotlin/Enum.name
+      simpleAccess = Read
+      typeArgumentsMapping = {}

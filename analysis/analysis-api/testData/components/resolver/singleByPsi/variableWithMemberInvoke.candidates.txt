@@ -1,35 +1,35 @@
-KtCallExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = f
-        isSafeNavigation = false
-        type = Foo
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /Foo.invoke(<dispatch receiver>: Foo, t: T): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = t
-            receiverType = null
-            returnType = kotlin.String
-            symbol = t: T
-            callableId = null
-        ]
-        callableId = /Foo.invoke
-    typeArgumentsMapping = {
-      T -> (kotlin.String)
-    }
-    argumentMapping = {
-      "" -> (KaVariableLikeSignature:
-        name = t
-        receiverType = null
-        returnType = kotlin.String
-        symbol = t: T
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtCallExpression(76,81): 'f("")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = Foo
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /Foo.invoke(<dispatch receiver>: Foo, t: T): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = t
+              receiverType = null
+              returnType = kotlin.String
+              symbol = t: T
+              callableId = null
+          ]
+          callableId = /Foo.invoke
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      argumentMapping = {
+        "" -> (KaVariableLikeSignature:
+          name = t
+          receiverType = null
+          returnType = kotlin.String
+          symbol = t: T
+          callableId = null)
+      }
+    isInBestCandidates = true

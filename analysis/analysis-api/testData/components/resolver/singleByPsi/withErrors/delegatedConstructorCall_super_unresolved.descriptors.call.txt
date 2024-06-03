@@ -1,32 +1,32 @@
-KtConstructorDelegationCall:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaDelegatedConstructorCall:
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = Base
-          symbol = <constructor>(p1: kotlin.Int): Base
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = p1
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = p1: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        s -> (KaVariableLikeSignature:
-          name = p1
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = p1: kotlin.Int
-          callableId = null)
-      }
-  ]
-  diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>
+KtConstructorDelegationCall(108,116): 'super(s)'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaDelegatedConstructorCall:
+        kind = SUPER_CALL
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = Base
+            symbol = <constructor>(p1: kotlin.Int): Base
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = p1
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = p1: kotlin.Int
+                callableId = null
+            ]
+            callableId = null
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          s -> (KaVariableLikeSignature:
+            name = p1
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p1: kotlin.Int
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>

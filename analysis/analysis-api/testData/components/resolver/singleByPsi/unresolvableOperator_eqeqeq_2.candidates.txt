@@ -1,2 +1,2 @@
-KtOperationReferenceExpression:
-NO_CANDIDATES
+KtOperationReferenceExpression(38,41): '==='
+  NO_CANDIDATES

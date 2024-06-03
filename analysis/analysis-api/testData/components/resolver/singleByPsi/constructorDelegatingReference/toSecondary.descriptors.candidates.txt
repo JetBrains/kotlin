@@ -1,78 +1,78 @@
-KtConstructorDelegationReferenceExpression:
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<null: OTHER_ERROR with <init>>
-  candidate = KaDelegatedConstructorCall:
-    kind = THIS_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = A
-        symbol = <constructor>(): A
-        valueParameters = []
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = false
-
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<null: OTHER_ERROR with <init>>
-  candidate = KaDelegatedConstructorCall:
-    kind = THIS_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = A
-        symbol = <constructor>(a: kotlin.Int): A
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = a: kotlin.Int
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      "2" -> (KaVariableLikeSignature:
-        name = a
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = a: kotlin.Int
-        callableId = null)
-    }
-  isInBestCandidates = false
-
-KaApplicableCallCandidateInfo:
-  candidate = KaDelegatedConstructorCall:
-    kind = THIS_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = A
-        symbol = <constructor>(b: kotlin.String): A
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = b
-            receiverType = null
-            returnType = kotlin.String
-            symbol = b: kotlin.String
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      "2" -> (KaVariableLikeSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.String
-        symbol = b: kotlin.String
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtConstructorDelegationReferenceExpression(76,80): 'this'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<null: OTHER_ERROR with <init>>
+    candidate = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = A
+          symbol = <constructor>(): A
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<null: OTHER_ERROR with <init>>
+    candidate = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = A
+          symbol = <constructor>(a: kotlin.Int): A
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = a: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "2" -> (KaVariableLikeSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = A
+          symbol = <constructor>(b: kotlin.String): A
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.String
+              symbol = b: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "2" -> (KaVariableLikeSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true

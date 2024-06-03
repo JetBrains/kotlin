@@ -1,26 +1,35 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(31,34): 'one'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(43,46): 'one'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(56,63): 'one.two'
+    null
 
-<caret_4>: KDocName:
-null
+<caret_4>:
+  KDocName(72,75): 'one'
+    null
 
-<caret_5>: KDocName:
-null
+<caret_5>:
+  KDocName(91,98): 'one.two'
+    null
 
-<caret_6>: KDocName:
-null
+<caret_6>:
+  KDocName(110,123): 'one.two.three'
+    null
 
-<caret_7>: KDocName:
-null
+<caret_7>:
+  KDocName(132,135): 'one'
+    null
 
-<caret_8>: KDocName:
-null
+<caret_8>:
+  KDocName(161,168): 'one.two'
+    null
 
-<caret_9>: KDocName:
-null
+<caret_9>:
+  KDocName(190,203): 'one.two.three'
+    null

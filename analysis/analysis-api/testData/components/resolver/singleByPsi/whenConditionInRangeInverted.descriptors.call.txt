@@ -1,34 +1,34 @@
-KtWhenConditionInRange:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = MyClass()
-        isSafeNavigation = false
-        type = MyClass
-      signature = KaFunctionLikeSignature:
-        receiverType = MyClass
-        returnType = kotlin.Boolean
-        symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = int
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = int: kotlin.Int
-            callableId = null
-        ]
-        callableId = /contains
-    typeArgumentsMapping = {
-      T -> (MyClass)
-    }
-    argumentMapping = {
-      f -> (KaVariableLikeSignature:
-        name = int
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = int: kotlin.Int
-        callableId = null)
-    }
+KtWhenConditionInRange(177,190): '!in MyClass()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        f -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }

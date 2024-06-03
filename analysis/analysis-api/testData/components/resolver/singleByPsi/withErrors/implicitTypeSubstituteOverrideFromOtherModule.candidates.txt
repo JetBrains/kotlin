@@ -1,21 +1,21 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaSmartCastedReceiverValue:
-        original = KaExplicitReceiverValue:
-          expression = b
-          isSafeNavigation = false
-          type = main.B?
-        type = main.B
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = dependency/A.foo(<dispatch receiver>: dependency.A<T>): kotlin.String
-        valueParameters = []
-        callableId = dependency/A.foo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
+KtNameReferenceExpression(168,171): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaExplicitReceiverValue:
+            expression = b
+            isSafeNavigation = false
+            type = main.B?
+          type = main.B
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.String
+          symbol = dependency/A.foo(<dispatch receiver>: dependency.A<T>): kotlin.String
+          valueParameters = []
+          callableId = dependency/A.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

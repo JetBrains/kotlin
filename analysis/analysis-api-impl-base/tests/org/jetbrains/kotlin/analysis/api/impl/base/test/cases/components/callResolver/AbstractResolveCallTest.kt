@@ -14,16 +14,14 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "call"
 
-    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String {
-        return analyseForTest(mainElement) {
-            val call = mainElement.resolveCallOld()
-            val secondCall = mainElement.resolveCallOld()
+    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyseForTest(mainElement) {
+        val call = mainElement.resolveCallOld()
+        val secondCall = mainElement.resolveCallOld()
 
-            ignoreStabilityIfNeeded(testServices.moduleStructure.allDirectives) {
-                assertStableResult(testServices, call, secondCall)
-            }
-
-            call?.let(::stringRepresentation) ?: "null"
+        ignoreStabilityIfNeeded(testServices.moduleStructure.allDirectives) {
+            assertStableResult(testServices, call, secondCall)
         }
+
+        call?.let(::stringRepresentation) ?: "null"
     }
 }

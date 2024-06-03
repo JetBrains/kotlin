@@ -1,44 +1,44 @@
-KtCallExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaImplicitReceiverValue:
-        symbol = one/two/TopLevelObject.Nested
-        type = one.two.TopLevelObject.Nested
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = one/two/TopLevelObject.Nested.foo(<dispatch receiver>: one.two.TopLevelObject.Nested): kotlin.Unit
-        valueParameters = []
-        callableId = one/two/TopLevelObject.Nested.foo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
-
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaImplicitReceiverValue:
-        symbol = one/two/TopLevelObject.Nested
-        type = one.two.TopLevelObject.Nested
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = one/two/TopLevelObject.Nested.foo(<dispatch receiver>: one.two.TopLevelObject.Nested, i: kotlin.Int): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = i
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = i: kotlin.Int
-            callableId = null
-        ]
-        callableId = one/two/TopLevelObject.Nested.foo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = false
+KtCallExpression(104,109): 'foo()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject.Nested
+          type = one.two.TopLevelObject.Nested
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.Nested.foo(<dispatch receiver>: one.two.TopLevelObject.Nested): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.Nested.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'i'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject.Nested
+          type = one.two.TopLevelObject.Nested
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.Nested.foo(<dispatch receiver>: one.two.TopLevelObject.Nested, i: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = one/two/TopLevelObject.Nested.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false

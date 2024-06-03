@@ -1,23 +1,23 @@
-KtCallableReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = Anno
-        symbol = <constructor>(value: kotlin.String): Anno
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = value
-            receiverType = null
-            returnType = kotlin.String
-            symbol = value: kotlin.String
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
+KtCallableReferenceExpression(114,120): '::Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(value: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.String
+              symbol = value: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

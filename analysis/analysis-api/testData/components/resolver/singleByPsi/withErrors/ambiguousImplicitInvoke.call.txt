@@ -1,53 +1,53 @@
-KtCallExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaSimpleFunctionCall:
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionLikeSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Unit
-          symbol = invoke(<extension receiver>: kotlin.Int, a: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.String
-              symbol = a: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {},
-    KaSimpleFunctionCall:
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionLikeSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Unit
-          symbol = invoke(<extension receiver>: kotlin.Int, b: kotlin.Boolean): kotlin.Unit
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = b: kotlin.Boolean
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
-  ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-  fun Int.invoke(a: String): Unit
-  fun Int.invoke(b: Boolean): Unit>
+KtCallExpression(134,137): 'x()'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = true
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = x
+            isSafeNavigation = false
+            type = kotlin.Int
+          signature = KaFunctionLikeSignature:
+            receiverType = kotlin.Int
+            returnType = kotlin.Unit
+            symbol = invoke(<extension receiver>: kotlin.Int, a: kotlin.String): kotlin.Unit
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = a
+                receiverType = null
+                returnType = kotlin.String
+                symbol = a: kotlin.String
+                callableId = null
+            ]
+            callableId = null
+        typeArgumentsMapping = {}
+        argumentMapping = {},
+      KaSimpleFunctionCall:
+        isImplicitInvoke = true
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = x
+            isSafeNavigation = false
+            type = kotlin.Int
+          signature = KaFunctionLikeSignature:
+            receiverType = kotlin.Int
+            returnType = kotlin.Unit
+            symbol = invoke(<extension receiver>: kotlin.Int, b: kotlin.Boolean): kotlin.Unit
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = b
+                receiverType = null
+                returnType = kotlin.Boolean
+                symbol = b: kotlin.Boolean
+                callableId = null
+            ]
+            callableId = null
+        typeArgumentsMapping = {}
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+    fun Int.invoke(a: String): Unit
+    fun Int.invoke(b: Boolean): Unit>

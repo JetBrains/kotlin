@@ -1,26 +1,35 @@
-<caret_1>: KDocName:
-NO_CANDIDATES
+<caret_1>:
+  KDocName(88,91): 'Foo'
+    NO_CANDIDATES
 
-<caret_2>: KDocName:
-NO_CANDIDATES
+<caret_2>:
+  KDocName(112,121): 'Outer.Foo'
+    NO_CANDIDATES
 
-<caret_3>: KDocName:
-NO_CANDIDATES
+<caret_3>:
+  KDocName(135,149): 'test.Outer.Foo'
+    NO_CANDIDATES
 
-<caret_4>: KDocName:
-NO_CANDIDATES
+<caret_4>:
+  KDocName(170,178): 'test.Foo'
+    NO_CANDIDATES
 
-<caret_nested_1>: KDocName:
-NO_CANDIDATES
+<caret_nested_1>:
+  KDocName(275,278): 'Foo'
+    NO_CANDIDATES
 
-<caret_nested_2>: KDocName:
-NO_CANDIDATES
+<caret_nested_2>:
+  KDocName(307,317): 'Nested.Foo'
+    NO_CANDIDATES
 
-<caret_nested_3>: KDocName:
-NO_CANDIDATES
+<caret_nested_3>:
+  KDocName(335,351): 'Outer.Nested.Foo'
+    NO_CANDIDATES
 
-<caret_nested_4>: KDocName:
-NO_CANDIDATES
+<caret_nested_4>:
+  KDocName(369,390): 'test.Outer.Nested.Foo'
+    NO_CANDIDATES
 
-<caret_nested_5>: KDocName:
-NO_CANDIDATES
+<caret_nested_5>:
+  KDocName(419,427): 'test.Foo'
+    NO_CANDIDATES

@@ -1,18 +1,18 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = WithGeneratedCompanion
-        isSafeNavigation = false
-        type = test.WithGeneratedCompanion.Companion
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = test/WithGeneratedCompanion.Companion.foo(<dispatch receiver>: test.WithGeneratedCompanion.Companion): kotlin.Int
-        valueParameters = []
-        callableId = test/WithGeneratedCompanion.Companion.foo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
+KtNameReferenceExpression(168,171): 'foo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = WithGeneratedCompanion
+          isSafeNavigation = false
+          type = test.WithGeneratedCompanion.Companion
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = test/WithGeneratedCompanion.Companion.foo(<dispatch receiver>: test.WithGeneratedCompanion.Companion): kotlin.Int
+          valueParameters = []
+          callableId = test/WithGeneratedCompanion.Companion.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}

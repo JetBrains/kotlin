@@ -1,107 +1,107 @@
-KtCallExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /function(t: T, a: kotlin.Char): kotlin.Unit
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = t
-              receiverType = null
-              returnType = TypeVariable(T)
-              symbol = t: T
-              callableId = null,
-            KaVariableLikeSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Char
-              symbol = a: kotlin.Char
-              callableId = null
-          ]
-          callableId = /function
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableLikeSignature:
-          name = t
-          receiverType = null
-          returnType = TypeVariable(T)
-          symbol = t: T
-          callableId = null)
-      },
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /function(u: U, b: kotlin.Boolean): kotlin.Unit
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = u
-              receiverType = null
-              returnType = TypeVariable(U)
-              symbol = u: U
-              callableId = null,
-            KaVariableLikeSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = b: kotlin.Boolean
-              callableId = null
-          ]
-          callableId = /function
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableLikeSignature:
-          name = u
-          receiverType = null
-          returnType = TypeVariable(U)
-          symbol = u: U
-          callableId = null)
-      },
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /function(v: V, c: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = v
-              receiverType = null
-              returnType = TypeVariable(V)
-              symbol = v: V
-              callableId = null,
-            KaVariableLikeSignature:
-              name = c
-              receiverType = null
-              returnType = kotlin.String
-              symbol = c: kotlin.String
-              callableId = null
-          ]
-          callableId = /function
-      typeArgumentsMapping = {}
-      argumentMapping = {
-        1 -> (KaVariableLikeSignature:
-          name = v
-          receiverType = null
-          returnType = TypeVariable(V)
-          symbol = v: V
-          callableId = null)
-      }
-  ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
-  public fun <T> function(t: TypeVariable(T), a: Char): Unit defined in root package in file ambiguousWithInferredTypeParameters.kt
-  public fun <U> function(u: TypeVariable(U), b: Boolean): Unit defined in root package in file ambiguousWithInferredTypeParameters.kt
-  public fun <V> function(v: TypeVariable(V), c: String): Unit defined in root package in file ambiguousWithInferredTypeParameters.kt>
+KtCallExpression(128,139): 'function(1)'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /function(t: T, a: kotlin.Char): kotlin.Unit
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = t
+                receiverType = null
+                returnType = TypeVariable(T)
+                symbol = t: T
+                callableId = null,
+              KaVariableLikeSignature:
+                name = a
+                receiverType = null
+                returnType = kotlin.Char
+                symbol = a: kotlin.Char
+                callableId = null
+            ]
+            callableId = /function
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          1 -> (KaVariableLikeSignature:
+            name = t
+            receiverType = null
+            returnType = TypeVariable(T)
+            symbol = t: T
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /function(u: U, b: kotlin.Boolean): kotlin.Unit
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = u
+                receiverType = null
+                returnType = TypeVariable(U)
+                symbol = u: U
+                callableId = null,
+              KaVariableLikeSignature:
+                name = b
+                receiverType = null
+                returnType = kotlin.Boolean
+                symbol = b: kotlin.Boolean
+                callableId = null
+            ]
+            callableId = /function
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          1 -> (KaVariableLikeSignature:
+            name = u
+            receiverType = null
+            returnType = TypeVariable(U)
+            symbol = u: U
+            callableId = null)
+        },
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /function(v: V, c: kotlin.String): kotlin.Unit
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = v
+                receiverType = null
+                returnType = TypeVariable(V)
+                symbol = v: V
+                callableId = null,
+              KaVariableLikeSignature:
+                name = c
+                receiverType = null
+                returnType = kotlin.String
+                symbol = c: kotlin.String
+                callableId = null
+            ]
+            callableId = /function
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          1 -> (KaVariableLikeSignature:
+            name = v
+            receiverType = null
+            returnType = TypeVariable(V)
+            symbol = v: V
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    public fun <T> function(t: TypeVariable(T), a: Char): Unit defined in root package in file ambiguousWithInferredTypeParameters.kt
+    public fun <U> function(u: TypeVariable(U), b: Boolean): Unit defined in root package in file ambiguousWithInferredTypeParameters.kt
+    public fun <V> function(v: TypeVariable(V), c: String): Unit defined in root package in file ambiguousWithInferredTypeParameters.kt>

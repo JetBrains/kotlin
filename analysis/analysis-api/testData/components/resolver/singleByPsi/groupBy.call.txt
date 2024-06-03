@@ -1,48 +1,48 @@
-KtDotQualifiedExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = nums.withIndex()
-        isSafeNavigation = false
-        type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-        returnType = kotlin.collections.Map<kotlin.Int, kotlin.collections.List<kotlin.Int>>
-        symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.collections.Iterable<T>, keySelector: kotlin.Function1<T, K>, valueTransform: kotlin.Function1<T, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = keySelector
-            receiverType = null
-            returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
-            symbol = keySelector: kotlin.Function1<T, K>
-            callableId = null,
-          KaVariableLikeSignature:
-            name = valueTransform
-            receiverType = null
-            returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
-            symbol = valueTransform: kotlin.Function1<T, V>
-            callableId = null
-        ]
-        callableId = kotlin/collections/groupBy
-    typeArgumentsMapping = {
-      T -> (kotlin.collections.IndexedValue<kotlin.Int>),
-      K -> (kotlin.Int),
-      V -> (kotlin.Int)
-    }
-    argumentMapping = {
-      { (_, value) -> value } -> (KaVariableLikeSignature:
-        name = keySelector
-        receiverType = null
-        returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
-        symbol = keySelector: kotlin.Function1<T, K>
-        callableId = null),
-      { (idx, _) -> idx } -> (KaVariableLikeSignature:
-        name = valueTransform
-        receiverType = null
-        returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
-        symbol = valueTransform: kotlin.Function1<T, V>
-        callableId = null)
-    }
+KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> value }) { (idx, _) -> idx }'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = nums.withIndex()
+          isSafeNavigation = false
+          type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
+          returnType = kotlin.collections.Map<kotlin.Int, kotlin.collections.List<kotlin.Int>>
+          symbol = kotlin/collections/groupBy(<extension receiver>: kotlin.collections.Iterable<T>, keySelector: kotlin.Function1<T, K>, valueTransform: kotlin.Function1<T, V>): kotlin.collections.Map<K, kotlin.collections.List<V>>
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = keySelector
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
+              symbol = keySelector: kotlin.Function1<T, K>
+              callableId = null,
+            KaVariableLikeSignature:
+              name = valueTransform
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
+              symbol = valueTransform: kotlin.Function1<T, V>
+              callableId = null
+          ]
+          callableId = kotlin/collections/groupBy
+      typeArgumentsMapping = {
+        T -> (kotlin.collections.IndexedValue<kotlin.Int>),
+        K -> (kotlin.Int),
+        V -> (kotlin.Int)
+      }
+      argumentMapping = {
+        { (_, value) -> value } -> (KaVariableLikeSignature:
+          name = keySelector
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
+          symbol = keySelector: kotlin.Function1<T, K>
+          callableId = null),
+        { (idx, _) -> idx } -> (KaVariableLikeSignature:
+          name = valueTransform
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.collections.IndexedValue<kotlin.Int>, kotlin.Int>
+          symbol = valueTransform: kotlin.Function1<T, V>
+          callableId = null)
+      }

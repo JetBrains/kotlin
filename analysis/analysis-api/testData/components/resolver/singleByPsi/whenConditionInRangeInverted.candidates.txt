@@ -1,69 +1,69 @@
-KtWhenConditionInRange:
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun contains(str: String): Boolean>
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = MyClass()
-        isSafeNavigation = false
-        type = MyClass
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Boolean
-        symbol = /MyClass.contains(<dispatch receiver>: MyClass, str: kotlin.String): kotlin.Boolean
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = str
-            receiverType = null
-            returnType = kotlin.String
-            symbol = str: kotlin.String
-            callableId = null
-        ]
-        callableId = /MyClass.contains
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      3 -> (KaVariableLikeSignature:
-        name = str
-        receiverType = null
-        returnType = kotlin.String
-        symbol = str: kotlin.String
-        callableId = null)
-    }
-  isInBestCandidates = false
-
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = MyClass()
-        isSafeNavigation = false
-        type = MyClass
-      signature = KaFunctionLikeSignature:
-        receiverType = MyClass
-        returnType = kotlin.Boolean
-        symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = int
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = int: kotlin.Int
-            callableId = null
-        ]
-        callableId = /contains
-    typeArgumentsMapping = {
-      T -> (MyClass)
-    }
-    argumentMapping = {
-      3 -> (KaVariableLikeSignature:
-        name = int
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = int: kotlin.Int
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtWhenConditionInRange(177,190): '!in MyClass()'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun contains(str: String): Boolean>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.contains(<dispatch receiver>: MyClass, str: kotlin.String): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = str
+              receiverType = null
+              returnType = kotlin.String
+              symbol = str: kotlin.String
+              callableId = null
+          ]
+          callableId = /MyClass.contains
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        3 -> (KaVariableLikeSignature:
+          name = str
+          receiverType = null
+          returnType = kotlin.String
+          symbol = str: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        3 -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true

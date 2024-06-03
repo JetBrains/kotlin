@@ -1,18 +1,18 @@
-KtCallExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(): kotlin.Unit
-          valueParameters = []
-          callableId = /foo
-      typeArgumentsMapping = {}
-      argumentMapping = {}
-  ]
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public fun foo(): Unit defined in root package in file simpleCallWithNonMatchingArgs.kt>
+KtCallExpression(14,20): 'foo(1)'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /foo(): kotlin.Unit
+            valueParameters = []
+            callableId = /foo
+        typeArgumentsMapping = {}
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public fun foo(): Unit defined in root package in file simpleCallWithNonMatchingArgs.kt>

@@ -1,19 +1,19 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = foo
-        isSafeNavigation = false
-        type = CInt32VarX<kotlin.Int>
-      signature = KaVariableLikeSignature:
-        name = value
-        receiverType = CInt32VarX<kotlin.Int>
-        returnType = kotlin.Int
-        symbol = var value: T
-        callableId = /value
-    simpleAccess = Read
-    typeArgumentsMapping = {
-      T -> (kotlin.Int)
-    }
+KtNameReferenceExpression(51,56): 'value'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = foo
+          isSafeNavigation = false
+          type = CInt32VarX<kotlin.Int>
+        signature = KaVariableLikeSignature:
+          name = value
+          receiverType = CInt32VarX<kotlin.Int>
+          returnType = kotlin.Int
+          symbol = var value: T
+          callableId = /value
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }

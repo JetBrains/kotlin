@@ -1,47 +1,47 @@
-KtCallExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = Foo<TypeVariable(T)>
-          symbol = <constructor>(len: kotlin.Int): Foo<T>
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = len
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = len: kotlin.Int
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {},
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = Foo<TypeVariable(T)>
-          symbol = <constructor>(s: kotlin.String): Foo<T>
-          valueParameters = [
-            KaVariableLikeSignature:
-              name = s
-              receiverType = null
-              returnType = kotlin.String
-              symbol = s: kotlin.String
-              callableId = null
-          ]
-          callableId = null
-      typeArgumentsMapping = {}
-      argumentMapping = {}
-  ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
-  public constructor Foo<T>(len: Int) defined in Foo
-  public constructor Foo<T>(s: String) defined in Foo>
+KtCallExpression(89,100): 'Foo<String>'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = Foo<TypeVariable(T)>
+            symbol = <constructor>(len: kotlin.Int): Foo<T>
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = len
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = len: kotlin.Int
+                callableId = null
+            ]
+            callableId = null
+        typeArgumentsMapping = {}
+        argumentMapping = {},
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = Foo<TypeVariable(T)>
+            symbol = <constructor>(s: kotlin.String): Foo<T>
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = s
+                receiverType = null
+                returnType = kotlin.String
+                symbol = s: kotlin.String
+                callableId = null
+            ]
+            callableId = null
+        typeArgumentsMapping = {}
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    public constructor Foo<T>(len: Int) defined in Foo
+    public constructor Foo<T>(s: String) defined in Foo>

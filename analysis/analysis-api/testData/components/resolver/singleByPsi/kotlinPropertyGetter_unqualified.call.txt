@@ -1,23 +1,23 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotationsList: []
-          origin: SOURCE
-          owningCallableSymbol: KaFunctionSymbol(/foo)
-          type: KaUsualClassType:
+KtNameReferenceExpression(50,51): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotationsList: []
-            typeArguments: []
-            type: A
-        type = A
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val i: kotlin.Int
-        callableId = /A.i
-    simpleAccess = Read
-    typeArgumentsMapping = {}
+            origin: SOURCE
+            owningCallableSymbol: KaFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotationsList: []
+              typeArguments: []
+              type: A
+          type = A
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val i: kotlin.Int
+          callableId = /A.i
+      simpleAccess = Read
+      typeArgumentsMapping = {}

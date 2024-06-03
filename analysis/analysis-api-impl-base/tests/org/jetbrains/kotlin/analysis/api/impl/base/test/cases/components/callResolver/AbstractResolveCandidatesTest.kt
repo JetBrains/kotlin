@@ -21,20 +21,18 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "candidates"
 
-    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String {
-        return analyseForTest(mainElement) {
-            val candidates = collectCallCandidates(mainElement)
-            ignoreStabilityIfNeeded(testServices.moduleStructure.allDirectives) {
-                val candidatesAgain = collectCallCandidates(mainElement)
-                assertStableSymbolResult(testServices, candidates, candidatesAgain)
-            }
+    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyseForTest(mainElement) {
+        val candidates = collectCallCandidates(mainElement)
+        ignoreStabilityIfNeeded(testServices.moduleStructure.allDirectives) {
+            val candidatesAgain = collectCallCandidates(mainElement)
+            assertStableSymbolResult(testServices, candidates, candidatesAgain)
+        }
 
-            checkConsistencyWithResolveCall(mainElement, candidates, testServices)
-            if (candidates.isEmpty()) {
-                "NO_CANDIDATES"
-            } else {
-                candidates.joinToString("\n\n") { stringRepresentation(it) }
-            }
+        checkConsistencyWithResolveCall(mainElement, candidates, testServices)
+        if (candidates.isEmpty()) {
+            "NO_CANDIDATES"
+        } else {
+            candidates.joinToString("\n\n") { stringRepresentation(it) }
         }
     }
 

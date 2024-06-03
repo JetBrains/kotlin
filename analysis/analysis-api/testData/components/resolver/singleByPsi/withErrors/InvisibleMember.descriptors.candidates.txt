@@ -1,19 +1,19 @@
-KtNameReferenceExpression:
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'i': it is private in 'A'>
-  candidate = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = a
-        isSafeNavigation = false
-        type = A
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val i: kotlin.Int
-        callableId = /A.i
-    simpleAccess = Read
-    typeArgumentsMapping = {}
-  isInBestCandidates = true
+KtNameReferenceExpression(63,64): 'i'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'i': it is private in 'A'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = false
+          type = A
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val i: kotlin.Int
+          callableId = /A.i
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

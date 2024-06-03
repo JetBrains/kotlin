@@ -1,25 +1,25 @@
-KtCallableReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = obj
-        isSafeNavigation = false
-        type = Foo
-      signature = KaFunctionLikeSignature:
-        receiverType = Foo
-        returnType = kotlin.Unit
-        symbol = /foo(<extension receiver>: Foo, a: kotlin.Int): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = a: kotlin.Int
-            callableId = null
-        ]
-        callableId = /foo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
+KtCallableReferenceExpression(72,80): 'obj::foo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = obj
+          isSafeNavigation = false
+          type = Foo
+        signature = KaFunctionLikeSignature:
+          receiverType = Foo
+          returnType = kotlin.Unit
+          symbol = /foo(<extension receiver>: Foo, a: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = a: kotlin.Int
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}

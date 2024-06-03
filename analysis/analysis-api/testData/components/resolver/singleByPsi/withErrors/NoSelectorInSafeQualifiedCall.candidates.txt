@@ -1,16 +1,16 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = testing.Foo
-        symbol = testing/makeFoo(): testing.Foo
-        valueParameters = []
-        callableId = testing/makeFoo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
+KtNameReferenceExpression(108,115): 'makeFoo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = testing.Foo
+          symbol = testing/makeFoo(): testing.Foo
+          valueParameters = []
+          callableId = testing/makeFoo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

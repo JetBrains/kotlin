@@ -1,4 +1,4 @@
-KtSuperTypeCallEntry:
-KaErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<NO_CONSTRUCTOR: This class does not have a constructor>
+KtSuperTypeCallEntry(15,18): 'I()'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<NO_CONSTRUCTOR: This class does not have a constructor>

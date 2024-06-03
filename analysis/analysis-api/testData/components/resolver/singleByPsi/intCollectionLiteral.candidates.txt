@@ -1,42 +1,42 @@
-KtCollectionLiteralExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.IntArray
-        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = elements
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = vararg elements: kotlin.Int
-            callableId = null
-        ]
-        callableId = kotlin/intArrayOf
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = vararg elements: kotlin.Int
-        callableId = null),
-      2 -> (KaVariableLikeSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = vararg elements: kotlin.Int
-        callableId = null),
-      3 -> (KaVariableLikeSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = vararg elements: kotlin.Int
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtCollectionLiteralExpression(91,100): '[1, 2, 3]'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = vararg elements: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg elements: kotlin.Int
+          callableId = null),
+        2 -> (KaVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg elements: kotlin.Int
+          callableId = null),
+        3 -> (KaVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg elements: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true

@@ -1,22 +1,22 @@
-KtCallExpression:
-KaErrorCallInfo:
-  candidateCalls = [
-    KaSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /generic(): kotlin.Unit
-          valueParameters = []
-          callableId = /generic
-      typeArgumentsMapping = {
-        A -> (kotlin.String),
-        B -> (kotlin.String),
-        C -> (ERROR CLASS: Cannot infer argument for type parameter C)
-      }
-      argumentMapping = {}
-  ]
-  diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A, B, C> generic(): Unit>
+KtCallExpression(45,70): 'generic<String, String>()'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /generic(): kotlin.Unit
+            valueParameters = []
+            callableId = /generic
+        typeArgumentsMapping = {
+          A -> (kotlin.String),
+          B -> (kotlin.String),
+          C -> (ERROR CLASS: Cannot infer argument for type parameter C)
+        }
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <A, B, C> generic(): Unit>

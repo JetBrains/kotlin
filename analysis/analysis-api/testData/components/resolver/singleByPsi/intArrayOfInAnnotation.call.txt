@@ -1,41 +1,41 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.IntArray
-        symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = elements
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = vararg elements: kotlin.Int
-            callableId = null
-        ]
-        callableId = kotlin/intArrayOf
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = vararg elements: kotlin.Int
-        callableId = null),
-      2 -> (KaVariableLikeSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = vararg elements: kotlin.Int
-        callableId = null),
-      3 -> (KaVariableLikeSignature:
-        name = elements
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = vararg elements: kotlin.Int
-        callableId = null)
-    }
+KtCallExpression(86,105): 'intArrayOf(1, 2, 3)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = elements
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = vararg elements: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/intArrayOf
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg elements: kotlin.Int
+          callableId = null),
+        2 -> (KaVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg elements: kotlin.Int
+          callableId = null),
+        3 -> (KaVariableLikeSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = vararg elements: kotlin.Int
+          callableId = null)
+      }

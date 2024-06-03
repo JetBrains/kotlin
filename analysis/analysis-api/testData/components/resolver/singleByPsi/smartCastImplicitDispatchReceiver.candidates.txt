@@ -1,26 +1,26 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaSmartCastedReceiverValue:
-        original = KaImplicitReceiverValue:
-          symbol = KaReceiverParameterSymbol:
-            annotationsList: []
-            origin: SOURCE
-            owningCallableSymbol: KaFunctionSymbol(/test)
-            type: KaUsualClassType:
+KtNameReferenceExpression(51,57): 'length'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
               annotationsList: []
-              typeArguments: []
-              type: kotlin/Any
-          type = kotlin.Any
-        type = kotlin.String
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = length
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val length: kotlin.Int
-        callableId = kotlin/String.length
-    simpleAccess = Read
-    typeArgumentsMapping = {}
-  isInBestCandidates = true
+              origin: SOURCE
+              owningCallableSymbol: KaFunctionSymbol(/test)
+              type: KaUsualClassType:
+                annotationsList: []
+                typeArguments: []
+                type: kotlin/Any
+            type = kotlin.Any
+          type = kotlin.String
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = length
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val length: kotlin.Int
+          callableId = kotlin/String.length
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

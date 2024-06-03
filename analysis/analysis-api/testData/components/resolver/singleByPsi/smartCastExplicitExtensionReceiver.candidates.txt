@@ -1,21 +1,21 @@
-KtCallExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaSmartCastedReceiverValue:
-        original = KaExplicitReceiverValue:
-          expression = a
-          isSafeNavigation = false
-          type = kotlin.Any
-        type = kotlin.String
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.String
-        returnType = kotlin.Unit
-        symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit
-        valueParameters = []
-        callableId = /foo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
+KtCallExpression(52,57): 'foo()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaSmartCastedReceiverValue:
+          original = KaExplicitReceiverValue:
+            expression = a
+            isSafeNavigation = false
+            type = kotlin.Any
+          type = kotlin.String
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.String
+          returnType = kotlin.Unit
+          symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit
+          valueParameters = []
+          callableId = /foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

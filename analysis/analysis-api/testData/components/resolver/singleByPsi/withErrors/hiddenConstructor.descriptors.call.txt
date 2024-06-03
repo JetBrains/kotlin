@@ -1,4 +1,4 @@
-KtCallExpression:
-KaErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<FUNCTION_EXPECTED: Expression 'Obj' of type 'Obj' cannot be invoked as a function. The function 'invoke()' is not found>
+KtCallExpression(17,25): 'Obj(555)'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<FUNCTION_EXPECTED: Expression 'Obj' of type 'Obj' cannot be invoked as a function. The function 'invoke()' is not found>

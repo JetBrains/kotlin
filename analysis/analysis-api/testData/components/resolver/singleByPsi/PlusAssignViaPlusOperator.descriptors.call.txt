@@ -1,32 +1,32 @@
-KtOperationReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = variable
-        isSafeNavigation = false
-        type = test.WithOperator
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = test.WithOperator
-        symbol = test/WithOperator.plus(<dispatch receiver>: test.WithOperator, f: test.Foo): test.WithOperator
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = f
-            receiverType = null
-            returnType = test.Foo
-            symbol = f: test.Foo
-            callableId = null
-        ]
-        callableId = test/WithOperator.plus
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      foo -> (KaVariableLikeSignature:
-        name = f
-        receiverType = null
-        returnType = test.Foo
-        symbol = f: test.Foo
-        callableId = null)
-    }
+KtOperationReferenceExpression(195,197): '+='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = variable
+          isSafeNavigation = false
+          type = test.WithOperator
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = test.WithOperator
+          symbol = test/WithOperator.plus(<dispatch receiver>: test.WithOperator, f: test.Foo): test.WithOperator
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = f
+              receiverType = null
+              returnType = test.Foo
+              symbol = f: test.Foo
+              callableId = null
+          ]
+          callableId = test/WithOperator.plus
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        foo -> (KaVariableLikeSignature:
+          name = f
+          receiverType = null
+          returnType = test.Foo
+          symbol = f: test.Foo
+          callableId = null)
+      }

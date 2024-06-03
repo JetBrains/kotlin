@@ -1,2 +1,2 @@
-KtProperty:
-NO_CANDIDATES
+KtProperty(0,20): 'val x : Int by Baz()'
+  NO_CANDIDATES

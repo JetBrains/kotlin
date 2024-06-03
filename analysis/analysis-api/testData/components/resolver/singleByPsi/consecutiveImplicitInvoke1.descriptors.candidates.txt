@@ -1,59 +1,59 @@
-KtCallExpression:
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = i
-        isSafeNavigation = false
-        type = kotlin.Int
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.Double
-        returnType = kotlin.Unit
-        symbol = /invoke(<extension receiver>: kotlin.Double): kotlin.Unit
-        valueParameters = []
-        callableId = /invoke
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = false
-
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = i
-        isSafeNavigation = false
-        type = kotlin.Int
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.Int
-        returnType = kotlin.Long
-        symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Long
-        valueParameters = []
-        callableId = /invoke
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
-
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = i
-        isSafeNavigation = false
-        type = kotlin.Int
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.Long
-        returnType = kotlin.Double
-        symbol = /invoke(<extension receiver>: kotlin.Long): kotlin.Double
-        valueParameters = []
-        callableId = /invoke
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = false
+KtCallExpression(135,138): 'i()'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.Double
+          returnType = kotlin.Unit
+          symbol = /invoke(<extension receiver>: kotlin.Double): kotlin.Unit
+          valueParameters = []
+          callableId = /invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Long
+          symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Long
+          valueParameters = []
+          callableId = /invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.Long
+          returnType = kotlin.Double
+          symbol = /invoke(<extension receiver>: kotlin.Long): kotlin.Double
+          valueParameters = []
+          callableId = /invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false

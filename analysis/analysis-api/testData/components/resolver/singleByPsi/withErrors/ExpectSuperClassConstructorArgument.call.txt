@@ -1,14 +1,14 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = obj
-        receiverType = null
-        returnType = kotlin.Any
-        symbol = obj: kotlin.Any
-        callableId = null
-    simpleAccess = Read
-    typeArgumentsMapping = {}
+KtNameReferenceExpression(173,176): 'obj'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = obj
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = obj: kotlin.Any
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}

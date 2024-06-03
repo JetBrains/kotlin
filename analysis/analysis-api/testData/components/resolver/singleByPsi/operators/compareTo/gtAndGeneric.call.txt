@@ -1,34 +1,34 @@
-KtOperationReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = m
-        isSafeNavigation = false
-        type = MyClass
-      signature = KaFunctionLikeSignature:
-        receiverType = MyClass
-        returnType = kotlin.Int
-        symbol = /compareTo(<extension receiver>: T, int: kotlin.Int): kotlin.Int
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = int
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = int: kotlin.Int
-            callableId = null
-        ]
-        callableId = /compareTo
-    typeArgumentsMapping = {
-      T -> (MyClass)
-    }
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = int
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = int: kotlin.Int
-        callableId = null)
-    }
+KtOperationReferenceExpression(97,98): '>'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Int
+          symbol = /compareTo(<extension receiver>: T, int: kotlin.Int): kotlin.Int
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /compareTo
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }

@@ -1,24 +1,24 @@
-KtCallableReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaImplicitReceiverValue:
-        symbol = KaReceiverParameterSymbol:
-          annotationsList: []
-          origin: SOURCE
-          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-          type: KaUsualClassType:
+KtCallableReferenceExpression(249,257): 'Bar::foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
             annotationsList: []
-            typeArguments: []
-            type: Foo
-        type = Foo
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = foo
-        receiverType = Bar
-        returnType = kotlin.String
-        symbol = val foo: kotlin.String
-        callableId = /Foo.foo
-    simpleAccess = Read
-    typeArgumentsMapping = {}
-  isInBestCandidates = true
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            type: KaUsualClassType:
+              annotationsList: []
+              typeArguments: []
+              type: Foo
+          type = Foo
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = foo
+          receiverType = Bar
+          returnType = kotlin.String
+          symbol = val foo: kotlin.String
+          callableId = /Foo.foo
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

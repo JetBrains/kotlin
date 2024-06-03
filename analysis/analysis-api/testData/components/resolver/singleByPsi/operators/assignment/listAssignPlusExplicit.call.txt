@@ -1,34 +1,34 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = l
-        isSafeNavigation = false
-        type = kotlin.collections.MutableList<kotlin.Int>
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
-        returnType = kotlin.Unit
-        symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = element
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = element: T
-            callableId = null
-        ]
-        callableId = kotlin/collections/plusAssign
-    typeArgumentsMapping = {
-      T -> (kotlin.Int)
-    }
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = element
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = element: T
-        callableId = null)
-    }
+KtNameReferenceExpression(54,64): 'plusAssign'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = l
+          isSafeNavigation = false
+          type = kotlin.collections.MutableList<kotlin.Int>
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = element
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = element: T
+              callableId = null
+          ]
+          callableId = kotlin/collections/plusAssign
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = element
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = element: T
+          callableId = null)
+      }

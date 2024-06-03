@@ -1,2 +1,2 @@
-KtCallExpression:
-NO_CANDIDATES
+KtCallExpression(17,28): 'function(1)'
+  NO_CANDIDATES

@@ -1,29 +1,39 @@
-<caret_constructor_MyClass>: KtNameReferenceExpression:
-null
+<caret_constructor_MyClass>:
+  KtNameReferenceExpression(109,116): 'MyClass'
+    null
 
-<caret_constructor_MyClass_fqn>: KtNameReferenceExpression:
-null
+<caret_constructor_MyClass_fqn>:
+  KtNameReferenceExpression(139,146): 'MyClass'
+    null
 
-<caret_constructor_List>: KtNameReferenceExpression:
-null
+<caret_constructor_List>:
+  KtNameReferenceExpression(165,169): 'List'
+    null
 
-<caret_constructor_MutableList>: KtNameReferenceExpression:
-null
+<caret_constructor_MutableList>:
+  KtNameReferenceExpression(196,207): 'MutableList'
+    null
 
-<caret_constructor_List_MyClass>: KtNameReferenceExpression:
-null
+<caret_constructor_List_MyClass>:
+  KtNameReferenceExpression(240,247): 'MyClass'
+    null
 
-<caret_staticMember_MyClass>: KtNameReferenceExpression:
-null
+<caret_staticMember_MyClass>:
+  KtNameReferenceExpression(303,310): 'MyClass'
+    null
 
-<caret_staticMember_MyClass_fqn>: KtNameReferenceExpression:
-null
+<caret_staticMember_MyClass_fqn>:
+  KtNameReferenceExpression(346,353): 'MyClass'
+    null
 
-<caret_staticMember_List>: KtNameReferenceExpression:
-null
+<caret_staticMember_List>:
+  KtNameReferenceExpression(385,389): 'List'
+    null
 
-<caret_staticMember_MutableList>: KtNameReferenceExpression:
-null
+<caret_staticMember_MutableList>:
+  KtNameReferenceExpression(429,440): 'MutableList'
+    null
 
-<caret_staticMember_List_MyClass>: KtNameReferenceExpression:
-null
+<caret_staticMember_List_MyClass>:
+  KtNameReferenceExpression(486,493): 'MyClass'
+    null

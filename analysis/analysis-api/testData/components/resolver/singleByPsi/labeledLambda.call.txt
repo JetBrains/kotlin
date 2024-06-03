@@ -1,29 +1,29 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /foo(l1: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = l1
-            receiverType = null
-            returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-            symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
-            callableId = null
-        ]
-        callableId = /foo
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      label@ {} -> (KaVariableLikeSignature:
-        name = l1
-        receiverType = null
-        returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-        symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
-        callableId = null)
-    }
+KtCallExpression(49,62): 'foo label@ {}'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(l1: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = l1
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        label@ {} -> (KaVariableLikeSignature:
+          name = l1
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = l1: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null)
+      }

@@ -1,29 +1,29 @@
-KtConstructorDelegationReferenceExpression:
-KaSuccessCallInfo:
-  call = KaDelegatedConstructorCall:
-    kind = THIS_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = A
-        symbol = <constructor>(b: kotlin.String): A
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = b
-            receiverType = null
-            returnType = kotlin.String
-            symbol = b: kotlin.String
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      "2" -> (KaVariableLikeSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.String
-        symbol = b: kotlin.String
-        callableId = null)
-    }
+KtConstructorDelegationReferenceExpression(76,80): 'this'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = A
+          symbol = <constructor>(b: kotlin.String): A
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.String
+              symbol = b: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "2" -> (KaVariableLikeSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          callableId = null)
+      }

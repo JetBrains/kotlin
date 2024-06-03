@@ -1,2 +1,2 @@
-KtDestructuringDeclarationEntry:
-null
+KtDestructuringDeclarationEntry(135,136): 'b'
+  null

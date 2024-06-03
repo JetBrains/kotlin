@@ -1,2 +1,2 @@
-KtLabelReferenceExpression:
-NO_CANDIDATES
+KtLabelReferenceExpression(68,72): '@foo'
+  NO_CANDIDATES

@@ -1,5 +1,7 @@
-<caret_1>: KDocName:
-NO_CANDIDATES
+<caret_1>:
+  KDocName(25,38): 'Storage.value'
+    NO_CANDIDATES
 
-<caret_2>: KDocName:
-NO_CANDIDATES
+<caret_2>:
+  KDocName(44,60): 'Storage.getValue'
+    NO_CANDIDATES

@@ -1,8 +1,11 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(50,53): 'foo'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(62,65): 'foo'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(75,82): 'foo.foo'
+    null

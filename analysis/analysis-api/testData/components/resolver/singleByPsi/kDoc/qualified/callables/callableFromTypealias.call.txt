@@ -1,5 +1,7 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(30,38): 'I.length'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(58,71): 'String.length'
+    null

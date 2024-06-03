@@ -14,34 +14,27 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileAnnotationList
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractResolveByElementTest : AbstractResolveTest() {
+abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
+    final override fun generateResolveOutput(
+        context: ResolveTestCaseContext<KtElement>,
+        mainFile: KtFile,
+        mainModule: KtTestModule,
+        testServices: TestServices
+    ): String = generateResolveOutput(context.element, testServices)
+
     abstract fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val elementsToProcess = elementsToProcess(mainFile, mainModule, testServices)
-        val actual = if (elementsToProcess.size == 1) {
-            val mainElement = elementsToProcess.single().elementToProcess
-            "${mainElement::class.simpleName}:\n" + generateResolveOutput(mainElement, testServices)
-        } else {
-            elementsToProcess.joinToString("\n\n") { (element, marker) ->
-                val output = generateResolveOutput(element, testServices)
-                "$marker: ${element::class.simpleName}:\n$output"
-            }
-        }
-
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "$resolveKind.txt")
-    }
-
-    private data class TestContext(val elementToProcess: KtElement, val marker: String)
-
-    private fun elementsToProcess(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices): List<TestContext> {
+    override fun collectElementsToResolve(
+        mainFile: KtFile,
+        mainModule: KtTestModule,
+        testServices: TestServices,
+    ): Collection<ResolveTestCaseContext<KtElement>> {
         val carets = testServices.expressionMarkerProvider.getAllCarets(mainFile)
         if (carets.size > 1) {
             return carets.map {
                 val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(mainFile, it.tag)
-                TestContext(element, it.fullTag)
+                ResolveTestCaseContext(element = element, context = element, marker = it.fullTag)
             }
         }
 
@@ -52,7 +45,8 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest() {
                 defaultType = KtElement::class,
             ) as KtElement
 
-        return listOf(TestContext(expression.elementToResolve, "<caret>"))
+        val elementToResolve = expression.elementToResolve
+        return listOf(ResolveTestCaseContext(element = elementToResolve, context = elementToResolve, marker = null))
     }
 
     protected val KtElement.elementToResolve: KtElement

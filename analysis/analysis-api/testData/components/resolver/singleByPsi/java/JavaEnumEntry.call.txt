@@ -1,17 +1,17 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = java.lang.annotation.RetentionPolicy
-        isSafeNavigation = false
-        type = kotlin.Unit
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = RUNTIME
-        receiverType = null
-        returnType = java.lang.annotation.RetentionPolicy
-        symbol = java/lang/annotation/RetentionPolicy.RUNTIME
-        callableId = java/lang/annotation/RetentionPolicy.RUNTIME
-    simpleAccess = Read
-    typeArgumentsMapping = {}
+KtNameReferenceExpression(69,76): 'RUNTIME'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = java.lang.annotation.RetentionPolicy
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = RUNTIME
+          receiverType = null
+          returnType = java.lang.annotation.RetentionPolicy
+          symbol = java/lang/annotation/RetentionPolicy.RUNTIME
+          callableId = java/lang/annotation/RetentionPolicy.RUNTIME
+      simpleAccess = Read
+      typeArgumentsMapping = {}

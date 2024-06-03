@@ -1,18 +1,18 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = a
-        isSafeNavigation = true
-        type = A
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = aa
-        receiverType = null
-        returnType = A?
-        symbol = val aa: A?
-        callableId = /A.aa
-    simpleAccess = Read
-    typeArgumentsMapping = {}
-  isInBestCandidates = true
+KtNameReferenceExpression(50,52): 'aa'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = true
+          type = A
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = aa
+          receiverType = null
+          returnType = A?
+          symbol = val aa: A?
+          callableId = /A.aa
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

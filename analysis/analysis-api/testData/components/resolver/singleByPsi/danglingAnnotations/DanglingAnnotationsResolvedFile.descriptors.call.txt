@@ -1,28 +1,28 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaAnnotationCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.jvm.JvmName
-        symbol = <constructor>(name: kotlin.String): kotlin.jvm.JvmName
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = name
-            receiverType = null
-            returnType = kotlin.String
-            symbol = name: kotlin.String
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      "" -> (KaVariableLikeSignature:
-        name = name
-        receiverType = null
-        returnType = kotlin.String
-        symbol = name: kotlin.String
-        callableId = null)
-    }
+KtNameReferenceExpression(49,56): 'JvmName'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.jvm.JvmName
+          symbol = <constructor>(name: kotlin.String): kotlin.jvm.JvmName
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = name
+              receiverType = null
+              returnType = kotlin.String
+              symbol = name: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "" -> (KaVariableLikeSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          callableId = null)
+      }

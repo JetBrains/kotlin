@@ -1,2 +1,2 @@
-KtBinaryExpression:
-null
+KtBinaryExpression(32,38): '1 == 2'
+  null

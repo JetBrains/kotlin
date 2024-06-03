@@ -1,15 +1,15 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /Dependency.Nested.foo(): kotlin.Unit
-        valueParameters = []
-        callableId = /Dependency.Nested.foo
-    typeArgumentsMapping = {}
-    argumentMapping = {}
+KtCallExpression(95,100): 'foo()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /Dependency.Nested.foo(): kotlin.Unit
+          valueParameters = []
+          callableId = /Dependency.Nested.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}

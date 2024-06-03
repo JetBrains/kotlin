@@ -1,14 +1,14 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = TOP_LEVEL
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val TOP_LEVEL: kotlin.Int
-        callableId = test/TOP_LEVEL
-    simpleAccess = Read
-    typeArgumentsMapping = {}
+KtNameReferenceExpression(100,109): 'TOP_LEVEL'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = TOP_LEVEL
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val TOP_LEVEL: kotlin.Int
+          callableId = test/TOP_LEVEL
+      simpleAccess = Read
+      typeArgumentsMapping = {}

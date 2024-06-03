@@ -1,2 +1,2 @@
-KtNameReferenceExpression:
-NO_CANDIDATES
+KtNameReferenceExpression(70,78): 'Conflict'
+  NO_CANDIDATES

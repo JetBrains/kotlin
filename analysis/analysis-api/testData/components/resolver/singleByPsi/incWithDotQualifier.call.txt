@@ -1,18 +1,18 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = foo()
-        isSafeNavigation = false
-        type = F
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = F
-        symbol = /F.peek(<dispatch receiver>: F): F
-        valueParameters = []
-        callableId = /F.peek
-    typeArgumentsMapping = {}
-    argumentMapping = {}
+KtCallExpression(93,99): 'peek()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = foo()
+          isSafeNavigation = false
+          type = F
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = F
+          symbol = /F.peek(<dispatch receiver>: F): F
+          valueParameters = []
+          callableId = /F.peek
+      typeArgumentsMapping = {}
+      argumentMapping = {}

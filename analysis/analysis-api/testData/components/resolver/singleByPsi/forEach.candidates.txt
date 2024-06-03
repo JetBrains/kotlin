@@ -1,69 +1,69 @@
-KtDotQualifiedExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = listOf(1, 2, 3)
-        isSafeNavigation = false
-        type = kotlin.collections.List<kotlin.Int>
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.collections.Iterable<kotlin.Int>
-        returnType = kotlin.Unit
-        symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = action
-            receiverType = null
-            returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-            symbol = action: kotlin.Function1<T, kotlin.Unit>
-            callableId = null
-        ]
-        callableId = kotlin/collections/forEach
-    typeArgumentsMapping = {
-      T -> (kotlin.Int)
-    }
-    argumentMapping = {
-      { } -> (KaVariableLikeSignature:
-        name = action
-        receiverType = null
-        returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-        symbol = action: kotlin.Function1<T, kotlin.Unit>
-        callableId = null)
-    }
-  isInBestCandidates = true
-
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun List<Int>.forEach(action: (Int) -> Unit): Unit>
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = listOf(1, 2, 3)
-        isSafeNavigation = false
-        type = kotlin.collections.List<kotlin.Int>
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.collections.List<kotlin.Int>
-        returnType = kotlin.Unit
-        symbol = /forEach(<extension receiver>: kotlin.collections.List<kotlin.Int>, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = action
-            receiverType = null
-            returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-            symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
-            callableId = null
-        ]
-        callableId = /forEach
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      { } -> (KaVariableLikeSignature:
-        name = action
-        receiverType = null
-        returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
-        symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
-        callableId = null)
-    }
-  isInBestCandidates = false
+KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.collections.Iterable<kotlin.Int>
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = action: kotlin.Function1<T, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      argumentMapping = {
+        { } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<T, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun List<Int>.forEach(action: (Int) -> Unit): Unit>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.collections.List<kotlin.Int>
+          returnType = kotlin.Unit
+          symbol = /forEach(<extension receiver>: kotlin.collections.List<kotlin.Int>, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = /forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false

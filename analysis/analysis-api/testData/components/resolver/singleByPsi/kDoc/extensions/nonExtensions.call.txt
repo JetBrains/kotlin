@@ -1,11 +1,15 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(78,91): 'Foo.nonExtFun'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(97,115): 'test.Foo.nonExtFun'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(124,138): 'Foo.nonExtProp'
+    null
 
-<caret_4>: KDocName:
-null
+<caret_4>:
+  KDocName(144,163): 'test.Foo.nonExtProp'
+    null

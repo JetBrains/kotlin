@@ -1,18 +1,18 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = "some"
-        isSafeNavigation = false
-        type = kotlin.String
-      signature = KaFunctionLikeSignature:
-        receiverType = kotlin.Any?
-        returnType = dynamic
-        symbol = kotlin/js/asDynamic(<extension receiver>: kotlin.Any?): dynamic
-        valueParameters = []
-        callableId = kotlin/js/asDynamic
-    typeArgumentsMapping = {}
-    argumentMapping = {}
+KtNameReferenceExpression(100,109): 'asDynamic'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = "some"
+          isSafeNavigation = false
+          type = kotlin.String
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.Any?
+          returnType = dynamic
+          symbol = kotlin/js/asDynamic(<extension receiver>: kotlin.Any?): dynamic
+          valueParameters = []
+          callableId = kotlin/js/asDynamic
+      typeArgumentsMapping = {}
+      argumentMapping = {}

@@ -1,2 +1,2 @@
-KtWhenExpression:
-NO_CANDIDATES
+KtWhenExpression(25,50): 'when (true) { else -> 2 }'
+  NO_CANDIDATES

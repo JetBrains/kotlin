@@ -1,72 +1,72 @@
-KtBinaryExpression:
-KaSuccessCallInfo:
-  call = KaCompoundArrayAccessCall:
-    compoundAccess = CompoundAssign:
-      kind = PLUS_ASSIGN
-      operand = 1
-      operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+KtBinaryExpression(128,139): 'm["a"] += 1'
+  KaSuccessCallInfo:
+    call = KaCompoundArrayAccessCall:
+      compoundAccess = CompoundAssign:
+        kind = PLUS_ASSIGN
+        operand = 1
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = m["a"]
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+            valueParameters = [
+              KaVariableLikeSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = other: kotlin.Int
+                callableId = null
+            ]
+            callableId = kotlin/Int.plus
+      getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaExplicitReceiverValue:
-          expression = m["a"]
+          expression = m
           isSafeNavigation = false
-          type = kotlin.Int
+          type = MyMap<kotlin.String, kotlin.Int>
         extensionReceiver = null
         signature = KaFunctionLikeSignature:
           receiverType = null
           returnType = kotlin.Int
-          symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+          symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
           valueParameters = [
             KaVariableLikeSignature:
-              name = other
+              name = k
               receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
+              returnType = kotlin.String
+              symbol = k: K
               callableId = null
           ]
-          callableId = kotlin/Int.plus
-    getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = m
-        isSafeNavigation = false
-        type = MyMap<kotlin.String, kotlin.Int>
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = k
-            receiverType = null
-            returnType = kotlin.String
-            symbol = k: K
-            callableId = null
-        ]
-        callableId = /MyMap.get
-    indexArguments = [
-      "a"
-    ]
-    setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = m
-        isSafeNavigation = false
-        type = MyMap<kotlin.String, kotlin.Int>
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /MyMap.set(<dispatch receiver>: MyMap<K, V>, k: K, v: V): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = k
-            receiverType = null
-            returnType = kotlin.String
-            symbol = k: K
-            callableId = null,
-          KaVariableLikeSignature:
-            name = v
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = v: V
-            callableId = null
-        ]
-        callableId = /MyMap.set
+          callableId = /MyMap.get
+      indexArguments = [
+        "a"
+      ]
+      setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MyMap<kotlin.String, kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /MyMap.set(<dispatch receiver>: MyMap<K, V>, k: K, v: V): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = k
+              receiverType = null
+              returnType = kotlin.String
+              symbol = k: K
+              callableId = null,
+            KaVariableLikeSignature:
+              name = v
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = v: V
+              callableId = null
+          ]
+          callableId = /MyMap.set

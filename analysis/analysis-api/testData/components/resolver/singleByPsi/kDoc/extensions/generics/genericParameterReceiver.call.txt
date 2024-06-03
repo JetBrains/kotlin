@@ -1,11 +1,15 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(70,82): 'PARAM.anyExt'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(88,104): 'PARAM.genericExt'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(175,193): 'CLASS_PARAM.anyExt'
+    null
 
-<caret_4>: KDocName:
-null
+<caret_4>:
+  KDocName(203,225): 'CLASS_PARAM.genericExt'
+    null

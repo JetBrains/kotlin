@@ -1,5 +1,7 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(85,97): 'Receiver.ext'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(142,154): 'Receiver.ext'
+    null

@@ -1,26 +1,35 @@
-<caret_1>: KDocName:
-null
+<caret_1>:
+  KDocName(88,91): 'Foo'
+    null
 
-<caret_2>: KDocName:
-null
+<caret_2>:
+  KDocName(112,121): 'Outer.Foo'
+    null
 
-<caret_3>: KDocName:
-null
+<caret_3>:
+  KDocName(135,149): 'test.Outer.Foo'
+    null
 
-<caret_4>: KDocName:
-null
+<caret_4>:
+  KDocName(170,178): 'test.Foo'
+    null
 
-<caret_nested_1>: KDocName:
-null
+<caret_nested_1>:
+  KDocName(275,278): 'Foo'
+    null
 
-<caret_nested_2>: KDocName:
-null
+<caret_nested_2>:
+  KDocName(307,317): 'Nested.Foo'
+    null
 
-<caret_nested_3>: KDocName:
-null
+<caret_nested_3>:
+  KDocName(335,351): 'Outer.Nested.Foo'
+    null
 
-<caret_nested_4>: KDocName:
-null
+<caret_nested_4>:
+  KDocName(369,390): 'test.Outer.Nested.Foo'
+    null
 
-<caret_nested_5>: KDocName:
-null
+<caret_nested_5>:
+  KDocName(419,427): 'test.Foo'
+    null

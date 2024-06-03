@@ -1,5 +1,7 @@
-<caret_1>: KDocName:
-NO_CANDIDATES
+<caret_1>:
+  KDocName(85,97): 'Receiver.ext'
+    NO_CANDIDATES
 
-<caret_2>: KDocName:
-NO_CANDIDATES
+<caret_2>:
+  KDocName(142,154): 'Receiver.ext'
+    NO_CANDIDATES

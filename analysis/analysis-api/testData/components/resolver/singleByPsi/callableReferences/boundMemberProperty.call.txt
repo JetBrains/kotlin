@@ -1,17 +1,17 @@
-KtCallableReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = obj
-        isSafeNavigation = false
-        type = Foo
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = foo
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val foo: kotlin.String
-        callableId = /Foo.foo
-    simpleAccess = Read
-    typeArgumentsMapping = {}
+KtCallableReferenceExpression(87,95): 'obj::foo'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = obj
+          isSafeNavigation = false
+          type = Foo
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = foo
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val foo: kotlin.String
+          callableId = /Foo.foo
+      simpleAccess = Read
+      typeArgumentsMapping = {}

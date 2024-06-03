@@ -1,33 +1,33 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = m
-        isSafeNavigation = false
-        type = library2.MyInterface
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = library2/MyInterface.check(<dispatch receiver>: library2.MyInterface, string: {library1.MyString=} kotlin.String): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = string
-            receiverType = null
-            returnType = {library1.MyString=} kotlin.String
-            symbol = string: {library1.MyString=} kotlin.String
-            callableId = null
-        ]
-        callableId = library2/MyInterface.check
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      "" -> (KaVariableLikeSignature:
-        name = string
-        receiverType = null
-        returnType = {library1.MyString=} kotlin.String
-        symbol = string: {library1.MyString=} kotlin.String
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtNameReferenceExpression(141,146): 'check'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = library2.MyInterface
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = library2/MyInterface.check(<dispatch receiver>: library2.MyInterface, string: {library1.MyString=} kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = string
+              receiverType = null
+              returnType = {library1.MyString=} kotlin.String
+              symbol = string: {library1.MyString=} kotlin.String
+              callableId = null
+          ]
+          callableId = library2/MyInterface.check
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "" -> (KaVariableLikeSignature:
+          name = string
+          receiverType = null
+          returnType = {library1.MyString=} kotlin.String
+          symbol = string: {library1.MyString=} kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true

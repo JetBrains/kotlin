@@ -1,32 +1,32 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = x
-        isSafeNavigation = false
-        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(a))  kotlin.Int, kotlin.Unit>
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = a
-            receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
-            symbol = p1: P1
-            callableId = null
-        ]
-        callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      1 -> (KaVariableLikeSignature:
-        name = a
-        receiverType = null
-        returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
-        symbol = p1: P1
-        callableId = null)
-    }
+KtCallExpression(81,85): 'x(1)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(a))  kotlin.Int, kotlin.Unit>
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
+              symbol = p1: P1
+              callableId = null
+          ]
+          callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = a
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
+          symbol = p1: P1
+          callableId = null)
+      }

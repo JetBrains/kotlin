@@ -1,74 +1,74 @@
-KtConstructorDelegationCall:
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(i: Int, j: Int) defined in Sub>
-  candidate = KaDelegatedConstructorCall:
-    kind = THIS_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = Sub
-        symbol = <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = i
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = i: kotlin.Int
-            callableId = null,
-          KaVariableLikeSignature:
-            name = j
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = j: kotlin.Int
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      i -> (KaVariableLikeSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
-        callableId = null),
-      j -> (KaVariableLikeSignature:
-        name = j
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = j: kotlin.Int
-        callableId = null)
-    }
-  isInBestCandidates = true
-
-KaInapplicableCallCandidateInfo:
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(p: Int) defined in Sub>
-  candidate = KaDelegatedConstructorCall:
-    kind = THIS_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = Sub
-        symbol = <constructor>(p: kotlin.Int): Sub
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = p
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = p: kotlin.Int
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      i -> (KaVariableLikeSignature:
-        name = p
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = p: kotlin.Int
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(i: Int, j: Int) defined in Sub>
+    candidate = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Sub
+          symbol = <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null,
+            KaVariableLikeSignature:
+              name = j
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = j: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        i -> (KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null),
+        j -> (KaVariableLikeSignature:
+          name = j
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = j: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Sub(p: Int) defined in Sub>
+    candidate = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Sub
+          symbol = <constructor>(p: kotlin.Int): Sub
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = p
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        i -> (KaVariableLikeSignature:
+          name = p
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true

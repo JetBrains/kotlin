@@ -1,2 +1,2 @@
-KtOperationReferenceExpression:
-null
+KtOperationReferenceExpression(38,41): '==='
+  null

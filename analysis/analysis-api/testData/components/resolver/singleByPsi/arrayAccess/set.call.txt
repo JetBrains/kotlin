@@ -1,8 +1,11 @@
-<caret>: KtContainerNode:
-null
+<caret>:
+  KtContainerNode(66,69): '[0]'
+    null
 
-<caret_singleIfStatement>: KtContainerNode:
-null
+<caret_singleIfStatement>:
+  KtContainerNode(93,96): '[0]'
+    null
 
-<caret_singleWhenStatement>: KtContainerNode:
-null
+<caret_singleWhenStatement>:
+  KtContainerNode(125,128): '[0]'
+    null

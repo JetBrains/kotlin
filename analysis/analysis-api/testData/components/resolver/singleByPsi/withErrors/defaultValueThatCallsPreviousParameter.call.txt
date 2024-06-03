@@ -1,32 +1,32 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = context
-        isSafeNavigation = false
-        type = test.pkg.Context
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.String!
-        symbol = test/pkg/Context.getString(<dispatch receiver>: test.pkg.Context, id: kotlin.Int): kotlin.String!
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = id
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = id: kotlin.Int
-            callableId = null
-        ]
-        callableId = test/pkg/Context.getString
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      if (testInt == 0) R.string.test_string_1 else R.string.test_string_2 -> (KaVariableLikeSignature:
-        name = id
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = id: kotlin.Int
-        callableId = null)
-    }
+KtNameReferenceExpression(270,279): 'getString'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = context
+          isSafeNavigation = false
+          type = test.pkg.Context
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.String!
+          symbol = test/pkg/Context.getString(<dispatch receiver>: test.pkg.Context, id: kotlin.Int): kotlin.String!
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = id
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = id: kotlin.Int
+              callableId = null
+          ]
+          callableId = test/pkg/Context.getString
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        if (testInt == 0) R.string.test_string_1 else R.string.test_string_2 -> (KaVariableLikeSignature:
+          name = id
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = id: kotlin.Int
+          callableId = null)
+      }

@@ -1,31 +1,31 @@
-KtPostfixExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Any
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = kotlin.Any?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            callableId = null
-        ]
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-    typeArgumentsMapping = {
-      <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.Any)
-    }
-    argumentMapping = {
-      a -> (KaVariableLikeSignature:
-        name = baseExpr
-        receiverType = null
-        returnType = kotlin.Any?
-        symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-        callableId = null)
-    }
+KtPostfixExpression(24,27): 'a!!'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = baseExpr
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+              callableId = null
+          ]
+          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.Any)
+      }
+      argumentMapping = {
+        a -> (KaVariableLikeSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          callableId = null)
+      }

@@ -1,17 +1,17 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = AnnotationRetention
-        isSafeNavigation = false
-        type = kotlin.Unit
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = SOURCE
-        receiverType = null
-        returnType = kotlin.annotation.AnnotationRetention
-        symbol = kotlin/annotation/AnnotationRetention.SOURCE
-        callableId = kotlin/annotation/AnnotationRetention.SOURCE
-    simpleAccess = Read
-    typeArgumentsMapping = {}
+KtNameReferenceExpression(31,37): 'SOURCE'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = AnnotationRetention
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = SOURCE
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationRetention
+          symbol = kotlin/annotation/AnnotationRetention.SOURCE
+          callableId = kotlin/annotation/AnnotationRetention.SOURCE
+      simpleAccess = Read
+      typeArgumentsMapping = {}

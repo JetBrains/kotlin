@@ -1,28 +1,28 @@
-KtPostfixExpression:
-KaSuccessCallInfo:
-  call = KaCompoundVariableAccessCall:
-    compoundAccess = IncOrDecOperation:
-      kind = INC
-      precedence = POSTFIX
-      operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = kotlin.Int
+KtPostfixExpression(31,34): 'i++'
+  KaSuccessCallInfo:
+    call = KaCompoundVariableAccessCall:
+      compoundAccess = IncOrDecOperation:
+        kind = INC
+        precedence = POSTFIX
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = i
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionLikeSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+            valueParameters = []
+            callableId = kotlin/Int.inc
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
         extensionReceiver = null
-        signature = KaFunctionLikeSignature:
+        signature = KaVariableLikeSignature:
+          name = i
           receiverType = null
           returnType = kotlin.Int
-          symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
-          valueParameters = []
-          callableId = kotlin/Int.inc
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = var i: kotlin.Int
-        callableId = null
-    typeArgumentsMapping = {}
+          symbol = var i: kotlin.Int
+          callableId = null
+      typeArgumentsMapping = {}

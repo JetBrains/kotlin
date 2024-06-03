@@ -1,18 +1,18 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = param
-        isSafeNavigation = false
-        type = A
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /A.invoke(<dispatch receiver>: A): kotlin.Unit
-        valueParameters = []
-        callableId = /A.invoke
-    typeArgumentsMapping = {}
-    argumentMapping = {}
+KtNameReferenceExpression(77,83): 'invoke'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = param
+          isSafeNavigation = false
+          type = A
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /A.invoke(<dispatch receiver>: A): kotlin.Unit
+          valueParameters = []
+          callableId = /A.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}

@@ -1,29 +1,29 @@
-KtCallExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = f
-        isSafeNavigation = false
-        type = @ExtensionFunctionType kotlin.Function1<kotlin.String, kotlin.Unit>
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = ""
-        isSafeNavigation = false
-        type = kotlin.String
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = p1
-            receiverType = null
-            returnType = kotlin.String
-            symbol = p1: P1
-            callableId = null
-        ]
-        callableId = kotlin/Function1.invoke
-    typeArgumentsMapping = {}
-    argumentMapping = {}
-  isInBestCandidates = true
+KtCallExpression(107,110): 'f()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = @ExtensionFunctionType kotlin.Function1<kotlin.String, kotlin.Unit>
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = ""
+          isSafeNavigation = false
+          type = kotlin.String
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = p1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = p1: P1
+              callableId = null
+          ]
+          callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

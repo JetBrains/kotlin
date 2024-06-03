@@ -1,29 +1,29 @@
-KtCallExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = x(b: kotlin.Boolean): kotlin.Unit
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = b
-            receiverType = null
-            returnType = kotlin.Boolean
-            symbol = b: kotlin.Boolean
-            callableId = null
-        ]
-        callableId = null
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      true -> (KaVariableLikeSignature:
-        name = b
-        receiverType = null
-        returnType = kotlin.Boolean
-        symbol = b: kotlin.Boolean
-        callableId = null)
-    }
+KtCallExpression(110,117): 'x(true)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = x(b: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = b: kotlin.Boolean
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        true -> (KaVariableLikeSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = b: kotlin.Boolean
+          callableId = null)
+      }

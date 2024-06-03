@@ -1,29 +1,29 @@
-KtNameReferenceExpression:
-KaSuccessCallInfo:
-  call = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.String
-        symbol = test/dummyTest(value: test.Test): kotlin.String
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = value
-            receiverType = null
-            returnType = test.Test
-            symbol = value: test.Test
-            callableId = null
-        ]
-        callableId = test/dummyTest
-    typeArgumentsMapping = {}
-    argumentMapping = {
-      Test() -> (KaVariableLikeSignature:
-        name = value
-        receiverType = null
-        returnType = test.Test
-        symbol = value: test.Test
-        callableId = null)
-    }
+KtNameReferenceExpression(123,132): 'dummyTest'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.String
+          symbol = test/dummyTest(value: test.Test): kotlin.String
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = value
+              receiverType = null
+              returnType = test.Test
+              symbol = value: test.Test
+              callableId = null
+          ]
+          callableId = test/dummyTest
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        Test() -> (KaVariableLikeSignature:
+          name = value
+          receiverType = null
+          returnType = test.Test
+          symbol = value: test.Test
+          callableId = null)
+      }

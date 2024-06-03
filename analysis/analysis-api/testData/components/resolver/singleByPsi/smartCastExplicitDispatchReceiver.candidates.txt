@@ -1,20 +1,20 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = KaSmartCastedReceiverValue:
-        original = KaExplicitReceiverValue:
-          expression = a
-          isSafeNavigation = false
-          type = kotlin.Any
-        type = kotlin.String
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = length
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val length: kotlin.Int
-        callableId = kotlin/String.length
-    simpleAccess = Read
-    typeArgumentsMapping = {}
-  isInBestCandidates = true
+KtNameReferenceExpression(52,58): 'length'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaExplicitReceiverValue:
+            expression = a
+            isSafeNavigation = false
+            type = kotlin.Any
+          type = kotlin.String
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = length
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val length: kotlin.Int
+          callableId = kotlin/String.length
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

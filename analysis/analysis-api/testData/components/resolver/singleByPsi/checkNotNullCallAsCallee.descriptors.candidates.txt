@@ -1,32 +1,32 @@
-KtPostfixExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleFunctionCall:
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionLikeSignature:
-        receiverType = null
-        returnType = kotlin.Function0<kotlin.Unit>
-        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-        valueParameters = [
-          KaVariableLikeSignature:
-            name = baseExpr
-            receiverType = null
-            returnType = kotlin.Function0<kotlin.Unit>?
-            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-            callableId = null
-        ]
-        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-    typeArgumentsMapping = {
-      <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.Function0<kotlin.Unit>)
-    }
-    argumentMapping = {
-      a -> (KaVariableLikeSignature:
-        name = baseExpr
-        receiverType = null
-        returnType = kotlin.Function0<kotlin.Unit>?
-        symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-        callableId = null)
-    }
-  isInBestCandidates = true
+KtPostfixExpression(33,36): 'a!!'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.Unit>
+          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = baseExpr
+              receiverType = null
+              returnType = kotlin.Function0<kotlin.Unit>?
+              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+              callableId = null
+          ]
+          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (kotlin.Function0<kotlin.Unit>)
+      }
+      argumentMapping = {
+        a -> (KaVariableLikeSignature:
+          name = baseExpr
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.Unit>?
+          symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+          callableId = null)
+      }
+    isInBestCandidates = true

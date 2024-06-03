@@ -1,15 +1,15 @@
-KtNameReferenceExpression:
-KaApplicableCallCandidateInfo:
-  candidate = KaSimpleVariableAccessCall:
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaVariableLikeSignature:
-        name = $$result
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = val $$result: kotlin.Int
-        callableId = /$$result
-    simpleAccess = Read
-    typeArgumentsMapping = {}
-  isInBestCandidates = true
+KtNameReferenceExpression(16,26): '`$$result`'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = $$result
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val $$result: kotlin.Int
+          callableId = /$$result
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
