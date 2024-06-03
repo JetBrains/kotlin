@@ -1,5 +1,5 @@
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   containingClassId: JavaClass.InnerClass
   contextReceivers: []
@@ -11,14 +11,14 @@ KaConstructorSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass.InnerClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -32,7 +32,7 @@ KaConstructorSymbol:
       origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: JavaClass!
       symbolKind: LOCAL
       typeParameters: []
@@ -43,7 +43,7 @@ KaConstructorSymbol:
   ]
   visibility: PackageVisibility
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null

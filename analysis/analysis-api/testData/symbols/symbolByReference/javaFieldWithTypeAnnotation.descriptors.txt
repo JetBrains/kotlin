@@ -1,5 +1,5 @@
 KaJavaFieldSymbol:
-  annotationsList: [
+  annotations: [
     Anno1()
       psi: null
   ]
@@ -13,7 +13,7 @@ KaJavaFieldSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: [
+    annotations: [
       Anno1()
         psi: null
     ]
@@ -22,7 +22,7 @@ KaJavaFieldSymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null

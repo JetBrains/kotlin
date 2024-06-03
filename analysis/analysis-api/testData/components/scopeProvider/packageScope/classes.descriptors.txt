@@ -1,5 +1,5 @@
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: test/A
   classKind: CLASS
   companionObject: KaNamedClassOrObjectSymbol(test/A.Companion)
@@ -16,11 +16,11 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: test/api/I
   ]
@@ -33,7 +33,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: test/InternalA
   classKind: CLASS
   companionObject: null
@@ -50,11 +50,11 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: test/api/InternalI
   ]
@@ -67,7 +67,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: test/PrivateA
   classKind: CLASS
   companionObject: null
@@ -84,11 +84,11 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: test/api/I
   ]
@@ -101,7 +101,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: test/B
   classKind: CLASS
   companionObject: KaNamedClassOrObjectSymbol(test/B.Companion)
@@ -118,7 +118,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: test/A
   ]
@@ -131,7 +131,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: test/InternalB
   classKind: CLASS
   companionObject: null
@@ -148,7 +148,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: test/InternalA
   ]
@@ -161,7 +161,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: test/PrivateB
   classKind: CLASS
   companionObject: null
@@ -178,7 +178,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: test/A
   ]

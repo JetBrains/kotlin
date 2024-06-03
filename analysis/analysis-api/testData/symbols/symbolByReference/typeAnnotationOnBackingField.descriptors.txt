@@ -1,5 +1,5 @@
 KaBackingFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   contextReceivers: []
   isExtension: false
@@ -8,7 +8,7 @@ KaBackingFieldSymbol:
   owningProperty: KaKotlinPropertySymbol(/foo)
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: [
+    annotations: [
       Anno3()
         psi: KtAnnotationEntry
       Anno2()

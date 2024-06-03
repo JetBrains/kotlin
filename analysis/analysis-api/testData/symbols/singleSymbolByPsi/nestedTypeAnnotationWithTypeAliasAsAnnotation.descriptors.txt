@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /foo2
   contextReceivers: []
   contractEffects: []
@@ -20,23 +20,23 @@ KaFunctionSymbol:
   name: foo2
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(/foo2)
     type: KaTypeParameterType:
-      annotationsList: []
+      annotations: []
       type: T
     getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: [
           KaTypeParameterType:
-            annotationsList: [
+            annotations: [
               BaseAnnotation()
                 psi: KtAnnotationEntry
             ]

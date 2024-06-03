@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   contextReceivers: []
   contractEffects: []
@@ -21,14 +21,14 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaTypeParameterType:
-    annotationsList: []
+    annotations: []
     type: Outer?
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: <local>/Base<Outer>
   getContainingFileSymbol: KaFileSymbol(genericFromFunctionInLocalClass.kt)

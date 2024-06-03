@@ -1,7 +1,7 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -10,7 +10,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/x)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
@@ -22,7 +22,7 @@ KaKotlinPropertySymbol:
   callableId: /x
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -35,7 +35,7 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
@@ -65,7 +65,7 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
@@ -82,9 +82,9 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -93,7 +93,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/y)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
@@ -105,7 +105,7 @@ KaKotlinPropertySymbol:
   callableId: /y
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: true
@@ -117,18 +117,18 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
-      annotationsList: []
+      annotations: []
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/y)
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
       getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
@@ -157,18 +157,18 @@ KaKotlinPropertySymbol:
   name: y
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/y)
     type: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
@@ -185,9 +185,9 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -196,7 +196,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/get)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Long
     symbolKind: LOCAL
@@ -208,7 +208,7 @@ KaKotlinPropertySymbol:
   callableId: /get
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: true
@@ -220,18 +220,18 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
-      annotationsList: []
+      annotations: []
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/get)
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Short
       getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Long
     symbolKind: ACCESSOR
@@ -260,22 +260,22 @@ KaKotlinPropertySymbol:
   name: get
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/get)
     type: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Short
     getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Long
   setter: KaPropertySetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: true
@@ -287,7 +287,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     parameter: KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -301,7 +301,7 @@ KaKotlinPropertySymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Long
       symbolKind: LOCAL
@@ -311,25 +311,25 @@ KaKotlinPropertySymbol:
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: KaReceiverParameterSymbol:
-      annotationsList: []
+      annotations: []
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/get)
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Short
       getContainingFileSymbol: KaFileSymbol(topLevelProperties.kt)
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
@@ -343,7 +343,7 @@ KaKotlinPropertySymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Long
         symbolKind: LOCAL

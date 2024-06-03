@@ -24,7 +24,7 @@ internal open class KaFirAnonymousObjectSymbol(
 ) : KaAnonymousObjectSymbol(), KaFirSymbol<FirAnonymousObjectSymbol> {
     override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
 
-    override val annotationsList by cached {
+    override val annotations by cached {
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 

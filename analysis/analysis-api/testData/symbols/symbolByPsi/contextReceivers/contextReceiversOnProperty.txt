@@ -1,7 +1,7 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -10,7 +10,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/y)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
@@ -24,18 +24,18 @@ KaKotlinPropertySymbol:
     KtContextReceiver:
       label: null
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
     KtContextReceiver:
       label: s
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/String
   ]
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: true
@@ -48,7 +48,7 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
@@ -78,7 +78,7 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null

@@ -1,7 +1,7 @@
 KaUsualClassType:
   abbreviatedType: KaUsualClassType:
     abbreviatedType: null
-    annotationsList: []
+    annotations: []
     classId: expansion/TransitiveStringAlias
     nullability: NULLABLE
     qualifiers: [
@@ -12,7 +12,7 @@ KaUsualClassType:
     ]
     symbol: KaTypeAliasSymbol(expansion/TransitiveStringAlias)
     typeArguments: []
-  annotationsList: []
+  annotations: []
   classId: kotlin/String
   nullability: NULLABLE
   qualifiers: [

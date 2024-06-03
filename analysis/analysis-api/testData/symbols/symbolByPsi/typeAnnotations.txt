@@ -1,5 +1,5 @@
 KaNamedClassOrObjectSymbol:
-  annotationsList: [
+  annotations: [
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
   ]
@@ -19,7 +19,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Annotation
   ]
@@ -32,7 +32,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: [
+  annotations: [
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
   ]
@@ -52,7 +52,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Annotation
   ]
@@ -65,7 +65,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: [
+  annotations: [
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
   ]
@@ -85,7 +85,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Annotation
   ]
@@ -98,7 +98,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: [
+  annotations: [
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
   ]
@@ -118,7 +118,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Annotation
   ]
@@ -131,7 +131,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   containingClassId: Anno5
   contextReceivers: []
@@ -143,20 +143,20 @@ KaConstructorSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: Anno5
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotationsList: []
+        annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           isExtension: false
@@ -165,7 +165,7 @@ KaConstructorSymbol:
           owningProperty: KaKotlinPropertySymbol(/Anno5.s)
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/String
           symbolKind: LOCAL
@@ -177,7 +177,7 @@ KaConstructorSymbol:
         callableId: /Anno5.s
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           hasBody: false
@@ -190,7 +190,7 @@ KaConstructorSymbol:
           origin: SOURCE
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/String
           symbolKind: ACCESSOR
@@ -198,7 +198,7 @@ KaConstructorSymbol:
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: Anno5
           getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -224,7 +224,7 @@ KaConstructorSymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/String
         setter: null
@@ -232,7 +232,7 @@ KaConstructorSymbol:
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: Anno5
         getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -253,7 +253,7 @@ KaConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
@@ -270,7 +270,7 @@ KaConstructorSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: [
+  annotations: [
     kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
       psi: KtAnnotationEntry
   ]
@@ -290,7 +290,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Annotation
   ]
@@ -303,7 +303,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: I
   classKind: INTERFACE
   companionObject: null
@@ -320,7 +320,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -333,7 +333,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /X.f
   contextReceivers: []
   contractEffects: []
@@ -355,7 +355,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: [
+    annotations: [
       Anno3()
         psi: KtAnnotationEntry
     ]
@@ -365,7 +365,7 @@ KaFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -379,7 +379,7 @@ KaFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: [
+        annotations: [
           Anno2()
             psi: KtAnnotationEntry
         ]
@@ -394,7 +394,7 @@ KaFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: X
   getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -403,9 +403,9 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -414,7 +414,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/X.x)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: [
+      annotations: [
         Anno4()
           psi: KtAnnotationEntry
       ]
@@ -429,7 +429,7 @@ KaKotlinPropertySymbol:
   callableId: /X.x
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -442,7 +442,7 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: [
+      annotations: [
         Anno4()
           psi: KtAnnotationEntry
       ]
@@ -453,7 +453,7 @@ KaKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: X
     getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -479,7 +479,7 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: [
+    annotations: [
       Anno4()
         psi: KtAnnotationEntry
     ]
@@ -490,7 +490,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: X
   getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
@@ -503,7 +503,7 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: X
   classKind: CLASS
   companionObject: null
@@ -520,7 +520,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: [
+      annotations: [
         Anno1()
           psi: KtAnnotationEntry
       ]
@@ -536,7 +536,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T
   origin: SOURCE
@@ -548,7 +548,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /foo
   contextReceivers: []
   contractEffects: []
@@ -569,20 +569,20 @@ KaFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(/foo)
     type: KaTypeParameterType:
-      annotationsList: []
+      annotations: []
       type: T
     getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: [
+        annotations: [
           Anno5(s = "1")
             psi: KtAnnotationEntry
         ]
@@ -601,7 +601,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T
   origin: SOURCE
@@ -613,7 +613,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /foo2
   contextReceivers: []
   contractEffects: []
@@ -634,23 +634,23 @@ KaFunctionSymbol:
   name: foo2
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(/foo2)
     type: KaTypeParameterType:
-      annotationsList: []
+      annotations: []
       type: T
     getContainingFileSymbol: KaFileSymbol(typeAnnotations.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: [
           KaTypeParameterType:
-            annotationsList: [
+            annotations: [
               Anno5(s = "1")
                 psi: KtAnnotationEntry
             ]

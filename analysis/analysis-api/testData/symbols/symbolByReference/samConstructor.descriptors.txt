@@ -1,5 +1,5 @@
 KaSamConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: java/lang/Runnable
   contextReceivers: []
   hasStableParameterNames: true
@@ -8,14 +8,14 @@ KaSamConstructorSymbol:
   origin: SAM_CONSTRUCTOR
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: java/lang/Runnable
   symbolKind: SAM_CONSTRUCTOR
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -29,10 +29,10 @@ KaSamConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaFunctionalType:
-        annotationsList: []
+        annotations: []
         typeArguments: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Unit
         ]

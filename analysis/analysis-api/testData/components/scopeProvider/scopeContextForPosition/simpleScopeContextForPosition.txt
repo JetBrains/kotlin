@@ -1,19 +1,19 @@
 element: e
 implicit receivers:
   type: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: A
   owner symbol: KaFirAnonymousFunctionSymbol
 
   type: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: B
   owner symbol: KaFirAnonymousFunctionSymbol
 
   type: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: C
   owner symbol: KaFirNamedClassOrObjectSymbol
@@ -30,7 +30,7 @@ scopes:
     classifiers: 0
     callables: 4
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: /A.memberInA
         contextReceivers: []
         contractEffects: []
@@ -52,7 +52,7 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Unit
         symbolKind: CLASS_MEMBER
@@ -60,7 +60,7 @@ scopes:
         valueParameters: []
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: kotlin/Any.equals
         contextReceivers: []
         contractEffects: []
@@ -82,14 +82,14 @@ scopes:
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Boolean
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
-            annotationsList: []
+            annotations: []
             callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
@@ -103,7 +103,7 @@ scopes:
             origin: LIBRARY
             receiverParameter: null
             returnType: KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: []
               type: kotlin/Any?
             symbolKind: LOCAL
@@ -111,7 +111,7 @@ scopes:
         ]
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: kotlin/Any.hashCode
         contextReceivers: []
         contractEffects: []
@@ -133,7 +133,7 @@ scopes:
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         symbolKind: CLASS_MEMBER
@@ -141,7 +141,7 @@ scopes:
         valueParameters: []
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: kotlin/Any.toString
         contextReceivers: []
         contractEffects: []
@@ -163,7 +163,7 @@ scopes:
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/String
         symbolKind: CLASS_MEMBER
@@ -172,7 +172,7 @@ scopes:
         visibility: Public
     constructors: 1
       KaConstructorSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         containingClassId: A
         contextReceivers: []
@@ -184,7 +184,7 @@ scopes:
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: A
         symbolKind: CLASS_MEMBER
@@ -209,7 +209,7 @@ scopes:
     classifiers: 0
     callables: 4
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: /B.memberInB
         contextReceivers: []
         contractEffects: []
@@ -231,7 +231,7 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Unit
         symbolKind: CLASS_MEMBER
@@ -239,7 +239,7 @@ scopes:
         valueParameters: []
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: kotlin/Any.equals
         contextReceivers: []
         contractEffects: []
@@ -261,14 +261,14 @@ scopes:
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Boolean
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
-            annotationsList: []
+            annotations: []
             callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
@@ -282,7 +282,7 @@ scopes:
             origin: LIBRARY
             receiverParameter: null
             returnType: KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: []
               type: kotlin/Any?
             symbolKind: LOCAL
@@ -290,7 +290,7 @@ scopes:
         ]
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: kotlin/Any.hashCode
         contextReceivers: []
         contractEffects: []
@@ -312,7 +312,7 @@ scopes:
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         symbolKind: CLASS_MEMBER
@@ -320,7 +320,7 @@ scopes:
         valueParameters: []
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: kotlin/Any.toString
         contextReceivers: []
         contractEffects: []
@@ -342,7 +342,7 @@ scopes:
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/String
         symbolKind: CLASS_MEMBER
@@ -351,7 +351,7 @@ scopes:
         visibility: Public
     constructors: 1
       KaConstructorSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         containingClassId: B
         contextReceivers: []
@@ -363,7 +363,7 @@ scopes:
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: B
         symbolKind: CLASS_MEMBER
@@ -382,7 +382,7 @@ scopes:
     classifiers: 0
     callables: 1
       KaLocalVariableSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         contextReceivers: []
         isExtension: false
@@ -391,7 +391,7 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         symbolKind: LOCAL
@@ -403,7 +403,7 @@ scopes:
     classifiers: 0
     callables: 1
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
@@ -417,7 +417,7 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/String
         symbolKind: LOCAL
@@ -429,7 +429,7 @@ scopes:
     classifiers: 0
     callables: 2
       KaLocalVariableSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         contextReceivers: []
         isExtension: false
@@ -438,13 +438,13 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         contextReceivers: []
         contractEffects: []
@@ -466,7 +466,7 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Unit
         symbolKind: LOCAL
@@ -480,7 +480,7 @@ scopes:
     classifiers: 0
     callables: 1
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
@@ -494,7 +494,7 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/String?
         symbolKind: LOCAL
@@ -505,7 +505,7 @@ scopes:
     packages: 0
     classifiers: 1
       KaTypeParameterSymbol:
-        annotationsList: []
+        annotations: []
         isReified: false
         name: T
         origin: SOURCE
@@ -519,7 +519,7 @@ scopes:
     packages: 0
     classifiers: 2
       KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        annotations: []
         classId: C.NestedInC
         classKind: CLASS
         companionObject: null
@@ -536,7 +536,7 @@ scopes:
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
@@ -544,7 +544,7 @@ scopes:
         typeParameters: []
         visibility: Public
       KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        annotations: []
         classId: JavaClass.NestedInJavaClass
         classKind: CLASS
         companionObject: null
@@ -561,7 +561,7 @@ scopes:
         origin: JAVA_SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
@@ -570,7 +570,7 @@ scopes:
         visibility: PackageVisibility
     callables: 4
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: /C.methodInC
         contextReceivers: []
         contractEffects: []
@@ -592,7 +592,7 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Unit
         symbolKind: CLASS_MEMBER
@@ -601,7 +601,7 @@ scopes:
         ]
         valueParameters: [
           KaValueParameterSymbol:
-            annotationsList: []
+            annotations: []
             callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
@@ -615,7 +615,7 @@ scopes:
             origin: SOURCE
             receiverParameter: null
             returnType: KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: []
               type: kotlin/String?
             symbolKind: LOCAL
@@ -623,7 +623,7 @@ scopes:
         ]
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: kotlin/Any.equals
         contextReceivers: []
         contractEffects: []
@@ -645,14 +645,14 @@ scopes:
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Boolean
         symbolKind: CLASS_MEMBER
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
-            annotationsList: []
+            annotations: []
             callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
@@ -666,7 +666,7 @@ scopes:
             origin: LIBRARY
             receiverParameter: null
             returnType: KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: []
               type: kotlin/Any?
             symbolKind: LOCAL
@@ -674,7 +674,7 @@ scopes:
         ]
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: kotlin/Any.hashCode
         contextReceivers: []
         contractEffects: []
@@ -696,7 +696,7 @@ scopes:
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         symbolKind: CLASS_MEMBER
@@ -704,7 +704,7 @@ scopes:
         valueParameters: []
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: kotlin/Any.toString
         contextReceivers: []
         contractEffects: []
@@ -726,7 +726,7 @@ scopes:
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/String
         symbolKind: CLASS_MEMBER
@@ -735,7 +735,7 @@ scopes:
         visibility: Public
     constructors: 1
       KaConstructorSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         containingClassId: C
         contextReceivers: []
@@ -747,7 +747,7 @@ scopes:
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: C
         symbolKind: CLASS_MEMBER
@@ -759,7 +759,7 @@ scopes:
     packages: 0
     classifiers: 1
       KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        annotations: []
         classId: C.NestedInC
         classKind: CLASS
         companionObject: null
@@ -776,7 +776,7 @@ scopes:
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
@@ -790,7 +790,7 @@ scopes:
     packages: 0
     classifiers: 1
       KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        annotations: []
         classId: JavaClass.NestedInJavaClass
         classKind: CLASS
         companionObject: null
@@ -807,7 +807,7 @@ scopes:
         origin: JAVA_SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
@@ -845,7 +845,7 @@ scopes:
         origin: SOURCE
     classifiers: 3
       KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        annotations: []
         classId: A
         classKind: CLASS
         companionObject: null
@@ -862,7 +862,7 @@ scopes:
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
@@ -870,7 +870,7 @@ scopes:
         typeParameters: []
         visibility: Public
       KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        annotations: []
         classId: B
         classKind: CLASS
         companionObject: null
@@ -887,7 +887,7 @@ scopes:
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
@@ -895,7 +895,7 @@ scopes:
         typeParameters: []
         visibility: Public
       KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        annotations: []
         classId: C
         classKind: CLASS
         companionObject: null
@@ -912,7 +912,7 @@ scopes:
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: JavaClass
         ]
@@ -921,7 +921,7 @@ scopes:
         visibility: Public
     callables: 4
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: /withA
         contextReceivers: []
         contractEffects: []
@@ -943,14 +943,14 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
-            annotationsList: []
+            annotations: []
             callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
@@ -964,14 +964,14 @@ scopes:
             origin: SOURCE
             receiverParameter: null
             returnType: KaFunctionalType:
-              annotationsList: []
+              annotations: []
               typeArguments: [
                 KaUsualClassType:
-                  annotationsList: []
+                  annotations: []
                   typeArguments: []
                   type: A
                 KaUsualClassType:
-                  annotationsList: []
+                  annotations: []
                   typeArguments: []
                   type: kotlin/Unit
               ]
@@ -981,7 +981,7 @@ scopes:
         ]
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: /withB
         contextReceivers: []
         contractEffects: []
@@ -1003,14 +1003,14 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
-            annotationsList: []
+            annotations: []
             callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
@@ -1024,14 +1024,14 @@ scopes:
             origin: SOURCE
             receiverParameter: null
             returnType: KaFunctionalType:
-              annotationsList: []
+              annotations: []
               typeArguments: [
                 KaUsualClassType:
-                  annotationsList: []
+                  annotations: []
                   typeArguments: []
                   type: B
                 KaUsualClassType:
-                  annotationsList: []
+                  annotations: []
                   typeArguments: []
                   type: kotlin/Unit
               ]
@@ -1041,7 +1041,7 @@ scopes:
         ]
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: /withJavaClass
         contextReceivers: []
         contractEffects: []
@@ -1063,14 +1063,14 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
-            annotationsList: []
+            annotations: []
             callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
@@ -1084,14 +1084,14 @@ scopes:
             origin: SOURCE
             receiverParameter: null
             returnType: KaFunctionalType:
-              annotationsList: []
+              annotations: []
               typeArguments: [
                 KaUsualClassType:
-                  annotationsList: []
+                  annotations: []
                   typeArguments: []
                   type: JavaClass
                 KaUsualClassType:
-                  annotationsList: []
+                  annotations: []
                   typeArguments: []
                   type: kotlin/Unit
               ]
@@ -1101,7 +1101,7 @@ scopes:
         ]
         visibility: Public
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: /topLevel
         contextReceivers: []
         contractEffects: []
@@ -1123,7 +1123,7 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         symbolKind: TOP_LEVEL

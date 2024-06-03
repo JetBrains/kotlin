@@ -23,7 +23,7 @@ internal class KaFirBackingFieldSymbol(
 ) : KaBackingFieldSymbol(), KaFirSymbol<FirBackingFieldSymbol> {
     override val origin: KaSymbolOrigin get() = withValidityAssertion { super<KaBackingFieldSymbol>.origin }
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }

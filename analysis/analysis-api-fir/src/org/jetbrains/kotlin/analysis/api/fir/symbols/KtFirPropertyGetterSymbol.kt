@@ -57,7 +57,7 @@ internal class KaFirPropertyGetterSymbol(
     override val returnType: KaType get() = withValidityAssertion { firSymbol.returnType(builder) }
     override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.fir.propertySymbol.receiver(builder) }
 
-    override val annotationsList by cached {
+    override val annotations by cached {
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 

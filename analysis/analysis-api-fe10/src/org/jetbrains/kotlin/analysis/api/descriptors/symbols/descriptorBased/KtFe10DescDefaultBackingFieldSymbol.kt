@@ -39,7 +39,7 @@ internal class KaFe10DescDefaultBackingFieldSymbol(
     override val token: KaLifetimeToken
         get() = owningProperty.token
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             KaFe10AnnotationList.create(fieldDescriptor?.annotations ?: Annotations.EMPTY, analysisContext)
         }

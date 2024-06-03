@@ -45,7 +45,7 @@ internal class KaFirDestructuringDeclarationSymbol(
             }
         }
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion { KaFirAnnotationListForDeclaration.create(firSymbol, builder) }
 
     override val entries: List<KaVariableSymbol>

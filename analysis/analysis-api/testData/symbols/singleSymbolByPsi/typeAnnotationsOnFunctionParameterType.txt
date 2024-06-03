@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /foo
   contextReceivers: []
   contractEffects: []
@@ -21,14 +21,14 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -42,7 +42,7 @@ KaFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: [
+        annotations: [
           Anno1()
             psi: KtAnnotationEntry
           Anno2()

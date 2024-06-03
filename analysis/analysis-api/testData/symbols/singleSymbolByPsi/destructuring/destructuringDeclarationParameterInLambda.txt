@@ -1,5 +1,5 @@
 KaValueParameterSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
@@ -13,7 +13,7 @@ KaValueParameterSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: X
   symbolKind: LOCAL

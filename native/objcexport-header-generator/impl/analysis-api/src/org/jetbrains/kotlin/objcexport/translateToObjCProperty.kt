@@ -56,7 +56,7 @@ fun KtPropertySymbol.buildProperty(): ObjCProperty {
 
     return ObjCProperty(
         name = name,
-        comment = annotationsList.translateToObjCComment(),
+        comment = annotations.translateToObjCComment(),
         origin = getObjCExportStubOrigin(),
         type = type ?: ObjCIdType, //[ObjCIdType] temp fix, should be translated properly, see KT-65709
         propertyAttributes = attributes,

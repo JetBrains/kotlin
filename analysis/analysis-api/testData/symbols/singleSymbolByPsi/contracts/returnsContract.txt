@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: [
+  annotations: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
@@ -13,7 +13,7 @@ KaFunctionSymbol:
         KaContractBooleanValueParameterExpression:
           parameterSymbol:
             KaValueParameterSymbol:
-              annotationsList: []
+              annotations: []
               callableId: null
               contextReceivers: []
               generatedPrimaryConstructorProperty: null
@@ -27,7 +27,7 @@ KaFunctionSymbol:
               origin: SOURCE
               receiverParameter: null
               returnType: KaUsualClassType:
-                annotationsList: []
+                annotations: []
                 typeArguments: []
                 type: kotlin/Boolean
               symbolKind: LOCAL
@@ -55,14 +55,14 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -76,7 +76,7 @@ KaFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Boolean
       symbolKind: LOCAL

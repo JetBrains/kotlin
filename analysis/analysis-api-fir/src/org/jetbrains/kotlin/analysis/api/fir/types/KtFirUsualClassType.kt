@@ -42,7 +42,7 @@ internal class KaFirUsualClassType(
 
     override val typeArguments: List<KaTypeProjection> get() = withValidityAssertion { qualifiers.last().typeArguments }
 
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
     }
 

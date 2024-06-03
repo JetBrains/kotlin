@@ -1,12 +1,12 @@
 KaKotlinPropertySymbol:
-  annotationsList: [
+  annotations: [
     ExplicitPropertyAnnotation()
       psi: KtAnnotationEntry
     PropertyAnnotation()
       psi: KtAnnotationEntry
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: [
+    annotations: [
       DelegateAnnotation()
         psi: KtAnnotationEntry
     ]
@@ -18,7 +18,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/lazyProperty)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
@@ -30,7 +30,7 @@ KaKotlinPropertySymbol:
   callableId: /lazyProperty
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: true
@@ -43,7 +43,7 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
@@ -73,7 +73,7 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null

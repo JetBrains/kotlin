@@ -1,5 +1,5 @@
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: test/WithGeneratedCompanion.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
@@ -16,7 +16,7 @@ KaNamedClassOrObjectSymbol:
   origin: PLUGIN
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]

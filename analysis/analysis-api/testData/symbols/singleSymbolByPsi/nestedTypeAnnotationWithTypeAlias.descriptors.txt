@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /foo2
   contextReceivers: []
   contractEffects: []
@@ -21,13 +21,13 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: [
           KaUsualClassType:
-            annotationsList: [
+            annotations: [
               Anno3()
                 psi: KtAnnotationEntry
               Anno2()

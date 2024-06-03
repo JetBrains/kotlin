@@ -1,5 +1,5 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: /A.zoo
   contextReceivers: []
@@ -22,18 +22,18 @@ KaKotlinPropertySymbol:
   name: zoo
   origin: DELEGATED
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
     origin: DELEGATED
     owningCallableSymbol: KaKotlinPropertySymbol(/A.zoo)
     type: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   setter: null
@@ -41,7 +41,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: A
   getContainingFileSymbol: KaFileSymbol(simple.kt)
@@ -54,7 +54,7 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /A.foo
   contextReceivers: []
   contractEffects: []
@@ -76,7 +76,7 @@ KaFunctionSymbol:
   origin: DELEGATED
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
@@ -84,7 +84,7 @@ KaFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: A
   getContainingFileSymbol: KaFileSymbol(simple.kt)
@@ -93,7 +93,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: /A.foo
   contextReceivers: []
@@ -117,7 +117,7 @@ KaKotlinPropertySymbol:
   origin: DELEGATED
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
@@ -125,7 +125,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: A
   getContainingFileSymbol: KaFileSymbol(simple.kt)
@@ -138,7 +138,7 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /A.smth
   contextReceivers: []
   contractEffects: []
@@ -159,18 +159,18 @@ KaFunctionSymbol:
   name: smth
   origin: DELEGATED
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
     origin: DELEGATED
     owningCallableSymbol: KaFunctionSymbol(/A.smth)
     type: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Short
   symbolKind: CLASS_MEMBER
@@ -178,7 +178,7 @@ KaFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: A
   getContainingFileSymbol: KaFileSymbol(simple.kt)
@@ -187,7 +187,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: /A.bar
   contextReceivers: []
@@ -211,7 +211,7 @@ KaKotlinPropertySymbol:
   origin: DELEGATED
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Long
   setter: null
@@ -219,7 +219,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: A
   getContainingFileSymbol: KaFileSymbol(simple.kt)
@@ -232,7 +232,7 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: /A.doo
   contextReceivers: []
@@ -255,18 +255,18 @@ KaKotlinPropertySymbol:
   name: doo
   origin: DELEGATED
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
     origin: DELEGATED
     owningCallableSymbol: KaKotlinPropertySymbol(/A.doo)
     type: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     getContainingFileSymbol: KaFileSymbol(simple.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/String
   setter: null
@@ -274,7 +274,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: A
   getContainingFileSymbol: KaFileSymbol(simple.kt)

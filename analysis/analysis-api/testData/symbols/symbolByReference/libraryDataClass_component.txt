@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: one/DataClass.component1
   contextReceivers: []
   contractEffects: []
@@ -21,7 +21,7 @@ KaFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/String
   symbolKind: CLASS_MEMBER
@@ -29,7 +29,7 @@ KaFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: one/DataClass
   getContainingFileSymbol: null

@@ -1,7 +1,7 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -10,10 +10,10 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/MyKotlinEnum.entries)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: [
         KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: MyKotlinEnum
       ]
@@ -27,7 +27,7 @@ KaKotlinPropertySymbol:
   callableId: /MyKotlinEnum.entries
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -40,10 +40,10 @@ KaKotlinPropertySymbol:
     origin: SOURCE_MEMBER_GENERATED
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: [
         KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: MyKotlinEnum
       ]
@@ -75,10 +75,10 @@ KaKotlinPropertySymbol:
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: MyKotlinEnum
     ]

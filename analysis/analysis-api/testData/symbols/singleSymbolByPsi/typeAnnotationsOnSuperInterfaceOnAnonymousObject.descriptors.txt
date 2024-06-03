@@ -1,5 +1,5 @@
 KaAnonymousObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: null
   classKind: ANONYMOUS_OBJECT
   isActual: false
@@ -8,7 +8,7 @@ KaAnonymousObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: [
+      annotations: [
         Anno3()
           psi: KtAnnotationEntry
         Anno2()

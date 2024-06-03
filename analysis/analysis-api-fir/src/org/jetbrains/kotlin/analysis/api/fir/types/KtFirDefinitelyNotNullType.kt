@@ -23,7 +23,7 @@ internal class KaFirDefinitelyNotNullType(
 ) : KaDefinitelyNotNullType(), KaFirType {
     override val token: KaLifetimeToken get() = builder.token
     override val original: KaType = withValidityAssertion { builder.typeBuilder.buildKtType(this.coneType.original) }
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
     }
 

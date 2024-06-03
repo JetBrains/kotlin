@@ -66,7 +66,7 @@ internal class KaFirFunctionSymbol(
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { firSymbol.fir.hasStableParameterNames }
 
-    override val annotationsList by cached {
+    override val annotations by cached {
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 

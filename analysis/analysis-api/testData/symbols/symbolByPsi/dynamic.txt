@@ -1,7 +1,7 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -10,7 +10,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/Foo.p)
     receiverParameter: null
     returnType: KaDynamicType:
-      annotationsList: []
+      annotations: []
       type: dynamic
     symbolKind: LOCAL
     typeParameters: []
@@ -21,7 +21,7 @@ KaKotlinPropertySymbol:
   callableId: /Foo.p
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -34,14 +34,14 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KaDynamicType:
-      annotationsList: []
+      annotations: []
       type: dynamic
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: Foo
     getContainingFileSymbol: KaFileSymbol(dynamic.kt)
@@ -67,14 +67,14 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: Foo
   getContainingFileSymbol: KaFileSymbol(dynamic.kt)
@@ -87,7 +87,7 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaAnonymousFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   contextReceivers: []
   hasStableParameterNames: true
@@ -95,7 +95,7 @@ KaAnonymousFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
   symbolKind: LOCAL
   typeParameters: []
@@ -106,7 +106,7 @@ KaAnonymousFunctionSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /Foo.f
   contextReceivers: []
   contractEffects: []
@@ -128,13 +128,13 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -148,7 +148,7 @@ KaFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaDynamicType:
-        annotationsList: []
+        annotations: []
         type: dynamic
       symbolKind: LOCAL
       typeParameters: []
@@ -159,7 +159,7 @@ KaFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: Foo
   getContainingFileSymbol: KaFileSymbol(dynamic.kt)
@@ -168,7 +168,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: Foo
   classKind: CLASS
   companionObject: null
@@ -185,7 +185,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]

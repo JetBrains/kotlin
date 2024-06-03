@@ -34,7 +34,7 @@ internal class KaFirJavaFieldSymbol(
     override val token: KaLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }

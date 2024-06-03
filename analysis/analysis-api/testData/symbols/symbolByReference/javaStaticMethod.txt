@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /JavaClass.foo
   contextReceivers: []
   contractEffects: []
@@ -21,7 +21,7 @@ KaFunctionSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER

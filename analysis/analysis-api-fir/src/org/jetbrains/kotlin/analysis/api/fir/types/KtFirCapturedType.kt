@@ -28,7 +28,7 @@ internal class KaFirCapturedType(
     override val projection: KaTypeProjection
         get() = withValidityAssertion { builder.typeBuilder.buildTypeProjection(coneType.constructor.projection) }
 
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
     }
 

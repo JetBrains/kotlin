@@ -1,10 +1,10 @@
 KaSyntheticJavaPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: /JavaClass.foo
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: /JavaClass.getFoo
     contextReceivers: []
     hasBody: false
@@ -17,7 +17,7 @@ KaSyntheticJavaPropertySymbol:
     origin: JAVA_SYNTHETIC_PROPERTY
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
@@ -25,7 +25,7 @@ KaSyntheticJavaPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: JavaClass
     getContainingFileSymbol: null
@@ -49,7 +49,7 @@ KaSyntheticJavaPropertySymbol:
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
@@ -57,7 +57,7 @@ KaSyntheticJavaPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null

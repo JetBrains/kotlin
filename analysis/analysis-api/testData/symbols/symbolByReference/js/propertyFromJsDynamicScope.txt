@@ -1,5 +1,5 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: null
   contextReceivers: []
@@ -23,14 +23,14 @@ KaKotlinPropertySymbol:
   origin: JS_DYNAMIC
   receiverParameter: null
   returnType: KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
   getContainingFileSymbol: null
   getContainingJvmClassName: null

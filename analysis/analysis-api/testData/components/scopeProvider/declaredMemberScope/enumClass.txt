@@ -1,5 +1,5 @@
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   containingClassId: test/E
   contextReceivers: []
@@ -11,7 +11,7 @@ KaConstructorSymbol:
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: test/E
   symbolKind: CLASS_MEMBER

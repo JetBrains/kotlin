@@ -1,6 +1,6 @@
 Inital from Sources of main:
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /foo
   contextReceivers: []
   contractEffects: []
@@ -22,7 +22,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
@@ -32,7 +32,7 @@ KaFunctionSymbol:
 
 Restored in Sources of restoreInContextOf:
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /foo
   contextReceivers: []
   contractEffects: []
@@ -54,7 +54,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL

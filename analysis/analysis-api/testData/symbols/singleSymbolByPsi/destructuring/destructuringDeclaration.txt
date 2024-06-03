@@ -1,5 +1,5 @@
 KaDestructuringDeclarationSymbol:
-  annotationsList: [
+  annotations: [
     AAA(value = "y")
       psi: KtAnnotationEntry
   ]

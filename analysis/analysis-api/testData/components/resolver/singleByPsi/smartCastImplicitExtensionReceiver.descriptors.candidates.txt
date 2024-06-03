@@ -7,11 +7,11 @@ KtCallExpression(51,56): 'foo()'
         extensionReceiver = KaSmartCastedReceiverValue:
           original = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
-              annotationsList: []
+              annotations: []
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/test)
               type: KaUsualClassType:
-                annotationsList: []
+                annotations: []
                 typeArguments: []
                 type: kotlin/Any
             type = kotlin.Any

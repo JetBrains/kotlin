@@ -1,5 +1,5 @@
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: kotlin/reflect/KClass
   classKind: INTERFACE
   companionObject: null
@@ -16,15 +16,15 @@ KaNamedClassOrObjectSymbol:
   origin: LIBRARY
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/reflect/KDeclarationContainer
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/reflect/KAnnotatedElement
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/reflect/KClassifier
   ]

@@ -108,7 +108,7 @@ internal fun KtCallableSymbol.getSwiftPrivateAttribute(): String? =
 internal fun KtCallableSymbol.isRefinedInSwift(): Boolean = when {
     // Note: the front-end checker requires all overridden descriptors to be either refined or not refined.
     //overriddenDescriptors.isNotEmpty() -> overriddenDescriptors.first().isRefinedInSwift() //TODO: implement isRefinedInSwift
-    else -> annotationsList.hasAnnotation(ClassId.topLevel(KonanFqNames.refinesInSwift))
+    else -> annotations.hasAnnotation(ClassId.topLevel(KonanFqNames.refinesInSwift))
 }
 
 context(KtAnalysisSession, KtObjCExportSession)

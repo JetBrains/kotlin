@@ -27,7 +27,7 @@ internal class KaFirIntersectionType(
     override val conjuncts: List<KaType> by cached {
         coneType.intersectedTypes.map { conjunct -> builder.typeBuilder.buildKtType(conjunct) }
     }
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
     }
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }

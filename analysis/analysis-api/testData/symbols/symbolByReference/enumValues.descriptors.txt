@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /MyKotlinEnum.values
   contextReceivers: []
   contractEffects: []
@@ -21,10 +21,10 @@ KaFunctionSymbol:
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: MyKotlinEnum
     ]

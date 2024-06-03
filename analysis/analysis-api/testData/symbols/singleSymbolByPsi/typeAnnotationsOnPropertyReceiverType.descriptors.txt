@@ -1,7 +1,7 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -10,7 +10,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/foo)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
@@ -22,7 +22,7 @@ KaKotlinPropertySymbol:
   callableId: /foo
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -34,11 +34,11 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
-      annotationsList: []
+      annotations: []
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/foo)
       type: KaUsualClassType:
-        annotationsList: [
+        annotations: [
           Anno3()
             psi: KtAnnotationEntry
           Anno2()
@@ -52,7 +52,7 @@ KaKotlinPropertySymbol:
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
@@ -81,11 +81,11 @@ KaKotlinPropertySymbol:
   name: foo
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/foo)
     type: KaUsualClassType:
-      annotationsList: [
+      annotations: [
         Anno3()
           psi: KtAnnotationEntry
         Anno2()
@@ -99,7 +99,7 @@ KaKotlinPropertySymbol:
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null

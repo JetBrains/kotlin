@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /JavaClass.add
   contextReceivers: []
   contractEffects: []
@@ -21,14 +21,14 @@ KaFunctionSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -42,7 +42,7 @@ KaFunctionSymbol:
       origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -53,7 +53,7 @@ KaFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
@@ -62,7 +62,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /JavaClass.removeAt
   contextReceivers: []
   contractEffects: []
@@ -84,13 +84,13 @@ KaFunctionSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -104,7 +104,7 @@ KaFunctionSymbol:
       origin: JAVA_SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
@@ -116,7 +116,7 @@ KaFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
@@ -125,7 +125,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   containingClassId: JavaClass
   contextReceivers: []
@@ -137,7 +137,7 @@ KaConstructorSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   symbolKind: CLASS_MEMBER

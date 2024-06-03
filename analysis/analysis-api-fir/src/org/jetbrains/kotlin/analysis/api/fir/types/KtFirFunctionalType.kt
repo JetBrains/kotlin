@@ -45,7 +45,7 @@ internal class KaFirFunctionalType(
         UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)
     }
 
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
     }
 

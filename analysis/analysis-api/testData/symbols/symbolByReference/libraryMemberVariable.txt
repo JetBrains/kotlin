@@ -1,7 +1,7 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -10,7 +10,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(one/SimpleClass.memberVariable)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Boolean
     symbolKind: LOCAL
@@ -22,7 +22,7 @@ KaKotlinPropertySymbol:
   callableId: one/SimpleClass.memberVariable
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -35,7 +35,7 @@ KaKotlinPropertySymbol:
     origin: LIBRARY
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Boolean
     symbolKind: ACCESSOR
@@ -43,7 +43,7 @@ KaKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: one/SimpleClass
     getContainingFileSymbol: null
@@ -69,11 +69,11 @@ KaKotlinPropertySymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
   setter: KaPropertySetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -85,7 +85,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     parameter: KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -99,7 +99,7 @@ KaKotlinPropertySymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Boolean
       symbolKind: LOCAL
@@ -110,14 +110,14 @@ KaKotlinPropertySymbol:
       deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
@@ -131,7 +131,7 @@ KaKotlinPropertySymbol:
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Boolean
         symbolKind: LOCAL
@@ -143,7 +143,7 @@ KaKotlinPropertySymbol:
     ]
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: one/SimpleClass
     getContainingFileSymbol: null
@@ -154,7 +154,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: one/SimpleClass
   getContainingFileSymbol: null

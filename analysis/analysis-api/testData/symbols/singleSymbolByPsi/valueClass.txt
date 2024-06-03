@@ -1,5 +1,5 @@
 KaNamedClassOrObjectSymbol:
-  annotationsList: [
+  annotations: [
     kotlin/jvm/JvmInline()
       psi: KtAnnotationEntry
   ]
@@ -19,7 +19,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]

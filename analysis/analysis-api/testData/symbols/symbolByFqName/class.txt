@@ -1,5 +1,5 @@
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: kotlin/Lazy
   classKind: INTERFACE
   companionObject: null
@@ -16,7 +16,7 @@ KaNamedClassOrObjectSymbol:
   origin: LIBRARY
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]

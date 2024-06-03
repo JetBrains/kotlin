@@ -1,5 +1,5 @@
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: A
   classKind: CLASS
   companionObject: null
@@ -16,7 +16,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -29,7 +29,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: B
   classKind: CLASS
   companionObject: null
@@ -46,7 +46,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -59,13 +59,13 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: A
   ]
@@ -88,7 +88,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
@@ -101,13 +101,13 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: B
   ]
@@ -130,7 +130,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
@@ -143,19 +143,19 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: A
     KtContextReceiver:
       label: null
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: B
   ]
@@ -178,7 +178,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL
@@ -191,19 +191,19 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /tooo
   contextReceivers: [
     KtContextReceiver:
       label: null
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: B
     KtContextReceiver:
       label: null
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: A
   ]
@@ -226,7 +226,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL

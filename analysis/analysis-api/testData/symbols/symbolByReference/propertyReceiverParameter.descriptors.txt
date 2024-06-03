@@ -1,7 +1,7 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -10,7 +10,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/prop)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Boolean
     symbolKind: LOCAL
@@ -22,7 +22,7 @@ KaKotlinPropertySymbol:
   callableId: /prop
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: true
@@ -34,14 +34,14 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: KaReceiverParameterSymbol:
-      annotationsList: [
+      annotations: [
         ReceiverAnnotation()
           psi: KtAnnotationEntry
       ]
       origin: SOURCE
       owningCallableSymbol: KaKotlinPropertySymbol(/prop)
       type: KaUsualClassType:
-        annotationsList: [
+        annotations: [
           ReceiverTypeAnnotation()
             psi: KtAnnotationEntry
         ]
@@ -51,7 +51,7 @@ KaKotlinPropertySymbol:
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Boolean
     symbolKind: ACCESSOR
@@ -80,14 +80,14 @@ KaKotlinPropertySymbol:
   name: prop
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: [
+    annotations: [
       ReceiverAnnotation()
         psi: KtAnnotationEntry
     ]
     origin: SOURCE
     owningCallableSymbol: KaKotlinPropertySymbol(/prop)
     type: KaUsualClassType:
-      annotationsList: [
+      annotations: [
         ReceiverTypeAnnotation()
           psi: KtAnnotationEntry
       ]
@@ -97,7 +97,7 @@ KaKotlinPropertySymbol:
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
   setter: null

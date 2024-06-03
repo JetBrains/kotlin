@@ -1,7 +1,7 @@
 KaUsualClassType:
   abbreviatedType: KaUsualClassType:
     abbreviatedType: null
-    annotationsList: []
+    annotations: []
     classId: library1/AsymmetricAlias2
     nullability: NON_NULLABLE
     qualifiers: [
@@ -12,7 +12,7 @@ KaUsualClassType:
           KaUsualClassType:
             abbreviatedType: KaUsualClassType:
               abbreviatedType: null
-              annotationsList: []
+              annotations: []
               classId: library1/IntAlias
               nullability: NON_NULLABLE
               qualifiers: [
@@ -23,7 +23,7 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(library1/IntAlias)
               typeArguments: []
-            annotationsList: []
+            annotations: []
             classId: kotlin/Int
             nullability: NON_NULLABLE
             qualifiers: [
@@ -37,7 +37,7 @@ KaUsualClassType:
           KaUsualClassType:
             abbreviatedType: KaUsualClassType:
               abbreviatedType: null
-              annotationsList: []
+              annotations: []
               classId: library1/AsymmetricAlias
               nullability: NON_NULLABLE
               qualifiers: [
@@ -48,7 +48,7 @@ KaUsualClassType:
                     KaUsualClassType:
                       abbreviatedType: KaUsualClassType:
                         abbreviatedType: null
-                        annotationsList: []
+                        annotations: []
                         classId: library1/BooleanAlias
                         nullability: NON_NULLABLE
                         qualifiers: [
@@ -59,7 +59,7 @@ KaUsualClassType:
                         ]
                         symbol: KaTypeAliasSymbol(library1/BooleanAlias)
                         typeArguments: []
-                      annotationsList: []
+                      annotations: []
                       classId: kotlin/Boolean
                       nullability: NON_NULLABLE
                       qualifiers: [
@@ -73,7 +73,7 @@ KaUsualClassType:
                     KaUsualClassType:
                       abbreviatedType: KaUsualClassType:
                         abbreviatedType: null
-                        annotationsList: []
+                        annotations: []
                         classId: library1/IntAlias
                         nullability: NON_NULLABLE
                         qualifiers: [
@@ -84,7 +84,7 @@ KaUsualClassType:
                         ]
                         symbol: KaTypeAliasSymbol(library1/IntAlias)
                         typeArguments: []
-                      annotationsList: []
+                      annotations: []
                       classId: kotlin/Int
                       nullability: NON_NULLABLE
                       qualifiers: [
@@ -102,7 +102,7 @@ KaUsualClassType:
                 KaUsualClassType:
                   abbreviatedType: KaUsualClassType:
                     abbreviatedType: null
-                    annotationsList: []
+                    annotations: []
                     classId: library1/BooleanAlias
                     nullability: NON_NULLABLE
                     qualifiers: [
@@ -113,7 +113,7 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(library1/BooleanAlias)
                     typeArguments: []
-                  annotationsList: []
+                  annotations: []
                   classId: kotlin/Boolean
                   nullability: NON_NULLABLE
                   qualifiers: [
@@ -127,7 +127,7 @@ KaUsualClassType:
                 KaUsualClassType:
                   abbreviatedType: KaUsualClassType:
                     abbreviatedType: null
-                    annotationsList: []
+                    annotations: []
                     classId: library1/IntAlias
                     nullability: NON_NULLABLE
                     qualifiers: [
@@ -138,7 +138,7 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(library1/IntAlias)
                     typeArguments: []
-                  annotationsList: []
+                  annotations: []
                   classId: kotlin/Int
                   nullability: NON_NULLABLE
                   qualifiers: [
@@ -150,7 +150,7 @@ KaUsualClassType:
                   symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
                   typeArguments: []
               ]
-            annotationsList: []
+            annotations: []
             classId: kotlin/String
             nullability: NON_NULLABLE
             qualifiers: [
@@ -168,7 +168,7 @@ KaUsualClassType:
       KaUsualClassType:
         abbreviatedType: KaUsualClassType:
           abbreviatedType: null
-          annotationsList: []
+          annotations: []
           classId: library1/IntAlias
           nullability: NON_NULLABLE
           qualifiers: [
@@ -179,7 +179,7 @@ KaUsualClassType:
           ]
           symbol: KaTypeAliasSymbol(library1/IntAlias)
           typeArguments: []
-        annotationsList: []
+        annotations: []
         classId: kotlin/Int
         nullability: NON_NULLABLE
         qualifiers: [
@@ -193,7 +193,7 @@ KaUsualClassType:
       KaUsualClassType:
         abbreviatedType: KaUsualClassType:
           abbreviatedType: null
-          annotationsList: []
+          annotations: []
           classId: library1/AsymmetricAlias
           nullability: NON_NULLABLE
           qualifiers: [
@@ -204,7 +204,7 @@ KaUsualClassType:
                 KaUsualClassType:
                   abbreviatedType: KaUsualClassType:
                     abbreviatedType: null
-                    annotationsList: []
+                    annotations: []
                     classId: library1/BooleanAlias
                     nullability: NON_NULLABLE
                     qualifiers: [
@@ -215,7 +215,7 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(library1/BooleanAlias)
                     typeArguments: []
-                  annotationsList: []
+                  annotations: []
                   classId: kotlin/Boolean
                   nullability: NON_NULLABLE
                   qualifiers: [
@@ -229,7 +229,7 @@ KaUsualClassType:
                 KaUsualClassType:
                   abbreviatedType: KaUsualClassType:
                     abbreviatedType: null
-                    annotationsList: []
+                    annotations: []
                     classId: library1/IntAlias
                     nullability: NON_NULLABLE
                     qualifiers: [
@@ -240,7 +240,7 @@ KaUsualClassType:
                     ]
                     symbol: KaTypeAliasSymbol(library1/IntAlias)
                     typeArguments: []
-                  annotationsList: []
+                  annotations: []
                   classId: kotlin/Int
                   nullability: NON_NULLABLE
                   qualifiers: [
@@ -258,7 +258,7 @@ KaUsualClassType:
             KaUsualClassType:
               abbreviatedType: KaUsualClassType:
                 abbreviatedType: null
-                annotationsList: []
+                annotations: []
                 classId: library1/BooleanAlias
                 nullability: NON_NULLABLE
                 qualifiers: [
@@ -269,7 +269,7 @@ KaUsualClassType:
                 ]
                 symbol: KaTypeAliasSymbol(library1/BooleanAlias)
                 typeArguments: []
-              annotationsList: []
+              annotations: []
               classId: kotlin/Boolean
               nullability: NON_NULLABLE
               qualifiers: [
@@ -283,7 +283,7 @@ KaUsualClassType:
             KaUsualClassType:
               abbreviatedType: KaUsualClassType:
                 abbreviatedType: null
-                annotationsList: []
+                annotations: []
                 classId: library1/IntAlias
                 nullability: NON_NULLABLE
                 qualifiers: [
@@ -294,7 +294,7 @@ KaUsualClassType:
                 ]
                 symbol: KaTypeAliasSymbol(library1/IntAlias)
                 typeArguments: []
-              annotationsList: []
+              annotations: []
               classId: kotlin/Int
               nullability: NON_NULLABLE
               qualifiers: [
@@ -306,7 +306,7 @@ KaUsualClassType:
               symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
               typeArguments: []
           ]
-        annotationsList: []
+        annotations: []
         classId: kotlin/String
         nullability: NON_NULLABLE
         qualifiers: [
@@ -318,7 +318,7 @@ KaUsualClassType:
         symbol: KaNamedClassOrObjectSymbol(kotlin/String)
         typeArguments: []
     ]
-  annotationsList: []
+  annotations: []
   classId: kotlin/collections/List
   nullability: NON_NULLABLE
   qualifiers: [
@@ -329,7 +329,7 @@ KaUsualClassType:
         KaUsualClassType:
           abbreviatedType: KaUsualClassType:
             abbreviatedType: null
-            annotationsList: []
+            annotations: []
             classId: library1/AsymmetricAlias
             nullability: NON_NULLABLE
             qualifiers: [
@@ -340,7 +340,7 @@ KaUsualClassType:
                   KaUsualClassType:
                     abbreviatedType: KaUsualClassType:
                       abbreviatedType: null
-                      annotationsList: []
+                      annotations: []
                       classId: library1/BooleanAlias
                       nullability: NON_NULLABLE
                       qualifiers: [
@@ -351,7 +351,7 @@ KaUsualClassType:
                       ]
                       symbol: KaTypeAliasSymbol(library1/BooleanAlias)
                       typeArguments: []
-                    annotationsList: []
+                    annotations: []
                     classId: kotlin/Boolean
                     nullability: NON_NULLABLE
                     qualifiers: [
@@ -365,7 +365,7 @@ KaUsualClassType:
                   KaUsualClassType:
                     abbreviatedType: KaUsualClassType:
                       abbreviatedType: null
-                      annotationsList: []
+                      annotations: []
                       classId: library1/IntAlias
                       nullability: NON_NULLABLE
                       qualifiers: [
@@ -376,7 +376,7 @@ KaUsualClassType:
                       ]
                       symbol: KaTypeAliasSymbol(library1/IntAlias)
                       typeArguments: []
-                    annotationsList: []
+                    annotations: []
                     classId: kotlin/Int
                     nullability: NON_NULLABLE
                     qualifiers: [
@@ -394,7 +394,7 @@ KaUsualClassType:
               KaUsualClassType:
                 abbreviatedType: KaUsualClassType:
                   abbreviatedType: null
-                  annotationsList: []
+                  annotations: []
                   classId: library1/BooleanAlias
                   nullability: NON_NULLABLE
                   qualifiers: [
@@ -405,7 +405,7 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(library1/BooleanAlias)
                   typeArguments: []
-                annotationsList: []
+                annotations: []
                 classId: kotlin/Boolean
                 nullability: NON_NULLABLE
                 qualifiers: [
@@ -419,7 +419,7 @@ KaUsualClassType:
               KaUsualClassType:
                 abbreviatedType: KaUsualClassType:
                   abbreviatedType: null
-                  annotationsList: []
+                  annotations: []
                   classId: library1/IntAlias
                   nullability: NON_NULLABLE
                   qualifiers: [
@@ -430,7 +430,7 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(library1/IntAlias)
                   typeArguments: []
-                annotationsList: []
+                annotations: []
                 classId: kotlin/Int
                 nullability: NON_NULLABLE
                 qualifiers: [
@@ -442,7 +442,7 @@ KaUsualClassType:
                 symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
                 typeArguments: []
             ]
-          annotationsList: []
+          annotations: []
           classId: kotlin/String
           nullability: NON_NULLABLE
           qualifiers: [
@@ -460,7 +460,7 @@ KaUsualClassType:
     KaUsualClassType:
       abbreviatedType: KaUsualClassType:
         abbreviatedType: null
-        annotationsList: []
+        annotations: []
         classId: library1/AsymmetricAlias
         nullability: NON_NULLABLE
         qualifiers: [
@@ -471,7 +471,7 @@ KaUsualClassType:
               KaUsualClassType:
                 abbreviatedType: KaUsualClassType:
                   abbreviatedType: null
-                  annotationsList: []
+                  annotations: []
                   classId: library1/BooleanAlias
                   nullability: NON_NULLABLE
                   qualifiers: [
@@ -482,7 +482,7 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(library1/BooleanAlias)
                   typeArguments: []
-                annotationsList: []
+                annotations: []
                 classId: kotlin/Boolean
                 nullability: NON_NULLABLE
                 qualifiers: [
@@ -496,7 +496,7 @@ KaUsualClassType:
               KaUsualClassType:
                 abbreviatedType: KaUsualClassType:
                   abbreviatedType: null
-                  annotationsList: []
+                  annotations: []
                   classId: library1/IntAlias
                   nullability: NON_NULLABLE
                   qualifiers: [
@@ -507,7 +507,7 @@ KaUsualClassType:
                   ]
                   symbol: KaTypeAliasSymbol(library1/IntAlias)
                   typeArguments: []
-                annotationsList: []
+                annotations: []
                 classId: kotlin/Int
                 nullability: NON_NULLABLE
                 qualifiers: [
@@ -525,7 +525,7 @@ KaUsualClassType:
           KaUsualClassType:
             abbreviatedType: KaUsualClassType:
               abbreviatedType: null
-              annotationsList: []
+              annotations: []
               classId: library1/BooleanAlias
               nullability: NON_NULLABLE
               qualifiers: [
@@ -536,7 +536,7 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(library1/BooleanAlias)
               typeArguments: []
-            annotationsList: []
+            annotations: []
             classId: kotlin/Boolean
             nullability: NON_NULLABLE
             qualifiers: [
@@ -550,7 +550,7 @@ KaUsualClassType:
           KaUsualClassType:
             abbreviatedType: KaUsualClassType:
               abbreviatedType: null
-              annotationsList: []
+              annotations: []
               classId: library1/IntAlias
               nullability: NON_NULLABLE
               qualifiers: [
@@ -561,7 +561,7 @@ KaUsualClassType:
               ]
               symbol: KaTypeAliasSymbol(library1/IntAlias)
               typeArguments: []
-            annotationsList: []
+            annotations: []
             classId: kotlin/Int
             nullability: NON_NULLABLE
             qualifiers: [
@@ -573,7 +573,7 @@ KaUsualClassType:
             symbol: KaNamedClassOrObjectSymbol(kotlin/Int)
             typeArguments: []
         ]
-      annotationsList: []
+      annotations: []
       classId: kotlin/String
       nullability: NON_NULLABLE
       qualifiers: [

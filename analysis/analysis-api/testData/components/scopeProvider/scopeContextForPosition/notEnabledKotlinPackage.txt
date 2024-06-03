@@ -1,7 +1,7 @@
 element: param
 implicit receivers:
   type: KaClassErrorType:
-    annotationsList: []
+    annotations: []
     type: ERROR_TYPE
   owner symbol: KaFirNamedClassOrObjectSymbol
 
@@ -17,7 +17,7 @@ scopes:
     classifiers: 0
     callables: 1
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
@@ -31,7 +31,7 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/String
         symbolKind: LOCAL

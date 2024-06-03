@@ -1,7 +1,7 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -10,7 +10,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(one/SimpleClass.constructorVariableWithAnnotations)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Long
     symbolKind: LOCAL
@@ -22,7 +22,7 @@ KaKotlinPropertySymbol:
   callableId: one/SimpleClass.constructorVariableWithAnnotations
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: [
+    annotations: [
       one/Anno()
         psi: null
     ]
@@ -38,7 +38,7 @@ KaKotlinPropertySymbol:
     origin: LIBRARY
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Long
     symbolKind: ACCESSOR
@@ -46,7 +46,7 @@ KaKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: one/SimpleClass
     getContainingFileSymbol: null
@@ -72,11 +72,11 @@ KaKotlinPropertySymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Long
   setter: KaPropertySetterSymbol:
-    annotationsList: [
+    annotations: [
       one/Anno()
         psi: null
     ]
@@ -91,7 +91,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     parameter: KaValueParameterSymbol:
-      annotationsList: [
+      annotations: [
         one/Anno()
           psi: null
       ]
@@ -108,7 +108,7 @@ KaKotlinPropertySymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Long
       symbolKind: LOCAL
@@ -119,14 +119,14 @@ KaKotlinPropertySymbol:
       deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
-        annotationsList: [
+        annotations: [
           one/Anno()
             psi: null
         ]
@@ -143,7 +143,7 @@ KaKotlinPropertySymbol:
         origin: LIBRARY
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Long
         symbolKind: LOCAL
@@ -155,7 +155,7 @@ KaKotlinPropertySymbol:
     ]
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: one/SimpleClass
     getContainingFileSymbol: null
@@ -166,7 +166,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: one/SimpleClass
   getContainingFileSymbol: null

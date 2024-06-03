@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 internal interface KaFe10AnnotatedSymbol : KaAnnotatedSymbol, KaFe10Symbol {
     val annotationsObject: Annotations
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             KaFe10AnnotationList.create(annotationsObject, analysisContext)
         }

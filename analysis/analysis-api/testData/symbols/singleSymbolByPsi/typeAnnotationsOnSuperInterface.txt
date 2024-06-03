@@ -1,5 +1,5 @@
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: Foo
   classKind: CLASS
   companionObject: null
@@ -16,7 +16,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: [
+      annotations: [
         Anno1()
           psi: KtAnnotationEntry
         Anno2()

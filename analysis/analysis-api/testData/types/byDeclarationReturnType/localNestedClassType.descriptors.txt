@@ -1,6 +1,6 @@
 KaUsualClassType:
   abbreviatedType: null
-  annotationsList: []
+  annotations: []
   classId: C
   nullability: NON_NULLABLE
   qualifiers: [

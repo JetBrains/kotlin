@@ -1,6 +1,6 @@
 KaUsualClassType:
   abbreviatedType: null
-  annotationsList: []
+  annotations: []
   classId: B
   nullability: NON_NULLABLE
   qualifiers: [
@@ -10,7 +10,7 @@ KaUsualClassType:
       typeArguments: [
         KaUsualClassType:
           abbreviatedType: null
-          annotationsList: []
+          annotations: []
           classId: kotlin/Int
           nullability: NON_NULLABLE
           qualifiers: [
@@ -27,7 +27,7 @@ KaUsualClassType:
   typeArguments: [
     KaUsualClassType:
       abbreviatedType: null
-      annotationsList: []
+      annotations: []
       classId: kotlin/Int
       nullability: NON_NULLABLE
       qualifiers: [

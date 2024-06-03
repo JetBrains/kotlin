@@ -36,7 +36,7 @@ object TestAnnotationRenderer {
                     continue
                 }
 
-                val metaAnnotations = with(analysisSession) { getClassOrObjectSymbolByClassId(classId)?.annotationsList }
+                val metaAnnotations = with(analysisSession) { getClassOrObjectSymbolByClassId(classId)?.annotations }
                 if (metaAnnotations != null) {
                     renderAnnotationsRecursive(analysisSession, metaAnnotations, currentMetaAnnotations + classId, indent = indent + 4)
                 } else {

@@ -33,5 +33,5 @@ internal class KaFirClassInitializerSymbol(
     override val symbolKind: KaSymbolKind get() = withValidityAssertion { KaSymbolKind.CLASS_MEMBER }
 
     override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
-    override val annotationsList: KaAnnotationList get() = withValidityAssertion { KaEmptyAnnotationList(token) }
+    override val annotations: KaAnnotationList get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 }

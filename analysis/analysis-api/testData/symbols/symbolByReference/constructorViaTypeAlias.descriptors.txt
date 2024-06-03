@@ -1,5 +1,5 @@
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   containingClassId: java/util/ArrayList
   contextReceivers: []
@@ -11,10 +11,10 @@ KaConstructorSymbol:
   origin: JAVA_LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: E
     ]
     type: java/util/ArrayList<E>
@@ -24,7 +24,7 @@ KaConstructorSymbol:
   ]
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -38,7 +38,7 @@ KaConstructorSymbol:
       origin: JAVA_LIBRARY
       receiverParameter: null
       returnType: KaFlexibleType:
-        annotationsList: []
+        annotations: []
         type: (kotlin/collections/MutableCollection<out E!>..kotlin/collections/Collection<E!>?)
       symbolKind: LOCAL
       typeParameters: []

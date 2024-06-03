@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
  */
 context(KtAnalysisSession)
 internal fun KtAnnotatedSymbol.getObjCDocumentedAnnotations(): List<KtAnnotationApplicationWithArgumentsInfo> {
-    return annotationsList.getObjCDocumentedAnnotations()
+    return annotations.getObjCDocumentedAnnotations()
 }
 
 /**

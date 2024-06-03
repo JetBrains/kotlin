@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /JavaClass.bar
   contextReceivers: []
   contractEffects: []
@@ -21,7 +21,7 @@ KaFunctionSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -33,7 +33,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaJavaFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /SuperClass.superFoo
   contextReceivers: []
   isExtension: false
@@ -44,7 +44,7 @@ KaJavaFieldSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
@@ -56,7 +56,7 @@ KaJavaFieldSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /SuperClass.superBar
   contextReceivers: []
   contractEffects: []
@@ -78,7 +78,7 @@ KaFunctionSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -90,7 +90,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaJavaFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /JavaClass.foo
   contextReceivers: []
   isExtension: false
@@ -101,7 +101,7 @@ KaJavaFieldSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
@@ -113,7 +113,7 @@ KaJavaFieldSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: JavaClass.InnerClass
   classKind: CLASS
   companionObject: null
@@ -130,7 +130,7 @@ KaNamedClassOrObjectSymbol:
   origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -143,7 +143,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: JavaClass.NestedClass
   classKind: CLASS
   companionObject: null
@@ -160,7 +160,7 @@ KaNamedClassOrObjectSymbol:
   origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]

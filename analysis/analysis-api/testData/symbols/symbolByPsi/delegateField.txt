@@ -1,5 +1,5 @@
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   containingClassId: MyColor
   contextReceivers: []
@@ -11,20 +11,20 @@ KaConstructorSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyColor
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotationsList: []
+        annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           isExtension: false
@@ -33,7 +33,7 @@ KaConstructorSymbol:
           owningProperty: KaKotlinPropertySymbol(/MyColor.x)
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
           symbolKind: LOCAL
@@ -45,7 +45,7 @@ KaConstructorSymbol:
         callableId: /MyColor.x
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           hasBody: false
@@ -58,7 +58,7 @@ KaConstructorSymbol:
           origin: SOURCE
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
           symbolKind: ACCESSOR
@@ -66,7 +66,7 @@ KaConstructorSymbol:
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: MyColor
           getContainingFileSymbol: KaFileSymbol(delegateField.kt)
@@ -92,7 +92,7 @@ KaConstructorSymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         setter: null
@@ -100,7 +100,7 @@ KaConstructorSymbol:
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: MyColor
         getContainingFileSymbol: KaFileSymbol(delegateField.kt)
@@ -121,7 +121,7 @@ KaConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
@@ -131,13 +131,13 @@ KaConstructorSymbol:
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotationsList: []
+        annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           isExtension: false
@@ -146,7 +146,7 @@ KaConstructorSymbol:
           owningProperty: KaKotlinPropertySymbol(/MyColor.y)
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
           symbolKind: LOCAL
@@ -158,7 +158,7 @@ KaConstructorSymbol:
         callableId: /MyColor.y
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           hasBody: false
@@ -171,7 +171,7 @@ KaConstructorSymbol:
           origin: SOURCE
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
           symbolKind: ACCESSOR
@@ -179,7 +179,7 @@ KaConstructorSymbol:
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: MyColor
           getContainingFileSymbol: KaFileSymbol(delegateField.kt)
@@ -205,7 +205,7 @@ KaConstructorSymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         setter: null
@@ -213,7 +213,7 @@ KaConstructorSymbol:
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: MyColor
         getContainingFileSymbol: KaFileSymbol(delegateField.kt)
@@ -234,7 +234,7 @@ KaConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
@@ -244,13 +244,13 @@ KaConstructorSymbol:
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotationsList: []
+        annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           isExtension: false
@@ -259,7 +259,7 @@ KaConstructorSymbol:
           owningProperty: KaKotlinPropertySymbol(/MyColor.z)
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
           symbolKind: LOCAL
@@ -271,7 +271,7 @@ KaConstructorSymbol:
         callableId: /MyColor.z
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           hasBody: false
@@ -284,7 +284,7 @@ KaConstructorSymbol:
           origin: SOURCE
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
           symbolKind: ACCESSOR
@@ -292,7 +292,7 @@ KaConstructorSymbol:
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: MyColor
           getContainingFileSymbol: KaFileSymbol(delegateField.kt)
@@ -318,7 +318,7 @@ KaConstructorSymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         setter: null
@@ -326,7 +326,7 @@ KaConstructorSymbol:
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: MyColor
         getContainingFileSymbol: KaFileSymbol(delegateField.kt)
@@ -347,7 +347,7 @@ KaConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
@@ -364,7 +364,7 @@ KaConstructorSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: MyColor
   classKind: CLASS
   companionObject: null
@@ -381,7 +381,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -394,7 +394,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaAnonymousFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   contextReceivers: []
   hasStableParameterNames: true
@@ -402,7 +402,7 @@ KaAnonymousFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyColor
   symbolKind: LOCAL
@@ -414,9 +414,9 @@ KaAnonymousFunctionSymbol:
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -425,7 +425,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/Some.delegate)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyColor
     symbolKind: LOCAL
@@ -437,7 +437,7 @@ KaKotlinPropertySymbol:
   callableId: /Some.delegate
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: true
@@ -450,7 +450,7 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyColor
     symbolKind: ACCESSOR
@@ -480,7 +480,7 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyColor
   setter: null
@@ -488,7 +488,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: Some
   getContainingFileSymbol: KaFileSymbol(delegateField.kt)
@@ -501,7 +501,7 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaAnonymousFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   contextReceivers: []
   hasStableParameterNames: true
@@ -509,7 +509,7 @@ KaAnonymousFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyColor
   symbolKind: LOCAL
@@ -521,9 +521,9 @@ KaAnonymousFunctionSymbol:
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -532,10 +532,10 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/Some.lambda)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: [
         KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: MyColor
       ]
@@ -549,7 +549,7 @@ KaKotlinPropertySymbol:
   callableId: /Some.lambda
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -562,10 +562,10 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: [
         KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: MyColor
       ]
@@ -575,7 +575,7 @@ KaKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: Some
     getContainingFileSymbol: KaFileSymbol(delegateField.kt)
@@ -601,10 +601,10 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: MyColor
     ]
@@ -614,7 +614,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: Some
   getContainingFileSymbol: KaFileSymbol(delegateField.kt)
@@ -627,9 +627,9 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -638,7 +638,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/Some.nonLazy)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyColor
     symbolKind: LOCAL
@@ -650,7 +650,7 @@ KaKotlinPropertySymbol:
   callableId: /Some.nonLazy
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -663,7 +663,7 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: MyColor
     symbolKind: ACCESSOR
@@ -671,7 +671,7 @@ KaKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: Some
     getContainingFileSymbol: KaFileSymbol(delegateField.kt)
@@ -697,7 +697,7 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: MyColor
   setter: null
@@ -705,7 +705,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: Some
   getContainingFileSymbol: KaFileSymbol(delegateField.kt)
@@ -718,7 +718,7 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: Some
   classKind: CLASS
   companionObject: null
@@ -735,7 +735,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]

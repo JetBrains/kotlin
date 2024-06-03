@@ -55,7 +55,7 @@ internal class KaFirClassErrorType(
     @KaAnalysisNonPublicApi
     override val errorMessage: String get() = withValidityAssertion { coneDiagnostic.reason }
 
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
     }
 

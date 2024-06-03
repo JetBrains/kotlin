@@ -1,5 +1,5 @@
 KaJavaFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /JavaClass.field
   contextReceivers: []
   isExtension: false
@@ -10,7 +10,7 @@ KaJavaFieldSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER

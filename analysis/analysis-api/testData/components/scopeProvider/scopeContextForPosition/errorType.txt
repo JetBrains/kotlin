@@ -1,7 +1,7 @@
 element: e
 implicit receivers:
   type: KaErrorType:
-    annotationsList: []
+    annotations: []
     type: ERROR_TYPE
   owner symbol: KaFirAnonymousFunctionSymbol
 
@@ -65,7 +65,7 @@ scopes:
     classifiers: 0
     callables: 1
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: /test
         contextReceivers: []
         contractEffects: []
@@ -87,7 +87,7 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL

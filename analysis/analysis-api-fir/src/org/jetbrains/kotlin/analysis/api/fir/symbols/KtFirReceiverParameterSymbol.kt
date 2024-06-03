@@ -53,7 +53,7 @@ internal class KaFirReceiverParameterSymbol(
         KaFirReceiverParameterSymbolPointer(owningCallableSymbol.createPointer())
     }
 
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         KaFirAnnotationListForReceiverParameter.create(firSymbol, builder = analysisSession.firSymbolBuilder)
     }
 

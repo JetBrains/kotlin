@@ -23,7 +23,7 @@ internal interface KaFe10Type : KaLifetimeOwner, KaAnnotated {
 
     val analysisContext: Fe10AnalysisContext
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             KaFe10AnnotationList.create(
                 fe10Type.annotations,

@@ -1,5 +1,5 @@
 KaEnumEntrySymbol:
-  annotationsList: []
+  annotations: []
   callableId: kotlin/LazyThreadSafetyMode.SYNCHRONIZED
   contextReceivers: []
   enumEntryInitializer: null
@@ -8,7 +8,7 @@ KaEnumEntrySymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/LazyThreadSafetyMode
   symbolKind: CLASS_MEMBER

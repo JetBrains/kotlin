@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: [
+  annotations: [
     org/jetbrains/annotations/NotNull()
       psi: null
   ]
@@ -24,14 +24,14 @@ KaFunctionSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: Enhanced for warning(@EnhancedNullability kotlin/String) kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null

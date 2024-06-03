@@ -1,6 +1,6 @@
 KaFunctionalType:
   abbreviatedType: null
-  annotationsList: []
+  annotations: []
   arity: 1
   classId: kotlin/Function1
   contextReceivers: []
@@ -12,7 +12,7 @@ KaFunctionalType:
   parameterTypes: [
     KaUsualClassType:
       abbreviatedType: null
-      annotationsList: []
+      annotations: []
       classId: kotlin/String
       nullability: NON_NULLABLE
       qualifiers: [
@@ -31,7 +31,7 @@ KaFunctionalType:
       typeArguments: [
         KaUsualClassType:
           abbreviatedType: null
-          annotationsList: []
+          annotations: []
           classId: kotlin/String
           nullability: NON_NULLABLE
           qualifiers: [
@@ -44,7 +44,7 @@ KaFunctionalType:
           typeArguments: []
         KaUsualClassType:
           abbreviatedType: null
-          annotationsList: []
+          annotations: []
           classId: kotlin/Int
           nullability: NON_NULLABLE
           qualifiers: [
@@ -60,7 +60,7 @@ KaFunctionalType:
   receiverType: null
   returnType: KaUsualClassType:
     abbreviatedType: null
-    annotationsList: []
+    annotations: []
     classId: kotlin/Int
     nullability: NON_NULLABLE
     qualifiers: [
@@ -75,7 +75,7 @@ KaFunctionalType:
   typeArguments: [
     KaUsualClassType:
       abbreviatedType: null
-      annotationsList: []
+      annotations: []
       classId: kotlin/String
       nullability: NON_NULLABLE
       qualifiers: [
@@ -88,7 +88,7 @@ KaFunctionalType:
       typeArguments: []
     KaUsualClassType:
       abbreviatedType: null
-      annotationsList: []
+      annotations: []
       classId: kotlin/Int
       nullability: NON_NULLABLE
       qualifiers: [

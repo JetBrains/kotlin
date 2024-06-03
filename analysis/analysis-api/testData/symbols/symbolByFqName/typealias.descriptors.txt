@@ -1,22 +1,22 @@
 KaTypeAliasSymbol:
-  annotationsList: []
+  annotations: []
   classId: kotlin/DeepRecursiveFunctionBlock
   expandedType: KaFunctionalType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: [
           *
           *
         ]
         type: kotlin/DeepRecursiveScope<*, *>
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Any?
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Any?
     ]

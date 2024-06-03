@@ -1,12 +1,12 @@
 KaReceiverParameterSymbol:
-  annotationsList: [
+  annotations: [
     ReceiverAnnotation()
       psi: KtAnnotationEntry
   ]
   origin: SOURCE
   owningCallableSymbol: KaFunctionSymbol(/foo)
   type: KaUsualClassType:
-    annotationsList: [
+    annotations: [
       ReceiverTypeAnnotation()
         psi: KtAnnotationEntry
     ]

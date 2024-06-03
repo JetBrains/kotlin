@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   contextReceivers: []
   contractEffects: []
@@ -21,13 +21,13 @@ KaFunctionSymbol:
   origin: JS_DYNAMIC
   receiverParameter: null
   returnType: KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -41,7 +41,7 @@ KaFunctionSymbol:
       origin: JS_DYNAMIC
       receiverParameter: null
       returnType: KaDynamicType:
-        annotationsList: []
+        annotations: []
         type: dynamic
       symbolKind: LOCAL
       typeParameters: []
@@ -52,7 +52,7 @@ KaFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KaDynamicType:
-    annotationsList: []
+    annotations: []
     type: dynamic
   getContainingFileSymbol: KaFileSymbol(functionFromJsDynamicScopeNoArguments.kt)
   getContainingJvmClassName: null

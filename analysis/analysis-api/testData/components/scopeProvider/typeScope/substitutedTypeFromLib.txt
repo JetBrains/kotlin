@@ -74,7 +74,7 @@ KaVariableLikeSignature:
 
 Declaration Scope:
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: kotlin/Pair.component1
   contextReceivers: []
   contractEffects: []
@@ -96,14 +96,14 @@ KaFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaTypeParameterType:
-    annotationsList: []
+    annotations: []
     type: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: kotlin/Pair.component2
   contextReceivers: []
   contractEffects: []
@@ -125,14 +125,14 @@ KaFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaTypeParameterType:
-    annotationsList: []
+    annotations: []
     type: B
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: kotlin/Pair.copy
   contextReceivers: []
   contractEffects: []
@@ -154,13 +154,13 @@ KaFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: A
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: B
     ]
     type: kotlin/Pair<A, B>
@@ -168,7 +168,7 @@ KaFunctionSymbol:
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -182,12 +182,12 @@ KaFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: A
       symbolKind: LOCAL
       typeParameters: []
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -201,14 +201,14 @@ KaFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: B
       symbolKind: LOCAL
       typeParameters: []
   ]
   visibility: Public
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: kotlin/Pair.equals
   contextReceivers: []
   contractEffects: []
@@ -230,14 +230,14 @@ KaFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -251,7 +251,7 @@ KaFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Any?
       symbolKind: LOCAL
@@ -259,7 +259,7 @@ KaFunctionSymbol:
   ]
   visibility: Public
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: kotlin/Pair.hashCode
   contextReceivers: []
   contractEffects: []
@@ -281,7 +281,7 @@ KaFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
@@ -289,7 +289,7 @@ KaFunctionSymbol:
   valueParameters: []
   visibility: Public
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: kotlin/Pair.toString
   contextReceivers: []
   contractEffects: []
@@ -311,7 +311,7 @@ KaFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/String
   symbolKind: CLASS_MEMBER
@@ -319,9 +319,9 @@ KaFunctionSymbol:
   valueParameters: []
   visibility: Public
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -330,14 +330,14 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(kotlin/Pair.first)
     receiverParameter: null
     returnType: KaTypeParameterType:
-      annotationsList: []
+      annotations: []
       type: A
     symbolKind: LOCAL
     typeParameters: []
   callableId: kotlin/Pair.first
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -350,7 +350,7 @@ KaKotlinPropertySymbol:
     origin: LIBRARY
     receiverParameter: null
     returnType: KaTypeParameterType:
-      annotationsList: []
+      annotations: []
       type: A
     symbolKind: ACCESSOR
     typeParameters: []
@@ -375,16 +375,16 @@ KaKotlinPropertySymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaTypeParameterType:
-    annotationsList: []
+    annotations: []
     type: A
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -393,14 +393,14 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(kotlin/Pair.second)
     receiverParameter: null
     returnType: KaTypeParameterType:
-      annotationsList: []
+      annotations: []
       type: B
     symbolKind: LOCAL
     typeParameters: []
   callableId: kotlin/Pair.second
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -413,7 +413,7 @@ KaKotlinPropertySymbol:
     origin: LIBRARY
     receiverParameter: null
     returnType: KaTypeParameterType:
-      annotationsList: []
+      annotations: []
       type: B
     symbolKind: ACCESSOR
     typeParameters: []
@@ -438,7 +438,7 @@ KaKotlinPropertySymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaTypeParameterType:
-    annotationsList: []
+    annotations: []
     type: B
   setter: null
   symbolKind: CLASS_MEMBER

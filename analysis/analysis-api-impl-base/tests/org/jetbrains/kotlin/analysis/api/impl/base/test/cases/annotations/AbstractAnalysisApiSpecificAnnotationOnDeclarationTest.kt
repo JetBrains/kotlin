@@ -32,7 +32,7 @@ abstract class AbstractAnalysisApiSpecificAnnotationOnDeclarationTest : Abstract
 
         val actual = analyseForTest(ktDeclaration) {
             val declarationSymbol = ktDeclaration.getSymbol() as KaAnnotatedSymbol
-            val annotationList = declarationSymbol.annotationsList
+            val annotationList = declarationSymbol.annotations
             val classId = ClassId.fromString(classIdString)
             val renderer = DebugSymbolRenderer()
             fun renderAnnotation(application: KaAnnotation): String = buildString {

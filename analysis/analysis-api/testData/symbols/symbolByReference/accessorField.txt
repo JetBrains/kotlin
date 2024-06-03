@@ -1,5 +1,5 @@
 KaBackingFieldSymbol:
-  annotationsList: [
+  annotations: [
     FieldAnnotation()
       psi: KtAnnotationEntry
     java/lang/Deprecated()
@@ -13,7 +13,7 @@ KaBackingFieldSymbol:
   owningProperty: KaKotlinPropertySymbol(/x)
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL

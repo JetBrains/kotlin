@@ -49,7 +49,7 @@ internal class KaFirTypeAliasSymbol(
 
     override val expandedType: KaType by cached { builder.typeBuilder.buildKtType(firSymbol.resolvedExpandedTypeRef) }
 
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 

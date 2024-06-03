@@ -115,10 +115,10 @@ private fun KtClassOrObjectSymbol.isHiddenFromObjCByAnnotation(): Boolean {
  */
 context(KtAnalysisSession)
 private fun KtAnnotatedSymbol.containsHidesFromObjCAnnotation(): Boolean {
-    return annotationsList.any { annotation ->
+    return annotations.any { annotation ->
         val annotationClassId = annotation.classId ?: return@any false
         val annotationClassSymbol = getClassOrObjectSymbolByClassId(annotationClassId) ?: return@any false
-        annotationClassSymbol.annotationsList.hasAnnotation(ClassId.topLevel(KonanFqNames.hidesFromObjC))
+        annotationClassSymbol.annotations.hasAnnotation(ClassId.topLevel(KonanFqNames.hidesFromObjC))
     }
 }
 

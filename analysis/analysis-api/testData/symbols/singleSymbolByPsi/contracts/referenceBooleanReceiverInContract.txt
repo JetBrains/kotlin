@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: [
+  annotations: [
     kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
       psi: KtAnnotationEntry
   ]
@@ -13,11 +13,11 @@ KaFunctionSymbol:
         KaContractBooleanValueParameterExpression:
           parameterSymbol:
             KaReceiverParameterSymbol:
-              annotationsList: []
+              annotations: []
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
               type: KaUsualClassType:
-                annotationsList: []
+                annotations: []
                 typeArguments: []
                 type: kotlin/Boolean
               getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
@@ -41,18 +41,18 @@ KaFunctionSymbol:
   name: referenceReceiverInContract
   origin: SOURCE
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
     origin: SOURCE
     owningCallableSymbol: KaFunctionSymbol(/referenceReceiverInContract)
     type: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Boolean
     getContainingFileSymbol: KaFileSymbol(referenceBooleanReceiverInContract.kt)
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL

@@ -4,11 +4,11 @@ KtCallableReferenceExpression(249,257): 'Bar::foo'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
-            annotationsList: []
+            annotations: []
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
             type: KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: []
               type: Foo
           type = Foo

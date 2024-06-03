@@ -1,5 +1,5 @@
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   containingClassId: Foo
   contextReceivers: []
@@ -11,20 +11,20 @@ KaConstructorSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: Foo
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotationsList: []
+        annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           isExtension: false
@@ -33,7 +33,7 @@ KaConstructorSymbol:
           owningProperty: KaKotlinPropertySymbol(/Foo.ints)
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/IntArray
           symbolKind: LOCAL
@@ -45,7 +45,7 @@ KaConstructorSymbol:
         callableId: /Foo.ints
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           hasBody: false
@@ -58,7 +58,7 @@ KaConstructorSymbol:
           origin: SOURCE
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/IntArray
           symbolKind: ACCESSOR
@@ -66,7 +66,7 @@ KaConstructorSymbol:
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: Foo
           getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsProperty.kt)
@@ -92,7 +92,7 @@ KaConstructorSymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/IntArray
         setter: null
@@ -100,7 +100,7 @@ KaConstructorSymbol:
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: Foo
         getContainingFileSymbol: KaFileSymbol(varargInPrimaryConstructorAsProperty.kt)
@@ -121,7 +121,7 @@ KaConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
@@ -138,7 +138,7 @@ KaConstructorSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: Foo
   classKind: CLASS
   companionObject: null
@@ -155,7 +155,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]

@@ -34,7 +34,7 @@ internal abstract class KaFirLocalOrErrorVariableSymbol<E : FirVariable, S : Fir
 ) : KaLocalVariableSymbol(), KaFirSymbol<S> {
     override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }

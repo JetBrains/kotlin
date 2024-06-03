@@ -67,7 +67,7 @@ internal class KaFirPropertySetterSymbol(
     override val modality: Modality get() = withValidityAssertion { firSymbol.modality }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
-    override val annotationsList by cached {
+    override val annotations by cached {
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 

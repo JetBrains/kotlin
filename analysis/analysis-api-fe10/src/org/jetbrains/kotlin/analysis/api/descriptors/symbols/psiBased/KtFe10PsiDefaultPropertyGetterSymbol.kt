@@ -92,7 +92,7 @@ internal class KaFe10PsiDefaultPropertyGetterSymbol(
     override val visibility: Visibility
         get() = withValidityAssertion { propertyPsi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             descriptor?.let { KaFe10AnnotationList.create(it.annotations, analysisContext) } ?: KaEmptyAnnotationList(token)
         }

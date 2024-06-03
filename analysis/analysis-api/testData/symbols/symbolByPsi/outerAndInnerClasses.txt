@@ -1,5 +1,5 @@
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T
   origin: SOURCE
@@ -11,7 +11,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T1
   origin: SOURCE
@@ -23,7 +23,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: X.Y
   classKind: CLASS
   companionObject: null
@@ -40,7 +40,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -55,7 +55,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T2
   origin: SOURCE
@@ -67,7 +67,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: X.Z
   classKind: CLASS
   companionObject: null
@@ -84,7 +84,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -99,7 +99,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T3
   origin: SOURCE
@@ -111,7 +111,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T4
   origin: SOURCE
@@ -123,7 +123,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T5
   origin: SOURCE
@@ -135,7 +135,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: null
   classKind: CLASS
   companionObject: null
@@ -152,7 +152,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -167,7 +167,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T6
   origin: SOURCE
@@ -179,7 +179,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: null
   classKind: CLASS
   companionObject: null
@@ -196,7 +196,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -211,7 +211,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T
   origin: SOURCE
@@ -223,7 +223,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T1
   origin: SOURCE
@@ -235,7 +235,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: null
   classKind: CLASS
   companionObject: null
@@ -252,7 +252,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -267,7 +267,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T2
   origin: SOURCE
@@ -279,7 +279,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: null
   classKind: CLASS
   companionObject: null
@@ -296,7 +296,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -311,7 +311,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T3
   origin: SOURCE
@@ -323,7 +323,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T4
   origin: SOURCE
@@ -335,7 +335,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T5
   origin: SOURCE
@@ -347,7 +347,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: null
   classKind: CLASS
   companionObject: null
@@ -364,7 +364,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -379,7 +379,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T6
   origin: SOURCE
@@ -391,7 +391,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: null
   classKind: CLASS
   companionObject: null
@@ -408,7 +408,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -423,7 +423,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: null
   classKind: CLASS
   companionObject: null
@@ -440,7 +440,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -455,7 +455,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   contextReceivers: []
   contractEffects: []
@@ -477,7 +477,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
@@ -487,10 +487,10 @@ KaFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: T
     ]
     type: <local>/U.X<T, T4, T3, T>
@@ -500,7 +500,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: null
   classKind: CLASS
   companionObject: null
@@ -517,7 +517,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -532,7 +532,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: null
   classKind: CLASS
   companionObject: null
@@ -549,7 +549,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -564,7 +564,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /X.foo
   contextReceivers: []
   contractEffects: []
@@ -586,7 +586,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
@@ -596,10 +596,10 @@ KaFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: T
     ]
     type: X<T>
@@ -609,7 +609,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: X
   classKind: CLASS
   companionObject: null
@@ -626,7 +626,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]

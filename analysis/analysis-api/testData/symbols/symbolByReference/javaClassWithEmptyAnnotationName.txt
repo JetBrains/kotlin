@@ -1,5 +1,5 @@
 KaNamedClassOrObjectSymbol:
-  annotationsList: [
+  annotations: [
     <error>()
       psi: null
   ]
@@ -19,7 +19,7 @@ KaNamedClassOrObjectSymbol:
   origin: JAVA_SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]

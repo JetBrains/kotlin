@@ -1,10 +1,10 @@
 KaKotlinPropertySymbol:
-  annotationsList: [
+  annotations: [
     one/Anno()
       psi: null
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -13,7 +13,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(one/SimpleClass.memberPropertyWithAnnotations)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Short
     symbolKind: LOCAL
@@ -25,7 +25,7 @@ KaKotlinPropertySymbol:
   callableId: one/SimpleClass.memberPropertyWithAnnotations
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: [
+    annotations: [
       one/Anno()
         psi: null
     ]
@@ -41,7 +41,7 @@ KaKotlinPropertySymbol:
     origin: LIBRARY
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Short
     symbolKind: ACCESSOR
@@ -49,7 +49,7 @@ KaKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: one/SimpleClass
     getContainingFileSymbol: null
@@ -75,7 +75,7 @@ KaKotlinPropertySymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Short
   setter: null
@@ -83,7 +83,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: one/SimpleClass
   getContainingFileSymbol: null

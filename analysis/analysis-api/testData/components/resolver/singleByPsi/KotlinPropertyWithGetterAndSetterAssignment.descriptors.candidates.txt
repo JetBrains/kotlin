@@ -106,11 +106,11 @@
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
-              annotationsList: []
+              annotations: []
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/foo)
               type: KaUsualClassType:
-                annotationsList: []
+                annotations: []
                 typeArguments: []
                 type: A
             type = A
@@ -132,11 +132,11 @@
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
-              annotationsList: []
+              annotations: []
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/foo)
               type: KaUsualClassType:
-                annotationsList: []
+                annotations: []
                 typeArguments: []
                 type: A
             type = A
@@ -158,11 +158,11 @@
         partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           dispatchReceiver = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
-              annotationsList: []
+              annotations: []
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/foo)
               type: KaUsualClassType:
-                annotationsList: []
+                annotations: []
                 typeArguments: []
                 type: A
             type = A

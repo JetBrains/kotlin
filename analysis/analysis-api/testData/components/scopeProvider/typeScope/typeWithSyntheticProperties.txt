@@ -43,7 +43,7 @@ KaVariableLikeSignature:
 
 Declaration Scope:
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /JavaClass.getValue
   contextReceivers: []
   contractEffects: []
@@ -65,14 +65,14 @@ KaFunctionSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/Int!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: kotlin/Any.equals
   contextReceivers: []
   contractEffects: []
@@ -94,14 +94,14 @@ KaFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -115,7 +115,7 @@ KaFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Any?
       symbolKind: LOCAL
@@ -123,7 +123,7 @@ KaFunctionSymbol:
   ]
   visibility: Public
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: kotlin/Any.hashCode
   contextReceivers: []
   contractEffects: []
@@ -145,7 +145,7 @@ KaFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
@@ -153,7 +153,7 @@ KaFunctionSymbol:
   valueParameters: []
   visibility: Public
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: kotlin/Any.toString
   contextReceivers: []
   contractEffects: []
@@ -175,7 +175,7 @@ KaFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/String
   symbolKind: CLASS_MEMBER
@@ -183,12 +183,12 @@ KaFunctionSymbol:
   valueParameters: []
   visibility: Public
 KaSyntheticJavaPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: /JavaClass.value
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: /JavaClass.getValue
     contextReceivers: []
     hasBody: false
@@ -201,7 +201,7 @@ KaSyntheticJavaPropertySymbol:
     origin: JAVA_SYNTHETIC_PROPERTY
     receiverParameter: null
     returnType: KaFlexibleType:
-      annotationsList: []
+      annotations: []
       type: kotlin/Int!
     symbolKind: ACCESSOR
     typeParameters: []
@@ -224,7 +224,7 @@ KaSyntheticJavaPropertySymbol:
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/Int!
   setter: null
   symbolKind: CLASS_MEMBER

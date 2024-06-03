@@ -1,5 +1,5 @@
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   containingClassId: P
   contextReceivers: []
@@ -11,20 +11,20 @@ KaConstructorSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: P
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotationsList: []
+        annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           isExtension: false
@@ -33,7 +33,7 @@ KaConstructorSymbol:
           owningProperty: KaKotlinPropertySymbol(/P.x)
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
           symbolKind: LOCAL
@@ -45,7 +45,7 @@ KaConstructorSymbol:
         callableId: /P.x
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           hasBody: false
@@ -58,7 +58,7 @@ KaConstructorSymbol:
           origin: SOURCE
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
           symbolKind: ACCESSOR
@@ -66,7 +66,7 @@ KaConstructorSymbol:
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: P
           getContainingFileSymbol: KaFileSymbol(destructuringDeclaration.kt)
@@ -92,7 +92,7 @@ KaConstructorSymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         setter: null
@@ -100,7 +100,7 @@ KaConstructorSymbol:
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: P
         getContainingFileSymbol: KaFileSymbol(destructuringDeclaration.kt)
@@ -121,7 +121,7 @@ KaConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
@@ -131,13 +131,13 @@ KaConstructorSymbol:
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
-        annotationsList: []
+        annotations: []
         backingFieldSymbol: KaBackingFieldSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           isExtension: false
@@ -146,7 +146,7 @@ KaConstructorSymbol:
           owningProperty: KaKotlinPropertySymbol(/P.y)
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
           symbolKind: LOCAL
@@ -158,7 +158,7 @@ KaConstructorSymbol:
         callableId: /P.y
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
-          annotationsList: []
+          annotations: []
           callableId: null
           contextReceivers: []
           hasBody: false
@@ -171,7 +171,7 @@ KaConstructorSymbol:
           origin: SOURCE
           receiverParameter: null
           returnType: KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Int
           symbolKind: ACCESSOR
@@ -179,7 +179,7 @@ KaConstructorSymbol:
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: P
           getContainingFileSymbol: KaFileSymbol(destructuringDeclaration.kt)
@@ -205,7 +205,7 @@ KaConstructorSymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         setter: null
@@ -213,7 +213,7 @@ KaConstructorSymbol:
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: P
         getContainingFileSymbol: KaFileSymbol(destructuringDeclaration.kt)
@@ -234,7 +234,7 @@ KaConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
@@ -251,7 +251,7 @@ KaConstructorSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: P
   classKind: CLASS
   companionObject: null
@@ -268,7 +268,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -281,7 +281,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaLocalVariableSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   contextReceivers: []
   isExtension: false
@@ -290,7 +290,7 @@ KaLocalVariableSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
@@ -301,7 +301,7 @@ KaLocalVariableSymbol:
   deprecationStatus: null
 
 KaLocalVariableSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   contextReceivers: []
   isExtension: false
@@ -310,7 +310,7 @@ KaLocalVariableSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
@@ -321,7 +321,7 @@ KaLocalVariableSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /destruct
   contextReceivers: []
   contractEffects: []
@@ -343,7 +343,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: TOP_LEVEL

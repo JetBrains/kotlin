@@ -31,7 +31,7 @@ internal class KaFirTypeParameterType(
             ?: errorWithFirSpecificEntries("Type parameter was not found", coneType = coneType)
     }
 
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
     }
 

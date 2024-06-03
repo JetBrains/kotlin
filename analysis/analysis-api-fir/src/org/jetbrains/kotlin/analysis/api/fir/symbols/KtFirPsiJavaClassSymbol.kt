@@ -132,7 +132,7 @@ internal class KaFirPsiJavaClassSymbol(
         firClassSymbol
     }
 
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         if (hasAnnotations) KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         else KaEmptyAnnotationList(token)
     }

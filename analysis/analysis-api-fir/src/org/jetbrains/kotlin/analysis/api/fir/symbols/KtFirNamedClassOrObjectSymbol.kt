@@ -58,7 +58,7 @@ internal class KaFirNamedClassOrObjectSymbol(
             }
         }
 
-    override val annotationsList by cached {
+    override val annotations by cached {
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 

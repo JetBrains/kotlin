@@ -22,7 +22,7 @@ internal class KaFirDynamicType(
     private val builder: KaSymbolByFirBuilder,
 ) : KaDynamicType(), KaFirType {
     override val token: KaLifetimeToken get() = builder.token
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
     }
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }

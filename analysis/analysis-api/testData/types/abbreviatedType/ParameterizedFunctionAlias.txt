@@ -1,6 +1,6 @@
 KaFunctionalType:
   abbreviatedType: null
-  annotationsList: []
+  annotations: []
   arity: 1
   classId: kotlin/Function1
   contextReceivers: []
@@ -13,7 +13,7 @@ KaFunctionalType:
     KaUsualClassType:
       abbreviatedType: KaUsualClassType:
         abbreviatedType: null
-        annotationsList: []
+        annotations: []
         classId: expansion/StringAlias
         nullability: NON_NULLABLE
         qualifiers: [
@@ -24,7 +24,7 @@ KaFunctionalType:
         ]
         symbol: KaTypeAliasSymbol(expansion/StringAlias)
         typeArguments: []
-      annotationsList: []
+      annotations: []
       classId: kotlin/String
       nullability: NON_NULLABLE
       qualifiers: [
@@ -44,7 +44,7 @@ KaFunctionalType:
         KaUsualClassType:
           abbreviatedType: KaUsualClassType:
             abbreviatedType: null
-            annotationsList: []
+            annotations: []
             classId: expansion/StringAlias
             nullability: NON_NULLABLE
             qualifiers: [
@@ -55,7 +55,7 @@ KaFunctionalType:
             ]
             symbol: KaTypeAliasSymbol(expansion/StringAlias)
             typeArguments: []
-          annotationsList: []
+          annotations: []
           classId: kotlin/String
           nullability: NON_NULLABLE
           qualifiers: [
@@ -69,7 +69,7 @@ KaFunctionalType:
         KaUsualClassType:
           abbreviatedType: KaUsualClassType:
             abbreviatedType: null
-            annotationsList: []
+            annotations: []
             classId: expansion/IntAlias
             nullability: NON_NULLABLE
             qualifiers: [
@@ -80,7 +80,7 @@ KaFunctionalType:
             ]
             symbol: KaTypeAliasSymbol(expansion/IntAlias)
             typeArguments: []
-          annotationsList: []
+          annotations: []
           classId: kotlin/Int
           nullability: NON_NULLABLE
           qualifiers: [
@@ -97,7 +97,7 @@ KaFunctionalType:
   returnType: KaUsualClassType:
     abbreviatedType: KaUsualClassType:
       abbreviatedType: null
-      annotationsList: []
+      annotations: []
       classId: expansion/IntAlias
       nullability: NON_NULLABLE
       qualifiers: [
@@ -108,7 +108,7 @@ KaFunctionalType:
       ]
       symbol: KaTypeAliasSymbol(expansion/IntAlias)
       typeArguments: []
-    annotationsList: []
+    annotations: []
     classId: kotlin/Int
     nullability: NON_NULLABLE
     qualifiers: [
@@ -124,7 +124,7 @@ KaFunctionalType:
     KaUsualClassType:
       abbreviatedType: KaUsualClassType:
         abbreviatedType: null
-        annotationsList: []
+        annotations: []
         classId: expansion/StringAlias
         nullability: NON_NULLABLE
         qualifiers: [
@@ -135,7 +135,7 @@ KaFunctionalType:
         ]
         symbol: KaTypeAliasSymbol(expansion/StringAlias)
         typeArguments: []
-      annotationsList: []
+      annotations: []
       classId: kotlin/String
       nullability: NON_NULLABLE
       qualifiers: [
@@ -149,7 +149,7 @@ KaFunctionalType:
     KaUsualClassType:
       abbreviatedType: KaUsualClassType:
         abbreviatedType: null
-        annotationsList: []
+        annotations: []
         classId: expansion/IntAlias
         nullability: NON_NULLABLE
         qualifiers: [
@@ -160,7 +160,7 @@ KaFunctionalType:
         ]
         symbol: KaTypeAliasSymbol(expansion/IntAlias)
         typeArguments: []
-      annotationsList: []
+      annotations: []
       classId: kotlin/Int
       nullability: NON_NULLABLE
       qualifiers: [

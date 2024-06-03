@@ -1,5 +1,5 @@
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: TYPE
   origin: SOURCE

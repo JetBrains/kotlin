@@ -6,11 +6,11 @@ KtNameReferenceExpression(183,194): 'suspendHere'
       partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
         dispatchReceiver = KaImplicitReceiverValue:
           symbol = KaReceiverParameterSymbol:
-            annotationsList: []
+            annotations: []
             origin: SOURCE
             owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
             type: KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: []
               type: Controller
           type = Controller

@@ -1,12 +1,12 @@
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T
   origin: SOURCE
   typeParameters: []
   upperBounds: [
     KaClassErrorType:
-      annotationsList: []
+      annotations: []
       type: ERROR_TYPE
   ]
   variance: INVARIANT
@@ -15,7 +15,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaLocalVariableSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   contextReceivers: []
   isExtension: false
@@ -24,7 +24,7 @@ KaLocalVariableSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: LOCAL
@@ -35,7 +35,7 @@ KaLocalVariableSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /f
   contextReceivers: []
   contractEffects: []
@@ -57,7 +57,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: TOP_LEVEL

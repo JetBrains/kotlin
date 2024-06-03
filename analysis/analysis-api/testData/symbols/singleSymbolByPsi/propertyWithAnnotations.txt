@@ -1,10 +1,10 @@
 KaKotlinPropertySymbol:
-  annotationsList: [
+  annotations: [
     PropertyAnnotation()
       psi: KtAnnotationEntry
   ]
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: [
+    annotations: [
       FieldAnnotation()
         psi: KtAnnotationEntry
     ]
@@ -16,7 +16,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/prop)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
@@ -28,7 +28,7 @@ KaKotlinPropertySymbol:
   callableId: /prop
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: [
+    annotations: [
       GetAnnotation()
         psi: KtAnnotationEntry
     ]
@@ -44,7 +44,7 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
@@ -74,11 +74,11 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: KaPropertySetterSymbol:
-    annotationsList: [
+    annotations: [
       SetAnnotation()
         psi: KtAnnotationEntry
     ]
@@ -93,7 +93,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     parameter: KaValueParameterSymbol:
-      annotationsList: [
+      annotations: [
         SetparamAnnotation()
           psi: KtAnnotationEntry
       ]
@@ -110,7 +110,7 @@ KaKotlinPropertySymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Int
       symbolKind: LOCAL
@@ -121,14 +121,14 @@ KaKotlinPropertySymbol:
       deprecationStatus: null
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
-        annotationsList: [
+        annotations: [
           SetparamAnnotation()
             psi: KtAnnotationEntry
         ]
@@ -145,7 +145,7 @@ KaKotlinPropertySymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Int
         symbolKind: LOCAL

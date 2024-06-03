@@ -28,7 +28,7 @@ internal class KaFirFileSymbol(
         TODO("Creating pointers for files from library is not supported yet")
     }
 
-    override val annotationsList by cached {
+    override val annotations by cached {
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 

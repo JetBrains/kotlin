@@ -30,7 +30,7 @@ internal class KaFirScriptSymbol(
     override val psi: PsiElement?
         get() = withValidityAssertion { firSymbol.fir.psi }
 
-    override val annotationsList by cached {
+    override val annotations by cached {
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 

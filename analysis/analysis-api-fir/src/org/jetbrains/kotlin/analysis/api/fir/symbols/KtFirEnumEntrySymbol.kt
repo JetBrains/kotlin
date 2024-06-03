@@ -31,7 +31,7 @@ internal class KaFirEnumEntrySymbol(
 ) : KaEnumEntrySymbol(), KaFirSymbol<FirEnumEntrySymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }

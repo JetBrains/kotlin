@@ -37,7 +37,7 @@ internal class KaFe10DynamicFunctionDescValueParameterSymbol(
     override val psi: PsiElement?
         get() = withValidityAssertion { null }
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 
     override val name: Name

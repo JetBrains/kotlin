@@ -1,10 +1,10 @@
 KaSyntheticJavaPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: /Derived.something
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: /Derived.getSomething
     contextReceivers: []
     hasBody: false
@@ -16,11 +16,11 @@ KaSyntheticJavaPropertySymbol:
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
     receiverParameter: KaReceiverParameterSymbol:
-      annotationsList: []
+      annotations: []
       origin: SOURCE
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: Derived
       getContainingFileSymbol: null
@@ -28,7 +28,7 @@ KaSyntheticJavaPropertySymbol:
 
       deprecationStatus: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/String
     symbolKind: ACCESSOR
@@ -57,11 +57,11 @@ KaSyntheticJavaPropertySymbol:
   name: something
   origin: JAVA_SYNTHETIC_PROPERTY
   receiverParameter: KaReceiverParameterSymbol:
-    annotationsList: []
+    annotations: []
     origin: SOURCE
     owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
     type: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: Derived
     getContainingFileSymbol: null
@@ -69,11 +69,11 @@ KaSyntheticJavaPropertySymbol:
 
     deprecationStatus: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/String
   setter: KaPropertySetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: /Derived.setSomething
     contextReceivers: []
     hasBody: false
@@ -85,7 +85,7 @@ KaSyntheticJavaPropertySymbol:
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
     parameter: KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -99,7 +99,7 @@ KaSyntheticJavaPropertySymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
@@ -111,11 +111,11 @@ KaSyntheticJavaPropertySymbol:
 
       deprecationStatus: null
     receiverParameter: KaReceiverParameterSymbol:
-      annotationsList: []
+      annotations: []
       origin: SOURCE
       owningCallableSymbol: KaSyntheticJavaPropertySymbol(/Derived.something)
       type: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: Derived
       getContainingFileSymbol: null
@@ -123,14 +123,14 @@ KaSyntheticJavaPropertySymbol:
 
       deprecationStatus: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
@@ -144,7 +144,7 @@ KaSyntheticJavaPropertySymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/String
         symbolKind: LOCAL

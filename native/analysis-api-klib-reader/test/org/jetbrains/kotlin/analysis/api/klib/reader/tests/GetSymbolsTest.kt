@@ -148,11 +148,11 @@ class GetSymbolsTest {
             )
 
             val fooInASymbol = fooInASymbols.first()
-            if (!fooInASymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A")))
+            if (!fooInASymbol.annotations.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A")))
                 fail("Missing annotation 'A' on 'fun foo()' in A.kt")
 
             val fooInBSymbol = fooInBSymbols.first()
-            if (!fooInBSymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B")))
+            if (!fooInBSymbol.annotations.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B")))
                 fail("Missing annotation 'B' on 'fun foo()' in B.kt")
         }
     }
@@ -178,11 +178,11 @@ class GetSymbolsTest {
             )
 
             val fooInASymbol = fooInASymbols.first()
-            if (!fooInASymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A")))
+            if (!fooInASymbol.annotations.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/A")))
                 fail("Missing annotation 'A' on 'val fooProperty' in A.kt")
 
             val fooInBSymbol = fooInBSymbols.first()
-            if (!fooInBSymbol.annotationsList.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B")))
+            if (!fooInBSymbol.annotations.hasAnnotation(ClassId.fromString("org/jetbrains/sample/filePrivateSymbolsClash/B")))
                 fail("Missing annotation 'B' on 'val fooProperty' in B.kt")
         }
     }

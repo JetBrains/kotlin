@@ -1,5 +1,5 @@
 KaTypeParameterSymbol:
-  annotationsList: [
+  annotations: [
     org/jetbrains/annotations/NotNull()
       psi: KtAnnotationEntry
   ]
@@ -14,7 +14,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: R
   origin: SOURCE
@@ -26,7 +26,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: A
   classKind: CLASS
   companionObject: null
@@ -43,7 +43,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]

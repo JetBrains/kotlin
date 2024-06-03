@@ -58,7 +58,7 @@ internal class KaFirValueParameterSymbol(
 
     override val hasDefaultValue: Boolean get() = withValidityAssertion { firSymbol.hasDefaultValue }
 
-    override val annotationsList by cached {
+    override val annotations by cached {
         KaFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 

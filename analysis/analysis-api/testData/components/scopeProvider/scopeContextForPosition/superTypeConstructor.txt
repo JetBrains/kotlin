@@ -17,7 +17,7 @@ scopes:
     packages: 0
     classifiers: 2
       KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        annotations: []
         classId: test/Base
         classKind: CLASS
         companionObject: null
@@ -34,7 +34,7 @@ scopes:
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: kotlin/Any
         ]
@@ -42,7 +42,7 @@ scopes:
         typeParameters: []
         visibility: Public
       KaNamedClassOrObjectSymbol:
-        annotationsList: []
+        annotations: []
         classId: test/Child
         classKind: CLASS
         companionObject: null
@@ -59,7 +59,7 @@ scopes:
         origin: SOURCE
         superTypes: [
           KaUsualClassType:
-            annotationsList: []
+            annotations: []
             typeArguments: []
             type: test/Base
         ]

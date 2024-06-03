@@ -1,5 +1,5 @@
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: T
   origin: SOURCE
@@ -11,7 +11,7 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: X
   classKind: CLASS
   companionObject: null
@@ -28,7 +28,7 @@ KaNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
   ]
@@ -43,7 +43,7 @@ KaNamedClassOrObjectSymbol:
   deprecationStatus: null
 
 KaTypeParameterSymbol:
-  annotationsList: []
+  annotations: []
   isReified: false
   name: Z
   origin: SOURCE
@@ -55,13 +55,13 @@ KaTypeParameterSymbol:
   deprecationStatus: null
 
 KaTypeAliasSymbol:
-  annotationsList: []
+  annotations: []
   classId: Y
   expandedType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaTypeParameterType:
-        annotationsList: []
+        annotations: []
         type: Z
     ]
     type: X<Z>

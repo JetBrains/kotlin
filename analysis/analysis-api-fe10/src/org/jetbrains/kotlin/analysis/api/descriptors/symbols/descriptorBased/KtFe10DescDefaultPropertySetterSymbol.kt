@@ -76,7 +76,7 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
     override val visibility: Visibility
         get() = withValidityAssertion { propertyDescriptor.ktVisibility }
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 
     override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
@@ -117,7 +117,7 @@ internal class KaFe10DescDefaultPropertySetterSymbol(
         override val psi: PsiElement?
             get() = withValidityAssertion { null }
 
-        override val annotationsList: KaAnnotationList
+        override val annotations: KaAnnotationList
             get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 
         override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {

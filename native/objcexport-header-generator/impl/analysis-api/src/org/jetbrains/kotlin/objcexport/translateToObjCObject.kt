@@ -20,7 +20,7 @@ fun KtClassOrObjectSymbol.translateToObjCObject(): ObjCClass? {
     val final = if (this is KtSymbolWithModality) this.modality == Modality.FINAL else false
     val name = getObjCClassOrProtocolName()
     val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
-    val comment: ObjCComment? = annotationsList.translateToObjCComment()
+    val comment: ObjCComment? = annotations.translateToObjCComment()
     val origin = getObjCExportStubOrigin()
     val superProtocols: List<String> = superProtocols()
     val categoryName: String? = null

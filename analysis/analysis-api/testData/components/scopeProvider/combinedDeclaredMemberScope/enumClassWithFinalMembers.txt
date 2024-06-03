@@ -1,5 +1,5 @@
 KaEnumEntrySymbol:
-  annotationsList: []
+  annotations: []
   callableId: test/E.A
   contextReceivers: []
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
@@ -8,7 +8,7 @@ KaEnumEntrySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: test/E
   symbolKind: CLASS_MEMBER
@@ -19,7 +19,7 @@ KaEnumEntrySymbol:
   deprecationStatus: null
 
 KaEnumEntrySymbol:
-  annotationsList: []
+  annotations: []
   callableId: test/E.B
   contextReceivers: []
   enumEntryInitializer: null
@@ -28,7 +28,7 @@ KaEnumEntrySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: test/E
   symbolKind: CLASS_MEMBER
@@ -39,9 +39,9 @@ KaEnumEntrySymbol:
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -50,7 +50,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(test/E.foo)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: LOCAL
@@ -62,7 +62,7 @@ KaKotlinPropertySymbol:
   callableId: test/E.foo
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -75,7 +75,7 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Int
     symbolKind: ACCESSOR
@@ -83,7 +83,7 @@ KaKotlinPropertySymbol:
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: test/E
     getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
@@ -109,7 +109,7 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   setter: null
@@ -117,7 +117,7 @@ KaKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: test/E
   getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
@@ -130,7 +130,7 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: test/E.bar
   contextReceivers: []
   contractEffects: []
@@ -152,7 +152,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Unit
   symbolKind: CLASS_MEMBER
@@ -160,7 +160,7 @@ KaFunctionSymbol:
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: test/E
   getContainingFileSymbol: KaFileSymbol(enumClassWithFinalMembers.kt)
@@ -169,7 +169,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: test/E.values
   contextReceivers: []
   contractEffects: []
@@ -191,10 +191,10 @@ KaFunctionSymbol:
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: test/E
     ]
@@ -209,7 +209,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: test/E.valueOf
   contextReceivers: []
   contractEffects: []
@@ -231,14 +231,14 @@ KaFunctionSymbol:
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: test/E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
-      annotationsList: []
+      annotations: []
       callableId: null
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
@@ -252,7 +252,7 @@ KaFunctionSymbol:
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
       returnType: KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/String
       symbolKind: LOCAL
@@ -269,12 +269,12 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: null
   callableId: test/E.entries
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -287,10 +287,10 @@ KaKotlinPropertySymbol:
     origin: SOURCE_MEMBER_GENERATED
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: [
         KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: test/E
       ]
@@ -322,10 +322,10 @@ KaKotlinPropertySymbol:
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: test/E
     ]
@@ -344,7 +344,7 @@ KaKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   containingClassId: test/E
   contextReceivers: []
@@ -356,7 +356,7 @@ KaConstructorSymbol:
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: test/E
   symbolKind: CLASS_MEMBER

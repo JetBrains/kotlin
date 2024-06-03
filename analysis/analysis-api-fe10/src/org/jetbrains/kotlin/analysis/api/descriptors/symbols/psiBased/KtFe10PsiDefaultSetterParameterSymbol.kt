@@ -66,7 +66,7 @@ internal class KaFe10PsiDefaultSetterParameterSymbol(
     override val name: Name
         get() = withValidityAssertion { descriptor?.name ?: Name.identifier("value") }
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {

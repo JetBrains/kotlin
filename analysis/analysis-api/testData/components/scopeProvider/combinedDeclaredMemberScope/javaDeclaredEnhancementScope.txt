@@ -1,5 +1,5 @@
 KaJavaFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /JavaClass.field2
   contextReceivers: []
   isExtension: false
@@ -10,13 +10,13 @@ KaJavaFieldSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
@@ -25,7 +25,7 @@ KaJavaFieldSymbol:
   deprecationStatus: null
 
 KaJavaFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /JavaClass.field
   contextReceivers: []
   isExtension: false
@@ -36,14 +36,14 @@ KaJavaFieldSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
@@ -52,7 +52,7 @@ KaJavaFieldSymbol:
   deprecationStatus: null
 
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /JavaClass.foo
   contextReceivers: []
   contractEffects: []
@@ -74,14 +74,14 @@ KaFunctionSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   getContainingFileSymbol: null
@@ -90,7 +90,7 @@ KaFunctionSymbol:
   deprecationStatus: null
 
 KaConstructorSymbol:
-  annotationsList: []
+  annotations: []
   callableId: null
   containingClassId: JavaClass
   contextReceivers: []
@@ -102,7 +102,7 @@ KaConstructorSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: JavaClass
   symbolKind: CLASS_MEMBER

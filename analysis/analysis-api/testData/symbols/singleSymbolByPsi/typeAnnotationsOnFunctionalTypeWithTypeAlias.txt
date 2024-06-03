@@ -1,5 +1,5 @@
 KaFunctionSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /foo
   contextReceivers: []
   contractEffects: []
@@ -21,7 +21,7 @@ KaFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaFunctionalType:
-    annotationsList: [
+    annotations: [
       Anno1()
         psi: KtAnnotationEntry
       Anno2()
@@ -31,7 +31,7 @@ KaFunctionSymbol:
     ]
     typeArguments: [
       KaUsualClassType:
-        annotationsList: []
+        annotations: []
         typeArguments: []
         type: kotlin/Unit
     ]

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.isNullableAny
  * [KaFirTypeParameterSymbolBase] provides shared implementations for [KaFirTypeParameterSymbol] and [KaFirPsiJavaTypeParameterSymbol].
  */
 internal sealed class KaFirTypeParameterSymbolBase : KaTypeParameterSymbol(), KaFirSymbol<FirTypeParameterSymbol> {
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             KaFirAnnotationListForDeclaration.create(firSymbol, builder)
         }

@@ -42,7 +42,7 @@ class KaFe10PsiClassInitializerSymbol(
     }
 
     override val typeParameters: List<KaTypeParameterSymbol> get() = withValidityAssertion { emptyList() }
-    override val annotationsList: KaAnnotationList get() = withValidityAssertion { KaEmptyAnnotationList(token) }
+    override val annotations: KaAnnotationList get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)
     override fun hashCode(): Int = calculateHashCode()

@@ -5,11 +5,11 @@ KtNameReferenceExpression(51,57): 'length'
         dispatchReceiver = KaSmartCastedReceiverValue:
           original = KaImplicitReceiverValue:
             symbol = KaReceiverParameterSymbol:
-              annotationsList: []
+              annotations: []
               origin: SOURCE
               owningCallableSymbol: KaFunctionSymbol(/test)
               type: KaUsualClassType:
-                annotationsList: []
+                annotations: []
                 typeArguments: []
                 type: kotlin/Any
             type = kotlin.Any

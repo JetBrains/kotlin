@@ -1,7 +1,7 @@
 KaKotlinPropertySymbol:
-  annotationsList: []
+  annotations: []
   backingFieldSymbol: KaBackingFieldSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     isExtension: false
@@ -10,7 +10,7 @@ KaKotlinPropertySymbol:
     owningProperty: KaKotlinPropertySymbol(/foo)
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: [
+      annotations: [
         Anno1()
           psi: KtAnnotationEntry
         Anno2()
@@ -29,7 +29,7 @@ KaKotlinPropertySymbol:
   callableId: /foo
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
-    annotationsList: []
+    annotations: []
     callableId: null
     contextReceivers: []
     hasBody: false
@@ -42,7 +42,7 @@ KaKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
-      annotationsList: [
+      annotations: [
         Anno1()
           psi: KtAnnotationEntry
         Anno2()
@@ -79,7 +79,7 @@ KaKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
-    annotationsList: [
+    annotations: [
       Anno1()
         psi: KtAnnotationEntry
       Anno2()

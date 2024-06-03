@@ -161,7 +161,7 @@ public class DebugSymbolRenderer(
         printer.withIndent {
             val members = apiClass.members
                 .filterIsInstance<KProperty<*>>()
-                .filter { it.name !in ignoredPropertyNames }
+                .filter { !it.hasAnnotation<Deprecated>() && it.name !in ignoredPropertyNames }
                 .sortedBy { it.name }
             appendLine()
             printCollectionIfNotEmpty(members, separator = "\n") { member ->
@@ -237,8 +237,8 @@ public class DebugSymbolRenderer(
             if (renderTypeByProperties) {
                 renderByPropertyNames(typeToRender, printer)
             } else {
-                append("annotationsList: ")
-                renderAnnotationsList(typeToRender.annotationsList, printer)
+                append("annotations: ")
+                renderAnnotationsList(typeToRender.annotations, printer)
 
                 if (typeToRender is KaNonErrorClassType) {
                     appendLine()

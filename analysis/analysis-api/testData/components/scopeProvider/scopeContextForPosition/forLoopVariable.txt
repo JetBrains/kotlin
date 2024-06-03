@@ -12,7 +12,7 @@ scopes:
     classifiers: 0
     callables: 1
       KaLocalVariableSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         contextReceivers: []
         isExtension: false
@@ -21,10 +21,10 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: [
             KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: []
               type: kotlin/Int
           ]
@@ -44,7 +44,7 @@ scopes:
     classifiers: 0
     callables: 1
       KaValueParameterSymbol:
-        annotationsList: []
+        annotations: []
         callableId: null
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
@@ -58,10 +58,10 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: [
             KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: []
               type: kotlin/Int
           ]
@@ -81,7 +81,7 @@ scopes:
     classifiers: 0
     callables: 1
       KaFunctionSymbol:
-        annotationsList: []
+        annotations: []
         callableId: test/usage
         contextReceivers: []
         contractEffects: []
@@ -103,14 +103,14 @@ scopes:
         origin: SOURCE
         receiverParameter: null
         returnType: KaUsualClassType:
-          annotationsList: []
+          annotations: []
           typeArguments: []
           type: kotlin/Unit
         symbolKind: TOP_LEVEL
         typeParameters: []
         valueParameters: [
           KaValueParameterSymbol:
-            annotationsList: []
+            annotations: []
             callableId: null
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
@@ -124,10 +124,10 @@ scopes:
             origin: SOURCE
             receiverParameter: null
             returnType: KaUsualClassType:
-              annotationsList: []
+              annotations: []
               typeArguments: [
                 KaUsualClassType:
-                  annotationsList: []
+                  annotations: []
                   typeArguments: []
                   type: kotlin/Int
               ]

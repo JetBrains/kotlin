@@ -69,7 +69,7 @@ class KaFe10DescDefaultPropertyGetterSymbol(
     override val visibility: Visibility
         get() = withValidityAssertion { propertyDescriptor.ktVisibility }
 
-    override val annotationsList: KaAnnotationList
+    override val annotations: KaAnnotationList
         get() = withValidityAssertion { KaEmptyAnnotationList(token) }
 
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {

@@ -26,7 +26,7 @@ internal class KaFirFlexibleType(
 
     override val lowerBound: KaType get() = withValidityAssertion { builder.typeBuilder.buildKtType(coneType.lowerBound) }
     override val upperBound: KaType get() = withValidityAssertion { builder.typeBuilder.buildKtType(coneType.upperBound) }
-    override val annotationsList: KaAnnotationList by cached {
+    override val annotations: KaAnnotationList by cached {
         KaFirAnnotationListForType.create(coneType, builder)
     }
     override val nullability: KaTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }

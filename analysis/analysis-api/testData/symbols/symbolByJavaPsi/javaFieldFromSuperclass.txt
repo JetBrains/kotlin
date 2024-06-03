@@ -1,5 +1,5 @@
 KaJavaFieldSymbol:
-  annotationsList: []
+  annotations: []
   callableId: /SuperClass.count
   contextReceivers: []
   isExtension: false
@@ -10,13 +10,13 @@ KaJavaFieldSymbol:
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
-    annotationsList: []
+    annotations: []
     type: kotlin/Int!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KaUsualClassType:
-    annotationsList: []
+    annotations: []
     typeArguments: []
     type: SuperClass
   getContainingFileSymbol: null

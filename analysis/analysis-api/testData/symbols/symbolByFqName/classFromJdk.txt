@@ -1,5 +1,5 @@
 KaNamedClassOrObjectSymbol:
-  annotationsList: []
+  annotations: []
   classId: java/lang/String
   classKind: CLASS
   companionObject: null
@@ -16,23 +16,23 @@ KaNamedClassOrObjectSymbol:
   origin: JAVA_LIBRARY
   superTypes: [
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/Any
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: java/io/Serializable
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: [
         KaFlexibleType:
-          annotationsList: []
+          annotations: []
           type: kotlin/String!
       ]
       type: kotlin/Comparable<kotlin/String!>
     KaUsualClassType:
-      annotationsList: []
+      annotations: []
       typeArguments: []
       type: kotlin/CharSequence
   ]
