@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 
-abstract class AbstractResolveCandidatesTest : AbstractResolveTest() {
+abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "candidates"
 
     override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String {

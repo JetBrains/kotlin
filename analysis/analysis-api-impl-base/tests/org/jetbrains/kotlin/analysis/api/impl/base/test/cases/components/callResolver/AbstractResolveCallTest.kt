@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
-abstract class AbstractResolveCallTest : AbstractResolveTest() {
+abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "call"
 
     override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String {
