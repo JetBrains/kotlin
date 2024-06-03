@@ -23,7 +23,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
 import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
-import org.jetbrains.org.objectweb.asm.tree.analysis.SimpleVerifier;
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicVerifier;
 import org.jetbrains.org.objectweb.asm.util.Textifier;
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
@@ -142,20 +142,19 @@ public class CodegenTestUtil {
         return javaFilePaths;
     }
 
-    public static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader, boolean reportProblems) {
+    public static boolean verifyAllFilesWithAsm(ClassFileFactory factory, boolean reportProblems) {
         boolean noErrors = true;
         for (OutputFile file : ClassFileUtilsKt.getClassFiles(factory)) {
-            noErrors &= verifyWithAsm(file, loader, reportProblems);
+            noErrors &= verifyWithAsm(file, reportProblems);
         }
         return noErrors;
     }
 
-    private static boolean verifyWithAsm(@NotNull OutputFile file, ClassLoader loader, boolean reportProblems) {
+    private static boolean verifyWithAsm(@NotNull OutputFile file, boolean reportProblems) {
         ClassNode classNode = new ClassNode();
         new ClassReader(file.asByteArray()).accept(classNode, 0);
 
-        SimpleVerifier verifier = new SimpleVerifier();
-        verifier.setClassLoader(loader);
+        BasicVerifier verifier = new BasicVerifier();
         Analyzer<BasicValue> analyzer = new Analyzer<>(verifier);
 
         boolean noErrors = true;

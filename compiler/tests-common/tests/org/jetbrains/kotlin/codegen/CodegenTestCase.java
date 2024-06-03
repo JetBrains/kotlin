@@ -189,7 +189,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
         initializedClassLoader = createClassLoader();
 
-        if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), initializedClassLoader, reportProblems)) {
+        if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), reportProblems)) {
             fail("Verification failed: see exceptions above");
         }
 

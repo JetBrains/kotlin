@@ -289,7 +289,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     ): GeneratedClassLoader {
         val classLoader = generatedTestClassLoader(testServices, module, classFileFactory)
         if (REQUIRES_SEPARATE_PROCESS !in module.directives && module.directives.singleOrZeroValue(JDK_KIND)?.requiresSeparateProcess != true) {
-            val verificationSucceeded = CodegenTestUtil.verifyAllFilesWithAsm(classFileFactory, classLoader, reportProblems)
+            val verificationSucceeded = CodegenTestUtil.verifyAllFilesWithAsm(classFileFactory, reportProblems)
             if (!verificationSucceeded) {
                 assertions.fail { "Verification failed: see exceptions above" }
             }
