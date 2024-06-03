@@ -44,25 +44,24 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation): Map<Name, FirEx
 internal fun annotationsByClassId(
     firSymbol: FirBasedSymbol<*>,
     classId: ClassId,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     builder: KaSymbolByFirBuilder,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KaAnnotationApplication> {
     if (firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATION_ARGUMENTS) {
         when (classId) {
             StandardClassIds.Annotations.Target -> annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
-                .mapIndexedToAnnotationApplication(useSiteTargetFilter, builder.rootSession, classId) { index, annotation ->
+                .mapIndexedToAnnotationApplication(builder.rootSession, classId) { index, annotation ->
                     computeKotlinTargetAnnotation(annotation, builder, index)
                 }
             JvmStandardClassIds.Annotations.Java.Target -> annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
-                .mapIndexedToAnnotationApplication(useSiteTargetFilter, builder.rootSession, classId) { index, annotation ->
+                .mapIndexedToAnnotationApplication(builder.rootSession, classId) { index, annotation ->
                     computeJavaTargetAnnotation(annotation, builder, index)
                 }
         }
     }
 
     return annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
-        .mapIndexedToAnnotationApplication(useSiteTargetFilter, builder.rootSession, classId) { index, annotation ->
+        .mapIndexedToAnnotationApplication(builder.rootSession, classId) { index, annotation ->
             annotation.toKtAnnotationApplication(builder, index) {
                 computeAnnotationArguments(firSymbol, annotationContainer, classId, index, builder)
             }
@@ -97,12 +96,11 @@ internal fun computeAnnotationArguments(
 }
 
 private inline fun List<FirAnnotation>.mapIndexedToAnnotationApplication(
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     useSiteSession: FirSession,
     classId: ClassId,
     transformer: (index: Int, annotation: FirAnnotation) -> KaAnnotationApplication?,
 ): List<KaAnnotationApplication> = mapIndexedNotNull { index, annotation ->
-    if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.toAnnotationClassId(useSiteSession) != classId) {
+    if (annotation.toAnnotationClassId(useSiteSession) != classId) {
         return@mapIndexedNotNull null
     }
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
@@ -31,6 +30,9 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
         get() = builder.token
 
     override fun isEmpty(): Boolean = withValidityAssertion {
+        // isEmpty check is possible on a callable symbol directly as annotations cannot be moved from a containing
+        // declaration (e.g., a containing property) to the receiver parameter afterwards
+        // See 'FirTypeResolveTransformer.moveOrDeleteIrrelevantAnnotations()'
         return receiverParameter.annotations.isEmpty()
     }
 
@@ -45,15 +47,12 @@ internal class KaFirAnnotationListForReceiverParameter private constructor(
         return backingAnnotations[index]
     }
 
-    override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
-        return hasAnnotation(firCallableSymbol, classId, useSiteTargetFilter, useSiteSession, receiverParameter)
+    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+        return hasAnnotation(firCallableSymbol, classId, useSiteSession, receiverParameter)
     }
 
-    override fun annotationsByClassId(
-        classId: ClassId,
-        useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KaAnnotationApplication> = withValidityAssertion {
-        return annotationsByClassId(firCallableSymbol, classId, useSiteTargetFilter, builder, receiverParameter)
+    override fun annotationsByClassId(classId: ClassId, ): List<KaAnnotationApplication> = withValidityAssertion {
+        return annotationsByClassId(firCallableSymbol, classId, builder, receiverParameter)
     }
 
     override val classIds: Collection<ClassId>

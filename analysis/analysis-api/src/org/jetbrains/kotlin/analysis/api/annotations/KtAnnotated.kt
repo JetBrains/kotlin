@@ -31,24 +31,22 @@ public val KaAnnotated.annotationInfos: List<KaAnnotationApplicationInfo>
     get() = annotationsList
 
 /**
- * Checks if entity has annotation with specified [classId] and filtered by [useSiteTargetFilter].
+ * Checks if entity has annotation with specified [classId].
  *
  * @see [KaAnnotationList.hasAnnotation]
  */
-public fun KaAnnotated.hasAnnotation(
-    classId: ClassId,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): Boolean = annotationsList.hasAnnotation(classId, useSiteTargetFilter)
+public fun KaAnnotated.hasAnnotation(classId: ClassId): Boolean {
+    return annotationsList.hasAnnotation(classId)
+}
 
 /**
- * A list of annotations applied with specified [classId] and filtered by [useSiteTargetFilter].
+ * A list of annotations applied with specified [classId].
  *
  * @see [KaAnnotationList.classIds]
  */
-public fun KaAnnotated.annotationsByClassId(
-    classId: ClassId,
-    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): List<KaAnnotationApplication> = annotationsList.annotationsByClassId(classId, useSiteTargetFilter)
+public fun KaAnnotated.annotationsByClassId(classId: ClassId): List<KaAnnotationApplication> {
+    return annotationsList.annotationsByClassId(classId)
+}
 
 /**
  * A list of annotations applied.

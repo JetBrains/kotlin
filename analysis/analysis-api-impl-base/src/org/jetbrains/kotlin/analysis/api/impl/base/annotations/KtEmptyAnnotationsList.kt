@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -25,14 +24,12 @@ class KaEmptyAnnotationList(override val token: KaLifetimeToken) : AbstractList<
         throw IndexOutOfBoundsException("Index $index out of bounds")
     }
 
-    override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
+    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
         return false
     }
 
-    override fun annotationsByClassId(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): List<KaAnnotationApplication> {
-        withValidityAssertion {
-            return emptyList()
-        }
+    override fun annotationsByClassId(classId: ClassId): List<KaAnnotationApplication> = withValidityAssertion {
+        return emptyList()
     }
 
     override val classIds: Set<ClassId>

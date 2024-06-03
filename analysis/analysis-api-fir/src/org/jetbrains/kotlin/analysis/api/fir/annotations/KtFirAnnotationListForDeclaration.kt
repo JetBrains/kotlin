@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
@@ -30,11 +29,14 @@ internal class KaFirAnnotationListForDeclaration private constructor(
         get() = builder.rootSession
 
     override fun isEmpty(): Boolean = withValidityAssertion {
-        return firSymbol.annotations.isEmpty()
+        // isEmpty check needs to be performed on an analyzed declaration
+        // (annotations can move to a nested declaration after code analysis).
+        // See 'FirTypeResolveTransformer.moveOrDeleteIrrelevantAnnotations()'
+        return backingAnnotations.isEmpty()
     }
 
     override val size: Int
-        get() = withValidityAssertion { firSymbol.annotations.size }
+        get() = withValidityAssertion { backingAnnotations.size }
 
     override fun iterator(): Iterator<KaAnnotationApplication> = withValidityAssertion {
         return backingAnnotations.iterator()
@@ -44,15 +46,12 @@ internal class KaFirAnnotationListForDeclaration private constructor(
         return backingAnnotations[index]
     }
 
-    override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
-        return hasAnnotation(firSymbol, classId, useSiteTargetFilter, useSiteSession)
+    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+        return hasAnnotation(firSymbol, classId, useSiteSession)
     }
 
-    override fun annotationsByClassId(
-        classId: ClassId,
-        useSiteTargetFilter: AnnotationUseSiteTargetFilter,
-    ): List<KaAnnotationApplication> = withValidityAssertion {
-        return annotationsByClassId(firSymbol, classId, useSiteTargetFilter, builder)
+    override fun annotationsByClassId(classId: ClassId): List<KaAnnotationApplication> = withValidityAssertion {
+        return annotationsByClassId(firSymbol, classId, builder)
     }
 
     override val classIds: Collection<ClassId>

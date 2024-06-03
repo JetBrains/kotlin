@@ -1,17 +1,17 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.annotations
+package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 
-public fun interface AnnotationUseSiteTargetFilter {
-    public fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean
+internal fun interface AnnotationUseSiteTargetFilter {
+    fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean
 }
 
-public fun AnnotationUseSiteTarget?.toFilter(): AnnotationUseSiteTargetFilter = when (this) {
+internal fun AnnotationUseSiteTarget?.toFilter(): AnnotationUseSiteTargetFilter = when (this) {
     null -> NoAnnotationUseSiteTargetFilter
     AnnotationUseSiteTarget.FIELD -> FieldAnnotationUseSiteTargetFilter
     AnnotationUseSiteTarget.FILE -> FileAnnotationUseSiteTargetFilter
@@ -24,48 +24,48 @@ public fun AnnotationUseSiteTarget?.toFilter(): AnnotationUseSiteTargetFilter = 
     AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> PropertyDelegateFieldAnnotationUseSiteTargetFilter
 }
 
-public object AnyAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+internal object AnyAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean = true
 }
 
-public object NoAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+internal object NoAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean = useSiteTarget == null
 }
 
-public object FieldAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+internal object FieldAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean = useSiteTarget == AnnotationUseSiteTarget.FIELD
 }
 
-public object FileAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+internal object FileAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean = useSiteTarget == AnnotationUseSiteTarget.FILE
 }
 
-public object PropertyAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+internal object PropertyAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean = useSiteTarget == AnnotationUseSiteTarget.PROPERTY
 }
 
-public object PropertyGetterAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+internal object PropertyGetterAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean = useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER
 }
 
-public object PropertySetterAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+internal object PropertySetterAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean = useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER
 }
 
-public object ReceiverAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+internal object ReceiverAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean = useSiteTarget == AnnotationUseSiteTarget.RECEIVER
 }
 
-public object ConstructorParameterAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+internal object ConstructorParameterAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean =
         useSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
 }
 
-public object SetterParameterAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+internal object SetterParameterAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean = useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER
 }
 
-public object PropertyDelegateFieldAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+internal object PropertyDelegateFieldAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean =
         useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
 }

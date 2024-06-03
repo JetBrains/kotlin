@@ -127,6 +127,28 @@ internal fun KaAnnotatedSymbol.findAnnotation(
     return annotationsByClassId(classId, useSiteTargetFilter).firstOrNull()
 }
 
+internal fun KaAnnotatedSymbol.hasAnnotation(
+    classId: ClassId,
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter,
+): Boolean {
+    if (hasAnnotation(classId)) {
+        return annotationsByClassId(classId).any { useSiteTargetFilter.isAllowed(it.useSiteTarget) }
+    }
+
+    return false
+}
+
+internal fun KaAnnotatedSymbol.annotationsByClassId(
+    classId: ClassId,
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter
+): List<KaAnnotationApplication> {
+    if (hasAnnotation(classId)) {
+        return annotationsByClassId(classId).filter { useSiteTargetFilter.isAllowed(it.useSiteTarget) }
+    }
+
+    return emptyList()
+}
+
 context(KaSession)
 internal fun KaAnnotatedSymbol.computeThrowsList(
     builder: LightReferenceListBuilder,

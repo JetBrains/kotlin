@@ -23,38 +23,27 @@ public interface KaAnnotationList : List<KaAnnotationApplication>, KaLifetimeOwn
         get() = this
 
     /**
-     * Checks if entity contains annotation with specified [classId] and filtered by [useSiteTargetFilter].
+     * Checks if entity contains annotation with specified [classId].
      *
      * The semantic is equivalent to
      * ```
-     * annotationsList.hasAnnotation(classId, useSiteTargetFilter) == annotationsList.annotations.any {
-     *   it.classId == classId && useSiteTargetFilter.isAllowed(it.useSiteTarget)
-     * }
+     * annotationsList.hasAnnotation(classId) == annotationsList.annotations.any { it.classId == classId }
      * ```
      * @param classId [ClassId] to search
-     * @param useSiteTargetFilter specific [AnnotationUseSiteTargetFilter]
      */
-    public fun hasAnnotation(
-        classId: ClassId,
-        useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-    ): Boolean
+    public fun hasAnnotation(classId: ClassId): Boolean
 
     /**
-     * A list of annotations applied with specified [classId] and filtered by [useSiteTargetFilter].
+     * A list of annotations applied with specified [classId].
      *
      * To check if annotation is present, please use [hasAnnotation].
      *
      * The semantic is equivalent to
      * ```
-     * annotationsList.annotationsByClassId(classId) == annotationsList.annotations.filter {
-     *   it.classId == classId && useSiteTargetFilter.isAllowed(it.useSiteTarget)
-     * }
+     * annotationsList.annotationsByClassId(classId) == annotationsList.annotations.filter { it.classId == classId }
      * ```
      */
-    public fun annotationsByClassId(
-        classId: ClassId,
-        useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-    ): List<KaAnnotationApplication>
+    public fun annotationsByClassId(classId: ClassId): List<KaAnnotationApplication>
 
     /**
      * A list of annotations [ClassId].
