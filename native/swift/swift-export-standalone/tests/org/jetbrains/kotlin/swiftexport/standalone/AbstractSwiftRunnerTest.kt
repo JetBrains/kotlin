@@ -17,13 +17,7 @@ import java.util.Properties
 import kotlin.io.path.*
 import kotlin.test.assertSame
 
-abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftRunnerTest(
-    renderDocComments = false, // in source mode we were able to render docs from the original kotlin. I believe without sources we have lost this ability?
-)
-
-abstract class AbstractSwiftRunnerTest(
-    private val renderDocComments: Boolean,
-) : AbstractNativeSwiftExportTest() {
+abstract class AbstractKlibBasedSwiftRunnerTest : AbstractNativeSwiftExportTest() {
 
     private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
 
@@ -38,11 +32,7 @@ abstract class AbstractSwiftRunnerTest(
         val files = swiftExportOutput.files
 
         val expectedFiles = testPathFull.toPath() / "golden_result/"
-        val expectedSwift = if (!renderDocComments && (expectedFiles / "result.no_comments.swift").exists()) {
-            expectedFiles / "result.no_comments.swift"
-        } else {
-            expectedFiles / "result.swift"
-        }
+        val expectedSwift = expectedFiles / "result.swift"
         val expectedCHeader = expectedFiles / "result.h"
         val expectedKotlinBridge = expectedFiles / "result.kt"
 
@@ -65,7 +55,7 @@ abstract class AbstractSwiftRunnerTest(
 
         val defaultConfig: Map<String, String> = mapOf(
             SwiftExportConfig.STABLE_DECLARATIONS_ORDER to "true",
-            SwiftExportConfig.RENDER_DOC_COMMENTS to (if (renderDocComments) "true" else "false"),
+            SwiftExportConfig.RENDER_DOC_COMMENTS to "false",
             SwiftExportConfig.BRIDGE_MODULE_NAME to SwiftExportConfig.DEFAULT_BRIDGE_MODULE_NAME,
         )
 
