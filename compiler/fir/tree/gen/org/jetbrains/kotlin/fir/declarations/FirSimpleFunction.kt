@@ -51,10 +51,9 @@ abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, F
         visitor.visitSimpleFunction(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E {
-        println("FirSimpleFunction.transform")
-        return transformer.transformSimpleFunction(this, data) as E
-    }
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
+        transformer.transformSimpleFunction(this, data) as E
+
     abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
