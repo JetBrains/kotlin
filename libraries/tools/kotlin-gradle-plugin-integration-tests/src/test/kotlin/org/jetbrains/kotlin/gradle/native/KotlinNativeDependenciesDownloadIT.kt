@@ -65,6 +65,10 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
     }
 
     //This test uses internal server for native dependencies
+    // We temporarily disable it for macOS until networking issues are resolved: KT-68762
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC], enabledOnCI = [OS.LINUX]
+    )
     @DisplayName("checks that native dependencies are not corrupted")
     @GradleTest
     fun testNativeDependencies(gradleVersion: GradleVersion) {
