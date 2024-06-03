@@ -40,13 +40,13 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
 
     override fun constructSwiftInput(
         testPathFull: File,
-    ): InputModule {
+    ): InputModule.Binary {
         val testName = testPathFull.name
         val swiftModuleName = testName.capitalizeAsciiOnly()
 
-        return InputModule.Source(
+        return InputModule.Binary(
             name = swiftModuleName,
-            path = testPathFull.toPath(),
+            path = compileToNativeKLib(testPathFull.toPath()),
         )
     }
 

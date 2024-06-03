@@ -41,14 +41,12 @@ internal class SwiftModuleBuildResults(
 )
 
 internal fun buildSwiftModule(
-    input: InputModule,
+    input: InputModule.Binary,
     config: SwiftExportConfig,
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
 ): SwiftModuleBuildResults {
-    val (useSiteModule, mainModule, scopeProvider) = when (input) {
-        is InputModule.Source -> createModuleWithScopeProviderFromSources(config.distribution, input)
-        is InputModule.Binary -> createModuleWithScopeProviderFromBinary(config.distribution, input)
-    }
+    val (useSiteModule, mainModule, scopeProvider) =
+        createModuleWithScopeProviderFromBinary(config.distribution, input)
     val moduleForPackageEnums = buildModule {
         name = input.name
     }
@@ -102,41 +100,6 @@ private data class ModuleWithScopeProvider(
     val mainModule: KtModule,
     val scopeProvider: (KaSession) -> List<KaScope>,
 )
-
-private fun createModuleWithScopeProviderFromSources(
-    kotlinDistribution: Distribution,
-    input: InputModule.Source,
-): ModuleWithScopeProvider {
-    val analysisAPISession = buildStandaloneAnalysisAPISession {
-        buildKtModuleProvider {
-            platform = NativePlatforms.unspecifiedNativePlatform
-
-            val stdlib = addModule(
-                buildKtLibraryModule {
-                    addBinaryRoot(Path(kotlinDistribution.stdlib))
-                    platform = NativePlatforms.unspecifiedNativePlatform
-                    libraryName = "stdlib"
-                }
-            )
-
-            addModule(
-                buildKtSourceModule {
-                    addSourceRoot(input.path)
-                    platform = NativePlatforms.unspecifiedNativePlatform
-                    moduleName = input.name
-                    addRegularDependency(stdlib)
-                }
-            )
-        }
-    }
-
-    val (sourceModule, rawFiles) = analysisAPISession.modulesWithFiles.entries.single()
-    return ModuleWithScopeProvider(sourceModule, sourceModule) { analysisSession ->
-        with(analysisSession) {
-            rawFiles.filterIsInstance<KtFile>().map { it.getFileSymbol().getFileScope() }
-        }
-    }
-}
 
 private fun createModuleWithScopeProviderFromBinary(
     kotlinDistribution: Distribution,

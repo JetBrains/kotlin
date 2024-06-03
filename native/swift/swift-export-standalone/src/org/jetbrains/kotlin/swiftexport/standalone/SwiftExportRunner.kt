@@ -83,11 +83,6 @@ public sealed interface InputModule {
     public val name: String
     public val path: Path
 
-    public class Source(
-        override val name: String,
-        override val path: Path,
-    ) : InputModule
-
     public class Binary(
         override val name: String,
         override val path: Path,
@@ -131,7 +126,7 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
 
 @Deprecated(message = "This method will be removed in a future version")
 public fun runSwiftExport(
-    input: InputModule,
+    input: InputModule.Binary,
     config: SwiftExportConfig,
     output: SwiftExportFiles,
 ) {
@@ -179,7 +174,7 @@ public fun runSwiftExport(
  */
 @Suppress("DEPRECATION")
 public fun runSwiftExport(
-    input: InputModule,
+    input: InputModule.Binary,
     config: SwiftExportConfig,
 ): Result<List<SwiftExportModule>> {
     val output = SwiftExportFiles(

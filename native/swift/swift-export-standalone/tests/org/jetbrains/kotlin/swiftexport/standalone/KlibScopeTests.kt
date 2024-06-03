@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
+import org.jetbrains.kotlin.konan.test.blackbox.compileToNativeKLib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.analysis.api.getAllLibraryModules
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
