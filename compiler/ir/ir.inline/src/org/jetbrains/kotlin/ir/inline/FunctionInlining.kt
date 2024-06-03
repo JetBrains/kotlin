@@ -648,23 +648,6 @@ open class FunctionInlining(
             return newVariable
         }
 
-        private fun IrTypeParameter?.firstRealUpperBound(): IrType {
-            val queue = this?.superTypes?.toMutableList() ?: mutableListOf()
-
-            while (queue.isNotEmpty()) {
-                val superType = queue.removeFirst()
-                val superTypeClassifier = superType.classifierOrNull?.owner ?: continue
-
-                if (superTypeClassifier is IrTypeParameter) {
-                    queue.addAll(superTypeClassifier.superTypes)
-                } else {
-                    return superType
-                }
-            }
-
-            return context.irBuiltIns.anyNType
-        }
-
         private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): List<IrStatement> {
             val arguments = buildParameterToArgument(callSite, callee)
             val evaluationStatements = mutableListOf<IrVariable>()
