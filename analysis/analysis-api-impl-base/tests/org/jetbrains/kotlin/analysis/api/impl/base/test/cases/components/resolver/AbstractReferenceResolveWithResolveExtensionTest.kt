@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extensions
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
-abstract class AbstractReferenceResolveWithResolveExtensionTest : AbstractReferenceResolveTest() {
+abstract class AbstractReferenceResolveWithResolveExtensionTest : AbstractResolveReferenceTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         KtResolveExtensionTestSupport.configure(builder)

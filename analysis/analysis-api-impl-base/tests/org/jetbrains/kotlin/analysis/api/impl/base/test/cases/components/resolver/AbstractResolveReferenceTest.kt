@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractReferenceResolveTest : AbstractResolveTest<KtReference?>() {
+abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>() {
     override val resolveKind: String get() = "references"
 
     override fun configureTest(builder: TestConfigurationBuilder) {

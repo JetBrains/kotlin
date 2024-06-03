@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWri
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractDanglingFileReferenceResolveTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractReferenceResolveTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractReferenceResolveWithResolveExtensionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCallTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesTest
@@ -127,7 +127,7 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 
         test<AbstractResolveCallTest>(init = init)
         test<AbstractResolveCandidatesTest>(init = init)
-        test<AbstractReferenceResolveTest>(init = init)
+        test<AbstractResolveReferenceTest>(init = init)
     }
 
     test<AbstractDanglingFileReferenceResolveTest>(

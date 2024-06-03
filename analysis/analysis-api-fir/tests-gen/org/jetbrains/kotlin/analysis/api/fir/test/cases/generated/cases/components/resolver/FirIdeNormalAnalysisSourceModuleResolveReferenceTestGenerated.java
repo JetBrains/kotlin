@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractReferenceResolveTest;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi")
 @TestDataPath("$PROJECT_ROOT")
-public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated extends AbstractReferenceResolveTest {
+public class FirIdeNormalAnalysisSourceModuleResolveReferenceTestGenerated extends AbstractResolveReferenceTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
