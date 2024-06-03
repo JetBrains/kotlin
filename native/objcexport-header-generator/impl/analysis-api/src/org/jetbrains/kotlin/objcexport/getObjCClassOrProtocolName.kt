@@ -50,6 +50,7 @@ private fun KtClassLikeSymbol.getObjCName(
 
     if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
         return objCName
+            .handleSpecialNames("get")
     }
 
     getContainingSymbol()?.let { it as? KtClassLikeSymbol }?.let { containingClass ->

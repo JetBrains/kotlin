@@ -14,7 +14,7 @@ context(KtAnalysisSession)
 fun KtVariableLikeSymbol.getObjCPropertyName(): ObjCExportPropertyName {
     val resolveObjCNameAnnotation = resolveObjCNameAnnotation()
     val stringName = name.asString()
-    val propertyName = if (stringName.isReservedPropertyName) stringName.mangleReservedObjCName() else stringName
+    val propertyName = stringName.mangleIfReservedObjCName()
 
     return ObjCExportPropertyName(
         objCName = resolveObjCNameAnnotation?.objCName ?: propertyName,

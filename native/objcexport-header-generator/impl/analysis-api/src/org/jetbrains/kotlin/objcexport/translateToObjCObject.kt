@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.objcexport.analysisApiUtils.isCompanion
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
 import org.jetbrains.kotlin.objcexport.extras.originClassId
@@ -100,7 +99,10 @@ private fun KtClassOrObjectSymbol.toPropertyType() = ObjCClassType(
  */
 context(KtAnalysisSession, KtObjCExportSession)
 private fun getObjectInstanceSelector(objectSymbol: KtClassOrObjectSymbol): String {
-    return objectSymbol.getObjCClassOrProtocolName(bareName = true).objCName.replaceFirstChar(Char::lowercaseChar)
+    return objectSymbol.getObjCClassOrProtocolName(bareName = true)
+        .objCName
+        .replaceFirstChar(Char::lowercaseChar)
+        .mangleIfReservedObjCName()
 }
 
 /**

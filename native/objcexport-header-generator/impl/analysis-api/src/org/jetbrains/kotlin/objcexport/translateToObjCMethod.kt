@@ -277,7 +277,7 @@ private fun KtFunctionLikeSymbol.getMangledName(forSwift: Boolean): String {
     }
 }
 
-private fun String.handleSpecialNames(prefix: String): String {
+internal fun String.handleSpecialNames(prefix: String): String {
     val trimmed = this.dropWhile { it == '_' }
     for (family in listOf("alloc", "copy", "mutableCopy", "new", "init")) {
         if (trimmed.startsWithWords(family)) {
