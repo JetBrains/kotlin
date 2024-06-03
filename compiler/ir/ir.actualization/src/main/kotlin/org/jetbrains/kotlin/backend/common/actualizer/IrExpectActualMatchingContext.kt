@@ -138,11 +138,18 @@ internal abstract class IrExpectActualMatchingContext(
     override val ClassLikeSymbolMarker.modality: Modality
         get() = processIr(
             onClass = {
-                // For some reason kotlin annotations in IR have open modality and java annotations have final modality
-                // But since it's legal to actualize kotlin annotation class with java annotation class
-                //  and effectively all annotation classes have the same modality, it's ok to always return one
-                //  modality for all annotation classes (doesn't matter final or open)
-                if (it.isAnnotationClass) Modality.OPEN else it.modality
+                when {
+                    // Modality for enum classes is not trivial in IR.
+                    // That's why we need to "normalize" modality for the expect-actual checker
+                    // See FirRegularClass.enumClassModality & 940567b8bd72f69b3eb7d54ff780f98a17e6b9fc
+                    it.isEnumClass -> Modality.FINAL
+                    // For some reason kotlin annotations in IR have open modality and java annotations have final modality
+                    // But since it's legal to actualize kotlin annotation class with java annotation class
+                    //  and effectively all annotation classes have the same modality, it's ok to always return one
+                    //  modality for all annotation classes (doesn't matter final or open)
+                    it.isAnnotationClass -> Modality.OPEN
+                    else -> it.modality
+                }
             },
             onTypeAlias = { Modality.FINAL }
         )
@@ -151,7 +158,8 @@ internal abstract class IrExpectActualMatchingContext(
 
     override val CallableSymbolMarker.modality: Modality?
         get() = when (this) {
-            is IrConstructorSymbol -> Modality.FINAL
+            // owner.modality is null for IrEnumEntrySymbol
+            is IrEnumEntrySymbol, is IrConstructorSymbol -> Modality.FINAL
             is IrSymbol -> (owner as? IrOverridableMember)?.modality
             else -> shouldNotBeCalled()
         }
