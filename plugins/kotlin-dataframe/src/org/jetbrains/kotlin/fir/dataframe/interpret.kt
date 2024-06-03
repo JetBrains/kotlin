@@ -45,7 +45,10 @@ import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isNullableString
+import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
 import org.jetbrains.kotlin.fir.types.isStarProjection
+import org.jetbrains.kotlin.fir.types.isString
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.returnType
 import org.jetbrains.kotlin.fir.types.toConeTypeProjection
@@ -151,7 +154,10 @@ fun <T> KotlinTypeFacade.interpret(
                     is FirPropertyAccessExpression -> {
                         (expression.calleeReference as? FirResolvedNamedReference)?.let {
                             val symbol = it.resolvedSymbol
-                            val literalInitializer = (symbol as? FirPropertySymbol)?.resolvedInitializer as? FirLiteralExpression
+                            val firPropertySymbol = symbol as? FirPropertySymbol
+                            val literalInitializer = runIf(firPropertySymbol?.resolvedReturnType?.canHaveLiteralInitializer == true) {
+                                firPropertySymbol?.resolvedInitializer as? FirLiteralExpression
+                            }
                             if (symbol is FirEnumEntrySymbol) {
                                 Interpreter.Success(
                                     DataFrameCallableId(
@@ -470,3 +476,5 @@ internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
 }
 
 internal class ObjectWithSchema(val schemaArg: Int, val typeRef: ConeKotlinType)
+
+internal val ConeKotlinType.canHaveLiteralInitializer get() = isPrimitiveOrNullablePrimitive || isString || isNullableString
