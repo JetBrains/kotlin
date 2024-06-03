@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/columnGroup.kt
+FILE fqName:<root> fileName:/columnGroupApi.kt
   CLASS CLASS name:Record modality:FINAL visibility:public [data] superTypes:[kotlin.Any; org.jetbrains.kotlinx.dataframe.api.DataRowSchema]
     annotations:
       DataSchema(isOpen = <null>)

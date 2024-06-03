@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -411,8 +414,15 @@ fun path(propertyAccessExpression: FirPropertyAccessExpression): List<String> {
         return emptyList()
     }
     return when (val explicitReceiver = propertyAccessExpression.explicitReceiver) {
-        null -> listOf(colName)
-        else -> path(explicitReceiver as FirPropertyAccessExpression) + colName
+        null, is FirThisReceiverExpression -> listOf(colName)
+        else -> {
+            val propertyAccess = explicitReceiver as FirPropertyAccessExpression
+            if (propertyAccess.calleeReference.symbol is FirValueParameterSymbol) {
+                listOf(colName)
+            } else {
+                path(propertyAccess) + colName
+            }
+        }
     }
 }
 

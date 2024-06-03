@@ -22,9 +22,9 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
-  @TestMetadata("columnGroup.kt")
-  public void testColumnGroup() {
-    runTest("testData/box/columnGroup.kt");
+  @TestMetadata("columnGroupApi.kt")
+  public void testColumnGroupApi() {
+    runTest("testData/box/columnGroupApi.kt");
   }
 
   @Test
@@ -265,6 +265,18 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   @TestMetadata("select.kt")
   public void testSelect() {
     runTest("testData/box/select.kt");
+  }
+
+  @Test
+  @TestMetadata("selectIt.kt")
+  public void testSelectIt() {
+    runTest("testData/box/selectIt.kt");
+  }
+
+  @Test
+  @TestMetadata("selectThis.kt")
+  public void testSelectThis() {
+    runTest("testData/box/selectThis.kt");
   }
 
   @Test
