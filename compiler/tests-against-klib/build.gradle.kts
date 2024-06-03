@@ -24,6 +24,13 @@ sourceSets {
 
 testsJar {}
 
+compilerTests {
+    // only 2 files are really needed:
+    // - compiler/testData/codegen/boxKlib/properties.kt
+    // - compiler/testData/codegen/boxKlib/simple.kt
+    testData("../testData/codegen/boxKlib")
+}
+
 projectTest(parallel = true) {
     workingDir = rootDir
     useJUnitPlatform()

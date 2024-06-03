@@ -7,10 +7,14 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.file.*
+import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
 
 abstract class CompilerTestsExtension(private val project: Project) {
+    abstract val allowFlaky: Property<Boolean>
+
     val stdlibRuntimeForTests: Configuration = project.configurations.create("stdlibRuntimeForTests") {
         isTransitive = false
     }
@@ -55,6 +59,13 @@ abstract class CompilerTestsExtension(private val project: Project) {
             add(stdlibMinimalRuntimeForTests) { project(":kotlin-stdlib-jvm-minimal-for-test") }
             add(kotlinReflectJarForTests) { project(":kotlin-reflect") }
         }
+    }
+
+    internal abstract val testData: ConfigurableFileCollection
+    fun testData(relativePath: String) {
+        testData.from(project.layout.projectDirectory.dir(relativePath).asFileTree.matching {
+            exclude("**/out/**")
+        })
     }
 
     fun withStdlibCommon() {

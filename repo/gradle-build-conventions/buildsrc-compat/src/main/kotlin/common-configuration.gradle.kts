@@ -253,9 +253,11 @@ fun Project.configureArtifacts() {
 
 fun Project.configureTests() {
     val ignoreTestFailures: Boolean by rootProject.extra
-    tasks.configureEach {
-        if (this is VerificationTask) {
-            ignoreFailures = ignoreTestFailures
+    if (!plugins.hasPlugin("compiler-tests-convention")) {
+        tasks.configureEach {
+            if (this is VerificationTask) {
+                ignoreFailures = ignoreTestFailures
+            }
         }
     }
 
@@ -267,7 +269,9 @@ fun Project.configureTests() {
     }
 
     tasks.withType<Test>().configureEach {
-        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
+        if (!plugins.hasPlugin("compiler-tests-convention")) {
+            outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { true }
+        }
         if (project.kotlinBuildProperties.limitTestTasksConcurrency) {
             usesService(concurrencyLimitService)
         }

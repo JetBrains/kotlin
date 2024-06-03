@@ -33,6 +33,7 @@ sourceSets {
 testsJar()
 
 compilerTests {
+    testData("testData")
     withScriptRuntime()
     withTestJar()
 }
@@ -40,7 +41,6 @@ compilerTests {
 projectTest(parallel = true) {
     workingDir = rootDir
     useJUnitPlatform()
-    inputs.dir(layout.projectDirectory.dir("testData")).withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.file(File(rootDir, "tests/mute-common.csv")).withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.file(File(rootDir, "compiler/cli/cli-common/resources/META-INF/extensions/compiler.xml"))
         .withPathSensitivity(PathSensitivity.RELATIVE)
