@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -18,8 +20,8 @@ import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -27,6 +29,9 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
+import org.jetbrains.kotlin.ir.inline.InlineMode
+import org.jetbrains.kotlin.ir.inline.PreSerializationLoweringPhasesProvider
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
@@ -62,14 +67,6 @@ internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseC
     ).lower(moduleFragment)
 }
 
-internal val KlibIrInlinerPhase = createSimpleNamedCompilerPhase<PhaseContext, Fir2IrOutput, Fir2IrOutput>(
-        "KlibIrInlinerPhase",
-        outputIfNotEnabled = { _, _, _, input -> input }
-) { context, input ->
-    // TODO: KT-68756: Invoke lowering prefix and IR Inliner
-    input
-}
-
 internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, PsiToIrOutput>(
         name = "CopyDefaultValuesToActual",
         preactions = getDefaultIrActions(),
@@ -86,13 +83,26 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrO
     runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
 }
 
+private object NativePreSerializationLoweringPhasesProvider : PreSerializationLoweringPhasesProvider<PreSerializationLoweringContext>() {
+
+    override val klibAssertionWrapperLowering: ((PreSerializationLoweringContext) -> FileLoweringPass)?
+        get() = null // TODO(KT-71415): Return the actual lowering here
+
+    override fun inlineFunctionResolver(context: PreSerializationLoweringContext, inlineMode: InlineMode): InlineFunctionResolver =
+            TODO("Refactor NativeInlineFunctionResolver to support PreSerializationLoweringContext")
+}
+
 internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
-    val languageVersionSettings = environment.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
-    return runPhase(
-            KlibIrInlinerPhase,
-            fir2IrOutput,
-            disable = languageVersionSettings?.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization) != true
-    )
+    val loweringContext = PreSerializationLoweringContext(fir2IrOutput.fir2irActualizedResult.irBuiltIns, environment.configuration)
+    val languageVersionSettings = environment.configuration.languageVersionSettings
+    val transformedModule = newEngine(loweringContext) { engine ->
+        engine.runPhase(
+                NativePreSerializationLoweringPhasesProvider.lowerings(environment.configuration),
+                fir2IrOutput.fir2irActualizedResult.irModuleFragment,
+                disable = !languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
+        )
+    }
+    return fir2IrOutput.copy(fir2irActualizedResult = fir2IrOutput.fir2irActualizedResult.copy(irModuleFragment = transformedModule))
 }
 
 internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(

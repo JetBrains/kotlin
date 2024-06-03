@@ -19,10 +19,10 @@ annotation class PhaseDescription(
 )
 
 fun <Context : CommonBackendContext> createFilePhases(
-    vararg phases: (Context) -> FileLoweringPass
+    vararg phases: ((Context) -> FileLoweringPass)?
 ): List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>> {
     val createdPhases = hashSetOf<Class<out FileLoweringPass>>()
-    return phases.map { phase ->
+    return phases.filterNotNull().map { phase ->
         val loweringClass = phase.extractReturnTypeArgument()
         createdPhases.add(loweringClass)
         createFilePhase(loweringClass, createdPhases, phase)

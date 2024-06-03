@@ -29,6 +29,7 @@ abstract class IrValidationPhase<Context : CommonBackendContext>(val context: Co
     protected open fun IrValidationContext.additionalValidation(irModule: IrModuleFragment, phaseName: String) {}
 }
 
+@PhaseDescription(name = "ValidateIrBeforeLowering")
 open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(

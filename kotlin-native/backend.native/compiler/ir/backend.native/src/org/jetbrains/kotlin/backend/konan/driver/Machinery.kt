@@ -60,7 +60,7 @@ internal open class BasicPhaseContext(
  * * [useContext] creates a child engine with a more specific [PhaseContext] that will be cleanup at the end of the call.
  * This way, PhaseEngine forces user to create more specialized contexts that have a limited lifetime.
  */
-internal class PhaseEngine<C : PhaseContext>(
+internal class PhaseEngine<C : LoggingContext>(
         val phaseConfig: PhaseConfigurationService,
         val phaserState: PhaserState<Any>,
         val context: C
@@ -100,7 +100,7 @@ internal class PhaseEngine<C : PhaseContext>(
      * Create a new PhaseEngine instance for an existing context that should not be disposed after the action.
      * This is useful for creating engines for a sub/super context type.
      */
-    inline fun <T : PhaseContext, R> newEngine(newContext: T, action: (PhaseEngine<T>) -> R): R {
+    inline fun <T : LoggingContext, R> newEngine(newContext: T, action: (PhaseEngine<T>) -> R): R {
         val newEngine = PhaseEngine(phaseConfig, phaserState, newContext)
         return action(newEngine)
     }
