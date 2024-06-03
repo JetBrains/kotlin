@@ -72,6 +72,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Enables corresponding analysis flag (AnalysisFlags.stdlibCompilation)"
     )
 
+    val PREFER_IN_TEST_OVER_STDLIB by directive(
+        description = "Prefer in-test defined class over stdlib one if the names collide"
+    )
+
     // It's inverted because otherwise we would have warnings in almost all KMP tests
     val ENABLE_EXPECT_ACTUAL_CLASSES_WARNING by stringDirective(
         description = "Disables -Xexpect-actual-classes key"
