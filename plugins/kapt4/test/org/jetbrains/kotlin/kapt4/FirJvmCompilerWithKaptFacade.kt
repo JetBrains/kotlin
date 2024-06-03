@@ -95,6 +95,7 @@ class FirJvmCompilerWithKaptFacade(
             classBuilderFactory.compiledClasses,
             classBuilderFactory.origins,
             codegenOutput.generationState,
+            analysisResults.outputs.flatMap { it.fir },
         )
         return KaptContextBinaryArtifact(kaptContext)
     }

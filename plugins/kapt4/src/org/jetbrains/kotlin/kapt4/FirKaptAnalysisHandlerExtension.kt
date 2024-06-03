@@ -232,7 +232,10 @@ internal class FirKaptAnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
         logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-        return KaptContextForStubGeneration(options, false, logger, compiledClasses, origins, codegenOutput.generationState)
+        return KaptContextForStubGeneration(
+            options, false, logger, compiledClasses, origins, codegenOutput.generationState,
+            analysisResults.outputs.flatMap { it.fir },
+        )
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {
