@@ -14,11 +14,10 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeEnvironment.Companion.XCODE_ENVIRONMENT_OVERRIDE_KEY
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -199,39 +198,11 @@ private fun swiftExportProject(
     targets: KotlinMultiplatformExtension.() -> Unit = { iosSimulatorArm64().binaries.framework() }
 ): ProjectInternal = buildProjectWithMPP(
     preApplyCode = {
-        project.extensions.extraProperties.set(
-            "$XCODE_ENVIRONMENT_OVERRIDE_KEY.CONFIGURATION",
-            configuration
+        applyEmbedAndSignEnvironment(
+            configuration = configuration,
+            sdk = sdk,
+            archs = archs,
         )
-        project.extensions.extraProperties.set(
-            "$XCODE_ENVIRONMENT_OVERRIDE_KEY.SDK_NAME",
-            sdk
-        )
-        project.extensions.extraProperties.set(
-            "$XCODE_ENVIRONMENT_OVERRIDE_KEY.ARCHS",
-            archs
-        )
-        project.extensions.extraProperties.set(
-            "$XCODE_ENVIRONMENT_OVERRIDE_KEY.BUILT_PRODUCTS_DIR",
-            layout.buildDirectory.dir("products").getFile().canonicalPath
-        )
-        project.extensions.extraProperties.set(
-            "$XCODE_ENVIRONMENT_OVERRIDE_KEY.TARGET_BUILD_DIR",
-            layout.buildDirectory.dir("buildDir").getFile().canonicalPath
-        )
-        project.extensions.extraProperties.set(
-            "$XCODE_ENVIRONMENT_OVERRIDE_KEY.FRAMEWORKS_FOLDER_PATH",
-            "Frameworks"
-        )
-        project.extensions.extraProperties.set(
-            "$XCODE_ENVIRONMENT_OVERRIDE_KEY.EXPANDED_CODE_SIGN_IDENTITY",
-            "-"
-        )
-        project.extensions.extraProperties.set(
-            "$XCODE_ENVIRONMENT_OVERRIDE_KEY.ENABLE_USER_SCRIPT_SANDBOXING",
-            "NO"
-        )
-
         enableSwiftExport()
     },
     code = {
