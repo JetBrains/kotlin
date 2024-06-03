@@ -52,7 +52,8 @@ class JvmCompilerWithKaptFacade(
             logger,
             classBuilderFactory.compiledClasses,
             classBuilderFactory.origins,
-            generationState
+            generationState,
+            emptyList()
         )
         return KaptContextBinaryArtifact(kaptContext, isFir = false)
     }

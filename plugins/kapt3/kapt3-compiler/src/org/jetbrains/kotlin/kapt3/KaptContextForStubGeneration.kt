@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
@@ -34,7 +35,8 @@ class KaptContextForStubGeneration(
     logger: KaptLogger,
     val compiledClasses: List<ClassNode>,
     val origins: Map<Any, JvmDeclarationOrigin>,
-    val generationState: GenerationState
+    val generationState: GenerationState,
+    val firFiles: List<FirFile>,
 ) : KaptContext(options, withJdk, logger) {
     private val treeMaker = TreeMaker.instance(context)
 

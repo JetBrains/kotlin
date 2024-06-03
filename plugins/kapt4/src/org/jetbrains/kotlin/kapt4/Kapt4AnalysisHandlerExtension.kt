@@ -101,7 +101,8 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             return false
         }
 
-        logger.info { "Kotlin files to compile: ${groupedSources.commonSources.map { it.name } + groupedSources.platformSources.map { it.name }}" }
+        val sourceFiles = groupedSources.commonSources + groupedSources.platformSources
+        logger.info { "Kotlin files to compile: ${sourceFiles.map { it.name }}" }
 
         val compilerInput = ModuleCompilerInput(
             TargetId(module),
@@ -149,7 +150,10 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
             logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-            KaptContextForStubGeneration(options, false, logger, compiledClasses, origins, codegenOutput.generationState).use { context ->
+            KaptContextForStubGeneration(
+                options, false, logger, compiledClasses, origins, codegenOutput.generationState,
+                analysisResults.outputs.flatMap { it.fir }
+            ).use { context ->
                 generateKotlinSourceStubs(context)
             }
         }

@@ -84,7 +84,8 @@ internal class Kapt4Facade(private val testServices: TestServices) :
         )
 
         val context = KaptContextForStubGeneration(
-            options, true, logger, compiledClasses, origins, codegenOutput.generationState
+            options, true, logger, compiledClasses, origins, codegenOutput.generationState,
+            analysisResults.outputs.flatMap { it.fir }
         )
         return KaptContextBinaryArtifact(context, isFir = true)
     }

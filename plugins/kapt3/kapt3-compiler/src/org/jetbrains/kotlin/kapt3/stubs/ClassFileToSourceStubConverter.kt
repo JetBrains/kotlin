@@ -32,6 +32,16 @@ import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAM
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.fir.analysis.checkers.classKind
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
+import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
+import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.javac.kaptError
@@ -45,6 +55,7 @@ import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
@@ -225,7 +236,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         classDeclaration.mods.annotations = classDeclaration.mods.annotations
 
         val ktFile = origin.element?.containingFile as? KtFile
-        val imports = if (ktFile != null && correctErrorTypes) convertImports(ktFile, classDeclaration) else JavacList.nil()
+        val firFile = findFirFile(origin)
+        val imports =
+            if (ktFile != null && correctErrorTypes) convertImports(ktFile, classDeclaration)
+            else if (firFile != null && correctErrorTypes) convertImports(firFile, classDeclaration)
+            else JavacList.nil()
 
         val classes = JavacList.of<JCTree>(classDeclaration)
 
@@ -242,6 +257,21 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         postProcess(topLevel)
 
         return KaptStub(topLevel, lineMappings.serialize())
+    }
+
+    // TODO: make mapping IrFile -> FirFile
+    private fun findFirFile(origin: JvmDeclarationOrigin): FirFile? {
+        for (firFile in kaptContext.firFiles) {
+            val path = firFile.sourceFile?.path
+            if (path != null && path == (origin.descriptor as? IrBasedClassDescriptor)?.owner?.fileOrNull?.path) {
+                return firFile
+            }
+
+            if (firFile.name == (origin.descriptor as? IrBasedClassDescriptor)?.owner?.fileOrNull?.name) {
+                return firFile
+            }
+        }
+        return null
     }
 
     private fun postProcess(topLevel: JCCompilationUnit) {
@@ -308,6 +338,56 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
             if (isCallableImport || isEnumEntry || isAllUnderClassifierImport) {
                 continue@loop
+            }
+
+            val importedExpr = treeMaker.FqName(importedFqName.asString())
+
+            imports += if (importDirective.isAllUnder) {
+                treeMakerImportMethod.invoke(
+                    treeMaker, treeMaker.Select(importedExpr, treeMaker.nameTable.names.asterisk), false
+                ) as JCImport
+            } else {
+                if (!importedShortNames.add(importedFqName.shortName().asString())) {
+                    continue
+                }
+
+                treeMakerImportMethod.invoke(treeMaker, importedExpr, false) as JCImport
+            }
+        }
+
+        return JavacList.from(imports)
+    }
+
+    // TODO: split into two classes - one for KtFile/descriptors and the other for LT/FIR
+    private fun convertImports(file: FirFile, classDeclaration: JCClassDecl): JavacList<JCTree> {
+        val imports = mutableListOf<JCImport>()
+        val importedShortNames = mutableSetOf<String>()
+        val firSession = file.moduleData.session
+
+        // We prefer ordinary imports over aliased ones.
+        val sortedImportDirectives = file.imports.partition { it.aliasName == null }.run { first + second }
+
+        loop@ for (importDirective in sortedImportDirectives) {
+            // Qualified name should be valid Java fq-name
+            val importedFqName = importDirective.importedFqName?.takeIf { it.pathSegments().size > 1 } ?: continue
+            if (!isValidQualifiedName(importedFqName)) continue
+
+            val shortName = importedFqName.shortName()
+            if (shortName.asString() == classDeclaration.simpleName.toString()) continue
+
+            val importedClassId = (importDirective as? FirResolvedImport)?.resolvedParentClassId ?: ClassId.topLevel(importedFqName)
+            val importedReference = resolveToPackageOrClass(firSession.symbolProvider, importedClassId)
+
+            if (importedReference is PackageResolutionResult.PackageOrClass) {
+                val isEnumEntry = importedReference.classSymbol?.classKind == ClassKind.ENUM_CLASS &&
+                        importedClassId.shortClassName != shortName
+                val isAllUnderClassImport = importDirective.isAllUnder && importedReference.classSymbol != null
+
+                if (isEnumEntry || isAllUnderClassImport) continue
+            } else {
+                val isCallable = firSession.symbolProvider.getTopLevelCallableSymbols(importedFqName.parent(), shortName)
+                    .isNotEmpty()
+                if (isCallable) continue
             }
 
             val importedExpr = treeMaker.FqName(importedFqName.asString())
