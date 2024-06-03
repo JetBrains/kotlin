@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
-@JvmDefaultWithCompatibility
 interface AdditionalTypeChecker {
     fun checkType(
         expression: KtExpression,

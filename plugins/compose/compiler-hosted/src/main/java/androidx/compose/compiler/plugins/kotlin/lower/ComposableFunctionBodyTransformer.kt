@@ -267,7 +267,6 @@ fun composeSyntheticParamCount(
         changedParamCount(realValueParams, thisParams)
 }
 
-@JvmDefaultWithCompatibility
 interface IrChangedBitMaskValue {
     val used: Boolean
     val declarations: List<IrValueDeclaration>
@@ -295,7 +294,6 @@ interface IrDefaultBitMaskValue {
     fun putAsValueArgumentIn(fn: IrFunctionAccessExpression, startIndex: Int)
 }
 
-@JvmDefaultWithCompatibility
 interface IrChangedBitMaskVariable : IrChangedBitMaskValue {
     fun asStatements(): List<IrStatement>
     fun irOrSetBitsAtSlot(slot: Int, value: IrExpression): IrExpression

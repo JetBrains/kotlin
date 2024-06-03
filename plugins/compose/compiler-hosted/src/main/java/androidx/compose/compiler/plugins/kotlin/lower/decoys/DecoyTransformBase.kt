@@ -56,7 +56,6 @@ import org.jetbrains.kotlin.ir.util.remapTypeParameters
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-@JvmDefaultWithCompatibility
 internal interface DecoyTransformBase {
     val context: IrPluginContext
     val signatureBuilder: IdSignatureFactory

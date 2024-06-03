@@ -23,7 +23,6 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
  * may also remove or add new definitions at this point.
  * Processed definitions are provided to the scripting support infrastructure.
  */
-@JvmDefaultWithCompatibility
 interface ScriptDefinitionsProvider {
     /**
      * A display name used to identify particular providers

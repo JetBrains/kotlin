@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 @ExperimentalCompilerApi
-@JvmDefaultWithCompatibility
 interface CommandLineProcessor {
     val pluginId: String
     val pluginOptions: Collection<AbstractCliOption>

@@ -184,27 +184,6 @@ fun Project.configureKotlinCompilationOptions() {
                 if (project.path in projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib) {
                     freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction")
                 }
-
-                if (project.path == ":kotlin-util-klib") {
-                    // This is a temporary workaround for a configuration problem in kotlin-native. Namely, module `:kotlin-native-shared`
-                    // depends on kotlin-util-klib from bootstrap for some reason (see `kotlin-native/shared/build.gradle.kts`), but when
-                    // we're packing dependencies for the use in the IDE, we pass paths to the newly built libraries to Proguard
-                    // (see `prepare/ide-plugin-dependencies/kotlin-backend-native-for-ide/build.gradle.kts`).
-                    //
-                    // So the code which was compiled against one version of a library, is analyzed by Proguard against another version.
-                    //
-                    // This is a bad situation for JVM default flag behavior specifically. If kotlin-util-klib from bootstrap is compiled
-                    // in the old mode (with DefaultImpls for interfaces), then subclasses in kotlin-native-shared will also be generated
-                    // in the old mode (with DefaultImpls). But then Proguard will analyze these subclasses and their DefaultImpls classes,
-                    // and will observe calls to non-existing methods from DefaultImpls of the interfaces in kotlin-util-klib, and report
-                    // an error.
-                    //
-                    // This change will most likely not be needed after the bootstrap, as soon as kotlin-util-klib is compiled with
-                    // `-Xjvm-default=all`.
-                    freeCompilerArgs.add("-Xjvm-default=all-compatibility")
-                } else if (!skipJvmDefaultAllForModule(project.path)) {
-                    freeCompilerArgs.add("-Xjvm-default=all")
-                }
             }
         }
     }
