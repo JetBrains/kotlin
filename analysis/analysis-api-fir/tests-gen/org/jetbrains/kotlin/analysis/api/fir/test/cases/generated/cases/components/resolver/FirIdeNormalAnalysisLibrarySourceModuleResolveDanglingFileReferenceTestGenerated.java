@@ -3,19 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.generated.cases.components.resolver;
+package org.jetbrains.kotlin.analysis.api.fir.test.cases.generated.cases.components.resolver;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators.AnalysisApiFirStandaloneModeTestConfiguratorFactory;
+import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractDanglingFileReferenceResolveTest;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveDanglingFileReferenceTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,16 +27,16 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/danglingFileReferenceResolve")
 @TestDataPath("$PROJECT_ROOT")
-public class FirStandaloneNormalAnalysisSourceModuleDanglingFileReferenceResolveTestGenerated extends AbstractDanglingFileReferenceResolveTest {
+public class FirIdeNormalAnalysisLibrarySourceModuleResolveDanglingFileReferenceTestGenerated extends AbstractResolveDanglingFileReferenceTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
-    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
         FrontendKind.Fir,
-        TestModuleKind.Source,
+        TestModuleKind.LibrarySource,
         AnalysisSessionMode.Normal,
-        AnalysisApiMode.Standalone
+        AnalysisApiMode.Ide
       )
     );
   }

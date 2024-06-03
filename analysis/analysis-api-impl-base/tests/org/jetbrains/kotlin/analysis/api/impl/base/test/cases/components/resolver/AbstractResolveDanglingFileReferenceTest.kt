@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractDanglingFileReferenceResolveTest : AbstractResolveReferenceTest() {
+abstract class AbstractResolveDanglingFileReferenceTest : AbstractResolveReferenceTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
 

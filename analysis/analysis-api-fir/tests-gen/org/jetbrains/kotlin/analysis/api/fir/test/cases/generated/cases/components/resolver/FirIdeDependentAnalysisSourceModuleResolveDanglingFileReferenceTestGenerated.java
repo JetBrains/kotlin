@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractDanglingFileReferenceResolveTest;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveDanglingFileReferenceTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,15 +27,15 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/danglingFileReferenceResolve")
 @TestDataPath("$PROJECT_ROOT")
-public class FirIdeNormalAnalysisLibrarySourceModuleDanglingFileReferenceResolveTestGenerated extends AbstractDanglingFileReferenceResolveTest {
+public class FirIdeDependentAnalysisSourceModuleResolveDanglingFileReferenceTestGenerated extends AbstractResolveDanglingFileReferenceTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
     return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
         FrontendKind.Fir,
-        TestModuleKind.LibrarySource,
-        AnalysisSessionMode.Normal,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Dependent,
         AnalysisApiMode.Ide
       )
     );

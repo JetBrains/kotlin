@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiType
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractDanglingFileReferenceResolveTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCallTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveDanglingFileReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceWithResolveExtensionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.*
@@ -130,7 +130,7 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         test<AbstractResolveReferenceTest>(init = init)
     }
 
-    test<AbstractDanglingFileReferenceResolveTest>(
+    test<AbstractResolveDanglingFileReferenceTest>(
         filter = frontendIs(FrontendKind.Fir)
                 and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)
     ) {
