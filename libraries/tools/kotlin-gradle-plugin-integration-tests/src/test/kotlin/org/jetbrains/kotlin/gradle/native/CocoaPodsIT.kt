@@ -740,8 +740,8 @@ class CocoaPodsIT : KGPBaseTest() {
                         zipFile.readKLibManifest()
                     }
 
-                assertContains(cinteropManifest, "linterOpts")
-                assertEquals(cinteropManifest["linterOpts"], "-framework AFNetworking")
+                assertContains(cinteropManifest, "linkerOpts")
+                assertEquals(cinteropManifest["linkerOpts"], "-framework AFNetworking")
             }
         }
     }
