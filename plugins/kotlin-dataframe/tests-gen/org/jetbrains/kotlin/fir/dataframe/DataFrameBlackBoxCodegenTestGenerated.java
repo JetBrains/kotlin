@@ -172,6 +172,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("localTypeExposure.kt")
+  public void testLocalTypeExposure() {
+    runTest("testData/box/localTypeExposure.kt");
+  }
+
+  @Test
   @TestMetadata("lowerGeneratedImplicitReceiver.kt")
   public void testLowerGeneratedImplicitReceiver() {
     runTest("testData/box/lowerGeneratedImplicitReceiver.kt");
