@@ -71,9 +71,6 @@ object AnalysisFlags {
     val muteExpectActualClassesWarning by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val consistentDataClassCopyVisibility by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val allowFullyQualifiedNameInKClass by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
@@ -86,7 +83,10 @@ object AnalysisFlags {
     val stdlibCompilation by AnalysisFlag.Delegates.Boolean
 }
 
-fun LanguageVersionSettings.doesDataClassCopyRespectConstructorVisibility(): Boolean {
-    return getFlag(AnalysisFlags.consistentDataClassCopyVisibility) ||
-            supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
+@Deprecated(
+    message = "Deprecated. Not needed",
+    replaceWith = ReplaceWith("supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)")
+)
+fun LanguageVersionSettings.doesDataClassCopyRespectConstructorVisibility(): Boolean { // Used in IDE
+    return supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
 }
