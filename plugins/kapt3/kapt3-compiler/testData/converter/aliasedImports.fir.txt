@@ -43,10 +43,10 @@ import a.b.ABC;
  */
 @kotlin.Metadata()
 public final class Test {
-    public Test.MyDate date;
-    public java.util.concurrent.TimeUnit timeUnit;
     public a.b.ABC abc;
     public bcd bcd;
+    public Test.MyDate date;
+    public java.util.concurrent.TimeUnit timeUnit;
 
     public Test() {
         super();

@@ -33,14 +33,18 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
+import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
+import org.jetbrains.kotlin.ir.descriptors.IrBasedFieldDescriptor
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.*
@@ -59,6 +63,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -76,6 +81,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.replaceAnonymousTypeWithSuperType
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
@@ -236,7 +242,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         classDeclaration.mods.annotations = classDeclaration.mods.annotations
 
         val ktFile = origin.element?.containingFile as? KtFile
-        val firFile = findFirFile(origin)
+        val firFile = (origin.descriptor as? IrBasedClassDescriptor)?.owner?.fileOrNull?.let { findFirFile(it) }
         val imports =
             if (ktFile != null && correctErrorTypes) convertImports(ktFile, classDeclaration)
             else if (firFile != null && correctErrorTypes) convertImports(firFile, classDeclaration)
@@ -260,14 +266,14 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     }
 
     // TODO: make mapping IrFile -> FirFile
-    private fun findFirFile(origin: JvmDeclarationOrigin): FirFile? {
+    private fun findFirFile(irFile: IrFile): FirFile? {
         for (firFile in kaptContext.firFiles) {
             val path = firFile.sourceFile?.path
-            if (path != null && path == (origin.descriptor as? IrBasedClassDescriptor)?.owner?.fileOrNull?.path) {
+            if (path != null && path == irFile.path) {
                 return firFile
             }
 
-            if (firFile.name == (origin.descriptor as? IrBasedClassDescriptor)?.owner?.fileOrNull?.name) {
+            if (firFile.name == irFile.name) {
                 return firFile
             }
         }
@@ -600,7 +606,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             return getNonErrorType<JCExpression>(
                 ErrorUtils.createErrorType(ErrorTypeKind.ERROR_SUPER_TYPE),
                 ErrorTypeCorrector.TypeKind.SUPER_TYPE,
-                ref
+                ref,
+                { null },
             ) { throw SuperTypeCalculationFailure() }
         }
 
@@ -788,6 +795,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 (origin.element as? KtProperty)?.delegateExpression?.getType(kaptContext.bindingContext),
                 RETURN_TYPE,
                 ktTypeProvider = { null },
+                firBasedTypeProvider = { null },
                 ifNonError = ::typeFromAsm
             )
         } else {
@@ -799,6 +807,14 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                         ?.takeIf { it !is KtFunction }
 
                     fieldOrigin?.typeReference
+                },
+                firBasedTypeProvider = type@{
+                    val irField = (kaptContext.origins[field]?.descriptor as? IrBasedFieldDescriptor)?.owner ?: return@type null
+                    val fir = (irField.metadata as? FirMetadataSource.Property)?.fir ?: return@type null
+                    val text = fir.source?.getChild(KtStubElementTypes.TYPE_REFERENCE)?.text ?: return@type null
+                    val firFile = irField.fileOrNull?.let { findFirFile(it) } ?: return@type null
+
+                    FirErrorTypeCorrector(firFile, treeMaker).convertType(text.toString())
                 },
                 ifNonError = ::typeFromAsm
             )
@@ -1081,7 +1097,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             method.signature, parameters, exceptionTypes, jcReturnType,
             nonErrorParameterTypeProvider = { index, lazyType ->
                 fun getNonErrorMethodParameterType(descriptor: ValueDescriptor, ktTypeProvider: () -> KtTypeReference?): JCExpression =
-                    getNonErrorType(descriptor.type, METHOD_PARAMETER_TYPE, ktTypeProvider, lazyType)
+                    getNonErrorType(descriptor.type, METHOD_PARAMETER_TYPE, ktTypeProvider, { null }, lazyType)
 
                 fun PsiElement.getCallableDeclaration(): KtCallableDeclaration? = when (this) {
                     is KtCallableDeclaration -> if (this is KtFunction) null else this
@@ -1162,6 +1178,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                     else -> null
                 }
             },
+            firBasedTypeProvider = { null },
             ifNonError = { genericSignature.returnType }
         )
 
@@ -1181,6 +1198,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         type: KotlinType?,
         kind: ErrorTypeCorrector.TypeKind,
         ktTypeProvider: () -> KtTypeReference?,
+        firBasedTypeProvider: () -> T?,
         ifNonError: () -> T
     ): T {
         if (!correctErrorTypes) {
@@ -1193,6 +1211,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             if (ktFile != null) {
                 @Suppress("UNCHECKED_CAST")
                 return ErrorTypeCorrector(this, kind, ktFile).convert(typeFromSource, emptyMap()) as T
+            } else {
+                firBasedTypeProvider()?.let { return it }
             }
         }
 
@@ -1316,6 +1336,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             annotationDescriptor?.type,
             ANNOTATION,
             { ktAnnotation?.typeReference },
+            { null },
             {
                 val useSimpleName = '.' in fqName && fqName.substringBeforeLast('.', "") == packageFqName
 
