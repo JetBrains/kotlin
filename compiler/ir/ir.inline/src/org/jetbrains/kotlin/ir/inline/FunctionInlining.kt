@@ -467,6 +467,12 @@ open class FunctionInlining(
                 get() = argumentExpression.let { argument ->
                     argument is IrGetValue && !argument.symbol.owner.let { it is IrVariable && it.isVar }
                 }
+
+            private fun IrValueParameter.getOriginalParameter(): IrValueParameter {
+                if (this.parent !is IrFunction) return this
+                val original = (this.parent as IrFunction).originalFunction
+                return original.allParameters.singleOrNull { it.name == this.name && it.startOffset == this.startOffset } ?: this
+            }
         }
 
 
@@ -640,12 +646,6 @@ open class FunctionInlining(
             }
 
             return newVariable
-        }
-
-        private fun IrValueParameter.getOriginalParameter(): IrValueParameter {
-            if (this.parent !is IrFunction) return this
-            val original = (this.parent as IrFunction).originalFunction
-            return original.allParameters.singleOrNull { it.name == this.name && it.startOffset == this.startOffset } ?: this
         }
 
         private fun IrTypeParameter?.firstRealUpperBound(): IrType {
