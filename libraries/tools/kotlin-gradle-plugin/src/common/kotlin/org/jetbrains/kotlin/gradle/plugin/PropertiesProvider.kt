@@ -516,6 +516,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val cocoapodsExecutablePath: RegularFile?
         get() = property(PropertyNames.KOTLIN_APPLE_COCOAPODS_EXECUTABLE).orNull?.let { RegularFile { File(it) } }
 
+    val appleAllowEmbedAndSignWithCocoapods: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_APPLE_ALLOW_EMBED_AND_SIGN_WITH_COCOAPODS) ?: false
+
     val swiftExportEnabled: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_SWIFT_EXPORT_ENABLED) ?: false
 
@@ -697,6 +700,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_APPLE_COPY_FRAMEWORK_TO_BUILT_PRODUCTS_DIR = property("kotlin.apple.copyFrameworkToBuiltProductsDir")
         val KOTLIN_APPLE_XCODE_COMPATIBILITY_NOWARN = property("kotlin.apple.xcodeCompatibility.nowarn")
         val KOTLIN_APPLE_COCOAPODS_EXECUTABLE = property("kotlin.apple.cocoapods.bin")
+        val KOTLIN_APPLE_ALLOW_EMBED_AND_SIGN_WITH_COCOAPODS = property("kotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies")
         val KOTLIN_SWIFT_EXPORT_ENABLED = property("kotlin.swift-export.enabled")
 
         /**

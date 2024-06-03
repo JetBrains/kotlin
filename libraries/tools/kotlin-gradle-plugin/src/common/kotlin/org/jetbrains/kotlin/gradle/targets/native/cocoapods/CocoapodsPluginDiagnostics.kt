@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.cocoapods
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 
@@ -54,8 +55,14 @@ object CocoapodsPluginDiagnostics {
     object EmbedAndSignUsedWithPodDependencies : ToolingDiagnosticFactory(FATAL) {
         operator fun invoke() = build(
             """
-                'embedAndSign' task can not be used in a project with dependencies to pods.
-                Please use CocoaPods for integration into Xcode.
+                'embedAndSign' task can't be used in a project with dependencies to pods.
+                Please migrate to CocoaPods for integration into Xcode: https://kotl.in/vc2iq3
+                
+                To temporarily suppress this error, put the following in your gradle.properties:
+                    
+                    ${PropertiesProvider.PropertyNames.KOTLIN_APPLE_ALLOW_EMBED_AND_SIGN_WITH_COCOAPODS}=true
+                
+                Please note that this property is deprecated and it will be removed in the upcoming releases
             """.trimIndent()
         )
     }
