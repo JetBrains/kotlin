@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2024 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -494,6 +494,21 @@ object KotlinCompilerClient {
         // assuming daemon process is deaf and (mostly) silent, so do not handle streams
         val daemon = launchProcessWithFallback(processBuilder, reportingTargets, "daemon client")
 
+        return checkDaemonStartedProperly(daemon, reportingTargets, daemonOptions, startupAttempt)
+    }
+
+    /**
+     * Ensures that the daemon process has started properly.
+     * Additionally, handles the logging logic in the case of exceptions.
+     *
+     * @return `true` if the daemon started properly, `false` otherwise.
+     */
+    private fun checkDaemonStartedProperly(
+        daemon: Process,
+        reportingTargets: DaemonReportingTargets,
+        daemonOptions: DaemonOptions,
+        startupAttempt: Int,
+    ): Boolean {
         val isEchoRead = Semaphore(1)
         isEchoRead.acquire()
 
