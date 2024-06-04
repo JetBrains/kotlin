@@ -60,8 +60,8 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
     override fun visitBlock(block: FirBlock, data: StmtConversionContext): ExpEmbedding =
         Block(block.statements.map(data::convert))
 
-    override fun <T> visitLiteralExpression(
-        constExpression: FirLiteralExpression<T>,
+    override fun visitLiteralExpression(
+        constExpression: FirLiteralExpression,
         data: StmtConversionContext,
     ): ExpEmbedding =
         when (constExpression.kind) {
