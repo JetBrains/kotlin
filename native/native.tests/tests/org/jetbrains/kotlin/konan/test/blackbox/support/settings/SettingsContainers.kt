@@ -50,8 +50,8 @@ abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) 
  * | [TestRunSettings]     | [TestClassSettings]    | The single test run of a test function      |
  */
 class TestProcessSettings(vararg settings: Any) : Settings(parent = null, settings.asIterable())
-internal class TestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
-internal class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
+class TestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
+class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
 
 /**
  * The hierarchy of settings containers for simple Native tests (e.g. KLIB tests):

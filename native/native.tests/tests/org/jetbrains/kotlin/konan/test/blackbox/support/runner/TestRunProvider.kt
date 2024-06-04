@@ -31,7 +31,7 @@ import org.junit.jupiter.api.extension.ExtensionContext
 /**
  * [TestRun] provider that is used in Kotlin/Native black box tests together with the corresponding [TestCaseGroupProvider].
  */
-internal class TestRunProvider(
+class TestRunProvider(
     internal val testCaseGroupProvider: TestCaseGroupProvider
 ) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource {
     private val compilationFactory = TestCompilationFactory()

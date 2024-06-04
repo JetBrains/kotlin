@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File
 import kotlin.test.assertFalse
 import kotlin.test.assertEquals
@@ -32,7 +31,6 @@ import kotlin.time.Duration.Companion.minutes
 
 @Tag("driver")
 @TestDataPath("\$PROJECT_ROOT")
-@ExtendWith(NativeSimpleTestSupport::class)
 class KonanDriverTest : AbstractNativeSimpleTest() {
     private val konanHome get() = testRunSettings.get<KotlinNativeHome>().dir
     private val buildDir get() = testRunSettings.get<Binaries>().testBinariesDir

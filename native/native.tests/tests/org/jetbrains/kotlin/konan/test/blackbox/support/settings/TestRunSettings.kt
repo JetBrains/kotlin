@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
-import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
 import java.io.File
 
@@ -14,10 +13,14 @@ import java.io.File
  *
  * [allInstances] - all test class instances ordered from outermost to innermost
  * [enclosingTestInstance] - the outermost test instance
+ * [externalSourceTransformersProvider] - transformers provider of the outermost test instance
  */
-internal class BlackBoxTestInstances(val allInstances: List<Any>) {
-    val enclosingTestInstance: AbstractNativeBlackBoxTest
-        get() = allInstances.firstOrNull() as AbstractNativeBlackBoxTest
+class NativeTestInstances<T>(val allInstances: List<Any>) {
+    @Suppress("UNCHECKED_CAST")
+    internal val enclosingTestInstance: T
+        get() = allInstances.firstOrNull() as T
+    internal val externalSourceTransformersProvider: ExternalSourceTransformersProvider?
+        get() = allInstances.firstOrNull() as? ExternalSourceTransformersProvider
 }
 
 internal interface ExternalSourceTransformersProvider {

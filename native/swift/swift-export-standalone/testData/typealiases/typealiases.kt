@@ -1,3 +1,40 @@
+// KIND: STANDALONE
+// MODULE: main
+// FILE: main.kt
+package typealiases
+
+import typealiases.inner.*
+
+public typealias SmallInteger = Short
+
+public typealias Bar = typealiases.inner.Bar
+
+public class Foo
+
+// FILE: inner.kt
+package typealiases.inner
+
+public typealias LargeInteger = Long
+
+public typealias Foo = typealiases.Foo
+
+public class Bar
+
+// FILE: root.kt
+public typealias RegularInteger = Int
+
+public typealias DefaultInteger = RegularInteger
+
+public fun increment(integer: DefaultInteger): RegularInteger = integer + 1
+
+@Target(AnnotationTarget.TYPE)
+annotation class UselessAnnotation
+
+typealias ShouldHaveNoAnnotation = @UselessAnnotation Int
+
+typealias UselessDeclaration = UselessAnnotation
+
+// FILE: should_be_ignored.kt
 
 public annotation class OptIn
 typealias annotationClass = OptIn

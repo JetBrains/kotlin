@@ -12,15 +12,22 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.konan.test.blackbox.compileToNativeKLib
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.callCompilerWithoutOutputInterceptor
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.analysis.api.getAllLibraryModules
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Test
+import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.extension
 import kotlin.io.path.writeText
+import kotlin.streams.asSequence
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -122,4 +129,25 @@ class KlibScopeTests : AbstractNativeSimpleTest() {
             KlibScope(module, this.analysisSession).block()
         }
     }
+}
+
+internal fun AbstractNativeSimpleTest.compileToNativeKLib(kLibSourcesRoot: Path): Path {
+    val ktFiles = Files.walk(kLibSourcesRoot).asSequence().filter { it.extension == "kt" }.toList()
+    val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib").toPath()
+
+    val arguments = buildList {
+        ktFiles.mapTo(this) { it.absolutePathString() }
+        addAll(listOf("-produce", "library"))
+        addAll(listOf("-output", testKlib.absolutePathString()))
+    }
+
+    // Avoid creating excessive number of classloaders
+    val classLoader = testRunSettings.get<KotlinNativeClassLoader>().classLoader
+    val compileResult = callCompilerWithoutOutputInterceptor(arguments.toTypedArray(), classLoader)
+
+    check(compileResult.exitCode == ExitCode.OK) {
+        "Compilation error: $compileResult"
+    }
+
+    return testKlib
 }

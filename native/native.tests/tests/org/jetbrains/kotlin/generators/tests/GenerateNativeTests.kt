@@ -528,15 +528,11 @@ fun main() {
         // Swift Export
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeSwiftExportExecutionTest>(
-                suiteTestClassName = "FirSwiftExportExecutionTestGenerated",
-                annotations = listOf(
-                    *frontendFir()
-                ),
-            ) {
-                model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativeSwiftExportExecutionTest>(
                 suiteTestClassName = "SwiftExportExecutionTestGenerated",
+                annotations = listOf(
+                    *frontendFir(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                ),
             ) {
                 model("SwiftExport", pattern = "^([^_](.+))$", recursive = false)
             }
@@ -588,7 +584,7 @@ fun main() {
     }
 }
 
-private inline fun <reified T : Annotation> provider() = annotation(T::class.java)
+inline fun <reified T : Annotation> provider() = annotation(T::class.java)
 
 private fun forceDebugMode() = annotation(
     EnforcedProperty::class.java,
@@ -617,7 +613,7 @@ private fun TestGroup.disabledInOneStageMode(vararg unexpandedPaths: String): An
     )
 }
 
-private fun frontendFir() = arrayOf(
+fun frontendFir() = arrayOf(
     annotation(Tag::class.java, "frontend-fir"),
     annotation(FirPipeline::class.java)
 )

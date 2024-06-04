@@ -10,6 +10,11 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSwiftExportTest
+import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeBlackBoxTestInstances
+import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeSwiftExportTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.getOrCreateSimpleTestRunProvider
@@ -43,10 +48,10 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
      * not allow accessing its parent test instance in case there are inner test classes in the generated test suite.
      */
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
-        val settings = createTestRunSettings()
+        val settings = createTestRunSettings(computeBlackBoxTestInstances())
 
         // Inject the required properties to test instance.
-        with(settings.get<BlackBoxTestInstances>().enclosingTestInstance) {
+        with(settings.get<NativeTestInstances<AbstractNativeBlackBoxTest>>().enclosingTestInstance) {
             testRunSettings = settings
             testRunProvider = getOrCreateTestRunProvider()
         }
@@ -58,9 +63,27 @@ class NativeSimpleTestSupport : BeforeEachCallback {
         val settings = createSimpleTestRunSettings()
 
         // Inject the required properties to test instance.
-        with(settings.get<SimpleTestInstances>().enclosingTestInstance) {
+        with(settings.get<NativeTestInstances<AbstractNativeSimpleTest>>().enclosingTestInstance) {
             testRunSettings = settings
             testRunProvider = getOrCreateSimpleTestRunProvider()
+        }
+    }
+}
+
+class SwiftExportTestSupport : BeforeEachCallback {
+    /**
+     * Note: [BeforeEachCallback.beforeEach] allows accessing test instances while [BeforeAllCallback.beforeAll] which may look
+     * more preferable here does not allow it because it is called at the time when test instances are not created yet.
+     * Also, [TestInstancePostProcessor.postProcessTestInstance] allows accessing only the currently created test instance and does
+     * not allow accessing its parent test instance in case there are inner test classes in the generated test suite.
+     */
+    override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
+        val settings = createTestRunSettings(computeSwiftExportTestInstances())
+
+        // Inject the required properties to test instance.
+        with(settings.get<NativeTestInstances<AbstractNativeSwiftExportTest>>().enclosingTestInstance) {
+            testRunSettings = settings
+            testRunProvider = getOrCreateTestRunProvider()
         }
     }
 }
@@ -69,7 +92,7 @@ internal object CastCompatibleKotlinNativeClassLoader {
     val kotlinNativeClassLoader = NativeTestSupport.computeNativeClassLoader(this::class.java.classLoader)
 }
 
-internal object NativeTestSupport {
+object NativeTestSupport {
     private val NAMESPACE = ExtensionContext.Namespace.create(NativeTestSupport::class.java.simpleName)
 
     /*************** Test process settings ***************/
@@ -566,21 +589,21 @@ internal object NativeTestSupport {
     /*************** Test run settings (for black box tests only) ***************/
 
     // Note: TestRunSettings is not cached!
-    fun ExtensionContext.createTestRunSettings(): TestRunSettings {
-        val testInstances = computeBlackBoxTestInstances()
-
+    fun ExtensionContext.createTestRunSettings(testInstances: NativeTestInstances<*>): TestRunSettings {
         return TestRunSettings(
             parent = getOrCreateTestClassSettings(),
             listOfNotNull(
                 testInstances,
-                (testInstances.enclosingTestInstance as? ExternalSourceTransformersProvider)
-                    ?.let { ExternalSourceTransformersProvider::class to it }
+                testInstances.externalSourceTransformersProvider?.let { ExternalSourceTransformersProvider::class to it }
             )
         )
     }
 
-    private fun ExtensionContext.computeBlackBoxTestInstances(): BlackBoxTestInstances =
-        BlackBoxTestInstances(requiredTestInstances.allInstances)
+    internal fun ExtensionContext.computeBlackBoxTestInstances(): NativeTestInstances<AbstractNativeBlackBoxTest> =
+        NativeTestInstances(requiredTestInstances.allInstances)
+
+    internal fun ExtensionContext.computeSwiftExportTestInstances(): NativeTestInstances<AbstractNativeSwiftExportTest> =
+        NativeTestInstances(requiredTestInstances.allInstances)
 
     /*************** Test run settings (simplified) ***************/
 
@@ -592,12 +615,12 @@ internal object NativeTestSupport {
             parent = testClassSettings,
             listOf(
                 computeSimpleTestInstances(),
-                computeBinariesForSimpleTests(testClassSettings.get(), testClassSettings.get())
+                computeBinariesForSimpleTests(testClassSettings.get(), testClassSettings.get()),
             )
         )
     }
 
-    private fun ExtensionContext.computeSimpleTestInstances(): SimpleTestInstances = SimpleTestInstances(requiredTestInstances.allInstances)
+    private fun ExtensionContext.computeSimpleTestInstances() = NativeTestInstances<AbstractNativeSimpleTest>(requiredTestInstances.allInstances)
 
     /** See also [computeBinariesForBlackBoxTests] */
     private fun ExtensionContext.computeBinariesForSimpleTests(baseDirs: BaseDirs, targets: KotlinNativeTargets): Binaries {

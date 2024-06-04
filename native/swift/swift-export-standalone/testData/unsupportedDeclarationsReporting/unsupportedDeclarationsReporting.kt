@@ -1,3 +1,6 @@
+// KIND: STANDALONE
+// MODULE: main
+// FILE: main.kt
 class Foo {
     inner class Inner {}
 
@@ -12,3 +15,11 @@ fun Foo.ext() {}
 
 inline fun foo() {}
 
+// FILE: packaged.kt
+package a.b.c
+
+abstract class A
+
+enum class E {
+    A, B, C
+}

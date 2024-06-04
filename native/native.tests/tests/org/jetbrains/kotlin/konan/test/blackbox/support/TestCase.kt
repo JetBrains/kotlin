@@ -301,7 +301,7 @@ interface TestCaseGroupId {
  * [TestCase]s inside of the group with similar [TestCompilerArgs] can be compiled to the single
  * executable file to reduce the time spent for compiling and speed-up overall test execution.
  */
-internal sealed interface TestCaseGroup {
+sealed interface TestCaseGroup {
     fun isEnabled(testCaseId: TestCaseId): Boolean
     fun getByName(testCaseId: TestCaseId): TestCase?
 

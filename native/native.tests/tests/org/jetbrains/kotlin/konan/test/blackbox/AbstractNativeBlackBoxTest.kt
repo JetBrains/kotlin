@@ -26,15 +26,15 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(NativeBlackBoxTestSupport::class)
 abstract class AbstractNativeBlackBoxTest {
-    internal lateinit var testRunSettings: TestRunSettings
-    internal lateinit var testRunProvider: TestRunProvider
+    lateinit var testRunSettings: TestRunSettings
+    lateinit var testRunProvider: TestRunProvider
 
     /**
      * Run JUnit test.
      *
      * This function should be called from a method annotated with [org.junit.jupiter.api.Test].
      */
-    fun runTest(@TestDataFile testDataFilePath: String) {
+    open fun runTest(@TestDataFile testDataFilePath: String) {
         val absoluteTestFile = getAbsoluteFile(testDataFilePath)
         val testCaseId = TestCaseId.TestDataFile(absoluteTestFile)
         try {

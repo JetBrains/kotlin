@@ -5,4 +5,4 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
 @Target(AnnotationTarget.CLASS)
-internal annotation class FirPipeline
+annotation class FirPipeline
