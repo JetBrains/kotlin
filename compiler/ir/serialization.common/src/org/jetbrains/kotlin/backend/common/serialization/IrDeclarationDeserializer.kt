@@ -120,7 +120,6 @@ class IrDeclarationDeserializer(
         val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
-            null,
             symbol,
             deserializeSimpleTypeNullability(proto.nullability),
             arguments,
@@ -138,7 +137,6 @@ class IrDeclarationDeserializer(
         val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
-            null,
             symbol,
             SimpleTypeNullability.fromHasQuestionMark(proto.hasQuestionMark),
             arguments,
