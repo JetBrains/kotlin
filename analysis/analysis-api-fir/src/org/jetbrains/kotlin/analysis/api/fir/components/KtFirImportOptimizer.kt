@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierE
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -411,7 +408,7 @@ private val FirResolvedTypeRef.resolvedClassId: ClassId?
         if (this !is FirErrorTypeRef) {
             // When you call a method from Java with type arguments, in FIR they are currently represented as flexible types.
             // TODO Consider handling other non-ConeLookupTagBasedType types here (see KT-66418)
-            return type.lowerBoundIfFlexible().classId
+            return type.abbreviatedTypeOrSelf.lowerBoundIfFlexible().classId
         }
 
         val candidateSymbols = diagnostic.getCandidateSymbols()
