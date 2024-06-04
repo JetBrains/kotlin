@@ -10,71 +10,99 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.calls
+import org.jetbrains.kotlin.analysis.api.resolution.singleCallOrNull
+import org.jetbrains.kotlin.analysis.api.resolution.singleConstructorCallOrNull
+import org.jetbrains.kotlin.analysis.api.resolution.singleFunctionCallOrNull
+import org.jetbrains.kotlin.analysis.api.resolution.singleVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.successfulCallOrNull
+import org.jetbrains.kotlin.analysis.api.resolution.successfulConstructorCallOrNull
+import org.jetbrains.kotlin.analysis.api.resolution.successfulFunctionCallOrNull
+import org.jetbrains.kotlin.analysis.api.resolution.successfulVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 
-/**
- * Call information at call site.
- */
-public sealed class KaCallInfo : KaLifetimeOwner
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaCallInfo = KaCallInfo
 public typealias KtCallInfo = KaCallInfo
 
-/**
- * Successfully resolved call.
- */
-public class KaSuccessCallInfo(private val backingCall: KaCall) : KaCallInfo() {
-    override val token: KaLifetimeToken get() = backingCall.token
-    public val call: KaCall get() = withValidityAssertion { backingCall }
-}
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaSuccessCallInfo = KaSuccessCallInfo
 public typealias KtSuccessCallInfo = KaSuccessCallInfo
 
-/**
- * Call that contains errors.
- */
-public class KaErrorCallInfo(
-    candidateCalls: List<KaCall>,
-    diagnostic: KaDiagnostic,
-    override val token: KaLifetimeToken,
-) : KaCallInfo() {
-    public val candidateCalls: List<KaCall> by validityAsserted(candidateCalls)
-    public val diagnostic: KaDiagnostic by validityAsserted(diagnostic)
-}
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaErrorCallInfo = KaErrorCallInfo
 public typealias KtErrorCallInfo = KaErrorCallInfo
 
-public val KaCallInfo.calls: List<KaCall>
-    get() = when (this) {
-        is KaErrorCallInfo -> candidateCalls
-        is KaSuccessCallInfo -> listOf(call)
-    }
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public val KaCallInfo.calls: List<KaCall> get() = calls
 
-public inline fun <reified T : KaCall> KaCallInfo.singleCallOrNull(): T? {
-    return calls.singleOrNull { it is T } as T?
-}
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public inline fun <reified T : KaCall> KaCallInfo.singleCallOrNull(): T? = singleCallOrNull()
 
-public fun KaCallInfo.singleFunctionCallOrNull(): KaFunctionCall<*>? = singleCallOrNull()
-public fun KaCallInfo.singleVariableAccessCall(): KaVariableAccessCall? = singleCallOrNull()
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public fun KaCallInfo.singleFunctionCallOrNull(): KaFunctionCall<*>? = singleFunctionCallOrNull()
 
-@Suppress("UNCHECKED_CAST")
-public fun KaCallInfo.singleConstructorCallOrNull(): KaFunctionCall<KaConstructorSymbol>? =
-    singleCallOrNull<KaFunctionCall<*>>()?.takeIf { it.symbol is KaConstructorSymbol } as KaFunctionCall<KaConstructorSymbol>?
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public fun KaCallInfo.singleVariableAccessCall(): KaVariableAccessCall? = singleVariableAccessCall()
 
-public inline fun <reified T : KaCall> KaCallInfo.successfulCallOrNull(): T? {
-    return (this as? KaSuccessCallInfo)?.call as? T
-}
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public fun KaCallInfo.singleConstructorCallOrNull(): KaFunctionCall<KaConstructorSymbol>? = singleConstructorCallOrNull()
 
-public fun KaCallInfo.successfulFunctionCallOrNull(): KaFunctionCall<*>? = successfulCallOrNull()
-public fun KaCallInfo.successfulVariableAccessCall(): KaVariableAccessCall? = successfulCallOrNull()
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public inline fun <reified T : KaCall> KaCallInfo.successfulCallOrNull(): T? = successfulCallOrNull()
 
-@Suppress("UNCHECKED_CAST")
-public fun KaCallInfo.successfulConstructorCallOrNull(): KaFunctionCall<KaConstructorSymbol>? =
-    successfulCallOrNull<KaFunctionCall<*>>()?.takeIf { it.symbol is KaConstructorSymbol } as KaFunctionCall<KaConstructorSymbol>?
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public fun KaCallInfo.successfulFunctionCallOrNull(): KaFunctionCall<*>? = successfulFunctionCallOrNull()
+
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public fun KaCallInfo.successfulVariableAccessCall(): KaVariableAccessCall? = successfulVariableAccessCall()
+
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public fun KaCallInfo.successfulConstructorCallOrNull(): KaFunctionCall<KaConstructorSymbol>? = successfulConstructorCallOrNull()
 
 /**
  * A candidate considered for a call. I.e., one of the overload candidates in scope at the call site.
