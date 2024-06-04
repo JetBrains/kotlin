@@ -512,7 +512,7 @@ object KotlinCompilerClient {
         val isEchoRead = Semaphore(1)
         isEchoRead.acquire()
 
-        val lastDaemonCliOutputs = LastDaemonCliOutputs()
+        val lastDaemonCliOutputs = DaemonLastOutputLinesListener()
 
         val stdoutThread =
             thread {
@@ -521,7 +521,7 @@ object KotlinCompilerClient {
                         .reader()
                         .forEachLine {
                             if (Thread.currentThread().isInterrupted) return@forEachLine
-                            lastDaemonCliOutputs.add(it)
+                            lastDaemonCliOutputs.onOutputLine(it)
                             if (it == COMPILE_DAEMON_IS_READY_MESSAGE) {
                                 reportingTargets.report(
                                     DaemonReportCategory.DEBUG,
@@ -561,7 +561,7 @@ object KotlinCompilerClient {
                     !isProcessAlive(daemon) -> {
                         reportingTargets.report(
                             DaemonReportCategory.EXCEPTION,
-                            "The daemon has terminated unexpectedly on startup attempt #${startupAttempt + 1} with error code: ${daemon.exitValue()}. ${lastDaemonCliOutputs.getAsSingleString()}"
+                            "The daemon has terminated unexpectedly on startup attempt #${startupAttempt + 1} with error code: ${daemon.exitValue()}. ${lastDaemonCliOutputs.retrieveProblems().joinToString("\n")}"
                         )
                         false
                     }
