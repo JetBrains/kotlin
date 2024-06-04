@@ -114,10 +114,10 @@ public abstract class KaSession(final override val token: KaLifetimeToken) : KaL
     internal val symbolProvider: KaSymbolProvider get() = symbolProviderImpl
     protected abstract val symbolProviderImpl: KaSymbolProvider
 
-    @KtAnalysisNonPublicApi
+    @KaAnalysisApiInternals
     internal val resolver: KaResolver get() = resolverImpl
 
-    @KtAnalysisNonPublicApi
+    @KaAnalysisApiInternals
     protected abstract val resolverImpl: KaResolver
 
     internal val samResolver: KaSamResolver get() = samResolverImpl
