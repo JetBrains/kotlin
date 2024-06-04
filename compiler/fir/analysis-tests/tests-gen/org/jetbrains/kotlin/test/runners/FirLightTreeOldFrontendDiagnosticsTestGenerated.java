@@ -25031,6 +25031,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("OpenInterface2.kt")
+      public void testOpenInterface2() {
+        runTest("compiler/testData/diagnostics/tests/modifiers/OpenInterface2.kt");
+      }
+
+      @Test
       @TestMetadata("primaryConstructorMissingBrackets.kt")
       public void testPrimaryConstructorMissingBrackets() {
         runTest("compiler/testData/diagnostics/tests/modifiers/primaryConstructorMissingBrackets.kt");
