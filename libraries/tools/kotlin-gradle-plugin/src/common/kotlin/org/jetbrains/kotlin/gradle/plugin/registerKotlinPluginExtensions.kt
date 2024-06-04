@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.AddKotlinPlatformInte
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizedCInteropApiElementsConfigurationsSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.internal.SetupCInteropApiElementsConfigurationSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.SetupKotlinNativeStdlibAndPlatformDependenciesImport
+import org.jetbrains.kotlin.gradle.targets.native.swiftExport.SetupSwiftExportFrameworkTaskSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 
@@ -102,6 +103,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, ConfigureFrameworkExportSideEffect)
         register(project, SetupCInteropApiElementsConfigurationSideEffect)
         register(project, SetupEmbedAndSignAppleFrameworkTaskSideEffect)
+        register(project, SetupSwiftExportFrameworkTaskSideEffect)
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {
