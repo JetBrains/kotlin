@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.calls.KaCompoundAccess
 import org.jetbrains.kotlin.analysis.api.calls.KaExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.calls.KaImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.calls.KaReceiverValue

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundArrayAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundVariableAccessCall
@@ -258,60 +259,11 @@ public typealias KtCompoundVariableAccessCall = KaCompoundVariableAccessCall
 public typealias KaCompoundArrayAccessCall = KaCompoundArrayAccessCall
 public typealias KtCompoundArrayAccessCall = KaCompoundArrayAccessCall
 
-/**
- * The type of access to a variable or using the array access convention.
- */
-public sealed class KaCompoundAccess(
-    operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>
-) : KaLifetimeOwner {
-    private val backingOperationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> = operationPartiallyAppliedSymbol
-
-    override val token: KaLifetimeToken get() = backingOperationPartiallyAppliedSymbol.token
-
-    /**
-     * The function that compute the value for this compound access. For example, if the access is `+=`, this is the resolved `plus`
-     * function. If the access is `++`, this is the resolved `inc` function.
-     */
-    public val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> get() = withValidityAssertion { backingOperationPartiallyAppliedSymbol }
-
-    /**
-     * A compound access that read, compute, and write the computed value back. Note that calls to `<op>Assign` is not represented by this.
-     */
-    public class CompoundAssign(
-        operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-        kind: Kind,
-        operand: KtExpression,
-    ) : KaCompoundAccess(operationPartiallyAppliedSymbol) {
-        public val kind: Kind by validityAsserted(kind)
-        public val operand: KtExpression by validityAsserted(operand)
-
-        public enum class Kind {
-            PLUS_ASSIGN, MINUS_ASSIGN, TIMES_ASSIGN, DIV_ASSIGN, REM_ASSIGN
-        }
-
-    }
-
-    /**
-     * A compound access that read, increment or decrement, and write the computed value back.
-     */
-    public class IncOrDecOperation(
-        operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-        kind: Kind,
-        precedence: Precedence,
-    ) : KaCompoundAccess(operationPartiallyAppliedSymbol) {
-        public val kind: Kind by validityAsserted(kind)
-        public val precedence: Precedence by validityAsserted(precedence)
-
-        public enum class Kind {
-            INC, DEC
-        }
-
-        public enum class Precedence {
-            PREFIX, POSTFIX
-        }
-    }
-}
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaCompoundAccess = KaCompoundAccess
 public typealias KtCompoundAccess = KaCompoundAccess
 
 /**
