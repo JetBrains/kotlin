@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analysis.api.calls.KaSimpleFunctionCall
 import org.jetbrains.kotlin.analysis.api.calls.KaSimpleVariableAccess
 import org.jetbrains.kotlin.analysis.api.calls.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.calls.KaSmartCastedReceiverValue
-import org.jetbrains.kotlin.analysis.api.calls.KtImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaNonBoundToPsiErrorDiagnostic
@@ -928,7 +927,7 @@ internal class KaFirResolver(override val analysisSession: KaFirSession) : KaAbs
             }
             this is FirResolvedQualifier && this.source?.kind is KtFakeSourceElementKind.ImplicitReceiver -> {
                 val symbol = this.symbol ?: return null
-                KtImplicitReceiverValue(symbol.toKtSymbol(), resolvedType.asKtType())
+                KaImplicitReceiverValue(symbol.toKtSymbol(), resolvedType.asKtType())
             }
             else -> {
                 val psi = psi
