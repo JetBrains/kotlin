@@ -12,13 +12,30 @@ import kotlin.internal.InlineOnly
 /**
  * Represents a Universally Unique Identifier (UUID), also known as a Globally Unique Identifier (GUID).
  *
- * A UUID is a 128-bit value used to uniquely identify items across the globe. For a deeper understanding
- * of the bits layout and their meaning, refer to [RFC 9562](https://www.rfc-editor.org/rfc/rfc9562).
+ * A UUID is a 128-bit value used to uniquely identify items universally. They are
+ * particularly useful in environments lacking central registration authority or coordination
+ * mechanism for generating identifiers, making UUIDs highly suitable for distributed systems.
  *
- * The standard textual representation of a UUID is "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", where each 'x'
- * is a hexadecimal digit, e.g., "550e8400-e29b-41d4-a716-446655440000".
+ * The standard textual representation of a UUID, also known as the "hex-and-dash" format, is:
+ * "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", where 'x' represents a hexadecimal digit,
+ * e.g., "550e8400-e29b-41d4-a716-446655440000". This format includes hyphens to separate
+ * different parts of the UUID, enhancing human readability.
  *
- * This class provides utility functions for the creation and parsing of and operations on UUIDs.
+ * This class provides utility functions for:
+ *   - Generating new random UUIDs.
+ *   - Creating UUIDs from given 128 bits.
+ *   - Parsing UUIDs from and formatting them to their string representations.
+ *   - Converting UUIDs to and from arrays of bytes.
+ *   - Comparing UUIDs to establish ordering or equality.
+ *
+ * UUIDs are typically used in:
+ *   - Generating unique identifiers for new database records.
+ *   - Identifying objects in distributed systems without collision.
+ *   - Serving as part of the URLs for identifying individual resources in web applications.
+ *
+ * @sample samples.uuid.UUIDs.parse
+ * @sample samples.uuid.UUIDs.fromByteArray
+ * @sample samples.uuid.UUIDs.random
  */
 @SinceKotlin("2.0")
 @ExperimentalStdlibApi
@@ -39,7 +56,8 @@ public class UUID internal constructor(
      *   - `mostSignificantBits = 0x550e8400e29b41d4L`.
      *   - `leastSignificantBits = 0xa716446655440000uL.toLong()`.
      *
-     * For example, to retrieve the [version number](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.2) of this UUID:
+     * For example, to retrieve the [version number](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.2)
+     * of this UUID:
      * ```kotlin
      * val version = uuid.toLongs { mostSignificantBits, _ ->
      *     ((mostSignificantBits shr 12) and 0xF).toInt()
@@ -72,7 +90,8 @@ public class UUID internal constructor(
      *   - `mostSignificantBits = 0x550e8400e29b41d4uL`.
      *   - `leastSignificantBits = 0xa716446655440000uL`.
      *
-     * For example, to identify whether a UUID is of the [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1):
+     * For example, to identify whether a UUID is of the
+     * [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1):
      * ```kotlin
      * val isIETFVariant = uuid.toULongs { _, leastSignificantBits ->
      *     (leastSignificantBits shr 62) == 2uL
@@ -94,10 +113,17 @@ public class UUID internal constructor(
     }
 
     /**
-     * Returns the string representation of this UUID.
+     * Returns the standard string representation of this UUID.
      *
      * The resulting string is in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-     * where 'x' represents a hexadecimal digit. It is in lowercase and consists of 36 characters.
+     * where 'x' represents a hexadecimal digit, also known as "hex-and-dash" format.
+     * It is in lowercase and consists of 36 characters. Each hexadecimal digit
+     * in the string sequentially represents the next 4 bits of the UUID, starting from the most
+     * significant 4 bits in the first digit to the least significant 4 bits in the last digit.
+     *
+     * This format is the standard textual representation of UUIDs and is compatible with
+     * UUID parsing logic found in most software environments. It is specified by
+     * [RFC 9562 section 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4).
      *
      * @see UUID.parse
      * @sample samples.uuid.UUIDs.toStringSample
@@ -119,7 +145,14 @@ public class UUID internal constructor(
     /**
      * Returns the hexadecimal string representation of this UUID without hyphens.
      *
-     * The resulting string is in lowercase and consists of 32 characters.
+     * The resulting string is in lowercase and consists of 32 characters. Each hexadecimal digit
+     * in the string sequentially represents the next 4 bits of the UUID, starting from the most
+     * significant 4 bits in the first digit to the least significant 4 bits in the last digit.
+     *
+     * The returned string is equivalent to:
+     * ```kotlin
+     * uuid.toByteArray().toHexString()
+     * ```
      *
      * @see UUID.parseHex
      * @sample samples.uuid.UUIDs.toHexString
@@ -152,8 +185,8 @@ public class UUID internal constructor(
      * Checks whether this UUID is equal to the specified [other] object.
      *
      * @param other The object to compare with this UUID.
-     * @return `true` if [other] is an instance of UUID, and consists of the same sequence of bits as this UUID;
-     *         `false` otherwise.
+     * @return `true` if [other] is an instance of UUID, and consists of the same sequence
+     *   of bits as this UUID; `false` otherwise.
      *
      * @sample samples.uuid.UUIDs.uuidEquals
      */
@@ -173,7 +206,8 @@ public class UUID internal constructor(
         /**
          * The UUID with all bits set to zero.
          *
-         * This UUID can be used as a special value, for instance, as a placeholder for a non-null but not yet initialized variable.
+         * This UUID can be used as a special value, for instance, as a placeholder for a
+         * non-null but not yet initialized variable.
          */
         public val NIL: UUID = UUID(0, 0)
 
@@ -234,17 +268,21 @@ public class UUID internal constructor(
         }
 
         /**
-         * Parses a UUID from a standard UUID string format.
+         * Parses a UUID from the standard string representation as described in [UUID.toString].
          *
-         * For a valid [uuidString] the following property holds:
+         * This function is case-insensitive, and for a valid [uuidString], the following property holds:
          * ```kotlin
          * val uuid = UUID.parse(uuidString)
          * assertEquals(uuid.toString(), uuidString.lowercase())
          * ```
          *
-         * @param uuidString A string in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", where each 'x'
-         *   is a hexadecimal digit, either lowercase or uppercase.
-         * @throws IllegalArgumentException If the [uuidString] is not a 36-character string in the standard UUID format.
+         * The standard textual representation of UUIDs is specified by
+         * [RFC 9562 section 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4).
+         *
+         * @param uuidString A string in the format "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+         *   where each 'x' is a hexadecimal digit, either lowercase or uppercase.
+         * @throws IllegalArgumentException If the [uuidString] is not a 36-character string
+         *   in the standard UUID format.
          * @return A UUID equivalent to the specified UUID string.
          *
          * @see UUID.toString
@@ -269,15 +307,15 @@ public class UUID internal constructor(
         }
 
         /**
-         * Parses a UUID from a hexadecimal UUID string without hyphens.
+         * Parses a UUID from the hexadecimal string representation as described in [UUID.toHexString].
          *
-         * For a valid [hexString] the following property holds:
+         * This function is case-insensitive, and for a valid [hexString], the following property holds:
          * ```kotlin
          * val uuid = UUID.parseHex(hexString)
          * assertEquals(uuid.toHexString(), hexString.lowercase())
          * ```
          *
-         * @param hexString A 32-character hexadecimal string representing the UUID.
+         * @param hexString A 32-character hexadecimal string representing the UUID, without hyphens.
          * @throws IllegalArgumentException If the [hexString] is not a 32-character hexadecimal string.
          * @return A UUID represented by the specified hexadecimal string.
          *
@@ -295,14 +333,29 @@ public class UUID internal constructor(
         /**
          * Generates a new random UUID instance.
          *
-         * The returned UUID is of [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1)
-         * and [version 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.2).
-         * It is generated using a cryptographically secure pseudorandom number generator (CSPRNG) available in the platform.
-         * Thus, if the underlying system has not collected enough entropy, this function may hang until the strong entropy is collected and the CSPRNG is initialized.
+         * The returned UUID conforms to [IETF variant (variant 2)](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.1)
+         * and [version 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4.2),
+         * designed to be unique with a very high probability regardless of when or where it is generated.
+         * The UUID is produced using a cryptographically secure pseudorandom number generator (CSPRNG)
+         * available on the platform. If the underlying system has not collected enough entropy, this function
+         * may block until sufficient entropy is collected and the CSPRNG is fully initialized.
          *
          * Note that the returned UUID is not recommended for use for cryptographic purposes.
-         * Because version 4 UUID has a partially predictable bit pattern, and utilizes at most 122 bits of entropy, regardless of platform.
-         * Additionally, on platforms that do not provide a CSPRNG, the subsequent calls of this function could return guessable UUIDs.
+         * Because version 4 UUID has a partially predictable bit pattern, and utilizes at most
+         * 122 bits of entropy, regardless of platform. Additionally, on platforms that do not provide
+         * a CSPRNG, the subsequent calls of this function could return guessable UUIDs.
+         *
+         * The following APIs are used for producing the random UUID in each of the supported targets:
+         *   - Kotlin/JVM - [java.security.SecureRandom](https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/security/SecureRandom.html)
+         *   - Kotlin/JS - [Crypto.getRandomBytes()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
+         *   - Kotlin/WasmJs - [Crypto.getRandomBytes()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)
+         *   - Kotlin/WasmWasi - [random_get](https://github.com/WebAssembly/WASI/blob/main/legacy/preview1/docs.md#random_get)
+         *   - Kotlin/Native:
+         *       - Linux targets - [getrandom](https://www.man7.org/linux/man-pages/man2/getrandom.2.html)
+         *       - Apple and Android Native targets - [arc4random_buf](https://man7.org/linux/man-pages/man3/arc4random_buf.3.html)
+         *       - Windows targets - [BCryptGenRandom](https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/nf-bcrypt-bcryptgenrandom)
+         *
+         * Note that the underlying API used to produce random UUIDs may change in the future.
          *
          * @return A randomly generated UUID.
          *
@@ -316,8 +369,8 @@ public class UUID internal constructor(
          *
          * This comparator compares the given two 128-bit UUIDs bit by bit sequentially,
          * starting from the most significant bit to the least significant.
-         * UUID `a` is considered less than `b` if, at the first position where corresponding bits of the two UUIDs differ,
-         * the bit in `a` is zero and the bit in `b` is one.
+         * UUID `a` is considered less than `b` if, at the first position where corresponding bits
+         * of the two UUIDs differ, the bit in `a` is zero and the bit in `b` is one.
          * Conversely, `a` is considered greater than `b` if, at the first differing position,
          * the bit in `a` is one and the bit in `b` is zero.
          * If no differing bits are found, the two UUIDs are considered equal.
