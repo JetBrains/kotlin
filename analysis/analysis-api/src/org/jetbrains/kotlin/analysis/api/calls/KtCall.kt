@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.calls
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaAnnotationCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaApplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCall
@@ -21,14 +17,18 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundArrayAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaDelegatedConstructorCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.resolution.KaInapplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSmartCastedReceiverValue
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.calls
@@ -43,8 +43,6 @@ import org.jetbrains.kotlin.analysis.api.resolution.successfulVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.psi.KtExpression
 
 @Deprecated(
     "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
@@ -266,99 +264,30 @@ public typealias KtCompoundArrayAccessCall = KaCompoundArrayAccessCall
 public typealias KaCompoundAccess = KaCompoundAccess
 public typealias KtCompoundAccess = KaCompoundAccess
 
-/**
- * A receiver value of a call.
- */
-public sealed class KaReceiverValue : KaLifetimeOwner {
-    /**
-     * Returns inferred [KaType] of the receiver.
-     *
-     * In case of smart cast on the receiver returns smart cast type.
-     *
-     * For builder inference in FIR implementation it currently works incorrectly, see KT-50916.
-     */
-    public abstract val type: KaType
-}
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaReceiverValue = KaReceiverValue
 public typealias KtReceiverValue = KaReceiverValue
 
-/**
- * An explicit expression receiver. For example
- * ```
- *   "".length // explicit receiver `""`
- * ```
- */
-public class KaExplicitReceiverValue(
-    expression: KtExpression,
-    type: KaType,
-    isSafeNavigation: Boolean,
-    override val token: KaLifetimeToken,
-) : KaReceiverValue() {
-    public val expression: KtExpression by validityAsserted(expression)
-
-    /**
-     * Whether safe navigation is used on this receiver. For example
-     * ```
-     * fun test(s1: String?, s2: String) {
-     *   s1?.length // explicit receiver `s1` has `isSafeNavigation = true`
-     *   s2.length // explicit receiver `s2` has `isSafeNavigation = false`
-     * }
-     * ```
-     */
-    public val isSafeNavigation: Boolean by validityAsserted(isSafeNavigation)
-
-    override val type: KaType by validityAsserted(type)
-}
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaExplicitReceiverValue = KaExplicitReceiverValue
 public typealias KtExplicitReceiverValue = KaExplicitReceiverValue
 
-/**
- * An implicit receiver. For example
- * ```
- * class A {
- *   val i: Int = 1
- *   fun test() {
- *     i // implicit receiver bound to class `A`
- *   }
- * }
- *
- * fun String.test() {
- *   length // implicit receiver bound to the `KaReceiverParameterSymbol` of type `String` declared by `test`.
- * }
- * ```
- */
-public class KaImplicitReceiverValue(
-    symbol: KaSymbol,
-    type: KaType,
-) : KaReceiverValue() {
-    private val backingSymbol: KaSymbol = symbol
-
-    override val token: KaLifetimeToken get() = backingSymbol.token
-    public val symbol: KaSymbol get() = withValidityAssertion { backingSymbol }
-    override val type: KaType by validityAsserted(type)
-}
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaImplicitReceiverValue = KaImplicitReceiverValue
 public typealias KtImplicitReceiverValue = KaImplicitReceiverValue
 
-/**
- * A smart-casted receiver. For example
- * ```
- * fun Any.test() {
- *   if (this is String) {
- *     length // smart-casted implicit receiver bound to the `KaReceiverParameterSymbol` of type `String` declared by `test`.
- *   }
- * }
- * ```
- */
-public class KaSmartCastedReceiverValue(
-    original: KaReceiverValue,
-    smartCastType: KaType,
-) : KaReceiverValue() {
-    private val backingOriginal: KaReceiverValue = original
-
-    override val token: KaLifetimeToken get() = backingOriginal.token
-    public val original: KaReceiverValue get() = withValidityAssertion { backingOriginal }
-    public override val type: KaType by validityAsserted(smartCastType)
-}
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaSmartCastedReceiverValue = KaSmartCastedReceiverValue
 public typealias KtSmartCastedReceiverValue = KaSmartCastedReceiverValue
