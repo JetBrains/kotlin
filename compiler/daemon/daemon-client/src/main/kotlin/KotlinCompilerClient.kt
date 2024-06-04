@@ -449,6 +449,10 @@ object KotlinCompilerClient {
             ?: DaemonSearchResult.NotFound(aliveWithMetadata.fold(optsCopy) { opts, d -> opts.updateMemoryUpperBounds(d.jvmOptions) })
     }
 
+    internal data class GcAutoConfiguration(
+        var shouldAutoConfigureGc: Boolean = true,
+        val preferredGc: String = "Parallel"
+    )
 
     private fun startDaemon(
         compilerId: CompilerId,
