@@ -70,7 +70,9 @@ dependencies {
     testApi(projectTests(":kotlin-assignment-compiler-plugin"))
     testApi(projectTests(":kotlinx-serialization-compiler-plugin"))
     testApi(projectTests(":kotlin-atomicfu-compiler-plugin"))
-    testImplementation(projectTests(":plugins:compose-compiler-plugin:compiler-hosted"))
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        testImplementation(projectTests(":plugins:compose-compiler-plugin:compiler-hosted"))
+    }
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testApi(projectTests(":plugins:fir-plugin-prototype"))
