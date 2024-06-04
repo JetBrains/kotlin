@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -118,7 +119,10 @@ class Candidate(
     var numDefaults: Int = 0
     var functionTypesOfSamConversions: HashMap<FirExpression, FirSamResolver.SamConversionInfo>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping
-    val postponedAtoms: MutableList<PostponedResolvedAtom> = mutableListOf()
+
+    private val _postponedAtomsByFir: MutableMap<FirElement, PostponedResolvedAtom> = mutableMapOf()
+    val postponedAtomsByFir: Map<FirElement, PostponedResolvedAtom> get() = _postponedAtomsByFir
+    val postponedAtoms: Collection<PostponedResolvedAtom> get() = _postponedAtomsByFir.values
 
     // PCLA-related parts
     val postponedPCLACalls: MutableList<FirStatement> = mutableListOf()
@@ -141,6 +145,10 @@ class Candidate(
     private val _diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
     override val diagnostics: List<ResolutionDiagnostic>
         get() = _diagnostics
+
+    fun addPostponedAtom(atom: PostponedResolvedAtom) {
+        _postponedAtomsByFir[atom.atom] = atom
+    }
 
     fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
         _diagnostics += diagnostic

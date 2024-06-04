@@ -46,7 +46,7 @@ fun Candidate.preprocessLambdaArgument(
 
             if (explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
                 return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, this).also {
-                    this.postponedAtoms += it
+                    addPostponedAtom(it)
                 }
             }
         }
@@ -107,7 +107,7 @@ fun Candidate.preprocessCallableReference(
     context: ResolutionContext
 ) {
     val lhs = context.bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(argument)
-    postponedAtoms += ResolvedCallableReferenceAtom(argument, expectedType, lhs, context.session)
+    addPostponedAtom(ResolvedCallableReferenceAtom(argument, expectedType, lhs, context.session))
 }
 
 private fun extractLambdaInfo(
@@ -157,6 +157,6 @@ private fun extractLambdaInfo(
         coerceFirstParameterToExtensionReceiver = false,
         sourceForFunctionExpression,
     ).also {
-        candidate?.postponedAtoms?.add(it)
+        candidate?.addPostponedAtom(it)
     }
 }

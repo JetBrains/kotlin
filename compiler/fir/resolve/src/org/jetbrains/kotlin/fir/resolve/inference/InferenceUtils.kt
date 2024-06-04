@@ -120,6 +120,6 @@ fun extractLambdaInfoFromFunctionType(
         coerceFirstParameterToExtensionReceiver,
         sourceForFunctionExpression,
     ).also {
-        candidate?.postponedAtoms?.add(it)
+        candidate?.addPostponedAtom(it)
     }
 }
