@@ -183,7 +183,8 @@ object AbstractExpectActualChecker {
         val actualMembersByName = actualClassSymbol.collectAllMembers(isActualDeclaration = true).groupBy { nameOf(it) }
 
         val expectMembers = expectClassSymbol.collectAllMembers(isActualDeclaration = false)
-            .filterNot { it is CallableSymbolMarker && it.visibility == Visibilities.Private }
+            // private expect constructors are yet allowed KT-68688
+            .filterNot { it is CallableSymbolMarker && it !is ConstructorSymbolMarker && it.visibility == Visibilities.Private }
         for (expectMember in expectMembers) {
             val actualMembers = getPossibleActualsByExpectName(expectMember, actualMembersByName)
 
