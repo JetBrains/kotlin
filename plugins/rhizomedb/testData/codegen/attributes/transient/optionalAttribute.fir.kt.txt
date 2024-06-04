@@ -1,0 +1,37 @@
+package test
+
+class MyEntity : Entity {
+  override val eid: Int
+    field = eid
+    override get
+
+  @TransientAttribute
+  val marker: MarkerInterface? /* by */
+    field = Companion.<get-markerAttr>()
+    get(): MarkerInterface? {
+      return <this>.#marker$delegate.getValue(entity = <this>, property = MyEntity::marker)
+    }
+
+  companion object Companion : EntityType<MyEntity> {
+    val markerAttr: Optional<MarkerInterface, MyEntity>
+      field = Companion.optionalTransient<MarkerInterface>(name = "markerAttr", valueFlags = Indexing.NOT_INDEXED, defaultValueProvider = null)
+      get
+
+    private constructor() /* primary */ {
+      super/*EntityType*/<MyEntity>(ident = MyEntity::class, reify = MyEntity::<init>)
+      /* <init>() */
+
+    }
+
+  }
+
+  constructor(eid: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface MarkerInterface {
+}

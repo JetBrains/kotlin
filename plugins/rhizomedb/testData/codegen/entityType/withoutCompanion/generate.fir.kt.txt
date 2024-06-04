@@ -1,0 +1,22 @@
+package test
+
+@GeneratedEntityType(mixins = [])
+class MyEntity : Entity {
+  override val eid: Int
+    field = eid
+    override get
+
+  companion object Companion : EntityType<MyEntity> {
+    private constructor() /* primary */ {
+      super/*EntityType*/<MyEntity>(ident = "test.MyEntity", module = entityModule(entityClass = KClass::class), reify = MyEntity::<init>, mixins = [])
+    }
+
+  }
+
+  constructor(eid: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}

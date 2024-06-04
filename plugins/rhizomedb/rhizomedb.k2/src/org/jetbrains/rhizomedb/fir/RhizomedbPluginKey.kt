@@ -12,3 +12,9 @@ object RhizomedbPluginKey : GeneratedDeclarationKey() {
         return "RhizomedbPlugin"
     }
 }
+
+data class RhizomedbAttributePluginKey(val kind: RhizomedbAttributeKind) : GeneratedDeclarationKey() {
+    override fun toString(): String {
+        return "RhizomedbPlugin: $kind"
+    }
+}

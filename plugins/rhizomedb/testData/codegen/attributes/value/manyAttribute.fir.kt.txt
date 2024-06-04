@@ -1,0 +1,35 @@
+package test
+
+class MyEntity : Entity {
+  override val eid: Int
+    field = eid
+    override get
+
+  @Many
+  @ValueAttribute
+  val strs: Set<String> /* by */
+    field = Companion.<get-strsAttr>()
+    get(): Set<String> {
+      return <this>.#strs$delegate.getValue(entity = <this>, property = MyEntity::strs)
+    }
+
+  companion object Companion : EntityType<MyEntity> {
+    val strsAttr: Many<String, MyEntity>
+      field = Companion.manyValues<String>(name = "strsAttr", serializer = Companion.serializer(), valueFlags = Indexing.NOT_INDEXED)
+      get
+
+    private constructor() /* primary */ {
+      super/*EntityType*/<MyEntity>(ident = MyEntity::class, reify = MyEntity::<init>)
+      /* <init>() */
+
+    }
+
+  }
+
+  constructor(eid: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}

@@ -81,7 +81,7 @@ class RhizomedbFirResolveExtension(session: FirSession) : FirDeclarationGenerati
         val attribute = session.attributesProvider.getBackingAttribute(prop) ?: return emptyList()
         val property = createMemberProperty(
             classSymbol,
-            RhizomedbPluginKey,
+            RhizomedbAttributePluginKey(attribute.kind),
             attribute.attributeName,
             attribute.attributeType,
         )

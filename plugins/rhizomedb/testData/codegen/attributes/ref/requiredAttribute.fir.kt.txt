@@ -1,0 +1,34 @@
+package test
+
+class MyEntity : Entity {
+  override val eid: Int
+    field = eid
+    override get
+
+  @RefAttribute(flags = [])
+  val parent: MyEntity /* by */
+    field = Companion.<get-parentAttr>()
+    get(): MyEntity {
+      return <this>.#parent$delegate.getValue(entity = <this>, property = MyEntity::parent)
+    }
+
+  companion object Companion : EntityType<MyEntity> {
+    val parentAttr: Required<MyEntity, MyEntity>
+      field = Companion.requiredRef<MyEntity>(name = "parentAttr", refFlags = [])
+      get
+
+    private constructor() /* primary */ {
+      super/*EntityType*/<MyEntity>(ident = MyEntity::class, reify = MyEntity::<init>)
+      /* <init>() */
+
+    }
+
+  }
+
+  constructor(eid: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}

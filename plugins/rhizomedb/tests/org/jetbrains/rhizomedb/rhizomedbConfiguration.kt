@@ -6,9 +6,11 @@
 package org.jetbrains.rhizomedb
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -41,8 +43,9 @@ class RhizomedbEnvironmentConfigurator(testServices: TestServices) : Environment
     }
 
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
+        val messageCollector = configuration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         FirExtensionRegistrarAdapter.registerExtension(RhizomedbFirExtensionRegistrar())
-        IrGenerationExtension.registerExtension(GeneratedDeclarationsIrBodyFiller())
+        IrGenerationExtension.registerExtension(GeneratedDeclarationsIrBodyFiller(messageCollector))
     }
 }
 

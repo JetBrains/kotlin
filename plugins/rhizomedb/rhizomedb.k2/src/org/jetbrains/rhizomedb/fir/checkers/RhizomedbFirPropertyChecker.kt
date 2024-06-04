@@ -112,7 +112,7 @@ object RhizomedbFirPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     }
 }
 
-private enum class AttributeAnnotationKind {
+enum class AttributeAnnotationKind {
     VALUE,
     TRANSIENT,
     REF,

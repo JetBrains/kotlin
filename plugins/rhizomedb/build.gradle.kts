@@ -18,7 +18,7 @@ dependencies {
 
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))
-    testApi(project(":kotlinx-serialization-compiler-plugin.cli"))
+    testApi(projectTests(":kotlinx-serialization-compiler-plugin"))
 
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
@@ -33,16 +33,16 @@ dependencies {
 
     testImplementation(project(":rhizomedb-compiler-plugin.k2"))
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
     testCompileOnly("org.jetbrains.fleet:rhizomedb:1.36.0-FL24724_a9c22bf7da121.11")
+
     rhizomedbClasspath("org.jetbrains.fleet:rhizomedb:1.36.0-FL24724_a9c22bf7da121.11")
     rhizomedbClasspath(project(":rhizomedb-compiler-plugin.testDeps"))
+    rhizomedbClasspath("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0")
+    rhizomedbClasspath("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }
 
 java {

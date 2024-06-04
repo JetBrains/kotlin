@@ -6,6 +6,7 @@
 package org.jetbrains.rhizomedb
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.rhizomedb.runners.AbstractRhizomedbAsmLikeInstructionListingTest
 import org.jetbrains.rhizomedb.runners.AbstractRhizomedbBlackBoxCodegenTest
 import org.jetbrains.rhizomedb.runners.AbstractRhizomedbJvmIrTextTest
 import org.jetbrains.rhizomedb.runners.AbstractRhizomedbFirPsiDiagnosticTest
@@ -13,33 +14,38 @@ import java.io.File
 import kotlin.io.path.createParentDirectories
 
 /**
- * Generates test files without companion objects in "firMembers/entityType/withoutCompanion"
+ * Generates test files without companion objects in "entityType/withoutCompanion"
  *
- * Original files located in "firMembers/entityType/withCompanion", only files with OPTIONAL_COMPANION affected
+ * Original files located in "entityType/withCompanion", only files with OPTIONAL_COMPANION affected
  */
 private fun generateTestFilesWithoutCompanion() {
-    val root = File("plugins/rhizomedb/testData/firMembers/entityType/withCompanion")
+    val roots = listOf(
+        "firMembers/entityType/withCompanion",
+        "codegen/entityType/withCompanion",
+    ).map { File("plugins/rhizomedb/testData/$it") }
 
-    for (file in root.listFiles { _, name -> name.endsWith(".kt") }.orEmpty()) {
-        val originalText = file.readText()
-        if (originalText.lines().all { it.trim() != OPTIONAL_COMPANION }) {
-            // No optional companion objects
-            continue
-        }
+    for (root in roots) {
+        for (file in root.listFiles { _, name -> name.endsWith(".kt") }.orEmpty()) {
+            val originalText = file.readText()
+            if (originalText.lines().all { it.trim() != OPTIONAL_COMPANION }) {
+                // No optional companion objects
+                continue
+            }
 
-        val target = file.parentFile.resolveSibling("withoutCompanion/${file.name}")
-        target.toPath().createParentDirectories()
-        target.writeText(
-            comment + file.readText().replace(
-                // remove companion objects
-                "\n\\s*$OPTIONAL_COMPANION\n\\s*companion object(\n|.)*?}".toRegex(),
-                ""
-            ).replace(
-                // Remove empty bodies
-                "\\s*\\{(\n|\\s)*}".toRegex(),
-                ""
+            val target = file.parentFile.resolveSibling("withoutCompanion/${file.name}")
+            target.toPath().createParentDirectories()
+            target.writeText(
+                comment + file.readText().replace(
+                    // remove companion objects
+                    "\n\\s*$OPTIONAL_COMPANION\n\\s*companion object(\n|.)*?}".toRegex(),
+                    ""
+                ).replace(
+                    // Remove empty bodies
+                    "\\s*\\{(\n|\\s)*}".toRegex(),
+                    ""
+                )
             )
-        )
+        }
     }
 }
 

@@ -1,0 +1,37 @@
+package test
+
+class MyEntity : Entity {
+  override val eid: Int
+    field = eid
+    override get
+
+  @TransientAttribute
+  val markerSet: Set<MarkerInterface> /* by */
+    field = Companion.<get-markerSetAttr>()
+    get(): Set<MarkerInterface> {
+      return <this>.#markerSet$delegate.getValue(entity = <this>, property = MyEntity::markerSet)
+    }
+
+  companion object Companion : EntityType<MyEntity> {
+    val markerSetAttr: Required<Set<MarkerInterface>, MyEntity>
+      field = Companion.requiredTransient<Set<MarkerInterface>>(name = "markerSetAttr", valueFlags = Indexing.NOT_INDEXED, defaultValueProvider = null)
+      get
+
+    private constructor() /* primary */ {
+      super/*EntityType*/<MyEntity>(ident = MyEntity::class, reify = MyEntity::<init>)
+      /* <init>() */
+
+    }
+
+  }
+
+  constructor(eid: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface MarkerInterface {
+}

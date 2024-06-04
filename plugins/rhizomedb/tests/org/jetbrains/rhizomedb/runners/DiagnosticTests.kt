@@ -6,13 +6,17 @@
 package org.jetbrains.rhizomedb.runners
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeAsmLikeInstructionListingTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJvmIrTextTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.rhizomedb.configureForRhizomedb
+import org.jetbrains.kotlinx.serialization.*
+import org.jetbrains.kotlinx.serialization.SerializationDirectives.ENABLE_SERIALIZATION
 
 //abstract class AbstractSerializationPluginDiagnosticTest : AbstractDiagnosticTest() {
 //    override fun configure(builder: TestConfigurationBuilder) {
@@ -45,10 +49,23 @@ open class AbstractRhizomedbJvmIrTextTest : AbstractFirLightTreeJvmIrTextTest() 
         super.configure(builder)
         builder.useAdditionalService(::LibraryProvider)
         builder.configureForRhizomedb()
+        builder.defaultDirectives {
+            -DUMP_SIGNATURES
+            +ENABLE_SERIALIZATION
+        }
+        builder.configureForKotlinxSerialization()
     }
 }
 
 open class AbstractRhizomedbBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useAdditionalService(::LibraryProvider)
+        builder.configureForRhizomedb()
+    }
+}
+
+open class AbstractRhizomedbAsmLikeInstructionListingTest : AbstractFirLightTreeAsmLikeInstructionListingTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useAdditionalService(::LibraryProvider)

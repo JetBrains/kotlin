@@ -1,0 +1,265 @@
+package test
+
+class MyEntity : Entity {
+  override val eid: Int
+    field = eid
+    override get
+
+  @ValueAttribute
+  val str: String /* by */
+    field = Companion.<get-strAttr>()
+    get(): String {
+      return <this>.#str$delegate.getValue(entity = <this>, property = MyEntity::str)
+    }
+
+  @ValueAttribute
+  val int: Int /* by */
+    field = Companion.<get-intAttr>()
+    get(): Int {
+      return <this>.#int$delegate.getValue(entity = <this>, property = MyEntity::int)
+    }
+
+  @ValueAttribute
+  val set: Set<String> /* by */
+    field = Companion.<get-setAttr>()
+    get(): Set<String> {
+      return <this>.#set$delegate.getValue(entity = <this>, property = MyEntity::set)
+    }
+
+  @ValueAttribute
+  val serializableClass: Point /* by */
+    field = Companion.<get-serializableClassAttr>()
+    get(): Point {
+      return <this>.#serializableClass$delegate.getValue(entity = <this>, property = MyEntity::serializableClass)
+    }
+
+  @ValueAttribute
+  val serializableClassList: List<Point> /* by */
+    field = Companion.<get-serializableClassListAttr>()
+    get(): List<Point> {
+      return <this>.#serializableClassList$delegate.getValue(entity = <this>, property = MyEntity::serializableClassList)
+    }
+
+  @ValueAttribute
+  val manuallySerializableClass: Wrapper /* by */
+    field = Companion.<get-manuallySerializableClassAttr>()
+    get(): Wrapper {
+      return <this>.#manuallySerializableClass$delegate.getValue(entity = <this>, property = MyEntity::manuallySerializableClass)
+    }
+
+  @ValueAttribute
+  val manuallySerializableClassMap: Map<String, Wrapper> /* by */
+    field = Companion.<get-manuallySerializableClassMapAttr>()
+    get(): Map<String, Wrapper> {
+      return <this>.#manuallySerializableClassMap$delegate.getValue(entity = <this>, property = MyEntity::manuallySerializableClassMap)
+    }
+
+  companion object Companion : EntityType<MyEntity> {
+    val serializableClassListAttr: Required<List<Point>, MyEntity>
+      field = Companion.requiredValue<List<Point>>(name = "serializableClassListAttr", serializer = ListSerializer</* null */>(elementSerializer = Companion.serializer()), valueFlags = Indexing.NOT_INDEXED, defaultValueProvider = null)
+      get
+
+    val strAttr: Required<String, MyEntity>
+      field = Companion.requiredValue<String>(name = "strAttr", serializer = Companion.serializer(), valueFlags = Indexing.NOT_INDEXED, defaultValueProvider = null)
+      get
+
+    val setAttr: Required<Set<String>, MyEntity>
+      field = Companion.requiredValue<Set<String>>(name = "setAttr", serializer = SetSerializer</* null */>(elementSerializer = Companion.serializer()), valueFlags = Indexing.NOT_INDEXED, defaultValueProvider = null)
+      get
+
+    val intAttr: Required<Int, MyEntity>
+      field = Companion.requiredValue<Int>(name = "intAttr", serializer = Companion.serializer(), valueFlags = Indexing.NOT_INDEXED, defaultValueProvider = null)
+      get
+
+    val serializableClassAttr: Required<Point, MyEntity>
+      field = Companion.requiredValue<Point>(name = "serializableClassAttr", serializer = Companion.serializer(), valueFlags = Indexing.NOT_INDEXED, defaultValueProvider = null)
+      get
+
+    val manuallySerializableClassMapAttr: Required<Map<String, Wrapper>, MyEntity>
+      field = Companion.requiredValue<Map<String, Wrapper>>(name = "manuallySerializableClassMapAttr", serializer = MapSerializer</* null */, /* null */>(keySerializer = Companion.serializer(), valueSerializer = Companion.serializer()), valueFlags = Indexing.NOT_INDEXED, defaultValueProvider = null)
+      get
+
+    val manuallySerializableClassAttr: Required<Wrapper, MyEntity>
+      field = Companion.requiredValue<Wrapper>(name = "manuallySerializableClassAttr", serializer = Companion.serializer(), valueFlags = Indexing.NOT_INDEXED, defaultValueProvider = null)
+      get
+
+    private constructor() /* primary */ {
+      super/*EntityType*/<MyEntity>(ident = MyEntity::class, reify = MyEntity::<init>)
+      /* <init>() */
+
+    }
+
+  }
+
+  constructor(eid: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Serializable
+class Point {
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun serializer(): KSerializer<Point> {
+      return $serializer
+    }
+
+  }
+
+  @Deprecated(message = "This synthesized declaration should not be used directly", level = DeprecationLevel.HIDDEN)
+  object $serializer : GeneratedSerializer<Point> {
+    override val descriptor: SerialDescriptor
+      override get
+
+    init {
+      val tmp_0: PluginGeneratedSerialDescriptor = PluginGeneratedSerialDescriptor(serialName = "test.Point", generatedSerializer = <this>, elementsCount = 2)
+      tmp_0.addElement(name = "x", isOptional = false)
+      tmp_0.addElement(name = "y", isOptional = false)
+      <this>.#descriptor = tmp_0
+    }
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    override fun childSerializers(): Array<KSerializer<*>> {
+      return arrayOf<KSerializer<*>>(elements = [IntSerializer, IntSerializer])
+    }
+
+    override fun deserialize(decoder: Decoder): Point {
+      val tmp_1: SerialDescriptor = <this>.<get-descriptor>()
+      var tmp_2: Boolean = true
+      var tmp_3: Int = 0
+      var tmp_4: Int = 0
+      var tmp_5: Int = 0
+      var tmp_6: Int = 0
+      val tmp_7: CompositeDecoder = decoder.beginStructure(descriptor = tmp_1)
+      when {
+        tmp_7.decodeSequentially() -> { // BLOCK
+          { // BLOCK
+            tmp_5 = tmp_7.decodeIntElement(descriptor = tmp_1, index = 0)
+            tmp_4 = tmp_4.or(other = 1)
+          }
+          { // BLOCK
+            tmp_6 = tmp_7.decodeIntElement(descriptor = tmp_1, index = 1)
+            tmp_4 = tmp_4.or(other = 2)
+          }
+        }
+        else -> while (tmp_2) { // BLOCK
+          tmp_3 = tmp_7.decodeElementIndex(descriptor = tmp_1)
+          when {
+            EQEQ(arg0 = tmp_3, arg1 = -1) -> tmp_2 = false
+            EQEQ(arg0 = tmp_3, arg1 = 0) -> { // BLOCK
+              tmp_5 = tmp_7.decodeIntElement(descriptor = tmp_1, index = 0)
+              tmp_4 = tmp_4.or(other = 1)
+            }
+            EQEQ(arg0 = tmp_3, arg1 = 1) -> { // BLOCK
+              tmp_6 = tmp_7.decodeIntElement(descriptor = tmp_1, index = 1)
+              tmp_4 = tmp_4.or(other = 2)
+            }
+            else -> throw UnknownFieldException(index = tmp_3)
+          }
+        }
+      }
+      tmp_7.endStructure(descriptor = tmp_1)
+      return Point(seen0 = tmp_4, x = tmp_5, y = tmp_6, serializationConstructorMarker = null)
+    }
+
+    override fun serialize(encoder: Encoder, value: Point) {
+      val tmp_8: SerialDescriptor = <this>.<get-descriptor>()
+      val tmp_9: CompositeEncoder = encoder.beginStructure(descriptor = tmp_8)
+      write$Self(self = value, output = tmp_9, serialDesc = tmp_8)
+      tmp_9.endStructure(descriptor = tmp_8)
+    }
+
+  }
+
+  internal constructor(seen0: Int, x: Int, y: Int, serializationConstructorMarker: SerializationConstructorMarker?) {
+    when {
+      EQEQ(arg0 = 3, arg1 = 3.and(other = seen0)).not() -> throwMissingFieldException(seen = seen0, goldenMask = 3, descriptor = $serializer.<get-descriptor>())
+    }
+    super/*Any*/()
+    <this>.#x = x
+    <this>.#y = y
+  }
+
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @JvmStatic
+  internal fun write$Self(self: Point, output: CompositeEncoder, serialDesc: SerialDescriptor) {
+    output.encodeIntElement(descriptor = serialDesc, index = 0, value = self.<get-x>())
+    output.encodeIntElement(descriptor = serialDesc, index = 1, value = self.<get-y>())
+  }
+
+}
+
+@Serializable(with = WrapperSerializer::class)
+class Wrapper {
+  val z: Int
+    field = z
+    get
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun serializer(): KSerializer<Wrapper> {
+      return WrapperSerializer()
+    }
+
+  }
+
+  constructor(z: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class WrapperSerializer : KSerializer<Wrapper> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun deserialize(decoder: Decoder): Wrapper {
+    return Wrapper(z = decoder.decodeInt())
+  }
+
+  override fun serialize(encoder: Encoder, value: Wrapper) {
+    encoder.encodeInt(value = value.<get-z>())
+  }
+
+  override val descriptor: SerialDescriptor
+    override get(): SerialDescriptor {
+      return Companion.serializer().<get-descriptor>()
+    }
+
+}

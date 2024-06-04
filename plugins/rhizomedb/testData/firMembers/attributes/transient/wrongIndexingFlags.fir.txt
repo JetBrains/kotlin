@@ -9,7 +9,7 @@ FILE: wrongIndexingFlags.kt
         public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
             public get(): R|com/jetbrains/rhizomedb/EID|
 
-        @R|com/jetbrains/rhizomedb/TransientAttribute|(flags = vararg(Int(42))) public final val marker: R|MarkerInterface|by this@R|/MyEntity.Companion|.R|/MyEntity.Companion.markerAttr|
+        @R|com/jetbrains/rhizomedb/TransientAttribute|(flags = Int(42)) public final val marker: R|MarkerInterface|by this@R|/MyEntity.Companion|.R|/MyEntity.Companion.markerAttr|
             public get(): R|MarkerInterface| {
                 ^ this@R|/MyEntity|.D|/MyEntity.marker|.R|SubstitutionOverride<com/jetbrains/rhizomedb/Attributes.Required.getValue: R|MarkerInterface|>|(this@R|/MyEntity|, ::R|/MyEntity.marker|)
             }

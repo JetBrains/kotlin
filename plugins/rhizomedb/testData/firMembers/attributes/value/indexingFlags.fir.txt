@@ -7,7 +7,7 @@ FILE: indexingFlags.kt
         public open override val eid: R|com/jetbrains/rhizomedb/EID| = R|<local>/eid|
             public get(): R|com/jetbrains/rhizomedb/EID|
 
-        @R|com/jetbrains/rhizomedb/ValueAttribute|(flags = vararg(Q|com/jetbrains/rhizomedb/Indexing|.R|com/jetbrains/rhizomedb/Indexing.UNIQUE|)) public final val string: R|kotlin/String|by this@R|/MyEntity.Companion|.R|/MyEntity.Companion.stringAttr|
+        @R|com/jetbrains/rhizomedb/ValueAttribute|(flags = Q|com/jetbrains/rhizomedb/Indexing|.R|com/jetbrains/rhizomedb/Indexing.UNIQUE|) public final val string: R|kotlin/String|by this@R|/MyEntity.Companion|.R|/MyEntity.Companion.stringAttr|
             public get(): R|kotlin/String| {
                 ^ this@R|/MyEntity|.D|/MyEntity.string|.R|SubstitutionOverride<com/jetbrains/rhizomedb/Attributes.Required.getValue: R|kotlin/String|>|(this@R|/MyEntity|, ::R|/MyEntity.string|)
             }

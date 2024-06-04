@@ -25,14 +25,20 @@ public class RhizomedbBlackBoxCodegenTestGenerated extends AbstractRhizomedbBlac
   }
 
   @Test
-  @TestMetadata("generate.kt")
-  public void testGenerate() {
-    runTest("plugins/rhizomedb/testData/blackbox/generate.kt");
+  @TestMetadata("attributes.kt")
+  public void testAttributes() {
+    runTest("plugins/rhizomedb/testData/blackbox/attributes.kt");
   }
 
   @Test
-  @TestMetadata("generateWithCompanion.kt")
-  public void testGenerateWithCompanion() {
-    runTest("plugins/rhizomedb/testData/blackbox/generateWithCompanion.kt");
+  @TestMetadata("entityType.kt")
+  public void testEntityType() {
+    runTest("plugins/rhizomedb/testData/blackbox/entityType.kt");
+  }
+
+  @Test
+  @TestMetadata("entityTypeWithCompanion.kt")
+  public void testEntityTypeWithCompanion() {
+    runTest("plugins/rhizomedb/testData/blackbox/entityTypeWithCompanion.kt");
   }
 }

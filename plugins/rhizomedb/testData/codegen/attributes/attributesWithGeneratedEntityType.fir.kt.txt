@@ -1,0 +1,59 @@
+package test
+
+@GeneratedEntityType(mixins = [])
+class MyEntity : Entity {
+  override val eid: Int
+    field = eid
+    override get
+
+  @TransientAttribute(flags = Indexing.UNIQUE)
+  val marker: MarkerInterface /* by */
+    field = Companion.<get-markerAttr>()
+    get(): MarkerInterface {
+      return <this>.#marker$delegate.getValue(entity = <this>, property = MyEntity::marker)
+    }
+
+  @ValueAttribute
+  val str: String? /* by */
+    field = Companion.<get-strAttr>()
+    get(): String? {
+      return <this>.#str$delegate.getValue(entity = <this>, property = MyEntity::str)
+    }
+
+  @Many
+  @RefAttribute(flags = [])
+  val parents: Set<MyEntity> /* by */
+    field = Companion.<get-parentsAttr>()
+    get(): Set<MyEntity> {
+      return <this>.#parents$delegate.getValue(entity = <this>, property = MyEntity::parents)
+    }
+
+  companion object Companion : EntityType<MyEntity> {
+    val markerAttr: Required<MarkerInterface, MyEntity>
+      field = Companion.requiredTransient<MarkerInterface>(name = "markerAttr", valueFlags = Indexing.UNIQUE, defaultValueProvider = null)
+      get
+
+    val strAttr: Optional<String, MyEntity>
+      field = Companion.optionalValue<String>(name = "strAttr", serializer = Companion.serializer(), valueFlags = Indexing.NOT_INDEXED, defaultValueProvider = null)
+      get
+
+    val parentsAttr: Many<MyEntity, MyEntity>
+      field = Companion.manyRef<MyEntity>(name = "parentsAttr", refFlags = [])
+      get
+
+    private constructor() /* primary */ {
+      super/*EntityType*/<MyEntity>(ident = "test.MyEntity", module = entityModule(entityClass = KClass::class), reify = MyEntity::<init>, mixins = [])
+    }
+
+  }
+
+  constructor(eid: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface MarkerInterface {
+}

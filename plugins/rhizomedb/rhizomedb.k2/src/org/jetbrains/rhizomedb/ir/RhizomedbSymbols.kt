@@ -5,19 +5,11 @@
 
 package org.jetbrains.rhizomedb.ir
 
-import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.rhizomedb.fir.RhizomedbPackages
-
-val IrBuiltIns.entityTypeClass: IrClassSymbol
-    get() {
-        return requireNotNull(findClass(Name.identifier("EntityType"), RhizomedbPackages.packageFqName)) {
-            "Where is EntityType?"
-        }
-    }
 
 val IrBuiltIns.mixinType: IrClassSymbol
     get() {
@@ -26,12 +18,21 @@ val IrBuiltIns.mixinType: IrClassSymbol
         }
     }
 
+val IrBuiltIns.refFlags: IrClassSymbol
+    get() {
+        return requireNotNull(findClass(Name.identifier("RefFlags"), RhizomedbPackages.packageFqName)) {
+            "Where is RefFlags?"
+        }
+    }
+
+val IrBuiltIns.defaultValueType: IrClassSymbol
+    get() {
+        return requireNotNull(findClass(Name.identifier("DefaultValue"), RhizomedbPackages.packageFqName)) {
+            "Where is RefFlags?"
+        }
+    }
+
 val IrBuiltIns.entityModuleFunction: IrSimpleFunctionSymbol
     get() {
         return findFunctions(Name.identifier("entityModule"), RhizomedbPackages.packageFqName).single()
-    }
-
-val IrBuiltIns.requiredTransientFunction: IrSimpleFunctionSymbol
-    get() {
-        return requireNotNull(entityTypeClass.functionByName("requiredTransient"))
     }

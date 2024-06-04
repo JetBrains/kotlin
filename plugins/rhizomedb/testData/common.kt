@@ -12,11 +12,11 @@ annotation class EntityConstructor
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.PROPERTY)
-annotation class ValueAttribute(vararg val flags: Indexing)
+annotation class ValueAttribute(val flags: Indexing = Indexing.NOT_INDEXED)
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.PROPERTY)
-annotation class TransientAttribute(vararg val flags: Indexing)
+annotation class TransientAttribute(val flags: Indexing = Indexing.NOT_INDEXED)
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.PROPERTY)

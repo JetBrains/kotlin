@@ -37,6 +37,18 @@ object RhizomedbSymbolNames {
     val entityClassId = ClassId(RhizomedbPackages.packageFqName, Name.identifier("Entity"))
     val entityTypeClassId = ClassId(RhizomedbPackages.packageFqName, Name.identifier("EntityType"))
     val eidClassId = ClassId(RhizomedbPackages.packageFqName, Name.identifier("EID"))
+
+    val indexingClassId = ClassId(RhizomedbPackages.packageFqName, Name.identifier("Indexing"))
+
+    val requiredValueName = Name.identifier("requiredValue")
+    val optionalValueName = Name.identifier("optionalValue")
+    val manyValuesName = Name.identifier("manyValues")
+    val requiredTransientName = Name.identifier("requiredTransient")
+    val optionalTransientName = Name.identifier("optionalTransient")
+    val manyTransientName = Name.identifier("manyTransient")
+    val requiredRefName = Name.identifier("requiredRef")
+    val optionalRefName = Name.identifier("optionalRef")
+    val manyRefName = Name.identifier("manyRef")
 }
 
 
