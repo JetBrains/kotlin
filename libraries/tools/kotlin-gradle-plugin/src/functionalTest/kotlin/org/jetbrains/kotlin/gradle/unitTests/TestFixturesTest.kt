@@ -16,12 +16,10 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestFixturesTest {
     @Test
-    @Ignore // test fails currently
     fun testNoDuplicatedClasspathInJvm() = testNoDuplicatedResourcesInClasspath(
         buildProjectWithJvm(
             projectBuilder = {
