@@ -191,11 +191,20 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
             // Nullable type is not a subtype of assumed non-nullable type of targetClass
             if (!type.isNullable() && classifier.isSubtypeOf(targetClass.symbol)) this
             else {
-                require(classifier is IrClassSymbol) { "Expected a class symbol to invoke .to${targetClass.name.asString()}(), but got $classifier" }
-                makeIrCallConversionToTargetClass(this, classifier.owner, targetClass)
+                makeIrCallConversionToTargetClass(this, classifier.closestSuperClass()!!.owner, targetClass)
             }
         }
     }
+
+// For a class, returns `this`,
+// For an interface, returns null,
+// For a type parameter, finds nearest class ancestor.
+private fun IrClassifierSymbol.closestSuperClass(): IrClassSymbol? =
+    if (this is IrClassSymbol)
+        if (owner.isInterface) null
+        else this
+    else
+        superTypes().mapNotNull { it.classifierOrFail.closestSuperClass() }.singleOrNull()
 
 private fun IrExpression.makeIrCallConversionToTargetClass(
     receiver: IrExpression,

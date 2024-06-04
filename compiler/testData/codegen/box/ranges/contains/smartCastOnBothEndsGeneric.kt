@@ -1,11 +1,6 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: ANY
-// IGNORE_LIGHT_ANALYSIS
-// REASON: Internal error in body lowering: java.lang.IllegalStateException: Unexpected types: t1=T of <root>.checkDouble?, t2=T of <root>.checkDouble?
-//	at org.jetbrains.kotlin.backend.common.lower.Transformer.leastCommonPrimitiveNumericType(RangeContainsLowering.kt:375)
-//	at org.jetbrains.kotlin.backend.common.lower.Transformer.computeComparisonClass(RangeContainsLowering.kt:357)
-//	at org.jetbrains.kotlin.backend.common.lower.Transformer.buildContainsComparison(RangeContainsLowering.kt:233)
-//	at org.jetbrains.kotlin.backend.common.lower.Transformer.visitCall(RangeContainsLowering.kt:107)
+// IGNORE_BACKEND: JVM, JVM_IR
+// REASON: KT-68718 [JVM] Generic function is instantiated with wrong type argument
 
 fun <T: Double> checkDouble(a: T?, b: T?, c: T): Boolean where T: Comparable<Double> = a != null && b != null && c !in a..b
 fun <T: Float> checkFloat(a: T?, b: T?, c: T): Boolean where T: Comparable<Float> = a != null && b != null && c !in a..b
