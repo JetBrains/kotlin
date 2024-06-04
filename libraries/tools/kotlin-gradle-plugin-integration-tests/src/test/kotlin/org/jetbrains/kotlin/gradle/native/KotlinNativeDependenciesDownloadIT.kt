@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.gradle.testbase.TestVersions.Kotlin.STABLE_RELEASE
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
-import kotlin.io.path.appendText
 
 // We temporarily disable it for windows until a proper fix is found for this issue: KT-62761
 @OsCondition(
@@ -64,15 +65,21 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
         }
     }
 
-    //This test uses internal server for native dependencies
-    // We temporarily disable it for macOS until networking issues are resolved: KT-68762
-    @OsCondition(
-        supportedOn = [OS.LINUX, OS.MAC], enabledOnCI = [OS.LINUX]
-    )
+    // testNativeDependencies and testMacosNativeDependencies use internal server for native dependencies
+    // We temporarily disable both tests on intel macOS until networking issues are resolved: KT-68762
     @DisplayName("checks that native dependencies are not corrupted")
     @GradleTest
     fun testNativeDependencies(gradleVersion: GradleVersion) {
+        if (HostManager.hostIsMac) Assumptions.assumeTrue(HostManager.host == KonanTarget.MACOS_ARM64)
         testNativeDependencies("native-simple-project", "assemble", gradleVersion)
+    }
+    
+    @DisplayName("checks that macos dependencies are not corrupted")
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    fun testMacosNativeDependencies(gradleVersion: GradleVersion) {
+        if (HostManager.hostIsMac) Assumptions.assumeTrue(HostManager.host == KonanTarget.MACOS_ARM64)
+        testNativeDependencies("KT-66982-macos-target", "compileKotlinMacosArm64", gradleVersion)
     }
 
     @OptIn(EnvironmentalVariablesOverride::class)
@@ -99,15 +106,6 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
                 }
             }
         }
-    }
-
-
-    //This test uses internal server for native dependencies
-    @DisplayName("checks that macos dependencies are not corrupted")
-    @GradleTest
-    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    fun testMacosNativeDependencies(gradleVersion: GradleVersion) {
-        testNativeDependencies("KT-66982-macos-target", "compileKotlinMacosArm64", gradleVersion)
     }
 
     @DisplayName("Test kotlin native prebuilt should not override `kotlin.native.version property`")
