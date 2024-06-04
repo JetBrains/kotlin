@@ -47,7 +47,7 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:linkSwiftExportBinaryDebugStaticIosArm64")
                 assertTasksExecuted(":shared:iosArm64DebugGenerateSPMPackage")
                 assertTasksExecuted(":shared:iosArm64DebugBuildSPMPackage")
-                assertTasksExecuted(":shared:mergeIosDebugSwiftExportLibraries")
+                assertTasksExecuted(":shared:mergeIosDebugEmbedSwiftExportLibraries")
                 assertTasksExecuted(":shared:copyDebugSPMIntermediates")
                 assertTasksSkipped(":shared:embedAndSignAppleFrameworkForXcode")
 
@@ -56,6 +56,20 @@ class SwiftExportIT : KGPBaseTest() {
                 assertDirectoryInProjectExists("shared/build/SPMDerivedData")
                 assertDirectoryInProjectExists("shared/build/SPMPackage/iosArm64/Debug")
                 assertDirectoryInProjectExists("shared/build/SwiftExport/iosArm64/Debug")
+            }
+
+            // Check up-to-dateness
+            build(
+                ":shared:embedAndSignAppleFrameworkForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertTasksUpToDate(":shared:iosArm64DebugSwiftExport")
+                assertTasksUpToDate(":shared:iosArm64MainKlibrary")
+                assertTasksUpToDate(":shared:compileSwiftExportMainKotlinIosArm64")
+                assertTasksUpToDate(":shared:linkSwiftExportBinaryDebugStaticIosArm64")
+                assertTasksUpToDate(":shared:iosArm64DebugGenerateSPMPackage")
+                assertTasksUpToDate(":shared:iosArm64DebugBuildSPMPackage")
+                assertTasksUpToDate(":shared:mergeIosDebugEmbedSwiftExportLibraries")
             }
         }
     }
@@ -265,6 +279,48 @@ class SwiftExportIT : KGPBaseTest() {
 
             assert(arm64Compilation.isSuccessful)
             assert(x64Compilation.isSuccessful)
+        }
+    }
+
+    @DisplayName("creates a valid .xcframework with Swift Export")
+    @GradleTest
+    fun testSwiftExportXCFrameworkTask(
+        gradleVersion: GradleVersion,
+    ) {
+        nativeProject(
+            "simpleSwiftExport",
+            gradleVersion,
+        ) {
+            projectPath.enableSwiftExport()
+
+            val frameworkPath = "shared/build/SwiftExportFramework/Debug/Shared.xcframework"
+
+            build(
+                ":shared:assembleDebugSwiftExportFramework",
+                buildOptions = defaultBuildOptions.copy(
+                    configurationCache = true,
+                )
+            ) {
+                assertDirectoryInProjectExists(frameworkPath)
+            }
+
+            projectPath
+                .resolve(frameworkPath)
+                .copyToRecursively(projectPath.resolve("FrameworkConsumer/Shared.xcframework"), followLinks = false)
+
+            projectPath
+                .resolve("shared/build")
+                .deleteRecursively()
+
+            val consumerPackage = projectPath.resolve("FrameworkConsumer")
+
+            xcodebuild(
+                workingDir = consumerPackage,
+                scheme = "FrameworkConsumer",
+                configuration = "Debug",
+                sdk = "iphonesimulator",
+                destination = "generic/platform=iOS Simulator"
+            )
         }
     }
 }
