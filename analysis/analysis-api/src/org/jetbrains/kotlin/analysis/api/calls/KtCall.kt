@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSy
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
@@ -229,18 +230,11 @@ public typealias KtPartiallyAppliedVariableSymbol<S> = KaPartiallyAppliedVariabl
 public typealias KaSimpleVariableAccessCall = KaSimpleVariableAccessCall
 public typealias KtSimpleVariableAccessCall = KaSimpleVariableAccessCall
 
-public sealed class KaSimpleVariableAccess {
-    public object Read : KaSimpleVariableAccess()
-
-    public class Write(
-        /**
-         * [KtExpression] that represents the new value that should be assigned to this variable. Or null if the assignment is incomplete
-         * and misses the new value.
-         */
-        public val value: KtExpression?,
-    ) : KaSimpleVariableAccess()
-}
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaSimpleVariableAccess = KaSimpleVariableAccess
 public typealias KtSimpleVariableAccess = KaSimpleVariableAccess
 
 @Deprecated(

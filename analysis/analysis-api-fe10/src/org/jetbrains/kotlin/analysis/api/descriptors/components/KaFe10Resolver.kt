@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.calls.KaCompoundAccess
 import org.jetbrains.kotlin.analysis.api.calls.KaExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.calls.KaImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.calls.KaReceiverValue
-import org.jetbrains.kotlin.analysis.api.calls.KaSimpleVariableAccess
 import org.jetbrains.kotlin.analysis.api.calls.KaSmartCastedReceiverValue
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session

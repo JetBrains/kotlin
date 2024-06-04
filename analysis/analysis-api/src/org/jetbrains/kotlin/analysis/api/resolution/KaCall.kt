@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.resolution
 
 import org.jetbrains.kotlin.analysis.api.calls.KaCompoundAccess
-import org.jetbrains.kotlin.analysis.api.calls.KaSimpleVariableAccess
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
