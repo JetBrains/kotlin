@@ -2,7 +2,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.artifacts.dsl.RepositoryHandler
-import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.maven
 import java.net.URI
 
 /*
@@ -14,6 +14,15 @@ private val Project.versionCatalog: VersionCatalog
 private fun Project.composeStableVersion() = versionCatalog.findVersion("compose.stable").get().requiredVersion
 private fun Project.composeSnapshotVersion() = versionCatalog.findVersion("compose.snapshot.version").get().requiredVersion
 private fun Project.composeSnapshotId() = versionCatalog.findVersion("compose.snapshot.id").get().requiredVersion
+
+val Project.androidXMavenLocalPath: String?
+    get() = kotlinBuildProperties.getOrNull("compose.aosp.root")?.toString()
+
+fun RepositoryHandler.androidXMavenLocal(androidXMavenLocalPath: String?) {
+    if (androidXMavenLocalPath != null) {
+        maven("$androidXMavenLocalPath/out/dist/repository/")
+    }
+}
 
 fun RepositoryHandler.androidxSnapshotRepo(composeSnapshotVersion: String) {
     maven {

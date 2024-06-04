@@ -7,8 +7,11 @@ plugins {
 }
 
 repositories {
-    composeGoogleMaven(libs.versions.compose.stable.get())
+    if (!kotlinBuildProperties.isTeamcityBuild) {
+        androidXMavenLocal(androidXMavenLocalPath)
+    }
     androidxSnapshotRepo(libs.versions.compose.snapshot.id.get())
+    composeGoogleMaven(libs.versions.compose.stable.get())
 }
 
 fun KotlinDependencyHandler.implementationArtifactOnly(dependency: String) {
