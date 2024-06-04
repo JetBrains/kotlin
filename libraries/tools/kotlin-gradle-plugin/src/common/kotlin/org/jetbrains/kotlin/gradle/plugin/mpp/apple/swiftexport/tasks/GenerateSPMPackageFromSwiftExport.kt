@@ -72,8 +72,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     private fun deserializeSwiftModules(): List<GradleSwiftExportModule> {
         val modulesFile = swiftModulesFile.getFile().readText()
-        val swiftModules = SerializationTools.readFromJson<List<GradleSwiftExportModule>>(modulesFile)
-        return swiftModules
+        return SerializationTools.readFromJson<List<GradleSwiftExportModule>>(modulesFile)
     }
 
     private fun createSPMSources(modules: List<GradleSwiftExportModule>) {
@@ -133,7 +132,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         }
 
         kotlinRuntimeModulePath.resolve("linkingStub.c").writeText("\n")
-        appendToOtherIncludes(kotlinRuntime.getFile().name, kotlinRuntimeIncludePath)
+        appendToOtherIncludes(kotlinRuntimeModule, kotlinRuntimeIncludePath)
     }
 
     private fun createPackageManifest(modules: List<GradleSwiftExportModule>) {
