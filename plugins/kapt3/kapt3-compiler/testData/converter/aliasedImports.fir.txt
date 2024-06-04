@@ -53,30 +53,8 @@ public final class Test {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final Test.MyDate getDate() {
-        return null;
-    }
-
-    public final void setDate(@org.jetbrains.annotations.NotNull()
-    Test.MyDate p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.concurrent.TimeUnit getTimeUnit() {
-        return null;
-    }
-
-    public final void setTimeUnit(@org.jetbrains.annotations.NotNull()
-    java.util.concurrent.TimeUnit p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
     public final a.b.ABC getAbc() {
         return null;
-    }
-
-    public final void setAbc(@org.jetbrains.annotations.NotNull()
-    a.b.ABC p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -84,8 +62,30 @@ public final class Test {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
+    public final Test.MyDate getDate() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.concurrent.TimeUnit getTimeUnit() {
+        return null;
+    }
+
+    public final void setAbc(@org.jetbrains.annotations.NotNull()
+    a.b.ABC p0) {
+    }
+
     public final void setBcd(@org.jetbrains.annotations.NotNull()
     bcd p0) {
+    }
+
+    public final void setDate(@org.jetbrains.annotations.NotNull()
+    Test.MyDate p0) {
+    }
+
+    public final void setTimeUnit(@org.jetbrains.annotations.NotNull()
+    java.util.concurrent.TimeUnit p0) {
     }
 
     /**
