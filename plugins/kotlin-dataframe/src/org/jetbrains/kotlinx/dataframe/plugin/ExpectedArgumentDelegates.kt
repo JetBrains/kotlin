@@ -11,30 +11,30 @@ import org.jetbrains.kotlinx.dataframe.annotations.TypeApproximation
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 
-public typealias ExpectedArgumentProvider<T> = PropertyDelegateProvider<Any?, ReadOnlyProperty<Arguments, T>>
+typealias ExpectedArgumentProvider<T> = PropertyDelegateProvider<Any?, ReadOnlyProperty<Arguments, T>>
 
-public fun <T> AbstractInterpreter<T>.dataFrame(
+fun <T> AbstractInterpreter<T>.dataFrame(
     name: ArgumentName? = null
 ): ExpectedArgumentProvider<PluginDataFrameSchema> = arg(name, lens = Interpreter.Schema)
 
-public fun <T> AbstractInterpreter<T>.varargString(
+fun <T> AbstractInterpreter<T>.varargString(
     name: ArgumentName? = null,
     defaultValue: DefaultValue<List<String>> = Absent
 ): ExpectedArgumentProvider<List<String>> = arg(name, lens = Interpreter.Value, defaultValue = defaultValue)
 
-public fun <T> AbstractInterpreter<T>.renameClause(
+fun <T> AbstractInterpreter<T>.renameClause(
     name: ArgumentName? = null
 ): ExpectedArgumentProvider<RenameClauseApproximation> = arg(name, lens = Interpreter.Value)
 
-public fun <T> AbstractInterpreter<T>.columnsSelector(
+fun <T> AbstractInterpreter<T>.columnsSelector(
     name: ArgumentName? = null
 ): ExpectedArgumentProvider<List<String>> = arg(name, lens = Interpreter.Value)
 
-public fun <T> AbstractInterpreter<T>.type(
+fun <T> AbstractInterpreter<T>.type(
     name: ArgumentName? = null
 ): ExpectedArgumentProvider<TypeApproximation> = arg(name, lens = Interpreter.ReturnType)
 
-public fun <T, E : Enum<E>> AbstractInterpreter<T>.enum(
+fun <T, E : Enum<E>> AbstractInterpreter<T>.enum(
     name: ArgumentName? = null,
     defaultValue: DefaultValue<E> = Absent
 ): ExpectedArgumentProvider<E> = argConvert(name = name, lens = Interpreter.Value, defaultValue = defaultValue) { it: DataFrameCallableId ->
@@ -42,15 +42,15 @@ public fun <T, E : Enum<E>> AbstractInterpreter<T>.enum(
     java.lang.Enum.valueOf(forName as Class<out Enum<*>>, it.callableName) as E
 }
 
-public fun <T> AbstractInterpreter<T>.columnAccessor(
+fun <T> AbstractInterpreter<T>.columnAccessor(
     name: ArgumentName? = null
 ): ExpectedArgumentProvider<ColumnAccessorApproximation> = arg(name, lens = Interpreter.Value)
 
-public fun <T> AbstractInterpreter<T>.dataColumn(
+fun <T> AbstractInterpreter<T>.dataColumn(
     name: ArgumentName? = null
 ): ExpectedArgumentProvider<SimpleCol> = arg(name, lens = Interpreter.Value)
 
-public fun <T> AbstractInterpreter<T>.insertClause(
+fun <T> AbstractInterpreter<T>.insertClause(
     name: ArgumentName? = null
 ): ExpectedArgumentProvider<InsertClauseApproximation> = arg(name, lens = Interpreter.Value)
 
@@ -62,7 +62,7 @@ internal fun <T> AbstractInterpreter<T>.columnWithPath(
     name: ArgumentName? = null
 ): ExpectedArgumentProvider<ColumnWithPathApproximation> = arg(name, lens = Interpreter.Value)
 
-public fun <T> AbstractInterpreter<T>.kproperty(
+fun <T> AbstractInterpreter<T>.kproperty(
     name: ArgumentName? = null
 ): ExpectedArgumentProvider<KPropertyApproximation> = arg(name, lens = Interpreter.Value)
 

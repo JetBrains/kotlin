@@ -6,16 +6,16 @@ import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.api.schema
 import org.jetbrains.kotlinx.dataframe.schema.ColumnSchema
 
-public val KotlinTypeFacade.pluginSchema: DataFrame<*>.() -> PluginDataFrameSchema get() = { schema().toPluginDataFrameSchema() }
+val KotlinTypeFacade.pluginSchema: DataFrame<*>.() -> PluginDataFrameSchema get() = { schema().toPluginDataFrameSchema() }
 
-public fun DataFrame<*>.generateSchemaDeclaration(
+fun DataFrame<*>.generateSchemaDeclaration(
     capitalizedName: String,
     generator: CodeGenerator = CodeGenerator.create(useFqNames = false)
 ): String = generator.generate(schema(), name = capitalizedName, fields = true, extensionProperties = true, isOpen = true)
     .code.declarations
     .replace(Regex("@JvmName\\(.*\"\\)"), "")
 
-public fun Map<String, ColumnSchema>.accept(
+fun Map<String, ColumnSchema>.accept(
     s: String,
 ): List<String> {
     var i = 0
@@ -48,7 +48,7 @@ public fun Map<String, ColumnSchema>.accept(
     return expressions.toList()
 }
 
-public fun DataFrame<*>.generateTestCode(): String {
+fun DataFrame<*>.generateTestCode(): String {
     val expressions = schema().columns.accept("df")
     return expressions.joinToString("\n")
 }

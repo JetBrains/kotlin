@@ -22,7 +22,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 
-public val KotlinTypeFacade.toPluginDataFrameSchema: DataFrameSchema.() -> PluginDataFrameSchema get() =  {
+val KotlinTypeFacade.toPluginDataFrameSchema: DataFrameSchema.() -> PluginDataFrameSchema get() =  {
     PluginDataFrameSchema(
         columns = columns.map { (name, columnSchema) ->
             when (columnSchema) {
@@ -48,7 +48,7 @@ public val KotlinTypeFacade.toPluginDataFrameSchema: DataFrameSchema.() -> Plugi
 
 
 
-public val KotlinTypeFacade.deserializeToPluginDataFrameSchema: SerializableSchema.() -> PluginDataFrameSchema get() =  {
+val KotlinTypeFacade.deserializeToPluginDataFrameSchema: SerializableSchema.() -> PluginDataFrameSchema get() =  {
     PluginDataFrameSchema(
         columns = columns.map {
             when (it) {
@@ -116,7 +116,7 @@ sealed interface SerializableColumn {
 class SerializableSchema(val columns: List<SerializableColumn>)
 
 
-public fun DataFrameSchema.serialize(): SerializableSchema {
+fun DataFrameSchema.serialize(): SerializableSchema {
     return SerializableSchema(
         columns = columns.map { (name, columnSchema) ->
             when (columnSchema) {
@@ -166,8 +166,7 @@ private fun List<KTypeProjection>.mapToConeTypeProjection(): List<TypeProjection
 
 private fun List<TypeProjection>.mapToConeTypeProjection(): Array<out ConeTypeProjection> {
     return Array(size) {
-        val typeProjection = get(it)
-        when (typeProjection) {
+        when (val typeProjection = get(it)) {
             StarProjection -> ConeStarProjection
             is SerializableArgument -> {
                 val coneType = type(typeProjection.kType)
@@ -187,8 +186,4 @@ fun KType.from(): String {
     val klass = classifier as? KClass<*> ?: error("")
     val fqName = klass.qualifiedName ?: error("")
     return fqName
-//    return ClassId(
-//        FqName(fqName.substringBeforeLast(".", missingDelimiterValue = "")),
-//        Name.identifier(fqName.substringAfterLast("."))
-//    )
 }

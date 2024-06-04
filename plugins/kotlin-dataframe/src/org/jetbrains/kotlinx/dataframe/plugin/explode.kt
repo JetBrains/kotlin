@@ -17,7 +17,7 @@ internal class Explode0 : AbstractInterpreter<PluginDataFrameSchema>() {
     }
 }
 
-public val KotlinTypeFacade.explodeImpl: PluginDataFrameSchema.(dropEmpty: Boolean, selector: List<ColumnPathApproximation>?) -> PluginDataFrameSchema get()  = { dropEmpty, selector ->
+val KotlinTypeFacade.explodeImpl: PluginDataFrameSchema.(dropEmpty: Boolean, selector: List<ColumnPathApproximation>?) -> PluginDataFrameSchema get()  = { dropEmpty, selector ->
     val columns = selector ?: TODO()
 
     val selected: Set<List<String>> = columns.map { it.path }.toSet()

@@ -207,8 +207,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                     resolvedReturnType.isSubtypeOf(StandardClassIds.Iterable.constructClassLikeType(arrayOf(ConeStarProjection)), session) ||
                     resolvedReturnType.isSubtypeOf(StandardClassIds.Iterable.constructClassLikeType(arrayOf(ConeStarProjection), isNullable = true), session)
                 ) {
-                    val typeArgument = resolvedReturnType.typeArguments[0]
-                    val type: ConeKotlinType = when (typeArgument) {
+                    val type: ConeKotlinType = when (val typeArgument = resolvedReturnType.typeArguments[0]) {
                         is ConeKotlinType -> typeArgument
                         ConeStarProjection -> session.builtinTypes.nullableAnyType.type
                         else -> session.builtinTypes.nullableAnyType.type

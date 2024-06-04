@@ -7,45 +7,43 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-public interface Interpreter<T> {
-    public val expectedArguments: List<ExpectedArgument>
+interface Interpreter<T> {
+    val expectedArguments: List<ExpectedArgument>
 
-    public data class ExpectedArgument(
-        public val name: String,
-        public val klass: KType,
-        public val lens: Lens,
+    data class ExpectedArgument(
+        val name: String,
+        val klass: KType,
+        val lens: Lens,
         val defaultValue: DefaultValue<*>
     )
 
-    public sealed interface Lens
+    sealed interface Lens
 
-    public object Value : Lens
+    data object Value : Lens
 
-    public object ReturnType : Lens
+    data object ReturnType : Lens
 
-    public object Dsl : Lens
+    data object Dsl : Lens
 
-    public object Schema : Lens
+    data object Schema : Lens
 
-    public object  Id : Lens
+    data object  Id : Lens
 
     // required to compute whether resulting schema should be inheritor of previous class or a new class
-    public fun startingSchema(arguments: Map<String, Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): PluginDataFrameSchema?
+    fun startingSchema(arguments: Map<String, Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): PluginDataFrameSchema?
 
-    public fun interpret(arguments: Map<String, Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): InterpretationResult<T>
+    fun interpret(arguments: Map<String, Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): InterpretationResult<T>
 
-    public sealed interface InterpretationResult<out T>
+    sealed interface InterpretationResult<out T>
 
-    public class Success<out T>(public val value: T) : InterpretationResult<T> {
+    class Success<out T>(val value: T) : InterpretationResult<T> {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
 
             other as Success<*>
 
-            if (value != other.value) return false
-
-            return true
+            return value == other.value
         }
 
         override fun hashCode(): Int {
@@ -53,22 +51,22 @@ public interface Interpreter<T> {
         }
     }
 
-    public class Error(public val message: String?) : InterpretationResult<Nothing>
+    class Error(val message: String?) : InterpretationResult<Nothing>
 }
 
-public sealed interface DefaultValue<out T>
+sealed interface DefaultValue<out T>
 
-public class Present<T>(public val value: T) : DefaultValue<T>
-public object Absent : DefaultValue<Nothing>
+class Present<T>(val value: T) : DefaultValue<T>
+data object Absent : DefaultValue<Nothing>
 
-public open class Arguments(private val arguments: Map<String, Interpreter.Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): KotlinTypeFacade by kotlinTypeFacade {
-    public operator fun get(s: String): Any? = (arguments[s] ?: error("")).value
-    public operator fun contains(key: String): Boolean {
+open class Arguments(private val arguments: Map<String, Interpreter.Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): KotlinTypeFacade by kotlinTypeFacade {
+    operator fun get(s: String): Any? = (arguments[s] ?: error("")).value
+    operator fun contains(key: String): Boolean {
         return arguments.contains(key)
     }
 }
 
-public abstract class AbstractInterpreter<T> : Interpreter<T> {
+abstract class AbstractInterpreter<T> : Interpreter<T> {
     @PublishedApi
     internal val _expectedArguments: MutableList<Interpreter.ExpectedArgument> = mutableListOf()
 
@@ -80,7 +78,7 @@ public abstract class AbstractInterpreter<T> : Interpreter<T> {
         return Arguments(arguments, kotlinTypeFacade).startingSchema
     }
 
-    public inline fun <Value, reified CompileTimeValue> argConvert(
+    inline fun <Value, reified CompileTimeValue> argConvert(
         defaultValue: DefaultValue<Value> = Absent,
         name: ArgumentName? = null,
         lens: Interpreter.Lens = Interpreter.Value,
@@ -97,7 +95,7 @@ public abstract class AbstractInterpreter<T> : Interpreter<T> {
         }
     }
 
-    public fun <Value> arg(
+    fun <Value> arg(
         name: ArgumentName? = null,
         expectedType: KType? = null,
         defaultValue: DefaultValue<Value> = Absent,
@@ -114,13 +112,13 @@ public abstract class AbstractInterpreter<T> : Interpreter<T> {
         }
     }
 
-    public class ArgumentName private constructor(public val value: String) {
-        public companion object {
-            public fun of(name: String): ArgumentName = ArgumentName(name)
+    class ArgumentName private constructor(val value: String) {
+        companion object {
+            fun of(name: String): ArgumentName = ArgumentName(name)
         }
     }
 
-    public fun name(name: String): ArgumentName = ArgumentName.of(name)
+    fun name(name: String): ArgumentName = ArgumentName.of(name)
 
     final override fun interpret(arguments: Map<String, Interpreter.Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): Interpreter.InterpretationResult<T> {
         return try {
@@ -130,14 +128,14 @@ public abstract class AbstractInterpreter<T> : Interpreter<T> {
         }
     }
 
-    public abstract fun Arguments.interpret(): T
+    abstract fun Arguments.interpret(): T
 }
 
-public interface SchemaModificationInterpreter : Interpreter<PluginDataFrameSchema> {
+interface SchemaModificationInterpreter : Interpreter<PluginDataFrameSchema> {
 
     override fun interpret(arguments: Map<String, Interpreter.Success<Any?>>, kotlinTypeFacade: KotlinTypeFacade): Interpreter.InterpretationResult<PluginDataFrameSchema>
 }
 
-public abstract class AbstractSchemaModificationInterpreter :
+abstract class AbstractSchemaModificationInterpreter :
     AbstractInterpreter<PluginDataFrameSchema>(),
     SchemaModificationInterpreter
