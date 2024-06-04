@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedFieldDescriptor
+import org.jetbrains.kotlin.ir.descriptors.IrBasedPropertyGetterDescriptor
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.*
@@ -1178,7 +1179,19 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                     else -> null
                 }
             },
-            firBasedTypeProvider = { null },
+            firBasedTypeProvider = type@{
+                when (descriptor) {
+                    is PropertyGetterDescriptor -> {
+                        val irGetter = (descriptor as? IrBasedPropertyGetterDescriptor)?.owner ?: return@type null
+                        val fir = (irGetter.metadata as? FirMetadataSource.Function)?.fir ?: return@type null
+                        val text = fir.source?.getChild(KtStubElementTypes.TYPE_REFERENCE)?.text ?: return@type null
+                        val firFile = irGetter.fileOrNull?.let { findFirFile(it) } ?: return@type null
+
+                        FirErrorTypeCorrector(firFile, treeMaker).convertType(text.toString())
+                    }
+                    else -> null
+                }
+            },
             ifNonError = { genericSignature.returnType }
         )
 
