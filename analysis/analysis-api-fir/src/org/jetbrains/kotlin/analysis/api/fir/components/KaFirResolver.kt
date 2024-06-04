@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KaSymbolBasedReference
 import org.jetbrains.kotlin.analysis.api.calls.KaAnnotationCall
-import org.jetbrains.kotlin.analysis.api.calls.KaApplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KaCall
-import org.jetbrains.kotlin.analysis.api.calls.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KaCompoundAccess
 import org.jetbrains.kotlin.analysis.api.calls.KaCompoundArrayAccessCall
 import org.jetbrains.kotlin.analysis.api.calls.KaCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.calls.KaDelegatedConstructorCall
 import org.jetbrains.kotlin.analysis.api.calls.KaExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.calls.KaImplicitReceiverValue
-import org.jetbrains.kotlin.analysis.api.calls.KaInapplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedSymbol
 import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedVariableSymbol

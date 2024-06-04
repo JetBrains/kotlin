@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.calls
 
-import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.resolution.KaApplicableCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaInapplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.calls
 import org.jetbrains.kotlin.analysis.api.resolution.singleCallOrNull
@@ -21,10 +25,8 @@ import org.jetbrains.kotlin.analysis.api.resolution.successfulConstructorCallOrN
 import org.jetbrains.kotlin.analysis.api.resolution.successfulFunctionCallOrNull
 import org.jetbrains.kotlin.analysis.api.resolution.successfulVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
-import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
@@ -104,53 +106,25 @@ public fun KaCallInfo.successfulVariableAccessCall(): KaVariableAccessCall? = su
 )
 public fun KaCallInfo.successfulConstructorCallOrNull(): KaFunctionCall<KaConstructorSymbol>? = successfulConstructorCallOrNull()
 
-/**
- * A candidate considered for a call. I.e., one of the overload candidates in scope at the call site.
- */
-public sealed class KaCallCandidateInfo(
-    candidate: KaCall,
-    isInBestCandidates: Boolean,
-) : KaLifetimeOwner {
-    private val backingCandidate: KaCall = candidate
-
-    override val token: KaLifetimeToken get() = backingCandidate.token
-    public val candidate: KaCall get() = withValidityAssertion { backingCandidate }
-
-    /**
-     * Returns true if the [candidate] is in the final set of candidates that the call is actually resolved to. There can be multiple
-     * candidates if the call is ambiguous.
-     */
-    public val isInBestCandidates: Boolean by validityAsserted(isInBestCandidates)
-}
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaCallCandidateInfo = KaCallCandidateInfo
 public typealias KtCallCandidateInfo = KaCallCandidateInfo
 
-/**
- * A candidate that is applicable for a call. A candidate is applicable if the call's arguments are complete and are assignable to the
- * candidate's parameters, AND the call's type arguments are complete and fit all the constraints of the candidate's type parameters.
- */
-public class KaApplicableCallCandidateInfo(
-    candidate: KaCall,
-    isInBestCandidates: Boolean,
-) : KaCallCandidateInfo(candidate, isInBestCandidates)
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaApplicableCallCandidateInfo = KaApplicableCallCandidateInfo
 public typealias KtApplicableCallCandidateInfo = KaApplicableCallCandidateInfo
 
-/**
- * A candidate that is NOT applicable for a call. A candidate is inapplicable if a call argument is missing or is not assignable to the
- * candidate's parameters, OR a call type argument is missing or does not fit the constraints of the candidate's type parameters.
- */
-public class KaInapplicableCallCandidateInfo(
-    candidate: KaCall,
-    isInBestCandidates: Boolean,
-    diagnostic: KaDiagnostic,
-) : KaCallCandidateInfo(candidate, isInBestCandidates) {
-    /**
-     * The reason the [candidate] was not applicable for the call (e.g., argument type mismatch, or no value for parameter).
-     */
-    public val diagnostic: KaDiagnostic by validityAsserted(diagnostic)
-}
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaInapplicableCallCandidateInfo = KaInapplicableCallCandidateInfo
 public typealias KtInapplicableCallCandidateInfo = KaInapplicableCallCandidateInfo
 
 /**
