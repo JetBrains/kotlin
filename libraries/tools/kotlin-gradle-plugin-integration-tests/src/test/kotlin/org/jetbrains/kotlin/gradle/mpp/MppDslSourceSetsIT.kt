@@ -41,6 +41,7 @@ class MppDslSourceSetsIT : KGPBaseTest() {
         project(
             projectName = "mpp-empty-sources",
             gradleVersion = gradleVersion,
+            localRepoDir = defaultLocalRepo(gradleVersion),
         ) {
             build("publish") {
                 assertTasksNoSource(
