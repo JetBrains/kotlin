@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.gradle.targets.native.ConfigureFrameworkExportSideEf
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeConfigureBinariesSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.SetupEmbedAndSignAppleFrameworkTaskSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
+import org.jetbrains.kotlin.gradle.targets.native.swiftExport.SetupSwiftExportFrameworkTaskSideEffect
 
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeToolchainProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryPreparationSetupAction
@@ -132,6 +133,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, ConfigureFrameworkExportSideEffect)
         register(project, SetupCInteropApiElementsConfigurationSideEffect)
         register(project, SetupEmbedAndSignAppleFrameworkTaskSideEffect)
+        register(project, SetupSwiftExportFrameworkTaskSideEffect)
         register(project, ConfigureJavaTestFixturesSideEffect)
         if (useNonPackedKlibs) {
             register(project, MaybeAddWorkaroundForSecondaryVariantsBug)
