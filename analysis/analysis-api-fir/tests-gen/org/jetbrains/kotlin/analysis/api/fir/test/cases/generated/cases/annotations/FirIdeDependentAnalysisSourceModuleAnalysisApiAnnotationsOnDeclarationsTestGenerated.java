@@ -98,6 +98,12 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiAnnotationsOnDeclarat
     }
 
     @Test
+    @TestMetadata("nestedAnnotation.kt")
+    public void testNestedAnnotation() {
+      runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/nestedAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("onClass.kt")
     public void testOnClass() {
       runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onClass.kt");

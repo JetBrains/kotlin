@@ -1,0 +1,5 @@
+KtDeclaration: KtClass Test
+annotations: [
+  A(b = /B(i = 42, ))
+    psi: KtAnnotationEntry
+]
