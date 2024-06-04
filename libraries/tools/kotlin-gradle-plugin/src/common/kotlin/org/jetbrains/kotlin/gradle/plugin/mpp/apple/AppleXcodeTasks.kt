@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.registerSwiftExportTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.registerSwiftExportEmbedTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -247,7 +247,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
             environment.targets.contains(framework.konanTarget) &&
             framework.buildType == envBuildType
         ) {
-            registerSwiftExportTask(framework).apply {
+            registerSwiftExportEmbedTask(framework)?.apply {
                 dependsOn(checkSandboxAndWriteProtectionTask)
             }
         } else {

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.maybeCreateSwiftExportClasspathResolvableConfiguration
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.MergeStaticLibrariesTask
@@ -29,25 +28,23 @@ import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.Distribution
 
-internal fun Project.registerSwiftExportTask(
-    framework: Framework,
-): TaskProvider<*> {
-    return registerSwiftExportTask(
-        swiftApiModuleName = framework.baseNameProvider,
-        target = framework.target,
-        buildType = framework.buildType,
-    )
+internal enum class SwiftExportPipelineType {
+    EMBED, FRAMEWORK;
 }
 
-private fun Project.registerSwiftExportTask(
+internal fun Project.setupCommonSwiftExportPipeline(
     swiftApiModuleName: Provider<String>,
+    taskNamePrefix: String,
     target: KotlinNativeTarget,
     buildType: NativeBuildType,
-): TaskProvider<*> {
-    val taskNamePrefix = lowerCamelCaseName(
-        target.disambiguationClassifier ?: target.name,
-        buildType.getName(),
-    )
+    pipelineType: SwiftExportPipelineType,
+    configuration: (
+        buildConfiguration: String,
+        packageBuild: TaskProvider<BuildSPMSwiftExportPackage>,
+        packageGenerationTask: TaskProvider<GenerateSPMPackageFromSwiftExport>,
+        mergeLibrariesTask: TaskProvider<MergeStaticLibrariesTask>,
+    ) -> TaskProvider<out Task>,
+): TaskProvider<out Task> {
     val mainCompilation = target.compilations.getByName("main")
     val buildConfiguration = buildType.configuration
 
@@ -87,18 +84,13 @@ private fun Project.registerSwiftExportTask(
     val mergeLibrariesTask = registerMergeLibraryTask(
         appleTarget = target.konanTarget.appleTarget,
         configuration = buildConfiguration,
+        pipelineType = pipelineType,
         staticLibrary = staticLibrary,
         swiftApiModuleName = swiftApiModuleName,
         packageBuildTask = packageBuild
     )
 
-    return registerCopyTask(
-        configuration = buildConfiguration,
-        libraryName = mergeLibrariesTask.map { it.library.getFile().name },
-        packageGenerationTask = packageGenerationTask,
-        packageBuildTask = packageBuild,
-        mergeLibrariesTask = mergeLibrariesTask
-    )
+    return configuration(buildConfiguration, packageBuild, packageGenerationTask, mergeLibrariesTask)
 }
 
 private fun Project.registerSwiftExportRun(
@@ -245,15 +237,22 @@ private fun Project.registerSPMPackageBuild(
 private fun Project.registerMergeLibraryTask(
     appleTarget: AppleTarget,
     configuration: String,
+    pipelineType: SwiftExportPipelineType,
     staticLibrary: AbstractNativeLibrary,
     swiftApiModuleName: Provider<String>,
     packageBuildTask: TaskProvider<BuildSPMSwiftExportPackage>,
 ): TaskProvider<MergeStaticLibrariesTask> {
 
+    val pipelineName = when (pipelineType) {
+        SwiftExportPipelineType.EMBED -> "Embed"
+        else -> ""
+    }
+
     val mergeTaskName = lowerCamelCaseName(
         "merge",
         appleTarget.targetName,
         configuration,
+        pipelineName,
         "SwiftExportLibraries"
     )
 
@@ -284,38 +283,5 @@ private fun Project.registerMergeLibraryTask(
     }
 
     return mergeTask
-}
-
-private fun Project.registerCopyTask(
-    configuration: String,
-    libraryName: Provider<String>,
-    packageGenerationTask: TaskProvider<GenerateSPMPackageFromSwiftExport>,
-    packageBuildTask: TaskProvider<BuildSPMSwiftExportPackage>,
-    mergeLibrariesTask: TaskProvider<MergeStaticLibrariesTask>,
-): TaskProvider<out Task> {
-
-    val copyTaskName = lowerCamelCaseName(
-        "copy",
-        configuration,
-        "SPMIntermediates"
-    )
-
-    val copyTask = locateOrRegisterTask<CopySwiftExportIntermediatesForConsumer>(copyTaskName) { task ->
-        task.group = BasePlugin.BUILD_GROUP
-        task.description = "Copy ${configuration.capitalize()} SPM intermediates"
-
-        // Input
-        task.includes.from(packageGenerationTask.map { it.includesPath.get() })
-        task.libraryName.set(libraryName)
-        task.library.set(mergeLibrariesTask.map { it.library.get() })
-    }
-
-    copyTask.configure { task ->
-        task.addInterface(
-            packageBuildTask.map { it.interfacesPath.asFile.get() }
-        )
-    }
-
-    return copyTask
 }
 
