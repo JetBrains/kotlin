@@ -22,6 +22,7 @@
 #elif KONAN_LINUX
 #include <unistd.h>
 #include <sys/syscall.h>
+#include <errno.h>
 #elif KONAN_WINDOWS
 #include <windows.h>
 #include <bcrypt.h>
@@ -619,7 +620,7 @@ void Kotlin_ByteArray_fillWithRandomBytes(KRef byteArray, KInt size) {
         long ret = syscall(SYS_getrandom, address + count, size - count, 0); // blocking
         if (ret >= 0) {
             count += ret;
-        } else {
+        } else if (errno != EINTR) { // repeat if interrupted
             RuntimeFail("getrandom returned a negative value: %ld, errno: %d", ret, errno);
         }
     }
