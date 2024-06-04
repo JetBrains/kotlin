@@ -7,7 +7,7 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 
 @Target({FIELD, METHOD})
-public @interface JavaAnno() {
+public @interface JavaAnno {
     ElementType[] value();
 }
 

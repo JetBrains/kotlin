@@ -224,31 +224,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             }
         }
 
-        group("annotations") {
-            test<AbstractAnalysisApiAnnotationsOnTypesTest> {
-                model(it, "annotationsOnTypes")
-            }
-
-            test<AbstractAnalysisApiAnnotationsOnDeclarationsTest> {
-                model(it, "annotationsOnDeclaration")
-            }
-
-            test<AbstractAnalysisApiSpecificAnnotationOnDeclarationTest> {
-                model(it, "specificAnnotations")
-            }
-
-            test<AbstractAnalysisApiAnnotationsOnFilesTest>(
-                filter = analysisSessionModeIs(AnalysisSessionMode.Normal),
-            ) {
-                model(it, "annotationsOnFiles")
-            }
-
-            test<AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest> {
-                model(it, "metaAnnotations")
-            }
-
-        }
-
         group("imports", filter = frontendIs(FrontendKind.Fir)) {
             test<AbstractReferenceImportAliasTest>(
                 filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
@@ -267,6 +242,33 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             test<AbstractAnalysisApiSubstitutorsTest> {
                 model(it, "typeSubstitution")
             }
+        }
+    }
+
+    group(
+        "annotations",
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibrarySource)
+    ) {
+        test<AbstractAnalysisApiAnnotationsOnTypesTest> {
+            model(it, "annotationsOnTypes")
+        }
+
+        test<AbstractAnalysisApiAnnotationsOnDeclarationsTest> {
+            model(it, "annotationsOnDeclaration")
+        }
+
+        test<AbstractAnalysisApiSpecificAnnotationOnDeclarationTest> {
+            model(it, "specificAnnotations")
+        }
+
+        test<AbstractAnalysisApiAnnotationsOnFilesTest>(
+            filter = analysisSessionModeIs(AnalysisSessionMode.Normal),
+        ) {
+            model(it, "annotationsOnFiles")
+        }
+
+        test<AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest> {
+            model(it, "metaAnnotations")
         }
     }
 

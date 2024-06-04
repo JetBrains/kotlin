@@ -1,3 +1,5 @@
+// COMPILATION_ERRORS
+
 // FILE: JavaAnno.java
 
 import java.lang.annotation.Target;

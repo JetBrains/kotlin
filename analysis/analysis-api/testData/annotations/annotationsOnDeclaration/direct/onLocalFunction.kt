@@ -1,3 +1,5 @@
+import kotlin.reflect.KClass
+
 annotation class Anno(val value: KClass<*>)
 
 fun test() {

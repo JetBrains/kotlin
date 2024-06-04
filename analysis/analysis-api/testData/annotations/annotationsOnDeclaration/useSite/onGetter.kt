@@ -1,3 +1,5 @@
+import kotlin.reflect.KClass
+
 annotation class A(val a: Int, val c: KClass<*>)
 
 @get:A(1, Int::class)
