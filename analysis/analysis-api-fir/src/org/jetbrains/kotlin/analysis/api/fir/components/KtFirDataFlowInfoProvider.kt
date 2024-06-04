@@ -61,10 +61,10 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.util.Optional
-import kotlin.collections.ArrayList
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.sign
 
@@ -197,7 +197,7 @@ internal class KaFirDataFlowInfoProvider(override val analysisSession: KaFirSess
 
         val defaultStatementFromFir = firDefaultStatement.psi as? KtExpression ?: return null
 
-        if (!PsiTreeUtil.isAncestor(defaultStatementFromFir, defaultStatement, false)) {
+        if (!PsiTreeUtil.isAncestor(defaultStatementFromFir, defaultStatement.deparenthesize(), false)) {
             // In certain cases, expressions might be different in PSI and FIR sources.
             // E.g., in 'foo.<expr>bar()</expr>', there is no FIR expression that corresponds to the 'bar()' KtCallExpression.
             return null
