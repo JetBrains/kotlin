@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaDelegatedConstructorCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaInapplicableCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
@@ -37,8 +40,6 @@ import org.jetbrains.kotlin.analysis.api.resolution.successfulFunctionCallOrNull
 import org.jetbrains.kotlin.analysis.api.resolution.successfulVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
-import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
@@ -146,39 +147,18 @@ public typealias KtInapplicableCallCandidateInfo = KaInapplicableCallCandidateIn
 public typealias KaCall = KaCall
 public typealias KtCall = KaCall
 
-/**
- * A callable symbol partially applied with receivers and type arguments. Essentially, this is a call that misses some information. For
- * properties, the missing information is the type of access (read, write, or compound access) to this property. For functions, the missing
- * information is the value arguments for the call.
- */
-public class KaPartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCallableSignature<S>>(
-    signature: C,
-    dispatchReceiver: KaReceiverValue?,
-    extensionReceiver: KaReceiverValue?,
-) : KaLifetimeOwner {
-    private val backingSignature: C = signature
-
-    override val token: KaLifetimeToken get() = backingSignature.token
-
-    /**
-     * The function or variable (property) declaration.
-     */
-    public val signature: C get() = withValidityAssertion { backingSignature }
-
-    /**
-     * The dispatch receiver for this symbol access. Dispatch receiver is available if the symbol is declared inside a class or object.
-     */
-    public val dispatchReceiver: KaReceiverValue? by validityAsserted(dispatchReceiver)
-
-    /**
-     * The extension receiver for this symbol access. Extension receiver is available if the symbol is declared with an extension receiver.
-     */
-    public val extensionReceiver: KaReceiverValue? by validityAsserted(extensionReceiver)
-}
-
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaPartiallyAppliedSymbol<S, C> = KaPartiallyAppliedSymbol<S, C>
 public typealias KtPartiallyAppliedSymbol<S, C> = KaPartiallyAppliedSymbol<S, C>
 
-public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaPartiallyAppliedSymbol<S, C>.symbol: S get() = signature.symbol
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaPartiallyAppliedSymbol<S, C>.symbol: S get() = symbol
 
 @Deprecated(
     "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
@@ -200,7 +180,11 @@ public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCa
 public typealias KaFunctionCall<S> = KaFunctionCall<S>
 public typealias KtFunctionCall<S> = KaFunctionCall<S>
 
-public typealias KaPartiallyAppliedFunctionSymbol<S> = KaPartiallyAppliedSymbol<S, KaFunctionLikeSignature<S>>
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaPartiallyAppliedFunctionSymbol<S> = KaPartiallyAppliedFunctionSymbol<S>
 public typealias KtPartiallyAppliedFunctionSymbol<S> = KaPartiallyAppliedFunctionSymbol<S>
 
 @Deprecated(
@@ -231,7 +215,11 @@ public typealias KtDelegatedConstructorCall = KaDelegatedConstructorCall
 public typealias KaVariableAccessCall = KaVariableAccessCall
 public typealias KtVariableAccessCall = KaVariableAccessCall
 
-public typealias KaPartiallyAppliedVariableSymbol<S> = KaPartiallyAppliedSymbol<S, KaVariableLikeSignature<S>>
+@Deprecated(
+    "The API has been moved into `org.jetbrains.kotlin.analysis.api.resolution` package",
+    level = DeprecationLevel.HIDDEN,
+)
+public typealias KaPartiallyAppliedVariableSymbol<S> = KaPartiallyAppliedVariableSymbol<S>
 public typealias KtPartiallyAppliedVariableSymbol<S> = KaPartiallyAppliedVariableSymbol<S>
 
 @Deprecated(

@@ -8,13 +8,9 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import org.jetbrains.kotlin.analysis.api.calls.KaCompoundAccess
 import org.jetbrains.kotlin.analysis.api.calls.KaExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.calls.KaImplicitReceiverValue
-import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedSymbol
-import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedVariableSymbol
 import org.jetbrains.kotlin.analysis.api.calls.KaReceiverValue
 import org.jetbrains.kotlin.analysis.api.calls.KaSimpleVariableAccess
 import org.jetbrains.kotlin.analysis.api.calls.KaSmartCastedReceiverValue
-import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
@@ -39,6 +35,9 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundArrayAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaDelegatedConstructorCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall

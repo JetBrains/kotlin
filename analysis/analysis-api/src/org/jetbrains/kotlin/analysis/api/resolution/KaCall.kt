@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.resolution
 
 import org.jetbrains.kotlin.analysis.api.calls.KaCompoundAccess
-import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedSymbol
-import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedVariableSymbol
 import org.jetbrains.kotlin.analysis.api.calls.KaSimpleVariableAccess
-import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.validityAsserted
