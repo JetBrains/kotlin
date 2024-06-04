@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: ANY
+// IGNORE_BACKEND: WASM
+//   Ignore wasm because KT-68828
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-68798
 
