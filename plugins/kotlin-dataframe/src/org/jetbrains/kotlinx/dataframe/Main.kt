@@ -61,10 +61,6 @@ interface KotlinTypeFacade {
         isNullable = false
     ).wrap()
 
-    fun fff() {
-        session.typeContext
-    }
-
     fun from(type: KType): Marker {
         return Marker(fromImpl(type))
     }
@@ -112,7 +108,6 @@ interface KotlinTypeFacade {
             true -> ConeNullability.NULLABLE
             false -> ConeNullability.NOT_NULL
         }
-//        type.withNullability()
         return Marker(type = type.withNullability(coneNullability, session.typeContext))
     }
 
@@ -167,9 +162,7 @@ class Marker private constructor(internal val type: ConeKotlinType) {
 
         other as Marker
 
-        if (type != other.type) return false
-
-        return true
+        return type == other.type
     }
 
     override fun hashCode(): Int {
@@ -177,11 +170,7 @@ class Marker private constructor(internal val type: ConeKotlinType) {
     }
 }
 
-class LazyMarker(internal val factory: (FirSession) -> ConeKotlinType)
-
 fun ConeKotlinType.wrap(): Marker = Marker(this)
-
-//fun ConeKotlinType
 
 
 

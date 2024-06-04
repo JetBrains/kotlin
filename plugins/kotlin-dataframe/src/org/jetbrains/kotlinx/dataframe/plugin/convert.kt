@@ -24,9 +24,9 @@ internal class Convert0 : AbstractInterpreter<ConvertApproximation>() {
     }
 }
 
-public class Convert2 : AbstractInterpreter<ConvertApproximation>() {
-    public val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    public val Arguments.columns: List<String> by varargString()
+class Convert2 : AbstractInterpreter<ConvertApproximation>() {
+    val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.columns: List<String> by varargString()
 
     override fun Arguments.interpret(): ConvertApproximation {
         return ConvertApproximation(receiver, columns.map { listOf(it) })
@@ -47,9 +47,9 @@ internal class Convert6 : AbstractInterpreter<PluginDataFrameSchema>() {
     }
 }
 
-public class With0 : AbstractSchemaModificationInterpreter() {
-    public val Arguments.receiver: ConvertApproximation by arg()
-    public val Arguments.type: TypeApproximation by type(name("rowConverter"))
+class With0 : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: ConvertApproximation by arg()
+    val Arguments.type: TypeApproximation by type(name("rowConverter"))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return convertImpl(receiver.schema, receiver.columns, type)

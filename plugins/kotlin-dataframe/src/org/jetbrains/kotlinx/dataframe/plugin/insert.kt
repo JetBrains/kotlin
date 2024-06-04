@@ -1,7 +1,5 @@
 package org.jetbrains.kotlinx.dataframe.plugin
 
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.api.Infer
@@ -103,9 +101,8 @@ internal class Under4 : AbstractInterpreter<PluginDataFrameSchema>() {
     }
 }
 
-//@Serializable
-public data class PluginDataFrameSchema(
-    @Contextual private val columns: List<SimpleCol>
+data class PluginDataFrameSchema(
+    private val columns: List<SimpleCol>
 ) : DataFrameLikeContainer<SimpleCol> {
     override fun columns(): List<SimpleCol> {
         return columns
@@ -138,22 +135,20 @@ private fun List<SimpleCol>.asString(indent: String = ""): String {
     }
 }
 
-//@Serializable
-public open class SimpleCol(
-    public val name: String,
-    @SerialName("valuesType") public open val type: TypeApproximation
+open class SimpleCol(
+    val name: String,
+    open val type: TypeApproximation
 ) : Col {
-//    public constructor(name: String, type: TypeApproximation) : this(name, type as TypeApproximation)
 
     override fun name(): String {
         return name
     }
 
-    public open fun rename(s: String): SimpleCol {
+    open fun rename(s: String): SimpleCol {
         return SimpleCol(s, type)
     }
 
-    public open fun changeType(type: TypeApproximation): SimpleCol {
+    open fun changeType(type: TypeApproximation): SimpleCol {
         return SimpleCol(name, type)
     }
 
@@ -179,19 +174,18 @@ public open class SimpleCol(
         return "SimpleCol(name='$name', type=$type)"
     }
 
-    public open fun kind(): SimpleColumnKind {
+    open fun kind(): SimpleColumnKind {
         return SimpleColumnKind.VALUE
     }
 }
 
-public enum class SimpleColumnKind {
+enum class SimpleColumnKind {
     VALUE, GROUP, FRAME
 }
 
-//@Serializable
-public data class SimpleFrameColumn(
+data class SimpleFrameColumn(
     private val name1: String,
-    @Contextual private val columns: List<SimpleCol>,
+    private val columns: List<SimpleCol>,
     // probably shouldn't be called at all?
     // exists only because SimpleCol has it
     // but in fact it's for `materialize` to decide what should be the type of the property / accessors
@@ -210,12 +204,11 @@ public data class SimpleFrameColumn(
     }
 }
 
-//@Serializable
-public class SimpleColumnGroup(
-    private val name1: String,
-    @Contextual private val columns: List<SimpleCol>,
+class SimpleColumnGroup(
+    name: String,
+    private val columns: List<SimpleCol>,
     columnGroupType: TypeApproximation
-) : MyColumnGroup<SimpleCol>, SimpleCol(name1, columnGroupType) {
+) : MyColumnGroup<SimpleCol>, SimpleCol(name, columnGroupType) {
 
     override fun columns(): List<SimpleCol> {
         return columns
