@@ -33,7 +33,7 @@ abstract class IrType : KotlinTypeMarker, TypeRefMarker, IrAnnotationContainer {
 abstract class IrErrorType(
     kotlinType: KotlinType?,
     private val errorClassStubSymbol: IrClassSymbol,
-    val isMarkedNullable: Boolean = false
+    val isMarkedNullable: Boolean = false,
 ) : IrTypeBase(kotlinType), SimpleTypeMarker {
     val symbol: IrClassSymbol
         get() = errorClassStubSymbol
@@ -94,6 +94,31 @@ abstract class IrSimpleType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), S
 
     override val variance: Variance
         get() = Variance.INVARIANT
+
+
+    private var cachedRelatedTypes: IrSimpleType? = null
+
+    internal fun findCachedTypeWithNullability(nullability: SimpleTypeNullability): IrSimpleType? {
+        var next = cachedRelatedTypes
+            ?: return null
+        while (next !== this) {
+            if (next.nullability == nullability)
+                return next
+            next = next.cachedRelatedTypes!!
+        }
+
+        return null
+    }
+
+    internal fun addCachedRelatedType(newRelatedType: IrSimpleType) {
+        if (cachedRelatedTypes == null) {
+            newRelatedType.cachedRelatedTypes = this
+        } else {
+            val next = cachedRelatedTypes
+            newRelatedType.cachedRelatedTypes = next
+        }
+        cachedRelatedTypes = newRelatedType
+    }
 }
 
 /**

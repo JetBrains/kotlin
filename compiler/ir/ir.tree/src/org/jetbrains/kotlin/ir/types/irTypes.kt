@@ -33,19 +33,26 @@ private fun IrType.withNullability(newNullability: Boolean): IrType =
 
 fun IrSimpleType.withNullability(newNullability: Boolean): IrSimpleType {
     val requiredNullability = if (newNullability) SimpleTypeNullability.MARKED_NULLABLE else SimpleTypeNullability.DEFINITELY_NOT_NULL
-    return if (nullability == requiredNullability)
-        this
-    else
-        buildSimpleType {
-            nullability = requiredNullability
-            kotlinType = originalKotlinType?.run {
-                if (newNullability) {
-                    TypeUtils.makeNullable(this)
-                } else {
-                    DefinitelyNotNullType.makeDefinitelyNotNull(this.unwrap()) ?: TypeUtils.makeNotNullable(this)
-                }
+    if (nullability == requiredNullability) {
+        return this
+    }
+
+    findCachedTypeWithNullability(requiredNullability)?.let {
+        return it
+    }
+
+    val new = buildSimpleType {
+        nullability = requiredNullability
+        kotlinType = originalKotlinType?.run {
+            if (newNullability) {
+                TypeUtils.makeNullable(this)
+            } else {
+                DefinitelyNotNullType.makeDefinitelyNotNull(this.unwrap()) ?: TypeUtils.makeNotNullable(this)
             }
         }
+    }
+    addCachedRelatedType(new)
+    return new
 }
 
 fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
