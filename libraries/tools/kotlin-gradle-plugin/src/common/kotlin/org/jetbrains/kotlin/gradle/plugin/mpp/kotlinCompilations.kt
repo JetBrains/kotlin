@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURES_FEATURE_NAME
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KAPT_GENERATE_STUBS_PREFIX
 import org.jetbrains.kotlin.gradle.internal.getKaptTaskName
@@ -22,6 +23,9 @@ internal fun KotlinCompilation<*>.isMain(): Boolean =
 
 internal fun KotlinCompilation<*>.isTest(): Boolean =
     name == KotlinCompilation.TEST_COMPILATION_NAME
+
+internal fun KotlinCompilation<*>.isTestFixtures(): Boolean =
+    name == TEST_FIXTURES_FEATURE_NAME
 
 // FIXME this function dangerously ignores an incorrect type of the task (e.g. if the actual task is a K/N one); consider reporting a failure
 internal fun addSourcesToKotlinCompileTask(
