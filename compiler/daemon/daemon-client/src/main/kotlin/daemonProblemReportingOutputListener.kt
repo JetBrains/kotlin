@@ -11,6 +11,20 @@ internal interface DaemonProblemReportingOutputListener {
     fun retrieveProblems(): List<String>
 }
 
+internal fun CompositeDaemonErrorReportingOutputListener(vararg listeners: DaemonProblemReportingOutputListener) =
+    CompositeErrorReportingOutputListener(listeners.toList())
+
+internal class CompositeErrorReportingOutputListener(private val listeners: List<DaemonProblemReportingOutputListener>) :
+    DaemonProblemReportingOutputListener {
+    override fun onOutputLine(line: String) {
+        listeners.forEach { it.onOutputLine(line) }
+    }
+
+    override fun retrieveProblems(): List<String> {
+        return listeners.flatMap { it.retrieveProblems() }
+    }
+}
+
 /**
  * Holds the last [LIMIT] lines of the daemon process standard output to be able to print them in the case of problems with the daemon.
  */
