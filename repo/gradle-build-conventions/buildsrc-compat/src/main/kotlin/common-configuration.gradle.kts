@@ -1,3 +1,4 @@
+import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -306,7 +307,11 @@ fun skipJvmDefaultAllForModule(path: String): Boolean =
 afterEvaluate {
     val versionString = version.toString()
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        val realFriendPaths = (friendPaths as DefaultConfigurableFileCollection).shallowCopy()
         val friendPathsWithoutVersion = friendPaths.filter { !it.name.contains(versionString) }
         friendPaths.setFrom(friendPathsWithoutVersion)
+        doFirst {
+            friendPaths.setFrom(realFriendPaths)
+        }
     }
 }
