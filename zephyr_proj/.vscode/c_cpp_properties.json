@@ -5,13 +5,11 @@
       "includePath": [
         "${workspaceFolder}/**",
         "${workspaceFolder}/include/**",
-        "/Users/txie/zephyrproject/zephyr/include"
+        "/home/txie/zephyrproject/zephyr/include",
+        "/home/txie/zephyrproject/zephyr/build/zephyr/include/generated"
       ],
       "defines": [],
-      "macFrameworkPath": [
-        "/Applications/Xcode_15.3.0_15E204a_fb.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks"
-      ],
-      "compilerPath": "/usr/bin/clang",
+      "compilerPath": "/home/txie/zephyr-sdk-build/output/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc",
       "cStandard": "c17",
       "cppStandard": "c++17",
       "intelliSenseMode": "macos-clang-arm64"

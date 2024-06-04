@@ -713,6 +713,4 @@
 #define	__guarded_by(x)		__lock_annotate(guarded_by(x))
 #define	__pt_guarded_by(x)	__lock_annotate(pt_guarded_by(x))
 
-#define __GLIBC_USE 0
-
 #endif /* !_SYS_CDEFS_H_ */

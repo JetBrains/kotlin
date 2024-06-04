@@ -17,16 +17,6 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_WRN);
 
 int main(void)
 {
-	try
-	{
-		LOG_WRN("%s", "started");
-		__cxxabiv1::__cxa_guard_acquire(NULL);
-		// libkn_symbols();
-		// throw std::invalid_argument("sample exception");
-		LOG_WRN("%s", "ended");
-	}
-	catch (std::exception &e)
-	{
-		LOG_WRN("exception: %s", e.what());
-	}
+	libkn_symbols()->kotlin.root.example.get_globalString();
+	LOG_WRN("%s", "ended");
 }

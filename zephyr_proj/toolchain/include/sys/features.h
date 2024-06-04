@@ -531,7 +531,6 @@ extern "C" {
 
 #endif /* __CYGWIN__ */
 
-
 /* ZEPHYR */
 #define _POSIX_THREADS				1
 #define _POSIX_TIMEOUTS				1
