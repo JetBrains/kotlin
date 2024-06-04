@@ -321,7 +321,15 @@ fun skipJvmDefaultAllForModule(path: String): Boolean =
 afterEvaluate {
     val versionString = version.toString()
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        val realFriendPaths = project.objects.fileCollection().apply {
+            // shallowCopy is internal and available since Gradle 8.6
+            setBuiltBy(friendPaths.builtBy)
+            setFrom(friendPaths.toList())
+        }
         val friendPathsWithoutVersion = friendPaths.filter { !it.name.contains(versionString) }
         friendPaths.setFrom(friendPathsWithoutVersion)
+        doFirst {
+            friendPaths.setFrom(realFriendPaths)
+        }
     }
 }
