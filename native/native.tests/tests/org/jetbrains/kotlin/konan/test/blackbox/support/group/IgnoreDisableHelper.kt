@@ -9,15 +9,8 @@ import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCScheduler
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCType
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestMode
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ThreadStateChecker
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.get
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -80,30 +73,28 @@ internal fun Settings.isIgnoredWithIGNORE_NATIVE(registeredDirectives: Registere
 
 // Note: this method would treat IGNORE_NATIVE without parameters as an unconditional "test must fail on any config". Same as // IGNORE_BACKEND: NATIVE
 internal fun Settings.isIgnoredTarget(directives: Directives): Boolean {
-    return isIgnoredWithIGNORE_NATIVE(directives) || isIgnoredWithIGNORE_BACKEND { valueDirective ->
-        directives.listValues(valueDirective.name)?.map { backendName ->
-            enumValues<TargetBackend>().first { it.name == backendName }
-        }
-    }
+    return isIgnoredWithIGNORE_NATIVE(directives) || isIgnoredWithIGNORE_BACKEND(directives::get)
 }
 
 // Note: this method would ignore IGNORE_NATIVE without parameters, since it would be not a StringDirective, but new SimpleDirective
 internal fun Settings.isIgnoredTarget(registeredDirectives: RegisteredDirectives): Boolean {
-    return isIgnoredWithIGNORE_NATIVE(registeredDirectives) || isIgnoredWithIGNORE_BACKEND { registeredDirectives.get(it) }
+    return isIgnoredWithIGNORE_NATIVE(registeredDirectives) || isIgnoredWithIGNORE_BACKEND(registeredDirectives::get)
 }
 
-// Mimics `InTextDirectivesUtils.isIgnoredTarget(NATIVE, file)` but does not require file contents, but only already parsed directives.
-private fun Settings.isIgnoredWithIGNORE_BACKEND(listValues: (ValueDirective<TargetBackend>) -> List<TargetBackend>?): Boolean {
-    val containsNativeOrAny: (List<TargetBackend>) -> Boolean = { TargetBackend.NATIVE in it || TargetBackend.ANY in it }
+internal val List<TargetBackend>.containsNativeOrAny: Boolean
+    get() = TargetBackend.NATIVE in this || TargetBackend.ANY in this
 
-    if (listValues(CodegenTestDirectives.IGNORE_BACKEND)?.let(containsNativeOrAny) == true)
+// Mimics `InTextDirectivesUtils.isIgnoredTarget(NATIVE, file)` but does not require file contents, but only already parsed directives.
+private fun Settings.isIgnoredWithIGNORE_BACKEND(listValues: (ValueDirective<TargetBackend>) -> List<TargetBackend>): Boolean {
+
+    if (listValues(CodegenTestDirectives.IGNORE_BACKEND).containsNativeOrAny)
         return true
     when (get<PipelineType>()) {
         PipelineType.K1 ->
-            if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K1)?.let(containsNativeOrAny) == true)
+            if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K1).containsNativeOrAny)
                 return true
         PipelineType.K2 ->
-            if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K2)?.let(containsNativeOrAny) == true)
+            if (listValues(CodegenTestDirectives.IGNORE_BACKEND_K2).containsNativeOrAny)
                 return true
         else -> {}
     }

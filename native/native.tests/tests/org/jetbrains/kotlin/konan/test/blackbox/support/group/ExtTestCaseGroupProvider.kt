@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.InTextDirectivesUtils.*
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -150,7 +150,7 @@ private class ExtTestDataFile(
                 testDataBaseDir = testRoots.baseDir,
                 testDataFile = testDataFile
             ),
-            assertionsMode = AssertionsMode.fromString(structure.directives[ASSERTIONS_MODE.name])
+            assertionsMode = structure.directives.singleOrZeroValue(ASSERTIONS_MODE) ?: AssertionsMode.DEFAULT,
         )
     }
 
@@ -170,7 +170,7 @@ private class ExtTestDataFile(
 
     private fun assembleFreeCompilerArgs(): TestCompilerArgs {
         val args = mutableListOf<String>()
-        structure.directives.listValues(FREE_COMPILER_ARGS.name)?.let { args.addAll(it)}
+        args += structure.directives[FREE_COMPILER_ARGS]
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isLocal()`
@@ -201,13 +201,13 @@ private class ExtTestDataFile(
      */
     private fun determineIfStandaloneTest(): Boolean = with(structure) {
         if (directives.contains(NATIVE_STANDALONE_DIRECTIVE)) return true
-        if (directives.contains(FILECHECK_STAGE.name)) return true
-        if (directives.contains(ASSERTIONS_MODE.name)) return true
+        if (directives.contains(FILECHECK_STAGE)) return true
+        if (directives.contains(ASSERTIONS_MODE)) return true
         if (isExpectedFailure) return true
         // To make the debug of possible failed testruns easier, it makes sense to run dodgy tests alone
-        if (directives.contains(IGNORE_NATIVE.name) ||
-            directives.contains(IGNORE_NATIVE_K1.name) ||
-            directives.contains(IGNORE_NATIVE_K2.name)
+        if (directives.contains(IGNORE_NATIVE) ||
+            directives.contains(IGNORE_NATIVE_K1) ||
+            directives.contains(IGNORE_NATIVE_K2)
         ) return true
 
         /**
