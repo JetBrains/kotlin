@@ -230,7 +230,11 @@ public class UUID internal constructor(
          * @sample samples.uuid.UUIDs.fromLongs
          */
         public fun fromLongs(mostSignificantBits: Long, leastSignificantBits: Long): UUID =
-            UUID(mostSignificantBits, leastSignificantBits)
+            if (mostSignificantBits == 0L && leastSignificantBits == 0L) {
+                NIL
+            } else {
+                UUID(mostSignificantBits, leastSignificantBits)
+            }
 
         /**
          * Creates a UUID from specified 128 bits split into two 64-bit ULongs.
@@ -245,7 +249,7 @@ public class UUID internal constructor(
          * @sample samples.uuid.UUIDs.fromULongs
          */
         public fun fromULongs(mostSignificantBits: ULong, leastSignificantBits: ULong): UUID =
-            UUID(mostSignificantBits.toLong(), leastSignificantBits.toLong())
+            fromLongs(mostSignificantBits.toLong(), leastSignificantBits.toLong())
 
         /**
          * Creates a UUID from a byte array containing 128 bits split into 16 bytes.
@@ -264,7 +268,7 @@ public class UUID internal constructor(
         public fun fromByteArray(byteArray: ByteArray): UUID {
             require(byteArray.size == SIZE_BYTES) { "Expected exactly $SIZE_BYTES bytes" }
 
-            return UUID(byteArray.toLong(startIndex = 0), byteArray.toLong(startIndex = 8))
+            return fromLongs(byteArray.toLong(startIndex = 0), byteArray.toLong(startIndex = 8))
         }
 
         /**
@@ -303,7 +307,7 @@ public class UUID internal constructor(
 
             val msb = (part1 shl 32) or (part2 shl 16) or part3
             val lsb = (part4 shl 48) or part5
-            return UUID(msb, lsb)
+            return fromLongs(msb, lsb)
         }
 
         /**
@@ -327,7 +331,7 @@ public class UUID internal constructor(
 
             val msb = hexString.hexToLong(startIndex = 0, endIndex = 16)
             val lsb = hexString.hexToLong(startIndex = 16, endIndex = 32)
-            return UUID(msb, lsb)
+            return fromLongs(msb, lsb)
         }
 
         /**

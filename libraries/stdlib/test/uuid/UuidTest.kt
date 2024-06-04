@@ -38,9 +38,9 @@ class UuidTest {
             uuidString,
             UUID.fromLongs(mostSignificantBits.toLong(), leastSignificantBits.toLong()).toString()
         )
-        assertEquals(
-            uuidStringNil,
-            UUID.fromLongs(0, 0).toString()
+        assertSame(
+            UUID.NIL,
+            UUID.fromLongs(0, 0)
         )
         assertEquals(
             uuidStringMax,
@@ -54,9 +54,9 @@ class UuidTest {
             uuidString,
             UUID.fromULongs(mostSignificantBits, leastSignificantBits).toString()
         )
-        assertEquals(
-            uuidStringNil,
-            UUID.fromULongs(0uL, 0uL).toString()
+        assertSame(
+            UUID.NIL,
+            UUID.fromULongs(0uL, 0uL)
         )
         assertEquals(
             uuidStringMax,
@@ -70,9 +70,9 @@ class UuidTest {
             uuidString,
             UUID.fromByteArray(uuidByteArray).toString()
         )
-        assertEquals(
-            uuidStringNil,
-            UUID.fromByteArray(ByteArray(16)).toString()
+        assertSame(
+            UUID.NIL,
+            UUID.fromByteArray(ByteArray(16))
         )
         assertEquals(
             uuidStringMax,
@@ -93,7 +93,7 @@ class UuidTest {
     fun parse() {
         // lower case
         assertEquals(uuidString, UUID.parse(uuidString).toString())
-        assertEquals(uuidStringNil, UUID.parse(uuidStringNil).toString())
+        assertSame(UUID.NIL, UUID.parse(uuidStringNil))
         assertEquals(uuidStringMax, UUID.parse(uuidStringMax).toString())
 
         // upper case
@@ -130,7 +130,7 @@ class UuidTest {
     fun parseHex() {
         // lower case
         assertEquals(uuidString, UUID.parseHex(uuidHexString).toString())
-        assertEquals(uuidStringNil, UUID.parseHex(uuidHexStringNil).toString())
+        assertSame(UUID.NIL, UUID.parseHex(uuidHexStringNil))
         assertEquals(uuidStringMax, UUID.parseHex(uuidHexStringMax).toString())
 
         // upper case
