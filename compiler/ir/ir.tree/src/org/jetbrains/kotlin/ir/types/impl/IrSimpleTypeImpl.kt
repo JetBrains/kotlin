@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.compactIfPossible
 
-abstract class IrAbstractSimpleType(kotlinType: KotlinType?) : IrSimpleType(kotlinType) {
+abstract class IrAbstractSimpleType : IrSimpleType() {
     abstract override val classifier: IrClassifierSymbol
     abstract override val nullability: SimpleTypeNullability
     abstract override val arguments: List<IrTypeArgument>
@@ -35,7 +35,7 @@ abstract class IrAbstractSimpleType(kotlinType: KotlinType?) : IrSimpleType(kotl
                 arguments.hashCode()
 }
 
-abstract class IrDelegatedSimpleType(kotlinType: KotlinType? = null) : IrAbstractSimpleType(kotlinType) {
+abstract class IrDelegatedSimpleType : IrAbstractSimpleType() {
 
     protected abstract val delegate: IrSimpleType
 
@@ -52,13 +52,13 @@ abstract class IrDelegatedSimpleType(kotlinType: KotlinType? = null) : IrAbstrac
 }
 
 class IrSimpleTypeImpl(
-    kotlinType: KotlinType?,
+    override val originalKotlinType: KotlinType?,
     override val classifier: IrClassifierSymbol,
     nullability: SimpleTypeNullability,
     override val arguments: List<IrTypeArgument>,
     override val annotations: List<IrConstructorCall>,
     override val abbreviation: IrTypeAbbreviation? = null
-) : IrAbstractSimpleType(kotlinType) {
+) : IrAbstractSimpleType() {
 
     override val nullability =
         if (classifier !is IrTypeParameterSymbol && nullability == SimpleTypeNullability.NOT_SPECIFIED)
@@ -169,7 +169,7 @@ class IrTypeProjectionImpl internal constructor(
 fun makeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
     when {
         type is IrCapturedType -> IrTypeProjectionImpl(type, variance)
-        type is IrTypeProjection && type.variance == variance -> type
+        type.variance == variance -> type
         type is IrSimpleType -> type.toBuilder().buildTypeProjection(variance)
         type is IrDynamicType -> IrDynamicTypeImpl(null, type.annotations, variance)
         type is IrErrorType -> IrErrorTypeImpl(null, type.annotations, variance)

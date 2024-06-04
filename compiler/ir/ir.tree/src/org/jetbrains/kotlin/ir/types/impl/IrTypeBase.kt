@@ -16,33 +16,26 @@ import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.CapturedTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 
-abstract class IrTypeBase(val kotlinType: KotlinType?) : IrType(), IrTypeProjection {
-    override val type: IrType get() = this
-}
-
 class IrErrorTypeImpl(
-    kotlinType: KotlinType?,
+    override val originalKotlinType: KotlinType?,
     override val annotations: List<IrConstructorCall>,
     override val variance: Variance,
     isMarkedNullable: Boolean = false
-) : IrErrorType(kotlinType, IrErrorClassImpl.symbol, isMarkedNullable) {
+) : IrErrorType(IrErrorClassImpl.symbol, isMarkedNullable) {
     override fun equals(other: Any?): Boolean = other is IrErrorTypeImpl
 
     override fun hashCode(): Int = IrErrorTypeImpl::class.java.hashCode()
 }
 
 class IrDynamicTypeImpl(
-    kotlinType: KotlinType?,
+    override val originalKotlinType: KotlinType?,
     override val annotations: List<IrConstructorCall>,
     override val variance: Variance,
-) : IrDynamicType(kotlinType) {
+) : IrDynamicType() {
     override fun equals(other: Any?): Boolean = other is IrDynamicTypeImpl
 
     override fun hashCode(): Int = IrDynamicTypeImpl::class.java.hashCode()
 }
-
-val IrType.originalKotlinType: KotlinType?
-    get() = (this as? IrTypeBase)?.kotlinType
 
 data object IrStarProjectionImpl : IrStarProjection
 
@@ -55,7 +48,7 @@ class IrCapturedType(
     override val nullability: SimpleTypeNullability,
     override val annotations: List<IrConstructorCall>,
     override val abbreviation: IrTypeAbbreviation?,
-) : IrSimpleType(null), CapturedTypeMarker {
+) : IrSimpleType(), CapturedTypeMarker {
     class Constructor(val argument: IrTypeArgument, val typeParameter: IrTypeParameter) : CapturedTypeConstructorMarker {
         var superTypes: List<IrType> = emptyList()
             private set
