@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.calls.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe

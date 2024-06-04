@@ -5,25 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.calls.KaAnnotationCall
-import org.jetbrains.kotlin.analysis.api.calls.KaCall
-import org.jetbrains.kotlin.analysis.api.calls.KaCallableMemberCall
 import org.jetbrains.kotlin.analysis.api.calls.KaCompoundAccess
-import org.jetbrains.kotlin.analysis.api.calls.KaCompoundArrayAccessCall
-import org.jetbrains.kotlin.analysis.api.calls.KaCompoundVariableAccessCall
-import org.jetbrains.kotlin.analysis.api.calls.KaDelegatedConstructorCall
 import org.jetbrains.kotlin.analysis.api.calls.KaExplicitReceiverValue
-import org.jetbrains.kotlin.analysis.api.calls.KaFunctionCall
 import org.jetbrains.kotlin.analysis.api.calls.KaImplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedSymbol
 import org.jetbrains.kotlin.analysis.api.calls.KaPartiallyAppliedVariableSymbol
 import org.jetbrains.kotlin.analysis.api.calls.KaReceiverValue
-import org.jetbrains.kotlin.analysis.api.calls.KaSimpleFunctionCall
 import org.jetbrains.kotlin.analysis.api.calls.KaSimpleVariableAccess
-import org.jetbrains.kotlin.analysis.api.calls.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.calls.KaSmartCastedReceiverValue
-import org.jetbrains.kotlin.analysis.api.calls.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
@@ -42,6 +32,17 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getRe
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAbstractResolver
 import org.jetbrains.kotlin.analysis.api.resolution.*
+import org.jetbrains.kotlin.analysis.api.resolution.KaAnnotationCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundArrayAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaDelegatedConstructorCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableLikeSignature

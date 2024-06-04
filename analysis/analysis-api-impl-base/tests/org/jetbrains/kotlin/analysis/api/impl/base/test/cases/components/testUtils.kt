@@ -8,10 +8,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.calls.KaCall
-import org.jetbrains.kotlin.analysis.api.calls.KaCallableMemberCall
-import org.jetbrains.kotlin.analysis.api.calls.KaCompoundArrayAccessCall
-import org.jetbrains.kotlin.analysis.api.calls.KaCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.calls.symbol
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.KaChainedSubstitutor
@@ -19,11 +15,16 @@ import org.jetbrains.kotlin.analysis.api.impl.base.KaMapBackedSubstitutor
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaRendererKeywordFilter
 import org.jetbrains.kotlin.analysis.api.resolution.KaApplicableCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundArrayAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaInapplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.calls
+import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
