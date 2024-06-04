@@ -48,7 +48,12 @@ data class CompileServiceSession(val compileService: CompileService, val session
 object KotlinCompilerClient {
 
     private const val DAEMON_DEFAULT_STARTUP_TIMEOUT_MS = 10000L
-    private const val DAEMON_CONNECT_CYCLE_ATTEMPTS = 3
+
+    /**
+     * Defines the number of attempts to find a daemon and connect to it.
+     * Effectively, it also controls the number of daemon startup attempts as [DAEMON_CONNECT_CYCLE_ATTEMPTS] minus 1.
+     */
+    private const val DAEMON_CONNECT_CYCLE_ATTEMPTS = 4
 
     val verboseReporting = CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.value != null
 
@@ -105,6 +110,7 @@ object KotlinCompilerClient {
     ): CompileServiceSession? {
         val ignoredDaemonSessionFiles = mutableSetOf<File>()
         var daemonStartupAttemptsCount = 0
+        val gcAutoConfiguration = GcAutoConfiguration()
         return connectLoop(reportingTargets, autostart) { isLastAttempt ->
 
             fun CompileService.tryToLeaseSession(): CompileServiceSession? {
@@ -151,7 +157,7 @@ object KotlinCompilerClient {
                 is DaemonSearchResult.NotFound -> {
                     if (!isLastAttempt && autostart) {
                         reportingTargets.report(DaemonReportCategory.DEBUG, "trying to start a new compiler daemon")
-                        if (startDaemon(compilerId, result.requiredJvmOptions, daemonOptions, reportingTargets, daemonStartupAttemptsCount++)) {
+                        if (startDaemon(compilerId, result.requiredJvmOptions, daemonOptions, reportingTargets, daemonStartupAttemptsCount++, gcAutoConfiguration)) {
                             reportingTargets.report(DaemonReportCategory.DEBUG, "new compiler daemon started, trying to find it")
                         }
                     }
@@ -461,6 +467,7 @@ object KotlinCompilerClient {
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets,
         startupAttempt: Int,
+        gcAutoConfiguration: GcAutoConfiguration,
     ): Boolean {
         val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
         val serverHostname = CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.value
@@ -476,10 +483,13 @@ object KotlinCompilerClient {
                 listOf("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
             else emptyList()
         val jvmArguments = daemonJVMOptions.mappers.flatMap { it.toArgs("-") }
+        if (jvmArguments.any { it == "-XX:-Use${gcAutoConfiguration.preferredGc}GC" || (it.startsWith("-XX:+Use") && it.endsWith("GC")) }) {
+            // enable the preferred gc only if it's not explicitly disabled and no other GC is selected
+            gcAutoConfiguration.shouldAutoConfigureGc = false
+        }
         val additionalOptimizationOptions = listOfNotNull(
             "-XX:+UseCodeCacheFlushing",
-            // enable parallel gc only if it's not explicitly disabled and no other GC is selected
-            "-XX:+UseParallelGC".takeIf { jvmArguments.none { it == "-XX:-UseParallelGC" || (it.startsWith("-XX:+Use") && it.endsWith("GC")) } },
+            if (gcAutoConfiguration.shouldAutoConfigureGc) "-XX:+Use${gcAutoConfiguration.preferredGc}GC" else null,
         )
         val args = listOf(
             javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)
@@ -494,12 +504,23 @@ object KotlinCompilerClient {
         reportingTargets.report(DaemonReportCategory.INFO, "starting the daemon as: " + args.joinToString(" "))
         val processBuilder = ProcessBuilder(args)
         processBuilder.redirectErrorStream(true)
+        CompilerSystemProperties.COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS.value?.let {
+            runCatching {
+                reportingTargets.report(
+                    DaemonReportCategory.EXCEPTION,
+                    "${CompilerSystemProperties.COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS.property} should be used only for testing!"
+                )
+                for ((key, value) in it.split(";").map { it.split("=") }) {
+                    processBuilder.environment()[key] = value
+                }
+            }
+        }
         val workingDir = File(daemonOptions.runFilesPath).apply { mkdirs() }
         processBuilder.directory(workingDir)
         // assuming daemon process is deaf and (mostly) silent, so do not handle streams
         val daemon = launchProcessWithFallback(processBuilder, reportingTargets, "daemon client")
 
-        return checkDaemonStartedProperly(daemon, reportingTargets, daemonOptions, startupAttempt)
+        return checkDaemonStartedProperly(daemon, reportingTargets, daemonOptions, startupAttempt, gcAutoConfiguration)
     }
 
     /**
@@ -513,11 +534,15 @@ object KotlinCompilerClient {
         reportingTargets: DaemonReportingTargets,
         daemonOptions: DaemonOptions,
         startupAttempt: Int,
+        gcAutoConfiguration: GcAutoConfiguration,
     ): Boolean {
         val isEchoRead = Semaphore(1)
         isEchoRead.acquire()
 
-        val lastDaemonCliOutputs = DaemonLastOutputLinesListener()
+        val outputListener = CompositeDaemonErrorReportingOutputListener(
+            DaemonLastOutputLinesListener(),
+            DaemonGcAutoConfigurationProblemsListener(gcAutoConfiguration, startupAttempt)
+        )
 
         var daemonIsAlmostDead = AtomicBoolean(false)
         val stdoutThread =
@@ -527,7 +552,7 @@ object KotlinCompilerClient {
                         .reader()
                         .forEachLine {
                             if (Thread.currentThread().isInterrupted) return@forEachLine
-                            lastDaemonCliOutputs.onOutputLine(it)
+                            outputListener.onOutputLine(it)
                             if (it == COMPILE_DAEMON_IS_READY_MESSAGE) {
                                 reportingTargets.report(
                                     DaemonReportCategory.DEBUG,
@@ -580,7 +605,7 @@ object KotlinCompilerClient {
                         }
                         reportingTargets.report(
                             DaemonReportCategory.EXCEPTION,
-                            "The daemon has terminated unexpectedly on startup attempt #${startupAttempt + 1} with error code: ${exitCode}. ${lastDaemonCliOutputs.retrieveProblems().joinToString("\n")}"
+                            "The daemon has terminated unexpectedly on startup attempt #${startupAttempt + 1} with error code: $exitCode. ${outputListener.retrieveProblems().joinToString("\n")}"
                         )
                         false
                     }
