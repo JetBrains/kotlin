@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,16 +9,16 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-class LastDaemonCliOutputsTest {
+class DaemonLastOutputLinesListenerTest {
     @Test
     @DisplayName("adding lines and getting output as a single string")
     fun fewLines() {
-        val daemonOutputs = LastDaemonCliOutputs()
-        daemonOutputs.add("Line 1")
-        daemonOutputs.add("Line 2")
-        daemonOutputs.add("Line 3")
+        val daemonOutputs = DaemonLastOutputLinesListener()
+        daemonOutputs.onOutputLine("Line 1")
+        daemonOutputs.onOutputLine("Line 2")
+        daemonOutputs.onOutputLine("Line 3")
 
-        val output = daemonOutputs.getAsSingleString()
+        val output = daemonOutputs.retrieveProblems().single()
 
         assertEquals(
             """
@@ -33,9 +33,9 @@ class LastDaemonCliOutputsTest {
     @Test
     @DisplayName("getting output when no lines are added")
     fun noLines() {
-        val daemonOutputs = LastDaemonCliOutputs()
+        val daemonOutputs = DaemonLastOutputLinesListener()
 
-        val output = daemonOutputs.getAsSingleString()
+        val output = daemonOutputs.retrieveProblems().single()
 
         assertEquals("    The daemon process produced no output", output)
     }
@@ -43,10 +43,10 @@ class LastDaemonCliOutputsTest {
     @Test
     @DisplayName("getting output with ellipsis for more lines")
     fun withEllipsis() {
-        val daemonOutputs = LastDaemonCliOutputs()
-        repeat(15) { daemonOutputs.add("Line $it") }
+        val daemonOutputs = DaemonLastOutputLinesListener()
+        repeat(15) { daemonOutputs.onOutputLine("Line $it") }
 
-        val output = daemonOutputs.getAsSingleString()
+        val output = daemonOutputs.retrieveProblems().single()
 
         assertEquals(
             """
