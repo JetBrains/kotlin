@@ -5,12 +5,19 @@
 
 package kotlin.uuid
 
-private fun jsRandomUUID(): String =
-    js("crypto.randomUUID()")
+import org.khronos.webgl.Int8Array
+import org.khronos.webgl.get
+
+@Suppress("ClassName")
+private external object crypto {
+    fun getRandomValues(bytes: Int8Array)
+}
 
 @ExperimentalStdlibApi
 internal actual fun secureRandomUuid(): UUID {
-    val uuidString = jsRandomUUID()
-    return UUID.parse(uuidString)
+    val jsRandomBytes = Int8Array(UUID.SIZE_BYTES)
+    crypto.getRandomValues(jsRandomBytes)
+    // Copy the JS-provided Int8Array into Kotlin ByteArray
+    val randomBytes = ByteArray(UUID.SIZE_BYTES) { jsRandomBytes[it] }
+    return uuidFromRandomBytes(randomBytes)
 }
-
