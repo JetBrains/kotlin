@@ -155,14 +155,14 @@ class IrDeclarationDeserializer(
             deserializeAnnotations(proto.annotationList)
         )
 
-    private val SIMPLE_DYNAMIC_TYPE = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+    private val SIMPLE_DYNAMIC_TYPE = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
 
     private fun deserializeDynamicType(proto: ProtoDynamicType): IrDynamicType {
         return if (proto.annotationCount == 0) {
             SIMPLE_DYNAMIC_TYPE
         } else {
             val annotations = deserializeAnnotations(proto.annotationList)
-            IrDynamicTypeImpl(null, annotations, Variance.INVARIANT)
+            IrDynamicTypeImpl(annotations, Variance.INVARIANT)
         }
     }
 

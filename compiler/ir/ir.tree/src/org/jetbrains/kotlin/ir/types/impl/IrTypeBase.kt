@@ -27,8 +27,7 @@ class IrErrorTypeImpl(
     override fun hashCode(): Int = IrErrorTypeImpl::class.java.hashCode()
 }
 
-class IrDynamicTypeImpl(
-    override val originalKotlinType: KotlinType?,
+open class IrDynamicTypeImpl(
     override val annotations: List<IrConstructorCall>,
     override val variance: Variance,
 ) : IrDynamicType() {
@@ -36,6 +35,12 @@ class IrDynamicTypeImpl(
 
     override fun hashCode(): Int = IrDynamicTypeImpl::class.java.hashCode()
 }
+
+class IrDynamicTypeWithOriginalKotlinTypeImpl(
+    override val originalKotlinType: KotlinType,
+    annotations: List<IrConstructorCall>,
+    variance: Variance,
+) : IrDynamicTypeImpl(annotations, variance)
 
 data object IrStarProjectionImpl : IrStarProjection
 

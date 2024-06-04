@@ -185,7 +185,7 @@ class Fir2IrTypeConverter(
             }
             is ConeDynamicType -> {
                 val typeAnnotations = with(annotationGenerator) { annotations.toIrAnnotations() }
-                return IrDynamicTypeImpl(null, typeAnnotations, Variance.INVARIANT)
+                return IrDynamicTypeImpl(typeAnnotations, Variance.INVARIANT)
             }
             is ConeFlexibleType -> with(session.typeContext) {
                 if (upperBound is ConeClassLikeType) {

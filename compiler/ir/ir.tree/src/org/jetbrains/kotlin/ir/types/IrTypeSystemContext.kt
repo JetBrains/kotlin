@@ -332,7 +332,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {
         require(lowerBound.isNothing())
         require(upperBound is IrType && upperBound.isNullableAny())
-        return IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+        return IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
     }
 
     override fun createSimpleType(

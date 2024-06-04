@@ -101,7 +101,7 @@ abstract class TypeTranslator(
                     isMarkedNullable = approximatedType.isMarkedNullable,
                 )
             approximatedType.isDynamic() ->
-                return IrDynamicTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
+                return IrDynamicTypeWithOriginalKotlinTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
             supportDefinitelyNotNullTypes && approximatedType is DefinitelyNotNullType ->
                 return makeTypeProjection(translateType(approximatedType.original).makeNotNull(), variance)
         }

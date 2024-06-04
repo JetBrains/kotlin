@@ -161,7 +161,7 @@ class JsIrBackendContext(
     private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)
     private val internalCollectionPackage = module.getPackage(COLLECTION_PACKAGE_FQNAME)
 
-    val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+    val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
     val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, this)
 
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
