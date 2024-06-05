@@ -169,7 +169,8 @@ open class FunctionInlining(
             callee: IrFunction,
             originalInlinedElement: IrElement,
             performRecursiveInline: Boolean
-        ): IrReturnableBlock {
+        ): IrReturnableBlock = context.irFactory.stageController.restrictTo(callee) {
+            // FIXME handle signatures correctly
             val copiedCallee = callee.copy().apply {
                 parent = callee.parent
                 if (performRecursiveInline) {
@@ -209,7 +210,7 @@ open class FunctionInlining(
 
             // Note: here we wrap `IrInlinedFunctionBlock` inside `IrReturnableBlock` because such way it is easier to
             // control special composite blocks that are inside `IrInlinedFunctionBlock`
-            return IrReturnableBlockImpl(
+            IrReturnableBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
                 type = callSite.type,
