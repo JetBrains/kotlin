@@ -17,7 +17,7 @@ FILE fqName:foo fileName:/box.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       CALL 'public final fun <set-temp> (<set-?>: other.PublicSuper?): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
-        <set-?>: WHEN type=other.PrivateSuper origin=IF
+        <set-?>: WHEN type=other.PublicSuper? origin=IF
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CONST String type=kotlin.String value="true"
@@ -27,7 +27,7 @@ FILE fqName:foo fileName:/box.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONSTRUCTOR_CALL 'public constructor <init> () declared in other.BClass' type=other.BClass origin=null
       CALL 'public final fun <set-temp> (<set-?>: other.PublicSuper?): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
-        <set-?>: WHEN type=other.PrivateSuper origin=WHEN
+        <set-?>: WHEN type=other.PublicSuper? origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: CONST String type=kotlin.String value="true"
