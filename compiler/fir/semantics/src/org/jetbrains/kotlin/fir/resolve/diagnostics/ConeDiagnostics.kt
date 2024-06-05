@@ -111,12 +111,6 @@ open class ConeVisibilityError(
     override val reason: String get() = "HIDDEN: ${describeSymbol(symbol)} is invisible"
 }
 
-open class ConeSetterVisibilityError(
-    override val symbol: FirPropertySymbol
-) : ConeDiagnosticWithSymbol<FirBasedSymbol<*>> {
-    override val reason: String get() = "HIDDEN SETTER: ${describeSymbol(symbol)} is invisible"
-}
-
 class ConeTypeVisibilityError(
     symbol: FirBasedSymbol<*>,
     val smallestUnresolvablePrefix: List<FirQualifierPart>,

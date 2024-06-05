@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
-import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.*

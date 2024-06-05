@@ -456,6 +456,8 @@ class FirTypeIntersectionScopeContext(
             }
         createCopy(newSymbol, keyFir, deferredReturnTypeCalculation, newReturnType).apply {
             originalForIntersectionOverrideAttr = keyFir
+            getter?.originalForIntersectionOverrideAttr = keyFir.getter
+            setter?.originalForIntersectionOverrideAttr = keyFir.setter
         }
         return newSymbol
     }
