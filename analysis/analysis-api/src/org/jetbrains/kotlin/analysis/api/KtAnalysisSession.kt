@@ -54,7 +54,10 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
  */
 @OptIn(KaAnalysisApiInternals::class, KaAnalysisNonPublicApi::class)
 @Suppress("AnalysisApiMissingLifetimeCheck")
-public abstract class KaSession(final override val token: KaLifetimeToken) : KaLifetimeOwner,
+public abstract class KaSession(
+    final override val token: KaLifetimeToken,
+    analysisScopeProvider: KaAnalysisScopeProvider
+) : KaLifetimeOwner,
     KaSmartCastProviderMixIn,
     KaResolverMixIn,
     KaSamResolverMixIn,
@@ -84,7 +87,7 @@ public abstract class KaSession(final override val token: KaLifetimeToken) : KaL
     KaOriginalPsiProviderMixIn,
     KaInheritorsProviderMixIn,
     KaTypeCreatorMixIn,
-    KaAnalysisScopeProviderMixIn,
+    KaAnalysisScopeProvider by analysisScopeProvider,
     KaSignatureSubstitutorMixIn,
     KaScopeSubstitutionMixIn,
     KaSymbolProviderByJavaPsiMixIn,
@@ -179,9 +182,6 @@ public abstract class KaSession(final override val token: KaLifetimeToken) : KaL
 
     internal val symbolInfoProvider: KaSymbolInfoProvider get() = symbolInfoProviderImpl
     protected abstract val symbolInfoProviderImpl: KaSymbolInfoProvider
-
-    internal val analysisScopeProvider: KaAnalysisScopeProvider get() = analysisScopeProviderImpl
-    protected abstract val analysisScopeProviderImpl: KaAnalysisScopeProvider
 
     internal val referenceResolveProvider: KaReferenceResolveProvider get() = referenceResolveProviderImpl
     protected abstract val referenceResolveProviderImpl: KaReferenceResolveProvider

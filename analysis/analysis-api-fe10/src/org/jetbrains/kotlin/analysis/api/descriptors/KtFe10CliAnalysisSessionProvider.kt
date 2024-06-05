@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.descriptors
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
@@ -19,14 +23,21 @@ internal class KaFe10SessionProvider(project: Project) : KaBaseSessionProvider(p
         val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
         val context = facade.getAnalysisContext(useSiteKtElement, token)
         val useSiteModule = ProjectStructureProvider.getModule(project, useSiteKtElement, contextualModule = null)
-        return KaFe10Session(context, useSiteModule, token)
+        return createSession(context, useSiteModule, token)
     }
 
     override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KaSession {
         val facade = Fe10AnalysisFacade.getInstance(project)
         val token = tokenFactory.create(project, project.createProjectWideOutOfBlockModificationTracker())
         val context = facade.getAnalysisContext(useSiteKtModule, token)
-        return KaFe10Session(context, useSiteKtModule, token)
+        return createSession(context, useSiteKtModule, token)
+    }
+
+    private fun createSession(context: Fe10AnalysisContext, useSiteModule: KtModule, token: KaLifetimeToken): KaSession {
+        return createSession {
+            val resolutionScope = KaGlobalSearchScope(shadowedScope = GlobalSearchScope.EMPTY_SCOPE, useSiteModule)
+            KaFe10Session(context, useSiteModule, token, analysisSessionProvider, resolutionScope)
+        }
     }
 
     override fun clearCaches() {}

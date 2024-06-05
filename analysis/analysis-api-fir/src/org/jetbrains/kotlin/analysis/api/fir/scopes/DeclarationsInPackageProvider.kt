@@ -48,7 +48,7 @@ internal object DeclarationsInPackageProvider {
                 analysisSession.targetPlatform.isJvm() -> {
                     val psiPackage = PsiPackageImpl(PsiManager.getInstance(analysisSession.project), packageFqName.asString())
                     forEachNonKotlinPsiElementFinder(analysisSession.project) { finder ->
-                        finder.getClassNames(psiPackage, analysisSession.useSiteAnalysisScope)
+                        finder.getClassNames(psiPackage, analysisSession.analysisScope)
                             .mapNotNullTo(this, Name::identifier)
                     }
                 }

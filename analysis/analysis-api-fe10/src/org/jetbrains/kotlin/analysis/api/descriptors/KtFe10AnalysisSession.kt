@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors
 
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererProviderImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProviderByJavaPsi
@@ -25,8 +25,12 @@ class KaFe10Session(
     val analysisContext: Fe10AnalysisContext,
     override val useSiteModule: KtModule,
     token: KaLifetimeToken,
-) : KaSession(token) {
-
+    analysisSessionProvider: () -> KaSession,
+    resolutionScope: KaGlobalSearchScope
+) : KaSession(
+    token,
+    analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope)
+) {
     override val smartCastProviderImpl: KaSmartCastProvider = KaFe10SmartCastProvider(this)
     override val diagnosticProviderImpl: KaDiagnosticProvider = KaFe10DiagnosticProvider(this)
     override val scopeProviderImpl: KaScopeProvider = KaFe10ScopeProvider(this)
@@ -55,8 +59,6 @@ class KaFe10Session(
     override val importOptimizerImpl: KaImportOptimizer = KaFe10ImportOptimizer(this)
     override val jvmTypeMapperImpl: KaJvmTypeMapper = KaFe10JvmTypeMapper(this)
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFe10SymbolInfoProvider(this)
-    override val analysisScopeProviderImpl: KaAnalysisScopeProvider =
-        KaAnalysisScopeProviderImpl(this, token, shadowedScope = GlobalSearchScope.EMPTY_SCOPE)
     override val referenceResolveProviderImpl: KaReferenceResolveProvider = KaFe10ReferenceResolveProvider(this)
     override val signatureSubstitutorImpl: KaSignatureSubstitutor = KaFe10SignatureSubstitutor(this)
     override val scopeSubstitutionImpl: KaScopeSubstitution = KaFe10ScopeSubstitution(this)
