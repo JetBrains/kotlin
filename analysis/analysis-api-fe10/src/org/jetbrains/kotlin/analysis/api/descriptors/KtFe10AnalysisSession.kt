@@ -29,6 +29,7 @@ class KaFe10Session(
     resolutionScope: KaGlobalSearchScope
 ) : KaSession(
     token,
+    originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope)
 ) {
     override val smartCastProviderImpl: KaSmartCastProvider = KaFe10SmartCastProvider(this)
@@ -52,7 +53,6 @@ class KaFe10Session(
     override val visibilityCheckerImpl: KaVisibilityChecker = KaFe10VisibilityChecker(this)
     override val overrideInfoProviderImpl: KaOverrideInfoProvider = KaFe10OverrideInfoProvider(this)
     override val multiplatformInfoProviderImpl: KaMultiplatformInfoProvider = KaFe10MultiplatformInfoProvider(this)
-    override val originalPsiProviderImpl: KaOriginalPsiProvider = KaFe10OriginalPsiProvider(this)
     override val inheritorsProviderImpl: KaInheritorsProvider = KaFe10InheritorsProvider(this)
     override val typesCreatorImpl: KaTypeCreator = KaFe10TypeCreator(this)
     override val samResolverImpl: KaSamResolver = KaFe10SamResolver(this)

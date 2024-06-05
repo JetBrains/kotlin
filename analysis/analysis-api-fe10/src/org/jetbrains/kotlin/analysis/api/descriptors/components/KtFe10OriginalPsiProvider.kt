@@ -5,20 +5,31 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaOriginalPsiProvider
-import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
-import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class KaFe10OriginalPsiProvider(
-    override val analysisSession: KaFe10Session
-) : KaOriginalPsiProvider(), KaFe10SessionComponent {
-    override fun getOriginalDeclaration(declaration: KtDeclaration): KtDeclaration? = null
+    override val analysisSessionProvider: () -> KaSession,
+    override val token: KaLifetimeToken
+) : KaSessionComponent<KaSession>(), KaOriginalPsiProvider {
+    override fun KtFile.recordOriginalKtFile(file: KtFile) = withValidityAssertion {
+        // Do nothing
+    }
 
-    override fun getOriginalKtFile(file: KtFile): KtFile? = null
+    override fun KtDeclaration.recordOriginalDeclaration(declaration: KtDeclaration) = withValidityAssertion {
+        // Do nothing
+    }
 
-    override fun recordOriginalDeclaration(fakeDeclaration: KtDeclaration, originalDeclaration: KtDeclaration) {}
+    override fun KtFile.getOriginalKtFile(): KtFile? = withValidityAssertion {
+        return null
+    }
 
-    override fun recordOriginalKtFile(fakeFile: KtFile, originalFile: KtFile) {}
+    override fun KtDeclaration.getOriginalDeclaration(): KtDeclaration? = withValidityAssertion {
+        return null
+    }
 }

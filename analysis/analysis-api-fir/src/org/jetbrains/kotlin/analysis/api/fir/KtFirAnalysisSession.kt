@@ -56,6 +56,7 @@ private constructor(
     useSiteScope: KaGlobalSearchScope
 ) : KaSession(
     token,
+    originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, useSiteScope)
 ) {
     internal val firSymbolBuilder: KaSymbolByFirBuilder = KaSymbolByFirBuilder(project, this, token)
@@ -112,8 +113,6 @@ private constructor(
     override val inheritorsProviderImpl: KaInheritorsProvider = KaFirInheritorsProvider(this, token)
 
     override val multiplatformInfoProviderImpl: KaMultiplatformInfoProvider = KaFirMultiplatformInfoProvider(this, token)
-
-    override val originalPsiProviderImpl: KaOriginalPsiProvider = KaFirOriginalPsiProvider(this, token)
 
     override val symbolInfoProviderImpl: KaSymbolInfoProvider = KaFirSymbolInfoProvider(this, token)
 

@@ -7,25 +7,31 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaOriginalPsiProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class KaFirOriginalPsiProvider(
-    override val analysisSession: KaFirSession,
+    override val analysisSessionProvider: () -> KaFirSession,
     override val token: KaLifetimeToken,
-) : KaOriginalPsiProvider(), KaFirSessionComponent {
-    override fun getOriginalDeclaration(declaration: KtDeclaration): KtDeclaration? = declaration.originalDeclaration
-
-    override fun getOriginalKtFile(file: KtFile): KtFile? = file.originalKtFile
-
-    override fun recordOriginalDeclaration(fakeDeclaration: KtDeclaration, originalDeclaration: KtDeclaration) {
-        fakeDeclaration.originalDeclaration = originalDeclaration
+) : KaSessionComponent<KaFirSession>(), KaOriginalPsiProvider, KaFirSessionComponent {
+    override fun KtFile.recordOriginalKtFile(file: KtFile) = withValidityAssertion {
+        originalKtFile = file
     }
 
-    override fun recordOriginalKtFile(fakeFile: KtFile, originalFile: KtFile) {
-        fakeFile.originalKtFile = originalFile
+    override fun KtDeclaration.recordOriginalDeclaration(declaration: KtDeclaration) = withValidityAssertion {
+        originalDeclaration = declaration
+    }
+
+    override fun KtFile.getOriginalKtFile(): KtFile? = withValidityAssertion {
+        return originalKtFile
+    }
+
+    override fun KtDeclaration.getOriginalDeclaration(): KtDeclaration? = withValidityAssertion {
+        return originalDeclaration
     }
 }
