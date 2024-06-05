@@ -40,6 +40,7 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
+    testImplementation(projectTests(":generators:analysis-api-generator"))
     testApi(project(":compiler:plugin-api"))
     testImplementation(projectTests(":compiler:tests-common-new"))
 
@@ -87,6 +88,8 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
     useJUnitPlatform()
 }
+
+val generateTests by generator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt")
 
 standardPublicJars()
 testsJar()
