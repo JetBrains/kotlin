@@ -117,7 +117,7 @@ internal class DokkaPsiParser(
              */
             fun Array<PsiClassType>.getSuperTypesPsiClasses(): List<Pair<PsiClass, JavaClassKindTypes>> {
                 forEach { type ->
-                    (type as? PsiClassType)?.resolve()?.let {
+                    type.resolve()?.let {
                         val definedAt = DRI.from(it)
                         it.methods.forEach { method ->
                             val hash = method.hash
@@ -588,7 +588,7 @@ internal class DokkaPsiParser(
         type.isExtends -> Covariance(getBound(type.extendsBound))
         type.isSuper -> Contravariance(getBound(type.superBound))
         // If the type isn't explicitly bounded, it still has an implicit `extends Object` bound
-        type.extendsBound != PsiType.NULL -> Covariance(getBound(type.extendsBound))
+        type.extendsBound != PsiTypes.nullType() -> Covariance(getBound(type.extendsBound))
         else -> throw IllegalStateException("${type.presentableText} has incorrect bounds")
     }
 
@@ -782,12 +782,12 @@ internal class DokkaPsiParser(
     }
 
     private fun PsiLiteralExpression.toValue(): AnnotationParameterValue? = when (type) {
-        PsiType.INT -> (value as? Int)?.let { IntValue(it) }
-        PsiType.LONG -> (value as? Long)?.let { LongValue(it) }
-        PsiType.FLOAT -> (value as? Float)?.let { FloatValue(it) }
-        PsiType.DOUBLE -> (value as? Double)?.let { DoubleValue(it) }
-        PsiType.BOOLEAN -> (value as? Boolean)?.let { BooleanValue(it) }
-        PsiType.NULL -> NullValue
+        PsiTypes.intType() -> (value as? Int)?.let { IntValue(it) }
+        PsiTypes.longType() -> (value as? Long)?.let { LongValue(it) }
+        PsiTypes.floatType() -> (value as? Float)?.let { FloatValue(it) }
+        PsiTypes.doubleType() -> (value as? Double)?.let { DoubleValue(it) }
+        PsiTypes.booleanType() -> (value as? Boolean)?.let { BooleanValue(it) }
+        PsiTypes.nullType() -> NullValue
         else -> StringValue(text ?: "")
     }
 
