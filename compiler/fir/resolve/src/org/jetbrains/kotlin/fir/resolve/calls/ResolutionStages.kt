@@ -413,7 +413,7 @@ object CheckDslScopeViolation : ResolutionStage() {
                 // ```
 
                 // Collect the annotation on the function type, or `@A` in the example above.
-                collectDslMarkerAnnotations(context, it.attributes.customAnnotations)
+                collectDslMarkerAnnotations(context, it.customAnnotations)
 
                 // Collect the annotation on the extension receiver, or `@B` in the example above.
                 if (CompilerConeAttributes.ExtensionFunctionType in it.attributes) {
@@ -435,7 +435,7 @@ object CheckDslScopeViolation : ResolutionStage() {
     }
 
     private fun MutableSet<ClassId>.collectDslMarkerAnnotations(context: ResolutionContext, type: ConeKotlinType) {
-        collectDslMarkerAnnotations(context, type.attributes.customAnnotations)
+        collectDslMarkerAnnotations(context, type.customAnnotations)
         when (type) {
             is ConeFlexibleType -> {
                 collectDslMarkerAnnotations(context, type.lowerBound)

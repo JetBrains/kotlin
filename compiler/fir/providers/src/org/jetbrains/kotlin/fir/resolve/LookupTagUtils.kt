@@ -99,7 +99,7 @@ fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParamet
     val name = parameter.name
     if (name == null || name == SpecialNames.NO_NAME_PROVIDED || name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return this
     // Existing @ParameterName annotation takes precedence
-    if (attributes.customAnnotations.getAnnotationsByClassId(StandardNames.FqNames.parameterNameClassId, session).isNotEmpty()) return this
+    if (customAnnotations.getAnnotationsByClassId(StandardNames.FqNames.parameterNameClassId, session).isNotEmpty()) return this
 
     val fakeSource = parameter.source?.fakeElement(KtFakeSourceElementKind.ParameterNameAnnotationCall)
     val parameterNameAnnotationCall = buildAnnotation {

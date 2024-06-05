@@ -512,7 +512,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         if (compilerAttribute != null) {
             return compilerAttribute in attributes
         }
-        val customAnnotations = attributes.customAnnotations
         return customAnnotations.any {
             it.resolvedType.fullyExpandedType(session).classId?.asSingleFqName() == fqName
         }
@@ -521,7 +520,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? {
         require(this is ConeKotlinType)
         // We don't check for compiler attributes because all of them doesn't have parameters
-        val customAnnotations = attributes.customAnnotations
         val annotationCall = customAnnotations.firstOrNull {
             it.resolvedType.fullyExpandedType(session).classId?.asSingleFqName() == fqName
         } ?: return null

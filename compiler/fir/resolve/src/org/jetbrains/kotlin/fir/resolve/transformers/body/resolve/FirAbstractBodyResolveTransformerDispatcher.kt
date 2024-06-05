@@ -96,7 +96,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         }
 
         resolvedTypeRef.coneType.forEachType {
-            it.type.attributes.customAnnotations.forEach { typeArgumentAnnotation ->
+            it.type.customAnnotations.forEach { typeArgumentAnnotation ->
                 typeArgumentAnnotation.accept(this, data)
             }
         }

@@ -950,7 +950,7 @@ private class EnhancementSignatureParts(
     override fun FirAnnotation.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean = this is FirJavaExternalAnnotation
 
     override val KotlinTypeMarker.annotations: Iterable<FirAnnotation>
-        get() = (this as ConeKotlinType).attributes.customAnnotations
+        get() = (this as ConeKotlinType).customAnnotations
 
     override val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
         get() = ((this as? ConeLookupTagBasedType)?.lookupTag as? ConeClassLikeLookupTag)?.classId?.asSingleFqName()?.toUnsafe()

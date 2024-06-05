@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.resolveAnnotationsWithArguments
 import org.jetbrains.kotlin.fir.symbols.resolveAnnotationsWithClassIds
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.custom
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.name.ClassId
 
@@ -84,8 +83,7 @@ internal class KaFirAnnotationListForType private constructor(
 }
 
 private fun ConeKotlinType.customAnnotationsWithLazyResolve(phase: FirResolvePhase): List<FirAnnotation> {
-    val custom = attributes.custom ?: return emptyList()
-    val annotations = custom.annotations.ifEmpty { return emptyList() }
+    val annotations = customAnnotations.ifEmpty { return emptyList() }
 
     for (annotation in annotations) {
         val containerSymbol = (annotation as? FirAnnotationCall)?.containingDeclarationSymbol ?: continue
