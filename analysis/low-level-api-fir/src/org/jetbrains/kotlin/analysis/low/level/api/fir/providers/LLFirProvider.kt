@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState

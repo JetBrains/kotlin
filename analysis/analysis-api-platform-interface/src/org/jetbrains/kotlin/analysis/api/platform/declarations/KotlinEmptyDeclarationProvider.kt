@@ -3,16 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.impl.declarationProviders
+package org.jetbrains.kotlin.analysis.api.platform.declarations
 
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-public object EmptyKotlinDeclarationProvider : KotlinDeclarationProvider() {
+public object KotlinEmptyDeclarationProvider : KotlinDeclarationProvider() {
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? = null
     override fun getAllClassesByClassId(classId: ClassId): List<KtClassOrObject> = emptyList()
     override fun getAllTypeAliasesByClassId(classId: ClassId): List<KtTypeAlias> = emptyList()

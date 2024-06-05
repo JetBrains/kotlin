@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionFi
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNavigationTargetsProvider
 import org.jetbrains.kotlin.analysis.api.permissions.forbidAnalysis
-import org.jetbrains.kotlin.analysis.api.platform.impl.declarationProviders.FileBasedKotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleStructureInternals
 import org.jetbrains.kotlin.analysis.project.structure.analysisExtensionFileContextModule
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
@@ -156,7 +156,7 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     private val ktModule: KtModule,
 ) : KotlinDeclarationProvider() {
 
-    private val extensionFileToDeclarationProvider: ConcurrentHashMap<KaResolveExtensionFile, FileBasedKotlinDeclarationProvider> =
+    private val extensionFileToDeclarationProvider: ConcurrentHashMap<KaResolveExtensionFile, KotlinFileBasedDeclarationProvider> =
         ConcurrentHashMap()
 
     fun getTopLevelCallables(): Sequence<KtCallableDeclaration> = sequence {
@@ -266,13 +266,13 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     private inline fun getDeclarationProvidersByPackage(
         packageFqName: FqName,
         crossinline filter: (KaResolveExtensionFile) -> Boolean
-    ): Sequence<FileBasedKotlinDeclarationProvider> = forbidAnalysis {
+    ): Sequence<KotlinFileBasedDeclarationProvider> = forbidAnalysis {
         return extensionProvider.getFilesByPackage(packageFqName)
             .filter { filter(it) }
             .map { createDeclarationProviderByFile(it) }
     }
 
-    private fun createDeclarationProviderByFile(file: KaResolveExtensionFile): FileBasedKotlinDeclarationProvider = forbidAnalysis {
+    private fun createDeclarationProviderByFile(file: KaResolveExtensionFile): KotlinFileBasedDeclarationProvider = forbidAnalysis {
         return extensionFileToDeclarationProvider.getOrPut(file) {
             val factory = KtPsiFactory(
                 ktModule.project,
@@ -285,7 +285,7 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
                 file.buildFileText(),
                 file.createNavigationTargetsProvider(),
             )
-            FileBasedKotlinDeclarationProvider(ktFile)
+            KotlinFileBasedDeclarationProvider(ktFile)
         }
     }
 

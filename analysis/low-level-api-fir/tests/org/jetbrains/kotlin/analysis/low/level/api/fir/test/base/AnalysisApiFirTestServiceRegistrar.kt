@@ -10,7 +10,7 @@ import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.NoOpKtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
-import org.jetbrains.kotlin.analysis.api.platform.ForeignValueProviderService
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinForeignValueProviderService
 import org.jetbrains.kotlin.analysis.api.platform.PackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.TestForeignValueProviderService
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -26,7 +26,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
         application.apply {
-            registerService(ForeignValueProviderService::class.java, TestForeignValueProviderService())
+            registerService(KotlinForeignValueProviderService::class.java, TestForeignValueProviderService())
         }
     }
 }

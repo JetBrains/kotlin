@@ -3,9 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.impl.declarationProviders
+package org.jetbrains.kotlin.analysis.api.platform.declarations
 
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
-public class FileBasedKotlinDeclarationProvider(public val kotlinFile: KtFile) : KotlinDeclarationProvider() {
+public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) : KotlinDeclarationProvider() {
     private val topLevelDeclarations: Sequence<KtDeclaration>
         get() {
             return sequence {

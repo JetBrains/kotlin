@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirR
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProvider
-import org.jetbrains.kotlin.analysis.api.platform.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.createPackageProvider
-import org.jetbrains.kotlin.analysis.api.platform.impl.declarationProviders.CompositeKotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.impl.packageProviders.CompositeKotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.moduleData
@@ -169,7 +169,7 @@ private constructor(
         analysisScopeProviderImpl = KaAnalysisScopeProviderImpl(this, token, shadowedScope)
         useSiteAnalysisScope = analysisScopeProviderImpl.getAnalysisScope()
 
-        useSiteScopeDeclarationProvider = CompositeKotlinDeclarationProvider.create(
+        useSiteScopeDeclarationProvider = KotlinCompositeDeclarationProvider.create(
             buildList {
                 add(project.createDeclarationProvider(useSiteAnalysisScope, useSiteModule))
                 extensionTools.mapTo(this) { it.declarationProvider }

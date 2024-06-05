@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCach
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProviderFactory
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDirectInheritorsProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals

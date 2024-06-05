@@ -11,7 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDirectInheritorsProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider

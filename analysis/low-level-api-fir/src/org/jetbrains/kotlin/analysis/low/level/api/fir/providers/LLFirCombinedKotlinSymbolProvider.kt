@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProvider
-import org.jetbrains.kotlin.analysis.api.platform.mergeDeclarationProviders
+import org.jetbrains.kotlin.analysis.api.platform.declarations.mergeDeclarationProviders
 import org.jetbrains.kotlin.analysis.api.platform.mergePackageProviders
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession

@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProviderFactory
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProviderMerger
-import org.jetbrains.kotlin.analysis.api.platform.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.impl.declarationProviders.CompositeKotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderMerger
+import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.impl.mergeSpecificProviders
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -488,7 +488,7 @@ class KotlinFakeClsStubsCache {
 
 class KotlinStandaloneDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMerger() {
     override fun merge(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
-        providers.mergeSpecificProviders<_, KotlinStandaloneDeclarationProvider>(CompositeKotlinDeclarationProvider.factory) { targetProviders ->
+        providers.mergeSpecificProviders<_, KotlinStandaloneDeclarationProvider>(KotlinCompositeDeclarationProvider.factory) { targetProviders ->
             val combinedScope = GlobalSearchScope.union(targetProviders.map { it.scope })
             project.createDeclarationProvider(combinedScope, contextualModule = null).apply {
                 check(this is KotlinStandaloneDeclarationProvider) {

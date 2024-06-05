@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandle
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.api.platform.KotlinResolutionScopeProvider
-import org.jetbrains.kotlin.analysis.api.platform.createAnnotationResolver
+import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
 import org.jetbrains.kotlin.fir.FirExceptionHandler
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration

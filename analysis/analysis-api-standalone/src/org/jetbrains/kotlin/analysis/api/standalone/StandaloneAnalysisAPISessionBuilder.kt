@@ -13,9 +13,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.platform.KotlinAnnotationsResolverFactory
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProviderFactory
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProviderMerger
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolverFactory
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModificationService
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProviderFactory

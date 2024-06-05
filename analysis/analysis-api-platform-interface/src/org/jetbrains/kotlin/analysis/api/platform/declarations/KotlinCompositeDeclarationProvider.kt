@@ -3,10 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.impl.declarationProviders
+package org.jetbrains.kotlin.analysis.api.platform.declarations
 
 import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProvider
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.impl.KotlinCompositeProviderFactory
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.flatMapToNullableSet
 
-public class CompositeKotlinDeclarationProvider private constructor(
+public class KotlinCompositeDeclarationProvider private constructor(
     override val providers: List<KotlinDeclarationProvider>
 ) : KotlinDeclarationProvider(), KotlinCompositeProvider<KotlinDeclarationProvider> {
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
@@ -86,8 +85,8 @@ public class CompositeKotlinDeclarationProvider private constructor(
 
     public companion object {
         public val factory: KotlinCompositeProviderFactory<KotlinDeclarationProvider> = KotlinCompositeProviderFactory(
-            EmptyKotlinDeclarationProvider,
-            ::CompositeKotlinDeclarationProvider,
+            KotlinEmptyDeclarationProvider,
+            ::KotlinCompositeDeclarationProvider,
         )
 
         public fun create(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider = factory.create(providers)

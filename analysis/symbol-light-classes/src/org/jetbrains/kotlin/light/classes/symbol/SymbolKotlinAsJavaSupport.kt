@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDec
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.api.platform.modification.createAllLibrariesModificationTracker
-import org.jetbrains.kotlin.analysis.api.platform.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.createPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupportBase
