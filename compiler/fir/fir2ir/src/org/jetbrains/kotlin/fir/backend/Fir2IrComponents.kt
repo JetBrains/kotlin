@@ -76,4 +76,6 @@ interface Fir2IrComponents {
      * the first scenario above. We set [filesBeingCompiled] as `null` if we do not use the CodeGen analysis API.
      */
     val filesBeingCompiled: Set<FirFile>?
+
+    val createsIrBuiltins: Boolean
 }
