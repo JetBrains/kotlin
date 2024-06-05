@@ -26,15 +26,11 @@ import org.jetbrains.kotlin.fir.declarations.CallToPotentiallyHiddenSymbolResult
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.originalOrSelf
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.processAllFunctions
-import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.scopes.retrieveDirectOverriddenOf
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -48,6 +44,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 abstract class FirAbstractOverrideChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     private fun ConeKotlinType.substituteAllTypeParameters(
@@ -412,6 +409,18 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         }
 
         if (overriddenMemberSymbols.isEmpty()) {
+            if (member is FirPropertySymbol) {
+                val syntheticScope = member.dispatchReceiverType?.let {
+                    FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(context.session, it, firTypeScope)
+                }
+                val potentialProperties = syntheticScope?.getProperties(member.name)
+                val syntheticProperty = potentialProperties?.firstIsInstanceOrNull<FirSyntheticPropertySymbol>()
+                if (syntheticProperty != null) {
+                    val accessors = listOfNotNull(syntheticProperty.getterSymbol, syntheticProperty.setterSymbol)
+                    reporter.reportNothingToOverrideAccessors(member, accessors, context)
+                    return
+                }
+            }
             reporter.reportNothingToOverride(member, context)
             return
         }
@@ -497,6 +506,14 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
 
     private fun DiagnosticReporter.reportNothingToOverride(declaration: FirCallableSymbol<*>, context: CheckerContext) {
         reportOn(declaration.source, FirErrors.NOTHING_TO_OVERRIDE, declaration, context)
+    }
+
+    private fun DiagnosticReporter.reportNothingToOverrideAccessors(
+        declaration: FirCallableSymbol<*>,
+        accessors: List<FirCallableSymbol<*>>,
+        context: CheckerContext
+    ) {
+        reportOn(declaration.source, FirErrors.NOTHING_TO_OVERRIDE_ACCESSORS, declaration, accessors, context)
     }
 
     private fun DiagnosticReporter.reportOverridingFinalMember(

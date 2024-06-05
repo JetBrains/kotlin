@@ -1970,6 +1970,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val declaration: KaCallableSymbol
     }
 
+    interface NothingToOverrideAccessors : KaFirDiagnostic<KtModifierListOwner> {
+        override val diagnosticClass get() = NothingToOverrideAccessors::class
+        val declaration: KaCallableSymbol
+        val accessors: List<KaCallableSymbol>
+    }
+
     interface CannotOverrideInvisibleMember : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = CannotOverrideInvisibleMember::class
         val overridingMember: KaCallableSymbol

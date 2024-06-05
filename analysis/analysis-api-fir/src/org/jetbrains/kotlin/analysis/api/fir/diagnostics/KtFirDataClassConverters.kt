@@ -2783,6 +2783,16 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NOTHING_TO_OVERRIDE_ACCESSORS) { firDiagnostic ->
+        NothingToOverrideAccessorsImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firDiagnostic.b.map { firCallableSymbol ->
+                firSymbolBuilder.callableBuilder.buildCallableSymbol(firCallableSymbol)
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CANNOT_OVERRIDE_INVISIBLE_MEMBER) { firDiagnostic ->
         CannotOverrideInvisibleMemberImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),

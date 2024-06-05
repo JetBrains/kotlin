@@ -458,6 +458,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_TAIL_RECURSIV
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_VARARG_SPREAD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOTHING_TO_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOTHING_TO_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOTHING_TO_OVERRIDE_ACCESSORS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_AN_ANNOTATION_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_FUNCTION_LABEL
@@ -1690,6 +1691,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         // Overrides
         map.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing.", DECLARATION_NAME)
+        map.put(NOTHING_TO_OVERRIDE_ACCESSORS, "''{0}'' overrides nothing. You must override accessors directly:{1}", DECLARATION_NAME, SYMBOLS_ON_NEXT_LINES)
 
         map.put(
             CANNOT_OVERRIDE_INVISIBLE_MEMBER,

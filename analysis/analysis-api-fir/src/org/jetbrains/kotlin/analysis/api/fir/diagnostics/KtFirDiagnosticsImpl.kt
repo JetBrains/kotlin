@@ -2368,6 +2368,13 @@ internal class NothingToOverrideImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KaFirDiagnostic.NothingToOverride
 
+internal class NothingToOverrideAccessorsImpl(
+    override val declaration: KaCallableSymbol,
+    override val accessors: List<KaCallableSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KaFirDiagnostic.NothingToOverrideAccessors
+
 internal class CannotOverrideInvisibleMemberImpl(
     override val overridingMember: KaCallableSymbol,
     override val baseMember: KaCallableSymbol,

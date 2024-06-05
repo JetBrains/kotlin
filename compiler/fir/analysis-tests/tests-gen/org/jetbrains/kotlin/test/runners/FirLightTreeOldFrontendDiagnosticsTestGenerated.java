@@ -23695,6 +23695,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       @TestDataPath("$PROJECT_ROOT")
       public class Properties {
         @Test
+        @TestMetadata("accessors.kt")
+        public void testAccessors() {
+          runTest("compiler/testData/diagnostics/tests/j+k/properties/accessors.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInProperties() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/properties"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
         }
