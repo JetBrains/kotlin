@@ -1539,6 +1539,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
       runTest("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
     }
 
+    @TestMetadata("lambdaWithParameterName.kt")
+    public void testLambdaWithParameterName() {
+      runTest("compiler/testData/ir/irText/expressions/lambdaWithParameterName.kt");
+    }
+
     @TestMetadata("literals.kt")
     public void testLiterals() {
       runTest("compiler/testData/ir/irText/expressions/literals.kt");

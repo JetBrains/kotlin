@@ -1,0 +1,52 @@
+val x1: @ParameterName(name = "something") String
+  field = foo<String, @ParameterName(name = "something") String>(t = "", block = local fun <anonymous>(x: @ParameterName(name = "something") String): @ParameterName(name = "something") String {
+    return x
+  }
+)
+  get
+
+val x2: @ParameterName(name = "something") String
+  field = foo<String, @ParameterName(name = "something") String>(t = "", block = local fun <anonymous>(it: @ParameterName(name = "something") String): @ParameterName(name = "something") String {
+    return it
+  }
+)
+  get
+
+val expectedType1: Function1<@ParameterName(name = "s") String, Int>
+  field = local fun <anonymous>(it: @ParameterName(name = "s") String): Int {
+    return it.<get-length>()
+  }
+
+  get
+
+val expectedType2: Function1<@ParameterName(name = "s") String, Int>
+  field = local fun <anonymous>(x: @ParameterName(name = "s") String): Int {
+    return x.<get-length>()
+  }
+
+  get
+
+fun bar(): @ParameterName(name = "something") String {
+  return foo<String, @ParameterName(name = "something") String>(t = "", block = local fun <anonymous>(x: @ParameterName(name = "something") String): @ParameterName(name = "something") String {
+    return x
+  }
+)
+}
+
+fun <T : Any?, R : Any?> foo(t: T, block: Function1<@ParameterName(name = "something") T, R>): R {
+  return TODO()
+}
+
+fun myMain() {
+  val y: @ParameterName(name = "something") String = foo<String, @ParameterName(name = "something") String>(t = "", block = local fun <anonymous>(x: @ParameterName(name = "something") String): @ParameterName(name = "something") String {
+    return x
+  }
+)
+  local fun baz(): @ParameterName(name = "something") String {
+    return foo<String, @ParameterName(name = "something") String>(t = "", block = local fun <anonymous>(x: @ParameterName(name = "something") String): @ParameterName(name = "something") String {
+      return x
+    }
+)
+  }
+
+}
