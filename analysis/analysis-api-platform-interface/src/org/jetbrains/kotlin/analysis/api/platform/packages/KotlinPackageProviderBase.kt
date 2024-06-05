@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.packages
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.platform.impl.forEachNonKotlinPsiElementFinder
+import org.jetbrains.kotlin.analysis.api.platform.utils.forEachNonKotlinPsiElementFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform

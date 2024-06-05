@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.scopes
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.file.PsiPackageImpl
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.platform.impl.forEachNonKotlinPsiElementFinder
+import org.jetbrains.kotlin.analysis.api.platform.utils.forEachNonKotlinPsiElementFinder
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators

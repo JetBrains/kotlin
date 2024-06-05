@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.impl
 
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProvider
 import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProvider
-import org.jetbrains.kotlin.analysis.api.platform.impl.util.mergeOnly
+import org.jetbrains.kotlin.analysis.api.platform.utils.mergeOnly
 
 /**
  * [KotlinCompositeProviderFactory] is used by various [KotlinCompositeProvider]s to share code related to provider creation and flattening.
