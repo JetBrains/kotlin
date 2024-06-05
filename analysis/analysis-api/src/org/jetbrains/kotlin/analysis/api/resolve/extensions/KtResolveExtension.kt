@@ -47,12 +47,12 @@ public abstract class KaResolveExtension : Disposable {
      *
      * If the content of these files becomes invalid (e.g., because the source declarations they were based on changed), the
      * [KaResolveExtension] must publish an out-of-block modification event via the Analysis API message bus:
-     * [org.jetbrains.kotlin.analysis.api.platform.topics.KotlinTopics.MODULE_OUT_OF_BLOCK_MODIFICATION].
+     * `KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION`.
      *
-     * To react to changes in Kotlin sources, [KaResolveExtension] may subscribe to Analysis API topics:
-     * [org.jetbrains.kotlin.analysis.api.platform.topics.KotlinTopics]. If the [KaResolveExtension] both subscribes to and
-     * publishes modification events, care needs to be taken that no cycles are introduced. In general, the [KaResolveExtension] should
-     * never publish an event for a module A in a listener for the same module A.
+     * To react to changes in Kotlin sources, [KaResolveExtension] may subscribe to Analysis API modification topics:
+     * `KotlinModificationTopics`. If the [KaResolveExtension] both subscribes to and publishes modification events, care needs to be taken
+     * that no cycles are introduced. In general, the [KaResolveExtension] should never publish an event for a module A in a listener for
+     * the same module A.
      *
      * An out-of-block modification event for the [KaResolveExtension]'s associated module does not need to be published in response to an
      * out-of-block modification event for the same module, because the original event suffices for invalidation.

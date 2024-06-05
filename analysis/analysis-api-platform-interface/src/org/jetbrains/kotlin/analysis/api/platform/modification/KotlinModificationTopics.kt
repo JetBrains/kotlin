@@ -9,8 +9,8 @@ import com.intellij.util.messages.Topic
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 
 /**
- * [Topic]s for Analysis API event subscription and publication. These topics should be subscribed to and published to via the Analysis API
- * message bus: [analysisMessageBus].
+ * [Topic]s for Analysis API modification event subscription and publication. These topics should be subscribed to and published to via the
+ * Analysis API message bus: [analysisMessageBus].
  *
  * See the individual listener interfaces for documentation about the events described by these topics:
  *
@@ -31,20 +31,23 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  *
  * #### Timing Guarantees
  *
+ * All modification events are guaranteed to be published in the write action in which the modification happens. Beyond that, the exact
+ * timing is not strictly defined for most modification events.
+ *
  * Most modification events may be published before or after a modification, so subscribers should not assume that the modification has or
  * hasn't happened yet. The reason for this design decision is that some of the underlying events (such as PSI tree changes) may be
- * published before and after a change, or even both. Modification events published before the modification should however be published
- * close to the modification.
+ * published before or after a change, or even both. Modification events published before the modification should however be published close
+ * to the modification.
  *
  * Only [module state modification events][KotlinModuleStateModificationListener] guarantee that the event is published before the module is
  * affected. This allows subscribers to access the module's properties and dependencies to invalidate or update caches.
  *
  * #### Implementation Notes
  *
- * Analysis API implementations need to take care of publishing to these topics via the [analysisMessageBus]. In general, if your tool works
- * with static code and static module structure, you do not need to publish any events. However, keep in mind the contracts of the various
- * topics. For example, if your tool can guarantee a static module structure but source code can still change, module state modification
- * events do not need to be published, but out-of-block modification events do.
+ * Analysis API platforms need to take care of publishing modification topics via the [analysisMessageBus]. In general, if your platform
+ * works with static code and static module structure, you do not need to publish any events. However, keep in mind the contracts of the
+ * various modification events. For example, if your platform can guarantee a static module structure but source code can still change,
+ * module state modification events do not need to be published, but out-of-block modification events do.
  */
 public object KotlinModificationTopics {
     public val MODULE_STATE_MODIFICATION: Topic<KotlinModuleStateModificationListener> =
@@ -67,8 +70,8 @@ public object KotlinModificationTopics {
 }
 
 /**
- * [KotlinModificationEventKind] represents the kinds of modification events in [KotlinModificationTopics]. While it is not required to publish or
- * subscribe to modification events, it can be useful when abstracting over modification events in general, for example in tests.
+ * [KotlinModificationEventKind] represents the kinds of modification events in [KotlinModificationTopics]. While it is not required to
+ * publish or subscribe to modification events, it can be useful when abstracting over modification events in general, for example in tests.
  */
 public enum class KotlinModificationEventKind {
     MODULE_STATE_MODIFICATION,
