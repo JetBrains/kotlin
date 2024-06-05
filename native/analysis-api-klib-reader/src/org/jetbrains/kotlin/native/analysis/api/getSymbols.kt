@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.native.analysis.api
 
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
@@ -82,8 +83,9 @@ public fun KlibPropertyAddress.getPropertySymbols(): Sequence<KtPropertySymbol> 
 }
 
 context(KtAnalysisSession)
+@OptIn(KaAnalysisNonPublicApi::class)
 private operator fun KlibDeclarationAddress.contains(symbol: KtDeclarationSymbol): Boolean {
-    val symbolKlibSourceFileName = symbol.getKlibSourceFileName()
+    val symbolKlibSourceFileName = symbol.klibSourceFileName
     val symbolLibraryModule = symbol.getContainingModule() as? KtLibraryModule ?: return false
 
     /* check if symbol comes from the same klib library: symbolKlibSourceFile not known -> checking library module */

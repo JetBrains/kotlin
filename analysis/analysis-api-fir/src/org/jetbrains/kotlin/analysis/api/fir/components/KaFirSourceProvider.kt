@@ -3,23 +3,26 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.descriptors.components
+package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSourceProvider
+import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 
 @OptIn(KaAnalysisNonPublicApi::class)
-internal class KaFe10SourceProvider(
-    override val analysisSessionProvider: () -> KaSession,
+internal class KaFirSourceProvider(
+    override val analysisSessionProvider: () -> KaFirSession,
     override val token: KaLifetimeToken,
-) : KaSessionComponent<KaSession>(), KaSourceProvider {
+) : KaSessionComponent<KaFirSession>(), KaSourceProvider {
     override val KaDeclarationSymbol.klibSourceFileName: String?
         get() = withValidityAssertion {
-            throw NotImplementedError("Method is not implemented for FE 1.0")
+            require(this is KaFirSymbol<*>)
+            firSymbol.klibSourceFile?.name
         }
 }

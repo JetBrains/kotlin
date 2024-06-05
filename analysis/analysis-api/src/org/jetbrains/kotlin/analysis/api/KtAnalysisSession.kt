@@ -57,7 +57,8 @@ import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 public abstract class KaSession(
     final override val token: KaLifetimeToken,
     originalPsiProvider: KaOriginalPsiProvider,
-    analysisScopeProvider: KaAnalysisScopeProvider
+    analysisScopeProvider: KaAnalysisScopeProvider,
+    sourceProvider: KaSourceProvider,
 ) : KaLifetimeOwner,
     KaSmartCastProviderMixIn,
     KaResolverMixIn,
@@ -97,7 +98,8 @@ public abstract class KaSession(
     KaMetadataCalculatorMixIn,
     KaSubstitutorProviderMixIn,
     KaDataFlowInfoProviderMixin,
-    KaKlibSourceFileProviderMixIn {
+    KaSourceProvider by sourceProvider
+{
 
     public abstract val useSiteModule: KtModule
 
@@ -220,9 +222,6 @@ public abstract class KaSession(
     internal val dataFlowInfoProvider: KaDataFlowInfoProvider get() = dataFlowInfoProviderImpl
     @KaAnalysisNonPublicApi
     protected abstract val dataFlowInfoProviderImpl: KaDataFlowInfoProvider
-
-    internal val klibSourceFileProvider: KaKlibSourceFileNameProvider get() = klibSourceFileProviderImpl
-    protected abstract val klibSourceFileProviderImpl: KaKlibSourceFileNameProvider
 }
 
 public typealias KtAnalysisSession = KaSession

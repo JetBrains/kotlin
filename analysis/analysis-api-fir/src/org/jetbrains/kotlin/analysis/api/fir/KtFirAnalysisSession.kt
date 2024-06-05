@@ -57,7 +57,8 @@ private constructor(
 ) : KaSession(
     token,
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
-    analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, useSiteScope)
+    analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, useSiteScope),
+    sourceProvider = KaFirSourceProvider(analysisSessionProvider, token)
 ) {
     internal val firSymbolBuilder: KaSymbolByFirBuilder = KaSymbolByFirBuilder(project, this, token)
 
@@ -137,8 +138,6 @@ private constructor(
     override val substitutorProviderImpl: KaSubstitutorProvider = KaFirSubstitutorProvider(this)
 
     override val dataFlowInfoProviderImpl: KaDataFlowInfoProvider = KaFirDataFlowInfoProvider(this)
-
-    override val klibSourceFileProviderImpl: KaKlibSourceFileNameProvider = KaFirKlibSourceFileNameProvider(this)
 
     internal val useSiteSession: FirSession get() = firResolveSession.useSiteFirSession
     internal val firSymbolProvider: FirSymbolProvider get() = useSiteSession.symbolProvider

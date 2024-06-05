@@ -30,7 +30,8 @@ class KaFe10Session(
 ) : KaSession(
     token,
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider, token),
-    analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope)
+    analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope),
+    sourceProvider = KaFe10SourceProvider(analysisSessionProvider, token)
 ) {
     override val smartCastProviderImpl: KaSmartCastProvider = KaFe10SmartCastProvider(this)
     override val diagnosticProviderImpl: KaDiagnosticProvider = KaFe10DiagnosticProvider(this)
@@ -67,7 +68,6 @@ class KaFe10Session(
     override val resolveExtensionInfoProviderImpl: KaResolveExtensionInfoProvider = KaFe10ResolveExtensionInfoProvider(this)
     override val compilerFacilityImpl: KaCompilerFacility = KaFe10CompilerFacility(this)
     override val dataFlowInfoProviderImpl: KaDataFlowInfoProvider = KaFe10DataFlowInfoProvider(this)
-    override val klibSourceFileProviderImpl: KaKlibSourceFileNameProvider = KaFe10KlibSourceFileNameProvider(this)
 
     override val metadataCalculatorImpl: KaMetadataCalculator
         get() = throw NotSupportedForK1Exception()
