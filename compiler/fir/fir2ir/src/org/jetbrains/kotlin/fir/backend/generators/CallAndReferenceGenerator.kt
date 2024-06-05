@@ -736,9 +736,16 @@ class CallAndReferenceGenerator(
         val type = builtins.unitType
         val calleeReference = variableAssignment.calleeReference ?: error("Reference not resolvable")
         // TODO(KT-63348): An expected type should be passed to the IrExpression conversion.
-        val assignedValue = wrapWithImplicitCastForAssignment(variableAssignment, visitor.convertToIrExpression(variableAssignment.rValue))
+        val irRhs = visitor.convertToIrExpression(variableAssignment.rValue)
 
-        injectSetValueCall(variableAssignment, calleeReference, assignedValue)?.let { return it }
+        // For compatibility with K1, special constructs on the RHS like if, when, etc. should have the type of the LHS, see KT-68401.
+        if (variableAssignment.rValue.toResolvedCallableSymbol(session)?.origin == FirDeclarationOrigin.Synthetic.FakeFunction) {
+            irRhs.type = variableAssignment.lValue.resolvedType.toIrType()
+        }
+
+        val irRhsWithCast = wrapWithImplicitCastForAssignment(variableAssignment, irRhs)
+
+        injectSetValueCall(variableAssignment, calleeReference, irRhsWithCast)?.let { return it }
 
         val firSymbol = calleeReference.extractDeclarationSiteSymbol(c)
         val isDynamicAccess = firSymbol?.origin == FirDeclarationOrigin.DynamicScope
@@ -750,7 +757,7 @@ class CallAndReferenceGenerator(
                 type,
                 calleeReference,
                 firSymbol ?: error("Must've had a symbol"),
-                assignedValue,
+                irRhsWithCast,
             )
         }
 
@@ -768,7 +775,7 @@ class CallAndReferenceGenerator(
                     startOffset, endOffset, symbol, type, origin,
                     superQualifierSymbol = lValue.dispatchReceiver?.superQualifierSymbolForFieldAccess(firSymbol)
                 ).apply {
-                    value = assignedValue
+                    value = irRhsWithCast
                 }
 
                 is IrLocalDelegatedPropertySymbol -> {
@@ -783,7 +790,7 @@ class CallAndReferenceGenerator(
                             superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                         ).apply {
                             putContextReceiverArguments(lValue)
-                            putValueArgument(0, assignedValue)
+                            putValueArgument(0, irRhsWithCast)
                         }
 
                         else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
@@ -803,7 +810,7 @@ class CallAndReferenceGenerator(
                             origin = origin,
                             superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                         ).apply {
-                            putValueArgument(putContextReceiverArguments(lValue), assignedValue)
+                            putValueArgument(putContextReceiverArguments(lValue), irRhsWithCast)
                         }
 
                         backingFieldSymbol != null -> IrSetFieldImpl(
@@ -811,7 +818,7 @@ class CallAndReferenceGenerator(
                             origin = null, // NB: to be consistent with PSI2IR, origin should be null here
                             superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFieldAccess(firSymbol)
                         ).apply {
-                            value = assignedValue
+                            value = irRhsWithCast
                         }
 
                         else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
@@ -826,12 +833,12 @@ class CallAndReferenceGenerator(
                         valueArgumentsCount = 1,
                         origin = origin
                     ).apply {
-                        putValueArgument(0, assignedValue)
+                        putValueArgument(0, irRhsWithCast)
                     }
                 }
 
                 is IrVariableSymbol -> {
-                    IrSetValueImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
+                    IrSetValueImpl(startOffset, endOffset, type, symbol, irRhsWithCast, origin)
                 }
 
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
