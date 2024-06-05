@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
-import org.jetbrains.kotlin.analysis.api.platform.lifetime.KtLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 
@@ -38,7 +38,7 @@ abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(proje
     private val writeActionStartedChecker = KaBaseWriteActionStartedChecker(this)
 
     override val tokenFactory: KtLifetimeTokenFactory by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        KtLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
+        KotlinLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
     }
 
     override fun beforeEnteringAnalysis(session: KtAnalysisSession, useSiteElement: KtElement) {

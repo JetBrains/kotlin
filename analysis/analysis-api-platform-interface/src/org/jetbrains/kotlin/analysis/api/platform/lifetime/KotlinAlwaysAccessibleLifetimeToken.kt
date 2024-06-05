@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import kotlin.reflect.KClass
 
-public class KtAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeToken() {
+public class KotlinAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeToken() {
     private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
-    override val factory: KaLifetimeTokenFactory get() = KtAlwaysAccessibleLifetimeTokenFactory
+    override val factory: KaLifetimeTokenFactory get() = KotlinAlwaysAccessibleLifetimeTokenFactory
 
     override fun isValid(): Boolean {
         return onCreatedTimeStamp == modificationTracker.modificationCount
@@ -36,9 +36,15 @@ public class KtAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeToken
     }
 }
 
-public object KtAlwaysAccessibleLifetimeTokenFactory : KaLifetimeTokenFactory() {
-    override val identifier: KClass<out KaLifetimeToken> = KtAlwaysAccessibleLifetimeToken::class
+public object KotlinAlwaysAccessibleLifetimeTokenFactory : KaLifetimeTokenFactory() {
+    override val identifier: KClass<out KaLifetimeToken> = KotlinAlwaysAccessibleLifetimeToken::class
 
     override fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken =
-        KtAlwaysAccessibleLifetimeToken(project)
+        KotlinAlwaysAccessibleLifetimeToken(project)
+}
+
+public class KotlinAlwaysAccessibleLifetimeTokenProvider : KotlinLifetimeTokenProvider() {
+    override fun getLifetimeTokenFactory(): KaLifetimeTokenFactory {
+        return KotlinAlwaysAccessibleLifetimeTokenFactory
+    }
 }

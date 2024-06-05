@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.lifetime
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
 
-public class KtAlwaysAccessibleLifetimeTokenProvider : KtLifetimeTokenProvider() {
-    override fun getLifetimeTokenFactory(): KaLifetimeTokenFactory {
-        return KtAlwaysAccessibleLifetimeTokenFactory
+public abstract class KotlinLifetimeTokenProvider {
+    public abstract fun getLifetimeTokenFactory(): KaLifetimeTokenFactory
+
+    public companion object {
+        public fun getService(project: Project): KotlinLifetimeTokenProvider =
+            project.getService(KotlinLifetimeTokenProvider::class.java)
     }
 }

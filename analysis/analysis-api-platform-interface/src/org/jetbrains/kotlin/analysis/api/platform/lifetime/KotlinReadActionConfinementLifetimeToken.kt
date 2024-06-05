@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 import kotlin.reflect.KClass
 
-public class KtReadActionConfinementLifetimeToken(
+public class KotlinReadActionConfinementLifetimeToken(
     project: Project,
     private val modificationTracker: ModificationTracker,
 ) : KaLifetimeToken() {
@@ -35,7 +35,7 @@ public class KtReadActionConfinementLifetimeToken(
     @KaCachedService
     private val lifetimeTracker = KaLifetimeTracker.getInstance(project)
 
-    override val factory: KaLifetimeTokenFactory get() = KtReadActionConfinementLifetimeTokenFactory
+    override val factory: KaLifetimeTokenFactory get() = KotlinReadActionConfinementLifetimeTokenFactory
 
     override fun isValid(): Boolean {
         return onCreatedTimeStamp == modificationTracker.modificationCount
@@ -66,9 +66,15 @@ public class KtReadActionConfinementLifetimeToken(
     }
 }
 
-public object KtReadActionConfinementLifetimeTokenFactory : KaLifetimeTokenFactory() {
-    override val identifier: KClass<out KaLifetimeToken> = KtReadActionConfinementLifetimeToken::class
+public object KotlinReadActionConfinementLifetimeTokenFactory : KaLifetimeTokenFactory() {
+    override val identifier: KClass<out KaLifetimeToken> = KotlinReadActionConfinementLifetimeToken::class
 
     override fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken =
-        KtReadActionConfinementLifetimeToken(project, modificationTracker)
+        KotlinReadActionConfinementLifetimeToken(project, modificationTracker)
+}
+
+public class KotlinReadActionConfinementLifetimeTokenProvider : KotlinLifetimeTokenProvider() {
+    override fun getLifetimeTokenFactory(): KaLifetimeTokenFactory {
+        return KotlinReadActionConfinementLifetimeTokenFactory
+    }
 }
