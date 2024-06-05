@@ -118,6 +118,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("assignmentsAndSmartcastsToUnrelatedProperty.kt")
+    public void testAssignmentsAndSmartcastsToUnrelatedProperty() {
+      runTest("compiler/testData/diagnostics/tests/assignmentsAndSmartcastsToUnrelatedProperty.kt");
+    }
+
+    @Test
     @TestMetadata("AutoCreatedIt.kt")
     public void testAutoCreatedIt() {
       runTest("compiler/testData/diagnostics/tests/AutoCreatedIt.kt");
@@ -1246,6 +1252,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("plusAssignVsPrivateSetter.kt")
+    public void testPlusAssignVsPrivateSetter() {
+      runTest("compiler/testData/diagnostics/tests/plusAssignVsPrivateSetter.kt");
+    }
+
+    @Test
     @TestMetadata("postfixIncSmartCast.kt")
     public void testPostfixIncSmartCast() {
       runTest("compiler/testData/diagnostics/tests/postfixIncSmartCast.kt");
@@ -1279,6 +1291,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     @TestMetadata("PrivateSetterForOverridden.kt")
     public void testPrivateSetterForOverridden() {
       runTest("compiler/testData/diagnostics/tests/PrivateSetterForOverridden.kt");
+    }
+
+    @Test
+    @TestMetadata("privateSetterSmartcastsToPublicSetter.kt")
+    public void testPrivateSetterSmartcastsToPublicSetter() {
+      runTest("compiler/testData/diagnostics/tests/privateSetterSmartcastsToPublicSetter.kt");
     }
 
     @Test
@@ -1339,6 +1357,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     @TestMetadata("PropertyInitializers.kt")
     public void testPropertyInitializers() {
       runTest("compiler/testData/diagnostics/tests/PropertyInitializers.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyPrivateSetttersPlusAssign.kt")
+    public void testPropertyPrivateSetttersPlusAssign() {
+      runTest("compiler/testData/diagnostics/tests/propertyPrivateSetttersPlusAssign.kt");
     }
 
     @Test
