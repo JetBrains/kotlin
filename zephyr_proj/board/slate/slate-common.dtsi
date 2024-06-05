@@ -1,0 +1,192 @@
+/*
+ * Copyright (c) 2019-2021 Linaro Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+sysclk: system-clock {
+	compatible = "fixed-clock";
+	clock-frequency = <200000000>;
+	#clock-cells = <0>;
+};
+
+gpio0: gpio@1100000 {
+	compatible = "arm,cmsdk-gpio";
+	reg = <0x1100000 0x1000>;
+	interrupts = <69 3>;
+	gpio-controller;
+	#gpio-cells = <2>;
+	label = "GPIO_0";
+};
+
+gpio1: gpio@1101000 {
+	compatible = "arm,cmsdk-gpio";
+	reg = <0x1101000 0x1000>;
+	interrupts = <70 3>;
+	gpio-controller;
+	#gpio-cells = <2>;
+	label = "GPIO_1";
+};
+
+gpio2: gpio@1102000 {
+	compatible = "arm,cmsdk-gpio";
+	reg = <0x1102000 0x1000>;
+	interrupts = <71 3>;
+	gpio-controller;
+	#gpio-cells = <2>;
+	label = "GPIO_2";
+};
+
+gpio3: gpio@1103000 {
+	compatible = "arm,cmsdk-gpio";
+	reg = <0x1103000 0x1000>;
+	interrupts = <72 3>;
+	gpio-controller;
+	#gpio-cells = <2>;
+	label = "GPIO_3";
+};
+
+eth0: eth@1400000 {
+	/* Linux has "smsc,lan9115" */
+	compatible = "smsc,lan9220";
+	/* Actual reg range is ~0x200 */
+	reg = <0x1400000 0x100000>;
+	label = "eth0";
+	interrupts = <49 3>;
+};
+
+i2c_touch: i2c@9200000 {
+	compatible = "arm,versatile-i2c";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	reg = <0x9200000 0x1000>;
+	label = "I2C_TOUCH";
+};
+
+i2c_audio_conf: i2c@9201000 {
+	compatible = "arm,versatile-i2c";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	reg = <0x9201000 0x1000>;
+	label = "I2C_AUDIO_CONF";
+};
+
+i2c_shield0: i2c@9203000 {
+	compatible = "arm,versatile-i2c";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	reg = <0x9203000 0x1000>;
+	label = "I2C_SHIELD0";
+};
+
+i2c_shield1: i2c@9204000 {
+	compatible = "arm,versatile-i2c";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	reg = <0x9204000 0x1000>;
+	label = "I2C_SHIELD1";
+};
+
+i2c_ddr4_eeprom: i2c@9208000 {
+	compatible = "arm,versatile-i2c";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	reg = <0x9208000 0x1000>;
+	label = "DDR4_EEPROM";
+};
+
+gpio_led0: mps3_fpgaio@9302000 {
+	compatible = "arm,mps3-fpgaio-gpio";
+
+	reg = <0x9302000 0x4>;
+	gpio-controller;
+	#gpio-cells = <1>;
+	ngpios = <8>;
+	label = "FPGA_LED0";
+};
+
+gpio_button: mps3_fpgaio@9302008 {
+	compatible = "arm,mps3-fpgaio-gpio";
+
+	reg = <0x9302008 0x4>;
+	gpio-controller;
+	#gpio-cells = <1>;
+	ngpios = <2>;
+	label = "FPGA_BUTTON";
+};
+
+gpio_misc: mps3_fpgaio@930204c {
+	compatible = "arm,mps3-fpgaio-gpio";
+
+	reg = <0x930204c 0x4>;
+	gpio-controller;
+	#gpio-cells = <1>;
+	ngpios = <3>;
+	label = "FPGA_MISC";
+};
+
+uart0: uart@9303000 {
+	compatible = "arm,cmsdk-uart";
+	reg = <0x9303000 0x1000>;
+	interrupts = <34 3 33 3>;
+	interrupt-names = "tx", "rx";
+	clocks = <&sysclk>;
+	current-speed = <115200>;
+	label = "UART_0";
+};
+
+uart1: uart@9304000 {
+	compatible = "arm,cmsdk-uart";
+	reg = <0x9304000 0x1000>;
+	interrupts = <36 3 35 3>;
+	interrupt-names = "tx", "rx";
+	clocks = <&sysclk>;
+	current-speed = <115200>;
+	label = "UART_1";
+};
+
+uart2: uart@9305000 {
+	compatible = "arm,cmsdk-uart";
+	reg = <0x9305000 0x1000>;
+	interrupts = <38 3 37 3>;
+	interrupt-names = "tx", "rx";
+	clocks = <&sysclk>;
+	current-speed = <115200>;
+	label = "UART_2";
+};
+
+uart3: uart@9306000 {
+	compatible = "arm,cmsdk-uart";
+	reg = <0x9306000 0x1000>;
+	interrupts = <40 3 39 3>;
+	interrupt-names = "tx", "rx";
+	clocks = <&sysclk>;
+	current-speed = <115200>;
+	label = "UART_3";
+};
+
+uart4: uart@9307000 {
+	compatible = "arm,cmsdk-uart";
+	reg = <0x9307000 0x1000>;
+	interrupts = <42 3 41 3>;
+	interrupt-names = "tx", "rx";
+	clocks = <&sysclk>;
+	current-speed = <115200>;
+	label = "UART_4";
+};
+
+uart5: uart@9308000 {
+	compatible = "arm,cmsdk-uart";
+	status = "disabled";
+	reg = <0x9308000 0x1000>;
+	interrupt-names = "tx", "rx";
+	interrupts = <126 3 125 3>;
+	clocks = <&sysclk>;
+	current-speed = <115200>;
+	label = "UART_5";
+};

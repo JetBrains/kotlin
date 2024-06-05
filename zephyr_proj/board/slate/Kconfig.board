@@ -1,0 +1,7 @@
+# Copyright (c) 2021 Linaro Limited
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_SLATE
+	bool "Arm Cortex-M55 (Corstone-300, SSE-300 w/Ethos-U55) on SLATE"
+	depends on SOC_MPS3_AN547
+	select QEMU_TARGET

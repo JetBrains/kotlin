@@ -1,0 +1,175 @@
+/*
+ * Copyright (c) 2018-2021 Linaro Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+
+#include <arm/armv8.1-m.dtsi>
+#include <dt-bindings/i2c/i2c.h>
+#include <mem.h>
+
+/ {
+	compatible = "arm,slate";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	aliases {
+		led0 = &led_0;
+		led1 = &led_1;
+		sw0 = &user_button_0;
+		sw1 = &user_button_1;
+	};
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,sram = &sram;
+		zephyr,flash = &flash;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led_0: led_0 {
+			gpios = <&gpio_led0 0>;
+			label = "USERLED0";
+		};
+		led_1: led_1 {
+			gpios = <&gpio_led0 1>;
+			label = "USERLED1";
+		};
+		led_2: led_2 {
+			gpios = <&gpio_led0 2>;
+			label = "USERLED2";
+		};
+		led_3: led_3 {
+			gpios = <&gpio_led0 3>;
+			label = "USERLED3";
+		};
+		led_4: led_4 {
+			gpios = <&gpio_led0 4>;
+			label = "USERLED4";
+		};
+		led_5: led_5 {
+			gpios = <&gpio_led0 5>;
+			label = "USERLED5";
+		};
+		led_6: led_6 {
+			gpios = <&gpio_led0 6>;
+			label = "USERLED6";
+		};
+		led_7: led_7 {
+			gpios = <&gpio_led0 7>;
+			label = "USERLED7";
+		};
+		led_8: led_8 {
+			gpios = <&gpio_led0 8>;
+			label = "PB1LED";
+		};
+		led_9: led_9 {
+			gpios = <&gpio_led0 9>;
+			label = "PB2LED";
+		};
+	};
+
+	gpio_keys {
+		compatible = "gpio-keys";
+		user_button_0: button_0 {
+			label = "USERPB0";
+			gpios = <&gpio_button 0>;
+		};
+		user_button_1: button_1 {
+			label = "USERPB1";
+			gpios = <&gpio_button 1>;
+		};
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-m55";
+			reg = <0>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			mpu: mpu@e000ed90 {
+				compatible = "arm,armv8.1m-mpu";
+				reg = <0xe000ed90 0x40>;
+				arm,num-mpu-regions = <16>;
+			};
+		};
+	};
+
+	/* We utilize the secure addresses, if you subtract 0x10000000
+	 * you'll get the non-secure alias
+	 */
+	flash: flash@10000000 {
+		compatible = "soc-nv-flash";
+		reg = <0x10000000 DT_SIZE_M(1)>;
+	};
+
+	sram: sram@12000000 {
+		compatible = "mmio-sram";
+		reg = <0x11000000 DT_SIZE_M(2)>;
+	};
+
+	sram2: sram2@21000000 {
+		compatible = "zephyr,memory-region";
+		reg = <0x21000000 DT_SIZE_M(1)>;
+		zephyr,memory-region = "SRAM_2";
+	};
+
+	ram_fb: ramfb@21800000 {
+		compatible = "zephyr,memory-region";
+		reg = <0x21800000 DT_SIZE_M(1)>;
+		zephyr,memory-region = "RAM_FB";
+	};
+
+	fb_io: fb_io@21900000 {
+		compatible = "zephyr,memory-region";
+		reg = <0x21900000 0x40>;
+		zephyr,memory-region = "FB_IO";
+	};
+
+	nema_io: nema_io@22000000 {
+		compatible = "zephyr,memory-region";
+		reg = <0x22000000 0x1000>;
+		zephyr,memory-region = "NEMA_IO";
+	};
+
+	nema_fb: nema_fb@22001000 {
+		compatible = "zephyr,memory-region";
+		reg = <0x22001000 DT_SIZE_M(2)>;
+		zephyr,memory-region = "NEMA_FB";
+	};
+
+	nema_cl: nema_cl@22201000 {
+		compatible = "zephyr,memory-region";
+		reg = <0x22201000 0x4000>;
+		zephyr,memory-region = "NEMA_CL";
+	};
+
+	host_clk_io: host_clk_io@22300000 {
+		compatible = "zephyr,memory-region";
+		reg = <0x22300000 0x100>;
+		zephyr,memory-region = "HOST_CLK_IO";
+	};
+
+	soc {
+		peripheral@50000000 {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x50000000 0x10000000>;
+
+			#include "slate-common.dtsi"
+		};
+	};
+};
+
+&nvic {
+	arm,num-irq-priority-bits = <3>;
+};

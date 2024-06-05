@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2019-2021 Linaro Limited
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+identifier: slate
+name: slate
+type: mcu
+arch: arm
+simulation: qemu
+toolchain:
+  - gnuarmemb
+  - zephyr
+  - xtools
+supported:
+  - gpio
+testing:
+  ignore_tags:
+    - drivers
+    - bluetooth
+    - net
+    - timer
