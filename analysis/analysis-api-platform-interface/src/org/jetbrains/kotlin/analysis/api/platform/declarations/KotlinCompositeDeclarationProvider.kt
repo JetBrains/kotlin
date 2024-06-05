@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
 import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProvider
-import org.jetbrains.kotlin.analysis.api.platform.impl.KotlinCompositeProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProviderFactory
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName

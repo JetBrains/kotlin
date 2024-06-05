@@ -3,10 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.impl
+package org.jetbrains.kotlin.analysis.api.platform
 
-import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProvider
-import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProvider
 import org.jetbrains.kotlin.analysis.api.platform.utils.mergeOnly
 
 /**

@@ -23,7 +23,7 @@
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.KotlinMessageBusProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.platform.impl.KotlinProjectMessageBusProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.platform.KotlinProjectMessageBusProvider"
     />
 
     <projectService

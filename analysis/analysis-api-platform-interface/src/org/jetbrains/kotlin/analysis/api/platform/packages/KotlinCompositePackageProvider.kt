@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.platform.packages
 
 import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProvider
-import org.jetbrains.kotlin.analysis.api.platform.impl.KotlinCompositeProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProviderFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform

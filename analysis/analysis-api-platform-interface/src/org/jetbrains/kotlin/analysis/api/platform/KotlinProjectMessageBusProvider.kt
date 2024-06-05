@@ -3,11 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.impl
+package org.jetbrains.kotlin.analysis.api.platform
 
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.MessageBus
-import org.jetbrains.kotlin.analysis.api.platform.KotlinMessageBusProvider
 
 /**
  * Provides the [project]'s [MessageBus] as the Analysis API message bus. This is the default implementation for both the standalone and the
