@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,7 +28,7 @@ val IrFunction.target: IrFunction
         else -> error(this)
     }
 
-fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.collectRealOverrides(
+fun <T : IrOverridableDeclaration<*>> T.collectRealOverrides(
     toSkip: (T) -> Boolean = { false },
     filter: (T) -> Boolean = { false },
 ): Set<T> {
@@ -40,7 +40,7 @@ fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.collectRealOverrides(
         .collectAndFilterRealOverrides(toSkip, filter)
 }
 
-fun <S : IrSymbol, T : IrOverridableDeclaration<S>> Collection<T>.collectAndFilterRealOverrides(
+fun <T : IrOverridableDeclaration<*>> Collection<T>.collectAndFilterRealOverrides(
     toSkip: (T) -> Boolean = { false },
     filter: (T) -> Boolean = { false }
 ): Set<T> {
@@ -107,7 +107,7 @@ fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideOrFail(
     resolveFakeOverride() ?: error("No real overrides for ${this.render()}")
 
 // TODO: use this implementation instead of any other
-fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverride(
+fun <T : IrOverridableDeclaration<*>> T.resolveFakeOverride(
     toSkip: (T) -> Boolean = { false },
 ): T? {
     if (!isFakeOverride && !toSkip(this)) return this

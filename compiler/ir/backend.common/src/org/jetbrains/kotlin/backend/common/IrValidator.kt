@@ -26,6 +26,7 @@ internal data class IrValidatorConfig(
     val checkTypes: Boolean = true,
     val checkProperties: Boolean = false,
     val checkScopes: Boolean = false, // TODO: Consider setting to true by default and deleting
+    val checkVisibilities: Boolean = false,
 )
 
 private class IrValidator(
@@ -42,6 +43,9 @@ private class IrValidator(
         super.visitFile(declaration)
         if (config.checkScopes) {
             ScopeValidator(this::error, parentChain).check(declaration)
+        }
+        if (config.checkVisibilities) {
+            declaration.acceptVoid(IrVisibilityChecker(declaration.module, declaration, reportError))
         }
     }
 
@@ -118,11 +122,13 @@ private fun performBasicIrValidation(
     irBuiltIns: IrBuiltIns,
     checkProperties: Boolean = false,
     checkTypes: Boolean = false,
+    checkVisibilities: Boolean = false,
     reportError: ReportIrValidationError,
 ) {
     val validatorConfig = IrValidatorConfig(
         checkTypes = checkTypes,
         checkProperties = checkProperties,
+        checkVisibilities = checkVisibilities,
     )
     val validator = IrValidator(irBuiltIns, validatorConfig, reportError)
     try {
@@ -172,12 +178,14 @@ sealed interface IrValidationContext {
         phaseName: String,
         checkProperties: Boolean = false,
         checkTypes: Boolean = false,
+        checkVisibilities: Boolean = false,
     ) {
         performBasicIrValidation(
             fragment,
             irBuiltIns,
             checkProperties,
             checkTypes,
+            checkVisibilities,
         ) { file, element, message, parentChain ->
             reportIrValidationError(file, element, message, phaseName, parentChain)
         }

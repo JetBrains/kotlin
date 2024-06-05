@@ -437,6 +437,21 @@ They should be a subset of sources passed as free arguments."""
         description = "IR verification mode (no verification by default)."
     )
     var verifyIr: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xverify-ir-visibility",
+        description = "Check for visibility violations in IR when validating it before running any lowerings. " +
+                "Only has effect if '-Xverify-ir' is not 'none'.",
+    )
+    var verifyIrVisibility: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xprofile-phases",

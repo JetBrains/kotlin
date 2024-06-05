@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -34,6 +35,7 @@ internal class JvmIrValidationBeforeLoweringPhase(
             phaseName,
             checkProperties = true,
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
+            checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
         )
     }
 }

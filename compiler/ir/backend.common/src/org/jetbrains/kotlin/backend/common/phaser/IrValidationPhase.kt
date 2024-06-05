@@ -32,6 +32,7 @@ open class IrValidationBeforeLoweringPhase<Context : CommonBackendContext>(conte
             context.irBuiltIns,
             phaseName,
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
+            checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
         )
     }
 }

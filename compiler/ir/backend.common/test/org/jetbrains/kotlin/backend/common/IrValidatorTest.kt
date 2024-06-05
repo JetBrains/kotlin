@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -13,30 +14,37 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.utils.TestMessageCollector
 import org.jetbrains.kotlin.test.utils.TestMessageCollector.Message
 import kotlin.reflect.KProperty
@@ -45,10 +53,18 @@ import kotlin.test.*
 class IrValidatorTest {
 
     private lateinit var messageCollector: TestMessageCollector
+    private lateinit var module: IrModuleFragment
 
     @BeforeTest
     fun setUp() {
         messageCollector = TestMessageCollector()
+
+        val moduleDescriptor = ModuleDescriptorImpl(
+            Name.special("<testModule>"),
+            LockBasedStorageManager("IrValidatorTest"),
+            DefaultBuiltIns.Instance
+        )
+        module = IrModuleFragmentImpl(moduleDescriptor, TestIrBuiltins)
     }
 
     private fun buildInvalidIrExpressionWithNoLocations(): IrElement {
@@ -66,9 +82,13 @@ class IrValidatorTest {
         return functionCall
     }
 
+    private fun createIrFile(name: String = "test.kt", packageFqName: FqName = FqName("org.sample")): IrFile {
+        val fileEntry = NaiveSourceBasedFileEntryImpl(name, lineStartOffsets = intArrayOf(0, 10, 25), maxOffset = 75)
+        return IrFileImpl(fileEntry, IrFileSymbolImpl(), packageFqName).also(module::addFile)
+    }
+
     private fun buildInvalidIrTreeWithLocations(): IrElement {
-        val fileEntry = NaiveSourceBasedFileEntryImpl("test.kt", lineStartOffsets = intArrayOf(0, 10, 25), maxOffset = 75)
-        val file = IrFileImpl(fileEntry, IrFileSymbolImpl(), FqName("org.sample"))
+        val file = createIrFile()
         val function = IrFactoryImpl.buildFun {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
@@ -102,6 +122,7 @@ class IrValidatorTest {
                     TestIrBuiltins,
                     phaseName = "IrValidatorTest",
                     checkTypes = true,
+                    checkVisibilities = true,
                 )
                 assertEquals(expectedMessages, messageCollector.messages)
             }
@@ -315,6 +336,78 @@ class IrValidatorTest {
                 )
             ),
         )
+    }
+
+    @Test
+    fun `private declarations can't be referenced from a different file`() {
+        val file1 = createIrFile("a.kt")
+        val klass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MyClass")
+            visibility = DescriptorVisibilities.PRIVATE
+        }
+        file1.addChild(klass)
+        val file2 = createIrFile("b.kt")
+        val subclass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MySubclass")
+        }
+        subclass.superTypes = listOf(IrSimpleTypeImpl(klass.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList()))
+        file2.addChild(subclass)
+        testValidation(
+            IrVerificationMode.ERROR,
+            file2,
+            listOf(
+                Message(
+                    ERROR,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The following element references 'private' declaration that is invisible in the current scope:
+                    CLASS CLASS name:MySubclass modality:FINAL visibility:public superTypes:[org.sample.MyClass]
+                      inside FILE fqName:org.sample fileName:b.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("b.kt", 0, 0, null),
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `annotations are ignored by IR visibility checker`() {
+        val file1 = createIrFile("MyAnnotation.kt")
+        val annotationClass = IrFactoryImpl.buildClass {
+            name = Name.identifier("MyAnnotation")
+            visibility = DescriptorVisibilities.PRIVATE
+            kind = ClassKind.ANNOTATION_CLASS
+        }
+        file1.addChild(annotationClass)
+        val annotationConstructor = IrFactoryImpl.createConstructor(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            origin = IrDeclarationOrigin.DEFINED,
+            name = SpecialNames.INIT,
+            visibility = DescriptorVisibilities.PRIVATE,
+            isInline = false,
+            isExpect = false,
+            returnType = null,
+            symbol = IrConstructorSymbolImpl(),
+            isPrimary = true
+        )
+        annotationClass.addChild(annotationConstructor)
+        val file2 = createIrFile("b.kt")
+        val annotatedClass = IrFactoryImpl.buildClass {
+            name = Name.identifier("AnnotatedClass")
+        }
+        annotatedClass.annotations = listOf(
+            IrConstructorCallImpl(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                type = IrSimpleTypeImpl(annotationClass.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList()),
+                symbol = annotationConstructor.symbol,
+                typeArgumentsCount = 0,
+                constructorTypeArgumentsCount = 0,
+                valueArgumentsCount = 0,
+            )
+        )
+        file2.addChild(annotatedClass)
+        testValidation(IrVerificationMode.WARNING, file2, emptyList())
     }
 }
 

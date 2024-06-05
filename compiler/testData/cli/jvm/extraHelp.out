@@ -237,6 +237,7 @@ where advanced options include:
   -Xverbose-phases           Be verbose while performing the given backend phases.
   -Xverify-ir={none|warning|error}
                              IR verification mode (no verification by default).
+  -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
   -Xwhen-guards              Enable language support for when guards.
 
 Advanced options are non-standard and may be changed or removed without any notice.
