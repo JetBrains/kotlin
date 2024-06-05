@@ -112,6 +112,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("assignmentsAndSmartcastsToUnrelatedProperty.kt")
+    public void testAssignmentsAndSmartcastsToUnrelatedProperty() {
+      runTest("compiler/testData/diagnostics/tests/assignmentsAndSmartcastsToUnrelatedProperty.kt");
+    }
+
+    @Test
     @TestMetadata("AutoCreatedIt.kt")
     public void testAutoCreatedIt() {
       runTest("compiler/testData/diagnostics/tests/AutoCreatedIt.kt");
@@ -1162,6 +1168,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("plusAssignVsPrivateSetter.kt")
+    public void testPlusAssignVsPrivateSetter() {
+      runTest("compiler/testData/diagnostics/tests/plusAssignVsPrivateSetter.kt");
+    }
+
+    @Test
     @TestMetadata("postfixIncSmartCast.kt")
     public void testPostfixIncSmartCast() {
       runTest("compiler/testData/diagnostics/tests/postfixIncSmartCast.kt");
@@ -1198,6 +1210,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("privateSetterSmartcastsToPublicSetter.kt")
+    public void testPrivateSetterSmartcastsToPublicSetter() {
+      runTest("compiler/testData/diagnostics/tests/privateSetterSmartcastsToPublicSetter.kt");
+    }
+
+    @Test
     @TestMetadata("ProcessingEmptyImport.kt")
     public void testProcessingEmptyImport() {
       runTest("compiler/testData/diagnostics/tests/ProcessingEmptyImport.kt");
@@ -1231,6 +1249,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     @TestMetadata("PropertyInitializers.kt")
     public void testPropertyInitializers() {
       runTest("compiler/testData/diagnostics/tests/PropertyInitializers.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyPrivateSetttersPlusAssign.kt")
+    public void testPropertyPrivateSetttersPlusAssign() {
+      runTest("compiler/testData/diagnostics/tests/propertyPrivateSetttersPlusAssign.kt");
     }
 
     @Test
