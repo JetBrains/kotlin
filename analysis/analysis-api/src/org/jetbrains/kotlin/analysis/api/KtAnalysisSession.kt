@@ -58,6 +58,7 @@ public abstract class KaSession(
     final override val token: KaLifetimeToken,
     originalPsiProvider: KaOriginalPsiProvider,
     analysisScopeProvider: KaAnalysisScopeProvider,
+    compilerFacility: KaCompilerFacility,
     sourceProvider: KaSourceProvider,
 ) : KaLifetimeOwner,
     KaSmartCastProviderMixIn,
@@ -94,7 +95,7 @@ public abstract class KaSession(
     KaScopeSubstitutionMixIn,
     KaSymbolProviderByJavaPsiMixIn,
     KaResolveExtensionInfoProviderMixIn,
-    KaCompilerFacilityMixIn,
+    KaCompilerFacility by compilerFacility,
     KaMetadataCalculatorMixIn,
     KaSubstitutorProviderMixIn,
     KaDataFlowInfoProviderMixin,
@@ -194,9 +195,6 @@ public abstract class KaSession(
 
     internal val resolveExtensionInfoProvider: KaResolveExtensionInfoProvider get() = resolveExtensionInfoProviderImpl
     protected abstract val resolveExtensionInfoProviderImpl: KaResolveExtensionInfoProvider
-
-    internal val compilerFacility: KaCompilerFacility get() = compilerFacilityImpl
-    protected abstract val compilerFacilityImpl: KaCompilerFacility
 
     @KaAnalysisApiInternals
     public val substitutorFactory: KaSubstitutorFactory get() = substitutorFactoryImpl

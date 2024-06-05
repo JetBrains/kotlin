@@ -25,12 +25,13 @@ class KaFe10Session(
     val analysisContext: Fe10AnalysisContext,
     override val useSiteModule: KtModule,
     token: KaLifetimeToken,
-    analysisSessionProvider: () -> KaSession,
+    analysisSessionProvider: () -> KaFe10Session,
     resolutionScope: KaGlobalSearchScope
 ) : KaSession(
     token,
     originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, resolutionScope),
+    compilerFacility = KaFe10CompilerFacility(analysisSessionProvider, token),
     sourceProvider = KaFe10SourceProvider(analysisSessionProvider, token)
 ) {
     override val smartCastProviderImpl: KaSmartCastProvider = KaFe10SmartCastProvider(this)
@@ -66,7 +67,6 @@ class KaFe10Session(
     override val substitutorFactoryImpl: KaSubstitutorFactory = KaFe10SubstitutorFactory(this)
     override val symbolProviderByJavaPsiImpl: KaSymbolProviderByJavaPsi = KaFe10SymbolProviderByJavaPsi(this)
     override val resolveExtensionInfoProviderImpl: KaResolveExtensionInfoProvider = KaFe10ResolveExtensionInfoProvider(this)
-    override val compilerFacilityImpl: KaCompilerFacility = KaFe10CompilerFacility(this)
     override val dataFlowInfoProviderImpl: KaDataFlowInfoProvider = KaFe10DataFlowInfoProvider(this)
 
     override val metadataCalculatorImpl: KaMetadataCalculator

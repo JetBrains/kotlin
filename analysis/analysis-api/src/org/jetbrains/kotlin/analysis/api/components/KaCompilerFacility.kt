@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.io.File
 
 /**
@@ -80,7 +78,7 @@ public sealed class KaCompilerTarget {
 
 public typealias KtCompilerTarget = KaCompilerTarget
 
-public abstract class KaCompilerFacility : KaSessionComponent() {
+public interface KaCompilerFacility {
     public companion object {
         /** Simple class name for the code fragment facade class. */
         public val CODE_FRAGMENT_CLASS_NAME: CompilerConfigurationKey<String> =
@@ -91,17 +89,6 @@ public abstract class KaCompilerFacility : KaSessionComponent() {
             CompilerConfigurationKey<String>("code fragment method name")
     }
 
-    public abstract fun compile(
-        file: KtFile,
-        configuration: CompilerConfiguration,
-        target: KaCompilerTarget,
-        allowedErrorFilter: (KaDiagnostic) -> Boolean,
-    ): KaCompilationResult
-}
-
-public typealias KtCompilerFacility = KaCompilerFacility
-
-public interface KaCompilerFacilityMixIn : KaSessionMixIn {
     /**
      * Compile the given [file] in-memory (without dumping the compiled binaries to a disk).
      *
@@ -129,19 +116,8 @@ public interface KaCompilerFacilityMixIn : KaSessionMixIn {
         configuration: CompilerConfiguration,
         target: KaCompilerTarget,
         allowedErrorFilter: (KaDiagnostic) -> Boolean
-    ): KaCompilationResult {
-        return withValidityAssertion {
-            try {
-                analysisSession.compilerFacility.compile(file, configuration, target, allowedErrorFilter)
-            } catch (e: Throwable) {
-                rethrowIntellijPlatformExceptionIfNeeded(e)
-                throw KaCodeCompilationException(e)
-            }
-        }
-    }
+    ): KaCompilationResult
 }
-
-public typealias KtCompilerFacilityMixIn = KaCompilerFacilityMixIn
 
 /**
  * Thrown when an exception occurred on analyzing the code to be compiled, or during target platform code generation.

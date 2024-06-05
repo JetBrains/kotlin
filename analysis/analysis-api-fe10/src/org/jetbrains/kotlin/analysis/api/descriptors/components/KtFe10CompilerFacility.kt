@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import org.jetbrains.kotlin.analysis.api.components.KaCodeCompilationException
 import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
@@ -14,7 +15,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10Sessi
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.InlineFunctionAnalyzer
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.collectReachableInlineDelegatedPropertyAccessors
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaCompiledFileForOutputFile
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.FacadeClassSourceShimForFragmentCompilation
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
@@ -30,6 +34,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 /**
  * Whether unbound IR symbols should be stubbed instead of linked.
@@ -39,9 +44,24 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 val STUB_UNBOUND_IR_SYMBOLS: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey<Boolean>("stub unbound IR symbols")
 
 internal class KaFe10CompilerFacility(
-    override val analysisSession: KaFe10Session
-) : KaCompilerFacility(), KaFe10SessionComponent {
+    override val analysisSessionProvider: () -> KaFe10Session,
+    override val token: KaLifetimeToken
+) : KaSessionComponent<KaFe10Session>(), KaCompilerFacility, KaFe10SessionComponent {
     override fun compile(
+        file: KtFile,
+        configuration: CompilerConfiguration,
+        target: KaCompilerTarget,
+        allowedErrorFilter: (KaDiagnostic) -> Boolean
+    ): KaCompilationResult = withValidityAssertion {
+        try {
+            compileUnsafe(file, configuration, target, allowedErrorFilter)
+        } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
+            throw KaCodeCompilationException(e)
+        }
+    }
+
+    private fun compileUnsafe(
         file: KtFile,
         configuration: CompilerConfiguration,
         target: KaCompilerTarget,
