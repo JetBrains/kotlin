@@ -167,6 +167,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
   }
 
   @Test
+  @TestMetadata("javaValueParameter.kt")
+  public void testJavaValueParameter() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaValueParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("javaValueParameterLibraryBinary.kt")
+  public void testJavaValueParameterLibraryBinary() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaValueParameterLibraryBinary.kt");
+  }
+
+  @Test
   @TestMetadata("libraryConstructorProperty.kt")
   public void testLibraryConstructorProperty() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/libraryConstructorProperty.kt");
