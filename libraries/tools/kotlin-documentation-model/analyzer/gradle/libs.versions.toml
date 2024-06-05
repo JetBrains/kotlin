@@ -11,14 +11,16 @@ kotlinx-serialization = "1.6.0"
 kotlinx-bcv = "0.13.2"
 
 ## Analysis
-kotlin-compiler = "2.0.0"
-kotlin-compiler-k2 = "2.0.20-dev-4579"
+# Version of compiler for analysis-descriptor is in sync with K2 because of updated intellij-platform in 2.0.20-dev-5055
+# can be changed to just 2.0.20 after release of Kotlin 2.0.20
+kotlin-compiler = "2.0.20-dev-5135"
+kotlin-compiler-k2 = "2.0.20-dev-5135"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
 # on the classpath and will fail with hard to debug problems in runtime.
-# See: https://github.com/JetBrains/kotlin/blob/e6633d3d9214402fcf3585ae8c24213a4761cc8b/gradle/versions.properties#L1
-intellij-platform = "213.7172.53"
+# See: https://github.com/JetBrains/kotlin/blob/480b38f967493adf494b4e049cbe5ac1060d215f/gradle/versions.properties#L1
+intellij-platform = "233.13135.103"
 
 ## HTML
 jsoup = "1.16.1"
