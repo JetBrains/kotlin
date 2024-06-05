@@ -2702,6 +2702,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("parameterName.kt")
+        public void testParameterName() {
+          runTest("compiler/testData/diagnostics/tests/annotations/functionalTypes/parameterName.kt");
+        }
+
+        @Test
         @TestMetadata("parenthesizedAnnotations.kt")
         public void testParenthesizedAnnotations() {
           runTest("compiler/testData/diagnostics/tests/annotations/functionalTypes/parenthesizedAnnotations.kt");

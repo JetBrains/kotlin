@@ -1707,6 +1707,12 @@ public class FirLightTreeNativeIrTextTestGenerated extends AbstractFirLightTreeN
     }
 
     @Test
+    @TestMetadata("lambdaWithParameterName.kt")
+    public void testLambdaWithParameterName() {
+      runTest("compiler/testData/ir/irText/expressions/lambdaWithParameterName.kt");
+    }
+
+    @Test
     @TestMetadata("literals.kt")
     public void testLiterals() {
       runTest("compiler/testData/ir/irText/expressions/literals.kt");
