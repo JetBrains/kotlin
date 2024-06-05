@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificatio
  * [KotlinMessageBusProvider] allows Analysis API implementations to provide a custom [MessageBus]. When subscribing to or publishing to
  * Analysis API topics ([KotlinModificationTopics]), the message bus provided by [getMessageBus] should be used, not the [Project]'s message bus.
  */
-public interface KotlinMessageBusProvider {
+public interface KotlinMessageBusProvider : KotlinPlatformComponent {
     public fun getMessageBus(): MessageBus
 
     public companion object {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 
 /**
  * [KotlinModificationTrackerFactory] creates modification trackers for select modification events.
@@ -15,7 +16,7 @@ import com.intellij.openapi.util.ModificationTracker
  * sense when there are many, possibly short-lived objects that need to be notified of a change. In such cases, subscriber management in the
  * message bus adds too much overhead.
  */
-public abstract class KotlinModificationTrackerFactory {
+public abstract class KotlinModificationTrackerFactory : KotlinPlatformComponent {
     /**
      * Creates an out-of-block modification tracker which is incremented every time there is an out-of-block change in some source project
      * module.

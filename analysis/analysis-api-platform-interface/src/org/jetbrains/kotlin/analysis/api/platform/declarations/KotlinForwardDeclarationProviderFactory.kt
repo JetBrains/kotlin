@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 /**
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
  * Implementations should be consistent with their corresponding [KotlinForwardDeclarationsPackageProviderFactory][org.jetbrains.kotlin.analysis.api.platform.packages.KotlinForwardDeclarationsPackageProviderFactory]
  * implementation.
  */
-public abstract class KotlinForwardDeclarationProviderFactory {
+public abstract class KotlinForwardDeclarationProviderFactory : KotlinOptionalPlatformComponent {
     /**
      * Create a Kotlin/Native declaration provider for [ktModule].
      *
@@ -29,6 +30,11 @@ public abstract class KotlinForwardDeclarationProviderFactory {
      * @return a declaration provider for [ktModule] or `null` if the module cannot contain forward declarations
      */
     public abstract fun createDeclarationProvider(ktModule: KtModule): KotlinDeclarationProvider?
+
+    public companion object {
+        public fun getInstance(project: Project): KotlinForwardDeclarationProviderFactory? =
+            project.getService(KotlinForwardDeclarationProviderFactory::class.java)
+    }
 }
 
 /**
@@ -37,4 +43,4 @@ public abstract class KotlinForwardDeclarationProviderFactory {
  * @see [KotlinForwardDeclarationProviderFactory]
  */
 public fun Project.createForwardDeclarationProvider(ktModule: KtModule): KotlinDeclarationProvider? =
-    getService(KotlinForwardDeclarationProviderFactory::class.java)?.createDeclarationProvider(ktModule)
+    KotlinForwardDeclarationProviderFactory.getInstance(this)?.createDeclarationProvider(ktModule)

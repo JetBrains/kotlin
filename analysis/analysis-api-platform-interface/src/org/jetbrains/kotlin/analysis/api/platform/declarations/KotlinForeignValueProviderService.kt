@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
 import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.psi.KtCodeFragment
 
-public interface KotlinForeignValueProviderService {
+public interface KotlinForeignValueProviderService : KotlinOptionalPlatformComponent {
     public fun getForeignValues(codeFragment: KtCodeFragment): Map<String, String>
 
     public companion object {

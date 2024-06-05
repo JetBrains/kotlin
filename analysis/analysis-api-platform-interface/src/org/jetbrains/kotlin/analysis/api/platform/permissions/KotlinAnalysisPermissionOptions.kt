@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.platform.permissions
 
 import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 
 /**
  * [KotlinAnalysisPermissionOptions] gives an Analysis API platform the choice whether to allow analysis on the EDT and in write actions by
@@ -13,7 +14,7 @@ import com.intellij.openapi.application.ApplicationManager
  *
  * @see KotlinDefaultAnalysisPermissionOptions
  */
-public interface KotlinAnalysisPermissionOptions {
+public interface KotlinAnalysisPermissionOptions : KotlinOptionalPlatformComponent {
     /**
      * The default setting for [org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry.isAnalysisAllowedOnEdt], when not
      * overridden by [org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisOnEdt].

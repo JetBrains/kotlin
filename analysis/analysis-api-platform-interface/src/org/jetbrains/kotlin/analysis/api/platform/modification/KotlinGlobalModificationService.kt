@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 /**
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
  * - [KotlinModificationTrackerFactory]
  * - [KotlinModificationTopics] via [analysisMessageBus][org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus]
  */
-public abstract class KotlinGlobalModificationService {
+public abstract class KotlinGlobalModificationService : KotlinPlatformComponent {
     /**
      * Publishes an event of global modification of the module state of all [KtModule]s.
      */

@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProvider
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProviderMerger
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -85,7 +86,7 @@ public abstract class KotlinDeclarationProvider : KotlinComposableProvider {
     public open fun computePackageNamesWithTopLevelCallables(): Set<String>? = computePackageNames()
 }
 
-public abstract class KotlinDeclarationProviderFactory {
+public abstract class KotlinDeclarationProviderFactory : KotlinPlatformComponent {
     public abstract fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KtModule?): KotlinDeclarationProvider
 
     public companion object {
@@ -104,7 +105,7 @@ public abstract class KotlinDeclarationProviderFactory {
  * [createDeclarationProvider]. [KotlinDeclarationProviderMerger] should implement proper merging logic that takes these concerns into
  * account.
  */
-public abstract class KotlinDeclarationProviderMerger : KotlinComposableProviderMerger<KotlinDeclarationProvider> {
+public abstract class KotlinDeclarationProviderMerger : KotlinComposableProviderMerger<KotlinDeclarationProvider>, KotlinPlatformComponent {
     public companion object {
         public fun getInstance(project: Project): KotlinDeclarationProviderMerger =
             project.getService(KotlinDeclarationProviderMerger::class.java)

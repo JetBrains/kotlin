@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
  * compiler depends on the IJ platform, but this dependency is not represented as JARs in the monorepo, but rather by certain monorepo
  * source modules, which are made visible to the Kotlin compiler library sources as dependencies via an anchor module.
  */
-public interface KotlinAnchorModuleProvider {
+public interface KotlinAnchorModuleProvider : KotlinOptionalPlatformComponent {
     public fun getAnchorModule(libraryModule: KtLibraryModule): KtSourceModule?
 
     /**

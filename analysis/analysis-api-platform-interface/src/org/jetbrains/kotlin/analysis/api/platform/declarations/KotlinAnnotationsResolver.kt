@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.declarations
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtElement
@@ -40,14 +41,18 @@ public interface KotlinAnnotationsResolver {
     public fun annotationsOnDeclaration(declaration: KtAnnotated): Set<ClassId>
 }
 
-public interface KotlinAnnotationsResolverFactory {
+public interface KotlinAnnotationsResolverFactory : KotlinPlatformComponent {
     /**
      * @param searchScope A scope in which the created [KotlinAnnotationsResolver] will operate. Make sure that this scope contains all
      * the annotations that you might want to resolve.
      */
     public fun createAnnotationResolver(searchScope: GlobalSearchScope): KotlinAnnotationsResolver
+
+    public companion object {
+        public fun getInstance(project: Project): KotlinAnnotationsResolverFactory =
+            project.getService(KotlinAnnotationsResolverFactory::class.java)
+    }
 }
 
 public fun Project.createAnnotationResolver(searchScope: GlobalSearchScope): KotlinAnnotationsResolver =
-    this.getService(KotlinAnnotationsResolverFactory::class.java)
-        .createAnnotationResolver(searchScope)
+    KotlinAnnotationsResolverFactory.getInstance(this).createAnnotationResolver(searchScope)
