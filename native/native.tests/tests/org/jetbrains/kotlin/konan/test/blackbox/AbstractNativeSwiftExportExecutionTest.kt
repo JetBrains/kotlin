@@ -29,11 +29,11 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
         testPathFull: File,
         testCase: TestCase,
         swiftExportOutput: SwiftExportModule,
-        swiftModule: TestCompilationArtifact.Swift.Module,
+        swiftModules: Set<TestCompilationArtifact.Swift.Module>,
     ) {
         val swiftTestFiles = testPathFull.walk().filter { it.extension == "swift" }.map { testPathFull.resolve(it) }.toList()
         val testExecutable =
-            compileTestExecutable(testPathFull.name, swiftTestFiles, swiftModule.rootDir, swiftModule.moduleName, swiftModule.modulemap)
+            compileTestExecutable(testPathFull.name, swiftTestFiles, swiftModules = swiftModules)
         runExecutableAndVerify(testCase, testExecutable)
     }
 
@@ -60,17 +60,16 @@ abstract class AbstractNativeSwiftExportExecutionTest : AbstractNativeSwiftExpor
     private fun compileTestExecutable(
         testName: String,
         testSources: List<File>,
-        swiftModuleDir: File,
-        binaryLibraryName: String,
-        moduleMap: File,
+        swiftModules: Set<TestCompilationArtifact.Swift.Module>,
     ): TestExecutable {
-        val swiftExtraOpts = listOf(
-            "-I", swiftModuleDir.absolutePath,
-            "-L", swiftModuleDir.absolutePath,
-            "-l$binaryLibraryName",
-            "-Xcc", "-fmodule-map-file=${moduleMap.absolutePath}",
-            "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
-        )
+        val swiftExtraOpts = swiftModules.flatMap {
+            listOf(
+                "-I", it.rootDir.absolutePath,
+                "-L", it.rootDir.absolutePath,
+                "-l${it.moduleName}",
+                "-Xcc", "-fmodule-map-file=${it.modulemap.absolutePath}",
+            )
+        } + listOf("-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",)
         val provider = createTestProvider(buildDir(testName), testSources)
         val success = SwiftCompilation(
             testRunSettings,

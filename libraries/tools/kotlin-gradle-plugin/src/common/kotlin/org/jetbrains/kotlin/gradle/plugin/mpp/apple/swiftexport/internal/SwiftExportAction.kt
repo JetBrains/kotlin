@@ -29,7 +29,6 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
         }
     }
 
-    @Suppress("DEPRECATION")
     override fun execute() {
         runSwiftExport(
             input = InputModule.Binary(
@@ -44,7 +43,8 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportParameters> {
                 ),
                 logger = Companion,
                 distribution = parameters.konanDistribution.get(),
-                outputPath = parameters.outputPath.getFile().toPath()
+                outputPath = parameters.outputPath.getFile().toPath(),
+                multipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.IntoSingleModule,
             )
         ).apply {
             val modules = getOrThrow()

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.printer
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.*
+import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -421,7 +422,9 @@ class SirAsSwiftSourcesPrinterTests {
                             origin = SirOrigin.Unknown
                             visibility = SirVisibility.PUBLIC
                             name = "Foo"
-                        })})}
+                        })
+                })
+        }
 
         runTest(
             module,
@@ -444,7 +447,9 @@ class SirAsSwiftSourcesPrinterTests {
                             origin = SirOrigin.Unknown
                             visibility = SirVisibility.PUBLIC
                             name = "INNER_CLASS"
-                        })})}
+                        })
+                })
+        }
 
         runTest(
             module,
@@ -888,6 +893,25 @@ class SirAsSwiftSourcesPrinterTests {
         runTest(
             module,
             "testData/extension"
+        )
+    }
+
+    @Test
+    fun `should print imports`() {
+        val module = buildModule {
+            name = "Test"
+        }
+
+        module.updateImports(
+            listOf(
+                SirImport(moduleName = "DEMO_PACKAGE"),
+                SirImport(moduleName = "ExportedModule", isExported = true),
+            )
+        )
+
+        runTest(
+            module,
+            "testData/imports"
         )
     }
 

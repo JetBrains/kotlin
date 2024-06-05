@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.sir.builder.buildExtension
 import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
 import org.jetbrains.kotlin.sir.providers.SirParentProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.utils.containingModule
+import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.util.addChild
 
 public class SirParentProviderImpl(
@@ -42,6 +44,13 @@ public class SirParentProviderImpl(
                 val enumAsPackage = with(packageEnumGenerator) { packageFqName.sirPackageEnum() }
                 val extensionsInModule = createdExtensionsForModule.getOrPut(sirModule) { mutableMapOf() }
                 val extensionForPackage = extensionsInModule.getOrPut(enumAsPackage) {
+                    sirModule.updateImport(
+                        SirImport(
+                            moduleName = enumAsPackage.containingModule().name,
+                            // so the user will have access to the Fully Qualified Name for declaration without importing additional modules
+                            isExported = true,
+                        )
+                    )
                     sirModule.addChild {
                         buildExtension {
                             origin = enumAsPackage.origin

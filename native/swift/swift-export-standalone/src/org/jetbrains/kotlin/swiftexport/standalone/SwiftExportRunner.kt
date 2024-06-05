@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.swiftexport.standalone
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.sir.SirImport
+import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.bridge.SirTypeNamer
@@ -38,8 +39,9 @@ public data class SwiftExportConfig(
     val distribution: Distribution = Distribution(KotlinNativePaths.homePath.absolutePath),
     val errorTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
     val unsupportedTypeStrategy: ErrorTypeStrategy = ErrorTypeStrategy.Fail,
+    val multipleModulesHandlingStrategy: MultipleModulesHandlingStrategy = MultipleModulesHandlingStrategy.OneToOneModuleMapping,
     val unsupportedDeclarationReporterKind: UnsupportedDeclarationReporterKind = UnsupportedDeclarationReporterKind.Silent,
-    ) {
+) {
     public companion object {
         /**
          * How should the generated stubs refer to C bridging module?
@@ -58,6 +60,10 @@ public data class SwiftExportConfig(
 
         public const val ROOT_PACKAGE: String = "packageRoot"
     }
+}
+
+public enum class MultipleModulesHandlingStrategy {
+    OneToOneModuleMapping, IntoSingleModule;
 }
 
 public enum class UnsupportedDeclarationReporterKind {
@@ -124,12 +130,13 @@ public fun createDummyLogger(): SwiftExportLogger = object : SwiftExportLogger {
     }
 }
 
-@Deprecated(message = "This method will be removed in a future version")
+/**
+ * A root function for running Swift Export from build tool
+ */
 public fun runSwiftExport(
     input: InputModule.Binary,
     config: SwiftExportConfig,
-    output: SwiftExportFiles,
-) {
+): Result<List<SwiftExportModule>> = runCatching {
     val stableDeclarationsOrder = config.settings.containsKey(STABLE_DECLARATIONS_ORDER)
     val renderDocComments = config.settings[RENDER_DOC_COMMENTS] != "false"
     val bridgeModuleName = config.settings.getOrElse(BRIDGE_MODULE_NAME) {
@@ -148,53 +155,44 @@ public fun runSwiftExport(
             return ((type.type.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
         }
     })
-    val bridgeRequests = buildBridgeRequests(bridgeGenerator, buildResult.mainModule)
-    if (bridgeRequests.isNotEmpty()) {
-        buildResult.mainModule.updateImports(listOf(SirImport(bridgeModuleName)))
-    }
+
     val additionalSwiftLinesProvider = if (unsupportedDeclarationReporter is SimpleUnsupportedDeclarationReporter) {
         // Lazily call after SIR printer to make sure that all declarations are collected.
         { unsupportedDeclarationReporter.messages.map { "// $it" } }
     } else {
         { emptyList() }
     }
-    dumpResultToFiles(
-        sirModules = listOf(buildResult.mainModule, buildResult.moduleForPackageEnums),
-        bridgeGenerator = bridgeGenerator,
-        requests = bridgeRequests,
-        output = output,
-        stableDeclarationsOrder = stableDeclarationsOrder,
-        renderDocComments = renderDocComments,
-        additionalSwiftLinesProvider = additionalSwiftLinesProvider,
-    )
-}
-
-/**
- * A root function for running Swift Export from build tool
- */
-@Suppress("DEPRECATION")
-public fun runSwiftExport(
-    input: InputModule.Binary,
-    config: SwiftExportConfig,
-): Result<List<SwiftExportModule>> {
-    val output = SwiftExportFiles(
-        swiftApi = config.outputPath / "${input.name}.swift",
-        kotlinBridges = config.outputPath / "${input.name}.kt",
-        cHeaderBridges = config.outputPath / "${input.name}.h"
-    )
-
-    return runCatching {
-        runSwiftExport(
-            input,
-            config,
-            output
-        )
-        listOf(
-            SwiftExportModule(
-                name = input.name,
-                files = output,
-                dependencies = emptyList(),
-            )
+    listOf(buildResult.mainModule, buildResult.moduleForPackageEnums).forEach {
+        val bridgeRequests = buildBridgeRequests(bridgeGenerator, it)
+        if (bridgeRequests.isNotEmpty()) {
+            it.updateImports(listOf(SirImport(moduleName = "${bridgeModuleName}_${it.name}")))
+        }
+        it.dumpResultToFiles(
+            output = it.createOutputFiles(config.outputPath),
+            bridgeGenerator = bridgeGenerator,
+            requests = bridgeRequests,
+            stableDeclarationsOrder = stableDeclarationsOrder,
+            renderDocComments = renderDocComments,
+            additionalSwiftLinesProvider = additionalSwiftLinesProvider,
         )
     }
+    return@runCatching listOf(
+        SwiftExportModule(
+            name = buildResult.mainModule.name,
+            dependencies = listOf(
+                SwiftExportModule(
+                    name = buildResult.moduleForPackageEnums.name,
+                    dependencies = emptyList(),
+                    files = buildResult.moduleForPackageEnums.createOutputFiles(config.outputPath)
+                )
+            ),
+            files = buildResult.mainModule.createOutputFiles(config.outputPath)
+        )
+    )
 }
+
+private fun SirModule.createOutputFiles(outputPath: Path): SwiftExportFiles = SwiftExportFiles(
+    swiftApi = (outputPath / name / "$name.swift"),
+    kotlinBridges = (outputPath / name / "$name.kt"),
+    cHeaderBridges = (outputPath / name / "$name.h")
+)

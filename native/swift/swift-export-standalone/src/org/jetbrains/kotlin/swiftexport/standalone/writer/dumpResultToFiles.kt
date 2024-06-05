@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportFiles
 import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.div
 
 
-internal fun dumpResultToFiles(
-    sirModules: List<SirModule>,
+internal fun SirModule.dumpResultToFiles(
     bridgeGenerator: BridgeGenerator,
     requests: List<BridgeRequest>,
     output: SwiftExportFiles,
@@ -26,12 +27,16 @@ internal fun dumpResultToFiles(
     val swiftFile = output.swiftApi.toFile()
 
     val bridges = generateBridgeSources(bridgeGenerator, requests, stableDeclarationsOrder)
-    val swiftSources = sirModules.asSequence().map { module ->
-        SirAsSwiftSourcesPrinter.print(module, stableDeclarationsOrder, renderDocComments)
-    } + additionalSwiftLinesProvider()
+    val swiftSources = listOf(
+        SirAsSwiftSourcesPrinter.print(
+            this,
+            stableDeclarationsOrder,
+            renderDocComments
+        )
+    ) + additionalSwiftLinesProvider()
     dumpTextAtFile(bridges.ktSrc, ktBridgeFile)
     dumpTextAtFile(bridges.cSrc, cHeaderFile)
-    dumpTextAtFile(swiftSources, swiftFile)
+    dumpTextAtFile(swiftSources.asSequence(), swiftFile)
 }
 
 private fun generateBridgeSources(
