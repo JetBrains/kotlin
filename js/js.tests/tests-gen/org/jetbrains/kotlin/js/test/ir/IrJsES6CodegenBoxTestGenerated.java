@@ -16444,6 +16444,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
+    @TestMetadata("inferenceWithTypeAliasFromOtherModule.kt")
+    public void testInferenceWithTypeAliasFromOtherModule() {
+      runTest("compiler/testData/codegen/box/fir/inferenceWithTypeAliasFromOtherModule.kt");
+    }
+
+    @Test
     @TestMetadata("listAssignmentInWhen.kt")
     public void testListAssignmentInWhen() {
       runTest("compiler/testData/codegen/box/fir/listAssignmentInWhen.kt");

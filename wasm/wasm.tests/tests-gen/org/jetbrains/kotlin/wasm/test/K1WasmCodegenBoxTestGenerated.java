@@ -16420,6 +16420,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("inferenceWithTypeAliasFromOtherModule.kt")
+    public void testInferenceWithTypeAliasFromOtherModule() {
+      runTest("compiler/testData/codegen/box/fir/inferenceWithTypeAliasFromOtherModule.kt");
+    }
+
+    @Test
     @TestMetadata("listAssignmentInWhen.kt")
     public void testListAssignmentInWhen() {
       runTest("compiler/testData/codegen/box/fir/listAssignmentInWhen.kt");
