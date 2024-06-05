@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.platform.lifetime
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 
 /**
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
  *
  * It can be used in the implementation of custom lifetime tokens to check that the accessed token is in scope.
  */
-@KaAnalysisApiInternals
 public interface KaLifetimeTracker {
     /**
      * Returns the [KtLifetimeToken] for the currently active analysis, or `null` if no analysis is in progress.

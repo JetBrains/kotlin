@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.platform.permissions
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 
 /**
  * [KaAnalysisPermissionChecker] is an *engine service* which allows checking whether analysis is currently allowed.
  */
-@KaAnalysisApiInternals
 public interface KaAnalysisPermissionChecker {
     public fun isAnalysisAllowed(): Boolean
 
