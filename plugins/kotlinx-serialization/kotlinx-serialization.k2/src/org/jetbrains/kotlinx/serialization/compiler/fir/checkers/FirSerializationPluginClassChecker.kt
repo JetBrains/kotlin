@@ -36,10 +36,7 @@ import org.jetbrains.kotlinx.serialization.compiler.diagnostic.RuntimeVersions
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationErrors.EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationErrors.EXTERNAL_SERIALIZER_USELESS
-import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySerializationInfoProvider
-import org.jetbrains.kotlinx.serialization.compiler.fir.services.findTypeSerializerOrContextUnchecked
-import org.jetbrains.kotlinx.serialization.compiler.fir.services.serializablePropertiesProvider
-import org.jetbrains.kotlinx.serialization.compiler.fir.services.versionReader
+import org.jetbrains.kotlinx.serialization.compiler.fir.services.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
@@ -604,7 +601,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
             }
             checkTypeArguments(typeRef, typeSource, reporter)
         } else {
-            if (type.toRegularClassSymbol(session)?.isEnumClass != true) {
+            if (type.classSymbolOrUpperBound(session)?.isEnumClass != true) {
                 // enums are always serializable
                 reporter.reportOn(typeSource, FirSerializationErrors.SERIALIZER_NOT_FOUND, type, this)
             }

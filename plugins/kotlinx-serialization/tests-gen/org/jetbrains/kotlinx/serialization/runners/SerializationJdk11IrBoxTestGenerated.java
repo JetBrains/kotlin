@@ -25,8 +25,20 @@ public class SerializationJdk11IrBoxTestGenerated extends AbstractSerializationJ
   }
 
   @Test
+  @TestMetadata("flexibleType.kt")
+  public void testFlexibleType() {
+    runTest("plugins/kotlinx-serialization/testData/jdk11BoxIr/flexibleType.kt");
+  }
+
+  @Test
   @TestMetadata("kt57647.kt")
   public void testKt57647() {
     runTest("plugins/kotlinx-serialization/testData/jdk11BoxIr/kt57647.kt");
+  }
+
+  @Test
+  @TestMetadata("serializableOnJavaClass.kt")
+  public void testSerializableOnJavaClass() {
+    runTest("plugins/kotlinx-serialization/testData/jdk11BoxIr/serializableOnJavaClass.kt");
   }
 }

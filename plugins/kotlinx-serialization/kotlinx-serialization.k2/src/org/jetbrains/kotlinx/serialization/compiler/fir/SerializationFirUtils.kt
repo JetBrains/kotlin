@@ -279,6 +279,13 @@ fun ConeKotlinType.isAbstractOrSealedOrInterface(session: FirSession): Boolean =
     toRegularClassSymbol(session)?.let { it.classKind.isInterface || it.rawStatus.modality == Modality.ABSTRACT || it.rawStatus.modality == Modality.SEALED }
         ?: false
 
+fun ConeKotlinType.classSymbolOrUpperBound(session: FirSession): FirClassSymbol<*>? {
+    return when (this) {
+        is ConeSimpleKotlinType -> toClassSymbol(session)
+        is ConeFlexibleType -> upperBound.toClassSymbol(session)
+    }
+}
+
 fun FirDeclaration.excludeFromJsExport(session: FirSession) {
     if (!session.moduleData.platform.isJs()) {
         return

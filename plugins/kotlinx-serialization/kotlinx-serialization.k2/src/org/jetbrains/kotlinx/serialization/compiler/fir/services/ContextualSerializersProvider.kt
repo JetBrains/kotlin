@@ -81,8 +81,8 @@ fun findTypeSerializerOrContextUnchecked(type: ConeKotlinType, c: CheckerContext
     if (type.isTypeParameter) return null
     val session = c.session
     val annotations = type.fullyExpandedType(session).customAnnotations
-    annotations.getSerializableWith(session)?.let { return it.toRegularClassSymbol(session) }
-    val classSymbol = type.toRegularClassSymbol(session) ?: return null
+    annotations.getSerializableWith(session)?.let { return it.classSymbolOrUpperBound(session) }
+    val classSymbol = type.classSymbolOrUpperBound(session) ?: return null
     val currentFile = c.currentFile
     val provider = session.contextualSerializersProvider
     provider.getAdditionalSerializersInScopeForFile(currentFile)[classSymbol to type.isMarkedNullable]?.let { return it }
@@ -92,7 +92,7 @@ fun findTypeSerializerOrContextUnchecked(type: ConeKotlinType, c: CheckerContext
     if (type in provider.getContextualKClassListForFile(currentFile)) {
         return session.dependencySerializationInfoProvider.getClassFromSerializationPackage(SpecialBuiltins.Names.contextSerializer)
     }
-    return analyzeSpecialSerializers(session, annotations) ?: findTypeSerializer(type, c)
+    return analyzeSpecialSerializers(session, annotations) ?: findTypeSerializer(type.upperBoundIfFlexible(), c)
 }
 
 /**
@@ -115,7 +115,7 @@ fun analyzeSpecialSerializers(session: FirSession, annotations: List<FirAnnotati
 fun findTypeSerializer(type: ConeKotlinType, c: CheckerContext): FirClassSymbol<*>? {
     val session = c.session
     val userOverride = type.getOverriddenSerializer(session)
-    if (userOverride != null) return userOverride.toRegularClassSymbol(session)
+    if (userOverride != null) return userOverride.classSymbolOrUpperBound(session)
     if (type.isTypeParameter) return null
     val serializationProvider = session.dependencySerializationInfoProvider
     if (type.isArrayType) {
