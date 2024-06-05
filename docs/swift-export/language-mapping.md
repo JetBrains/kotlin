@@ -173,6 +173,26 @@ public class Foo : KotlinRuntime.KotlinBase {
 
 `Unit` is translated to the `Void` type.
 
+### kotlin.Nothing
+
+`Nothing` is translated to the `Never` type.
+
+```kotlin
+fun foo(): Nothing = TODO()
+
+fun baz(input: Nothing) {}
+```
+
+```swift
+public func foo() -> Swift.Never {
+    ...
+}
+
+public func baz(input: Swift.Never) -> Void {
+    ...
+}
+```
+
 ## Classifier types
 
 Swift export supports only a limited number of reference types for now: final classes that directly inherit from `Any`.

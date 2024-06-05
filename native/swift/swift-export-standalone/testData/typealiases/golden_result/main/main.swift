@@ -5,6 +5,7 @@ import KotlinRuntime
 public typealias DefaultInteger = main.RegularInteger
 public typealias RegularInteger = Swift.Int32
 public typealias ShouldHaveNoAnnotation = Swift.Int32
+public typealias never = Swift.Never
 public func increment(
     integer: main.DefaultInteger
 ) -> main.RegularInteger {

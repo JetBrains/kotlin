@@ -53,6 +53,7 @@ public class SirTypeProviderImpl(
 
                 ktType.isDouble -> SirSwiftModule.double
                 ktType.isFloat -> SirSwiftModule.float
+                ktType.isNothing -> SirSwiftModule.never
                 else -> null
             }?.let { primitiveType ->
                 SirNominalType(primitiveType)

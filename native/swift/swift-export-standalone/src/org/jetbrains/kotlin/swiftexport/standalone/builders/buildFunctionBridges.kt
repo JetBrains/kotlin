@@ -95,6 +95,8 @@ private fun SirCallable.patchCallableBodyAndGenerateRequest(
     val typesUsed = listOf(returnType) + allParameters.map { it.type }
     if (typesUsed.any { !it.isSupported })
         return null
+    if (allParameters.any { it.type.isNever })
+        return null // If any of the parameters is never - there should be no ability to call this function - therefor we can skip the bridge generation
     val suffix = bridgeSuffix
     val request = BridgeRequest(
         this,
@@ -109,7 +111,7 @@ private val SirType.isSupported: Boolean
     get() = when (this) {
         is SirNominalType -> when (val declaration = type) {
             is SirTypealias -> declaration.type.isSupported
-            else -> declaration != KotlinRuntimeModule.kotlinBase // Unexported types are mapped to KotlinBase; they cannot have bridges
+            else -> declaration != KotlinRuntimeModule.kotlinBase  // Unexported types are mapped to KotlinBase; they cannot have bridges
         }
         else -> false
     }

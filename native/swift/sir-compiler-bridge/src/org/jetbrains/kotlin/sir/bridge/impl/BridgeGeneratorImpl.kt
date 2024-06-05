@@ -170,7 +170,7 @@ private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String 
 }
 
 private fun BridgeFunctionDescriptor.cDeclaration() =
-    "${returnType.cType.repr} ${cBridgeName}(${allParameters.joinToString { "${it.bridge.cType.repr} ${it.name}" }});"
+    "${returnType.cType.repr} ${cBridgeName}(${allParameters.joinToString { "${it.bridge.cType.repr} ${it.name}" }})${if (returnType.swiftType.isNever) " __attribute((noreturn))" else ""};"
 
 private inline fun BridgeFunctionDescriptor.createFunctionBridge(typeNamer: SirTypeNamer, kotlinCall: (name: String, args: List<String>) -> String) =
     FunctionBridge(
@@ -201,6 +201,7 @@ private fun bridgeType(type: SirType): Bridge {
         SirSwiftModule.float -> Bridge.AsIs(type, KotlinType.Float, CType.Float)
 
         SirSwiftModule.uint -> Bridge.AsOpaqueObject(type, KotlinType.Object, CType.Object)
+        SirSwiftModule.never -> Bridge.AsOpaqueObject(type, KotlinType.Object, CType.Object)
 
         is SirTypealias -> bridgeType(subtype.type)
 

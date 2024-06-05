@@ -16,31 +16,29 @@ object SirSwiftModule : SirModule() {
 
     override val name: String get() = "Swift"
 
-    val bool = primitive("Bool")
+    val bool = struct("Bool")
 
-    val int8 = primitive("Int8")
-    val int16 = primitive("Int16")
-    val int32 = primitive("Int32")
-    val int64 = primitive("Int64")
+    val int8 = struct("Int8")
+    val int16 = struct("Int16")
+    val int32 = struct("Int32")
+    val int64 = struct("Int64")
 
-    val uint8 = primitive("UInt8")
-    val uint16 = primitive("UInt16")
-    val uint32 = primitive("UInt32")
-    val uint64 = primitive("UInt64")
+    val uint8 = struct("UInt8")
+    val uint16 = struct("UInt16")
+    val uint32 = struct("UInt32")
+    val uint64 = struct("UInt64")
 
-    val double = primitive("Double")
-    val float = primitive("Float")
+    val double = struct("Double")
+    val float = struct("Float")
 
-    val uint = primitive("UInt")
+    val uint = struct("UInt")
 
-    val void = buildStruct {
-        origin = SirOrigin.ExternallyDefined(name = "Swift.Void")
-        visibility = SirVisibility.PUBLIC
-        name = "Void"
-    }.also { it.parent = SirSwiftModule }
+    val void = struct("Void")
+    val never = struct("Never")
 
     override var declarations: MutableList<SirDeclaration> = mutableListOf(
         void,
+        never,
 
         bool,
 
@@ -61,7 +59,7 @@ object SirSwiftModule : SirModule() {
     )
 }
 
-private fun primitive(typeName: String) = buildStruct {
+private fun struct(typeName: String) = buildStruct {
     origin = SirOrigin.ExternallyDefined("Swift.$typeName")
     visibility = SirVisibility.PUBLIC
     name = typeName
