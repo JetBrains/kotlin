@@ -3,11 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.impl
+package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.api.platform.KotlinResolutionScopeProvider
 import org.jetbrains.kotlin.utils.topologicalSort
 
 public class KotlinByModulesResolutionScopeProvider : KotlinResolutionScopeProvider() {
