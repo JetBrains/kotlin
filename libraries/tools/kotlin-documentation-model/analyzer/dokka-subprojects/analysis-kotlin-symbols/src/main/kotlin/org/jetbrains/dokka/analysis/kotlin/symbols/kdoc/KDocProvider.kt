@@ -48,8 +48,8 @@ internal fun KaSession.getKDocDocumentationFrom(symbol: KaSymbol, logger: DokkaL
     val ktElement = symbol.psi
     val kdocLocation = ktElement?.containingFile?.name?.let {
         val name = when(symbol) {
-            is KaCallableSymbol -> symbol.callableIdIfNonLocal?.toString()
-            is KaClassOrObjectSymbol -> symbol.classIdIfNonLocal?.toString()
+            is KaCallableSymbol -> symbol.callableId?.toString()
+            is KaClassOrObjectSymbol -> symbol.classId?.toString()
             is KaNamedSymbol -> symbol.name.asString()
             else -> null
         }?.replace('/', '.') // replace to be compatible with K1

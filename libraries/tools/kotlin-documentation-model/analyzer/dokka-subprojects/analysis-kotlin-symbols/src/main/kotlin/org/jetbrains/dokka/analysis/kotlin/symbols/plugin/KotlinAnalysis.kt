@@ -11,8 +11,6 @@ import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder
@@ -72,8 +70,6 @@ internal fun createAnalysisSession(
         projectDisposable = projectDisposable,
         withPsiDeclarationFromBinaryModuleProvider = false
     ) {
-        registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-
         val sortedSourceSets = topologicalSortByDependantSourceSets(sourceSets, logger)
 
         val sourcesModuleBySourceSetId = mutableMapOf<DokkaSourceSetID, KtSourceModule>()
