@@ -230,13 +230,6 @@ class LightTreeRawFirExpressionBuilder(
                         KtFakeSourceElementKind.LambdaDestructuringBlock
                     }
                     val bodyBlock = declarationBuilder.convertBlockExpressionWithoutBuilding(block!!, kind).apply {
-                        statements.firstOrNull()?.let {
-                            if (it.isContractBlockFirCheck()) {
-                                this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
-                                statements[0] = FirContractCallBlock(it)
-                            }
-                        }
-
                         if (statements.isEmpty()) {
                             statements.add(
                                 buildReturnExpression {
