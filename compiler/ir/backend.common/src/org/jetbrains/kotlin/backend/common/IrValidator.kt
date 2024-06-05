@@ -110,7 +110,7 @@ private class CheckDeclarationParentsVisitor : DeclarationParentsVisitor() {
     }
 }
 
-open class IrValidationError(message: String? = null) : IllegalStateException(message)
+open class IrValidationError(message: String? = null, cause: Throwable? = null) : IllegalStateException(message, cause)
 
 class DuplicateIrNodeError(element: IrElement) : IrValidationError(element.render())
 

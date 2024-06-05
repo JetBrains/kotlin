@@ -1,3 +1,5 @@
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+
 // MODULE: a
 // FILE: a.kt
 

@@ -10,6 +10,10 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+// ^ Because of access control violation caused by the fact that the backends sees the Result from stdlib instead of
+//   the custom Result from this test. Accessing its `value` causes IR validation error, since it has internal visibility in the stdlib.
+
 // FILE: result.kt
 package kotlin
 

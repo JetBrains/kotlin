@@ -1,5 +1,6 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 
 import kotlin.concurrent.*
 

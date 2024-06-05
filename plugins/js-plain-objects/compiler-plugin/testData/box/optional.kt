@@ -1,3 +1,6 @@
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+// ^ KT-68839
+
 package foo
 
 import kotlinx.js.JsPlainObject

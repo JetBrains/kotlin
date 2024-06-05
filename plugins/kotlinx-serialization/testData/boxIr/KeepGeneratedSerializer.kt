@@ -1,6 +1,10 @@
 // WITH_STDLIB
 // FIR_IDENTICAL
 
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+// ^ Some functions, calls to which are emitted by the serialization plugin into user code, have internal visibility.
+//   See https://github.com/Kotlin/kotlinx.serialization/issues/2703
+
 // FILE: annotation.kt
 package kotlinx.serialization
 

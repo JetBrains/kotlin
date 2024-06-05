@@ -22,6 +22,8 @@ inline fun foo(values: IntArray, crossinline block: (Int, Int, Int) -> Int): Int
 }
 
 // MODULE: main(lib)
+// DISABLE_IR_VISIBILITY_CHECKS: NATIVE, WASM
+// ^ UninitializedPropertyAccessException is internal on Native and Wasm
 // FILE: main.kt
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
