@@ -189,7 +189,7 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
         else -> {
             val classifier = (type as IrSimpleType).classifier
             // Nullable type is not a subtype of assumed non-nullable type of targetClass
-            if (!type.isNullable() && classifier.isSubtypeOf(targetClass.symbol)) this
+            if (!type.isNullable() && classifier.isSubtypeOfClass(targetClass.symbol)) this
             else {
                 makeIrCallConversionToTargetClass(this, classifier.closestSuperClass()!!.owner, targetClass)
             }
