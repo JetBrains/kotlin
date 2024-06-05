@@ -19,7 +19,7 @@ package test;
 import lib.Anno;
 import lib.impl.Impl;
 
-@lib.Anno(impls = {lib.impl.Impl.class, ABC.class})
+@lib.Anno(impls = {Impl.class, ABC.class})
 /**
  * public final class test/Bar : kotlin/Any {
  *

@@ -1668,9 +1668,19 @@ class Fir2IrVisitor(
                 startOffset, endOffset,
                 type = arrayType,
                 varargElementType = elementType,
-                elements = arrayLiteral.arguments.map { it.convertToIrVarargElement() }
+                elements = arrayLiteral.arguments.mapNotNull {
+                    if (it.isGetClassWithErrorType()) null else it.convertToIrVarargElement()
+                }
             )
         }
+    }
+
+    // FIXME: Hack around lack of error types when generating IR in K1 in KAPT mode
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    private fun FirExpression.isGetClassWithErrorType(): Boolean {
+        if (!configuration.skipBodies) return false
+        if (this !is FirGetClassCall) return false
+        return coneTypeOrNull is ConeErrorType || coneTypeOrNull?.typeArguments?.any { it is ConeErrorType } == true
     }
 
     override fun visitIndexedAccessAugmentedAssignment(
