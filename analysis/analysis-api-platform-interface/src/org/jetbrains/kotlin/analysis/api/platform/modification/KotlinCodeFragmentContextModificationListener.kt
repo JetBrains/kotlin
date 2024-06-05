@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.topics
+package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
@@ -13,7 +13,7 @@ public fun interface KotlinCodeFragmentContextModificationListener {
      *
      * All code fragments depending on [module], both directly or transitively, should be considered modified when this event is received.
      *
-     * @see KotlinTopics
+     * @see KotlinModificationTopics
      */
     public fun onModification(module: KtModule)
 }

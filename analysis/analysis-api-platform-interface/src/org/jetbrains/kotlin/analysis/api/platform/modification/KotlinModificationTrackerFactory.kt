@@ -3,16 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform
+package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
-import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinTopics
 
 /**
  * [KotlinModificationTrackerFactory] creates modification trackers for select modification events.
  *
- * Further modification tracking is implemented with a subscription-based mechanism via [KotlinTopics]. Modification trackers make the most
+ * Further modification tracking is implemented with a subscription-based mechanism via [KotlinModificationTopics]. Modification trackers make the most
  * sense when there are many, possibly short-lived objects that need to be notified of a change. In such cases, subscriber management in the
  * message bus adds too much overhead.
  */

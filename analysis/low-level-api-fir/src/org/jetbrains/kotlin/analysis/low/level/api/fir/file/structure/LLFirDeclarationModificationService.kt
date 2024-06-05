@@ -13,6 +13,8 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -25,9 +27,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
-import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinTopics.CODE_FRAGMENT_CONTEXT_MODIFICATION
-import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinTopics.MODULE_OUT_OF_BLOCK_MODIFICATION
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -53,11 +52,12 @@ import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
  *
  * For local changes (in-block modification), this service will do all required work.
  *
- * In case of non-local changes (out-of-block modification), this service will publish event to [MODULE_OUT_OF_BLOCK_MODIFICATION].
+ * In case of non-local changes (out-of-block modification), this service will publish event to
+ * [KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION].
  *
  * @see getNonLocalReanalyzableContainingDeclaration
- * @see MODULE_OUT_OF_BLOCK_MODIFICATION
- * @see org.jetbrains.kotlin.analysis.api.platform.topics.KotlinModuleOutOfBlockModificationListener
+ * @see KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION
+ * @see org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener
  */
 @LLFirInternals
 class LLFirDeclarationModificationService(val project: Project) : Disposable {
@@ -153,7 +153,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      * This method should be called during some [PsiElement] modification.
      * This method must be called from write action.
      *
-     * Will publish event to [MODULE_OUT_OF_BLOCK_MODIFICATION] in case of out-of-block modification.
+     * Will publish event to [KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION] in case of out-of-block modification.
      *
      * @param element is an element that we want to/did already modify, remove, or add.
      * Some examples:
@@ -262,7 +262,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
 
         fileStructure.invalidateElement(declaration)
 
-        project.analysisMessageBus.syncPublisher(CODE_FRAGMENT_CONTEXT_MODIFICATION).onModification(ktModule)
+        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.CODE_FRAGMENT_CONTEXT_MODIFICATION).onModification(ktModule)
     }
 
     private fun outOfBlockModification(element: PsiElement) {
@@ -270,7 +270,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
 
         // We should check outdated modifications before to avoid cache dropping (e.g., KtModule cache)
         dropOutdatedModifications(ktModule)
-        project.analysisMessageBus.syncPublisher(MODULE_OUT_OF_BLOCK_MODIFICATION).onModification(ktModule)
+        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION).onModification(ktModule)
     }
 
     /**

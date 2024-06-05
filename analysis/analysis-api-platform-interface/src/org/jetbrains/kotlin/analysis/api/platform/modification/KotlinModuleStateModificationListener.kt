@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.topics
+package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
@@ -11,7 +11,7 @@ public fun interface KotlinModuleStateModificationListener {
     /**
      * [onModification] is invoked in a write action *before* the [module] is updated or removed (see [modificationKind] for specifics).
      *
-     * @see KotlinTopics
+     * @see KotlinModificationTopics
      */
     public fun onModification(module: KtModule, modificationKind: KotlinModuleStateModificationKind)
 }

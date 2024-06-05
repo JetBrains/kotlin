@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeTokenFactory
-import org.jetbrains.kotlin.analysis.api.platform.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import kotlin.reflect.KClass
 
 public class KtAlwaysAccessibleLifetimeToken(project: Project) : KaLifetimeToken() {

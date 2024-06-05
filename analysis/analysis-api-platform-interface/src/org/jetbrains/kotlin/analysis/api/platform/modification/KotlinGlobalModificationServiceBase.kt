@@ -3,14 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.impl
+package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analysis.api.platform.KotlinGlobalModificationService
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
-import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinTopics
 
 public abstract class KotlinGlobalModificationServiceBase(private val project: Project) : KotlinGlobalModificationService() {
     @TestOnly
@@ -21,7 +19,7 @@ public abstract class KotlinGlobalModificationServiceBase(private val project: P
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         incrementModificationTrackers(includeBinaryTrackers = true)
-        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_MODULE_STATE_MODIFICATION).onModification()
+        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.GLOBAL_MODULE_STATE_MODIFICATION).onModification()
     }
 
     @TestOnly
@@ -29,7 +27,7 @@ public abstract class KotlinGlobalModificationServiceBase(private val project: P
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         incrementModificationTrackers(includeBinaryTrackers = false)
-        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION).onModification()
+        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION).onModification()
     }
 
     @TestOnly
@@ -37,6 +35,6 @@ public abstract class KotlinGlobalModificationServiceBase(private val project: P
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
         incrementModificationTrackers(includeBinaryTrackers = false)
-        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION).onModification()
+        project.analysisMessageBus.syncPublisher(KotlinModificationTopics.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION).onModification()
     }
 }

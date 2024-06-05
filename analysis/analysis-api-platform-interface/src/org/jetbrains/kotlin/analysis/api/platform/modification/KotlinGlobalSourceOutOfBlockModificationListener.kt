@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.topics
+package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
@@ -17,7 +17,7 @@ public fun interface KotlinGlobalSourceOutOfBlockModificationListener {
      * Library modules (including library sources) do not need to be considered modified, so any caches related to library modules and their
      * contents may be kept.
      *
-     * @see KotlinTopics
+     * @see KotlinModificationTopics
      */
     public fun onModification()
 }

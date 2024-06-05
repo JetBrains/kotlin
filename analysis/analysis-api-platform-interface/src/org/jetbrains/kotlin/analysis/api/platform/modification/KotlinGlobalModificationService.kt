@@ -3,22 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform
+package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.api.platform.topics.KotlinTopics
 
 /**
  * [KotlinGlobalModificationService] is a central service for the invalidation of caches during/between tests.
  *
- * All `publish` functions must be called in a write action because the events in [KotlinTopics] guarantee that the listener is called in a
+ * All `publish` functions must be called in a write action because the events in [KotlinModificationTopics] guarantee that the listener is called in a
  * write action.
  *
  * Implementations of this service should publish global modification events to at least the following components:
  * - [KotlinModificationTrackerFactory]
- * - [KotlinTopics] via [analysisMessageBus]
+ * - [KotlinModificationTopics] via [analysisMessageBus][org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus]
  */
 public abstract class KotlinGlobalModificationService {
     /**

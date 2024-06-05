@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.topics
+package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import com.intellij.util.messages.Topic
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
  * topics. For example, if your tool can guarantee a static module structure but source code can still change, module state modification
  * events do not need to be published, but out-of-block modification events do.
  */
-public object KotlinTopics {
+public object KotlinModificationTopics {
     public val MODULE_STATE_MODIFICATION: Topic<KotlinModuleStateModificationListener> =
         Topic(KotlinModuleStateModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 
@@ -67,7 +67,7 @@ public object KotlinTopics {
 }
 
 /**
- * [KotlinModificationEventKind] represents the kinds of modification events in [KotlinTopics]. While it is not required to publish or
+ * [KotlinModificationEventKind] represents the kinds of modification events in [KotlinModificationTopics]. While it is not required to publish or
  * subscribe to modification events, it can be useful when abstracting over modification events in general, for example in tests.
  */
 public enum class KotlinModificationEventKind {

@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.platform.KotlinAnnotationsResolverFactory
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProviderMerger
-import org.jetbrains.kotlin.analysis.api.platform.KotlinGlobalModificationService
-import org.jetbrains.kotlin.analysis.api.platform.KotlinModificationTrackerFactory
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModificationService
+import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProviderFactory
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProviderMerger
 import org.jetbrains.kotlin.analysis.api.platform.KotlinResolutionScopeProvider

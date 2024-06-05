@@ -3,10 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.topics
+package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.api.platform.KotlinModificationTrackerFactory
 
 public fun interface KotlinModuleOutOfBlockModificationListener {
     /**
@@ -18,7 +17,7 @@ public fun interface KotlinModuleOutOfBlockModificationListener {
      * This event may be published for any and all source code changes, not just out-of-block modifications, to simplify the implementation
      * of modification detection.
      *
-     * @see KotlinTopics
+     * @see KotlinModificationTopics
      */
     public fun onModification(module: KtModule)
 }

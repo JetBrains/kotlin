@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.topics
+package org.jetbrains.kotlin.analysis.api.platform.modification
 
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
@@ -15,7 +15,7 @@ public fun interface KotlinGlobalModuleStateModificationListener {
      * is received. This includes source files being moved or removed, binary content being added, removed, or changed, and modules possibly
      * being removed. Thus, all caches related to module structure, source code, and binaries should be invalidated.
      *
-     * @see KotlinTopics
+     * @see KotlinModificationTopics
      */
     public fun onModification()
 }
