@@ -44,6 +44,7 @@ internal class KaFe10Session(
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, resolutionScope),
     signatureSubstitutor = KaFe10SignatureSubstitutor(analysisSessionProvider),
     resolveExtensionInfoProvider = KaFe10ResolveExtensionInfoProvider(analysisSessionProvider),
+    compilerPluginGeneratedDeclarationsProvider = KaFe10CompilerPluginGeneratedDeclarationsProvider(analysisSessionProvider),
     compilerFacility = KaFe10CompilerFacility(analysisSessionProvider),
     metadataCalculator = KaFe10MetadataCalculator(analysisSessionProvider),
     substitutorProvider = KaFe10SubstitutorProvider(analysisSessionProvider),

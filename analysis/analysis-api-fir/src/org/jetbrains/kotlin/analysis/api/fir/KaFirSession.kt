@@ -74,6 +74,7 @@ private constructor(
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope),
     signatureSubstitutor = KaFirSignatureSubstitutor(analysisSessionProvider),
     resolveExtensionInfoProvider = KaFirResolveExtensionInfoProvider(analysisSessionProvider),
+    compilerPluginGeneratedDeclarationsProvider = KaFirCompilerPluginGeneratedDeclarationsProvider(analysisSessionProvider),
     compilerFacility = KaFirCompilerFacility(analysisSessionProvider),
     metadataCalculator = KaFirMetadataCalculator(analysisSessionProvider),
     substitutorProvider = KaFirSubstitutorProvider(analysisSessionProvider),
