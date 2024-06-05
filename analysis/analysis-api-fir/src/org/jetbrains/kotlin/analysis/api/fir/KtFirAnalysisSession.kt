@@ -59,6 +59,7 @@ private constructor(
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider, token),
     analysisScopeProvider = KaAnalysisScopeProviderImpl(analysisSessionProvider, token, useSiteScope),
     compilerFacility = KaFirCompilerFacility(analysisSessionProvider, token),
+    metadataCalculator = KaFirMetadataCalculator(analysisSessionProvider, token),
     sourceProvider = KaFirSourceProvider(analysisSessionProvider, token)
 ) {
     internal val firSymbolBuilder: KaSymbolByFirBuilder = KaSymbolByFirBuilder(project, this, token)
@@ -131,8 +132,6 @@ private constructor(
     override val symbolProviderByJavaPsiImpl = KaFirSymbolProviderByJavaPsi(this)
 
     override val resolveExtensionInfoProviderImpl: KaResolveExtensionInfoProvider = KaFirResolveExtensionInfoProvider(this)
-
-    override val metadataCalculatorImpl: KaMetadataCalculator = KaFirMetadataCalculator(this)
 
     override val substitutorProviderImpl: KaSubstitutorProvider = KaFirSubstitutorProvider(this)
 

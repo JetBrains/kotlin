@@ -59,6 +59,7 @@ public abstract class KaSession(
     originalPsiProvider: KaOriginalPsiProvider,
     analysisScopeProvider: KaAnalysisScopeProvider,
     compilerFacility: KaCompilerFacility,
+    metadataCalculator: KaMetadataCalculator,
     sourceProvider: KaSourceProvider,
 ) : KaLifetimeOwner,
     KaSmartCastProviderMixIn,
@@ -96,7 +97,7 @@ public abstract class KaSession(
     KaSymbolProviderByJavaPsiMixIn,
     KaResolveExtensionInfoProviderMixIn,
     KaCompilerFacility by compilerFacility,
-    KaMetadataCalculatorMixIn,
+    KaMetadataCalculator by metadataCalculator,
     KaSubstitutorProviderMixIn,
     KaDataFlowInfoProviderMixin,
     KaSourceProvider by sourceProvider
@@ -204,9 +205,6 @@ public abstract class KaSession(
     public val symbolProviderByJavaPsi: KaSymbolProviderByJavaPsi get() = symbolProviderByJavaPsiImpl
     @KaAnalysisApiInternals
     protected abstract val symbolProviderByJavaPsiImpl: KaSymbolProviderByJavaPsi
-
-    internal val metadataCalculator: KaMetadataCalculator get() = metadataCalculatorImpl
-    protected abstract val metadataCalculatorImpl: KaMetadataCalculator
 
     @PublishedApi
     internal val typesCreator: KaTypeCreator

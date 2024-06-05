@@ -15,6 +15,9 @@ import com.intellij.psi.util.ClassUtil
 import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KaMetadataCalculator
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -41,6 +44,7 @@ import org.jetbrains.kotlin.fir.types.typeApproximator
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
@@ -55,18 +59,23 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 @OptIn(KaAnalysisNonPublicApi::class)
-internal class KaFirMetadataCalculator(override val analysisSession: KaFirSession) : KaMetadataCalculator(),
-    KaFirSessionComponent {
+internal class KaFirMetadataCalculator(
+    override val analysisSessionProvider: () -> KaFirSession,
+    override val token: KaLifetimeToken
+) : KaSessionComponent<KaFirSession>(), KaMetadataCalculator, KaFirSessionComponent {
     private val firSession: FirSession
         get() = rootModuleSession
 
     private val scopeSession: ScopeSession
         get() = firResolveSession.getScopeSessionFor(firSession)
 
-    private val metadataVersion = firSession.languageVersionSettings.languageVersion.toMetadataVersion()
+    private val metadataVersion: JvmMetadataVersion by lazy {
+        firSession.languageVersionSettings.languageVersion.toMetadataVersion()
+    }
 
-    override fun calculateMetadata(ktClass: KtClassOrObject, mapping: Multimap<KtElement, PsiElement>): Metadata {
-        val firClass = ktClass.resolveToFirSymbolOfType<FirClassSymbol<*>>(firResolveSession).fir
+    @KaAnalysisNonPublicApi
+    override fun KtClassOrObject.calculateMetadata(mapping: Multimap<KtElement, PsiElement>): Metadata = withValidityAssertion {
+        val firClass = resolveToFirSymbolOfType<FirClassSymbol<*>>(firResolveSession).fir
         firClass.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
         val bindings = JvmSerializationBindings().also { collectBindings(firClass.declarations, mapping, it) }
         val (serializer, stringTable) = createTopLevelSerializer(bindings)
@@ -74,8 +83,8 @@ internal class KaFirMetadataCalculator(override val analysisSession: KaFirSessio
         return generateAnnotation(classProto.build(), stringTable, KotlinClassHeader.Kind.CLASS)
     }
 
-    override fun calculateMetadata(ktFile: KtFile, mapping: Multimap<KtElement, PsiElement>): Metadata {
-        val firFile = ktFile.getOrBuildFirFile(firResolveSession)
+    override fun KtFile.calculateMetadata(mapping: Multimap<KtElement, PsiElement>): Metadata = withValidityAssertion {
+        val firFile = getOrBuildFirFile(firResolveSession)
         val bindings = JvmSerializationBindings().also { collectBindings(firFile.declarations, mapping, it) }
         val (serializer, stringTable) = createTopLevelSerializer(bindings)
         val fileProto = serializer.packagePartProto(firFile, null)

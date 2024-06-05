@@ -13,6 +13,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.analysis.api.KaAnalysisNonPublicApi
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -632,6 +633,7 @@ private class StubGenerator(
                 printWithNoIndent(name, " = ", value)
             }
 
+            @OptIn(KaAnalysisNonPublicApi::class)
             private fun calculateMetadata(lightClass: PsiClass): Metadata? =
                 if (stripMetadata) null
                 else if (psiClass.name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME && (psiClass as? SymbolLightClassForNamedClassLike)?.containingClass?.isInterface == true) {
