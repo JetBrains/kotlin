@@ -19,13 +19,14 @@ import kotlin.io.encoding.Base64.Default.symbolsPerGroup
 
 /**
  * Returns an input stream that decodes symbols from this input stream using the specified [base64] encoding.
+ * Please refer to [Base64] documentation for more details on the encoding itself.
  *
  * Reading from the returned input stream leads to reading some symbols from the underlying input stream.
  * The symbols are decoded using the specified [base64] encoding and the resulting bytes are returned.
  * Symbols are decoded in 4-symbol blocks.
  *
  * The symbols for decoding are not required to be padded.
- * However, if there is a padding character present, the correct amount of padding character(s) must be present.
+ * However, if padding characters are present, their number must be correct.
  * The padding character `'='` is interpreted as the end of the symbol stream. Subsequent symbols are not read even if
  * the end of the underlying input stream is not reached.
  *
@@ -33,6 +34,9 @@ import kotlin.io.encoding.Base64.Default.symbolsPerGroup
  * which closes the resource after a given block of code is executed.
  * The close operation discards leftover bytes.
  * Closing the returned input stream will close the underlying input stream.
+ *
+ * @see [Base64]
+ * @sample samples.io.encoding.Base64StreamsSample.base64InputStream
  */
 @SinceKotlin("1.8")
 @ExperimentalEncodingApi
@@ -43,6 +47,7 @@ public fun InputStream.decodingWith(base64: Base64): InputStream {
 /**
  * Returns an output stream that encodes bytes using the specified [base64] encoding
  * and writes the result to this output stream.
+ * Please refer to [Base64] documentation for more details on the encoding itself.
  *
  * The byte data written to the returned output stream is encoded using the specified [base64] encoding
  * and the resulting symbols are written to the underlying output stream.
@@ -52,6 +57,9 @@ public fun InputStream.decodingWith(base64: Base64): InputStream {
  * which closes the resource after a given block of code is executed.
  * The close operation writes properly padded leftover symbols to the underlying output stream.
  * Closing the returned output stream will close the underlying output stream.
+ *
+ * @see [Base64]
+ * @sample samples.io.encoding.Base64StreamsSample.base64OutputStream
  */
 @SinceKotlin("1.8")
 @ExperimentalEncodingApi

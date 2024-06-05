@@ -9,11 +9,45 @@ package kotlin.io.encoding
 
 /**
  * Provides Base64 encoding and decoding functionality.
+ * Base64 encoding, as defined by the [`RFC 4648`](https://www.rfc-editor.org/rfc/rfc4648) and a few other RFCs,
+ * transforms arbitrary binary data into a sequence of printable characters.
+ *
+ * For example, a sequence of bytes `0xC0 0xFF 0xEE` will be transformed to a string `"wP/u"` using a Base64 encoding
+ * defined by the [`RFC 4648`](https://www.rfc-editor.org/rfc/rfc4648). Decoding that string will result in the original
+ * byte sequence.
+ *
+ * **Base64 is not an encryption scheme and should not be used when data needs to be secured or obfuscated.**
+ *
+ * Characters used by a particular Base64 scheme form an alphabet of 64 regular characters and
+ * an extra padding character.
+ *
+ * Almost all Base64 encoding schemes share the same first 62 characters of an alphabet,
+ * which are `'A'..'Z'` followed by `'a'..'z'`, but the last two characters may vary.
+ * [`RFC 4648 section 4`](https://www.rfc-editor.org/rfc/rfc4648#section-4) defines an alphabet that uses
+ * `'+'` and `'/'` as the last two characters, while the URL-safe alphabet defined in
+ * [`RFC 4648 section 5`](https://www.rfc-editor.org/rfc/rfc4648#section-5) uses `'-'` and `'_'` instead.
+ *
+ * When decoding, a Base64 scheme usually accepts only characters from its alphabet, presence of any other characters
+ * is treated as an error (see [Base64.Mime] for an exception to this rule). That also implies
+ * that a Base64 scheme could not decode data encoded by another Base64 scheme if their alphabets differ.
+ *
+ * In addition to 64 characters from the alphabet,
+ * Base64-encoded data may also contain one or two padding characters `'='` at its end.
+ * Base64 splits data that needs to be encoded into chunks three bytes long, which are then transformed into
+ * a sequence of four characters (meaning that every character encodes six bits of data).
+ * If the number of bytes constituting input data is not a multiple of three (for instance, input consists of only five bytes),
+ * the data will be padded by zero bits first and only then transformed into Base64-alphabet characters.
+ * If padding takes place, the resulting string is augmented by `'='`. The padding could consist of zero, two or
+ * four bytes, thus encoded data will contain zero, one or two padding characters (`'='`), respectively.
  *
  * This class is not supposed to be instantiated or inherited.
  * However, predefined instances of this class are available for use.
  * The companion object [Base64.Default] is the default instance of [Base64].
  * There are also [Base64.UrlSafe] and [Base64.Mime] instances.
+ *
+ * @sample samples.io.encoding.Base64Samples.encodeAndDecode
+ * @sample samples.io.encoding.Base64Samples.encodingDifferences
+ * @sample samples.io.encoding.Base64Samples.padding
  */
 @SinceKotlin("1.8")
 @ExperimentalEncodingApi
@@ -44,6 +78,8 @@ public open class Base64 private constructor(
      * @throws IllegalArgumentException when `startIndex > endIndex`.
      *
      * @return a [ByteArray] with the resulting symbols.
+     *
+     * @sample samples.io.encoding.Base64Samples.encodeToByteArraySample
      */
     public fun encodeToByteArray(source: ByteArray, startIndex: Int = 0, endIndex: Int = source.size): ByteArray {
         return platformEncodeToByteArray(source, startIndex, endIndex)
@@ -68,6 +104,8 @@ public open class Base64 private constructor(
      * or when that index is out of the [destination] array indices range.
      *
      * @return the number of symbols written into [destination] array.
+     *
+     * @sample samples.io.encoding.Base64Samples.encodeIntoByteArraySample
      */
     public fun encodeIntoByteArray(
         source: ByteArray,
@@ -96,6 +134,8 @@ public open class Base64 private constructor(
      * @throws IllegalArgumentException when `startIndex > endIndex`.
      *
      * @return a string with the resulting symbols.
+     *
+     * @sample samples.io.encoding.Base64Samples.encodeToStringSample
      */
     public fun encode(source: ByteArray, startIndex: Int = 0, endIndex: Int = source.size): String {
         return platformEncodeToString(source, startIndex, endIndex)
@@ -117,6 +157,8 @@ public open class Base64 private constructor(
      * @throws IllegalArgumentException when `startIndex > endIndex`.
      *
      * @return the destination appendable.
+     *
+     * @sample samples.io.encoding.Base64Samples.encodeToAppendableSample
      */
     public fun <A : Appendable> encodeToAppendable(
         source: ByteArray,
@@ -146,6 +188,8 @@ public open class Base64 private constructor(
      * @throws IllegalArgumentException when the symbols for decoding are padded incorrectly or there are extra symbols after the padding.
      *
      * @return a [ByteArray] with the resulting bytes.
+     *
+     * @sample samples.io.encoding.Base64Samples.decodeFromByteArraySample
      */
     public fun decode(source: ByteArray, startIndex: Int = 0, endIndex: Int = source.size): ByteArray {
         checkSourceBounds(source.size, startIndex, endIndex)
@@ -181,6 +225,8 @@ public open class Base64 private constructor(
      * @throws IllegalArgumentException when the symbols for decoding are padded incorrectly or there are extra symbols after the padding.
      *
      * @return the number of bytes written into [destination] array.
+     *
+     * @sample samples.io.encoding.Base64Samples.decodeIntoByteArrayFromByteArraySample
      */
     public fun decodeIntoByteArray(
         source: ByteArray,
@@ -212,6 +258,8 @@ public open class Base64 private constructor(
      * @throws IllegalArgumentException when the symbols for decoding are padded incorrectly or there are extra symbols after the padding.
      *
      * @return a [ByteArray] with the resulting bytes.
+     *
+     * @sample samples.io.encoding.Base64Samples.decodeFromStringSample
      */
     public fun decode(source: CharSequence, startIndex: Int = 0, endIndex: Int = source.length): ByteArray {
         val byteSource = platformCharsToBytes(source, startIndex, endIndex)
@@ -239,6 +287,8 @@ public open class Base64 private constructor(
      * @throws IllegalArgumentException when the symbols for decoding are padded incorrectly or there are extra symbols after the padding.
      *
      * @return the number of bytes written into [destination] array.
+     *
+     * @sample samples.io.encoding.Base64Samples.decodeIntoByteArraySample
      */
     public fun decodeIntoByteArray(
         source: CharSequence,
@@ -518,11 +568,15 @@ public open class Base64 private constructor(
      * The "base64" encoding specified by [`RFC 4648 section 4`](https://www.rfc-editor.org/rfc/rfc4648#section-4),
      * Base 64 Encoding.
      *
-     * Uses "The Base 64 Alphabet" as specified in Table 1 of RFC 4648 for encoding and decoding.
+     * Uses "The Base 64 Alphabet" as specified in Table 1 of RFC 4648 for encoding and decoding, consisting of
+     * `'A'..'Z'`, `'a'..'z'`, `'+'` and `'/'` characters.
+     *
+     * The character `'='` is used for padding.
+     *
      * Encode operation does not add any line separator character.
      * Decode operation throws if it encounters a character outside the base64 alphabet.
      *
-     * The character `'='` is used for padding.
+     * @sample samples.io.encoding.Base64Samples.defaultEncodingSample
      */
     public companion object Default : Base64(isUrlSafe = false, isMimeScheme = false) {
 
@@ -542,11 +596,15 @@ public open class Base64 private constructor(
          * The "base64url" encoding specified by [`RFC 4648 section 5`](https://www.rfc-editor.org/rfc/rfc4648#section-5),
          * Base 64 Encoding with URL and Filename Safe Alphabet.
          *
-         * Uses "The URL and Filename safe Base 64 Alphabet" as specified in Table 2 of RFC 4648 for encoding and decoding.
+         * Uses "The URL and Filename safe Base 64 Alphabet" as specified in Table 2 of RFC 4648 for encoding and decoding,
+         * consisting of `'A'..'Z'`, `'a'..'z'`, `'-'` and `'_'` characters.
+         *
+         * The character `'='` is used for padding.
+         *
          * Encode operation does not add any line separator character.
          * Decode operation throws if it encounters a character outside the base64url alphabet.
          *
-         * The character `'='` is used for padding.
+         * @sample samples.io.encoding.Base64Samples.urlSafeEncodingSample
          */
         public val UrlSafe: Base64 = Base64(isUrlSafe = true, isMimeScheme = false)
 
@@ -554,11 +612,15 @@ public open class Base64 private constructor(
          * The encoding specified by [`RFC 2045 section 6.8`](https://www.rfc-editor.org/rfc/rfc2045#section-6.8),
          * Base64 Content-Transfer-Encoding.
          *
-         * Uses "The Base64 Alphabet" as specified in Table 1 of RFC 2045 for encoding and decoding.
+         * Uses "The Base64 Alphabet" as specified in Table 1 of RFC 2045 for encoding and decoding,
+         * consisting of `'A'..'Z'`, `'a'..'z'`, `'+'` and `'/'` characters.
+         *
+         * The character `'='` is used for padding.
+         *
          * Encode operation adds CRLF every 76 symbols. No line separator is added to the end of the encoded output.
          * Decode operation ignores all line separators and other characters outside the base64 alphabet.
          *
-         * The character `'='` is used for padding.
+         * @sample samples.io.encoding.Base64Samples.mimeEncodingSample
          */
         public val Mime: Base64 = Base64(isUrlSafe = false, isMimeScheme = true)
     }
