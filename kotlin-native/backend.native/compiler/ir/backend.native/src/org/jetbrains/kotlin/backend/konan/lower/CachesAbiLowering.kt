@@ -39,6 +39,7 @@ internal val INTERNAL_ABI_ORIGIN = IrDeclarationOriginImpl("INTERNAL_ABI")
 internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: IrFactory) {
     private val outerThisAccessors = mapping.outerThisCacheAccessors
     private val lateinitPropertyAccessors = mapping.lateinitPropertyCacheAccessors
+    private val topLevelFieldAccessors = mapping.topLevelFieldCacheAccessors
     private val lateInitFieldToNullableField = mapping.lateInitFieldToNullableField
 
 
@@ -58,6 +59,20 @@ internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: I
                     origin = INTERNAL_ABI_ORIGIN
                     type = irClass.defaultType
                 }
+            }
+        }
+    }
+
+    // This is workaround for KT-68797, should be dropped in KT-68916
+    fun getTopLevelFieldAccessor(irField: IrField): IrSimpleFunction {
+        require(irField.isTopLevel)
+        return topLevelFieldAccessors.getOrPut(irField) {
+            irFactory.buildFun {
+                name = getMangledNameFor("${irField.name}_get", irField.parent)
+                origin = INTERNAL_ABI_ORIGIN
+                returnType = irField.type
+            }.apply {
+                parent = irField.parent
             }
         }
     }
@@ -91,7 +106,7 @@ internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: I
      * Generate name for declaration that will be a part of internal ABI.
      */
     private fun getMangledNameFor(declarationName: String, parent: IrDeclarationParent): Name {
-        val prefix = parent.fqNameForIrSerialization
+        val prefix = (parent as? IrFile)?.path ?: parent.fqNameForIrSerialization
         return "$prefix.$declarationName".synthesizedName
     }
 }
@@ -146,6 +161,21 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, 
         }
         data.add(function)
     }
+
+    // This is workaround for KT-68797, should be dropped in KT-68916
+    override fun visitField(declaration: IrField, data: MutableList<IrFunction>) {
+        declaration.acceptChildren(this, data)
+
+        if (!declaration.isTopLevel || DescriptorVisibilities.isPrivate(declaration.visibility)) return
+
+        val getter = cachesAbiSupport.getTopLevelFieldAccessor(declaration)
+        context.createIrBuilder(getter.symbol).apply {
+            getter.body = irBlockBody {
+                +irReturn(irGetField(null, declaration))
+            }
+        }
+        data.add(getter)
+    }
 }
 
 internal class ImportCachesAbiTransformer(val generationState: NativeGenerationState) : FileLoweringPass, IrElementTransformerVoid() {
@@ -193,6 +223,12 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
                             putValueArgument(0, expression.receiver)
                     }
                 }
+            }
+
+            field.isTopLevel -> {
+                val accessor = cachesAbiSupport.getTopLevelFieldAccessor(field)
+                dependenciesTracker.add(field)
+                createIrBuilder().irCall(accessor)
             }
 
             else -> expression
