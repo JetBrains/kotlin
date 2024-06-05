@@ -1,8 +1,5 @@
 // ISSUE: KT-68801
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND: JVM_IR JS_IR JS_IR_ES6 WASM NATIVE
-// ^^^ This test fails with `java.lang.IllegalArgumentException: There should be no references to expect classes at this point`
-//     at org.jetbrains.kotlin.backend.common.actualizer.SpecialFakeOverrideSymbolsResolver.processClass(SpecialFakeOverrideSymbolsResolver.kt:97)
 
 // MODULE: common
 // FILE: common.kt

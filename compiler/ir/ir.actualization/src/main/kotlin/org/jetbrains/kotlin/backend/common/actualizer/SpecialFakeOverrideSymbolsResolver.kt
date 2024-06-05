@@ -114,9 +114,7 @@ class SpecialFakeOverrideSymbolsResolver(private val expectActualMap: Map<IrSymb
 
     private fun IrOverridableDeclaration<*>.collectOverrides(visited: MutableSet<IrSymbol>): Sequence<IrSymbol> = sequence {
         if (visited.add(symbol)) {
-            if (!isFakeOverride) {
-                yield(symbol)
-            }
+            yield(symbol)
             for (overridden in overriddenSymbols) {
                 yieldAll((overridden.remap().owner as IrOverridableDeclaration<*>).collectOverrides(visited))
             }
