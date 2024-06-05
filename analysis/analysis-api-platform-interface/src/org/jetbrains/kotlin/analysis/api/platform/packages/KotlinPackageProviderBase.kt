@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.impl
+package org.jetbrains.kotlin.analysis.api.platform.packages
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.impl.forEachNonKotlinPsiElementFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -17,7 +17,6 @@ public abstract class KotlinPackageProviderBase(
     protected val project: Project,
     public val searchScope: GlobalSearchScope,
 ) : KotlinPackageProvider() {
-
     override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean {
         return doesPlatformSpecificPackageExist(packageFqName, platform) || doesKotlinOnlyPackageExist(packageFqName)
     }
@@ -48,7 +47,6 @@ public abstract class KotlinPackageProviderBase(
             addAll(getPlatformSpecificSubPackagesFqNames(packageFqName, platform, nameFilter))
         }
 
-
     override fun getPlatformSpecificSubPackagesFqNames(
         packageFqName: FqName,
         platform: TargetPlatform,
@@ -73,4 +71,3 @@ public abstract class KotlinPackageProviderBase(
         }
     }
 }
-

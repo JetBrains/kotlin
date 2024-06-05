@@ -11,7 +11,7 @@ import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPsiDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPsiDeclarationProviderFactory
-import org.jetbrains.kotlin.analysis.api.platform.createPackagePartProvider
+import org.jetbrains.kotlin.analysis.api.platform.packages.createPackagePartProvider
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider

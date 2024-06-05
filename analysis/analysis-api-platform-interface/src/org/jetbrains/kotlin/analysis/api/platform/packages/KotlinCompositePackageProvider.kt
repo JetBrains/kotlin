@@ -3,16 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.platform.impl.packageProviders
+package org.jetbrains.kotlin.analysis.api.platform.packages
 
 import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProvider
-import org.jetbrains.kotlin.analysis.api.platform.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.impl.KotlinCompositeProviderFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 
-public class CompositeKotlinPackageProvider private constructor(
+public class KotlinCompositePackageProvider private constructor(
     override val providers: List<KotlinPackageProvider>,
 ) : KotlinPackageProvider(), KotlinCompositeProvider<KotlinPackageProvider> {
     override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean {
@@ -45,8 +44,8 @@ public class CompositeKotlinPackageProvider private constructor(
 
     public companion object {
         public val factory: KotlinCompositeProviderFactory<KotlinPackageProvider> = KotlinCompositeProviderFactory(
-            EmptyKotlinPackageProvider,
-            ::CompositeKotlinPackageProvider,
+            KotlinEmptyPackageProvider,
+            ::KotlinCompositePackageProvider,
         )
 
         public fun create(providers: List<KotlinPackageProvider>): KotlinPackageProvider = factory.create(providers)

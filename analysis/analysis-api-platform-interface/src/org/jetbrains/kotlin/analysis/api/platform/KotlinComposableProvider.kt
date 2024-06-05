@@ -14,7 +14,7 @@ package org.jetbrains.kotlin.analysis.api.platform
  * produce a merged provider which is more efficient than the naive sequential composite provider.
  *
  * @see org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
- * @see KotlinPackageProvider
+ * @see org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
  */
 public interface KotlinComposableProvider
 
