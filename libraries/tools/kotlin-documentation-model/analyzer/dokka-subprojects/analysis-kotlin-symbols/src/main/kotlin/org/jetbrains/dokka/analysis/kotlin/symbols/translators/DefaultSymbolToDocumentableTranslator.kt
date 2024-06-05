@@ -419,8 +419,8 @@ internal class DokkaSymbolVisitor(
             .filterOutSyntheticJavaPropBackingField()
 
         fun List<KaFunctionSymbol>.filterOutSyntheticJavaPropAccessors() = filterNot { fn ->
-            if (fn.origin == KaSymbolOrigin.JAVA && fn.callableIdIfNonLocal != null)
-                syntheticJavaProperties.any { fn.callableIdIfNonLocal == it.javaGetterSymbol.callableIdIfNonLocal || fn.callableIdIfNonLocal == it.javaSetterSymbol?.callableIdIfNonLocal }
+            if (fn.origin == KaSymbolOrigin.JAVA && fn.callableId != null)
+                syntheticJavaProperties.any { fn.callableId == it.javaGetterSymbol.callableId || fn.callableId == it.javaSetterSymbol?.callableId }
             else false
         }
 
@@ -577,9 +577,9 @@ internal class DokkaSymbolVisitor(
         // it also covers @JvmName annotation
         val name = (if (isGetter) propertySymbol.javaGetterName else propertySymbol.javaSetterName)?.asString() ?: ""
 
-        // SyntheticJavaProperty has callableIdIfNonLocal, propertyAccessorSymbol.origin = JAVA_SYNTHETIC_PROPERTY
-        // For Kotlin properties callableIdIfNonLocal=null
-        val dri = if (propertyAccessorSymbol.callableIdIfNonLocal != null)
+        // SyntheticJavaProperty has callableId, propertyAccessorSymbol.origin = JAVA_SYNTHETIC_PROPERTY
+        // For Kotlin properties callableId=null
+        val dri = if (propertyAccessorSymbol.callableId != null)
             getDRIFromFunctionLike(propertyAccessorSymbol)
         else
             propertyDRI.copy(
@@ -629,7 +629,7 @@ internal class DokkaSymbolVisitor(
     private fun KaSession.visitConstructorSymbol(
         constructorSymbol: KaConstructorSymbol
     ): DFunction = withExceptionCatcher(constructorSymbol) {
-        val name = constructorSymbol.containingClassIdIfNonLocal?.shortClassName?.asString()
+        val name = constructorSymbol.containingClassId?.shortClassName?.asString()
             ?: throw IllegalStateException("Unknown containing class of constructor")
         val dri = createDRIWithOverridden(constructorSymbol).origin
         val isExpect = constructorSymbol.isExpect
