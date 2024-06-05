@@ -731,7 +731,8 @@ publishing {
                     /* receiver = */  mvn,
                     /* project = */   project,
                     /* explicitDescription = */ "Kotlin/Native bundle",
-                    /* packaging = */ "pom"
+                    /* packaging = */ "pom",
+                    /* explicitName = */ null
             )
         }
         register("BundlePrebuilt", MavenPublication) { mvn ->
@@ -771,7 +772,8 @@ publishing {
                     /* receiver = */  mvn,
                     /* project = */   project,
                     /* explicitDescription = */ "Kotlin/Native bundle (prebuilt platform libs)",
-                    /* packaging = */ "pom"
+                    /* packaging = */ "pom",
+                    /* explicitName = */ null
             )
         }
     }

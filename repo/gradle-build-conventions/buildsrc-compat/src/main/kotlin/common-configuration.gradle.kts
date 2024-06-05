@@ -221,7 +221,7 @@ fun Project.configureArtifacts() {
     }
 
     /**
-     * Bit mask: rw-r--r--
+     * Bit mask: `rw-r--r--`
      */
     fun ConfigurableFilePermissions.configureDefaultFilePermissions() {
         user {
@@ -242,7 +242,7 @@ fun Project.configureArtifacts() {
     }
 
     /**
-     * Bit mask: rwxr-xr-x
+     * Bit mask: `rwxr-xr-x`
      * Applies to both directories and executable files
      */
     fun ConfigurableFilePermissions.configureDefaultExecutableFilePermissions() {
