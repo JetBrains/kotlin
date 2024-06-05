@@ -51,6 +51,12 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
     }
 
     @Test
+    @TestMetadata("annotatedConflictsWithPurelyImplemented.kt")
+    public void testAnnotatedConflictsWithPurelyImplemented() {
+      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/annotatedConflictsWithPurelyImplemented.kt");
+    }
+
+    @Test
     @TestMetadata("aosp.kt")
     public void testAosp() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/aosp.kt");

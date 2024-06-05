@@ -51,6 +51,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
     }
 
     @Test
+    @TestMetadata("annotatedConflictsWithPurelyImplemented.kt")
+    public void testAnnotatedConflictsWithPurelyImplemented() {
+      runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/annotatedConflictsWithPurelyImplemented.kt");
+    }
+
+    @Test
     @TestMetadata("aosp.kt")
     public void testAosp() {
       runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/aosp.kt");
