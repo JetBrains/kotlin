@@ -75,4 +75,6 @@ class Fir2IrComponentsStorage(
         override val firMangler: FirMangler
             get() = commonMemberStorage.mangler
     }
+
+    override var createsIrBuiltins: Boolean = false
 }

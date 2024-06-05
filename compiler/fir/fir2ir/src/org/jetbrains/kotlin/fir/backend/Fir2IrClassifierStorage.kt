@@ -5,26 +5,38 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.backend.generators.addDeclarationToParent
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
+import org.jetbrains.kotlin.fir.backend.generators.isFakeOverride
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
+import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
+import org.jetbrains.kotlin.fir.scopes.staticScopeForBackend
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.concurrent.ConcurrentHashMap
 
@@ -93,7 +105,7 @@ class Fir2IrClassifierStorage(
     internal fun getIrTypeParameter(
         typeParameter: FirTypeParameter,
         index: Int,
-        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
+        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
     ): IrTypeParameter {
         getCachedIrTypeParameter(typeParameter, typeOrigin)?.let { return it }
         val irTypeParameter = createAndCacheIrTypeParameter(typeParameter, index, typeOrigin)
@@ -119,7 +131,7 @@ class Fir2IrClassifierStorage(
 
     internal fun getCachedIrTypeParameter(
         typeParameter: FirTypeParameter,
-        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
+        typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
     ): IrTypeParameter? {
         return if (typeOrigin.forSetter)
             typeParameterCacheForSetter[typeParameter]
@@ -129,7 +141,7 @@ class Fir2IrClassifierStorage(
 
     fun getIrTypeParameterSymbol(
         firTypeParameterSymbol: FirTypeParameterSymbol,
-        typeOrigin: ConversionTypeOrigin
+        typeOrigin: ConversionTypeOrigin,
     ): IrTypeParameterSymbol {
         val firTypeParameter = firTypeParameterSymbol.fir
 
@@ -165,7 +177,7 @@ class Fir2IrClassifierStorage(
     fun createAndCacheIrClass(
         regularClass: FirRegularClass,
         parent: IrDeclarationParent,
-        predefinedOrigin: IrDeclarationOrigin? = null
+        predefinedOrigin: IrDeclarationOrigin? = null,
     ): IrClass {
         val symbol = createClassSymbol()
         return classifiersGenerator.createIrClass(regularClass, parent, symbol, predefinedOrigin).also {
@@ -216,10 +228,69 @@ class Fir2IrClassifierStorage(
         classCache[firClass] = symbol
         check(irParent.isExternalParent()) { "Source classes should be created separately before referencing" }
         val irClass = lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent, symbol)
+        addDeclarationToParent(irClass, irParent)
         // NB: this is needed to prevent recursions in case of self bounds
         irClass.prepareTypeParameters()
 
+        initializeLazyIrClassDeclarations(classId, irClass)
+
         return irClass
+    }
+
+    private fun initializeLazyIrClassDeclarations(classId: ClassId, irClass: Fir2IrLazyClass) {
+        if (classId.packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE)) {
+            val allDeclarations = irClass.computeAllDeclarations()
+            irClass.declarationsStatic += allDeclarations - irClass.declarationsStatic.toSet()
+        } else {
+            fun shouldBuildStub(fir: FirCallableDeclaration): Boolean {
+                if (irClass.kind == ClassKind.ENUM_CLASS && fir.nameOrSpecialName in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES) {
+                    return true
+                }
+
+                if (fir.originalOrSelf().origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) {
+                    return false
+                }
+                if (fir.isHiddenToOvercomeSignatureClash == true && fir.isFinal) {
+                    return false
+                }
+
+                return fir.isFakeOverride(irClass.fir) && session.visibilityChecker.isVisibleForOverriding(
+                    irClass.fir.moduleData,
+                    irClass.fir.symbol,
+                    fir
+                )
+            }
+
+            val result = mutableListOf<IrDeclaration>()
+            val scope = irClass.fir.unsubstitutedScope(c)
+            val lookupTag = irClass.fir.symbol.toLookupTag()
+
+            fun addDeclarationsFromScope(scope: FirContainingNamesAwareScope?) {
+                if (scope == null) return
+                for (name in scope.getCallableNames()) {
+                    val functions = scope.collectAllFunctions()
+                    val sam = functions.singleOrNull { it.fir.isAbstract }
+                    for (symbol in functions) {
+                        if (shouldBuildStub(symbol.fir) || symbol == sam) {
+                            @OptIn(UnsafeDuringIrConstructionAPI::class)
+                            result += declarationStorage.getIrFunctionSymbol(symbol, lookupTag).owner
+                        }
+                    }
+
+                    scope.processPropertiesByName(name) { symbol ->
+                        if (symbol is FirPropertySymbol && shouldBuildStub(symbol.fir)) {
+                            @OptIn(UnsafeDuringIrConstructionAPI::class)
+                            result += declarationStorage.getIrPropertySymbol(symbol, lookupTag).owner as IrProperty
+                        }
+                    }
+                }
+            }
+
+            addDeclarationsFromScope(scope)
+            addDeclarationsFromScope(irClass.fir.staticScopeForBackend(session, scopeSession))
+
+            irClass.declarationsStatic += result - irClass.declarationsStatic.toSet()
+        }
     }
 
     private fun getIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
@@ -310,7 +381,7 @@ class Fir2IrClassifierStorage(
         anonymousObject: FirAnonymousObject,
         visibility: Visibility = Visibilities.Local,
         name: Name = SpecialNames.NO_NAME_PROVIDED,
-        irParent: IrDeclarationParent? = null
+        irParent: IrDeclarationParent? = null,
     ): IrClass {
         return classifiersGenerator.createAnonymousObject(anonymousObject, visibility, name, irParent).also {
             localStorage[anonymousObject] = it
@@ -375,7 +446,7 @@ class Fir2IrClassifierStorage(
 
     fun createAndCacheIrTypeAlias(
         typeAlias: FirTypeAlias,
-        parent: IrDeclarationParent
+        parent: IrDeclarationParent,
     ): IrTypeAlias {
         val symbol = IrTypeAliasSymbolImpl()
         return classifiersGenerator.createIrTypeAlias(typeAlias, parent, symbol).also {
@@ -405,6 +476,7 @@ class Fir2IrClassifierStorage(
 
         val symbol = IrTypeAliasSymbolImpl()
         val irTypeAlias = lazyDeclarationsGenerator.createIrLazyTypeAlias(firTypeAlias, irParent, symbol)
+        addDeclarationToParent(irTypeAlias, irParent)
         typeAliasCache[firTypeAlias] = symbol
         irTypeAlias.prepareTypeParameters()
 

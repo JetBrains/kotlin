@@ -101,7 +101,9 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             }
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             if (symbol.isBound) return symbol.owner
-            return lazyDeclarationsGenerator.createIrLazyFunction(function, symbol, irParent, updatedOrigin)
+            val created = lazyDeclarationsGenerator.createIrLazyFunction(function, symbol, irParent, updatedOrigin)
+            addDeclarationToParent(created, irParent)
+            return created
         }
         val name = simpleFunction?.name
             ?: if (isLambda) SpecialNames.ANONYMOUS else SpecialNames.NO_NAME_PROVIDED
@@ -182,6 +184,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             }
             val lazyConstructor = lazyDeclarationsGenerator.createIrLazyConstructor(constructor, symbol, origin, irParent)
             lazyConstructor.prepareTypeParameters()
+            addDeclarationToParent(lazyConstructor, irParent)
             return lazyConstructor
         }
         val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
@@ -242,7 +245,9 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             @OptIn(UnsafeDuringIrConstructionAPI::class)
             if (symbols.propertySymbol.isBound) return symbols.propertySymbol.owner
             // For private functions signature is null, fallback to non-lazy property
-            return lazyDeclarationsGenerator.createIrLazyProperty(property, irParent!!, symbols, origin)
+            val created = lazyDeclarationsGenerator.createIrLazyProperty(property, irParent!!, symbols, origin)
+            addDeclarationToParent(created, irParent)
+            return created
         }
         return property.convertWithOffsets { startOffset, endOffset ->
             classifierStorage.preCacheTypeParameters(property)
@@ -980,10 +985,7 @@ internal fun addDeclarationToParent(declaration: IrDeclaration, irParent: IrDecl
     if (irParent == null) return
     when (irParent) {
         is Fir2IrLazyClass -> {
-            /*
-             * Declaration list of lazy class is lazy by itself, and it will collect and store all required members
-             * automatically on the first access to Fir2IrLazyClass.declarations
-             */
+            irParent.declarationsStatic += declaration
         }
         is IrClass -> irParent.declarations += declaration
         is IrFile -> irParent.declarations += declaration

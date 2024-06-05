@@ -81,4 +81,6 @@ interface Fir2IrComponents {
         val irMangler: KotlinMangler.IrMangler
         val firMangler: FirMangler
     }
+
+    val createsIrBuiltins: Boolean
 }

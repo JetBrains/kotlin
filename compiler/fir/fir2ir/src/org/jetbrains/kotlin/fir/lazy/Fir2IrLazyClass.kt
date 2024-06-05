@@ -149,8 +149,19 @@ class Fir2IrLazyClass(
         get() = computeValueClassRepresentation(fir)
         set(_) = mutationNotSupported()
 
+    val declarationsStatic: MutableList<IrDeclaration> = mutableListOf()
+
     @UnsafeDuringIrConstructionAPI
-    override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
+    override val declarations: MutableList<IrDeclaration>
+        get() {
+            val declStatic = declarationsStatic
+            //val declLazy = computeAllDeclarations()
+            return declStatic
+        }
+
+    //@UnsafeDuringIrConstructionAPI
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    fun computeAllDeclarations(): List<IrDeclaration> {
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
@@ -226,7 +237,7 @@ class Fir2IrLazyClass(
             result.addAll(getFieldsWithContextReceiversForClass(this@Fir2IrLazyClass, fir))
         }
 
-        result
+        return result
     }
 
     private fun shouldBuildStub(fir: FirDeclaration): Boolean {
