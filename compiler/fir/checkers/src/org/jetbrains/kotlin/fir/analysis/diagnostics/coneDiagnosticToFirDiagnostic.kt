@@ -101,12 +101,6 @@ private fun ConeDiagnostic.toKtDiagnostic(
     }
 
     is ConeTypeVisibilityError -> symbol.toInvisibleReferenceDiagnostic(smallestUnresolvablePrefix.last().source)
-    is ConeSetterVisibilityError -> FirErrors.INVISIBLE_SETTER.createOn(
-        source,
-        symbol,
-        symbol.setterSymbol?.visibility ?: symbol.visibility,
-        symbol.callableId
-    )
     is ConeVisibilityError -> symbol.toInvisibleReferenceDiagnostic(source)
     is ConeInapplicableWrongReceiver -> when (val diagnostic = primaryDiagnostic) {
         is DynamicReceiverExpectedButWasNonDynamic ->

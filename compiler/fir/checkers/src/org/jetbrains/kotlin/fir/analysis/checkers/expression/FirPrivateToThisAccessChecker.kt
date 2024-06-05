@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeSetterVisibilityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -38,7 +37,6 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
             // If there was a visibility diagnostic, no need to report another one about visibility
             when (reference.diagnostic) {
                 is ConeVisibilityError,
-                is ConeSetterVisibilityError
                 -> return
             }
         }

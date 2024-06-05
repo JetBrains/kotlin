@@ -28,9 +28,9 @@ fun main(test: Base) {
     if (test !is Derived) return
 
     test.<!INVISIBLE_SETTER!>publicGetInDerived<!> = 5
-    test.publicGetInDerived -= 5
-    test.publicGetInDerived--
-    --test.publicGetInDerived
+    test.<!INVISIBLE_SETTER!>publicGetInDerived<!> -= 5
+    test.<!INVISIBLE_SETTER!>publicGetInDerived<!>--
+    --test.<!INVISIBLE_SETTER!>publicGetInDerived<!>
 
     test.publicInDerived = 5
     test.publicInDerived -= 5

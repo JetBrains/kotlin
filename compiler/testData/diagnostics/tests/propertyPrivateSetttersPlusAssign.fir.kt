@@ -9,7 +9,7 @@ fun main() {
     val test = Test()
 
     test.<!INVISIBLE_SETTER!>x<!> = 5
-    test.x -= 5
-    test.x--
-    --test.x
+    test.<!INVISIBLE_SETTER!>x<!> -= 5
+    test.<!INVISIBLE_SETTER!>x<!>--
+    --test.<!INVISIBLE_SETTER!>x<!>
 }

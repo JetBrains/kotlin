@@ -742,11 +742,8 @@ fun createConeDiagnosticForCandidateWithError(
                         return ConeVisibilityError(it.symbol)
                     }
             }
-            if (symbol is FirPropertySymbol && SetterVisibilityError in candidate.diagnostics) {
-                ConeSetterVisibilityError(symbol)
-            } else {
-                ConeVisibilityError(symbol)
-            }
+
+            ConeVisibilityError(symbol)
         }
         CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate))
         CandidateApplicability.K2_NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate)

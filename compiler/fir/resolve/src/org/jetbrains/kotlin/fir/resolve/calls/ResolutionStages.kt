@@ -638,14 +638,6 @@ internal object CheckVisibility : CheckerStage() {
                 sink.yieldDiagnostic(VisibilityError)
                 return
             }
-
-            if (symbol is FirPropertySymbol && callInfo.callSite is FirVariableAssignment) {
-                val setterFir = symbol.setterSymbol?.fir ?: symbol.originalForSubstitutionOverride?.setterSymbol?.fir
-                if (setterFir != null && !visibilityChecker.isVisible(setterFir, candidate)) {
-                    sink.yieldDiagnostic(SetterVisibilityError)
-                    return
-                }
-            }
         }
 
         if (declaration is FirConstructor) {

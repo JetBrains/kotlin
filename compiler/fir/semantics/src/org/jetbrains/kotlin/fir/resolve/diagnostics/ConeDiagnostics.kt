@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 sealed interface ConeUnresolvedError : ConeDiagnostic {
     val qualifier: String
@@ -110,12 +109,6 @@ open class ConeVisibilityError(
     override val symbol: FirBasedSymbol<*>
 ) : ConeDiagnosticWithSymbol<FirBasedSymbol<*>> {
     override val reason: String get() = "HIDDEN: ${describeSymbol(symbol)} is invisible"
-}
-
-open class ConeSetterVisibilityError(
-    override val symbol: FirPropertySymbol
-) : ConeDiagnosticWithSymbol<FirBasedSymbol<*>> {
-    override val reason: String get() = "HIDDEN SETTER: ${describeSymbol(symbol)} is invisible"
 }
 
 class ConeTypeVisibilityError(
