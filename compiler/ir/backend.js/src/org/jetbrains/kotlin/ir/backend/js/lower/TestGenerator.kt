@@ -80,10 +80,12 @@ private class TestGenerator(
     ): IrSimpleFunction {
         val body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
 
-        val function = context.irFactory.buildFun {
-            this.name = Name.identifier("$name test fun")
-            this.returnType = if (this@createInvocation == context.suiteFun!!) context.irBuiltIns.unitType else context.irBuiltIns.anyNType
-            this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+        val function = context.irFactory.stageController.restrictTo(parentFunction) {
+            context.irFactory.buildFun {
+                this.name = Name.identifier("$name test fun")
+                this.returnType = if (this@createInvocation == context.suiteFun!!) context.irBuiltIns.unitType else context.irBuiltIns.anyNType
+                this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+            }
         }
         function.parent = parentFunction
         function.body = body
@@ -206,21 +208,23 @@ private class TestGenerator(
                 )
             }
 
-            val afterFunction = context.irFactory.buildFun {
-                this.name = Name.identifier("${irClass.name.asString()} after test fun")
-                this.returnType = context.irBuiltIns.unitType
-                this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
-            }.apply {
-                parent = fn
-                this.body = context.irFactory.createBlockBody(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    afterFuns.memoryOptimizedMap {
-                        JsIrBuilder.buildCall(it.symbol).apply {
-                            dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
+            val afterFunction = context.irFactory.stageController.restrictTo(fn) {
+                context.irFactory.buildFun {
+                    this.name = Name.identifier("${irClass.name.asString()} after test fun")
+                    this.returnType = context.irBuiltIns.unitType
+                    this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+                }.apply {
+                    parent = fn
+                    this.body = context.irFactory.createBlockBody(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        afterFuns.memoryOptimizedMap {
+                            JsIrBuilder.buildCall(it.symbol).apply {
+                                dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
 
             val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())

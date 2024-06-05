@@ -125,6 +125,15 @@ open class FunctionInlining(
         irBody.patchDeclarationParents(container as? IrDeclarationParent ?: container.parent)
     }
 
+    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
+        return when (declaration) {
+            is IrFunction, is IrClass, is IrProperty -> context.irFactory.stageController.restrictTo(declaration) {
+                super.visitDeclaration(declaration)
+            }
+            else -> super.visitDeclaration(declaration)
+        }
+    }
+
     fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {

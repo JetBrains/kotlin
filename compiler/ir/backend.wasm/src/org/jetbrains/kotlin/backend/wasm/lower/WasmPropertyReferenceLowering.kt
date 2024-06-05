@@ -87,7 +87,7 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
 
         val kPropertiesFieldType: IrType = arrayClass.typeWith(kPropertyImplType)
 
-        val kPropertiesField =
+        val kPropertiesField = context.irFactory.stageController.restrictTo(symbols.kProperty1Impl.owner) {
             context.irFactory.createField(
                 startOffset = SYNTHETIC_OFFSET,
                 endOffset = SYNTHETIC_OFFSET,
@@ -102,6 +102,7 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
             ).apply {
                 parent = irFile
             }
+        }
 
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
 
