@@ -64,9 +64,5 @@ class IrFactoryImplForWasmIC(stageController: StageController) : IrFactory(stage
         declarationToSignature[declaration]
             ?: declaration.symbol.signature
             ?: declaration.symbol.privateSignature
-            ?: run {
-                val unknownDeclaration = IdSignature.ScopeLocalDeclaration(declaration.dump().hashCode(), "UNKNOWN")
-                declarationToSignature[declaration] = unknownDeclaration
-                unknownDeclaration
-            }
+            ?: error("Can't retrieve a signature for $declaration")
 }

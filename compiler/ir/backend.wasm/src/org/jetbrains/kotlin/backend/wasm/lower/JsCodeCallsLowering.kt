@@ -66,13 +66,15 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
         if (function.valueParameters.any { it.defaultValue != null }) {
             // Create a separate external function without default arguments
             // and delegate calls to it.
-            val externalFun = createExternalJsFunction(
-                context,
-                function.name,
-                "_js_code",
-                function.returnType,
-                jsCode = jsFunCode,
-            )
+            val externalFun = context.irFactory.stageController.restrictTo(function) {
+                createExternalJsFunction(
+                    context,
+                    function.name,
+                    "_js_code",
+                    function.returnType,
+                    jsCode = jsFunCode,
+                )
+            }
             externalFun.copyTypeParametersFrom(function)
             externalFun.valueParameters = function.valueParameters.map { it.copyTo(externalFun, defaultValue = null) }
             function.body = context.createIrBuilder(function.symbol).irBlockBody {
@@ -100,13 +102,15 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
         val field = property.backingField ?: return null
         val initializer = field.initializer ?: return null
         val jsCode = initializer.expression.getJsCode() ?: return null
-        val externalFun = createExternalJsFunction(
-            context,
-            property.name,
-            "_js_code",
-            field.type,
-            jsCode = "() => ($jsCode)",
-        )
+        val externalFun = context.irFactory.stageController.restrictTo(field) {
+            createExternalJsFunction(
+                context,
+                property.name,
+                "_js_code",
+                field.type,
+                jsCode = "() => ($jsCode)",
+            )
+        }
         val builder = context.createIrBuilder(field.symbol)
         initializer.expression = builder.irCall(externalFun)
         return listOf(property, externalFun)
