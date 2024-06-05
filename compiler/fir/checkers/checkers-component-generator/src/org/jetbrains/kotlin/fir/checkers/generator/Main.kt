@@ -19,6 +19,14 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import java.io.File
 
+/*
+    The first argument is the name of the project to generate
+     [checkers.jvm|checkers.js|checkers.native|checkers.wasm|checkers.web.common|raw-fir.common|checkers]
+
+     The second argument is optional, and it's generationPath, there is a hardcoded default for each
+
+     Without arguments, it will produce all projects in their default locations
+ */
 fun main(args: Array<String>) {
     val basePackage = "org.jetbrains.kotlin.fir.analysis"
 
@@ -95,42 +103,42 @@ fun main(args: Array<String>) {
             alias<FirTypeRef>("TypeRefChecker")
         }
 
-    val expressionPackage = "$basePackage.checkers.expression"
-    generateCheckersComponents(checkersPath, expressionPackage, "FirExpressionChecker") {
-        alias<FirStatement>("BasicExpressionChecker")
-        alias<FirQualifiedAccessExpression>("QualifiedAccessExpressionChecker")
-        alias<FirCall>("CallChecker")
-        alias<FirFunctionCall>("FunctionCallChecker")
-        alias<FirPropertyAccessExpression>("PropertyAccessExpressionChecker")
-        alias<FirIntegerLiteralOperatorCall>("IntegerLiteralOperatorCallChecker")
-        alias<FirVariableAssignment>("VariableAssignmentChecker")
-        alias<FirTryExpression>("TryExpressionChecker")
-        alias<FirWhenExpression>("WhenExpressionChecker")
-        alias<FirLoop>("LoopExpressionChecker")
-        alias<FirLoopJump>("LoopJumpChecker")
-        alias<FirBinaryLogicExpression>("LogicExpressionChecker")
-        alias<FirReturnExpression>("ReturnExpressionChecker")
-        alias<FirBlock>("BlockChecker")
-        alias<FirAnnotation>("AnnotationChecker")
-        alias<FirAnnotationCall>("AnnotationCallChecker")
-        alias<FirCheckNotNullCall>("CheckNotNullCallChecker")
-        alias<FirElvisExpression>("ElvisExpressionChecker")
-        alias<FirGetClassCall>("GetClassCallChecker")
-        alias<FirSafeCallExpression>("SafeCallExpressionChecker")
-        alias<FirEqualityOperatorCall>("EqualityOperatorCallChecker")
-        alias<FirStringConcatenationCall>("StringConcatenationCallChecker")
-        alias<FirTypeOperatorCall>("TypeOperatorCallChecker")
-        alias<FirResolvedQualifier>("ResolvedQualifierChecker")
-        alias<FirLiteralExpression>("LiteralExpressionChecker")
-        alias<FirCallableReferenceAccess>("CallableReferenceAccessChecker")
-        alias<FirThisReceiverExpression>("ThisReceiverExpressionChecker")
-        alias<FirWhileLoop>("WhileLoopChecker")
-        alias<FirThrowExpression>("ThrowExpressionChecker")
-        alias<FirDoWhileLoop>("DoWhileLoopChecker")
-        alias<FirArrayLiteral>("ArrayLiteralChecker")
-        alias<FirClassReferenceExpression>("ClassReferenceExpressionChecker")
-        alias<FirInaccessibleReceiverExpression>("InaccessibleReceiverChecker")
-    }
+        val expressionPackage = "$basePackage.checkers.expression"
+        generateCheckersComponents(checkersPath, expressionPackage, "FirExpressionChecker") {
+            alias<FirStatement>("BasicExpressionChecker")
+            alias<FirQualifiedAccessExpression>("QualifiedAccessExpressionChecker")
+            alias<FirCall>("CallChecker")
+            alias<FirFunctionCall>("FunctionCallChecker")
+            alias<FirPropertyAccessExpression>("PropertyAccessExpressionChecker")
+            alias<FirIntegerLiteralOperatorCall>("IntegerLiteralOperatorCallChecker")
+            alias<FirVariableAssignment>("VariableAssignmentChecker")
+            alias<FirTryExpression>("TryExpressionChecker")
+            alias<FirWhenExpression>("WhenExpressionChecker")
+            alias<FirLoop>("LoopExpressionChecker")
+            alias<FirLoopJump>("LoopJumpChecker")
+            alias<FirBinaryLogicExpression>("LogicExpressionChecker")
+            alias<FirReturnExpression>("ReturnExpressionChecker")
+            alias<FirBlock>("BlockChecker")
+            alias<FirAnnotation>("AnnotationChecker")
+            alias<FirAnnotationCall>("AnnotationCallChecker")
+            alias<FirCheckNotNullCall>("CheckNotNullCallChecker")
+            alias<FirElvisExpression>("ElvisExpressionChecker")
+            alias<FirGetClassCall>("GetClassCallChecker")
+            alias<FirSafeCallExpression>("SafeCallExpressionChecker")
+            alias<FirEqualityOperatorCall>("EqualityOperatorCallChecker")
+            alias<FirStringConcatenationCall>("StringConcatenationCallChecker")
+            alias<FirTypeOperatorCall>("TypeOperatorCallChecker")
+            alias<FirResolvedQualifier>("ResolvedQualifierChecker")
+            alias<FirLiteralExpression>("LiteralExpressionChecker")
+            alias<FirCallableReferenceAccess>("CallableReferenceAccessChecker")
+            alias<FirThisReceiverExpression>("ThisReceiverExpressionChecker")
+            alias<FirWhileLoop>("WhileLoopChecker")
+            alias<FirThrowExpression>("ThrowExpressionChecker")
+            alias<FirDoWhileLoop>("DoWhileLoopChecker")
+            alias<FirArrayLiteral>("ArrayLiteralChecker")
+            alias<FirClassReferenceExpression>("ClassReferenceExpressionChecker")
+            alias<FirInaccessibleReceiverExpression>("InaccessibleReceiverChecker")
+        }
 
         val declarationPackage = "$basePackage.checkers.declaration"
         generateCheckersComponents(checkersPath, declarationPackage, "FirDeclarationChecker") {
