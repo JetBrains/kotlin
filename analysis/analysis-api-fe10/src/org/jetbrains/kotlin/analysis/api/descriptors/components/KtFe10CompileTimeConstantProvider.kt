@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KaCompileTimeConstantProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationValue
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtConstantValue
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -38,6 +38,6 @@ internal class KaFe10CompileTimeConstantProvider(
     override fun evaluateAsAnnotationValue(expression: KtExpression): KaAnnotationValue? {
         val bindingContext = analysisContext.analyze(expression)
         val constant = ConstantExpressionEvaluator.getPossiblyErrorConstant(expression, bindingContext)
-        return constant?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.toKtAnnotationValue(analysisContext)
+        return constant?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.toKaAnnotationValue(analysisContext)
     }
 }

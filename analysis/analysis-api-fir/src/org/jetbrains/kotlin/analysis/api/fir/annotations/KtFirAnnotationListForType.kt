@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
-import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.fir.toKaAnnotation
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -33,7 +33,7 @@ internal class KaFirAnnotationListForType private constructor(
             // Resolve annotation types
             containingSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
 
-            firAnnotation.toKtAnnotationApplication(builder, index) {
+            firAnnotation.toKaAnnotation(builder, index) {
                 if (containingSymbol != null && firAnnotation.arguments.isNotEmpty()) {
                     // Resolve annotation arguments
                     containingSymbol.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)

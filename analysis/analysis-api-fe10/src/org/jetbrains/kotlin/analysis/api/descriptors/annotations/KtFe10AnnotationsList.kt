@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classIdForAnnotation
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKaAnnotation
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -25,7 +25,7 @@ internal class KaFe10AnnotationList private constructor(
         buildList {
             fe10Annotations.forEachIndexed { index, annotationDescriptor ->
                 if (annotationDescriptor.classIdForAnnotation !in ignoredAnnotations) {
-                    add(annotationDescriptor.toKtAnnotationApplication(analysisContext, index))
+                    add(annotationDescriptor.toKaAnnotation(analysisContext, index))
                 }
             }
         }
@@ -76,7 +76,7 @@ internal class KaFe10AnnotationList private constructor(
                 return@mapIndexedNotNull null
             }
 
-            annotation.toKtAnnotationApplication(analysisContext, index)
+            annotation.toKaAnnotation(analysisContext, index)
         }
     }
 

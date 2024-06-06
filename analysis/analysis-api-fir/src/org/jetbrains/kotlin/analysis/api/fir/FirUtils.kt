@@ -72,7 +72,7 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
         else -> emptyList()
     }
 
-internal fun FirAnnotation.toKtAnnotationApplication(
+internal fun FirAnnotation.toKaAnnotation(
     builder: KaSymbolByFirBuilder,
     index: Int,
     argumentsFactory: (ClassId?) -> List<KaNamedAnnotationValue>

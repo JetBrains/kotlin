@@ -456,11 +456,11 @@ internal fun List<ConstantValue<*>>.expandArrayAnnotationValue(
         // to be expanded here. (It should have the array element type instead.)
         (constantValue as ArrayValue).value.expandArrayAnnotationValue(containingArrayType, analysisContext)
     } else {
-        listOf(constantValue.toKtAnnotationValue(analysisContext))
+        listOf(constantValue.toKaAnnotationValue(analysisContext))
     }
 }
 
-internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisContext): KaAnnotationValue {
+internal fun ConstantValue<*>.toKaAnnotationValue(analysisContext: Fe10AnalysisContext): KaAnnotationValue {
     val token = analysisContext.token
 
     return when (this) {
@@ -680,7 +680,7 @@ internal fun createKtInitializerValue(
     return KaNonConstantInitializerValue(initializer)
 }
 
-internal fun AnnotationDescriptor.toKtAnnotationApplication(
+internal fun AnnotationDescriptor.toKaAnnotation(
     analysisContext: Fe10AnalysisContext,
     index: Int,
 ): KaAnnotation {
@@ -702,7 +702,7 @@ internal val AnnotationDescriptor.useSiteTarget: AnnotationUseSiteTarget?
 
 internal fun AnnotationDescriptor.getKtNamedAnnotationArguments(analysisContext: Fe10AnalysisContext): List<KaNamedAnnotationValue> =
     allValueArguments.map { (name, value) ->
-        KaNamedAnnotationValue(name, value.toKtAnnotationValue(analysisContext), analysisContext.token)
+        KaNamedAnnotationValue(name, value.toKaAnnotationValue(analysisContext), analysisContext.token)
     }
 
 internal fun CallableDescriptor.createContextReceivers(

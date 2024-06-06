@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
-import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.fir.toKaAnnotation
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -62,7 +62,7 @@ internal fun annotationsByClassId(
 
     return annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
         .mapIndexedToAnnotationApplication(builder.rootSession, classId) { index, annotation ->
-            annotation.toKtAnnotationApplication(builder, index) {
+            annotation.toKaAnnotation(builder, index) {
                 computeAnnotationArguments(firSymbol, annotationContainer, classId, index, builder)
             }
         }
@@ -142,7 +142,7 @@ private fun computeTargetAnnotationArguments(
 }
 
 private fun computeKotlinTargetAnnotation(annotation: FirAnnotation, builder: KaSymbolByFirBuilder, index: Int): KaAnnotation {
-    return annotation.toKtAnnotationApplication(builder, index) {
+    return annotation.toKaAnnotation(builder, index) {
         computeKotlinTargetAnnotationArguments(annotation, builder)
     }
 }
@@ -154,7 +154,7 @@ private fun computeKotlinTargetAnnotationArguments(annotation: FirAnnotation, bu
 }
 
 private fun computeJavaTargetAnnotation(annotation: FirAnnotation, builder: KaSymbolByFirBuilder, index: Int): KaAnnotation {
-    return annotation.toKtAnnotationApplication(builder, index) {
+    return annotation.toKaAnnotation(builder, index) {
         computeJavaTargetAnnotationArguments(annotation, builder)
     }
 }
@@ -189,7 +189,7 @@ internal fun annotations(
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KaAnnotation> =
     annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapIndexed { index, annotation ->
-        annotation.toKtAnnotationApplication(builder, index) { classId ->
+        annotation.toKaAnnotation(builder, index) { classId ->
             computeAnnotationArguments(firSymbol, annotationContainer, classId, index, builder)
         }
     }
