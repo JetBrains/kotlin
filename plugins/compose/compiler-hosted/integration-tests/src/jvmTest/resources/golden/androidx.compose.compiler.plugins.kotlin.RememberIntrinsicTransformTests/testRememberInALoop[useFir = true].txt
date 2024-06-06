@@ -17,7 +17,7 @@ val content: @Composable (a: SomeUnstableClass) -> Unit = {
 
 val content: Function3<@[ParameterName(name = 'a')] SomeUnstableClass, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
 internal object ComposableSingletons%TestKt {
-  val lambda-1: Function3<@[ParameterName(name = 'a')] SomeUnstableClass, Composer, Int, Unit> = composableLambdaInstance(<>, false) { it: @[ParameterName(name = 'a')] SomeUnstableClass, %composer: Composer?, %changed: Int ->
+  val lambda-1: Function3<SomeUnstableClass, Composer, Int, Unit> = composableLambdaInstance(<>, false) { it: SomeUnstableClass, %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<rememb...>:Test.kt")
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

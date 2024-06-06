@@ -3,7 +3,7 @@ FILE: lambda.kt
         Int(1).R|kotlin/run|<R|kotlin/Int|, R|kotlin/Unit|>(R|<local>/t|)
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/f|(<L> = f@fun <anonymous>(i: R|@R|kotlin/ParameterName|(name = String(v))  kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+        R|/f|(<L> = f@fun <anonymous>(i: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
             ^@f Unit
         }
         )

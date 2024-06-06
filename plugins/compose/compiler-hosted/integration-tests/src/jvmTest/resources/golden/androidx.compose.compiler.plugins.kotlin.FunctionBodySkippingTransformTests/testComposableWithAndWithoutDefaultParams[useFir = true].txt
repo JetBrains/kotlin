@@ -76,7 +76,7 @@ fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     used(y)
-    Wrap(10, rememberComposableLambda(<>, true, { it: @[ParameterName(name = 'x')] Int, %composer: Composer?, %changed: Int ->
+    Wrap(10, rememberComposableLambda(<>, true, { it: Int, %composer: Composer?, %changed: Int ->
       sourceInformation(%composer, "C<A(x)>:Test.kt")
       val %dirty = %changed
       if (%changed and 0b0110 == 0) {

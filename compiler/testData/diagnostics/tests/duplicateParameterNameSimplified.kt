@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-65584
 
 fun <T> giveItName(it: T, block: (myName: T) -> Unit) = block(it)

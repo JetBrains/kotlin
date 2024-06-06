@@ -33,7 +33,7 @@ class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : Cone
         get() = true
 }
 
-private val ConeAttributes.custom: CustomAnnotationTypeAttribute? by ConeAttributes.attributeAccessor<CustomAnnotationTypeAttribute>()
+val ConeAttributes.custom: CustomAnnotationTypeAttribute? by ConeAttributes.attributeAccessor<CustomAnnotationTypeAttribute>()
 
 val ConeAttributes.customAnnotations: List<FirAnnotation> get() = custom?.annotations.orEmpty()
 
