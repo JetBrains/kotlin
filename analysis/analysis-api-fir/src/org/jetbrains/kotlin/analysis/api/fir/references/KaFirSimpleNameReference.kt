@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.references.KaBaseSimpleNameReference
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -21,8 +22,7 @@ import org.jetbrains.kotlin.psi.*
 internal class KaFirSimpleNameReference(
     expression: KtSimpleNameExpression,
     val isRead: Boolean,
-) : KtSimpleNameReference(expression), KaFirReference {
-
+) : KaBaseSimpleNameReference(expression), KaFirReference {
     private val isAnnotationCall: Boolean
         get() {
             val ktUserType = expression.parent as? KtUserType ?: return false
