@@ -47,7 +47,7 @@ internal data class AnnotationApplication(
 internal fun KaAnnotation.toDumbLightClassAnnotationApplication(): AnnotationApplication {
     val value = AnnotationValue.Annotation(
         classId,
-        constructorSymbolPointer = null,
+        constructorSymbolPointer = constructorSymbol?.createPointer(),
         arguments = emptyList(),
         sourcePsi = null
     )
