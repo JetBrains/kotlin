@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.removeParameterNameAnnotation
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -70,6 +71,11 @@ fun extractLambdaInfoFromFunctionType(
         val toDrop = forExtension + contextReceiversNumber
 
         if (toDrop > 0) it.drop(toDrop) else it
+    }.map {
+        // @ParameterName is assumed to be used for Ctrl+P on the call site of a property with a function type.
+        // Propagating it further may affect further inference might work weirdly, and for sure,
+        // it's not expected to leak in implicitly typed declarations.
+        it.removeParameterNameAnnotation(session)
     }
 
     var coerceFirstParameterToExtensionReceiver = false

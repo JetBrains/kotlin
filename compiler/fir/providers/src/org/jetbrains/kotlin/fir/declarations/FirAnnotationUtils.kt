@@ -118,7 +118,18 @@ fun FirAnnotationContainer.getAnnotationsByClassId(classId: ClassId, session: Fi
 
 fun List<FirAnnotation>.getAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> {
     return filter {
-        it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId == classId
+        it.doesMatchesClassId(classId, session)
+    }
+}
+
+private fun FirAnnotation.doesMatchesClassId(
+    classId: ClassId,
+    session: FirSession,
+): Boolean = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId == classId
+
+fun List<FirAnnotation>.filterOutAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> {
+    return filterNot {
+        it.doesMatchesClassId(classId, session)
     }
 }
 

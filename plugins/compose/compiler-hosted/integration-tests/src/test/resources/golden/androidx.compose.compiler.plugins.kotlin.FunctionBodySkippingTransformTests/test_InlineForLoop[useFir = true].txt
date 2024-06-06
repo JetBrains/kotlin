@@ -28,7 +28,7 @@ fun Test(%composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    Bug(listOf(1, 2, 3), { it: @[ParameterName(name = 'item')] Int, %composer: Composer?, %changed: Int ->
+    Bug(listOf(1, 2, 3), { it: Int, %composer: Composer?, %changed: Int ->
       sourceInformationMarkerStart(%composer, <>, "C<Text(i...>:Test.kt")
       Text(it.toString(), %composer, 0)
       sourceInformationMarkerEnd(%composer)

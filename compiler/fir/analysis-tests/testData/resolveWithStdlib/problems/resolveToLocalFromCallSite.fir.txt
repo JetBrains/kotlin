@@ -6,8 +6,8 @@ FILE: resolveToLocalFromCallSite.kt
 
         public final fun foo(types: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
             lval length: R|kotlin/String| = String(123)
-            R|<local>/types|.R|kotlin/collections/mapIndexed|<R|kotlin/String|, R|kotlin/Triple<@R|kotlin/ParameterName|(name = String(index))  kotlin/Int, kotlin/String, kotlin/Int>|>(<L> = mapIndexed@fun <anonymous>(i: R|@R|kotlin/ParameterName|(name = String(index))  kotlin/Int|, length: R|kotlin/String|): R|kotlin/Triple<@R|kotlin/ParameterName|(name = String(index))  kotlin/Int, kotlin/String, kotlin/Int>| <inline=Inline, kind=UNKNOWN>  {
-                ^ R|kotlin/Triple.Triple|<R|@R|kotlin/ParameterName|(name = String(index))  kotlin/Int|, R|kotlin/String|, R|kotlin/Int|>(R|<local>/i|, R|<local>/length|, (this@R|/<anonymous>|, R|<local>/length|).R|/<anonymous>.getFilteredType|())
+            R|<local>/types|.R|kotlin/collections/mapIndexed|<R|kotlin/String|, R|kotlin/Triple<kotlin/Int, kotlin/String, kotlin/Int>|>(<L> = mapIndexed@fun <anonymous>(i: R|kotlin/Int|, length: R|kotlin/String|): R|kotlin/Triple<kotlin/Int, kotlin/String, kotlin/Int>| <inline=Inline, kind=UNKNOWN>  {
+                ^ R|kotlin/Triple.Triple|<R|kotlin/Int|, R|kotlin/String|, R|kotlin/Int|>(R|<local>/i|, R|<local>/length|, (this@R|/<anonymous>|, R|<local>/length|).R|/<anonymous>.getFilteredType|())
             }
             )
         }
