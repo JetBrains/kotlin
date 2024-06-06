@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 
-internal class KtFirPropertyDelegationMethodsReference(
+internal class KaFirPropertyDelegationMethodsReference(
     element: KtPropertyDelegate
 ) : KtPropertyDelegationMethodsReference(element), KaFirReference {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {

@@ -20,7 +20,7 @@ internal class KotlinFirReferenceContributor : KotlinReferenceProviderContributo
         with(registrar) {
             registerProvider(factory = ::KaFirForLoopInReference)
             registerProvider(factory = ::KaFirInvokeFunctionReference)
-            registerProvider(factory = ::KtFirPropertyDelegationMethodsReference)
+            registerProvider(factory = ::KaFirPropertyDelegationMethodsReference)
             registerProvider(factory = ::KaFirDestructuringDeclarationReference)
             registerProvider(factory = ::KaFirArrayAccessReference)
             registerProvider(factory = ::KaFirConstructorDelegationReference)
