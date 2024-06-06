@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReferenceService
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.TestReferenceResolveResultRenderer.renderResolvedTo
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaRendererAnnotationsFilter
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfTypeInPreorder
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -71,6 +74,17 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
 
         contexts.ifEmpty {
             listOf(ResolveReferenceTestCaseContext(element = null, marker = marker))
+        }
+    }
+
+    protected fun collectAllReferences(file: KtFile): Collection<ResolveReferenceTestCaseContext> = buildSet {
+        val referenceService = PsiReferenceService.getService()
+        file.forEachDescendantOfTypeInPreorder<PsiElement> { element ->
+            for (reference in referenceService.getContributedReferences(element)) {
+                if (reference !is KtReference) continue
+                val context = ResolveReferenceTestCaseContext(element = reference, marker = null)
+                add(context)
+            }
         }
     }
 

@@ -1,0 +1,487 @@
+KtNameReferenceExpression(8,11): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtCallExpression(66,71): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(66,69): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(80,84): 'this'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtCallExpression(85,90): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(85,88): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(99,103): 'this'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtLabelReferenceExpression(103,111): '@MyClass'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtCallExpression(112,117): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(112,115): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(203,208): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(203,206): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(221,225): 'this'
+  KtSimpleNameReference:
+    (in one.MyClass) inner class InnerOuter
+
+KtCallExpression(226,231): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(226,229): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(244,248): 'this'
+  KtSimpleNameReference:
+    (in one.MyClass) inner class InnerOuter
+
+KtLabelReferenceExpression(248,259): '@InnerOuter'
+  KtSimpleNameReference:
+    (in one.MyClass) inner class InnerOuter
+
+KtCallExpression(260,265): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(260,263): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(278,282): 'this'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtLabelReferenceExpression(282,290): '@MyClass'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtCallExpression(291,296): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(291,294): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(403,408): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(403,406): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter.InnerNested) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(425,429): 'this'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) inner class InnerNested
+
+KtCallExpression(430,435): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(430,433): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter.InnerNested) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(452,456): 'this'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) inner class InnerNested
+
+KtLabelReferenceExpression(456,468): '@InnerNested'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) inner class InnerNested
+
+KtCallExpression(469,474): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(469,472): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter.InnerNested) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(491,495): 'this'
+  KtSimpleNameReference:
+    (in one.MyClass) inner class InnerOuter
+
+KtLabelReferenceExpression(495,506): '@InnerOuter'
+  KtSimpleNameReference:
+    (in one.MyClass) inner class InnerOuter
+
+KtCallExpression(507,512): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(507,510): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(529,533): 'this'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtLabelReferenceExpression(533,541): '@MyClass'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtCallExpression(542,547): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(542,545): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(573,578): 'anon@'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(583,590): 'MyClass'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtNameReferenceExpression(595,601): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtCallExpression(625,630): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(625,628): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(651,655): 'this'
+  KtSimpleNameReference:
+    (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.MyClass.`<no name provided>`(s: kotlin.String)
+
+KtCallExpression(656,661): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(656,659): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(682,686): 'this'
+  KtSimpleNameReference:
+    (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.MyClass.`<no name provided>`(s: kotlin.String)
+
+KtLabelReferenceExpression(686,691): '@anon'
+  KtSimpleNameReference:
+    (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.MyClass.`<no name provided>`(s: kotlin.String)
+
+KtCallExpression(692,697): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(692,695): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(718,722): 'this'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) inner class InnerNested
+
+KtLabelReferenceExpression(722,734): '@InnerNested'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) inner class InnerNested
+
+KtCallExpression(735,740): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(735,738): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter.InnerNested) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(761,765): 'this'
+  KtSimpleNameReference:
+    (in one.MyClass) inner class InnerOuter
+
+KtLabelReferenceExpression(765,776): '@InnerOuter'
+  KtSimpleNameReference:
+    (in one.MyClass) inner class InnerOuter
+
+KtCallExpression(777,782): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(777,780): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(803,807): 'this'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtLabelReferenceExpression(807,815): '@MyClass'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtCallExpression(816,821): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(816,819): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(857,1107): 'myWith { t ->'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(857,863): 'myWith'
+  KtSimpleNameReference:
+    (in one) fun <T> T.myWith(body: T.(T) -> kotlin.Unit)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(891,896): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(891,894): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter.InnerNested) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(917,921): 'this'
+  KtSimpleNameReference:
+    (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.InnerOuter.MyClass.InnerNested.(t: one.InnerOuter.MyClass.InnerNested): kotlin.Unit
+
+KtCallExpression(922,927): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(922,925): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter.InnerNested) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(948,952): 'this'
+  KtSimpleNameReference:
+    (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.InnerOuter.MyClass.InnerNested.(t: one.InnerOuter.MyClass.InnerNested): kotlin.Unit
+
+KtLabelReferenceExpression(952,959): '@myWith'
+  KtSimpleNameReference:
+    (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.InnerOuter.MyClass.InnerNested.(t: one.InnerOuter.MyClass.InnerNested): kotlin.Unit
+
+KtCallExpression(960,965): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(960,963): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter.InnerNested) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(986,990): 'this'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) inner class InnerNested
+
+KtLabelReferenceExpression(990,1002): '@InnerNested'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) inner class InnerNested
+
+KtCallExpression(1003,1008): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1003,1006): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter.InnerNested) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1029,1033): 'this'
+  KtSimpleNameReference:
+    (in one.MyClass) inner class InnerOuter
+
+KtLabelReferenceExpression(1033,1044): '@InnerOuter'
+  KtSimpleNameReference:
+    (in one.MyClass) inner class InnerOuter
+
+KtCallExpression(1045,1050): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1045,1048): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1071,1075): 'this'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtLabelReferenceExpression(1075,1083): '@MyClass'
+  KtSimpleNameReference:
+    (in one) class MyClass
+
+KtCallExpression(1084,1089): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1084,1087): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(1125,1194): 'myWith label@{'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1125,1131): 'myWith'
+  KtSimpleNameReference:
+    (in one) fun <T> T.myWith(body: T.(T) -> kotlin.Unit)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(1132,1138): 'label@'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1160,1164): 'this'
+  KtSimpleNameReference:
+    (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.InnerOuter.MyClass.InnerNested.(it: one.InnerOuter.MyClass.InnerNested): kotlin.Unit
+
+KtLabelReferenceExpression(1164,1170): '@label'
+  KtSimpleNameReference:
+    (in <local>: MyClass.InnerOuter.InnerNested.<no name>) fun one.InnerOuter.MyClass.InnerNested.(it: one.InnerOuter.MyClass.InnerNested): kotlin.Unit
+
+KtCallExpression(1171,1176): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1171,1174): 'foo'
+  KtSimpleNameReference:
+    (in one.MyClass.InnerOuter.InnerNested) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1236,1237): 'T'
+  KtSimpleNameReference:
+    T
+
+KtNameReferenceExpression(1251,1252): 'T'
+  KtSimpleNameReference:
+    T
+
+KtNameReferenceExpression(1254,1255): 'T'
+  KtSimpleNameReference:
+    T
+
+KtNameReferenceExpression(1260,1264): 'Unit'
+  KtSimpleNameReference:
+    (in kotlin) object Unit
+
+KtCallExpression(1272,1282): 'body(this)'
+  KtInvokeFunctionReference:
+    (in kotlin.Function2) operator fun P1.invoke(p2: P2): R
+
+KtNameReferenceExpression(1272,1276): 'body'
+  KtSimpleNameReference:
+    body: T.(T) -> kotlin.Unit
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1277,1281): 'this'
+  KtSimpleNameReference:
+    (in one) fun <T> T.myWith(body: T.(T) -> kotlin.Unit)

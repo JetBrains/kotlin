@@ -1,0 +1,173 @@
+KtFile: 'elvis.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,115): 'class MyClass {'
+  null
+
+KtClassBody(14,115): '{'
+  null
+
+KtNamedFunction(20,113): 'override fun equals(other: Any?): Boolean {'
+  null
+
+KtDeclarationModifierList(20,28): 'override'
+  null
+
+KtParameterList(39,52): '(other: Any?)'
+  null
+
+KtParameter(40,51): 'other: Any?'
+  null
+
+KtTypeReference(47,51): 'Any?'
+  null
+
+KtNullableType(47,51): 'Any?'
+  null
+
+KtUserType(47,50): 'Any'
+  null
+
+KtNameReferenceExpression(47,50): 'Any'
+  null
+
+KtTypeReference(54,61): 'Boolean'
+  null
+
+KtUserType(54,61): 'Boolean'
+  null
+
+KtNameReferenceExpression(54,61): 'Boolean'
+  null
+
+KtBlockExpression(62,113): '{'
+  null
+
+KtReturnExpression(72,107): 'return other?.equals(this) ?: false'
+  null
+
+KtBinaryExpression(79,107): 'other?.equals(this) ?: false'
+  null
+
+KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
+  null
+
+KtNameReferenceExpression(79,84): 'other'
+  null
+
+KtCallExpression(86,98): 'equals(this)'
+  null
+
+KtNameReferenceExpression(86,92): 'equals'
+  null
+
+KtValueArgumentList(92,98): '(this)'
+  null
+
+KtValueArgument(93,97): 'this'
+  null
+
+KtThisExpression(93,97): 'this'
+  null
+
+KtNameReferenceExpression(93,97): 'this'
+  null
+
+KtOperationReferenceExpression(99,101): '?:'
+  null
+
+KtConstantExpression(102,107): 'false'
+  null
+
+KtNamedFunction(117,209): 'fun check(m: MyClass?, m2: MyClass?) {'
+  null
+
+KtParameterList(126,153): '(m: MyClass?, m2: MyClass?)'
+  null
+
+KtParameter(127,138): 'm: MyClass?'
+  null
+
+KtTypeReference(130,138): 'MyClass?'
+  null
+
+KtNullableType(130,138): 'MyClass?'
+  null
+
+KtUserType(130,137): 'MyClass'
+  null
+
+KtNameReferenceExpression(130,137): 'MyClass'
+  null
+
+KtParameter(140,152): 'm2: MyClass?'
+  null
+
+KtTypeReference(144,152): 'MyClass?'
+  null
+
+KtNullableType(144,152): 'MyClass?'
+  null
+
+KtUserType(144,151): 'MyClass'
+  null
+
+KtNameReferenceExpression(144,151): 'MyClass'
+  null
+
+KtBlockExpression(154,209): '{'
+  null
+
+KtProperty(160,183): 'val f = m ?: m2 ?: null'
+  null
+
+KtBinaryExpression(168,183): 'm ?: m2 ?: null'
+  null
+
+KtBinaryExpression(168,175): 'm ?: m2'
+  null
+
+KtNameReferenceExpression(168,169): 'm'
+  null
+
+KtOperationReferenceExpression(170,172): '?:'
+  null
+
+KtNameReferenceExpression(173,175): 'm2'
+  null
+
+KtOperationReferenceExpression(176,178): '?:'
+  null
+
+KtConstantExpression(179,183): 'null'
+  null
+
+KtBinaryExpression(188,195): 'f ?: m2'
+  null
+
+KtNameReferenceExpression(188,189): 'f'
+  null
+
+KtOperationReferenceExpression(190,192): '?:'
+  null
+
+KtNameReferenceExpression(193,195): 'm2'
+  null
+
+KtBinaryExpression(200,207): 'm2 ?: m'
+  null
+
+KtNameReferenceExpression(200,202): 'm2'
+  null
+
+KtOperationReferenceExpression(203,205): '?:'
+  null
+
+KtNameReferenceExpression(206,207): 'm'
+  null

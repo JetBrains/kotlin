@@ -1,0 +1,2009 @@
+KtFile: 'annotatedClasses.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,89): '// WITH_STDLIB'
+  null
+
+KtDeclarationModifierList(15,56): '@Target(AnnotationTarget.TYPE)'
+  null
+
+KtAnnotationEntry(15,45): '@Target(AnnotationTarget.TYPE)'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.annotation.Target
+          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = allowedTargets
+              receiverType = null
+              returnType = kotlin.annotation.AnnotationTarget
+              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(16,22): 'Target'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.annotation.Target
+          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = allowedTargets
+              receiverType = null
+              returnType = kotlin.annotation.AnnotationTarget
+              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableId = null)
+      }
+
+KtTypeReference(16,22): 'Target'
+  null
+
+KtUserType(16,22): 'Target'
+  null
+
+KtNameReferenceExpression(16,22): 'Target'
+  null
+
+KtValueArgumentList(22,45): '(AnnotationTarget.TYPE)'
+  null
+
+KtValueArgument(23,44): 'AnnotationTarget.TYPE'
+  null
+
+KtDotQualifiedExpression(23,44): 'AnnotationTarget.TYPE'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = AnnotationTarget
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = TYPE
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = kotlin/annotation/AnnotationTarget.TYPE
+          callableId = kotlin/annotation/AnnotationTarget.TYPE
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(23,39): 'AnnotationTarget'
+  null
+
+KtNameReferenceExpression(40,44): 'TYPE'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = AnnotationTarget
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = TYPE
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = kotlin/annotation/AnnotationTarget.TYPE
+          callableId = kotlin/annotation/AnnotationTarget.TYPE
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtPrimaryConstructor(67,89): '(val position: String)'
+  null
+
+KtParameterList(67,89): '(val position: String)'
+  null
+
+KtParameter(68,88): 'val position: String'
+  null
+
+KtTypeReference(82,88): 'String'
+  null
+
+KtUserType(82,88): 'String'
+  null
+
+KtNameReferenceExpression(82,88): 'String'
+  null
+
+KtProperty(91,113): 'const val prop = "str"'
+  null
+
+KtDeclarationModifierList(91,96): 'const'
+  null
+
+KtStringTemplateExpression(108,113): '"str"'
+  null
+
+KtLiteralStringTemplateEntry(109,112): 'str'
+  null
+
+KtClass(115,429): 'class A {'
+  null
+
+KtClassBody(123,429): '{'
+  null
+
+KtSecondaryConstructor(129,427): 'constructor(param: @Anno("parameter type $prop") List<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>> = @Anno("defaultValue $prop") fun(i: @Anno("anonymousFunction parameter type $prop") Int): @Anno("anonymousFunction return type $prop") Int {})'
+  null
+
+KtParameterList(140,427): '(param: @Anno("parameter type $prop") List<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>> = @Anno("defaultValue $prop") fun(i: @Anno("anonymousFunction parameter type $prop") Int): @Anno("anonymousFunction return type $prop") Int {})'
+  null
+
+KtParameter(141,426): 'param: @Anno("parameter type $prop") List<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>> = @Anno("defaultValue $prop") fun(i: @Anno("anonymousFunction parameter type $prop") Int): @Anno("anonymousFunction return type $prop") Int {}'
+  null
+
+KtTypeReference(148,283): '@Anno("parameter type $prop") List<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>>'
+  null
+
+KtDeclarationModifierList(148,177): '@Anno("parameter type $prop")'
+  null
+
+KtAnnotationEntry(148,177): '@Anno("parameter type $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(149,153): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(149,153): 'Anno'
+  null
+
+KtUserType(149,153): 'Anno'
+  null
+
+KtNameReferenceExpression(149,153): 'Anno'
+  null
+
+KtValueArgumentList(153,177): '("parameter type $prop")'
+  null
+
+KtValueArgument(154,176): '"parameter type $prop"'
+  null
+
+KtStringTemplateExpression(154,176): '"parameter type $prop"'
+  null
+
+KtLiteralStringTemplateEntry(155,170): 'parameter type '
+  null
+
+KtSimpleNameStringTemplateEntry(170,175): '$prop'
+  null
+
+KtNameReferenceExpression(171,175): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(178,283): 'List<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>>'
+  null
+
+KtNameReferenceExpression(178,182): 'List'
+  null
+
+KtTypeArgumentList(182,283): '<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>>'
+  null
+
+KtTypeProjection(183,282): '@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>'
+  null
+
+KtTypeReference(183,282): '@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>'
+  null
+
+KtDeclarationModifierList(183,219): '@Anno("nested parameter type $prop")'
+  null
+
+KtAnnotationEntry(183,219): '@Anno("nested parameter type $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(184,188): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(184,188): 'Anno'
+  null
+
+KtUserType(184,188): 'Anno'
+  null
+
+KtNameReferenceExpression(184,188): 'Anno'
+  null
+
+KtValueArgumentList(188,219): '("nested parameter type $prop")'
+  null
+
+KtValueArgument(189,218): '"nested parameter type $prop"'
+  null
+
+KtStringTemplateExpression(189,218): '"nested parameter type $prop"'
+  null
+
+KtLiteralStringTemplateEntry(190,212): 'nested parameter type '
+  null
+
+KtSimpleNameStringTemplateEntry(212,217): '$prop'
+  null
+
+KtNameReferenceExpression(213,217): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(220,282): 'Collection<@Anno("nested nested parameter type $prop") String>'
+  null
+
+KtNameReferenceExpression(220,230): 'Collection'
+  null
+
+KtTypeArgumentList(230,282): '<@Anno("nested nested parameter type $prop") String>'
+  null
+
+KtTypeProjection(231,281): '@Anno("nested nested parameter type $prop") String'
+  null
+
+KtTypeReference(231,281): '@Anno("nested nested parameter type $prop") String'
+  null
+
+KtDeclarationModifierList(231,274): '@Anno("nested nested parameter type $prop")'
+  null
+
+KtAnnotationEntry(231,274): '@Anno("nested nested parameter type $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(232,236): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(232,236): 'Anno'
+  null
+
+KtUserType(232,236): 'Anno'
+  null
+
+KtNameReferenceExpression(232,236): 'Anno'
+  null
+
+KtValueArgumentList(236,274): '("nested nested parameter type $prop")'
+  null
+
+KtValueArgument(237,273): '"nested nested parameter type $prop"'
+  null
+
+KtStringTemplateExpression(237,273): '"nested nested parameter type $prop"'
+  null
+
+KtLiteralStringTemplateEntry(238,267): 'nested nested parameter type '
+  null
+
+KtSimpleNameStringTemplateEntry(267,272): '$prop'
+  null
+
+KtNameReferenceExpression(268,272): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(275,281): 'String'
+  null
+
+KtNameReferenceExpression(275,281): 'String'
+  null
+
+KtNamedFunction(286,426): '@Anno("defaultValue $prop") fun(i: @Anno("anonymousFunction parameter type $prop") Int): @Anno("anonymousFunction return type $prop") Int {}'
+  null
+
+KtDeclarationModifierList(286,313): '@Anno("defaultValue $prop")'
+  null
+
+KtAnnotationEntry(286,313): '@Anno("defaultValue $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "defaultValue $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(287,291): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "defaultValue $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(287,291): 'Anno'
+  null
+
+KtUserType(287,291): 'Anno'
+  null
+
+KtNameReferenceExpression(287,291): 'Anno'
+  null
+
+KtValueArgumentList(291,313): '("defaultValue $prop")'
+  null
+
+KtValueArgument(292,312): '"defaultValue $prop"'
+  null
+
+KtStringTemplateExpression(292,312): '"defaultValue $prop"'
+  null
+
+KtLiteralStringTemplateEntry(293,306): 'defaultValue '
+  null
+
+KtSimpleNameStringTemplateEntry(306,311): '$prop'
+  null
+
+KtNameReferenceExpression(307,311): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtParameterList(317,373): '(i: @Anno("anonymousFunction parameter type $prop") Int)'
+  null
+
+KtParameter(318,372): 'i: @Anno("anonymousFunction parameter type $prop") Int'
+  null
+
+KtTypeReference(321,372): '@Anno("anonymousFunction parameter type $prop") Int'
+  null
+
+KtDeclarationModifierList(321,368): '@Anno("anonymousFunction parameter type $prop")'
+  null
+
+KtAnnotationEntry(321,368): '@Anno("anonymousFunction parameter type $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "anonymousFunction parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(322,326): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "anonymousFunction parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(322,326): 'Anno'
+  null
+
+KtUserType(322,326): 'Anno'
+  null
+
+KtNameReferenceExpression(322,326): 'Anno'
+  null
+
+KtValueArgumentList(326,368): '("anonymousFunction parameter type $prop")'
+  null
+
+KtValueArgument(327,367): '"anonymousFunction parameter type $prop"'
+  null
+
+KtStringTemplateExpression(327,367): '"anonymousFunction parameter type $prop"'
+  null
+
+KtLiteralStringTemplateEntry(328,361): 'anonymousFunction parameter type '
+  null
+
+KtSimpleNameStringTemplateEntry(361,366): '$prop'
+  null
+
+KtNameReferenceExpression(362,366): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(369,372): 'Int'
+  null
+
+KtNameReferenceExpression(369,372): 'Int'
+  null
+
+KtTypeReference(375,423): '@Anno("anonymousFunction return type $prop") Int'
+  null
+
+KtDeclarationModifierList(375,419): '@Anno("anonymousFunction return type $prop")'
+  null
+
+KtAnnotationEntry(375,419): '@Anno("anonymousFunction return type $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "anonymousFunction return type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(376,380): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "anonymousFunction return type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(376,380): 'Anno'
+  null
+
+KtUserType(376,380): 'Anno'
+  null
+
+KtNameReferenceExpression(376,380): 'Anno'
+  null
+
+KtValueArgumentList(380,419): '("anonymousFunction return type $prop")'
+  null
+
+KtValueArgument(381,418): '"anonymousFunction return type $prop"'
+  null
+
+KtStringTemplateExpression(381,418): '"anonymousFunction return type $prop"'
+  null
+
+KtLiteralStringTemplateEntry(382,412): 'anonymousFunction return type '
+  null
+
+KtSimpleNameStringTemplateEntry(412,417): '$prop'
+  null
+
+KtNameReferenceExpression(413,417): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(420,423): 'Int'
+  null
+
+KtNameReferenceExpression(420,423): 'Int'
+  null
+
+KtBlockExpression(424,426): '{}'
+  null
+
+KtConstructorDelegationCall(427,427): ''
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = <constructor>(): kotlin.Any
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtConstructorDelegationReferenceExpression(427,427): ''
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = <constructor>(): kotlin.Any
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtClass(431,462): 'abstract class AbstractClass<T>'
+  null
+
+KtDeclarationModifierList(431,439): 'abstract'
+  null
+
+KtTypeParameterList(459,462): '<T>'
+  null
+
+KtTypeParameter(460,461): 'T'
+  null
+
+KtClass(464,618): 'class MyClass : @Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  null
+
+KtSuperTypeList(480,618): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  null
+
+KtSuperTypeCallEntry(480,618): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = AbstractClass<T>
+          symbol = <constructor>(): AbstractClass<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {
+        T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>)
+      }
+      argumentMapping = {}
+
+KtConstructorCalleeExpression(480,616): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = AbstractClass<T>
+          symbol = <constructor>(): AbstractClass<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {
+        T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>)
+      }
+      argumentMapping = {}
+
+KtTypeReference(480,616): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  null
+
+KtDeclarationModifierList(480,510): '@Anno("super type call $prop")'
+  null
+
+KtAnnotationEntry(480,510): '@Anno("super type call $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(481,485): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(481,485): 'Anno'
+  null
+
+KtUserType(481,485): 'Anno'
+  null
+
+KtNameReferenceExpression(481,485): 'Anno'
+  null
+
+KtValueArgumentList(485,510): '("super type call $prop")'
+  null
+
+KtValueArgument(486,509): '"super type call $prop"'
+  null
+
+KtStringTemplateExpression(486,509): '"super type call $prop"'
+  null
+
+KtLiteralStringTemplateEntry(487,503): 'super type call '
+  null
+
+KtSimpleNameStringTemplateEntry(503,508): '$prop'
+  null
+
+KtNameReferenceExpression(504,508): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(511,616): 'AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  null
+
+KtNameReferenceExpression(511,524): 'AbstractClass'
+  null
+
+KtTypeArgumentList(524,616): '<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  null
+
+KtTypeProjection(525,615): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>'
+  null
+
+KtTypeReference(525,615): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>'
+  null
+
+KtDeclarationModifierList(525,561): '@Anno("nested super type ref $prop")'
+  null
+
+KtAnnotationEntry(525,561): '@Anno("nested super type ref $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(526,530): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(526,530): 'Anno'
+  null
+
+KtUserType(526,530): 'Anno'
+  null
+
+KtNameReferenceExpression(526,530): 'Anno'
+  null
+
+KtValueArgumentList(530,561): '("nested super type ref $prop")'
+  null
+
+KtValueArgument(531,560): '"nested super type ref $prop"'
+  null
+
+KtStringTemplateExpression(531,560): '"nested super type ref $prop"'
+  null
+
+KtLiteralStringTemplateEntry(532,554): 'nested super type ref '
+  null
+
+KtSimpleNameStringTemplateEntry(554,559): '$prop'
+  null
+
+KtNameReferenceExpression(555,559): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(562,615): 'List<@Anno("nested nested super type ref $prop") Int>'
+  null
+
+KtNameReferenceExpression(562,566): 'List'
+  null
+
+KtTypeArgumentList(566,615): '<@Anno("nested nested super type ref $prop") Int>'
+  null
+
+KtTypeProjection(567,614): '@Anno("nested nested super type ref $prop") Int'
+  null
+
+KtTypeReference(567,614): '@Anno("nested nested super type ref $prop") Int'
+  null
+
+KtDeclarationModifierList(567,610): '@Anno("nested nested super type ref $prop")'
+  null
+
+KtAnnotationEntry(567,610): '@Anno("nested nested super type ref $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(568,572): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(568,572): 'Anno'
+  null
+
+KtUserType(568,572): 'Anno'
+  null
+
+KtNameReferenceExpression(568,572): 'Anno'
+  null
+
+KtValueArgumentList(572,610): '("nested nested super type ref $prop")'
+  null
+
+KtValueArgument(573,609): '"nested nested super type ref $prop"'
+  null
+
+KtStringTemplateExpression(573,609): '"nested nested super type ref $prop"'
+  null
+
+KtLiteralStringTemplateEntry(574,603): 'nested nested super type ref '
+  null
+
+KtSimpleNameStringTemplateEntry(603,608): '$prop'
+  null
+
+KtNameReferenceExpression(604,608): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(611,614): 'Int'
+  null
+
+KtNameReferenceExpression(611,614): 'Int'
+  null
+
+KtValueArgumentList(616,618): '()'
+  null
+
+KtClass(620,791): 'class MyClassWithConstructor() : @Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  null
+
+KtPrimaryConstructor(648,650): '()'
+  null
+
+KtParameterList(648,650): '()'
+  null
+
+KtSuperTypeList(653,791): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  null
+
+KtSuperTypeCallEntry(653,791): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = AbstractClass<T>
+          symbol = <constructor>(): AbstractClass<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {
+        T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>)
+      }
+      argumentMapping = {}
+
+KtConstructorCalleeExpression(653,789): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = AbstractClass<T>
+          symbol = <constructor>(): AbstractClass<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {
+        T -> (@R|Anno|(position = <strcat>(String(nested super type ref ), R|.prop|))  kotlin.collections.List<@R|Anno|(position = <strcat>(String(nested nested super type ref ), R|.prop|))  kotlin.Int>)
+      }
+      argumentMapping = {}
+
+KtTypeReference(653,789): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  null
+
+KtDeclarationModifierList(653,683): '@Anno("super type call $prop")'
+  null
+
+KtAnnotationEntry(653,683): '@Anno("super type call $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(654,658): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(654,658): 'Anno'
+  null
+
+KtUserType(654,658): 'Anno'
+  null
+
+KtNameReferenceExpression(654,658): 'Anno'
+  null
+
+KtValueArgumentList(658,683): '("super type call $prop")'
+  null
+
+KtValueArgument(659,682): '"super type call $prop"'
+  null
+
+KtStringTemplateExpression(659,682): '"super type call $prop"'
+  null
+
+KtLiteralStringTemplateEntry(660,676): 'super type call '
+  null
+
+KtSimpleNameStringTemplateEntry(676,681): '$prop'
+  null
+
+KtNameReferenceExpression(677,681): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(684,789): 'AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  null
+
+KtNameReferenceExpression(684,697): 'AbstractClass'
+  null
+
+KtTypeArgumentList(697,789): '<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  null
+
+KtTypeProjection(698,788): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>'
+  null
+
+KtTypeReference(698,788): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>'
+  null
+
+KtDeclarationModifierList(698,734): '@Anno("nested super type ref $prop")'
+  null
+
+KtAnnotationEntry(698,734): '@Anno("nested super type ref $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(699,703): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(699,703): 'Anno'
+  null
+
+KtUserType(699,703): 'Anno'
+  null
+
+KtNameReferenceExpression(699,703): 'Anno'
+  null
+
+KtValueArgumentList(703,734): '("nested super type ref $prop")'
+  null
+
+KtValueArgument(704,733): '"nested super type ref $prop"'
+  null
+
+KtStringTemplateExpression(704,733): '"nested super type ref $prop"'
+  null
+
+KtLiteralStringTemplateEntry(705,727): 'nested super type ref '
+  null
+
+KtSimpleNameStringTemplateEntry(727,732): '$prop'
+  null
+
+KtNameReferenceExpression(728,732): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(735,788): 'List<@Anno("nested nested super type ref $prop") Int>'
+  null
+
+KtNameReferenceExpression(735,739): 'List'
+  null
+
+KtTypeArgumentList(739,788): '<@Anno("nested nested super type ref $prop") Int>'
+  null
+
+KtTypeProjection(740,787): '@Anno("nested nested super type ref $prop") Int'
+  null
+
+KtTypeReference(740,787): '@Anno("nested nested super type ref $prop") Int'
+  null
+
+KtDeclarationModifierList(740,783): '@Anno("nested nested super type ref $prop")'
+  null
+
+KtAnnotationEntry(740,783): '@Anno("nested nested super type ref $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(741,745): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(741,745): 'Anno'
+  null
+
+KtUserType(741,745): 'Anno'
+  null
+
+KtNameReferenceExpression(741,745): 'Anno'
+  null
+
+KtValueArgumentList(745,783): '("nested nested super type ref $prop")'
+  null
+
+KtValueArgument(746,782): '"nested nested super type ref $prop"'
+  null
+
+KtStringTemplateExpression(746,782): '"nested nested super type ref $prop"'
+  null
+
+KtLiteralStringTemplateEntry(747,776): 'nested nested super type ref '
+  null
+
+KtSimpleNameStringTemplateEntry(776,781): '$prop'
+  null
+
+KtNameReferenceExpression(777,781): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(784,787): 'Int'
+  null
+
+KtNameReferenceExpression(784,787): 'Int'
+  null
+
+KtValueArgumentList(789,791): '()'
+  null
+
+KtClass(793,804): 'interface I'
+  null
+
+KtClass(806,964): 'class MyClassWithSuperInterface : @Anno("super type ref $prop") List<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  null
+
+KtSuperTypeList(840,964): '@Anno("super type ref $prop") List<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  null
+
+KtSuperTypeEntry(840,964): '@Anno("super type ref $prop") List<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  null
+
+KtTypeReference(840,964): '@Anno("super type ref $prop") List<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  null
+
+KtDeclarationModifierList(840,869): '@Anno("super type ref $prop")'
+  null
+
+KtAnnotationEntry(840,869): '@Anno("super type ref $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(841,845): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(841,845): 'Anno'
+  null
+
+KtUserType(841,845): 'Anno'
+  null
+
+KtNameReferenceExpression(841,845): 'Anno'
+  null
+
+KtValueArgumentList(845,869): '("super type ref $prop")'
+  null
+
+KtValueArgument(846,868): '"super type ref $prop"'
+  null
+
+KtStringTemplateExpression(846,868): '"super type ref $prop"'
+  null
+
+KtLiteralStringTemplateEntry(847,862): 'super type ref '
+  null
+
+KtSimpleNameStringTemplateEntry(862,867): '$prop'
+  null
+
+KtNameReferenceExpression(863,867): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(870,964): 'List<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  null
+
+KtNameReferenceExpression(870,874): 'List'
+  null
+
+KtTypeArgumentList(874,964): '<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  null
+
+KtTypeProjection(875,963): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>'
+  null
+
+KtTypeReference(875,963): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>'
+  null
+
+KtDeclarationModifierList(875,911): '@Anno("nested super type ref $prop")'
+  null
+
+KtAnnotationEntry(875,911): '@Anno("nested super type ref $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(876,880): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(876,880): 'Anno'
+  null
+
+KtUserType(876,880): 'Anno'
+  null
+
+KtNameReferenceExpression(876,880): 'Anno'
+  null
+
+KtValueArgumentList(880,911): '("nested super type ref $prop")'
+  null
+
+KtValueArgument(881,910): '"nested super type ref $prop"'
+  null
+
+KtStringTemplateExpression(881,910): '"nested super type ref $prop"'
+  null
+
+KtLiteralStringTemplateEntry(882,904): 'nested super type ref '
+  null
+
+KtSimpleNameStringTemplateEntry(904,909): '$prop'
+  null
+
+KtNameReferenceExpression(905,909): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(912,963): 'List<@Anno("nested nested super type ref $prop") I>'
+  null
+
+KtNameReferenceExpression(912,916): 'List'
+  null
+
+KtTypeArgumentList(916,963): '<@Anno("nested nested super type ref $prop") I>'
+  null
+
+KtTypeProjection(917,962): '@Anno("nested nested super type ref $prop") I'
+  null
+
+KtTypeReference(917,962): '@Anno("nested nested super type ref $prop") I'
+  null
+
+KtDeclarationModifierList(917,960): '@Anno("nested nested super type ref $prop")'
+  null
+
+KtAnnotationEntry(917,960): '@Anno("nested nested super type ref $prop")'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(918,922): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+
+KtTypeReference(918,922): 'Anno'
+  null
+
+KtUserType(918,922): 'Anno'
+  null
+
+KtNameReferenceExpression(918,922): 'Anno'
+  null
+
+KtValueArgumentList(922,960): '("nested nested super type ref $prop")'
+  null
+
+KtValueArgument(923,959): '"nested nested super type ref $prop"'
+  null
+
+KtStringTemplateExpression(923,959): '"nested nested super type ref $prop"'
+  null
+
+KtLiteralStringTemplateEntry(924,953): 'nested nested super type ref '
+  null
+
+KtSimpleNameStringTemplateEntry(953,958): '$prop'
+  null
+
+KtNameReferenceExpression(954,958): 'prop'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtUserType(961,962): 'I'
+  null
+
+KtNameReferenceExpression(961,962): 'I'
+  null

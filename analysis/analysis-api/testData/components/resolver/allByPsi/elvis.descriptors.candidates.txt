@@ -1,0 +1,326 @@
+KtFile: 'elvis.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(0,115): 'class MyClass {'
+  NO_CANDIDATES
+
+KtClassBody(14,115): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(20,113): 'override fun equals(other: Any?): Boolean {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(20,28): 'override'
+  NO_CANDIDATES
+
+KtParameterList(39,52): '(other: Any?)'
+  NO_CANDIDATES
+
+KtParameter(40,51): 'other: Any?'
+  NO_CANDIDATES
+
+KtTypeReference(47,51): 'Any?'
+  NO_CANDIDATES
+
+KtNullableType(47,51): 'Any?'
+  NO_CANDIDATES
+
+KtUserType(47,50): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(47,50): 'Any'
+  NO_CANDIDATES
+
+KtTypeReference(54,61): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(54,61): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(54,61): 'Boolean'
+  NO_CANDIDATES
+
+KtBlockExpression(62,113): '{'
+  NO_CANDIDATES
+
+KtReturnExpression(72,107): 'return other?.equals(this) ?: false'
+  NO_CANDIDATES
+
+KtBinaryExpression(79,107): 'other?.equals(this) ?: false'
+  NO_CANDIDATES
+
+KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(79,84): 'other'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(86,98): 'equals(this)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = other
+          isSafeNavigation = true
+          type = kotlin.Any?
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        this -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(86,92): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = other
+          isSafeNavigation = true
+          type = kotlin.Any?
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        this -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(92,98): '(this)'
+  NO_CANDIDATES
+
+KtValueArgument(93,97): 'this'
+  NO_CANDIDATES
+
+KtThisExpression(93,97): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(93,97): 'this'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(99,101): '?:'
+  NO_CANDIDATES
+
+KtConstantExpression(102,107): 'false'
+  NO_CANDIDATES
+
+KtNamedFunction(117,209): 'fun check(m: MyClass?, m2: MyClass?) {'
+  NO_CANDIDATES
+
+KtParameterList(126,153): '(m: MyClass?, m2: MyClass?)'
+  NO_CANDIDATES
+
+KtParameter(127,138): 'm: MyClass?'
+  NO_CANDIDATES
+
+KtTypeReference(130,138): 'MyClass?'
+  NO_CANDIDATES
+
+KtNullableType(130,138): 'MyClass?'
+  NO_CANDIDATES
+
+KtUserType(130,137): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(130,137): 'MyClass'
+  NO_CANDIDATES
+
+KtParameter(140,152): 'm2: MyClass?'
+  NO_CANDIDATES
+
+KtTypeReference(144,152): 'MyClass?'
+  NO_CANDIDATES
+
+KtNullableType(144,152): 'MyClass?'
+  NO_CANDIDATES
+
+KtUserType(144,151): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(144,151): 'MyClass'
+  NO_CANDIDATES
+
+KtBlockExpression(154,209): '{'
+  NO_CANDIDATES
+
+KtProperty(160,183): 'val f = m ?: m2 ?: null'
+  NO_CANDIDATES
+
+KtBinaryExpression(168,183): 'm ?: m2 ?: null'
+  NO_CANDIDATES
+
+KtBinaryExpression(168,175): 'm ?: m2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(168,169): 'm'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = m
+          receiverType = null
+          returnType = MyClass?
+          symbol = m: MyClass?
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(170,172): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(173,175): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass?
+          symbol = m2: MyClass?
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(176,178): '?:'
+  NO_CANDIDATES
+
+KtConstantExpression(179,183): 'null'
+  NO_CANDIDATES
+
+KtBinaryExpression(188,195): 'f ?: m2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(188,189): 'f'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = f
+          receiverType = null
+          returnType = MyClass?
+          symbol = val f: MyClass?
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(190,192): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(193,195): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass?
+          symbol = m2: MyClass?
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(200,207): 'm2 ?: m'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(200,202): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass?
+          symbol = m2: MyClass?
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(203,205): '?:'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(206,207): 'm'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = m
+          receiverType = null
+          returnType = MyClass?
+          symbol = m: MyClass?
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

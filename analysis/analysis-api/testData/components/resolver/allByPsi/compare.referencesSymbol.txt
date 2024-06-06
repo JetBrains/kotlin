@@ -1,0 +1,67 @@
+KtOperationReferenceExpression(20,21): '>'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(30,42): 'compareTo(2)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(30,39): 'compareTo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(43,44): '>'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(56,57): '<'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(99,108): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(99,106): 'MyClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(113,120): 'myClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(121,123): '>='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(124,130): 'number'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(135,142): 'myClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(143,160): 'compareTo(number)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(143,152): 'compareTo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(153,159): 'number'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(210,213): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(216,219): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(222,223): 'i'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

@@ -1,0 +1,80 @@
+KtFile: 'annotationsWithoutCall.kt'
+  null
+
+KtPackageDirective(0,11): 'package one'
+  null
+
+KtNameReferenceExpression(8,11): 'one'
+  null
+
+KtImportList(11,11): ''
+  null
+
+KtClass(13,34): 'annotation class Anno'
+  null
+
+KtDeclarationModifierList(13,23): 'annotation'
+  null
+
+KtNamedFunction(36,54): '@Anno'
+  null
+
+KtDeclarationModifierList(36,41): '@Anno'
+  null
+
+KtAnnotationEntry(36,41): '@Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = one.Anno
+          symbol = <constructor>(): one.Anno
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtConstructorCalleeExpression(37,41): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = one.Anno
+          symbol = <constructor>(): one.Anno
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtTypeReference(37,41): 'Anno'
+  null
+
+KtUserType(37,41): 'Anno'
+  null
+
+KtNameReferenceExpression(37,41): 'Anno'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = one.Anno
+          symbol = <constructor>(): one.Anno
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtParameterList(49,51): '()'
+  null
+
+KtBlockExpression(52,54): '{}'
+  null

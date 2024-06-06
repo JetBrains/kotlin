@@ -1,0 +1,369 @@
+KtFile: 'providedDelegate.kt'
+  null
+
+KtPackageDirective(17,31): 'package myPack'
+  null
+
+KtNameReferenceExpression(25,31): 'myPack'
+  null
+
+KtImportList(33,106): 'import kotlin.reflect.KProperty'
+  null
+
+KtImportDirective(33,64): 'import kotlin.reflect.KProperty'
+  null
+
+KtDotQualifiedExpression(40,64): 'kotlin.reflect.KProperty'
+  null
+
+KtDotQualifiedExpression(40,54): 'kotlin.reflect'
+  null
+
+KtNameReferenceExpression(40,46): 'kotlin'
+  null
+
+KtNameReferenceExpression(47,54): 'reflect'
+  null
+
+KtNameReferenceExpression(55,64): 'KProperty'
+  null
+
+KtImportDirective(65,106): 'import kotlin.properties.ReadOnlyProperty'
+  null
+
+KtDotQualifiedExpression(72,106): 'kotlin.properties.ReadOnlyProperty'
+  null
+
+KtDotQualifiedExpression(72,89): 'kotlin.properties'
+  null
+
+KtNameReferenceExpression(72,78): 'kotlin'
+  null
+
+KtNameReferenceExpression(79,89): 'properties'
+  null
+
+KtNameReferenceExpression(90,106): 'ReadOnlyProperty'
+  null
+
+KtClass(108,266): 'class ResourceID<T> {'
+  null
+
+KtTypeParameterList(124,127): '<T>'
+  null
+
+KtTypeParameter(125,126): 'T'
+  null
+
+KtClassBody(128,266): '{'
+  null
+
+KtNamedFunction(134,264): 'operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): ReadOnlyProperty<Any?, T> {'
+  null
+
+KtDeclarationModifierList(134,142): 'operator'
+  null
+
+KtParameterList(162,201): '(thisRef: Any?, property: KProperty<*>)'
+  null
+
+KtParameter(163,176): 'thisRef: Any?'
+  null
+
+KtTypeReference(172,176): 'Any?'
+  null
+
+KtNullableType(172,176): 'Any?'
+  null
+
+KtUserType(172,175): 'Any'
+  null
+
+KtNameReferenceExpression(172,175): 'Any'
+  null
+
+KtParameter(178,200): 'property: KProperty<*>'
+  null
+
+KtTypeReference(188,200): 'KProperty<*>'
+  null
+
+KtUserType(188,200): 'KProperty<*>'
+  null
+
+KtNameReferenceExpression(188,197): 'KProperty'
+  null
+
+KtTypeArgumentList(197,200): '<*>'
+  null
+
+KtTypeProjection(198,199): '*'
+  null
+
+KtTypeReference(203,228): 'ReadOnlyProperty<Any?, T>'
+  null
+
+KtUserType(203,228): 'ReadOnlyProperty<Any?, T>'
+  null
+
+KtNameReferenceExpression(203,219): 'ReadOnlyProperty'
+  null
+
+KtTypeArgumentList(219,228): '<Any?, T>'
+  null
+
+KtTypeProjection(220,224): 'Any?'
+  null
+
+KtTypeReference(220,224): 'Any?'
+  null
+
+KtNullableType(220,224): 'Any?'
+  null
+
+KtUserType(220,223): 'Any'
+  null
+
+KtNameReferenceExpression(220,223): 'Any'
+  null
+
+KtTypeProjection(226,227): 'T'
+  null
+
+KtTypeReference(226,227): 'T'
+  null
+
+KtUserType(226,227): 'T'
+  null
+
+KtNameReferenceExpression(226,227): 'T'
+  null
+
+KtBlockExpression(229,264): '{'
+  null
+
+KtReturnExpression(239,258): 'return MyDelegate()'
+  null
+
+KtCallExpression(246,258): 'MyDelegate()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.MyDelegate<T>
+          symbol = <constructor>(): myPack.MyDelegate<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtNameReferenceExpression(246,256): 'MyDelegate'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.MyDelegate<T>
+          symbol = <constructor>(): myPack.MyDelegate<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtValueArgumentList(256,258): '()'
+  null
+
+KtClass(268,420): 'class MyDelegate<T> : ReadOnlyProperty<Any?, T> {'
+  null
+
+KtTypeParameterList(284,287): '<T>'
+  null
+
+KtTypeParameter(285,286): 'T'
+  null
+
+KtSuperTypeList(290,315): 'ReadOnlyProperty<Any?, T>'
+  null
+
+KtSuperTypeEntry(290,315): 'ReadOnlyProperty<Any?, T>'
+  null
+
+KtTypeReference(290,315): 'ReadOnlyProperty<Any?, T>'
+  null
+
+KtUserType(290,315): 'ReadOnlyProperty<Any?, T>'
+  null
+
+KtNameReferenceExpression(290,306): 'ReadOnlyProperty'
+  null
+
+KtTypeArgumentList(306,315): '<Any?, T>'
+  null
+
+KtTypeProjection(307,311): 'Any?'
+  null
+
+KtTypeReference(307,311): 'Any?'
+  null
+
+KtNullableType(307,311): 'Any?'
+  null
+
+KtUserType(307,310): 'Any'
+  null
+
+KtNameReferenceExpression(307,310): 'Any'
+  null
+
+KtTypeProjection(313,314): 'T'
+  null
+
+KtTypeReference(313,314): 'T'
+  null
+
+KtUserType(313,314): 'T'
+  null
+
+KtNameReferenceExpression(313,314): 'T'
+  null
+
+KtClassBody(316,420): '{'
+  null
+
+KtNamedFunction(322,418): 'override fun getValue(thisRef: Any?, property: KProperty<*>): T {'
+  null
+
+KtDeclarationModifierList(322,330): 'override'
+  null
+
+KtParameterList(343,382): '(thisRef: Any?, property: KProperty<*>)'
+  null
+
+KtParameter(344,357): 'thisRef: Any?'
+  null
+
+KtTypeReference(353,357): 'Any?'
+  null
+
+KtNullableType(353,357): 'Any?'
+  null
+
+KtUserType(353,356): 'Any'
+  null
+
+KtNameReferenceExpression(353,356): 'Any'
+  null
+
+KtParameter(359,381): 'property: KProperty<*>'
+  null
+
+KtTypeReference(369,381): 'KProperty<*>'
+  null
+
+KtUserType(369,381): 'KProperty<*>'
+  null
+
+KtNameReferenceExpression(369,378): 'KProperty'
+  null
+
+KtTypeArgumentList(378,381): '<*>'
+  null
+
+KtTypeProjection(379,380): '*'
+  null
+
+KtTypeReference(384,385): 'T'
+  null
+
+KtUserType(384,385): 'T'
+  null
+
+KtNameReferenceExpression(384,385): 'T'
+  null
+
+KtBlockExpression(386,418): '{'
+  null
+
+KtReturnExpression(396,412): 'return null as T'
+  null
+
+KtBinaryExpressionWithTypeRHS(403,412): 'null as T'
+  null
+
+KtConstantExpression(403,407): 'null'
+  null
+
+KtOperationReferenceExpression(408,410): 'as'
+  null
+
+KtTypeReference(411,412): 'T'
+  null
+
+KtUserType(411,412): 'T'
+  null
+
+KtNameReferenceExpression(411,412): 'T'
+  null
+
+KtProperty(422,463): 'val providedDelegate by ResourceID<Int>()'
+  null
+
+KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
+  null
+
+KtCallExpression(446,463): 'ResourceID<Int>()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.ResourceID<kotlin.Int>
+          symbol = <constructor>(): myPack.ResourceID<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtNameReferenceExpression(446,456): 'ResourceID'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = myPack.ResourceID<kotlin.Int>
+          symbol = <constructor>(): myPack.ResourceID<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtTypeArgumentList(456,461): '<Int>'
+  null
+
+KtTypeProjection(457,460): 'Int'
+  null
+
+KtTypeReference(457,460): 'Int'
+  null
+
+KtUserType(457,460): 'Int'
+  null
+
+KtNameReferenceExpression(457,460): 'Int'
+  null
+
+KtValueArgumentList(461,463): '()'
+  null

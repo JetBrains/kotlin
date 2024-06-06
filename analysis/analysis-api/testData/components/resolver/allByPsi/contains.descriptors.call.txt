@@ -1,0 +1,732 @@
+KtFile: 'contains.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,51): 'class MyClass() {'
+  null
+
+KtPrimaryConstructor(13,15): '()'
+  null
+
+KtParameterList(13,15): '()'
+  null
+
+KtClassBody(16,51): '{'
+  null
+
+KtSecondaryConstructor(22,49): 'constructor(i: Int): this()'
+  null
+
+KtParameterList(33,41): '(i: Int)'
+  null
+
+KtParameter(34,40): 'i: Int'
+  null
+
+KtTypeReference(37,40): 'Int'
+  null
+
+KtUserType(37,40): 'Int'
+  null
+
+KtNameReferenceExpression(37,40): 'Int'
+  null
+
+KtConstructorDelegationCall(43,49): 'this()'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtConstructorDelegationReferenceExpression(43,47): 'this'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtValueArgumentList(47,49): '()'
+  null
+
+KtNamedFunction(53,106): 'operator fun <T> T.contains(int: Int): Boolean = true'
+  null
+
+KtDeclarationModifierList(53,61): 'operator'
+  null
+
+KtTypeParameterList(66,69): '<T>'
+  null
+
+KtTypeParameter(67,68): 'T'
+  null
+
+KtTypeReference(70,71): 'T'
+  null
+
+KtUserType(70,71): 'T'
+  null
+
+KtNameReferenceExpression(70,71): 'T'
+  null
+
+KtParameterList(80,90): '(int: Int)'
+  null
+
+KtParameter(81,89): 'int: Int'
+  null
+
+KtTypeReference(86,89): 'Int'
+  null
+
+KtUserType(86,89): 'Int'
+  null
+
+KtNameReferenceExpression(86,89): 'Int'
+  null
+
+KtTypeReference(92,99): 'Boolean'
+  null
+
+KtUserType(92,99): 'Boolean'
+  null
+
+KtNameReferenceExpression(92,99): 'Boolean'
+  null
+
+KtConstantExpression(102,106): 'true'
+  null
+
+KtNamedFunction(108,300): 'fun usage() {'
+  null
+
+KtParameterList(117,119): '()'
+  null
+
+KtBlockExpression(120,300): '{'
+  null
+
+KtBinaryExpression(126,140): '1 in MyClass()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+
+KtConstantExpression(126,127): '1'
+  null
+
+KtOperationReferenceExpression(128,130): 'in'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+
+KtCallExpression(131,140): 'MyClass()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtNameReferenceExpression(131,138): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtValueArgumentList(138,140): '()'
+  null
+
+KtDotQualifiedExpression(145,166): 'MyClass().contains(2)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+
+KtCallExpression(145,154): 'MyClass()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtNameReferenceExpression(145,152): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtValueArgumentList(152,154): '()'
+  null
+
+KtCallExpression(155,166): 'contains(2)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+
+KtNameReferenceExpression(155,163): 'contains'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+
+KtValueArgumentList(163,166): '(2)'
+  null
+
+KtValueArgument(164,165): '2'
+  null
+
+KtConstantExpression(164,165): '2'
+  null
+
+KtBinaryExpression(171,186): '2 !in MyClass()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+
+KtConstantExpression(171,172): '2'
+  null
+
+KtOperationReferenceExpression(173,176): '!in'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+
+KtCallExpression(177,186): 'MyClass()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtNameReferenceExpression(177,184): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtValueArgumentList(184,186): '()'
+  null
+
+KtWhenExpression(192,237): 'when (1) {'
+  null
+
+KtConstantExpression(198,199): '1'
+  null
+
+KtWhenEntry(211,231): 'in MyClass() -> true'
+  null
+
+KtWhenConditionInRange(211,223): 'in MyClass()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+
+KtOperationReferenceExpression(211,213): 'in'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+
+KtCallExpression(214,223): 'MyClass()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtNameReferenceExpression(214,221): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtValueArgumentList(221,223): '()'
+  null
+
+KtConstantExpression(227,231): 'true'
+  null
+
+KtWhenExpression(243,298): 'when (val f = 3) {'
+  null
+
+KtProperty(249,258): 'val f = 3'
+  null
+
+KtConstantExpression(257,258): '3'
+  null
+
+KtWhenEntry(270,292): '!in MyClass() -> false'
+  null
+
+KtWhenConditionInRange(270,283): '!in MyClass()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        f -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+
+KtOperationReferenceExpression(270,273): '!in'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = MyClass()
+          isSafeNavigation = false
+          type = MyClass
+        signature = KaFunctionLikeSignature:
+          receiverType = MyClass
+          returnType = kotlin.Boolean
+          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = int
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = int: kotlin.Int
+              callableId = null
+          ]
+          callableId = /contains
+      typeArgumentsMapping = {
+        T -> (MyClass)
+      }
+      argumentMapping = {
+        f -> (KaVariableLikeSignature:
+          name = int
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = int: kotlin.Int
+          callableId = null)
+      }
+
+KtCallExpression(274,283): 'MyClass()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtNameReferenceExpression(274,281): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtValueArgumentList(281,283): '()'
+  null
+
+KtConstantExpression(287,292): 'false'
+  null

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtDeclarationModifierList
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileAnnotationList
 import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfTypeInPreorder
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
@@ -63,4 +65,12 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
             is KtFileAnnotationList -> annotationEntries.singleOrNull() ?: error("Only single annotation entry is supported for now")
             else -> this
         }
+
+    protected fun collectAllKtElements(file: KtFile): Collection<ResolveKtElementTestCaseContext> = buildSet {
+        file.forEachDescendantOfTypeInPreorder<PsiElement> { element ->
+            if (element is KtElement) {
+                add(ResolveKtElementTestCaseContext(element = element, marker = null))
+            }
+        }
+    }
 }

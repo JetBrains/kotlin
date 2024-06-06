@@ -1,0 +1,79 @@
+KtNameReferenceExpression(39,45): 'Target'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(46,62): 'AnnotationTarget'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(63,73): 'EXPRESSION'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(76,85): 'Retention'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(86,105): 'AnnotationRetention'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(106,112): 'SOURCE'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(148,151): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(173,177): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(178,189): '0 + integer'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(180,181): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(182,189): 'integer'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(193,197): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(198,205): 'integer'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(198,205): 'integer'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(207,214): 'usage()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(207,212): 'usage'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(216,226): 'toString()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(216,224): 'toString'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

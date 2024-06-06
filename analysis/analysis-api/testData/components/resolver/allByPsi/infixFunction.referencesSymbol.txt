@@ -1,0 +1,75 @@
+KtNameReferenceExpression(10,13): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(25,28): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(31,34): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(37,41): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(42,43): '-'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(44,45): 'i'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(68,71): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(98,107): 'parameter'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(108,115): 'myMinus'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(145,157): 'newParameter'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(158,159): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(162,169): 'myMinus'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(195,207): 'newParameter'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(208,212): 'plus'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(213,222): 'parameter'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(223,230): 'myMinus'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(231,247): 'oneMoreParameter'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

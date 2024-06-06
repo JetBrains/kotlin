@@ -1,0 +1,82 @@
+KtNameReferenceExpression(16,27): 'MutableList'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(28,31): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(40,44): 'list'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(45,47): '+='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtArrayAccessExpression(74,81): 'list[0]'
+  KtArrayAccessReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(74,78): 'list'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(106,110): 'list'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(111,129): 'get(implicitIndex)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(111,114): 'get'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(115,128): 'implicitIndex'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(144,147): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(155,166): 'MutableList'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(167,170): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(179,199): 'foo(--list[i], list)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(179,182): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(183,185): '--'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtArrayAccessExpression(185,192): 'list[i]'
+  KtArrayAccessReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(185,189): 'list'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(190,191): 'i'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(194,198): 'list'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

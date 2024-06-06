@@ -1,0 +1,96 @@
+KtNameReferenceExpression(8,9): 'r'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(57,60): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtConstructorDelegationReferenceExpression(61,61): ''
+  KtConstructorDelegationReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(81,87): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtConstructorDelegationReferenceExpression(88,88): ''
+  KtConstructorDelegationReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(131,140): 'BaseClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(163,166): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtConstructorDelegationReferenceExpression(170,175): 'super'
+  KtConstructorDelegationReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(176,178): 'ci'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(200,206): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtConstructorDelegationReferenceExpression(210,215): 'super'
+  KtConstructorDelegationReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(216,218): 'cs'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(245,250): 'super'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(251,257): 'call()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(251,255): 'call'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(294,303): 'BaseClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(329,335): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtConstructorDelegationReferenceExpression(339,343): 'this'
+  KtConstructorDelegationReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(380,383): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(405,418): 'ClassWithType'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(419,422): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtConstructorDelegationReferenceExpression(446,451): 'super'
+  KtConstructorDelegationReference:
+    Nothing (Unresolved reference)

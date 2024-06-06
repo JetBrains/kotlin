@@ -1,0 +1,11 @@
+KtNameReferenceExpression(8,9): 'f'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtForExpression(29,54): 'for (i in 1..<5) {'
+  KtForLoopInReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(40,43): '..<'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

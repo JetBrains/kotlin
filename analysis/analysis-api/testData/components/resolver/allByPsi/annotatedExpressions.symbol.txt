@@ -1,0 +1,197 @@
+KtFile: 'annotatedExpressions.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtProperty(0,36): '// WITH_STDLIB'
+  null
+
+KtDeclarationModifierList(15,20): 'const'
+  null
+
+KtConstantExpression(35,36): '0'
+  null
+
+KtClass(38,152): '@Target(AnnotationTarget.EXPRESSION)'
+  null
+
+KtDeclarationModifierList(38,124): '@Target(AnnotationTarget.EXPRESSION)'
+  null
+
+KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
+  null
+
+KtConstructorCalleeExpression(39,45): 'Target'
+  null
+
+KtTypeReference(39,45): 'Target'
+  null
+
+KtUserType(39,45): 'Target'
+  null
+
+KtNameReferenceExpression(39,45): 'Target'
+  null
+
+KtValueArgumentList(45,74): '(AnnotationTarget.EXPRESSION)'
+  null
+
+KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
+  null
+
+KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
+  null
+
+KtNameReferenceExpression(46,62): 'AnnotationTarget'
+  null
+
+KtNameReferenceExpression(63,73): 'EXPRESSION'
+  null
+
+KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
+  null
+
+KtConstructorCalleeExpression(76,85): 'Retention'
+  null
+
+KtTypeReference(76,85): 'Retention'
+  null
+
+KtUserType(76,85): 'Retention'
+  null
+
+KtNameReferenceExpression(76,85): 'Retention'
+  null
+
+KtValueArgumentList(85,113): '(AnnotationRetention.SOURCE)'
+  null
+
+KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
+  null
+
+KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
+  null
+
+KtNameReferenceExpression(86,105): 'AnnotationRetention'
+  null
+
+KtNameReferenceExpression(106,112): 'SOURCE'
+  null
+
+KtPrimaryConstructor(135,152): '(val number: Int)'
+  null
+
+KtParameterList(135,152): '(val number: Int)'
+  null
+
+KtParameter(136,151): 'val number: Int'
+  null
+
+KtTypeReference(148,151): 'Int'
+  null
+
+KtUserType(148,151): 'Int'
+  null
+
+KtNameReferenceExpression(148,151): 'Int'
+  null
+
+KtNamedFunction(154,228): 'fun usage() {'
+  null
+
+KtParameterList(163,165): '()'
+  null
+
+KtBlockExpression(166,228): '{'
+  null
+
+KtAnnotatedExpression(172,226): '@Anno(0 + integer) (@Anno(integer) usage()).toString()'
+  null
+
+KtAnnotationEntry(172,190): '@Anno(0 + integer)'
+  null
+
+KtConstructorCalleeExpression(173,177): 'Anno'
+  null
+
+KtTypeReference(173,177): 'Anno'
+  null
+
+KtUserType(173,177): 'Anno'
+  null
+
+KtNameReferenceExpression(173,177): 'Anno'
+  null
+
+KtValueArgumentList(177,190): '(0 + integer)'
+  null
+
+KtValueArgument(178,189): '0 + integer'
+  null
+
+KtBinaryExpression(178,189): '0 + integer'
+  null
+
+KtConstantExpression(178,179): '0'
+  null
+
+KtOperationReferenceExpression(180,181): '+'
+  null
+
+KtNameReferenceExpression(182,189): 'integer'
+  null
+
+KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
+  null
+
+KtParenthesizedExpression(191,215): '(@Anno(integer) usage())'
+  null
+
+KtAnnotatedExpression(192,214): '@Anno(integer) usage()'
+  null
+
+KtAnnotationEntry(192,206): '@Anno(integer)'
+  null
+
+KtConstructorCalleeExpression(193,197): 'Anno'
+  null
+
+KtTypeReference(193,197): 'Anno'
+  null
+
+KtUserType(193,197): 'Anno'
+  null
+
+KtNameReferenceExpression(193,197): 'Anno'
+  null
+
+KtValueArgumentList(197,206): '(integer)'
+  null
+
+KtValueArgument(198,205): 'integer'
+  null
+
+KtNameReferenceExpression(198,205): 'integer'
+  null
+
+KtCallExpression(207,214): 'usage()'
+  null
+
+KtNameReferenceExpression(207,212): 'usage'
+  null
+
+KtValueArgumentList(212,214): '()'
+  null
+
+KtCallExpression(216,226): 'toString()'
+  null
+
+KtNameReferenceExpression(216,224): 'toString'
+  null
+
+KtValueArgumentList(224,226): '()'
+  null

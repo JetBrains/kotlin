@@ -1,0 +1,800 @@
+KtFile: 'return.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,18): 'package returnPack'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,18): 'returnPack'
+  NO_CANDIDATES
+
+KtImportList(18,18): ''
+  NO_CANDIDATES
+
+KtNamedFunction(20,63): 'inline fun foo1(action: (Int) -> Unit) {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(20,26): 'inline'
+  NO_CANDIDATES
+
+KtParameterList(35,58): '(action: (Int) -> Unit)'
+  NO_CANDIDATES
+
+KtParameter(36,57): 'action: (Int) -> Unit'
+  NO_CANDIDATES
+
+KtTypeReference(44,57): '(Int) -> Unit'
+  NO_CANDIDATES
+
+KtFunctionType(44,57): '(Int) -> Unit'
+  NO_CANDIDATES
+
+KtParameterList(44,49): '(Int)'
+  NO_CANDIDATES
+
+KtParameter(45,48): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(45,48): 'Int'
+  NO_CANDIDATES
+
+KtUserType(45,48): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(45,48): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(53,57): 'Unit'
+  NO_CANDIDATES
+
+KtUserType(53,57): 'Unit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(53,57): 'Unit'
+  NO_CANDIDATES
+
+KtBlockExpression(59,63): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(65,111): 'inline fun foo2(action: (String) -> Unit) {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(65,71): 'inline'
+  NO_CANDIDATES
+
+KtParameterList(80,106): '(action: (String) -> Unit)'
+  NO_CANDIDATES
+
+KtParameter(81,105): 'action: (String) -> Unit'
+  NO_CANDIDATES
+
+KtTypeReference(89,105): '(String) -> Unit'
+  NO_CANDIDATES
+
+KtFunctionType(89,105): '(String) -> Unit'
+  NO_CANDIDATES
+
+KtParameterList(89,97): '(String)'
+  NO_CANDIDATES
+
+KtParameter(90,96): 'String'
+  NO_CANDIDATES
+
+KtTypeReference(90,96): 'String'
+  NO_CANDIDATES
+
+KtUserType(90,96): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(90,96): 'String'
+  NO_CANDIDATES
+
+KtTypeReference(101,105): 'Unit'
+  NO_CANDIDATES
+
+KtUserType(101,105): 'Unit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(101,105): 'Unit'
+  NO_CANDIDATES
+
+KtBlockExpression(107,111): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(113,160): 'inline fun foo3(action: (Boolean) -> Unit) {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(113,119): 'inline'
+  NO_CANDIDATES
+
+KtParameterList(128,155): '(action: (Boolean) -> Unit)'
+  NO_CANDIDATES
+
+KtParameter(129,154): 'action: (Boolean) -> Unit'
+  NO_CANDIDATES
+
+KtTypeReference(137,154): '(Boolean) -> Unit'
+  NO_CANDIDATES
+
+KtFunctionType(137,154): '(Boolean) -> Unit'
+  NO_CANDIDATES
+
+KtParameterList(137,146): '(Boolean)'
+  NO_CANDIDATES
+
+KtParameter(138,145): 'Boolean'
+  NO_CANDIDATES
+
+KtTypeReference(138,145): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(138,145): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(138,145): 'Boolean'
+  NO_CANDIDATES
+
+KtTypeReference(150,154): 'Unit'
+  NO_CANDIDATES
+
+KtUserType(150,154): 'Unit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(150,154): 'Unit'
+  NO_CANDIDATES
+
+KtBlockExpression(156,160): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(162,763): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(171,173): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(174,763): '{'
+  NO_CANDIDATES
+
+KtCallExpression(180,749): 'foo1 {'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = returnPack/foo1
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                foo2 {
+                    foo3 {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+        
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+        
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    }
+                }
+            } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(180,184): 'foo1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = returnPack/foo1
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                foo2 {
+                    foo3 {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+        
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+        
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    }
+                }
+            } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtLambdaArgument(185,749): '{'
+  NO_CANDIDATES
+
+KtLambdaExpression(185,749): '{'
+  NO_CANDIDATES
+
+KtFunctionLiteral(185,749): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(195,743): 'foo2 {'
+  NO_CANDIDATES
+
+KtCallExpression(195,743): 'foo2 {'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = returnPack/foo2
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                    foo3 {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+        
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+        
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    }
+                } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(195,199): 'foo2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = returnPack/foo2
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                    foo3 {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+        
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+        
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    }
+                } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtLambdaArgument(200,743): '{'
+  NO_CANDIDATES
+
+KtLambdaExpression(200,743): '{'
+  NO_CANDIDATES
+
+KtFunctionLiteral(200,743): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(214,733): 'foo3 {'
+  NO_CANDIDATES
+
+KtCallExpression(214,733): 'foo3 {'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo3(action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = returnPack/foo3
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+        
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+        
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(214,218): 'foo3'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo3(action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = returnPack/foo3
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                        foo1(
+                            {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            },
+                        )
+        
+                        foo2(label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        })
+        
+                        return@foo3
+                        return@foo2
+                        return@foo1
+                    } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtLambdaArgument(219,733): '{'
+  NO_CANDIDATES
+
+KtLambdaExpression(219,733): '{'
+  NO_CANDIDATES
+
+KtFunctionLiteral(219,733): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(237,719): 'foo1('
+  NO_CANDIDATES
+
+KtCallExpression(237,413): 'foo1('
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = returnPack/foo1
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(237,241): 'foo1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo1(action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = returnPack/foo1
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {
+                                return@foo3
+                                return@foo2
+                                return@foo1
+                            } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(241,413): '('
+  NO_CANDIDATES
+
+KtValueArgument(263,394): '{'
+  NO_CANDIDATES
+
+KtLambdaExpression(263,394): '{'
+  NO_CANDIDATES
+
+KtFunctionLiteral(263,394): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(289,372): 'return@foo3'
+  NO_CANDIDATES
+
+KtReturnExpression(289,300): 'return@foo3'
+  NO_CANDIDATES
+
+KtContainerNode(295,300): '@foo3'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(295,300): '@foo3'
+  NO_CANDIDATES
+
+KtReturnExpression(325,336): 'return@foo2'
+  NO_CANDIDATES
+
+KtContainerNode(331,336): '@foo2'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(331,336): '@foo2'
+  NO_CANDIDATES
+
+KtReturnExpression(361,372): 'return@foo1'
+  NO_CANDIDATES
+
+KtContainerNode(367,372): '@foo1'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(367,372): '@foo1'
+  NO_CANDIDATES
+
+KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = returnPack/foo2
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(431,435): 'foo2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = returnPack/foo2(action: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = returnPack/foo2
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        label@ fun(s: String) {
+                            return
+                            return@label
+                            return@foo3
+                            return@foo2
+                            return@foo1
+                        } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.String, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.String, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(435,634): '(label@ fun(s: String) {'
+  NO_CANDIDATES
+
+KtValueArgument(436,633): 'label@ fun(s: String) {'
+  NO_CANDIDATES
+
+KtLabeledExpression(436,633): 'label@ fun(s: String) {'
+  NO_CANDIDATES
+
+KtContainerNode(436,442): 'label@'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(436,442): 'label@'
+  NO_CANDIDATES
+
+KtNamedFunction(443,633): 'fun(s: String) {'
+  NO_CANDIDATES
+
+KtParameterList(446,457): '(s: String)'
+  NO_CANDIDATES
+
+KtParameter(447,456): 's: String'
+  NO_CANDIDATES
+
+KtTypeReference(450,456): 'String'
+  NO_CANDIDATES
+
+KtUserType(450,456): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(450,456): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(458,633): '{'
+  NO_CANDIDATES
+
+KtReturnExpression(480,486): 'return'
+  NO_CANDIDATES
+
+KtReturnExpression(507,519): 'return@label'
+  NO_CANDIDATES
+
+KtContainerNode(513,519): '@label'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(513,519): '@label'
+  NO_CANDIDATES
+
+KtReturnExpression(540,551): 'return@foo3'
+  NO_CANDIDATES
+
+KtContainerNode(546,551): '@foo3'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(546,551): '@foo3'
+  NO_CANDIDATES
+
+KtReturnExpression(572,583): 'return@foo2'
+  NO_CANDIDATES
+
+KtContainerNode(578,583): '@foo2'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(578,583): '@foo2'
+  NO_CANDIDATES
+
+KtReturnExpression(604,615): 'return@foo1'
+  NO_CANDIDATES
+
+KtContainerNode(610,615): '@foo1'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(610,615): '@foo1'
+  NO_CANDIDATES
+
+KtReturnExpression(652,663): 'return@foo3'
+  NO_CANDIDATES
+
+KtContainerNode(658,663): '@foo3'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(658,663): '@foo3'
+  NO_CANDIDATES
+
+KtReturnExpression(680,691): 'return@foo2'
+  NO_CANDIDATES
+
+KtContainerNode(686,691): '@foo2'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(686,691): '@foo2'
+  NO_CANDIDATES
+
+KtReturnExpression(708,719): 'return@foo1'
+  NO_CANDIDATES
+
+KtContainerNode(714,719): '@foo1'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(714,719): '@foo1'
+  NO_CANDIDATES
+
+KtReturnExpression(755,761): 'return'
+  NO_CANDIDATES

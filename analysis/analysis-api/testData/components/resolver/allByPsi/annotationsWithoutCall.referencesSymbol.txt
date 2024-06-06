@@ -1,0 +1,7 @@
+KtNameReferenceExpression(8,11): 'one'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(37,41): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

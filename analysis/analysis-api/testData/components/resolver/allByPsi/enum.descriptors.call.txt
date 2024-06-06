@@ -1,0 +1,610 @@
+KtFile: 'enum.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,133): 'enum class EnumWithConstructor(val i: Int) {'
+  null
+
+KtDeclarationModifierList(0,4): 'enum'
+  null
+
+KtPrimaryConstructor(30,42): '(val i: Int)'
+  null
+
+KtParameterList(30,42): '(val i: Int)'
+  null
+
+KtParameter(31,41): 'val i: Int'
+  null
+
+KtTypeReference(38,41): 'Int'
+  null
+
+KtUserType(38,41): 'Int'
+  null
+
+KtNameReferenceExpression(38,41): 'Int'
+  null
+
+KtClassBody(43,133): '{'
+  null
+
+KtEnumEntry(49,58): 'Entry(1),'
+  null
+
+KtInitializerList(54,57): '(1)'
+  null
+
+KtSuperTypeCallEntry(54,57): '(1)'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(54,54): ''
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+
+KtTypeReference(54,54): ''
+  null
+
+KtUserType(54,54): ''
+  null
+
+KtEnumEntrySuperclassReferenceExpression(54,54): ''
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+
+KtValueArgumentList(54,57): '(1)'
+  null
+
+KtValueArgument(55,56): '1'
+  null
+
+KtConstantExpression(55,56): '1'
+  null
+
+KtEnumEntry(63,131): 'EntryWithBody(2) {'
+  null
+
+KtInitializerList(76,79): '(2)'
+  null
+
+KtSuperTypeCallEntry(76,79): '(2)'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(76,76): ''
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+
+KtTypeReference(76,76): ''
+  null
+
+KtUserType(76,76): ''
+  null
+
+KtEnumEntrySuperclassReferenceExpression(76,76): ''
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        2 -> (KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+
+KtValueArgumentList(76,79): '(2)'
+  null
+
+KtValueArgument(77,78): '2'
+  null
+
+KtConstantExpression(77,78): '2'
+  null
+
+KtClassBody(80,131): '{'
+  null
+
+KtNamedFunction(90,125): 'fun foo() {'
+  null
+
+KtParameterList(97,99): '()'
+  null
+
+KtBlockExpression(100,125): '{'
+  null
+
+KtNameReferenceExpression(114,115): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = /EnumWithConstructor.EntryWithBody
+          type = EnumWithConstructor.EntryWithBody
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val i: kotlin.Int
+          callableId = /EnumWithConstructor.i
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtClass(135,262): 'enum class EnumWithoutConstructor {'
+  null
+
+KtDeclarationModifierList(135,139): 'enum'
+  null
+
+KtClassBody(169,262): '{'
+  null
+
+KtEnumEntry(175,181): 'Entry,'
+  null
+
+KtEnumEntry(186,260): 'EntryWithBody {'
+  null
+
+KtClassBody(200,260): '{'
+  null
+
+KtNamedFunction(210,254): 'fun baz() {'
+  null
+
+KtParameterList(217,219): '()'
+  null
+
+KtBlockExpression(220,254): '{'
+  null
+
+KtDotQualifiedExpression(234,244): 'this.baz()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = EnumWithoutConstructor.EntryWithBody
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtThisExpression(234,238): 'this'
+  null
+
+KtNameReferenceExpression(234,238): 'this'
+  null
+
+KtCallExpression(239,244): 'baz()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = EnumWithoutConstructor.EntryWithBody
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtNameReferenceExpression(239,242): 'baz'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = this
+          isSafeNavigation = false
+          type = EnumWithoutConstructor.EntryWithBody
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtValueArgumentList(242,244): '()'
+  null
+
+KtNamedFunction(264,575): 'fun usage(with: EnumWithConstructor) {'
+  null
+
+KtParameterList(273,300): '(with: EnumWithConstructor)'
+  null
+
+KtParameter(274,299): 'with: EnumWithConstructor'
+  null
+
+KtTypeReference(280,299): 'EnumWithConstructor'
+  null
+
+KtUserType(280,299): 'EnumWithConstructor'
+  null
+
+KtNameReferenceExpression(280,299): 'EnumWithConstructor'
+  null
+
+KtBlockExpression(301,575): '{'
+  null
+
+KtDotQualifiedExpression(307,319): 'with.ordinal'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = with
+          isSafeNavigation = false
+          type = EnumWithConstructor
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = ordinal
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val ordinal: kotlin.Int
+          callableId = kotlin/Enum.ordinal
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(307,311): 'with'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = with
+          receiverType = null
+          returnType = EnumWithConstructor
+          symbol = with: EnumWithConstructor
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(312,319): 'ordinal'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = with
+          isSafeNavigation = false
+          type = EnumWithConstructor
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = ordinal
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val ordinal: kotlin.Int
+          callableId = kotlin/Enum.ordinal
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
+  null
+
+KtNameReferenceExpression(325,344): 'EnumWithConstructor'
+  null
+
+KtNameReferenceExpression(345,350): 'Entry'
+  null
+
+KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = EnumWithConstructor.Entry
+          isSafeNavigation = false
+          type = EnumWithConstructor
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val name: kotlin.String
+          callableId = kotlin/Enum.name
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
+  null
+
+KtNameReferenceExpression(355,374): 'EnumWithConstructor'
+  null
+
+KtNameReferenceExpression(375,380): 'Entry'
+  null
+
+KtNameReferenceExpression(381,385): 'name'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = EnumWithConstructor.Entry
+          isSafeNavigation = false
+          type = EnumWithConstructor
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val name: kotlin.String
+          callableId = kotlin/Enum.name
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
+  null
+
+KtNameReferenceExpression(390,409): 'EnumWithConstructor'
+  null
+
+KtNameReferenceExpression(410,423): 'EntryWithBody'
+  null
+
+KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = EnumWithConstructor.EntryWithBody
+          isSafeNavigation = false
+          type = EnumWithConstructor
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val i: kotlin.Int
+          callableId = /EnumWithConstructor.i
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
+  null
+
+KtNameReferenceExpression(428,447): 'EnumWithConstructor'
+  null
+
+KtNameReferenceExpression(448,461): 'EntryWithBody'
+  null
+
+KtNameReferenceExpression(462,463): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = EnumWithConstructor.EntryWithBody
+          isSafeNavigation = false
+          type = EnumWithConstructor
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val i: kotlin.Int
+          callableId = /EnumWithConstructor.i
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = entries
+          receiverType = null
+          returnType = kotlin.enums.EnumEntries<EnumWithoutConstructor>
+          symbol = val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+          callableId = /EnumWithoutConstructor.entries
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
+  null
+
+KtNameReferenceExpression(492,499): 'entries'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = entries
+          receiverType = null
+          returnType = kotlin.enums.EnumEntries<EnumWithoutConstructor>
+          symbol = val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
+          callableId = /EnumWithoutConstructor.entries
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
+  null
+
+KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
+  null
+
+KtNameReferenceExpression(527,532): 'Entry'
+  null
+
+KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
+  null
+
+KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
+  null
+
+KtNameReferenceExpression(560,573): 'EntryWithBody'
+  null

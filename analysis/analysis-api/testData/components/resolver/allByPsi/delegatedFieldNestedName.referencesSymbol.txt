@@ -1,0 +1,231 @@
+KtNameReferenceExpression(23,29): 'second'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(32,38): 'Target'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(39,60): 'AnnotationTarget.TYPE'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(39,55): 'AnnotationTarget'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(56,60): 'TYPE'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(91,94): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(226,230): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(231,240): '0 + outer'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(233,234): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(235,240): 'outer'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(242,246): 'Base'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(248,252): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(253,262): '1 + outer'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(255,256): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(257,262): 'outer'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(264,268): 'Base'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(270,274): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(275,284): '2 + outer'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(277,278): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(279,284): 'outer'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(286,289): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(295,304): 'Companion'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(311,315): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(316,325): '4 + outer'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(318,319): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(320,325): 'outer'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(327,333): 'Second'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(335,339): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(340,349): '5 + outer'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(342,343): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(344,349): 'outer'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(351,357): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(362,374): 'NestedObject'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(401,405): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(406,415): '6 + inner'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(408,409): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(410,415): 'inner'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(417,421): 'Base'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(423,427): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(428,437): '7 + inner'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(430,431): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(432,437): 'inner'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(439,443): 'Base'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(445,449): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(450,459): '8 + inner'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(452,453): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(454,459): 'inner'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(461,464): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(560,564): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(565,574): '9 + inner'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(567,568): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(569,574): 'inner'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(576,582): 'Second'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(584,588): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(589,599): '10 + inner'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(592,593): '+'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(594,599): 'inner'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(601,607): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

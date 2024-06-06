@@ -1,0 +1,493 @@
+KtFile: 'labels.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtNamedFunction(0,44): 'fun foo(action: () -> Unit) {'
+  NO_CANDIDATES
+
+KtParameterList(7,27): '(action: () -> Unit)'
+  NO_CANDIDATES
+
+KtParameter(8,26): 'action: () -> Unit'
+  NO_CANDIDATES
+
+KtTypeReference(16,26): '() -> Unit'
+  NO_CANDIDATES
+
+KtFunctionType(16,26): '() -> Unit'
+  NO_CANDIDATES
+
+KtParameterList(16,18): '()'
+  NO_CANDIDATES
+
+KtTypeReference(22,26): 'Unit'
+  NO_CANDIDATES
+
+KtUserType(22,26): 'Unit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(22,26): 'Unit'
+  NO_CANDIDATES
+
+KtBlockExpression(28,44): '{'
+  NO_CANDIDATES
+
+KtCallExpression(34,42): 'action()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = action
+          isSafeNavigation = false
+          type = kotlin.Function0<kotlin.Unit>
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+          valueParameters = []
+          callableId = kotlin/Function0.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(34,40): 'action'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.Unit>
+          symbol = action: kotlin.Function0<kotlin.Unit>
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(40,42): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(46,163): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(55,57): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(58,163): '{'
+  NO_CANDIDATES
+
+KtCallExpression(64,102): 'foo label@{'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function0<kotlin.Unit>
+              symbol = action: kotlin.Function0<kotlin.Unit>
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        label@{
+                return@label
+            } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.Unit>
+          symbol = action: kotlin.Function0<kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(64,67): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function0<kotlin.Unit>
+              symbol = action: kotlin.Function0<kotlin.Unit>
+              callableId = null
+          ]
+          callableId = /foo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        label@{
+                return@label
+            } -> (KaVariableLikeSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.Unit>
+          symbol = action: kotlin.Function0<kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtLambdaArgument(68,102): 'label@{'
+  NO_CANDIDATES
+
+KtLabeledExpression(68,102): 'label@{'
+  NO_CANDIDATES
+
+KtContainerNode(68,74): 'label@'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(68,74): 'label@'
+  NO_CANDIDATES
+
+KtLambdaExpression(74,102): '{'
+  NO_CANDIDATES
+
+KtFunctionLiteral(74,102): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(84,96): 'return@label'
+  NO_CANDIDATES
+
+KtReturnExpression(84,96): 'return@label'
+  NO_CANDIDATES
+
+KtContainerNode(90,96): '@label'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(90,96): '@label'
+  NO_CANDIDATES
+
+KtLabeledExpression(108,161): 'myFor@ for (i in 0..1) {'
+  NO_CANDIDATES
+
+KtContainerNode(108,114): 'myFor@'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(108,114): 'myFor@'
+  NO_CANDIDATES
+
+KtForExpression(115,161): 'for (i in 0..1) {'
+  NO_CANDIDATES
+
+KtParameter(120,121): 'i'
+  NO_CANDIDATES
+
+KtContainerNode(125,129): '0..1'
+  NO_CANDIDATES
+
+KtBinaryExpression(125,129): '0..1'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.IntRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.ranges.IntRange
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = other: kotlin.Byte
+              callableId = null
+          ]
+          callableId = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.IntRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.IntRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.ranges.IntRange
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = other: kotlin.Short
+              callableId = null
+          ]
+          callableId = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Long' was expected.>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.LongRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.ranges.LongRange
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = other: kotlin.Long
+              callableId = null
+          ]
+          callableId = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          callableId = null)
+      }
+    isInBestCandidates = false
+
+KtConstantExpression(125,126): '0'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(126,128): '..'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Byte' was expected.>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.IntRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Byte): kotlin.ranges.IntRange
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = other: kotlin.Byte
+              callableId = null
+          ]
+          callableId = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = other: kotlin.Byte
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.IntRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Short' was expected.>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.IntRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Short): kotlin.ranges.IntRange
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = other: kotlin.Short
+              callableId = null
+          ]
+          callableId = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = other: kotlin.Short
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.Long' was expected.>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = 0
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.ranges.LongRange
+          symbol = kotlin/Int.rangeTo(<dispatch receiver>: kotlin.Int, other: kotlin.Long): kotlin.ranges.LongRange
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = other: kotlin.Long
+              callableId = null
+          ]
+          callableId = kotlin/Int.rangeTo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = other: kotlin.Long
+          callableId = null)
+      }
+    isInBestCandidates = false
+
+KtConstantExpression(128,129): '1'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(131,161): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(131,161): '{'
+  NO_CANDIDATES
+
+KtContinueExpression(141,155): 'continue@myFor'
+  NO_CANDIDATES
+
+KtContainerNode(149,155): '@myFor'
+  NO_CANDIDATES
+
+KtLabelReferenceExpression(149,155): '@myFor'
+  NO_CANDIDATES

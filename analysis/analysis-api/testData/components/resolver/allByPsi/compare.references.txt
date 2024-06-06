@@ -1,0 +1,67 @@
+KtOperationReferenceExpression(20,21): '>'
+  KtSimpleNameReference:
+    (in kotlin.Int) open operator fun compareTo(other: kotlin.Int): kotlin.Int
+
+KtCallExpression(30,42): 'compareTo(2)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(30,39): 'compareTo'
+  KtSimpleNameReference:
+    (in kotlin.Int) open operator fun compareTo(other: kotlin.Int): kotlin.Int
+
+KtOperationReferenceExpression(43,44): '>'
+  KtSimpleNameReference:
+    (in kotlin.Int) open operator fun compareTo(other: kotlin.Int): kotlin.Int
+
+KtOperationReferenceExpression(56,57): '<'
+  KtSimpleNameReference:
+    (in kotlin.String) open operator fun compareTo(other: kotlin.String): kotlin.Int
+
+KtCallExpression(99,108): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(99,106): 'MyClass'
+  KtSimpleNameReference:
+    (in MyClass) constructor()
+
+KtNameReferenceExpression(113,120): 'myClass'
+  KtSimpleNameReference:
+    (in <local>: usage) val myClass: MyClass
+
+KtOperationReferenceExpression(121,123): '>='
+  KtSimpleNameReference:
+    (in MyClass) operator fun compareTo(i: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(124,130): 'number'
+  KtSimpleNameReference:
+    (in <local>: usage) val number: kotlin.Int
+
+KtNameReferenceExpression(135,142): 'myClass'
+  KtSimpleNameReference:
+    (in <local>: usage) val myClass: MyClass
+
+KtCallExpression(143,160): 'compareTo(number)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(143,152): 'compareTo'
+  KtSimpleNameReference:
+    (in MyClass) operator fun compareTo(i: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(153,159): 'number'
+  KtSimpleNameReference:
+    (in <local>: usage) val number: kotlin.Int
+
+KtNameReferenceExpression(210,213): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(216,219): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(222,223): 'i'
+  KtSimpleNameReference:
+    i: kotlin.Int

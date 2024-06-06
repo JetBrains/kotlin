@@ -1,0 +1,710 @@
+KtFile: 'equals.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,106): 'class MyClass {'
+  null
+
+KtClassBody(14,106): '{'
+  null
+
+KtNamedFunction(20,104): 'override fun equals(other: Any?): Boolean {'
+  null
+
+KtDeclarationModifierList(20,28): 'override'
+  null
+
+KtParameterList(39,52): '(other: Any?)'
+  null
+
+KtParameter(40,51): 'other: Any?'
+  null
+
+KtTypeReference(47,51): 'Any?'
+  null
+
+KtNullableType(47,51): 'Any?'
+  null
+
+KtUserType(47,50): 'Any'
+  null
+
+KtNameReferenceExpression(47,50): 'Any'
+  null
+
+KtTypeReference(54,61): 'Boolean'
+  null
+
+KtUserType(54,61): 'Boolean'
+  null
+
+KtNameReferenceExpression(54,61): 'Boolean'
+  null
+
+KtBlockExpression(62,104): '{'
+  null
+
+KtReturnExpression(72,98): 'return super.equals(other)'
+  null
+
+KtDotQualifiedExpression(79,98): 'super.equals(other)'
+  null
+
+KtSuperExpression(79,84): 'super'
+  null
+
+KtNameReferenceExpression(79,84): 'super'
+  null
+
+KtCallExpression(85,98): 'equals(other)'
+  null
+
+KtNameReferenceExpression(85,91): 'equals'
+  null
+
+KtValueArgumentList(91,98): '(other)'
+  null
+
+KtValueArgument(92,97): 'other'
+  null
+
+KtNameReferenceExpression(92,97): 'other'
+  null
+
+KtClass(108,126): 'open class Another'
+  null
+
+KtDeclarationModifierList(108,112): 'open'
+  null
+
+KtClass(128,244): 'class Child : Another() {'
+  null
+
+KtSuperTypeList(142,151): 'Another()'
+  null
+
+KtSuperTypeCallEntry(142,151): 'Another()'
+  null
+
+KtConstructorCalleeExpression(142,149): 'Another'
+  null
+
+KtTypeReference(142,149): 'Another'
+  null
+
+KtUserType(142,149): 'Another'
+  null
+
+KtNameReferenceExpression(142,149): 'Another'
+  null
+
+KtValueArgumentList(149,151): '()'
+  null
+
+KtClassBody(152,244): '{'
+  null
+
+KtNamedFunction(158,242): 'override fun equals(other: Any?): Boolean {'
+  null
+
+KtDeclarationModifierList(158,166): 'override'
+  null
+
+KtParameterList(177,190): '(other: Any?)'
+  null
+
+KtParameter(178,189): 'other: Any?'
+  null
+
+KtTypeReference(185,189): 'Any?'
+  null
+
+KtNullableType(185,189): 'Any?'
+  null
+
+KtUserType(185,188): 'Any'
+  null
+
+KtNameReferenceExpression(185,188): 'Any'
+  null
+
+KtTypeReference(192,199): 'Boolean'
+  null
+
+KtUserType(192,199): 'Boolean'
+  null
+
+KtNameReferenceExpression(192,199): 'Boolean'
+  null
+
+KtBlockExpression(200,242): '{'
+  null
+
+KtReturnExpression(210,236): 'return super.equals(other)'
+  null
+
+KtDotQualifiedExpression(217,236): 'super.equals(other)'
+  null
+
+KtSuperExpression(217,222): 'super'
+  null
+
+KtNameReferenceExpression(217,222): 'super'
+  null
+
+KtCallExpression(223,236): 'equals(other)'
+  null
+
+KtNameReferenceExpression(223,229): 'equals'
+  null
+
+KtValueArgumentList(229,236): '(other)'
+  null
+
+KtValueArgument(230,235): 'other'
+  null
+
+KtNameReferenceExpression(230,235): 'other'
+  null
+
+KtNamedFunction(246,432): 'fun myClass(m1: MyClass, m2: MyClass) {'
+  null
+
+KtParameterList(257,283): '(m1: MyClass, m2: MyClass)'
+  null
+
+KtParameter(258,269): 'm1: MyClass'
+  null
+
+KtTypeReference(262,269): 'MyClass'
+  null
+
+KtUserType(262,269): 'MyClass'
+  null
+
+KtNameReferenceExpression(262,269): 'MyClass'
+  null
+
+KtParameter(271,282): 'm2: MyClass'
+  null
+
+KtTypeReference(275,282): 'MyClass'
+  null
+
+KtUserType(275,282): 'MyClass'
+  null
+
+KtNameReferenceExpression(275,282): 'MyClass'
+  null
+
+KtBlockExpression(284,432): '{'
+  null
+
+KtBinaryExpression(290,299): 'm1 === m2'
+  null
+
+KtNameReferenceExpression(290,292): 'm1'
+  null
+
+KtOperationReferenceExpression(293,296): '==='
+  null
+
+KtNameReferenceExpression(297,299): 'm2'
+  null
+
+KtBinaryExpression(304,313): 'm1 !== m2'
+  null
+
+KtNameReferenceExpression(304,306): 'm1'
+  null
+
+KtOperationReferenceExpression(307,310): '!=='
+  null
+
+KtNameReferenceExpression(311,313): 'm2'
+  null
+
+KtBinaryExpression(318,326): 'm1 == m2'
+  null
+
+KtNameReferenceExpression(318,320): 'm1'
+  null
+
+KtOperationReferenceExpression(321,323): '=='
+  null
+
+KtNameReferenceExpression(324,326): 'm2'
+  null
+
+KtBinaryExpression(331,339): 'm1 != m2'
+  null
+
+KtNameReferenceExpression(331,333): 'm1'
+  null
+
+KtOperationReferenceExpression(334,336): '!='
+  null
+
+KtNameReferenceExpression(337,339): 'm2'
+  null
+
+KtDotQualifiedExpression(344,357): 'm1.equals(m2)'
+  null
+
+KtNameReferenceExpression(344,346): 'm1'
+  null
+
+KtCallExpression(347,357): 'equals(m2)'
+  null
+
+KtNameReferenceExpression(347,353): 'equals'
+  null
+
+KtValueArgumentList(353,357): '(m2)'
+  null
+
+KtValueArgument(354,356): 'm2'
+  null
+
+KtNameReferenceExpression(354,356): 'm2'
+  null
+
+KtBinaryExpression(363,372): 'm2 === m1'
+  null
+
+KtNameReferenceExpression(363,365): 'm2'
+  null
+
+KtOperationReferenceExpression(366,369): '==='
+  null
+
+KtNameReferenceExpression(370,372): 'm1'
+  null
+
+KtBinaryExpression(377,386): 'm2 !== m1'
+  null
+
+KtNameReferenceExpression(377,379): 'm2'
+  null
+
+KtOperationReferenceExpression(380,383): '!=='
+  null
+
+KtNameReferenceExpression(384,386): 'm1'
+  null
+
+KtBinaryExpression(391,399): 'm2 == m1'
+  null
+
+KtNameReferenceExpression(391,393): 'm2'
+  null
+
+KtOperationReferenceExpression(394,396): '=='
+  null
+
+KtNameReferenceExpression(397,399): 'm1'
+  null
+
+KtBinaryExpression(404,412): 'm2 != m1'
+  null
+
+KtNameReferenceExpression(404,406): 'm2'
+  null
+
+KtOperationReferenceExpression(407,409): '!='
+  null
+
+KtNameReferenceExpression(410,412): 'm1'
+  null
+
+KtDotQualifiedExpression(417,430): 'm2.equals(m1)'
+  null
+
+KtNameReferenceExpression(417,419): 'm2'
+  null
+
+KtCallExpression(420,430): 'equals(m1)'
+  null
+
+KtNameReferenceExpression(420,426): 'equals'
+  null
+
+KtValueArgumentList(426,430): '(m1)'
+  null
+
+KtValueArgument(427,429): 'm1'
+  null
+
+KtNameReferenceExpression(427,429): 'm1'
+  null
+
+KtNamedFunction(434,999): 'fun another() {'
+  null
+
+KtParameterList(445,447): '()'
+  null
+
+KtBlockExpression(448,999): '{'
+  null
+
+KtProperty(454,477): 'val another = Another()'
+  null
+
+KtCallExpression(468,477): 'Another()'
+  null
+
+KtNameReferenceExpression(468,475): 'Another'
+  null
+
+KtValueArgumentList(475,477): '()'
+  null
+
+KtBinaryExpression(482,501): 'another === another'
+  null
+
+KtNameReferenceExpression(482,489): 'another'
+  null
+
+KtOperationReferenceExpression(490,493): '==='
+  null
+
+KtNameReferenceExpression(494,501): 'another'
+  null
+
+KtBinaryExpression(506,525): 'another !== another'
+  null
+
+KtNameReferenceExpression(506,513): 'another'
+  null
+
+KtOperationReferenceExpression(514,517): '!=='
+  null
+
+KtNameReferenceExpression(518,525): 'another'
+  null
+
+KtBinaryExpression(530,550): 'another == Another()'
+  null
+
+KtNameReferenceExpression(530,537): 'another'
+  null
+
+KtOperationReferenceExpression(538,540): '=='
+  null
+
+KtCallExpression(541,550): 'Another()'
+  null
+
+KtNameReferenceExpression(541,548): 'Another'
+  null
+
+KtValueArgumentList(548,550): '()'
+  null
+
+KtBinaryExpression(555,575): 'another != Another()'
+  null
+
+KtNameReferenceExpression(555,562): 'another'
+  null
+
+KtOperationReferenceExpression(563,565): '!='
+  null
+
+KtCallExpression(566,575): 'Another()'
+  null
+
+KtNameReferenceExpression(566,573): 'Another'
+  null
+
+KtValueArgumentList(573,575): '()'
+  null
+
+KtDotQualifiedExpression(580,605): 'another.equals(Another())'
+  null
+
+KtNameReferenceExpression(580,587): 'another'
+  null
+
+KtCallExpression(588,605): 'equals(Another())'
+  null
+
+KtNameReferenceExpression(588,594): 'equals'
+  null
+
+KtValueArgumentList(594,605): '(Another())'
+  null
+
+KtValueArgument(595,604): 'Another()'
+  null
+
+KtCallExpression(595,604): 'Another()'
+  null
+
+KtNameReferenceExpression(595,602): 'Another'
+  null
+
+KtValueArgumentList(602,604): '()'
+  null
+
+KtProperty(611,630): 'val child = Child()'
+  null
+
+KtCallExpression(623,630): 'Child()'
+  null
+
+KtNameReferenceExpression(623,628): 'Child'
+  null
+
+KtValueArgumentList(628,630): '()'
+  null
+
+KtProperty(635,658): 'val myClass = MyClass()'
+  null
+
+KtCallExpression(649,658): 'MyClass()'
+  null
+
+KtNameReferenceExpression(649,656): 'MyClass'
+  null
+
+KtValueArgumentList(656,658): '()'
+  null
+
+KtBinaryExpression(663,680): 'child === another'
+  null
+
+KtNameReferenceExpression(663,668): 'child'
+  null
+
+KtOperationReferenceExpression(669,672): '==='
+  null
+
+KtNameReferenceExpression(673,680): 'another'
+  null
+
+KtBinaryExpression(685,702): 'another !== child'
+  null
+
+KtNameReferenceExpression(685,692): 'another'
+  null
+
+KtOperationReferenceExpression(693,696): '!=='
+  null
+
+KtNameReferenceExpression(697,702): 'child'
+  null
+
+KtBinaryExpression(708,724): 'child == myClass'
+  null
+
+KtNameReferenceExpression(708,713): 'child'
+  null
+
+KtOperationReferenceExpression(714,716): '=='
+  null
+
+KtNameReferenceExpression(717,724): 'myClass'
+  null
+
+KtDotQualifiedExpression(729,750): 'child.equals(myClass)'
+  null
+
+KtNameReferenceExpression(729,734): 'child'
+  null
+
+KtCallExpression(735,750): 'equals(myClass)'
+  null
+
+KtNameReferenceExpression(735,741): 'equals'
+  null
+
+KtValueArgumentList(741,750): '(myClass)'
+  null
+
+KtValueArgument(742,749): 'myClass'
+  null
+
+KtNameReferenceExpression(742,749): 'myClass'
+  null
+
+KtBinaryExpression(755,771): 'myClass != child'
+  null
+
+KtNameReferenceExpression(755,762): 'myClass'
+  null
+
+KtOperationReferenceExpression(763,765): '!='
+  null
+
+KtNameReferenceExpression(766,771): 'child'
+  null
+
+KtPrefixExpression(776,798): '!myClass.equals(child)'
+  null
+
+KtOperationReferenceExpression(776,777): '!'
+  null
+
+KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
+  null
+
+KtNameReferenceExpression(777,784): 'myClass'
+  null
+
+KtCallExpression(785,798): 'equals(child)'
+  null
+
+KtNameReferenceExpression(785,791): 'equals'
+  null
+
+KtValueArgumentList(791,798): '(child)'
+  null
+
+KtValueArgument(792,797): 'child'
+  null
+
+KtNameReferenceExpression(792,797): 'child'
+  null
+
+KtBinaryExpression(804,820): 'another == child'
+  null
+
+KtNameReferenceExpression(804,811): 'another'
+  null
+
+KtOperationReferenceExpression(812,814): '=='
+  null
+
+KtNameReferenceExpression(815,820): 'child'
+  null
+
+KtDotQualifiedExpression(825,846): 'another.equals(child)'
+  null
+
+KtNameReferenceExpression(825,832): 'another'
+  null
+
+KtCallExpression(833,846): 'equals(child)'
+  null
+
+KtNameReferenceExpression(833,839): 'equals'
+  null
+
+KtValueArgumentList(839,846): '(child)'
+  null
+
+KtValueArgument(840,845): 'child'
+  null
+
+KtNameReferenceExpression(840,845): 'child'
+  null
+
+KtBinaryExpression(851,867): 'child == another'
+  null
+
+KtNameReferenceExpression(851,856): 'child'
+  null
+
+KtOperationReferenceExpression(857,859): '=='
+  null
+
+KtNameReferenceExpression(860,867): 'another'
+  null
+
+KtDotQualifiedExpression(872,893): 'child.equals(another)'
+  null
+
+KtNameReferenceExpression(872,877): 'child'
+  null
+
+KtCallExpression(878,893): 'equals(another)'
+  null
+
+KtNameReferenceExpression(878,884): 'equals'
+  null
+
+KtValueArgumentList(884,893): '(another)'
+  null
+
+KtValueArgument(885,892): 'another'
+  null
+
+KtNameReferenceExpression(885,892): 'another'
+  null
+
+KtBinaryExpression(899,917): 'another == myClass'
+  null
+
+KtNameReferenceExpression(899,906): 'another'
+  null
+
+KtOperationReferenceExpression(907,909): '=='
+  null
+
+KtNameReferenceExpression(910,917): 'myClass'
+  null
+
+KtDotQualifiedExpression(922,945): 'another.equals(myClass)'
+  null
+
+KtNameReferenceExpression(922,929): 'another'
+  null
+
+KtCallExpression(930,945): 'equals(myClass)'
+  null
+
+KtNameReferenceExpression(930,936): 'equals'
+  null
+
+KtValueArgumentList(936,945): '(myClass)'
+  null
+
+KtValueArgument(937,944): 'myClass'
+  null
+
+KtNameReferenceExpression(937,944): 'myClass'
+  null
+
+KtBinaryExpression(950,968): 'myClass != another'
+  null
+
+KtNameReferenceExpression(950,957): 'myClass'
+  null
+
+KtOperationReferenceExpression(958,960): '!='
+  null
+
+KtNameReferenceExpression(961,968): 'another'
+  null
+
+KtPrefixExpression(973,997): '!myClass.equals(another)'
+  null
+
+KtOperationReferenceExpression(973,974): '!'
+  null
+
+KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
+  null
+
+KtNameReferenceExpression(974,981): 'myClass'
+  null
+
+KtCallExpression(982,997): 'equals(another)'
+  null
+
+KtNameReferenceExpression(982,988): 'equals'
+  null
+
+KtValueArgumentList(988,997): '(another)'
+  null
+
+KtValueArgument(989,996): 'another'
+  null
+
+KtNameReferenceExpression(989,996): 'another'
+  null

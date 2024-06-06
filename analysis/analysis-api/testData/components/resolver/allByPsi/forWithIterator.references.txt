@@ -1,0 +1,87 @@
+KtNameReferenceExpression(8,9): 'f'
+  KtSimpleNameReference:
+    package f
+
+KtNameReferenceExpression(43,46): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(57,60): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(76,90): 'IntProgression'
+  KtSimpleNameReference:
+    (in f) class IntProgression(start: kotlin.Int, end: kotlin.Int)
+
+KtNameReferenceExpression(113,121): 'Iterator'
+  KtSimpleNameReference:
+    (in kotlin.collections) interface Iterator<out T>
+
+KtNameReferenceExpression(122,125): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(147,151): 'this'
+  KtSimpleNameReference:
+    extension receiver with type f.IntProgression
+
+KtLabelReferenceExpression(151,160): '@iterator'
+  KtSimpleNameReference:
+    (in f) operator fun f.IntProgression.iterator(): kotlin.collections.Iterator<kotlin.Int>
+
+KtNameReferenceExpression(161,166): 'start'
+  KtSimpleNameReference:
+    (in f.IntProgression) val start: kotlin.Int
+
+KtNameReferenceExpression(196,203): 'current'
+  KtSimpleNameReference:
+    (in <local>: iterator.<no name>) var current: kotlin.Int
+
+KtOperationReferenceExpression(204,206): '<='
+  KtSimpleNameReference:
+    (in kotlin.Int) open operator fun compareTo(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(207,211): 'this'
+  KtSimpleNameReference:
+    extension receiver with type f.IntProgression
+
+KtLabelReferenceExpression(211,220): '@iterator'
+  KtSimpleNameReference:
+    (in f) operator fun f.IntProgression.iterator(): kotlin.collections.Iterator<kotlin.Int>
+
+KtNameReferenceExpression(221,224): 'end'
+  KtSimpleNameReference:
+    (in f.IntProgression) val end: kotlin.Int
+
+KtNameReferenceExpression(250,253): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(256,263): 'current'
+  KtSimpleNameReference:
+    (in <local>: iterator.<no name>) var current: kotlin.Int
+
+  KtSimpleNameReference:
+    (in <local>: iterator.<no name>) var current: kotlin.Int
+
+KtOperationReferenceExpression(263,265): '++'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun inc(): kotlin.Int
+
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun inc(): kotlin.Int
+
+KtForExpression(287,328): 'for (i in IntProgression(1, 10)) {'
+  KtForLoopInReference:
+    0: (in f) operator fun f.IntProgression.iterator(): kotlin.collections.Iterator<kotlin.Int>
+    1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+    2: (in kotlin.collections.Iterator) operator fun next(): T
+
+KtCallExpression(297,318): 'IntProgression(1, 10)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(297,311): 'IntProgression'
+  KtSimpleNameReference:
+    (in f.IntProgression) constructor(start: kotlin.Int, end: kotlin.Int)

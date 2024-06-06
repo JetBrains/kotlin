@@ -1,0 +1,115 @@
+KtNameReferenceExpression(8,18): 'returnPack'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(45,48): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(53,57): 'Unit'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(90,96): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(101,105): 'Unit'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(138,145): 'Boolean'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(150,154): 'Unit'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(180,749): 'foo1 {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(180,184): 'foo1'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(195,743): 'foo2 {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(195,199): 'foo2'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(214,733): 'foo3 {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(214,218): 'foo3'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(237,413): 'foo1('
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(237,241): 'foo1'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(295,300): '@foo3'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(331,336): '@foo2'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(367,372): '@foo1'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(431,435): 'foo2'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(436,442): 'label@'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(450,456): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(513,519): '@label'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(546,551): '@foo3'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(578,583): '@foo2'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(610,615): '@foo1'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(658,663): '@foo3'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(686,691): '@foo2'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(714,719): '@foo1'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

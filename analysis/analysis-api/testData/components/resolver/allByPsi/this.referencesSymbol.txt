@@ -1,0 +1,403 @@
+KtNameReferenceExpression(8,11): 'one'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(66,71): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(66,69): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(80,84): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(85,90): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(85,88): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(99,103): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(103,111): '@MyClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(112,117): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(112,115): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(203,208): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(203,206): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(221,225): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(226,231): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(226,229): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(244,248): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(248,259): '@InnerOuter'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(260,265): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(260,263): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(278,282): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(282,290): '@MyClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(291,296): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(291,294): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(403,408): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(403,406): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(425,429): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(430,435): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(430,433): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(452,456): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(456,468): '@InnerNested'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(469,474): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(469,472): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(491,495): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(495,506): '@InnerOuter'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(507,512): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(507,510): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(529,533): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(533,541): '@MyClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(542,547): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(542,545): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(573,578): 'anon@'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(583,590): 'MyClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(595,601): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(625,630): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(625,628): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(651,655): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(656,661): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(656,659): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(682,686): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(686,691): '@anon'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(692,697): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(692,695): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(718,722): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(722,734): '@InnerNested'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(735,740): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(735,738): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(761,765): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(765,776): '@InnerOuter'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(777,782): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(777,780): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(803,807): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(807,815): '@MyClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(816,821): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(816,819): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(857,1107): 'myWith { t ->'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(857,863): 'myWith'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(891,896): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(891,894): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(917,921): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(922,927): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(922,925): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(948,952): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(952,959): '@myWith'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(960,965): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(960,963): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(986,990): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(990,1002): '@InnerNested'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(1003,1008): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1003,1006): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1029,1033): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(1033,1044): '@InnerOuter'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(1045,1050): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1045,1048): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1071,1075): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(1075,1083): '@MyClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(1084,1089): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1084,1087): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(1125,1194): 'myWith label@{'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1125,1131): 'myWith'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(1132,1138): 'label@'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1160,1164): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(1164,1170): '@label'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(1171,1176): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1171,1174): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1236,1237): 'T'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1251,1252): 'T'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1254,1255): 'T'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1260,1264): 'Unit'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(1272,1282): 'body(this)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1272,1276): 'body'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1277,1281): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

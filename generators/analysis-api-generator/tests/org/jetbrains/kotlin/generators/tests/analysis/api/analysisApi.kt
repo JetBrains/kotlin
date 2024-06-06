@@ -38,12 +38,17 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiType
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCallByFileTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCallTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesByFileTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveDanglingFileReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceByFileTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceSymbolByFileTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceSymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveReferenceWithResolveExtensionTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveSymbolByFileTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveSymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest
@@ -132,6 +137,18 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
         test<AbstractResolveReferenceTest>(init = singleByPsiInit)
         test<AbstractResolveSymbolTest>(init = singleByPsiInit)
         test<AbstractResolveReferenceSymbolTest>(init = singleByPsiInit)
+
+        group(filter = testModuleKindIs(TestModuleKind.Source)) {
+            val allByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
+                model(data, "allByPsi")
+            }
+
+            test<AbstractResolveCallByFileTest>(init = allByPsiInit)
+            test<AbstractResolveCandidatesByFileTest>(init = allByPsiInit)
+            test<AbstractResolveReferenceByFileTest>(init = allByPsiInit)
+            test<AbstractResolveSymbolByFileTest>(init = allByPsiInit)
+            test<AbstractResolveReferenceSymbolByFileTest>(init = allByPsiInit)
+        }
     }
 
     test<AbstractResolveDanglingFileReferenceTest>(

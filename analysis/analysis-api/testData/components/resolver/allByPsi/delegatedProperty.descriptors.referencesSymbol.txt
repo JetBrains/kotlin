@@ -1,0 +1,54 @@
+KtNameReferenceExpression(24,30): 'myPack'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(39,45): 'kotlin'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(46,53): 'reflect'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(54,63): 'KProperty'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtPropertyDelegate(74,87): 'by Delegate()'
+  KtPropertyDelegationMethodsReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(77,87): 'Delegate()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(77,85): 'Delegate'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(141,144): 'Any'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(157,166): 'KProperty'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(172,178): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(241,244): 'Any'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(257,266): 'KProperty'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(278,284): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

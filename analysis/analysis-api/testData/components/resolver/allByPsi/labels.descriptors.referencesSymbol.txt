@@ -1,0 +1,49 @@
+KtNameReferenceExpression(22,26): 'Unit'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(34,42): 'action()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(34,40): 'action'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(64,102): 'foo label@{'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(64,67): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(68,74): 'label@'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(90,96): '@label'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(108,114): 'myFor@'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtForExpression(115,161): 'for (i in 0..1) {'
+  KtForLoopInReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(126,128): '..'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(149,155): '@myFor'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

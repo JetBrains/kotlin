@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "call"
@@ -25,7 +24,7 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
         val call = resolveCall(mainElement)
         val secondCall = resolveCall(mainElement)
 
-        ignoreStabilityIfNeeded(testServices.moduleStructure.allDirectives) {
+        ignoreStabilityIfNeeded {
             assertStableResult(testServices, call?.asCallInfo(), secondCall?.asCallInfo())
         }
 

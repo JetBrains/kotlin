@@ -1,0 +1,286 @@
+KtNameReferenceExpression(16,22): 'Target'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(23,44): 'AnnotationTarget.TYPE'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(23,39): 'AnnotationTarget'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(40,44): 'TYPE'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(82,88): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(149,153): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(154,176): '"parameter type $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(171,175): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(178,182): 'List'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(184,188): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(189,218): '"nested parameter type $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(213,217): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(220,230): 'Collection'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(232,236): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(237,273): '"nested nested parameter type $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(268,272): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(275,281): 'String'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(287,291): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(292,312): '"defaultValue $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(307,311): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(322,326): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(327,367): '"anonymousFunction parameter type $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(362,366): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(369,372): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(376,380): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(381,418): '"anonymousFunction return type $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(413,417): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(420,423): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtConstructorDelegationReferenceExpression(427,427): ''
+  KtConstructorDelegationReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(481,485): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(486,509): '"super type call $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(504,508): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(511,524): 'AbstractClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(526,530): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(531,560): '"nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(555,559): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(562,566): 'List'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(568,572): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(573,609): '"nested nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(604,608): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(611,614): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(654,658): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(659,682): '"super type call $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(677,681): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(684,697): 'AbstractClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(699,703): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(704,733): '"nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(728,732): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(735,739): 'List'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(741,745): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(746,782): '"nested nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(777,781): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(784,787): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(841,845): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(846,868): '"super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(863,867): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(870,874): 'List'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(876,880): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(881,910): '"nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(905,909): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(912,916): 'List'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(918,922): 'Anno'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(923,959): '"nested nested super type ref $prop"'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(954,958): 'prop'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(961,962): 'I'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

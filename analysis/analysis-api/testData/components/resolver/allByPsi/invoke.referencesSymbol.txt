@@ -1,0 +1,87 @@
+KtNameReferenceExpression(8,9): 'r'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(55,59): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(78,82): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(97,100): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(114,121): 'MyClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(124,133): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(124,131): 'MyClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(156,165): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(156,163): 'MyClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(186,191): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(186,189): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(196,199): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(205,216): '((foo)())()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(206,213): '(foo)()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(207,210): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(218,226): 'invoke()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(218,224): 'invoke'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(231,234): 'foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(235,243): 'invoke()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(235,241): 'invoke'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(248,258): 'property()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(248,256): 'property'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

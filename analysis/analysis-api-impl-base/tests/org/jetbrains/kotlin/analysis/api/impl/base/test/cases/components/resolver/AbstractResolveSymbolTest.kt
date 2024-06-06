@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "symbol"
@@ -22,7 +21,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
         val symbolAttempt = attemptResolveSymbol(element)
         val secondSymbolAttempt = attemptResolveSymbol(element)
 
-        ignoreStabilityIfNeeded(testServices.moduleStructure.allDirectives) {
+        ignoreStabilityIfNeeded {
             assertStableResult(testServices, symbolAttempt, secondSymbolAttempt)
 
             if (element is KtResolvableCall) {

@@ -1,0 +1,2527 @@
+KtFile: 'annotatedClasses.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(0,89): '// WITH_STDLIB'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(15,56): '@Target(AnnotationTarget.TYPE)'
+  NO_CANDIDATES
+
+KtAnnotationEntry(15,45): '@Target(AnnotationTarget.TYPE)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.annotation.Target
+          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = allowedTargets
+              receiverType = null
+              returnType = kotlin.annotation.AnnotationTarget
+              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(16,22): 'Target'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.annotation.Target
+          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = allowedTargets
+              receiverType = null
+              returnType = kotlin.annotation.AnnotationTarget
+              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(16,22): 'Target'
+  NO_CANDIDATES
+
+KtUserType(16,22): 'Target'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(16,22): 'Target'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.annotation.Target
+          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = allowedTargets
+              receiverType = null
+              returnType = kotlin.annotation.AnnotationTarget
+              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        AnnotationTarget.TYPE -> (KaVariableLikeSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(22,45): '(AnnotationTarget.TYPE)'
+  NO_CANDIDATES
+
+KtValueArgument(23,44): 'AnnotationTarget.TYPE'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(23,44): 'AnnotationTarget.TYPE'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = TYPE
+          isSafeNavigation = false
+          type = kotlin.annotation.AnnotationTarget
+        signature = KaFunctionLikeSignature:
+          receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
+          returnType = ERROR_TYPE
+          symbol = kotlin/invoke(<extension receiver>: kotlin.DeepRecursiveFunction<T, R>, value: T): R
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = value
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = value: T
+              callableId = null
+          ]
+          callableId = kotlin/invoke
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE),
+        R -> (ERROR_TYPE)
+      }
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(23,39): 'AnnotationTarget'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(40,44): 'TYPE'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(67,89): '(val position: String)'
+  NO_CANDIDATES
+
+KtParameterList(67,89): '(val position: String)'
+  NO_CANDIDATES
+
+KtParameter(68,88): 'val position: String'
+  NO_CANDIDATES
+
+KtTypeReference(82,88): 'String'
+  NO_CANDIDATES
+
+KtUserType(82,88): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(82,88): 'String'
+  NO_CANDIDATES
+
+KtProperty(91,113): 'const val prop = "str"'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(91,96): 'const'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(108,113): '"str"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(109,112): 'str'
+  NO_CANDIDATES
+
+KtClass(115,429): 'class A {'
+  NO_CANDIDATES
+
+KtClassBody(123,429): '{'
+  NO_CANDIDATES
+
+KtSecondaryConstructor(129,427): 'constructor(param: @Anno("parameter type $prop") List<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>> = @Anno("defaultValue $prop") fun(i: @Anno("anonymousFunction parameter type $prop") Int): @Anno("anonymousFunction return type $prop") Int {})'
+  NO_CANDIDATES
+
+KtParameterList(140,427): '(param: @Anno("parameter type $prop") List<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>> = @Anno("defaultValue $prop") fun(i: @Anno("anonymousFunction parameter type $prop") Int): @Anno("anonymousFunction return type $prop") Int {})'
+  NO_CANDIDATES
+
+KtParameter(141,426): 'param: @Anno("parameter type $prop") List<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>> = @Anno("defaultValue $prop") fun(i: @Anno("anonymousFunction parameter type $prop") Int): @Anno("anonymousFunction return type $prop") Int {}'
+  NO_CANDIDATES
+
+KtTypeReference(148,283): '@Anno("parameter type $prop") List<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>>'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(148,177): '@Anno("parameter type $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(148,177): '@Anno("parameter type $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(149,153): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(149,153): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(149,153): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(149,153): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(153,177): '("parameter type $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(154,176): '"parameter type $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(154,176): '"parameter type $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(155,170): 'parameter type '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(170,175): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(171,175): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(178,283): 'List<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(178,182): 'List'
+  NO_CANDIDATES
+
+KtTypeArgumentList(182,283): '<@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>>'
+  NO_CANDIDATES
+
+KtTypeProjection(183,282): '@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>'
+  NO_CANDIDATES
+
+KtTypeReference(183,282): '@Anno("nested parameter type $prop") Collection<@Anno("nested nested parameter type $prop") String>'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(183,219): '@Anno("nested parameter type $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(183,219): '@Anno("nested parameter type $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(184,188): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(184,188): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(184,188): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(184,188): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(188,219): '("nested parameter type $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(189,218): '"nested parameter type $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(189,218): '"nested parameter type $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(190,212): 'nested parameter type '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(212,217): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(213,217): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(220,282): 'Collection<@Anno("nested nested parameter type $prop") String>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(220,230): 'Collection'
+  NO_CANDIDATES
+
+KtTypeArgumentList(230,282): '<@Anno("nested nested parameter type $prop") String>'
+  NO_CANDIDATES
+
+KtTypeProjection(231,281): '@Anno("nested nested parameter type $prop") String'
+  NO_CANDIDATES
+
+KtTypeReference(231,281): '@Anno("nested nested parameter type $prop") String'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(231,274): '@Anno("nested nested parameter type $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(231,274): '@Anno("nested nested parameter type $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(232,236): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(232,236): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(232,236): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(232,236): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(236,274): '("nested nested parameter type $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(237,273): '"nested nested parameter type $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(237,273): '"nested nested parameter type $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(238,267): 'nested nested parameter type '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(267,272): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(268,272): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(275,281): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(275,281): 'String'
+  NO_CANDIDATES
+
+KtNamedFunction(286,426): '@Anno("defaultValue $prop") fun(i: @Anno("anonymousFunction parameter type $prop") Int): @Anno("anonymousFunction return type $prop") Int {}'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(286,313): '@Anno("defaultValue $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(286,313): '@Anno("defaultValue $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "defaultValue $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(287,291): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "defaultValue $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(287,291): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(287,291): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(287,291): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "defaultValue $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(291,313): '("defaultValue $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(292,312): '"defaultValue $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(292,312): '"defaultValue $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(293,306): 'defaultValue '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(306,311): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(307,311): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtParameterList(317,373): '(i: @Anno("anonymousFunction parameter type $prop") Int)'
+  NO_CANDIDATES
+
+KtParameter(318,372): 'i: @Anno("anonymousFunction parameter type $prop") Int'
+  NO_CANDIDATES
+
+KtTypeReference(321,372): '@Anno("anonymousFunction parameter type $prop") Int'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(321,368): '@Anno("anonymousFunction parameter type $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(321,368): '@Anno("anonymousFunction parameter type $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "anonymousFunction parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(322,326): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "anonymousFunction parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(322,326): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(322,326): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(322,326): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "anonymousFunction parameter type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(326,368): '("anonymousFunction parameter type $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(327,367): '"anonymousFunction parameter type $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(327,367): '"anonymousFunction parameter type $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(328,361): 'anonymousFunction parameter type '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(361,366): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(362,366): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(369,372): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(369,372): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(375,423): '@Anno("anonymousFunction return type $prop") Int'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(375,419): '@Anno("anonymousFunction return type $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(375,419): '@Anno("anonymousFunction return type $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "anonymousFunction return type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(376,380): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "anonymousFunction return type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(376,380): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(376,380): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(376,380): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "anonymousFunction return type $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(380,419): '("anonymousFunction return type $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(381,418): '"anonymousFunction return type $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(381,418): '"anonymousFunction return type $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(382,412): 'anonymousFunction return type '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(412,417): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(413,417): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(420,423): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(420,423): 'Int'
+  NO_CANDIDATES
+
+KtBlockExpression(424,426): '{}'
+  NO_CANDIDATES
+
+KtConstructorDelegationCall(427,427): ''
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = <constructor>(): kotlin.Any
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorDelegationReferenceExpression(427,427): ''
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = <constructor>(): kotlin.Any
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtClass(431,462): 'abstract class AbstractClass<T>'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(431,439): 'abstract'
+  NO_CANDIDATES
+
+KtTypeParameterList(459,462): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(460,461): 'T'
+  NO_CANDIDATES
+
+KtClass(464,618): 'class MyClass : @Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  NO_CANDIDATES
+
+KtSuperTypeList(480,618): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(480,618): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
+          symbol = <constructor>(): AbstractClass<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(480,616): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
+          symbol = <constructor>(): AbstractClass<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(480,616): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(480,510): '@Anno("super type call $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(480,510): '@Anno("super type call $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(481,485): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(481,485): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(481,485): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(481,485): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(485,510): '("super type call $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(486,509): '"super type call $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(486,509): '"super type call $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(487,503): 'super type call '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(503,508): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(504,508): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(511,616): 'AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(511,524): 'AbstractClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
+          symbol = <constructor>(): AbstractClass<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeArgumentList(524,616): '<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  NO_CANDIDATES
+
+KtTypeProjection(525,615): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>'
+  NO_CANDIDATES
+
+KtTypeReference(525,615): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(525,561): '@Anno("nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(525,561): '@Anno("nested super type ref $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(526,530): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(526,530): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(526,530): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(526,530): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(530,561): '("nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(531,560): '"nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(531,560): '"nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(532,554): 'nested super type ref '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(554,559): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(555,559): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(562,615): 'List<@Anno("nested nested super type ref $prop") Int>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(562,566): 'List'
+  NO_CANDIDATES
+
+KtTypeArgumentList(566,615): '<@Anno("nested nested super type ref $prop") Int>'
+  NO_CANDIDATES
+
+KtTypeProjection(567,614): '@Anno("nested nested super type ref $prop") Int'
+  NO_CANDIDATES
+
+KtTypeReference(567,614): '@Anno("nested nested super type ref $prop") Int'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(567,610): '@Anno("nested nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(567,610): '@Anno("nested nested super type ref $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(568,572): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(568,572): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(568,572): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(568,572): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(572,610): '("nested nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(573,609): '"nested nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(573,609): '"nested nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(574,603): 'nested nested super type ref '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(603,608): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(604,608): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(611,614): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(611,614): 'Int'
+  NO_CANDIDATES
+
+KtValueArgumentList(616,618): '()'
+  NO_CANDIDATES
+
+KtClass(620,791): 'class MyClassWithConstructor() : @Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(648,650): '()'
+  NO_CANDIDATES
+
+KtParameterList(648,650): '()'
+  NO_CANDIDATES
+
+KtSuperTypeList(653,791): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(653,791): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
+          symbol = <constructor>(): AbstractClass<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(653,789): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
+          symbol = <constructor>(): AbstractClass<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(653,789): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(653,683): '@Anno("super type call $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(653,683): '@Anno("super type call $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(654,658): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(654,658): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(654,658): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(654,658): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type call $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(658,683): '("super type call $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(659,682): '"super type call $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(659,682): '"super type call $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(660,676): 'super type call '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(676,681): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(677,681): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(684,789): 'AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(684,697): 'AbstractClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = AbstractClass<@R|Anno|(position = String(nested super type ref str))  kotlin.collections.List<@R|Anno|(position = String(nested nested super type ref str))  kotlin.Int>>
+          symbol = <constructor>(): AbstractClass<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeArgumentList(697,789): '<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
+  NO_CANDIDATES
+
+KtTypeProjection(698,788): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>'
+  NO_CANDIDATES
+
+KtTypeReference(698,788): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(698,734): '@Anno("nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(698,734): '@Anno("nested super type ref $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(699,703): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(699,703): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(699,703): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(699,703): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(703,734): '("nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(704,733): '"nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(704,733): '"nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(705,727): 'nested super type ref '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(727,732): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(728,732): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(735,788): 'List<@Anno("nested nested super type ref $prop") Int>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(735,739): 'List'
+  NO_CANDIDATES
+
+KtTypeArgumentList(739,788): '<@Anno("nested nested super type ref $prop") Int>'
+  NO_CANDIDATES
+
+KtTypeProjection(740,787): '@Anno("nested nested super type ref $prop") Int'
+  NO_CANDIDATES
+
+KtTypeReference(740,787): '@Anno("nested nested super type ref $prop") Int'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(740,783): '@Anno("nested nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(740,783): '@Anno("nested nested super type ref $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(741,745): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(741,745): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(741,745): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(741,745): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(745,783): '("nested nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(746,782): '"nested nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(746,782): '"nested nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(747,776): 'nested nested super type ref '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(776,781): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(777,781): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(784,787): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(784,787): 'Int'
+  NO_CANDIDATES
+
+KtValueArgumentList(789,791): '()'
+  NO_CANDIDATES
+
+KtClass(793,804): 'interface I'
+  NO_CANDIDATES
+
+KtClass(806,964): 'class MyClassWithSuperInterface : @Anno("super type ref $prop") List<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  NO_CANDIDATES
+
+KtSuperTypeList(840,964): '@Anno("super type ref $prop") List<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(840,964): '@Anno("super type ref $prop") List<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  NO_CANDIDATES
+
+KtTypeReference(840,964): '@Anno("super type ref $prop") List<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(840,869): '@Anno("super type ref $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(840,869): '@Anno("super type ref $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(841,845): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(841,845): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(841,845): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(841,845): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(845,869): '("super type ref $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(846,868): '"super type ref $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(846,868): '"super type ref $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(847,862): 'super type ref '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(862,867): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(863,867): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(870,964): 'List<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(870,874): 'List'
+  NO_CANDIDATES
+
+KtTypeArgumentList(874,964): '<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>>'
+  NO_CANDIDATES
+
+KtTypeProjection(875,963): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>'
+  NO_CANDIDATES
+
+KtTypeReference(875,963): '@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") I>'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(875,911): '@Anno("nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(875,911): '@Anno("nested super type ref $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(876,880): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(876,880): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(876,880): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(876,880): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(880,911): '("nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(881,910): '"nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(881,910): '"nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(882,904): 'nested super type ref '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(904,909): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(905,909): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(912,963): 'List<@Anno("nested nested super type ref $prop") I>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(912,916): 'List'
+  NO_CANDIDATES
+
+KtTypeArgumentList(916,963): '<@Anno("nested nested super type ref $prop") I>'
+  NO_CANDIDATES
+
+KtTypeProjection(917,962): '@Anno("nested nested super type ref $prop") I'
+  NO_CANDIDATES
+
+KtTypeReference(917,962): '@Anno("nested nested super type ref $prop") I'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(917,960): '@Anno("nested nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtAnnotationEntry(917,960): '@Anno("nested nested super type ref $prop")'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(918,922): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtTypeReference(918,922): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(918,922): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(918,922): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = Anno
+          symbol = <constructor>(position: kotlin.String): Anno
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = position
+              receiverType = null
+              returnType = kotlin.String
+              symbol = position: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "nested nested super type ref $prop" -> (KaVariableLikeSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(922,960): '("nested nested super type ref $prop")'
+  NO_CANDIDATES
+
+KtValueArgument(923,959): '"nested nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(923,959): '"nested nested super type ref $prop"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(924,953): 'nested nested super type ref '
+  NO_CANDIDATES
+
+KtSimpleNameStringTemplateEntry(953,958): '$prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(954,958): 'prop'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.String
+          symbol = val prop: kotlin.String
+          callableId = /prop
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtUserType(961,962): 'I'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(961,962): 'I'
+  NO_CANDIDATES

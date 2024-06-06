@@ -1,0 +1,1667 @@
+KtFile: 'multiEquals.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,103): 'abstract class ItemCallback<T> {'
+  null
+
+KtDeclarationModifierList(0,8): 'abstract'
+  null
+
+KtTypeParameterList(27,30): '<T>'
+  null
+
+KtTypeParameter(28,29): 'T'
+  null
+
+KtClassBody(31,103): '{'
+  null
+
+KtNamedFunction(37,101): 'abstract fun areContentsTheSame(oldItem: T, newItem: T): Boolean'
+  null
+
+KtDeclarationModifierList(37,45): 'abstract'
+  null
+
+KtParameterList(68,92): '(oldItem: T, newItem: T)'
+  null
+
+KtParameter(69,79): 'oldItem: T'
+  null
+
+KtTypeReference(78,79): 'T'
+  null
+
+KtUserType(78,79): 'T'
+  null
+
+KtNameReferenceExpression(78,79): 'T'
+  null
+
+KtParameter(81,91): 'newItem: T'
+  null
+
+KtTypeReference(90,91): 'T'
+  null
+
+KtUserType(90,91): 'T'
+  null
+
+KtNameReferenceExpression(90,91): 'T'
+  null
+
+KtTypeReference(94,101): 'Boolean'
+  null
+
+KtUserType(94,101): 'Boolean'
+  null
+
+KtNameReferenceExpression(94,101): 'Boolean'
+  null
+
+KtClass(105,191): 'sealed class MessagePreview {'
+  null
+
+KtDeclarationModifierList(105,111): 'sealed'
+  null
+
+KtClassBody(133,191): '{'
+  null
+
+KtNamedFunction(139,189): 'abstract override fun equals(other: Any?): Boolean'
+  null
+
+KtDeclarationModifierList(139,156): 'abstract override'
+  null
+
+KtParameterList(167,180): '(other: Any?)'
+  null
+
+KtParameter(168,179): 'other: Any?'
+  null
+
+KtTypeReference(175,179): 'Any?'
+  null
+
+KtNullableType(175,179): 'Any?'
+  null
+
+KtUserType(175,178): 'Any'
+  null
+
+KtNameReferenceExpression(175,178): 'Any'
+  null
+
+KtTypeReference(182,189): 'Boolean'
+  null
+
+KtUserType(182,189): 'Boolean'
+  null
+
+KtNameReferenceExpression(182,189): 'Boolean'
+  null
+
+KtClass(193,272): 'interface InterfaceWithEquals {'
+  null
+
+KtClassBody(223,272): '{'
+  null
+
+KtNamedFunction(229,270): 'override fun equals(other: Any?): Boolean'
+  null
+
+KtDeclarationModifierList(229,237): 'override'
+  null
+
+KtParameterList(248,261): '(other: Any?)'
+  null
+
+KtParameter(249,260): 'other: Any?'
+  null
+
+KtTypeReference(256,260): 'Any?'
+  null
+
+KtNullableType(256,260): 'Any?'
+  null
+
+KtUserType(256,259): 'Any'
+  null
+
+KtNameReferenceExpression(256,259): 'Any'
+  null
+
+KtTypeReference(263,270): 'Boolean'
+  null
+
+KtUserType(263,270): 'Boolean'
+  null
+
+KtNameReferenceExpression(263,270): 'Boolean'
+  null
+
+KtNamedFunction(274,499): 'private fun <T> interfaceAndClass(): ItemCallback<T> where T : InterfaceWithEquals, T : MessagePreview = object : ItemCallback<T>() {'
+  null
+
+KtDeclarationModifierList(274,281): 'private'
+  null
+
+KtTypeParameterList(286,289): '<T>'
+  null
+
+KtTypeParameter(287,288): 'T'
+  null
+
+KtParameterList(307,309): '()'
+  null
+
+KtTypeReference(311,326): 'ItemCallback<T>'
+  null
+
+KtUserType(311,326): 'ItemCallback<T>'
+  null
+
+KtNameReferenceExpression(311,323): 'ItemCallback'
+  null
+
+KtTypeArgumentList(323,326): '<T>'
+  null
+
+KtTypeProjection(324,325): 'T'
+  null
+
+KtTypeReference(324,325): 'T'
+  null
+
+KtUserType(324,325): 'T'
+  null
+
+KtNameReferenceExpression(324,325): 'T'
+  null
+
+KtTypeConstraintList(333,376): 'T : InterfaceWithEquals, T : MessagePreview'
+  null
+
+KtTypeConstraint(333,356): 'T : InterfaceWithEquals'
+  null
+
+KtNameReferenceExpression(333,334): 'T'
+  null
+
+KtTypeReference(337,356): 'InterfaceWithEquals'
+  null
+
+KtUserType(337,356): 'InterfaceWithEquals'
+  null
+
+KtNameReferenceExpression(337,356): 'InterfaceWithEquals'
+  null
+
+KtTypeConstraint(358,376): 'T : MessagePreview'
+  null
+
+KtNameReferenceExpression(358,359): 'T'
+  null
+
+KtTypeReference(362,376): 'MessagePreview'
+  null
+
+KtUserType(362,376): 'MessagePreview'
+  null
+
+KtNameReferenceExpression(362,376): 'MessagePreview'
+  null
+
+KtObjectLiteralExpression(379,499): 'object : ItemCallback<T>() {'
+  null
+
+KtObjectDeclaration(379,499): 'object : ItemCallback<T>() {'
+  null
+
+KtSuperTypeList(388,405): 'ItemCallback<T>()'
+  null
+
+KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtConstructorCalleeExpression(388,403): 'ItemCallback<T>'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtTypeReference(388,403): 'ItemCallback<T>'
+  null
+
+KtUserType(388,403): 'ItemCallback<T>'
+  null
+
+KtNameReferenceExpression(388,400): 'ItemCallback'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtTypeArgumentList(400,403): '<T>'
+  null
+
+KtTypeProjection(401,402): 'T'
+  null
+
+KtTypeReference(401,402): 'T'
+  null
+
+KtUserType(401,402): 'T'
+  null
+
+KtNameReferenceExpression(401,402): 'T'
+  null
+
+KtValueArgumentList(403,405): '()'
+  null
+
+KtClassBody(406,499): '{'
+  null
+
+KtNamedFunction(412,497): 'override fun areContentsTheSame(oldItem: T, newItem: T): Boolean = oldItem == newItem'
+  null
+
+KtDeclarationModifierList(412,420): 'override'
+  null
+
+KtParameterList(443,467): '(oldItem: T, newItem: T)'
+  null
+
+KtParameter(444,454): 'oldItem: T'
+  null
+
+KtTypeReference(453,454): 'T'
+  null
+
+KtUserType(453,454): 'T'
+  null
+
+KtNameReferenceExpression(453,454): 'T'
+  null
+
+KtParameter(456,466): 'newItem: T'
+  null
+
+KtTypeReference(465,466): 'T'
+  null
+
+KtUserType(465,466): 'T'
+  null
+
+KtNameReferenceExpression(465,466): 'T'
+  null
+
+KtTypeReference(469,476): 'Boolean'
+  null
+
+KtUserType(469,476): 'Boolean'
+  null
+
+KtNameReferenceExpression(469,476): 'Boolean'
+  null
+
+KtBinaryExpression(479,497): 'oldItem == newItem'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = oldItem
+          isSafeNavigation = false
+          type = T
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /InterfaceWithEquals.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        newItem -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(479,486): 'oldItem'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = oldItem
+          receiverType = null
+          returnType = T
+          symbol = oldItem: T
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(487,489): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = oldItem
+          isSafeNavigation = false
+          type = T
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /InterfaceWithEquals.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        newItem -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(490,497): 'newItem'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = newItem
+          receiverType = null
+          returnType = T
+          symbol = newItem: T
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNamedFunction(501,726): 'private fun <T> classAndInterface(): ItemCallback<T> where T : MessagePreview, T : InterfaceWithEquals = object : ItemCallback<T>() {'
+  null
+
+KtDeclarationModifierList(501,508): 'private'
+  null
+
+KtTypeParameterList(513,516): '<T>'
+  null
+
+KtTypeParameter(514,515): 'T'
+  null
+
+KtParameterList(534,536): '()'
+  null
+
+KtTypeReference(538,553): 'ItemCallback<T>'
+  null
+
+KtUserType(538,553): 'ItemCallback<T>'
+  null
+
+KtNameReferenceExpression(538,550): 'ItemCallback'
+  null
+
+KtTypeArgumentList(550,553): '<T>'
+  null
+
+KtTypeProjection(551,552): 'T'
+  null
+
+KtTypeReference(551,552): 'T'
+  null
+
+KtUserType(551,552): 'T'
+  null
+
+KtNameReferenceExpression(551,552): 'T'
+  null
+
+KtTypeConstraintList(560,603): 'T : MessagePreview, T : InterfaceWithEquals'
+  null
+
+KtTypeConstraint(560,578): 'T : MessagePreview'
+  null
+
+KtNameReferenceExpression(560,561): 'T'
+  null
+
+KtTypeReference(564,578): 'MessagePreview'
+  null
+
+KtUserType(564,578): 'MessagePreview'
+  null
+
+KtNameReferenceExpression(564,578): 'MessagePreview'
+  null
+
+KtTypeConstraint(580,603): 'T : InterfaceWithEquals'
+  null
+
+KtNameReferenceExpression(580,581): 'T'
+  null
+
+KtTypeReference(584,603): 'InterfaceWithEquals'
+  null
+
+KtUserType(584,603): 'InterfaceWithEquals'
+  null
+
+KtNameReferenceExpression(584,603): 'InterfaceWithEquals'
+  null
+
+KtObjectLiteralExpression(606,726): 'object : ItemCallback<T>() {'
+  null
+
+KtObjectDeclaration(606,726): 'object : ItemCallback<T>() {'
+  null
+
+KtSuperTypeList(615,632): 'ItemCallback<T>()'
+  null
+
+KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtConstructorCalleeExpression(615,630): 'ItemCallback<T>'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtTypeReference(615,630): 'ItemCallback<T>'
+  null
+
+KtUserType(615,630): 'ItemCallback<T>'
+  null
+
+KtNameReferenceExpression(615,627): 'ItemCallback'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtTypeArgumentList(627,630): '<T>'
+  null
+
+KtTypeProjection(628,629): 'T'
+  null
+
+KtTypeReference(628,629): 'T'
+  null
+
+KtUserType(628,629): 'T'
+  null
+
+KtNameReferenceExpression(628,629): 'T'
+  null
+
+KtValueArgumentList(630,632): '()'
+  null
+
+KtClassBody(633,726): '{'
+  null
+
+KtNamedFunction(639,724): 'override fun areContentsTheSame(oldItem: T, newItem: T): Boolean = oldItem == newItem'
+  null
+
+KtDeclarationModifierList(639,647): 'override'
+  null
+
+KtParameterList(670,694): '(oldItem: T, newItem: T)'
+  null
+
+KtParameter(671,681): 'oldItem: T'
+  null
+
+KtTypeReference(680,681): 'T'
+  null
+
+KtUserType(680,681): 'T'
+  null
+
+KtNameReferenceExpression(680,681): 'T'
+  null
+
+KtParameter(683,693): 'newItem: T'
+  null
+
+KtTypeReference(692,693): 'T'
+  null
+
+KtUserType(692,693): 'T'
+  null
+
+KtNameReferenceExpression(692,693): 'T'
+  null
+
+KtTypeReference(696,703): 'Boolean'
+  null
+
+KtUserType(696,703): 'Boolean'
+  null
+
+KtNameReferenceExpression(696,703): 'Boolean'
+  null
+
+KtBinaryExpression(706,724): 'oldItem == newItem'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = oldItem
+          isSafeNavigation = false
+          type = T
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        newItem -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(706,713): 'oldItem'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = oldItem
+          receiverType = null
+          returnType = T
+          symbol = oldItem: T
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(714,716): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = oldItem
+          isSafeNavigation = false
+          type = T
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        newItem -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(717,724): 'newItem'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = newItem
+          receiverType = null
+          returnType = T
+          symbol = newItem: T
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNamedFunction(728,895): 'private fun <T : MessagePreview> classOnly() = object : ItemCallback<T>() {'
+  null
+
+KtDeclarationModifierList(728,735): 'private'
+  null
+
+KtTypeParameterList(740,760): '<T : MessagePreview>'
+  null
+
+KtTypeParameter(741,759): 'T : MessagePreview'
+  null
+
+KtTypeReference(745,759): 'MessagePreview'
+  null
+
+KtUserType(745,759): 'MessagePreview'
+  null
+
+KtNameReferenceExpression(745,759): 'MessagePreview'
+  null
+
+KtParameterList(770,772): '()'
+  null
+
+KtObjectLiteralExpression(775,895): 'object : ItemCallback<T>() {'
+  null
+
+KtObjectDeclaration(775,895): 'object : ItemCallback<T>() {'
+  null
+
+KtSuperTypeList(784,801): 'ItemCallback<T>()'
+  null
+
+KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtConstructorCalleeExpression(784,799): 'ItemCallback<T>'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtTypeReference(784,799): 'ItemCallback<T>'
+  null
+
+KtUserType(784,799): 'ItemCallback<T>'
+  null
+
+KtNameReferenceExpression(784,796): 'ItemCallback'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = ItemCallback<T>
+          symbol = <constructor>(): ItemCallback<T>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+
+KtTypeArgumentList(796,799): '<T>'
+  null
+
+KtTypeProjection(797,798): 'T'
+  null
+
+KtTypeReference(797,798): 'T'
+  null
+
+KtUserType(797,798): 'T'
+  null
+
+KtNameReferenceExpression(797,798): 'T'
+  null
+
+KtValueArgumentList(799,801): '()'
+  null
+
+KtClassBody(802,895): '{'
+  null
+
+KtNamedFunction(808,893): 'override fun areContentsTheSame(oldItem: T, newItem: T): Boolean = oldItem == newItem'
+  null
+
+KtDeclarationModifierList(808,816): 'override'
+  null
+
+KtParameterList(839,863): '(oldItem: T, newItem: T)'
+  null
+
+KtParameter(840,850): 'oldItem: T'
+  null
+
+KtTypeReference(849,850): 'T'
+  null
+
+KtUserType(849,850): 'T'
+  null
+
+KtNameReferenceExpression(849,850): 'T'
+  null
+
+KtParameter(852,862): 'newItem: T'
+  null
+
+KtTypeReference(861,862): 'T'
+  null
+
+KtUserType(861,862): 'T'
+  null
+
+KtNameReferenceExpression(861,862): 'T'
+  null
+
+KtTypeReference(865,872): 'Boolean'
+  null
+
+KtUserType(865,872): 'Boolean'
+  null
+
+KtNameReferenceExpression(865,872): 'Boolean'
+  null
+
+KtBinaryExpression(875,893): 'oldItem == newItem'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = oldItem
+          isSafeNavigation = false
+          type = T
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        newItem -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(875,882): 'oldItem'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = oldItem
+          receiverType = null
+          returnType = T
+          symbol = oldItem: T
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(883,885): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = oldItem
+          isSafeNavigation = false
+          type = T
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        newItem -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(886,893): 'newItem'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = newItem
+          receiverType = null
+          returnType = T
+          symbol = newItem: T
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNamedFunction(897,1031): 'fun check(i: InterfaceWithEquals, m: MessagePreview) {'
+  null
+
+KtParameterList(906,949): '(i: InterfaceWithEquals, m: MessagePreview)'
+  null
+
+KtParameter(907,929): 'i: InterfaceWithEquals'
+  null
+
+KtTypeReference(910,929): 'InterfaceWithEquals'
+  null
+
+KtUserType(910,929): 'InterfaceWithEquals'
+  null
+
+KtNameReferenceExpression(910,929): 'InterfaceWithEquals'
+  null
+
+KtParameter(931,948): 'm: MessagePreview'
+  null
+
+KtTypeReference(934,948): 'MessagePreview'
+  null
+
+KtUserType(934,948): 'MessagePreview'
+  null
+
+KtNameReferenceExpression(934,948): 'MessagePreview'
+  null
+
+KtBlockExpression(950,1031): '{'
+  null
+
+KtBinaryExpression(956,962): 'i == m'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = InterfaceWithEquals
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /InterfaceWithEquals.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(956,957): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = InterfaceWithEquals
+          symbol = i: InterfaceWithEquals
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(958,960): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = InterfaceWithEquals
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /InterfaceWithEquals.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(961,962): 'm'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = m
+          receiverType = null
+          returnType = MessagePreview
+          symbol = m: MessagePreview
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtBinaryExpression(967,973): 'i != m'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = InterfaceWithEquals
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /InterfaceWithEquals.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(967,968): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = InterfaceWithEquals
+          symbol = i: InterfaceWithEquals
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(969,971): '!='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = InterfaceWithEquals
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /InterfaceWithEquals.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(972,973): 'm'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = m
+          receiverType = null
+          returnType = MessagePreview
+          symbol = m: MessagePreview
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtBinaryExpression(979,985): 'm == i'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MessagePreview
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        i -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(979,980): 'm'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = m
+          receiverType = null
+          returnType = MessagePreview
+          symbol = m: MessagePreview
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(981,983): '=='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MessagePreview
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        i -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(984,985): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = InterfaceWithEquals
+          symbol = i: InterfaceWithEquals
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtBinaryExpression(990,996): 'm != i'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MessagePreview
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        i -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(990,991): 'm'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = m
+          receiverType = null
+          returnType = MessagePreview
+          symbol = m: MessagePreview
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(992,994): '!='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MessagePreview
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        i -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(995,996): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = InterfaceWithEquals
+          symbol = i: InterfaceWithEquals
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = InterfaceWithEquals
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /InterfaceWithEquals.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(1002,1003): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = InterfaceWithEquals
+          symbol = i: InterfaceWithEquals
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCallExpression(1004,1013): 'equals(m)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = InterfaceWithEquals
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /InterfaceWithEquals.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(1004,1010): 'equals'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = InterfaceWithEquals
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /InterfaceWithEquals.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtValueArgumentList(1010,1013): '(m)'
+  null
+
+KtValueArgument(1011,1012): 'm'
+  null
+
+KtNameReferenceExpression(1011,1012): 'm'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = m
+          receiverType = null
+          returnType = MessagePreview
+          symbol = m: MessagePreview
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MessagePreview
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        i -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(1018,1019): 'm'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = m
+          receiverType = null
+          returnType = MessagePreview
+          symbol = m: MessagePreview
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCallExpression(1020,1029): 'equals(i)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MessagePreview
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        i -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtNameReferenceExpression(1020,1026): 'equals'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = MessagePreview
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableLikeSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MessagePreview.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        i -> (KaVariableLikeSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+
+KtValueArgumentList(1026,1029): '(i)'
+  null
+
+KtValueArgument(1027,1028): 'i'
+  null
+
+KtNameReferenceExpression(1027,1028): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = InterfaceWithEquals
+          symbol = i: InterfaceWithEquals
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}

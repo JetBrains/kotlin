@@ -1,0 +1,279 @@
+KtNameReferenceExpression(8,12): 'pack'
+  KtSimpleNameReference:
+    package pack
+
+KtNameReferenceExpression(61,64): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(93,96): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(118,125): 'MyClass'
+  KtSimpleNameReference:
+    (in pack.MyClass) constructor()
+
+KtNameReferenceExpression(187,188): 'T'
+  KtSimpleNameReference:
+    T
+
+KtNameReferenceExpression(223,224): 'T'
+  KtSimpleNameReference:
+    T
+
+KtNameReferenceExpression(258,271): 'ClassWithType'
+  KtSimpleNameReference:
+    (in pack.ClassWithType) constructor()
+
+KtNameReferenceExpression(272,279): 'MyClass'
+  KtSimpleNameReference:
+    (in pack) open class MyClass
+
+KtNameReferenceExpression(308,311): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(347,354): 'MyClass'
+  KtSimpleNameReference:
+    (in pack) open class MyClass
+
+KtNameReferenceExpression(376,382): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(395,402): 'MyClass'
+  KtSimpleNameReference:
+    (in pack) open class MyClass
+
+KtNameReferenceExpression(422,428): 'String'
+  KtSimpleNameReference:
+    (in kotlin) class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+
+KtNameReferenceExpression(470,477): 'MyClass'
+  KtSimpleNameReference:
+    (in pack) open class MyClass
+
+KtNameReferenceExpression(497,504): 'MyClass'
+  KtSimpleNameReference:
+    (in pack) open class MyClass
+
+KtNameReferenceExpression(506,520): 'memberFunction'
+  KtSimpleNameReference:
+    (in pack.MyClass) fun memberFunction(): kotlin.Int
+
+KtCallExpression(521,538): 'invoke(MyClass())'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(521,527): 'invoke'
+  KtSimpleNameReference:
+    (in kotlin.reflect.KFunction1) operator fun invoke(p1: P1): R
+
+KtCallExpression(528,537): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(528,535): 'MyClass'
+  KtSimpleNameReference:
+    (in pack.MyClass) constructor()
+
+KtNameReferenceExpression(543,550): 'MyClass'
+  KtSimpleNameReference:
+    (in pack) open class MyClass
+
+KtNameReferenceExpression(552,566): 'memberProperty'
+  KtSimpleNameReference:
+    (in pack.MyClass) val memberProperty: kotlin.Int
+
+KtNameReferenceExpression(567,571): 'name'
+  KtSimpleNameReference:
+    (in kotlin.reflect.KCallable) expect val name: kotlin.String
+
+KtNameReferenceExpression(577,582): 'Child'
+  KtSimpleNameReference:
+    (in pack) class Child : pack.MyClass()
+
+KtNameReferenceExpression(584,598): 'memberFunction'
+  KtSimpleNameReference:
+    (in pack.MyClass) fun memberFunction(): kotlin.Int
+
+KtCallExpression(599,614): 'invoke(Child())'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(599,605): 'invoke'
+  KtSimpleNameReference:
+    (in kotlin.reflect.KFunction1) operator fun invoke(p1: P1): R
+
+KtCallExpression(606,613): 'Child()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(606,611): 'Child'
+  KtSimpleNameReference:
+    (in pack.Child) constructor()
+
+KtNameReferenceExpression(619,624): 'Child'
+  KtSimpleNameReference:
+    (in pack) class Child : pack.MyClass()
+
+KtNameReferenceExpression(626,640): 'memberProperty'
+  KtSimpleNameReference:
+    (in pack.MyClass) val memberProperty: kotlin.Int
+
+KtNameReferenceExpression(641,645): 'name'
+  KtSimpleNameReference:
+    (in kotlin.reflect.KCallable) expect val name: kotlin.String
+
+KtNameReferenceExpression(659,663): 'pack'
+  KtSimpleNameReference:
+    package pack
+
+KtNameReferenceExpression(664,671): 'MyClass'
+  KtSimpleNameReference:
+    (in pack) open class MyClass
+
+KtNameReferenceExpression(673,690): 'extensionFunction'
+  KtSimpleNameReference:
+    (in pack) fun pack.MyClass.extensionFunction(): kotlin.String
+
+KtNameReferenceExpression(703,710): 'MyClass'
+  KtSimpleNameReference:
+    (in pack) open class MyClass
+
+KtNameReferenceExpression(712,729): 'extensionProperty'
+  KtSimpleNameReference:
+    (in pack) val pack.MyClass.extensionProperty: kotlin.String
+
+KtNameReferenceExpression(744,749): 'Child'
+  KtSimpleNameReference:
+    (in pack) class Child : pack.MyClass()
+
+KtNameReferenceExpression(751,768): 'extensionFunction'
+  KtSimpleNameReference:
+    (in pack) fun pack.MyClass.extensionFunction(): kotlin.String
+
+KtNameReferenceExpression(782,786): 'pack'
+  KtSimpleNameReference:
+    package pack
+
+KtNameReferenceExpression(787,792): 'Child'
+  KtSimpleNameReference:
+    (in pack) class Child : pack.MyClass()
+
+KtNameReferenceExpression(794,811): 'extensionProperty'
+  KtSimpleNameReference:
+    (in pack) val pack.MyClass.extensionProperty: kotlin.String
+
+KtNameReferenceExpression(817,830): 'ChildWithType'
+  KtSimpleNameReference:
+    (in pack) class ChildWithType : pack.ClassWithType<pack.MyClass>()
+
+KtNameReferenceExpression(832,848): 'functionWithType'
+  KtSimpleNameReference:
+    (in pack.ChildWithType) override fun functionWithType(): pack.MyClass?
+
+KtNameReferenceExpression(849,853): 'name'
+  KtSimpleNameReference:
+    (in kotlin.reflect.KCallable) expect val name: kotlin.String
+
+KtNameReferenceExpression(858,871): 'ChildWithType'
+  KtSimpleNameReference:
+    (in pack) class ChildWithType : pack.ClassWithType<pack.MyClass>()
+
+KtNameReferenceExpression(873,889): 'propertyWithType'
+  KtSimpleNameReference:
+    (in pack.ChildWithType) override var propertyWithType: pack.MyClass?
+
+KtCallExpression(890,913): 'invoke(ChildWithType())'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(890,896): 'invoke'
+  KtSimpleNameReference:
+    (in kotlin.reflect.KMutableProperty1) expect override operator fun invoke(p1: T): V
+
+KtCallExpression(897,912): 'ChildWithType()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(897,910): 'ChildWithType'
+  KtSimpleNameReference:
+    (in pack.ChildWithType) constructor()
+
+KtNameReferenceExpression(921,937): 'topLevelFunction'
+  KtSimpleNameReference:
+    (in pack) fun topLevelFunction(i: kotlin.Int)
+
+KtNameReferenceExpression(944,960): 'topLevelVariable'
+  KtSimpleNameReference:
+    (in pack) var topLevelVariable: kotlin.Int
+
+KtNameReferenceExpression(968,979): 'lateinitVar'
+  KtSimpleNameReference:
+    (in pack) lateinit var lateinitVar: pack.MyClass
+
+KtNameReferenceExpression(980,993): 'isInitialized'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1006,1012): 'Number'
+  KtSimpleNameReference:
+    (in kotlin) abstract class Number : java.io.Serializable
+
+KtNameReferenceExpression(1039,1052): 'ClassWithType'
+  KtSimpleNameReference:
+    (in pack) open class ClassWithType<T>
+
+KtNameReferenceExpression(1053,1054): 'T'
+  KtSimpleNameReference:
+    T
+
+KtNameReferenceExpression(1063,1076): 'classWithType'
+  KtSimpleNameReference:
+    classWithType: pack.ClassWithType<T>
+
+KtNameReferenceExpression(1078,1094): 'functionWithType'
+  KtSimpleNameReference:
+    (in pack.ClassWithType) fun functionWithType(): T?
+
+KtNameReferenceExpression(1099,1112): 'classWithType'
+  KtSimpleNameReference:
+    classWithType: pack.ClassWithType<T>
+
+KtNameReferenceExpression(1114,1130): 'propertyWithType'
+  KtSimpleNameReference:
+    (in pack.ClassWithType) var propertyWithType: T?
+
+KtNameReferenceExpression(1143,1156): 'ClassWithType'
+  KtSimpleNameReference:
+    (in pack) open class ClassWithType<T>
+
+KtNameReferenceExpression(1157,1160): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(1174,1175): 't'
+  KtSimpleNameReference:
+    (in <local>: typeClass) val t: pack.ClassWithType<kotlin.Int>?
+
+KtOperationReferenceExpression(1175,1177): '!!'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1179,1195): 'functionWithType'
+  KtSimpleNameReference:
+    (in pack.ClassWithType) fun functionWithType(): T?
+
+KtNameReferenceExpression(1200,1201): 't'
+  KtSimpleNameReference:
+    (in <local>: typeClass) val t: pack.ClassWithType<kotlin.Int>?
+
+KtOperationReferenceExpression(1201,1203): '!!'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1205,1221): 'propertyWithType'
+  KtSimpleNameReference:
+    (in pack.ClassWithType) var propertyWithType: T?

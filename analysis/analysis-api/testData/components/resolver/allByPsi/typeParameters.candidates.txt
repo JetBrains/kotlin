@@ -1,0 +1,456 @@
+KtFile: 'typeParameters.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,15): 'package one.two'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(8,15): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,11): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(12,15): 'two'
+  NO_CANDIDATES
+
+KtImportList(17,48): 'import one.two.Base.NestedClass'
+  NO_CANDIDATES
+
+KtImportDirective(17,48): 'import one.two.Base.NestedClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(24,48): 'one.two.Base.NestedClass'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(24,36): 'one.two.Base'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(24,31): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(24,27): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(28,31): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(32,36): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(37,48): 'NestedClass'
+  NO_CANDIDATES
+
+KtClass(50,140): 'open class Base<B : Base.NestedClass> {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(50,54): 'open'
+  NO_CANDIDATES
+
+KtTypeParameterList(65,87): '<B : Base.NestedClass>'
+  NO_CANDIDATES
+
+KtTypeParameter(66,86): 'B : Base.NestedClass'
+  NO_CANDIDATES
+
+KtTypeReference(70,86): 'Base.NestedClass'
+  NO_CANDIDATES
+
+KtUserType(70,86): 'Base.NestedClass'
+  NO_CANDIDATES
+
+KtUserType(70,74): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(70,74): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(75,86): 'NestedClass'
+  NO_CANDIDATES
+
+KtClassBody(88,140): '{'
+  NO_CANDIDATES
+
+KtClass(94,116): 'open class NestedClass'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(94,98): 'open'
+  NO_CANDIDATES
+
+KtClass(121,138): 'inner class Inner'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(121,126): 'inner'
+  NO_CANDIDATES
+
+KtClass(142,279): 'class Child<C : one.two.Base.NestedClass> : Base<C>() {'
+  NO_CANDIDATES
+
+KtTypeParameterList(153,183): '<C : one.two.Base.NestedClass>'
+  NO_CANDIDATES
+
+KtTypeParameter(154,182): 'C : one.two.Base.NestedClass'
+  NO_CANDIDATES
+
+KtTypeReference(158,182): 'one.two.Base.NestedClass'
+  NO_CANDIDATES
+
+KtUserType(158,182): 'one.two.Base.NestedClass'
+  NO_CANDIDATES
+
+KtUserType(158,170): 'one.two.Base'
+  NO_CANDIDATES
+
+KtUserType(158,165): 'one.two'
+  NO_CANDIDATES
+
+KtUserType(158,161): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(158,161): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(162,165): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(166,170): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(171,182): 'NestedClass'
+  NO_CANDIDATES
+
+KtSuperTypeList(186,195): 'Base<C>()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(186,195): 'Base<C>()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = one.two.Base<B>
+          symbol = <constructor>(): one.two.Base<B>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {
+        B -> (C)
+      }
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(186,193): 'Base<C>'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = one.two.Base<B>
+          symbol = <constructor>(): one.two.Base<B>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {
+        B -> (C)
+      }
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(186,193): 'Base<C>'
+  NO_CANDIDATES
+
+KtUserType(186,193): 'Base<C>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(186,190): 'Base'
+  NO_CANDIDATES
+
+KtTypeArgumentList(190,193): '<C>'
+  NO_CANDIDATES
+
+KtTypeProjection(191,192): 'C'
+  NO_CANDIDATES
+
+KtTypeReference(191,192): 'C'
+  NO_CANDIDATES
+
+KtUserType(191,192): 'C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(191,192): 'C'
+  NO_CANDIDATES
+
+KtValueArgumentList(193,195): '()'
+  NO_CANDIDATES
+
+KtClassBody(196,279): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(202,237): 'fun function(): NestedClass? = null'
+  NO_CANDIDATES
+
+KtParameterList(214,216): '()'
+  NO_CANDIDATES
+
+KtTypeReference(218,230): 'NestedClass?'
+  NO_CANDIDATES
+
+KtNullableType(218,230): 'NestedClass?'
+  NO_CANDIDATES
+
+KtUserType(218,229): 'NestedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(218,229): 'NestedClass'
+  NO_CANDIDATES
+
+KtConstantExpression(233,237): 'null'
+  NO_CANDIDATES
+
+KtNamedFunction(242,277): 'fun classTypeParameter(): C? = null'
+  NO_CANDIDATES
+
+KtParameterList(264,266): '()'
+  NO_CANDIDATES
+
+KtTypeReference(268,270): 'C?'
+  NO_CANDIDATES
+
+KtNullableType(268,270): 'C?'
+  NO_CANDIDATES
+
+KtUserType(268,269): 'C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(268,269): 'C'
+  NO_CANDIDATES
+
+KtConstantExpression(273,277): 'null'
+  NO_CANDIDATES
+
+KtNamedFunction(281,434): 'fun local(c1: Child<NestedClass>, c2: one.two.Child<one.two.Base.NestedClass>) {'
+  NO_CANDIDATES
+
+KtParameterList(290,359): '(c1: Child<NestedClass>, c2: one.two.Child<one.two.Base.NestedClass>)'
+  NO_CANDIDATES
+
+KtParameter(291,313): 'c1: Child<NestedClass>'
+  NO_CANDIDATES
+
+KtTypeReference(295,313): 'Child<NestedClass>'
+  NO_CANDIDATES
+
+KtUserType(295,313): 'Child<NestedClass>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(295,300): 'Child'
+  NO_CANDIDATES
+
+KtTypeArgumentList(300,313): '<NestedClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(301,312): 'NestedClass'
+  NO_CANDIDATES
+
+KtTypeReference(301,312): 'NestedClass'
+  NO_CANDIDATES
+
+KtUserType(301,312): 'NestedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(301,312): 'NestedClass'
+  NO_CANDIDATES
+
+KtParameter(315,358): 'c2: one.two.Child<one.two.Base.NestedClass>'
+  NO_CANDIDATES
+
+KtTypeReference(319,358): 'one.two.Child<one.two.Base.NestedClass>'
+  NO_CANDIDATES
+
+KtUserType(319,358): 'one.two.Child<one.two.Base.NestedClass>'
+  NO_CANDIDATES
+
+KtUserType(319,326): 'one.two'
+  NO_CANDIDATES
+
+KtUserType(319,322): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(319,322): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(323,326): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(327,332): 'Child'
+  NO_CANDIDATES
+
+KtTypeArgumentList(332,358): '<one.two.Base.NestedClass>'
+  NO_CANDIDATES
+
+KtTypeProjection(333,357): 'one.two.Base.NestedClass'
+  NO_CANDIDATES
+
+KtTypeReference(333,357): 'one.two.Base.NestedClass'
+  NO_CANDIDATES
+
+KtUserType(333,357): 'one.two.Base.NestedClass'
+  NO_CANDIDATES
+
+KtUserType(333,345): 'one.two.Base'
+  NO_CANDIDATES
+
+KtUserType(333,340): 'one.two'
+  NO_CANDIDATES
+
+KtUserType(333,336): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(333,336): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(337,340): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(341,345): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(346,357): 'NestedClass'
+  NO_CANDIDATES
+
+KtBlockExpression(360,434): '{'
+  NO_CANDIDATES
+
+KtProperty(366,405): 'val nested: NestedClass = NestedClass()'
+  NO_CANDIDATES
+
+KtTypeReference(378,389): 'NestedClass'
+  NO_CANDIDATES
+
+KtUserType(378,389): 'NestedClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(378,389): 'NestedClass'
+  NO_CANDIDATES
+
+KtCallExpression(392,405): 'NestedClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = one.two.Base.NestedClass
+          symbol = <constructor>(): one.two.Base.NestedClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(392,403): 'NestedClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = one.two.Base.NestedClass
+          symbol = <constructor>(): one.two.Base.NestedClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(403,405): '()'
+  NO_CANDIDATES
+
+KtProperty(410,432): 'val inner = c1.Inner()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(422,432): 'c1.Inner()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = c1
+          isSafeNavigation = false
+          type = one.two.Child<one.two.Base.NestedClass>
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = one.two.Base.Inner<B>
+          symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(422,424): 'c1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableLikeSignature:
+          name = c1
+          receiverType = null
+          returnType = one.two.Child<one.two.Base.NestedClass>
+          symbol = c1: one.two.Child<one.two.Base.NestedClass>
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(425,432): 'Inner()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = c1
+          isSafeNavigation = false
+          type = one.two.Child<one.two.Base.NestedClass>
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = one.two.Base.Inner<B>
+          symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(425,430): 'Inner'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = c1
+          isSafeNavigation = false
+          type = one.two.Child<one.two.Base.NestedClass>
+        extensionReceiver = null
+        signature = KaFunctionLikeSignature:
+          receiverType = null
+          returnType = one.two.Base.Inner<B>
+          symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(430,432): '()'
+  NO_CANDIDATES

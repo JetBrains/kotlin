@@ -1,0 +1,182 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,335): '// WITH_STDLIB'
+  null
+
+KtTypeReference(71,80): 'JavaClass'
+  null
+
+KtUserType(71,80): 'JavaClass'
+  null
+
+KtNameReferenceExpression(71,80): 'JavaClass'
+  null
+
+KtParameterList(84,106): '(javaClass: JavaClass)'
+  null
+
+KtParameter(85,105): 'javaClass: JavaClass'
+  null
+
+KtTypeReference(96,105): 'JavaClass'
+  null
+
+KtUserType(96,105): 'JavaClass'
+  null
+
+KtNameReferenceExpression(96,105): 'JavaClass'
+  null
+
+KtBlockExpression(107,335): '{'
+  null
+
+KtCallExpression(113,139): 'print(javaClass.something)'
+  null
+
+KtNameReferenceExpression(113,118): 'print'
+  null
+
+KtValueArgumentList(118,139): '(javaClass.something)'
+  null
+
+KtValueArgument(119,138): 'javaClass.something'
+  null
+
+KtDotQualifiedExpression(119,138): 'javaClass.something'
+  null
+
+KtNameReferenceExpression(119,128): 'javaClass'
+  null
+
+KtNameReferenceExpression(129,138): 'something'
+  null
+
+KtBinaryExpression(144,167): 'javaClass.something = 1'
+  null
+
+KtDotQualifiedExpression(144,163): 'javaClass.something'
+  null
+
+KtNameReferenceExpression(144,153): 'javaClass'
+  null
+
+KtNameReferenceExpression(154,163): 'something'
+  null
+
+KtOperationReferenceExpression(164,165): '='
+  null
+
+KtConstantExpression(166,167): '1'
+  null
+
+KtBinaryExpression(172,196): 'javaClass.something += 1'
+  null
+
+KtDotQualifiedExpression(172,191): 'javaClass.something'
+  null
+
+KtNameReferenceExpression(172,181): 'javaClass'
+  null
+
+KtNameReferenceExpression(182,191): 'something'
+  null
+
+KtOperationReferenceExpression(192,194): '+='
+  null
+
+KtConstantExpression(195,196): '1'
+  null
+
+KtPostfixExpression(201,222): 'javaClass.something++'
+  null
+
+KtDotQualifiedExpression(201,220): 'javaClass.something'
+  null
+
+KtNameReferenceExpression(201,210): 'javaClass'
+  null
+
+KtNameReferenceExpression(211,220): 'something'
+  null
+
+KtOperationReferenceExpression(220,222): '++'
+  null
+
+KtPrefixExpression(227,248): '--javaClass.something'
+  null
+
+KtOperationReferenceExpression(227,229): '--'
+  null
+
+KtDotQualifiedExpression(229,248): 'javaClass.something'
+  null
+
+KtNameReferenceExpression(229,238): 'javaClass'
+  null
+
+KtNameReferenceExpression(239,248): 'something'
+  null
+
+KtPostfixExpression(254,265): 'something++'
+  null
+
+KtNameReferenceExpression(254,263): 'something'
+  null
+
+KtOperationReferenceExpression(263,265): '++'
+  null
+
+KtPostfixExpression(270,283): '(something)++'
+  null
+
+KtParenthesizedExpression(270,281): '(something)'
+  null
+
+KtNameReferenceExpression(271,280): 'something'
+  null
+
+KtOperationReferenceExpression(281,283): '++'
+  null
+
+KtBinaryExpression(288,303): '(something) = 1'
+  null
+
+KtParenthesizedExpression(288,299): '(something)'
+  null
+
+KtNameReferenceExpression(289,298): 'something'
+  null
+
+KtOperationReferenceExpression(300,301): '='
+  null
+
+KtConstantExpression(302,303): '1'
+  null
+
+KtBinaryExpression(308,333): '(javaClass.something) = 1'
+  null
+
+KtParenthesizedExpression(308,329): '(javaClass.something)'
+  null
+
+KtDotQualifiedExpression(309,328): 'javaClass.something'
+  null
+
+KtNameReferenceExpression(309,318): 'javaClass'
+  null
+
+KtNameReferenceExpression(319,328): 'something'
+  null
+
+KtOperationReferenceExpression(330,331): '='
+  null
+
+KtConstantExpression(332,333): '1'
+  null

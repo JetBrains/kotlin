@@ -1,0 +1,85 @@
+KtNameReferenceExpression(8,9): 'f'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(43,46): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(57,60): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(76,90): 'IntProgression'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(113,121): 'Iterator'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(122,125): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(147,151): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(151,160): '@iterator'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(161,166): 'start'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(196,203): 'current'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(204,206): '<='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(207,211): 'this'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtLabelReferenceExpression(211,220): '@iterator'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(221,224): 'end'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(250,253): 'Int'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(256,263): 'current'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(263,265): '++'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtForExpression(287,328): 'for (i in IntProgression(1, 10)) {'
+  KtForLoopInReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(297,318): 'IntProgression(1, 10)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(297,311): 'IntProgression'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

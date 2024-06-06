@@ -1,0 +1,137 @@
+KtFile: 'labels.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,44): 'fun foo(action: () -> Unit) {'
+  null
+
+KtParameterList(7,27): '(action: () -> Unit)'
+  null
+
+KtParameter(8,26): 'action: () -> Unit'
+  null
+
+KtTypeReference(16,26): '() -> Unit'
+  null
+
+KtFunctionType(16,26): '() -> Unit'
+  null
+
+KtParameterList(16,18): '()'
+  null
+
+KtTypeReference(22,26): 'Unit'
+  null
+
+KtUserType(22,26): 'Unit'
+  null
+
+KtNameReferenceExpression(22,26): 'Unit'
+  null
+
+KtBlockExpression(28,44): '{'
+  null
+
+KtCallExpression(34,42): 'action()'
+  null
+
+KtNameReferenceExpression(34,40): 'action'
+  null
+
+KtValueArgumentList(40,42): '()'
+  null
+
+KtNamedFunction(46,163): 'fun usage() {'
+  null
+
+KtParameterList(55,57): '()'
+  null
+
+KtBlockExpression(58,163): '{'
+  null
+
+KtCallExpression(64,102): 'foo label@{'
+  null
+
+KtNameReferenceExpression(64,67): 'foo'
+  null
+
+KtLambdaArgument(68,102): 'label@{'
+  null
+
+KtLabeledExpression(68,102): 'label@{'
+  null
+
+KtContainerNode(68,74): 'label@'
+  null
+
+KtLabelReferenceExpression(68,74): 'label@'
+  null
+
+KtLambdaExpression(74,102): '{'
+  null
+
+KtFunctionLiteral(74,102): '{'
+  null
+
+KtBlockExpression(84,96): 'return@label'
+  null
+
+KtReturnExpression(84,96): 'return@label'
+  null
+
+KtContainerNode(90,96): '@label'
+  null
+
+KtLabelReferenceExpression(90,96): '@label'
+  null
+
+KtLabeledExpression(108,161): 'myFor@ for (i in 0..1) {'
+  null
+
+KtContainerNode(108,114): 'myFor@'
+  null
+
+KtLabelReferenceExpression(108,114): 'myFor@'
+  null
+
+KtForExpression(115,161): 'for (i in 0..1) {'
+  null
+
+KtParameter(120,121): 'i'
+  null
+
+KtContainerNode(125,129): '0..1'
+  null
+
+KtBinaryExpression(125,129): '0..1'
+  null
+
+KtConstantExpression(125,126): '0'
+  null
+
+KtOperationReferenceExpression(126,128): '..'
+  null
+
+KtConstantExpression(128,129): '1'
+  null
+
+KtContainerNodeForControlStructureBody(131,161): '{'
+  null
+
+KtBlockExpression(131,161): '{'
+  null
+
+KtContinueExpression(141,155): 'continue@myFor'
+  null
+
+KtContainerNode(149,155): '@myFor'
+  null
+
+KtLabelReferenceExpression(149,155): '@myFor'
+  null
