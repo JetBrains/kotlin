@@ -15,8 +15,9 @@ import org.jetbrains.kotlin.objcexport.Predefined.objCReservedNameMethodSelector
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
 import org.jetbrains.kotlin.objcexport.extras.objCExportStubExtras
 import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
+import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal val KtCallableSymbol.isConstructor: Boolean
+internal val KaSymbol.isConstructor: Boolean
     get() = this is KtConstructorSymbol
 
 context(KtAnalysisSession, KtObjCExportSession)
@@ -71,10 +72,7 @@ internal fun KtFunctionLikeSymbol.buildObjCMethod(
     if (unavailable) {
         attributes += "unavailable"
     } else {
-        /**
-         * Implement and use [org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver]
-         */
-        //attributes.addIfNotNull(getDeprecationAttribute(method))
+        attributes.addIfNotNull(getObjCDeprecationStatus())
     }
 
     val isMethodInstance = if (isExtensionOfMappedObjCType) false else bridge.isInstance

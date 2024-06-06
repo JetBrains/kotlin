@@ -302,7 +302,7 @@ __attribute__((objc_subclassing_restricted))
 @property (class, readonly, getter=companion) FixedOffsetTimeZoneCompanion *companion __attribute__((swift_name("companion")));
 @property (readonly) NSString *id __attribute__((swift_name("id")));
 @property (readonly) UtcOffset *offset __attribute__((swift_name("offset")));
-@property (readonly) int32_t totalSeconds __attribute__((swift_name("totalSeconds")));
+@property (readonly) int32_t totalSeconds __attribute__((swift_name("totalSeconds"))) __attribute__((deprecated("Use offset.totalSeconds")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -357,8 +357,7 @@ __attribute__((swift_name("Instant.Companion")))
 - (Instant *)fromEpochMillisecondsEpochMilliseconds:(int64_t)epochMilliseconds __attribute__((swift_name("fromEpochMilliseconds(epochMilliseconds:)")));
 - (Instant *)fromEpochSecondsEpochSeconds:(int64_t)epochSeconds nanosecondAdjustment:(int32_t)nanosecondAdjustment __attribute__((swift_name("fromEpochSeconds(epochSeconds:nanosecondAdjustment:)")));
 - (Instant *)fromEpochSecondsEpochSeconds:(int64_t)epochSeconds nanosecondAdjustment_:(int64_t)nanosecondAdjustment __attribute__((swift_name("fromEpochSeconds(epochSeconds:nanosecondAdjustment_:)")));
-- (Instant *)now __attribute__((swift_name("now()")));
-- (Instant *)parseIsoString:(NSString *)isoString __attribute__((swift_name("parse(isoString:)")));
+- (Instant *)now __attribute__((swift_name("now()"))) __attribute__((unavailable("Use Clock.System.now() instead")));
 - (Instant *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
 - (KSerializer<Instant *> *)serializer __attribute__((swift_name("serializer()")));
 @property (readonly) Instant *DISTANT_FUTURE __attribute__((swift_name("DISTANT_FUTURE")));
@@ -392,7 +391,6 @@ __attribute__((swift_name("LocalDate.Companion")))
 @property (class, readonly, getter=shared) LocalDateCompanion *shared __attribute__((swift_name("shared")));
 - (id<DateTimeFormat>)FormatBlock:(void (^)(id<DateTimeFormatBuilderWithDate>))block __attribute__((swift_name("Format(block:)")));
 - (LocalDate *)fromEpochDaysEpochDays:(int32_t)epochDays __attribute__((swift_name("fromEpochDays(epochDays:)")));
-- (LocalDate *)parseIsoString:(NSString *)isoString __attribute__((swift_name("parse(isoString:)")));
 - (LocalDate *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
 - (KSerializer<LocalDate *> *)serializer __attribute__((swift_name("serializer()")));
 @end
@@ -440,7 +438,6 @@ __attribute__((swift_name("LocalDateTime.Companion")))
 + (instancetype)companion __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) LocalDateTimeCompanion *shared __attribute__((swift_name("shared")));
 - (id<DateTimeFormat>)FormatBuilder:(void (^)(id<DateTimeFormatBuilderWithDateTime>))builder __attribute__((swift_name("Format(builder:)")));
-- (LocalDateTime *)parseIsoString:(NSString *)isoString __attribute__((swift_name("parse(isoString:)")));
 - (LocalDateTime *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
 - (KSerializer<LocalDateTime *> *)serializer __attribute__((swift_name("serializer()")));
 @end
@@ -483,7 +480,6 @@ __attribute__((swift_name("LocalTime.Companion")))
 - (LocalTime *)fromMillisecondOfDayMillisecondOfDay:(int32_t)millisecondOfDay __attribute__((swift_name("fromMillisecondOfDay(millisecondOfDay:)")));
 - (LocalTime *)fromNanosecondOfDayNanosecondOfDay:(int64_t)nanosecondOfDay __attribute__((swift_name("fromNanosecondOfDay(nanosecondOfDay:)")));
 - (LocalTime *)fromSecondOfDaySecondOfDay:(int32_t)secondOfDay __attribute__((swift_name("fromSecondOfDay(secondOfDay:)")));
-- (LocalTime *)parseIsoString:(NSString *)isoString __attribute__((swift_name("parse(isoString:)")));
 - (LocalTime *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
 - (KSerializer<LocalTime *> *)serializer __attribute__((swift_name("serializer()")));
 @end
@@ -550,7 +546,6 @@ __attribute__((swift_name("UtcOffset.Companion")))
 + (instancetype)companion __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) UtcOffsetCompanion *shared __attribute__((swift_name("shared")));
 - (id<DateTimeFormat>)FormatBlock:(void (^)(id<DateTimeFormatBuilderWithUtcOffset>))block __attribute__((swift_name("Format(block:)")));
-- (UtcOffset *)parseOffsetString:(NSString *)offsetString __attribute__((swift_name("parse(offsetString:)")));
 - (UtcOffset *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
 - (KSerializer<UtcOffset *> *)serializer __attribute__((swift_name("serializer()")));
 @property (readonly) UtcOffset *ZERO __attribute__((swift_name("ZERO")));
@@ -1019,11 +1014,11 @@ __attribute__((objc_subclassing_restricted))
 @interface Instant (Extensions)
 - (int32_t)daysUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("daysUntil(other:timeZone:)")));
 - (NSString *)formatFormat:(id<DateTimeFormat>)format offset:(UtcOffset *)offset __attribute__((swift_name("format(format:offset:)")));
-- (Instant *)minusUnit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(unit:)")));
+- (Instant *)minusUnit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(unit:)"))) __attribute__((deprecated("Use the minus overload with an explicit number of units")));
 - (Instant *)minusValue:(int32_t)value unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(value:unit:)")));
 - (Instant *)minusValue:(int64_t)value unit_:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(value:unit_:)")));
 - (Instant *)minusPeriod:(DateTimePeriod *)period timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(period:timeZone:)")));
-- (Instant *)minusUnit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(unit:timeZone:)")));
+- (Instant *)minusUnit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(unit:timeZone:)"))) __attribute__((deprecated("Use the minus overload with an explicit number of units")));
 - (int64_t)minusOther:(Instant *)other unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(other:unit:)")));
 - (DateTimePeriod *)minusOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(other:timeZone:)")));
 - (Instant *)minusValue:(int32_t)value unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("minus(value:unit:timeZone:)")));
@@ -1032,11 +1027,11 @@ __attribute__((objc_subclassing_restricted))
 - (int32_t)monthsUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("monthsUntil(other:timeZone:)")));
 - (UtcOffset *)offsetInTimeZone:(TimeZone *)timeZone __attribute__((swift_name("offsetIn(timeZone:)")));
 - (DateTimePeriod *)periodUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("periodUntil(other:timeZone:)")));
-- (Instant *)plusUnit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("plus(unit:)")));
+- (Instant *)plusUnit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("plus(unit:)"))) __attribute__((deprecated("Use the plus overload with an explicit number of units")));
 - (Instant *)plusValue:(int32_t)value unit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("plus(value:unit:)")));
 - (Instant *)plusValue:(int64_t)value unit_:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("plus(value:unit_:)")));
 - (Instant *)plusPeriod:(DateTimePeriod *)period timeZone:(TimeZone *)timeZone __attribute__((swift_name("plus(period:timeZone:)")));
-- (Instant *)plusUnit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("plus(unit:timeZone:)")));
+- (Instant *)plusUnit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("plus(unit:timeZone:)"))) __attribute__((deprecated("Use the plus overload with an explicit number of units")));
 - (Instant *)plusValue:(int32_t)value unit:(DateTimeUnit *)unit timeZone:(TimeZone *)timeZone __attribute__((swift_name("plus(value:unit:timeZone:)")));
 - (Instant *)plusValue:(int64_t)value unit:(DateTimeUnit *)unit timeZone_:(TimeZone *)timeZone __attribute__((swift_name("plus(value:unit:timeZone_:)")));
 - (LocalDateTime *)toLocalDateTimeTimeZone:(TimeZone *)timeZone __attribute__((swift_name("toLocalDateTime(timeZone:)")));
@@ -1055,14 +1050,14 @@ __attribute__((objc_subclassing_restricted))
 - (int32_t)daysUntilOther:(LocalDate *)other __attribute__((swift_name("daysUntil(other:)")));
 - (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
 - (LocalDate *)minusPeriod:(DatePeriod *)period __attribute__((swift_name("minus(period:)")));
-- (LocalDate *)minusUnit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("minus(unit:)")));
+- (LocalDate *)minusUnit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("minus(unit:)"))) __attribute__((deprecated("Use the minus overload with an explicit number of units")));
 - (DatePeriod *)minusOther:(LocalDate *)other __attribute__((swift_name("minus(other:)")));
 - (LocalDate *)minusValue:(int32_t)value unit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("minus(value:unit:)")));
 - (LocalDate *)minusValue:(int64_t)value unit_:(DateTimeUnitDateBased *)unit __attribute__((swift_name("minus(value:unit_:)")));
 - (int32_t)monthsUntilOther:(LocalDate *)other __attribute__((swift_name("monthsUntil(other:)")));
 - (DatePeriod *)periodUntilOther:(LocalDate *)other __attribute__((swift_name("periodUntil(other:)")));
 - (LocalDate *)plusPeriod:(DatePeriod *)period __attribute__((swift_name("plus(period:)")));
-- (LocalDate *)plusUnit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(unit:)")));
+- (LocalDate *)plusUnit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(unit:)"))) __attribute__((deprecated("Use the plus overload with an explicit number of units")));
 - (LocalDate *)plusValue:(int32_t)value unit:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(value:unit:)")));
 - (LocalDate *)plusValue:(int64_t)value unit_:(DateTimeUnitDateBased *)unit __attribute__((swift_name("plus(value:unit_:)")));
 - (NSDateComponents *)toNSDateComponents __attribute__((swift_name("toNSDateComponents()")));
@@ -1126,7 +1121,7 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.time.ExperimentalTime
 */
 + (id<KotlinTimeSourceWithComparableMarks>)asTimeSource:(id<Clock>)receiver __attribute__((swift_name("asTimeSource(_:)")));
-+ (LocalDate *)todayAt:(id<Clock>)receiver timeZone:(TimeZone *)timeZone __attribute__((swift_name("todayAt(_:timeZone:)")));
++ (LocalDate *)todayAt:(id<Clock>)receiver timeZone:(TimeZone *)timeZone __attribute__((swift_name("todayAt(_:timeZone:)"))) __attribute__((deprecated("Use Clock.todayIn instead")));
 + (LocalDate *)todayIn:(id<Clock>)receiver timeZone:(TimeZone *)timeZone __attribute__((swift_name("todayIn(_:timeZone:)")));
 @end
 
@@ -1145,8 +1140,8 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((objc_subclassing_restricted))
 @interface DateTimePeriodKt : Base
 + (DateTimePeriod *)DateTimePeriodYears:(int32_t)years months:(int32_t)months days:(int32_t)days hours:(int32_t)hours minutes:(int32_t)minutes seconds:(int32_t)seconds nanoseconds:(int64_t)nanoseconds __attribute__((swift_name("DateTimePeriod(years:months:days:hours:minutes:seconds:nanoseconds:)")));
-+ (DatePeriod *)toDatePeriod:(NSString *)receiver __attribute__((swift_name("toDatePeriod(_:)")));
-+ (DateTimePeriod *)toDateTimePeriod:(NSString *)receiver __attribute__((swift_name("toDateTimePeriod(_:)")));
++ (DatePeriod *)toDatePeriod:(NSString *)receiver __attribute__((swift_name("toDatePeriod(_:)"))) __attribute__((deprecated("Removed to support more idiomatic code. See https://github.com/Kotlin/kotlinx-datetime/issues/339")));
++ (DateTimePeriod *)toDateTimePeriod:(NSString *)receiver __attribute__((swift_name("toDateTimePeriod(_:)"))) __attribute__((deprecated("Removed to support more idiomatic code. See https://github.com/Kotlin/kotlinx-datetime/issues/339")));
 + (DateTimePeriod *)toDateTimePeriod_:(int64_t)receiver __attribute__((swift_name("toDateTimePeriod(__:)")));
 @end
 
@@ -1157,22 +1152,22 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface InstantKt : Base
-+ (Instant *)toInstant:(NSString *)receiver __attribute__((swift_name("toInstant(_:)")));
++ (Instant *)toInstant:(NSString *)receiver __attribute__((swift_name("toInstant(_:)"))) __attribute__((deprecated("Removed to support more idiomatic code. See https://github.com/Kotlin/kotlinx-datetime/issues/339")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface LocalDateKt : Base
-+ (LocalDate *)toLocalDate:(NSString *)receiver __attribute__((swift_name("toLocalDate(_:)")));
++ (LocalDate *)toLocalDate:(NSString *)receiver __attribute__((swift_name("toLocalDate(_:)"))) __attribute__((deprecated("Removed to support more idiomatic code. See https://github.com/Kotlin/kotlinx-datetime/issues/339")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface LocalDateTimeKt : Base
-+ (LocalDateTime *)toLocalDateTime:(NSString *)receiver __attribute__((swift_name("toLocalDateTime(_:)")));
++ (LocalDateTime *)toLocalDateTime:(NSString *)receiver __attribute__((swift_name("toLocalDateTime(_:)"))) __attribute__((deprecated("Removed to support more idiomatic code. See https://github.com/Kotlin/kotlinx-datetime/issues/339")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface LocalTimeKt : Base
-+ (LocalTime *)toLocalTime:(NSString *)receiver __attribute__((swift_name("toLocalTime(_:)")));
++ (LocalTime *)toLocalTime:(NSString *)receiver __attribute__((swift_name("toLocalTime(_:)"))) __attribute__((deprecated("Removed to support more idiomatic code. See https://github.com/Kotlin/kotlinx-datetime/issues/339")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1192,7 +1187,7 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface UtcOffsetKt : Base
-+ (UtcOffset *)UtcOffset __attribute__((swift_name("UtcOffset()")));
++ (UtcOffset *)UtcOffset __attribute__((swift_name("UtcOffset()"))) __attribute__((unavailable("Use UtcOffset.ZERO instead")));
 + (UtcOffset *)UtcOffsetHours:(Int * _Nullable)hours minutes:(Int * _Nullable)minutes seconds:(Int * _Nullable)seconds __attribute__((swift_name("UtcOffset(hours:minutes:seconds:)")));
 @end
 

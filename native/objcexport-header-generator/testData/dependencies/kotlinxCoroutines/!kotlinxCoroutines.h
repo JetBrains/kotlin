@@ -6,9 +6,9 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class KotlinThrowable, KotlinCancellationException, JobSupport, CoroutineStart, CoroutineDispatcher, KotlinAbstractCoroutineContextElement, CoroutineDispatcherKey, KotlinArray<T>, KotlinException, KotlinRuntimeException, KotlinAbstractCoroutineContextKey<B, E>, CoroutineExceptionHandlerKey, CoroutineNameKey, CoroutineName, KotlinEnumCompanion, KotlinEnum<E>, Dispatchers, MainCoroutineDispatcher, GlobalScope, JobKey, NonCancellable, NonDisposableHandle, KotlinIllegalStateException, TimeoutCancellationException, BufferOverflow, ChannelFactory, KotlinNoSuchElementException, SharingCommand, SharingStartedCompanion, ChannelFlow<T>, AtomicOp<__contravariant T>, OpDescriptor, LockFreeLinkedListNode, SynchronizedObject, ThreadSafeHeap<T>, KotlinUnit, KotlinIntIterator, KotlinIntArray, KotlinLongIterator, KotlinLongArray, KotlinIntProgressionCompanion, KotlinIntProgression, KotlinIntRangeCompanion, KotlinIntRange, KotlinLongProgressionCompanion, KotlinLongProgression, KotlinLongRangeCompanion, KotlinLongRange, KotlinNothing, CloseableCoroutineDispatcher;
+@class KotlinCancellationException, KotlinThrowable, JobSupport, CoroutineStart, CoroutineDispatcher, KotlinAbstractCoroutineContextElement, CoroutineDispatcherKey, KotlinArray<T>, KotlinException, KotlinRuntimeException, KotlinAbstractCoroutineContextKey<B, E>, CoroutineExceptionHandlerKey, CoroutineNameKey, CoroutineName, KotlinEnumCompanion, KotlinEnum<E>, Dispatchers, MainCoroutineDispatcher, GlobalScope, JobKey, NonCancellable, NonDisposableHandle, KotlinIllegalStateException, TimeoutCancellationException, BufferOverflow, ChannelFactory, KotlinNoSuchElementException, SharingCommand, SharingStartedCompanion, ChannelFlow<T>, AtomicOp<__contravariant T>, OpDescriptor, LockFreeLinkedListNode, SynchronizedObject, ThreadSafeHeap<T>, KotlinUnit, KotlinIntIterator, KotlinIntArray, KotlinLongIterator, KotlinLongArray, KotlinIntProgressionCompanion, KotlinIntProgression, KotlinIntRangeCompanion, KotlinIntRange, KotlinLongProgressionCompanion, KotlinLongProgression, KotlinLongRangeCompanion, KotlinLongRange, KotlinNothing, CloseableCoroutineDispatcher;
 
-@protocol ChildHandle, ChildJob, DisposableHandle, Job, KotlinSequence, SelectClause0, KotlinCoroutineContextKey, KotlinCoroutineContextElement, KotlinCoroutineContext, ParentJob, SelectClause1, KotlinContinuation, CoroutineScope, KotlinSuspendFunction1, KotlinContinuationInterceptor, Runnable, Deferred, KotlinComparable, CancellableContinuation, CopyableThrowable, ReceiveChannel, SelectClause2, SendChannel, ChannelIterator, BroadcastChannel, FlowCollector, Flow, StateFlow, SharedFlow, MutableSharedFlow, SharingStarted, FusibleFlow, ProducerScope, MainDispatcherFactory, KotlinSuspendFunction0, SelectInstance, SelectClause, KotlinIterator, KotlinIterable, KotlinClosedRange, KotlinOpenEndRange, Channel, KotlinSuspendFunction2, CompletableDeferred, CoroutineExceptionHandler, KotlinComparator, KotlinSuspendFunction3, CompletableJob, KotlinSuspendFunction4, KotlinSuspendFunction5, Mutex, SelectBuilder, Semaphore, MutableStateFlow, KotlinKClass, KotlinSuspendFunction6, KotlinFunction, KotlinKDeclarationContainer, KotlinKAnnotatedElement, KotlinKClassifier;
+@protocol ChildHandle, ChildJob, DisposableHandle, Job, KotlinSequence, SelectClause0, KotlinCoroutineContextKey, KotlinCoroutineContextElement, KotlinCoroutineContext, ParentJob, SelectClause1, KotlinContinuation, CoroutineScope, KotlinSuspendFunction1, KotlinContinuationInterceptor, Runnable, Deferred, KotlinComparable, CancellableContinuation, CopyableThrowable, ReceiveChannel, SelectClause2, SendChannel, ChannelIterator, BroadcastChannel, FlowCollector, Flow, StateFlow, SharedFlow, MutableSharedFlow, SharingStarted, FusibleFlow, ProducerScope, MainDispatcherFactory, KotlinSuspendFunction0, SelectInstance, SelectClause, KotlinIterator, KotlinIterable, KotlinClosedRange, KotlinOpenEndRange, Channel, KotlinSuspendFunction2, CompletableDeferred, CoroutineExceptionHandler, KotlinSuspendFunction3, CompletableJob, KotlinSuspendFunction4, KotlinSuspendFunction5, Mutex, SelectBuilder, Semaphore, MutableStateFlow, KotlinKClass, KotlinSuspendFunction6, KotlinFunction, KotlinKDeclarationContainer, KotlinKAnnotatedElement, KotlinKClassifier;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
@@ -43,9 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol Job <KotlinCoroutineContextElement>
 @required
 - (id<ChildHandle>)attachChildChild:(id<ChildJob>)child __attribute__((swift_name("attachChild(child:)")));
-- (void)cancel __attribute__((swift_name("cancel()")));
-- (BOOL)cancelCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
-- (void)cancelCause_:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause_:)")));
+- (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
 - (KotlinCancellationException *)getCancellationException __attribute__((swift_name("getCancellationException()")));
 - (id<DisposableHandle>)invokeOnCompletionHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(handler:)")));
 - (id<DisposableHandle>)invokeOnCompletionOnCancelling:(BOOL)onCancelling invokeImmediately:(BOOL)invokeImmediately handler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(onCancelling:invokeImmediately:handler:)")));
@@ -55,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Other uncaught Kotlin exceptions are fatal.
 */
 - (void)joinWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("join(completionHandler:)")));
-- (id<Job>)plusOther:(id<Job>)other __attribute__((swift_name("plus(other:)")));
+- (id<Job>)plusOther:(id<Job>)other __attribute__((swift_name("plus(other:)"))) __attribute__((unavailable("Operator '+' on two Job objects is meaningless. Job is a coroutine context element and `+` is a set-sum operator for coroutine contexts. The job to the right of `+` just replaces the job the left of `+`.")));
 - (BOOL)start __attribute__((swift_name("start()")));
 @property (readonly) id<KotlinSequence> children __attribute__((swift_name("children")));
 @property (readonly) BOOL isActive __attribute__((swift_name("isActive")));
@@ -81,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface JobSupport : Base <Job, ChildJob, ParentJob>
-- (instancetype)initWithActive:(BOOL)active __attribute__((swift_name("init(active:)"))) __attribute__((objc_designated_initializer));
+- (instancetype)initWithActive:(BOOL)active __attribute__((swift_name("init(active:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable("This is internal API and may be removed in the future releases")));
 
 /**
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
@@ -95,8 +93,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
 - (void)awaitInternalWithCompletionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("awaitInternal(completionHandler:)")));
-- (BOOL)cancelCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
-- (void)cancelCause_:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause_:)")));
+- (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
 - (BOOL)cancelCoroutineCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancelCoroutine(cause:)")));
 - (void)cancelInternalCause:(KotlinThrowable *)cause __attribute__((swift_name("cancelInternal(cause:)")));
 
@@ -233,7 +230,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol CancellableContinuation <KotlinContinuation>
 @required
-- (BOOL)cancelCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
+- (BOOL)cancelCause_:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(cause_:)")));
 - (void)completeResumeToken:(id)token __attribute__((swift_name("completeResume(token:)")));
 - (void)doInitCancellability __attribute__((swift_name("doInitCancellability()")));
 - (void)invokeOnCancellationHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCancellation(handler:)")));
@@ -310,7 +307,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   kotlinx.coroutines.ExperimentalCoroutinesApi
 */
 - (CoroutineDispatcher *)limitedParallelismParallelism:(int32_t)parallelism __attribute__((swift_name("limitedParallelism(parallelism:)")));
-- (CoroutineDispatcher *)plusOther_:(CoroutineDispatcher *)other __attribute__((swift_name("plus(other_:)")));
+- (CoroutineDispatcher *)plusOther_:(CoroutineDispatcher *)other __attribute__((swift_name("plus(other_:)"))) __attribute__((unavailable("Operator '+' on two CoroutineDispatcher objects is meaningless. CoroutineDispatcher is a coroutine context element and `+` is a set-sum operator for coroutine contexts. The dispatcher to the right of `+` just replaces the dispatcher to the left.")));
 - (void)releaseInterceptedContinuationContinuation:(id<KotlinContinuation>)continuation __attribute__((swift_name("releaseInterceptedContinuation(continuation:)")));
 - (NSString *)description __attribute__((swift_name("description()")));
 @end
@@ -511,7 +508,7 @@ __attribute__((objc_subclassing_restricted))
  * @note This method converts instances of CancellationException to errors.
  * Other uncaught Kotlin exceptions are fatal.
 */
-- (void)delayTime:(int64_t)time completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("delay(time:completionHandler:)")));
+- (void)delayTime:(int64_t)time completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("delay(time:completionHandler:)"))) __attribute__((unavailable("Deprecated without replacement as an internal method never intended for public use")));
 - (id<DisposableHandle>)invokeOnTimeoutTimeMillis:(int64_t)timeMillis block:(id<Runnable>)block context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("invokeOnTimeout(timeMillis:block:context:)")));
 - (void)scheduleResumeAfterDelayTimeMillis:(int64_t)timeMillis continuation:(id<CancellableContinuation>)continuation __attribute__((swift_name("scheduleResumeAfterDelay(timeMillis:continuation:)")));
 @end
@@ -569,26 +566,25 @@ __attribute__((objc_subclassing_restricted))
 - (instancetype)initWithKey:(id<KotlinCoroutineContextKey>)key __attribute__((swift_name("init(key:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)nonCancellable __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) NonCancellable *shared __attribute__((swift_name("shared")));
-- (id<ChildHandle>)attachChildChild:(id<ChildJob>)child __attribute__((swift_name("attachChild(child:)")));
-- (BOOL)cancelCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
-- (void)cancelCause_:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause_:)")));
-- (KotlinCancellationException *)getCancellationException __attribute__((swift_name("getCancellationException()")));
-- (id<DisposableHandle>)invokeOnCompletionHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(handler:)")));
-- (id<DisposableHandle>)invokeOnCompletionOnCancelling:(BOOL)onCancelling invokeImmediately:(BOOL)invokeImmediately handler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(onCancelling:invokeImmediately:handler:)")));
+- (id<ChildHandle>)attachChildChild:(id<ChildJob>)child __attribute__((swift_name("attachChild(child:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+- (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+- (KotlinCancellationException *)getCancellationException __attribute__((swift_name("getCancellationException()"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+- (id<DisposableHandle>)invokeOnCompletionHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(handler:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+- (id<DisposableHandle>)invokeOnCompletionOnCancelling:(BOOL)onCancelling invokeImmediately:(BOOL)invokeImmediately handler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnCompletion(onCancelling:invokeImmediately:handler:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
  * Other uncaught Kotlin exceptions are fatal.
 */
-- (void)joinWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("join(completionHandler:)")));
-- (BOOL)start __attribute__((swift_name("start()")));
+- (void)joinWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("join(completionHandler:)"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+- (BOOL)start __attribute__((swift_name("start()"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
 - (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) id<KotlinSequence> children __attribute__((swift_name("children")));
-@property (readonly) BOOL isActive __attribute__((swift_name("isActive")));
-@property (readonly) BOOL isCancelled __attribute__((swift_name("isCancelled")));
-@property (readonly) BOOL isCompleted __attribute__((swift_name("isCompleted")));
-@property (readonly) id<SelectClause0> onJoin __attribute__((swift_name("onJoin")));
-@property (readonly) id<Job> _Nullable parent __attribute__((swift_name("parent")));
+@property (readonly) id<KotlinSequence> children __attribute__((swift_name("children"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+@property (readonly) BOOL isActive __attribute__((swift_name("isActive"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+@property (readonly) BOOL isCancelled __attribute__((swift_name("isCancelled"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+@property (readonly) BOOL isCompleted __attribute__((swift_name("isCompleted"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+@property (readonly) id<SelectClause0> onJoin __attribute__((swift_name("onJoin"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
+@property (readonly) id<Job> _Nullable parent __attribute__((swift_name("parent"))) __attribute__((deprecated("NonCancellable can be used only as an argument for 'withContext', direct usages of its API are prohibited")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -643,7 +639,7 @@ __attribute__((objc_subclassing_restricted))
 @required
 - (BOOL)closeCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("close(cause:)")));
 - (void)invokeOnCloseHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnClose(handler:)")));
-- (BOOL)offerElement:(id _Nullable)element __attribute__((swift_name("offer(element:)")));
+- (BOOL)offerElement:(id _Nullable)element __attribute__((swift_name("offer(element:)"))) __attribute__((unavailable("Deprecated in the favour of 'trySend' method")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -667,8 +663,7 @@ __attribute__((objc_subclassing_restricted))
 */
 @protocol BroadcastChannel <SendChannel>
 @required
-- (BOOL)cancelCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
-- (void)cancelCause_:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause_:)")));
+- (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
 - (id<ReceiveChannel>)openSubscription __attribute__((swift_name("openSubscription()")));
 @end
 
@@ -686,11 +681,9 @@ __attribute__((objc_subclassing_restricted))
 
 @protocol ReceiveChannel
 @required
-- (void)cancel __attribute__((swift_name("cancel()")));
-- (BOOL)cancelCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
-- (void)cancelCause_:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause_:)")));
+- (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
 - (id<ChannelIterator>)iterator __attribute__((swift_name("iterator()")));
-- (id _Nullable)poll __attribute__((swift_name("poll()")));
+- (id _Nullable)poll __attribute__((swift_name("poll()"))) __attribute__((unavailable("Deprecated in the favour of 'tryReceive'. Please note that the provided replacement does not rethrow channel's close cause as 'poll' did, for the precise replacement please refer to the 'poll' documentation")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -708,7 +701,7 @@ __attribute__((objc_subclassing_restricted))
  * @note This method converts instances of CancellationException to errors.
  * Other uncaught Kotlin exceptions are fatal.
 */
-- (void)receiveOrNullWithCompletionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("receiveOrNull(completionHandler:)")));
+- (void)receiveOrNullWithCompletionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("receiveOrNull(completionHandler:)"))) __attribute__((unavailable("Deprecated in favor of 'receiveCatching'. Please note that the provided replacement does not rethrow channel's close cause as 'receiveOrNull' did, for the detailed replacement please refer to the 'receiveOrNull' documentation")));
 - (id _Nullable)tryReceive __attribute__((swift_name("tryReceive()")));
 
 /**
@@ -724,7 +717,7 @@ __attribute__((objc_subclassing_restricted))
 @property (readonly) BOOL isEmpty __attribute__((swift_name("isEmpty")));
 @property (readonly) id<SelectClause1> onReceive __attribute__((swift_name("onReceive")));
 @property (readonly) id<SelectClause1> onReceiveCatching __attribute__((swift_name("onReceiveCatching")));
-@property (readonly) id<SelectClause1> onReceiveOrNull __attribute__((swift_name("onReceiveOrNull")));
+@property (readonly) id<SelectClause1> onReceiveOrNull __attribute__((swift_name("onReceiveOrNull"))) __attribute__((unavailable("Deprecated in favor of onReceiveCatching extension")));
 @end
 
 @protocol Channel <SendChannel, ReceiveChannel>
@@ -753,14 +746,6 @@ __attribute__((objc_subclassing_restricted))
 */
 - (void)hasNextWithCompletionHandler:(void (^)(Boolean * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("hasNext(completionHandler:)")));
 - (id _Nullable)next __attribute__((swift_name("next()")));
-
-/**
- * @note annotations
- *   kotlin.jvm.JvmName(name="next")
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-- (void)next0WithCompletionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("next0(completionHandler:)")));
 @end
 
 @interface KotlinNoSuchElementException : KotlinRuntimeException
@@ -794,14 +779,13 @@ __attribute__((objc_subclassing_restricted))
 */
 __attribute__((objc_subclassing_restricted))
 @interface ConflatedBroadcastChannel<E> : Base <BroadcastChannel>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("ConflatedBroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (instancetype)initWithValue:(E _Nullable)value __attribute__((swift_name("init(value:)"))) __attribute__((objc_designated_initializer));
-- (BOOL)cancelCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
-- (void)cancelCause_:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause_:)")));
+- (instancetype)initWithValue:(E _Nullable)value __attribute__((swift_name("init(value:)"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("ConflatedBroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
+- (void)cancelCause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(cause:)")));
 - (BOOL)closeCause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("close(cause:)")));
 - (void)invokeOnCloseHandler:(void (^)(KotlinThrowable * _Nullable))handler __attribute__((swift_name("invokeOnClose(handler:)")));
-- (BOOL)offerElement:(E _Nullable)element __attribute__((swift_name("offer(element:)")));
+- (BOOL)offerElement:(E _Nullable)element __attribute__((swift_name("offer(element:)"))) __attribute__((unavailable("Deprecated in the favour of 'trySend' method")));
 - (id<ReceiveChannel>)openSubscription __attribute__((swift_name("openSubscription()")));
 
 /**
@@ -1066,7 +1050,7 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.coroutines.ExperimentalCoroutinesApi
 */
-- (void)onTimeoutTimeMillis:(int64_t)timeMillis block:(id<KotlinSuspendFunction0>)block __attribute__((swift_name("onTimeout(timeMillis:block:)")));
+- (void)onTimeoutTimeMillis:(int64_t)timeMillis block:(id<KotlinSuspendFunction0>)block __attribute__((swift_name("onTimeout(timeMillis:block:)"))) __attribute__((unavailable("Replaced with the same extension function")));
 @end
 
 @protocol SelectClause
@@ -1109,7 +1093,7 @@ __attribute__((objc_subclassing_restricted))
 - (BOOL)tryLockOwner:(id _Nullable)owner __attribute__((swift_name("tryLock(owner:)")));
 - (void)unlockOwner:(id _Nullable)owner __attribute__((swift_name("unlock(owner:)")));
 @property (readonly) BOOL isLocked __attribute__((swift_name("isLocked")));
-@property (readonly) id<SelectClause2> onLock __attribute__((swift_name("onLock")));
+@property (readonly) id<SelectClause2> onLock __attribute__((swift_name("onLock"))) __attribute__((deprecated("Mutex.onLock deprecated without replacement. For additional details please refer to #2794")));
 @end
 
 @protocol Semaphore
@@ -1225,7 +1209,7 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlin.SinceKotlin(version="1.9")
 */
-@property (readonly) Int *endExclusive __attribute__((swift_name("endExclusive")));
+@property (readonly) Int *endExclusive __attribute__((swift_name("endExclusive"))) __attribute__((deprecated("Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")));
 @property (readonly) Int *endInclusive __attribute__((swift_name("endInclusive")));
 @property (readonly, getter=start_) Int *start __attribute__((swift_name("start")));
 @end
@@ -1261,7 +1245,7 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlin.SinceKotlin(version="1.9")
 */
-@property (readonly) Long *endExclusive __attribute__((swift_name("endExclusive")));
+@property (readonly) Long *endExclusive __attribute__((swift_name("endExclusive"))) __attribute__((deprecated("Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")));
 @property (readonly) Long *endInclusive __attribute__((swift_name("endInclusive")));
 @property (readonly, getter=start_) Long *start __attribute__((swift_name("start")));
 @end
@@ -1322,13 +1306,13 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.coroutines.ObsoleteCoroutinesApi
 */
-+ (id<BroadcastChannel>)broadcast:(id<ReceiveChannel>)receiver capacity:(int32_t)capacity start:(CoroutineStart *)start __attribute__((swift_name("broadcast(_:capacity:start:)")));
++ (id<BroadcastChannel>)broadcast:(id<ReceiveChannel>)receiver capacity:(int32_t)capacity start:(CoroutineStart *)start __attribute__((swift_name("broadcast(_:capacity:start:)"))) __attribute__((deprecated("BroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
 
 /**
  * @note annotations
  *   kotlinx.coroutines.ObsoleteCoroutinesApi
 */
-+ (id<BroadcastChannel>)broadcast:(id<CoroutineScope>)receiver context:(id<KotlinCoroutineContext>)context capacity:(int32_t)capacity start:(CoroutineStart *)start onCompletion:(void (^ _Nullable)(KotlinThrowable * _Nullable))onCompletion block:(id<KotlinSuspendFunction1>)block __attribute__((swift_name("broadcast(_:context:capacity:start:onCompletion:block:)")));
++ (id<BroadcastChannel>)broadcast:(id<CoroutineScope>)receiver context:(id<KotlinCoroutineContext>)context capacity:(int32_t)capacity start:(CoroutineStart *)start onCompletion:(void (^ _Nullable)(KotlinThrowable * _Nullable))onCompletion block:(id<KotlinSuspendFunction1>)block __attribute__((swift_name("broadcast(_:context:capacity:start:onCompletion:block:)"))) __attribute__((deprecated("BroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1338,7 +1322,7 @@ __attribute__((objc_subclassing_restricted))
  * @note annotations
  *   kotlinx.coroutines.ObsoleteCoroutinesApi
 */
-+ (id<BroadcastChannel>)BroadcastChannelCapacity:(int32_t)capacity __attribute__((swift_name("BroadcastChannel(capacity:)")));
++ (id<BroadcastChannel>)BroadcastChannelCapacity:(int32_t)capacity __attribute__((swift_name("BroadcastChannel(capacity:)"))) __attribute__((deprecated("BroadcastChannel is deprecated in the favour of SharedFlow and StateFlow, and is no longer supported")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1387,7 +1371,6 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface ChannelKt : Base
-+ (id<Channel>)ChannelCapacity:(int32_t)capacity __attribute__((swift_name("Channel(capacity:)")));
 + (id<Channel>)ChannelCapacity:(int32_t)capacity onBufferOverflow:(BufferOverflow *)onBufferOverflow onUndeliveredElement:(void (^ _Nullable)(id _Nullable))onUndeliveredElement __attribute__((swift_name("Channel(capacity:onBufferOverflow:onUndeliveredElement:)")));
 + (id _Nullable)getOrElse:(id _Nullable)receiver onFailure:(id _Nullable (^)(KotlinThrowable * _Nullable))onFailure __attribute__((swift_name("getOrElse(_:onFailure:)")));
 + (id _Nullable)onClosed:(id _Nullable)receiver action:(void (^)(KotlinThrowable * _Nullable))action __attribute__((swift_name("onClosed(_:action:)")));
@@ -1404,13 +1387,6 @@ __attribute__((objc_subclassing_restricted))
  * Other uncaught Kotlin exceptions are fatal.
 */
 + (void)consumeEach:(id<ReceiveChannel>)receiver action:(void (^)(id _Nullable))action completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("consumeEach(_:action:completionHandler:)")));
-+ (id<SelectClause1>)onReceiveOrNull:(id<ReceiveChannel>)receiver __attribute__((swift_name("onReceiveOrNull(_:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)receiveOrNull:(id<ReceiveChannel>)receiver completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("receiveOrNull(_:completionHandler:)")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -1421,7 +1397,7 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface ChannelsKt : Base
-+ (id<Flow>)asFlow:(id<BroadcastChannel>)receiver __attribute__((swift_name("asFlow(_:)")));
++ (id<Flow>)asFlow:(id<BroadcastChannel>)receiver __attribute__((swift_name("asFlow(_:)"))) __attribute__((unavailable("'BroadcastChannel' is obsolete and all corresponding operators are deprecated in the favour of StateFlow and SharedFlow")));
 + (id<Flow>)consumeAsFlow:(id<ReceiveChannel>)receiver __attribute__((swift_name("consumeAsFlow(_:)")));
 
 /**
@@ -1431,7 +1407,6 @@ __attribute__((objc_subclassing_restricted))
 + (void)emitAll:(id<FlowCollector>)receiver channel:(id<ReceiveChannel>)channel completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("emitAll(_:channel:completionHandler:)")));
 + (id<ReceiveChannel>)produceIn:(id<Flow>)receiver scope:(id<CoroutineScope>)scope __attribute__((swift_name("produceIn(_:scope:)")));
 + (id<Flow>)receiveAsFlow:(id<ReceiveChannel>)receiver __attribute__((swift_name("receiveAsFlow(_:)")));
-+ (void)sendBlocking:(id<SendChannel>)receiver element:(id _Nullable)element __attribute__((swift_name("sendBlocking(_:element:)")));
 + (id _Nullable)trySendBlocking:(id<SendChannel>)receiver element:(id _Nullable)element __attribute__((swift_name("trySendBlocking(_:element:)")));
 @end
 
@@ -1443,12 +1418,6 @@ __attribute__((objc_subclassing_restricted))
  * Other uncaught Kotlin exceptions are fatal.
 */
 + (void)collect:(id<Flow>)receiver completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("collect(_:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)collect:(id<Flow>)receiver action:(id<KotlinSuspendFunction1>)action completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("collect(_:action:completionHandler:)")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -1501,7 +1470,6 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface ContextKt : Base
-+ (id<Flow>)buffer:(id<Flow>)receiver capacity:(int32_t)capacity __attribute__((swift_name("buffer(_:capacity:)")));
 + (id<Flow>)buffer:(id<Flow>)receiver capacity:(int32_t)capacity onBufferOverflow:(BufferOverflow *)onBufferOverflow __attribute__((swift_name("buffer(_:capacity:onBufferOverflow:)")));
 + (id<Flow>)cancellable:(id<Flow>)receiver __attribute__((swift_name("cancellable(_:)")));
 + (id<Flow>)conflate:(id<Flow>)receiver __attribute__((swift_name("conflate(_:)")));
@@ -1628,149 +1596,16 @@ __attribute__((objc_subclassing_restricted))
 @interface DeprecatedKt : Base
 
 /**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)any:(id<ReceiveChannel>)receiver completionHandler:(void (^)(Boolean * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("any(_:completionHandler:)")));
-
-/**
  * @note annotations
  *   kotlinx.coroutines.ObsoleteCoroutinesApi
 */
-+ (id _Nullable)consume:(id<BroadcastChannel>)receiver block:(id _Nullable (^)(id<ReceiveChannel>))block __attribute__((swift_name("consume(_:block:)")));
++ (id _Nullable)consume:(id<BroadcastChannel>)receiver block:(id _Nullable (^)(id<ReceiveChannel>))block __attribute__((swift_name("consume(_:block:)"))) __attribute__((unavailable("BroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
  * Other uncaught Kotlin exceptions are fatal.
 */
-+ (void)consumeEach:(id<BroadcastChannel>)receiver action:(void (^)(id _Nullable))action completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("consumeEach(_:action:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)count:(id<ReceiveChannel>)receiver completionHandler:(void (^)(Int * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("count(_:completionHandler:)")));
-+ (id<ReceiveChannel>)distinct:(id<ReceiveChannel>)receiver __attribute__((swift_name("distinct(_:)")));
-+ (id<ReceiveChannel>)drop:(id<ReceiveChannel>)receiver n:(int32_t)n context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("drop(_:n:context:)")));
-+ (id<ReceiveChannel>)dropWhile:(id<ReceiveChannel>)receiver context:(id<KotlinCoroutineContext>)context predicate:(id<KotlinSuspendFunction1>)predicate __attribute__((swift_name("dropWhile(_:context:predicate:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)elementAt:(id<ReceiveChannel>)receiver index:(int32_t)index completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("elementAt(_:index:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)elementAtOrNull:(id<ReceiveChannel>)receiver index:(int32_t)index completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("elementAtOrNull(_:index:completionHandler:)")));
-+ (id<ReceiveChannel>)filterIndexed:(id<ReceiveChannel>)receiver context:(id<KotlinCoroutineContext>)context predicate:(id<KotlinSuspendFunction2>)predicate __attribute__((swift_name("filterIndexed(_:context:predicate:)")));
-+ (id<ReceiveChannel>)filterNot:(id<ReceiveChannel>)receiver context:(id<KotlinCoroutineContext>)context predicate:(id<KotlinSuspendFunction1>)predicate __attribute__((swift_name("filterNot(_:context:predicate:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)filterNotNullTo:(id<ReceiveChannel>)receiver destination:(id)destination completionHandler:(void (^)(id _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("filterNotNullTo(_:destination:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)filterNotNullTo:(id<ReceiveChannel>)receiver destination:(id<SendChannel>)destination completionHandler_:(void (^)(id<SendChannel> _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("filterNotNullTo(_:destination:completionHandler_:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)first:(id<ReceiveChannel>)receiver completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("first(_:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)firstOrNull:(id<ReceiveChannel>)receiver completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("firstOrNull(_:completionHandler:)")));
-+ (id<ReceiveChannel>)flatMap:(id<ReceiveChannel>)receiver context:(id<KotlinCoroutineContext>)context transform:(id<KotlinSuspendFunction1>)transform __attribute__((swift_name("flatMap(_:context:transform:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)indexOf:(id<ReceiveChannel>)receiver element:(id _Nullable)element completionHandler:(void (^)(Int * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("indexOf(_:element:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)last:(id<ReceiveChannel>)receiver completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("last(_:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)lastIndexOf:(id<ReceiveChannel>)receiver element:(id _Nullable)element completionHandler:(void (^)(Int * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("lastIndexOf(_:element:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)lastOrNull:(id<ReceiveChannel>)receiver completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("lastOrNull(_:completionHandler:)")));
-+ (id<ReceiveChannel>)mapIndexedNotNull:(id<ReceiveChannel>)receiver context:(id<KotlinCoroutineContext>)context transform:(id<KotlinSuspendFunction2>)transform __attribute__((swift_name("mapIndexedNotNull(_:context:transform:)")));
-+ (id<ReceiveChannel>)mapNotNull:(id<ReceiveChannel>)receiver context:(id<KotlinCoroutineContext>)context transform:(id<KotlinSuspendFunction1>)transform __attribute__((swift_name("mapNotNull(_:context:transform:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)maxWith:(id<ReceiveChannel>)receiver comparator:(id<KotlinComparator>)comparator completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("maxWith(_:comparator:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)minWith:(id<ReceiveChannel>)receiver comparator:(id<KotlinComparator>)comparator completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("minWith(_:comparator:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)none:(id<ReceiveChannel>)receiver completionHandler:(void (^)(Boolean * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("none(_:completionHandler:)")));
-+ (id<ReceiveChannel>)requireNoNulls:(id<ReceiveChannel>)receiver __attribute__((swift_name("requireNoNulls(_:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)single:(id<ReceiveChannel>)receiver completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("single(_:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)singleOrNull:(id<ReceiveChannel>)receiver completionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("singleOrNull(_:completionHandler:)")));
-+ (id<ReceiveChannel>)take:(id<ReceiveChannel>)receiver n:(int32_t)n context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("take(_:n:context:)")));
-+ (id<ReceiveChannel>)takeWhile:(id<ReceiveChannel>)receiver context:(id<KotlinCoroutineContext>)context predicate:(id<KotlinSuspendFunction1>)predicate __attribute__((swift_name("takeWhile(_:context:predicate:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)toMap:(id<ReceiveChannel>)receiver completionHandler:(void (^)(NSDictionary<id, id> * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("toMap(_:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)toMutableList:(id<ReceiveChannel>)receiver completionHandler:(void (^)(NSMutableArray<id> * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("toMutableList(_:completionHandler:)")));
-
-/**
- * @note This method converts instances of CancellationException to errors.
- * Other uncaught Kotlin exceptions are fatal.
-*/
-+ (void)toSet:(id<ReceiveChannel>)receiver completionHandler:(void (^)(NSSet<id> * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("toSet(_:completionHandler:)")));
-+ (id<ReceiveChannel>)withIndex:(id<ReceiveChannel>)receiver context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("withIndex(_:context:)")));
-+ (id<ReceiveChannel>)zip:(id<ReceiveChannel>)receiver other:(id<ReceiveChannel>)other __attribute__((swift_name("zip(_:other:)")));
++ (void)consumeEach:(id<BroadcastChannel>)receiver action:(void (^)(id _Nullable))action completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("consumeEach(_:action:completionHandler:)"))) __attribute__((unavailable("BroadcastChannel is deprecated in the favour of SharedFlow and is no longer supported")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1810,15 +1645,7 @@ __attribute__((objc_subclassing_restricted))
 + (BOOL)isActive:(id<KotlinCoroutineContext>)receiver __attribute__((swift_name("isActive(_:)")));
 + (id<Job>)job:(id<KotlinCoroutineContext>)receiver __attribute__((swift_name("job(_:)")));
 + (id<CompletableJob>)JobParent:(id<Job> _Nullable)parent __attribute__((swift_name("Job(parent:)")));
-
-/**
- * @note annotations
- *   kotlin.jvm.JvmName(name="Job")
-*/
-+ (id<Job>)Job0Parent:(id<Job> _Nullable)parent __attribute__((swift_name("Job0(parent:)")));
-+ (void)cancel:(id<KotlinCoroutineContext>)receiver __attribute__((swift_name("cancel(_:)")));
-+ (BOOL)cancel:(id<KotlinCoroutineContext>)receiver cause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(_:cause:)")));
-+ (void)cancel:(id<KotlinCoroutineContext>)receiver cause_:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(_:cause_:)")));
++ (void)cancel:(id<KotlinCoroutineContext>)receiver cause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(_:cause:)")));
 + (void)cancel:(id<Job>)receiver message:(NSString *)message cause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancel(_:message:cause:)")));
 
 /**
@@ -1826,12 +1653,8 @@ __attribute__((objc_subclassing_restricted))
  * Other uncaught Kotlin exceptions are fatal.
 */
 + (void)cancelAndJoin:(id<Job>)receiver completionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("cancelAndJoin(_:completionHandler:)")));
-+ (void)cancelChildren:(id<KotlinCoroutineContext>)receiver __attribute__((swift_name("cancelChildren(_:)")));
-+ (void)cancelChildren_:(id<Job>)receiver __attribute__((swift_name("cancelChildren(__:)")));
-+ (void)cancelChildren:(id<KotlinCoroutineContext>)receiver cause:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancelChildren(_:cause:)")));
-+ (void)cancelChildren:(id<KotlinCoroutineContext>)receiver cause_:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancelChildren(_:cause_:)")));
-+ (void)cancelChildren:(id<Job>)receiver cause__:(KotlinThrowable * _Nullable)cause __attribute__((swift_name("cancelChildren(_:cause__:)")));
-+ (void)cancelChildren:(id<Job>)receiver cause___:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancelChildren(_:cause___:)")));
++ (void)cancelChildren:(id<KotlinCoroutineContext>)receiver cause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancelChildren(_:cause:)")));
++ (void)cancelChildren:(id<Job>)receiver cause_:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancelChildren(_:cause_:)")));
 + (void)ensureActive:(id<KotlinCoroutineContext>)receiver __attribute__((swift_name("ensureActive(_:)")));
 + (void)ensureActive_:(id<Job>)receiver __attribute__((swift_name("ensureActive(__:)")));
 @end
@@ -1847,28 +1670,28 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface LintKt : Base
-+ (id<KotlinCoroutineContext>)coroutineContext:(id<FlowCollector>)receiver __attribute__((swift_name("coroutineContext(_:)")));
-+ (BOOL)isActive:(id<FlowCollector>)receiver __attribute__((swift_name("isActive(_:)")));
-+ (void)cancel:(id<FlowCollector>)receiver cause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(_:cause:)")));
-+ (id<Flow>)cancellable:(id<SharedFlow>)receiver __attribute__((swift_name("cancellable(_:)")));
-+ (id<Flow>)catch:(id<SharedFlow>)receiver action:(id<KotlinSuspendFunction2>)action __attribute__((swift_name("catch(_:action:)")));
-+ (id<Flow>)conflate:(id<StateFlow>)receiver __attribute__((swift_name("conflate(_:)")));
++ (id<KotlinCoroutineContext>)coroutineContext:(id<FlowCollector>)receiver __attribute__((swift_name("coroutineContext(_:)"))) __attribute__((unavailable("coroutineContext is resolved into the property of outer CoroutineScope which is likely to be an error.Use currentCoroutineContext() instead or specify the receiver of coroutineContext explicitly")));
++ (BOOL)isActive:(id<FlowCollector>)receiver __attribute__((swift_name("isActive(_:)"))) __attribute__((unavailable("isActive is resolved into the extension of outer CoroutineScope which is likely to be an error.Use currentCoroutineContext().isActive or cancellable() operator instead or specify the receiver of isActive explicitly. Additionally, flow {} builder emissions are cancellable by default.")));
++ (void)cancel:(id<FlowCollector>)receiver cause:(KotlinCancellationException * _Nullable)cause __attribute__((swift_name("cancel(_:cause:)"))) __attribute__((unavailable("cancel() is resolved into the extension of outer CoroutineScope which is likely to be an error.Use currentCoroutineContext().cancel() instead or specify the receiver of cancel() explicitly")));
++ (id<Flow>)cancellable:(id<SharedFlow>)receiver __attribute__((swift_name("cancellable(_:)"))) __attribute__((unavailable("Applying 'cancellable' to a SharedFlow has no effect. See the SharedFlow documentation on Operator Fusion.")));
++ (id<Flow>)catch:(id<SharedFlow>)receiver action:(id<KotlinSuspendFunction2>)action __attribute__((swift_name("catch(_:action:)"))) __attribute__((deprecated("SharedFlow never completes, so this operator typically has not effect, it can only catch exceptions from 'onSubscribe' operator")));
++ (id<Flow>)conflate:(id<StateFlow>)receiver __attribute__((swift_name("conflate(_:)"))) __attribute__((unavailable("Applying 'conflate' to StateFlow has no effect. See the StateFlow documentation on Operator Fusion.")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
  * Other uncaught Kotlin exceptions are fatal.
 */
-+ (void)count:(id<SharedFlow>)receiver completionHandler:(void (^)(Int * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("count(_:completionHandler:)")));
-+ (id<Flow>)distinctUntilChanged:(id<StateFlow>)receiver __attribute__((swift_name("distinctUntilChanged(_:)")));
-+ (id<Flow>)flowOn:(id<SharedFlow>)receiver context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("flowOn(_:context:)")));
-+ (id<Flow>)retry:(id<SharedFlow>)receiver retries:(int64_t)retries predicate:(id<KotlinSuspendFunction1>)predicate __attribute__((swift_name("retry(_:retries:predicate:)")));
-+ (id<Flow>)retryWhen:(id<SharedFlow>)receiver predicate:(id<KotlinSuspendFunction3>)predicate __attribute__((swift_name("retryWhen(_:predicate:)")));
++ (void)count:(id<SharedFlow>)receiver completionHandler:(void (^)(Int * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("count(_:completionHandler:)"))) __attribute__((deprecated("SharedFlow never completes, so this terminal operation never completes.")));
++ (id<Flow>)distinctUntilChanged:(id<StateFlow>)receiver __attribute__((swift_name("distinctUntilChanged(_:)"))) __attribute__((unavailable("Applying 'distinctUntilChanged' to StateFlow has no effect. See the StateFlow documentation on Operator Fusion.")));
++ (id<Flow>)flowOn:(id<SharedFlow>)receiver context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("flowOn(_:context:)"))) __attribute__((unavailable("Applying 'flowOn' to SharedFlow has no effect. See the SharedFlow documentation on Operator Fusion.")));
++ (id<Flow>)retry:(id<SharedFlow>)receiver retries:(int64_t)retries predicate:(id<KotlinSuspendFunction1>)predicate __attribute__((swift_name("retry(_:retries:predicate:)"))) __attribute__((deprecated("SharedFlow never completes, so this operator has no effect.")));
++ (id<Flow>)retryWhen:(id<SharedFlow>)receiver predicate:(id<KotlinSuspendFunction3>)predicate __attribute__((swift_name("retryWhen(_:predicate:)"))) __attribute__((deprecated("SharedFlow never completes, so this operator has no effect.")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
  * Other uncaught Kotlin exceptions are fatal.
 */
-+ (void)toList:(id<SharedFlow>)receiver completionHandler:(void (^)(NSArray<id> * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("toList(_:completionHandler:)")));
++ (void)toList:(id<SharedFlow>)receiver completionHandler:(void (^)(NSArray<id> * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("toList(_:completionHandler:)"))) __attribute__((deprecated("SharedFlow never completes, so this terminal operation never completes.")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -1880,7 +1703,7 @@ __attribute__((objc_subclassing_restricted))
  * @note This method converts instances of CancellationException to errors.
  * Other uncaught Kotlin exceptions are fatal.
 */
-+ (void)toSet:(id<SharedFlow>)receiver completionHandler:(void (^)(NSSet<id> * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("toSet(_:completionHandler:)")));
++ (void)toSet:(id<SharedFlow>)receiver completionHandler:(void (^)(NSSet<id> * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("toSet(_:completionHandler:)"))) __attribute__((deprecated("SharedFlow never completes, so this terminal operation never completes.")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -1951,41 +1774,41 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface MigrationKt : Base
-+ (id<Flow>)cache:(id<Flow>)receiver __attribute__((swift_name("cache(_:)")));
-+ (id<Flow>)combineLatest:(id<Flow>)receiver other:(id<Flow>)other transform:(id<KotlinSuspendFunction2>)transform __attribute__((swift_name("combineLatest(_:other:transform:)")));
-+ (id<Flow>)combineLatest:(id<Flow>)receiver other:(id<Flow>)other other2:(id<Flow>)other2 transform:(id<KotlinSuspendFunction3>)transform __attribute__((swift_name("combineLatest(_:other:other2:transform:)")));
-+ (id<Flow>)combineLatest:(id<Flow>)receiver other:(id<Flow>)other other2:(id<Flow>)other2 other3:(id<Flow>)other3 transform:(id<KotlinSuspendFunction4>)transform __attribute__((swift_name("combineLatest(_:other:other2:other3:transform:)")));
-+ (id<Flow>)combineLatest:(id<Flow>)receiver other:(id<Flow>)other other2:(id<Flow>)other2 other3:(id<Flow>)other3 other4:(id<Flow>)other4 transform:(id<KotlinSuspendFunction5>)transform __attribute__((swift_name("combineLatest(_:other:other2:other3:other4:transform:)")));
-+ (id<Flow>)compose:(id<Flow>)receiver transformer:(id<Flow> (^)(id<Flow>))transformer __attribute__((swift_name("compose(_:transformer:)")));
-+ (id<Flow>)concatMap:(id<Flow>)receiver mapper:(id<Flow> (^)(id _Nullable))mapper __attribute__((swift_name("concatMap(_:mapper:)")));
-+ (id<Flow>)concatWith:(id<Flow>)receiver value:(id _Nullable)value __attribute__((swift_name("concatWith(_:value:)")));
-+ (id<Flow>)concatWith:(id<Flow>)receiver other:(id<Flow>)other __attribute__((swift_name("concatWith(_:other:)")));
-+ (id<Flow>)delayEach:(id<Flow>)receiver timeMillis:(int64_t)timeMillis __attribute__((swift_name("delayEach(_:timeMillis:)")));
-+ (id<Flow>)delayFlow:(id<Flow>)receiver timeMillis:(int64_t)timeMillis __attribute__((swift_name("delayFlow(_:timeMillis:)")));
-+ (id<Flow>)flatMap:(id<Flow>)receiver mapper:(id<KotlinSuspendFunction1>)mapper __attribute__((swift_name("flatMap(_:mapper:)")));
-+ (id<Flow>)flatten:(id<Flow>)receiver __attribute__((swift_name("flatten(_:)")));
-+ (void)forEach:(id<Flow>)receiver action:(id<KotlinSuspendFunction1>)action __attribute__((swift_name("forEach(_:action:)")));
-+ (id<Flow>)merge:(id<Flow>)receiver __attribute__((swift_name("merge(_:)")));
-+ (id<Flow>)observeOn:(id<Flow>)receiver context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("observeOn(_:context:)")));
-+ (id<Flow>)onErrorResume:(id<Flow>)receiver fallback:(id<Flow>)fallback __attribute__((swift_name("onErrorResume(_:fallback:)")));
-+ (id<Flow>)onErrorResumeNext:(id<Flow>)receiver fallback:(id<Flow>)fallback __attribute__((swift_name("onErrorResumeNext(_:fallback:)")));
-+ (id<Flow>)onErrorReturn:(id<Flow>)receiver fallback:(id _Nullable)fallback __attribute__((swift_name("onErrorReturn(_:fallback:)")));
-+ (id<Flow>)onErrorReturn:(id<Flow>)receiver fallback:(id _Nullable)fallback predicate:(Boolean *(^)(KotlinThrowable *))predicate __attribute__((swift_name("onErrorReturn(_:fallback:predicate:)")));
-+ (id<Flow>)publish:(id<Flow>)receiver __attribute__((swift_name("publish(_:)")));
-+ (id<Flow>)publish:(id<Flow>)receiver bufferSize:(int32_t)bufferSize __attribute__((swift_name("publish(_:bufferSize:)")));
-+ (id<Flow>)publishOn:(id<Flow>)receiver context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("publishOn(_:context:)")));
-+ (id<Flow>)replay:(id<Flow>)receiver __attribute__((swift_name("replay(_:)")));
-+ (id<Flow>)replay:(id<Flow>)receiver bufferSize:(int32_t)bufferSize __attribute__((swift_name("replay(_:bufferSize:)")));
-+ (id<Flow>)scanFold:(id<Flow>)receiver initial:(id _Nullable)initial operation:(id<KotlinSuspendFunction2>)operation __attribute__((swift_name("scanFold(_:initial:operation:)")));
-+ (id<Flow>)scanReduce:(id<Flow>)receiver operation:(id<KotlinSuspendFunction2>)operation __attribute__((swift_name("scanReduce(_:operation:)")));
-+ (id<Flow>)skip:(id<Flow>)receiver count:(int32_t)count __attribute__((swift_name("skip(_:count:)")));
-+ (id<Flow>)startWith:(id<Flow>)receiver value:(id _Nullable)value __attribute__((swift_name("startWith(_:value:)")));
-+ (id<Flow>)startWith:(id<Flow>)receiver other:(id<Flow>)other __attribute__((swift_name("startWith(_:other:)")));
-+ (void)subscribe:(id<Flow>)receiver __attribute__((swift_name("subscribe(_:)")));
-+ (void)subscribe:(id<Flow>)receiver onEach:(id<KotlinSuspendFunction1>)onEach __attribute__((swift_name("subscribe(_:onEach:)")));
-+ (void)subscribe:(id<Flow>)receiver onEach:(id<KotlinSuspendFunction1>)onEach onError:(id<KotlinSuspendFunction1>)onError __attribute__((swift_name("subscribe(_:onEach:onError:)")));
-+ (id<Flow>)subscribeOn:(id<Flow>)receiver context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("subscribeOn(_:context:)")));
-+ (id<Flow>)switchMap:(id<Flow>)receiver transform:(id<KotlinSuspendFunction1>)transform __attribute__((swift_name("switchMap(_:transform:)")));
++ (id<Flow>)cache:(id<Flow>)receiver __attribute__((swift_name("cache(_:)"))) __attribute__((unavailable("Flow analogue of 'cache()' is 'shareIn' with unlimited replay and 'started = SharingStared.Lazily' argument'")));
++ (id<Flow>)combineLatest:(id<Flow>)receiver other:(id<Flow>)other transform:(id<KotlinSuspendFunction2>)transform __attribute__((swift_name("combineLatest(_:other:transform:)"))) __attribute__((unavailable("Flow analogue of 'combineLatest' is 'combine'")));
++ (id<Flow>)combineLatest:(id<Flow>)receiver other:(id<Flow>)other other2:(id<Flow>)other2 transform:(id<KotlinSuspendFunction3>)transform __attribute__((swift_name("combineLatest(_:other:other2:transform:)"))) __attribute__((unavailable("Flow analogue of 'combineLatest' is 'combine'")));
++ (id<Flow>)combineLatest:(id<Flow>)receiver other:(id<Flow>)other other2:(id<Flow>)other2 other3:(id<Flow>)other3 transform:(id<KotlinSuspendFunction4>)transform __attribute__((swift_name("combineLatest(_:other:other2:other3:transform:)"))) __attribute__((unavailable("Flow analogue of 'combineLatest' is 'combine'")));
++ (id<Flow>)combineLatest:(id<Flow>)receiver other:(id<Flow>)other other2:(id<Flow>)other2 other3:(id<Flow>)other3 other4:(id<Flow>)other4 transform:(id<KotlinSuspendFunction5>)transform __attribute__((swift_name("combineLatest(_:other:other2:other3:other4:transform:)"))) __attribute__((unavailable("Flow analogue of 'combineLatest' is 'combine'")));
++ (id<Flow>)compose:(id<Flow>)receiver transformer:(id<Flow> (^)(id<Flow>))transformer __attribute__((swift_name("compose(_:transformer:)"))) __attribute__((unavailable("Flow analogue of 'compose' is 'let'")));
++ (id<Flow>)concatMap:(id<Flow>)receiver mapper:(id<Flow> (^)(id _Nullable))mapper __attribute__((swift_name("concatMap(_:mapper:)"))) __attribute__((unavailable("Flow analogue of 'concatMap' is 'flatMapConcat'")));
++ (id<Flow>)concatWith:(id<Flow>)receiver value:(id _Nullable)value __attribute__((swift_name("concatWith(_:value:)"))) __attribute__((unavailable("Flow analogue of 'concatWith' is 'onCompletion'. Use 'onCompletion { emit(value) }'")));
++ (id<Flow>)concatWith:(id<Flow>)receiver other:(id<Flow>)other __attribute__((swift_name("concatWith(_:other:)"))) __attribute__((unavailable("Flow analogue of 'concatWith' is 'onCompletion'. Use 'onCompletion { if (it == null) emitAll(other) }'")));
++ (id<Flow>)delayEach:(id<Flow>)receiver timeMillis:(int64_t)timeMillis __attribute__((swift_name("delayEach(_:timeMillis:)"))) __attribute__((unavailable("Use 'onEach { delay(timeMillis) }'")));
++ (id<Flow>)delayFlow:(id<Flow>)receiver timeMillis:(int64_t)timeMillis __attribute__((swift_name("delayFlow(_:timeMillis:)"))) __attribute__((unavailable("Use 'onStart { delay(timeMillis) }'")));
++ (id<Flow>)flatMap:(id<Flow>)receiver mapper:(id<KotlinSuspendFunction1>)mapper __attribute__((swift_name("flatMap(_:mapper:)"))) __attribute__((unavailable("Flow analogue is 'flatMapConcat'")));
++ (id<Flow>)flatten:(id<Flow>)receiver __attribute__((swift_name("flatten(_:)"))) __attribute__((unavailable("Flow analogue of 'flatten' is 'flattenConcat'")));
++ (void)forEach:(id<Flow>)receiver action:(id<KotlinSuspendFunction1>)action __attribute__((swift_name("forEach(_:action:)"))) __attribute__((unavailable("Flow analogue of 'forEach' is 'collect'")));
++ (id<Flow>)merge:(id<Flow>)receiver __attribute__((swift_name("merge(_:)"))) __attribute__((unavailable("Flow analogue of 'merge' is 'flattenConcat'")));
++ (id<Flow>)observeOn:(id<Flow>)receiver context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("observeOn(_:context:)"))) __attribute__((unavailable("Collect flow in the desired context instead")));
++ (id<Flow>)onErrorResume:(id<Flow>)receiver fallback:(id<Flow>)fallback __attribute__((swift_name("onErrorResume(_:fallback:)"))) __attribute__((unavailable("Flow analogue of 'onErrorXxx' is 'catch'. Use 'catch { emitAll(fallback) }'")));
++ (id<Flow>)onErrorResumeNext:(id<Flow>)receiver fallback:(id<Flow>)fallback __attribute__((swift_name("onErrorResumeNext(_:fallback:)"))) __attribute__((unavailable("Flow analogue of 'onErrorXxx' is 'catch'. Use 'catch { emitAll(fallback) }'")));
++ (id<Flow>)onErrorReturn:(id<Flow>)receiver fallback:(id _Nullable)fallback __attribute__((swift_name("onErrorReturn(_:fallback:)"))) __attribute__((unavailable("Flow analogue of 'onErrorXxx' is 'catch'. Use 'catch { emit(fallback) }'")));
++ (id<Flow>)onErrorReturn:(id<Flow>)receiver fallback:(id _Nullable)fallback predicate:(Boolean *(^)(KotlinThrowable *))predicate __attribute__((swift_name("onErrorReturn(_:fallback:predicate:)"))) __attribute__((unavailable("Flow analogue of 'onErrorXxx' is 'catch'. Use 'catch { e -> if (predicate(e)) emit(fallback) else throw e }'")));
++ (id<Flow>)publish:(id<Flow>)receiver __attribute__((swift_name("publish(_:)"))) __attribute__((unavailable("Flow analogue of 'publish()' is 'shareIn'. \npublish().connect() is the default strategy (no extra call is needed), \npublish().autoConnect() translates to 'started = SharingStared.Lazily' argument, \npublish().refCount() translates to 'started = SharingStared.WhileSubscribed()' argument.")));
++ (id<Flow>)publish:(id<Flow>)receiver bufferSize:(int32_t)bufferSize __attribute__((swift_name("publish(_:bufferSize:)"))) __attribute__((unavailable("Flow analogue of 'publish(bufferSize)' is 'buffer' followed by 'shareIn'. \npublish().connect() is the default strategy (no extra call is needed), \npublish().autoConnect() translates to 'started = SharingStared.Lazily' argument, \npublish().refCount() translates to 'started = SharingStared.WhileSubscribed()' argument.")));
++ (id<Flow>)publishOn:(id<Flow>)receiver context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("publishOn(_:context:)"))) __attribute__((unavailable("Collect flow in the desired context instead")));
++ (id<Flow>)replay:(id<Flow>)receiver __attribute__((swift_name("replay(_:)"))) __attribute__((unavailable("Flow analogue of 'replay()' is 'shareIn' with unlimited replay. \nreplay().connect() is the default strategy (no extra call is needed), \nreplay().autoConnect() translates to 'started = SharingStared.Lazily' argument, \nreplay().refCount() translates to 'started = SharingStared.WhileSubscribed()' argument.")));
++ (id<Flow>)replay:(id<Flow>)receiver bufferSize:(int32_t)bufferSize __attribute__((swift_name("replay(_:bufferSize:)"))) __attribute__((unavailable("Flow analogue of 'replay(bufferSize)' is 'shareIn' with the specified replay parameter. \nreplay().connect() is the default strategy (no extra call is needed), \nreplay().autoConnect() translates to 'started = SharingStared.Lazily' argument, \nreplay().refCount() translates to 'started = SharingStared.WhileSubscribed()' argument.")));
++ (id<Flow>)scanFold:(id<Flow>)receiver initial:(id _Nullable)initial operation:(id<KotlinSuspendFunction2>)operation __attribute__((swift_name("scanFold(_:initial:operation:)"))) __attribute__((unavailable("Flow has less verbose 'scan' shortcut")));
++ (id<Flow>)scanReduce:(id<Flow>)receiver operation:(id<KotlinSuspendFunction2>)operation __attribute__((swift_name("scanReduce(_:operation:)"))) __attribute__((unavailable("'scanReduce' was renamed to 'runningReduce' to be consistent with Kotlin standard library")));
++ (id<Flow>)skip:(id<Flow>)receiver count:(int32_t)count __attribute__((swift_name("skip(_:count:)"))) __attribute__((unavailable("Flow analogue of 'skip' is 'drop'")));
++ (id<Flow>)startWith:(id<Flow>)receiver value:(id _Nullable)value __attribute__((swift_name("startWith(_:value:)"))) __attribute__((unavailable("Flow analogue of 'startWith' is 'onStart'. Use 'onStart { emit(value) }'")));
++ (id<Flow>)startWith:(id<Flow>)receiver other:(id<Flow>)other __attribute__((swift_name("startWith(_:other:)"))) __attribute__((unavailable("Flow analogue of 'startWith' is 'onStart'. Use 'onStart { emitAll(other) }'")));
++ (void)subscribe:(id<Flow>)receiver __attribute__((swift_name("subscribe(_:)"))) __attribute__((unavailable("Use 'launchIn' with 'onEach', 'onCompletion' and 'catch' instead")));
++ (void)subscribe:(id<Flow>)receiver onEach:(id<KotlinSuspendFunction1>)onEach __attribute__((swift_name("subscribe(_:onEach:)"))) __attribute__((unavailable("Use 'launchIn' with 'onEach', 'onCompletion' and 'catch' instead")));
++ (void)subscribe:(id<Flow>)receiver onEach:(id<KotlinSuspendFunction1>)onEach onError:(id<KotlinSuspendFunction1>)onError __attribute__((swift_name("subscribe(_:onEach:onError:)"))) __attribute__((unavailable("Use 'launchIn' with 'onEach', 'onCompletion' and 'catch' instead")));
++ (id<Flow>)subscribeOn:(id<Flow>)receiver context:(id<KotlinCoroutineContext>)context __attribute__((swift_name("subscribeOn(_:context:)"))) __attribute__((unavailable("Use 'flowOn' instead")));
++ (id<Flow>)switchMap:(id<Flow>)receiver transform:(id<KotlinSuspendFunction1>)transform __attribute__((swift_name("switchMap(_:transform:)"))) __attribute__((unavailable("Flow analogues of 'switchMap' are 'transformLatest', 'flatMapLatest' and 'mapLatest'")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -2179,12 +2002,6 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((objc_subclassing_restricted))
 @interface SupervisorKt : Base
 + (id<CompletableJob>)SupervisorJobParent:(id<Job> _Nullable)parent __attribute__((swift_name("SupervisorJob(parent:)")));
-
-/**
- * @note annotations
- *   kotlin.jvm.JvmName(name="SupervisorJob")
-*/
-+ (id<Job>)SupervisorJob0Parent:(id<Job> _Nullable)parent __attribute__((swift_name("SupervisorJob0(parent:)")));
 
 /**
  * @note This method converts instances of CancellationException to errors.
@@ -2416,11 +2233,6 @@ __attribute__((swift_name("KotlinLongRange.Companion")))
 
 __attribute__((objc_subclassing_restricted))
 @interface KotlinNothing : Base
-@end
-
-@protocol KotlinComparator
-@required
-- (int32_t)compareA:(id _Nullable)a b:(id _Nullable)b __attribute__((swift_name("compare(a:b:)")));
 @end
 
 @protocol KotlinSuspendFunction3 <KotlinFunction>

@@ -130,7 +130,7 @@ private fun createCompilerConfiguration(): CompilerConfiguration {
     return configuration
 }
 
-private fun createLanguageVersionSettings() = LanguageVersionSettingsImpl(
+internal fun createLanguageVersionSettings() = LanguageVersionSettingsImpl(
     languageVersion = LanguageVersion.LATEST_STABLE,
     apiVersion = ApiVersion.LATEST_STABLE
 )

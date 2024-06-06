@@ -421,6 +421,24 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("objectWithReservedName"))
     }
 
+    /**
+     * Depends on unimplemented AA deprecation message: KT-67823
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - deprecatedHidden`() {
+        doTest(headersTestDataDir.resolve("deprecatedHidden"))
+    }
+
+    /**
+     * Depends on unimplemented AA deprecation message: KT-67823
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - deprecatedWarningAndError`() {
+        doTest(headersTestDataDir.resolve("deprecatedWarningAndError"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

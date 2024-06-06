@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.bridgeReceiverType
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 context(KtAnalysisSession, KtObjCExportSession)
 fun KtPropertySymbol.translateToObjCProperty(): ObjCProperty? {
@@ -51,8 +52,7 @@ fun KtPropertySymbol.buildProperty(): ObjCProperty {
     val getterName: String? = if (getterSelector != name && getterSelector?.isNotBlank() == true) getterSelector else null
     val declarationAttributes = mutableListOf(getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
 
-    //TODO: implement and use [org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver]
-    //declarationAttributes.addIfNotNull(mapper.getDeprecation(property)?.toDeprecationAttribute())
+    declarationAttributes.addIfNotNull(getObjCDeprecationStatus())
 
     return ObjCProperty(
         name = name,
