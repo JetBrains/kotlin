@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ArrayFqNames
@@ -1345,11 +1346,10 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         val values = when {
             firArgMapping.isNotEmpty() -> {
-                firArgMapping.mapNotNull { (parameterName, arg) ->
-                    // TODO: default arguments
-                    convertAnnotationArgumentWithName(
-                        containingClass, constantValues[parameterName.asString()], arg, parameterName.asString(),
-                    )
+                constantValues.mapNotNull { (parameterName, argumentValue) ->
+                    val name = Name.identifier(parameterName)
+                    val firArg = firArgMapping[name]
+                    convertAnnotationArgumentWithNameFir(containingClass, argumentValue, firArg, parameterName)
                 }
             }
             argMapping.isNotEmpty() -> {
@@ -1368,10 +1368,10 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return treeMaker.Annotation(annotationFqName, JavacList.from(values))
     }
 
-    private fun convertAnnotationArgumentWithName(
+    private fun convertAnnotationArgumentWithNameFir(
         containingClass: ClassNode,
         constantValue: Any?,
-        value: FirExpression,
+        value: FirExpression?,
         name: String,
     ): JCExpression? {
         if (!isValidIdentifier(name)) return null
