@@ -96,6 +96,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             name = Name.identifier(STUB_FOR_INLINING)
             visibility = DescriptorVisibilities.LOCAL
             returnType = field.type
+            isInline = true
         }.apply {
             body = context.createIrBuilder(symbol).run {
                 val boundReceiver = dispatchReceiver ?: extensionReceiver
@@ -119,6 +120,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             visibility = DescriptorVisibilities.LOCAL
             returnType = ((type as IrSimpleType).arguments.last() as IrTypeProjection).type
             isSuspend = referencedFunction.isSuspend
+            isInline = true
         }.apply {
             body = context.createIrBuilder(symbol, startOffset, endOffset).run {
                 // TODO: could there be a star projection here?
