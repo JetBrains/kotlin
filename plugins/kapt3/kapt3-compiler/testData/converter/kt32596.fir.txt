@@ -73,7 +73,7 @@ public final class ErrorMultipleMissingAnnotations {
 import kotlin.reflect.KClass;
 
 @CDE()
-@Anno(klass = null)
+@Anno()
 @ABC()
 /**
  * public final class ErrorSomeMissingAnnotations : kotlin/Any {
