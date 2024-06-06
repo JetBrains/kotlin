@@ -4,4 +4,5 @@
  */
 package kotlin.js
 
+@PublishedApi // Used from the JavaScript Plain Objects compiler plugin
 internal val VOID: Nothing? = js("void 0")
