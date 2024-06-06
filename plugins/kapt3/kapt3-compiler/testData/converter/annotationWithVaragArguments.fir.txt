@@ -43,14 +43,6 @@ public final class AnnotationWithVaragArgumentsKt {
         super();
     }
 
-    @A(x = {})
-    @B(x = "x", z = "z", y = {})
-    @C(a = @A(x = {}), b = @B(x = "x", y = {}, z = "z"))
-    @D()
-    @E(d = @D())
-    public static final void foo() {
-    }
-
     @A(x = {1})
     @B(x = "x", y = {1}, z = "z")
     @C(a = @A(x = {1}), b = @B(x = "x", y = {1}, z = "z"))
@@ -61,6 +53,14 @@ public final class AnnotationWithVaragArgumentsKt {
     @B(x = "x", y = {1, 2}, z = "z")
     @C(a = @A(x = {1, 2}), b = @B(x = "x", y = {1, 2}, z = "z"))
     public static final void baz() {
+    }
+
+    @A(x = {})
+    @B(x = "x", y = {}, z = "z")
+    @C(a = @A(x = {}), b = @B(x = "x", y = {}, z = "z"))
+    @D()
+    @E(d = @D())
+    public static final void foo() {
     }
 }
 

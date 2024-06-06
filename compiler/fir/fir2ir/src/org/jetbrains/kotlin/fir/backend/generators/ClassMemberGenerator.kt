@@ -259,7 +259,8 @@ internal class ClassMemberGenerator(
         initializerExpression: FirExpression?
     ) {
         val irField = backingField ?: return
-        if (configuration.skipBodies) {
+        val isAnnotationParameter = (irField.parent as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS
+        if (configuration.skipBodies && !isAnnotationParameter) {
             if (!isLateinit) {
                 irField.initializer = irFactory.createExpressionBody(
                     startOffset, endOffset, IrConstImpl.defaultValueForType(startOffset, endOffset, irField.type)
