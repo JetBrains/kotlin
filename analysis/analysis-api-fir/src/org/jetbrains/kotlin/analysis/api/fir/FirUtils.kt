@@ -87,6 +87,7 @@ internal fun FirAnnotation.toKaAnnotation(
         classId = classId,
         psi = psi as? KtCallElement,
         useSiteTarget = useSiteTarget,
+        hasArguments = this is FirAnnotationCall && this.arguments.isNotEmpty(),
         lazyArguments = lazy { argumentsFactory(classId) },
         index = index,
         constructorSymbol = constructorSymbol,

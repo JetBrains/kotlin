@@ -52,11 +52,11 @@ internal fun KaAnnotation.toDumbLightClassAnnotationApplication(): AnnotationApp
         sourcePsi = null
     )
 
-    return AnnotationApplication(value, true, useSiteTarget, isCallWithArguments, index)
+    return AnnotationApplication(value, true, useSiteTarget, hasArguments, index)
 }
 
 internal fun KaAnnotation.toLightClassAnnotationApplication(): AnnotationApplication {
-    return AnnotationApplication(toLightClassAnnotationValue(), false, useSiteTarget, isCallWithArguments, index)
+    return AnnotationApplication(toLightClassAnnotationValue(), false, useSiteTarget, hasArguments, index)
 }
 
 internal sealed class AnnotationValue {

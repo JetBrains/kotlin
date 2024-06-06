@@ -43,11 +43,15 @@ public interface KaAnnotation : KaLifetimeOwner {
 
     /**
      * This property can be used to optimize some argument processing logic.
-     * For example, if you have [KaAnnotationApplicationInfo] from [KaAnnotated.annotationInfos] and [isCallWithArguments] is **false**,
+     * For example, if you have [KaAnnotationApplicationInfo] from [KaAnnotated.annotationInfos] and [hasArguments] is **false**,
      * then you can avoid [KaAnnotated.annotationsByClassId] call,
      * because effectively you already have all necessary information in [KaAnnotationApplicationInfo]
      */
+    public val hasArguments: Boolean
+
+    @Deprecated("Use 'hasArguments' instead.", replaceWith = ReplaceWith("hasArguments"))
     public val isCallWithArguments: Boolean
+        get() = hasArguments
 
     /**
      * An index of the annotation in an owner. `null` when annotation is used as an argument of other annotations

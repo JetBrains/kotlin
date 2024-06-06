@@ -145,6 +145,7 @@ internal object FirAnnotationValueConverter {
                                     classId = resolvedSymbol.callableId.classId,
                                     psi = psi as? KtCallElement,
                                     useSiteTarget = null,
+                                    hasArguments = arguments.isNotEmpty(),
                                     lazyArguments = lazy { toNamedConstantValue(builder.analysisSession, resultMap, builder) },
                                     index = null,
                                     constructorSymbol = with(builder.analysisSession) {
