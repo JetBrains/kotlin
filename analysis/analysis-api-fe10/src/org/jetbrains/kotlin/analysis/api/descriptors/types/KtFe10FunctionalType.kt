@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.types
 
 import org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescNamedClassOrObjectSymbol
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
+import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
