@@ -1375,19 +1375,18 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         name: String,
     ): JCExpression? {
         if (!isValidIdentifier(name)) return null
-        return when (value) {
+        val expr = when (value) {
             is FirArrayLiteral -> {
-                val expr =
-                    convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments) ?: return null
-                treeMaker.Assign(treeMaker.SimpleName(name), expr)
+                convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments)
             }
             is FirVarargArgumentsExpression -> {
-                val expr =
-                    convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments) ?: return null
-                treeMaker.Assign(treeMaker.SimpleName(name), expr)
+                convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments)
             }
-            else -> null
-        }
+            else -> {
+                convertLiteralExpression(containingClass, constantValue)
+            }
+        } ?: return null
+        return treeMaker.Assign(treeMaker.SimpleName(name), expr)
     }
 
     private fun convertConstantValueArgumentsFir(
