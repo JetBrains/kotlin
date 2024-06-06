@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
+import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.tooling.core.closure
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -67,6 +70,11 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
         val moduleDescriptors = setOf(createModuleDescriptor(environment, kotlinFiles, configuration.dependencies))
 
         val mapper = ObjCExportMapper(
+            deprecationResolver = DeprecationResolver(
+                storageManager = LockBasedStorageManager.NO_LOCKS,
+                languageVersionSettings = createLanguageVersionSettings(),
+                deprecationSettings = JavaDeprecationSettings
+            ),
             unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT
         )
 
