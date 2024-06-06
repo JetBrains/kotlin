@@ -1454,17 +1454,19 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         ownerDescriptor: DeclarationDescriptor?,
     ): JCExpression? {
         if (!isValidIdentifier(name)) return null
-        return when (value) {
+        val expr = when (value) {
             is FirArrayLiteral -> {
-                val expr = convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments, ownerDescriptor) ?: return null
-                treeMaker.Assign(treeMaker.SimpleName(name), expr)
+                convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments, ownerDescriptor)
             }
             is FirVarargArgumentsExpression -> {
-                val expr = convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments, ownerDescriptor) ?: return null
-                treeMaker.Assign(treeMaker.SimpleName(name), expr)
+                convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments, ownerDescriptor)
+            }
+            is FirFunctionCall -> {
+                convertLiteralExpression(containingClass, constantValue, ownerDescriptor)
             }
             else -> null
-        }
+        } ?: return null
+        return treeMaker.Assign(treeMaker.SimpleName(name), expr)
     }
 
     private fun convertConstantValueArgumentsFir(
