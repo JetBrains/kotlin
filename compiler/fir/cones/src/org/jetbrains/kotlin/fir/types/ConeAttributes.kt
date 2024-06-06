@@ -151,6 +151,13 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         return create(attributes)
     }
 
+    fun remove(key: ConeAttributeKey): ConeAttributes {
+        if (isEmpty()) return this
+        val attributes = arrayMap.filter { it.key != key }
+        if (attributes.size == arrayMap.size) return this
+        return create(attributes)
+    }
+
     fun filterNecessaryToKeep(): ConeAttributes {
         return if (all { it.keepInInferredDeclarationType }) this
         else create(filter { it.keepInInferredDeclarationType })
