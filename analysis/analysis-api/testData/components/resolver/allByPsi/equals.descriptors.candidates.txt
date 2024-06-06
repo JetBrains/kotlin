@@ -1,0 +1,3633 @@
+KtFile: 'equals.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(0,106): 'class MyClass {'
+  NO_CANDIDATES
+
+KtClassBody(14,106): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(20,104): 'override fun equals(other: Any?): Boolean {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(20,28): 'override'
+  NO_CANDIDATES
+
+KtParameterList(39,52): '(other: Any?)'
+  NO_CANDIDATES
+
+KtParameter(40,51): 'other: Any?'
+  NO_CANDIDATES
+
+KtTypeReference(47,51): 'Any?'
+  NO_CANDIDATES
+
+KtNullableType(47,51): 'Any?'
+  NO_CANDIDATES
+
+KtUserType(47,50): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(47,50): 'Any'
+  NO_CANDIDATES
+
+KtTypeReference(54,61): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(54,61): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(54,61): 'Boolean'
+  NO_CANDIDATES
+
+KtBlockExpression(62,104): '{'
+  NO_CANDIDATES
+
+KtReturnExpression(72,98): 'return super.equals(other)'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(79,98): 'super.equals(other)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = super
+          isSafeNavigation = false
+          type = kotlin.Any
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtSuperExpression(79,84): 'super'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(79,84): 'super'
+  NO_CANDIDATES
+
+KtCallExpression(85,98): 'equals(other)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = super
+          isSafeNavigation = false
+          type = kotlin.Any
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(85,91): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = super
+          isSafeNavigation = false
+          type = kotlin.Any
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(91,98): '(other)'
+  NO_CANDIDATES
+
+KtValueArgument(92,97): 'other'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(92,97): 'other'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtClass(108,126): 'open class Another'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(108,112): 'open'
+  NO_CANDIDATES
+
+KtClass(128,244): 'class Child : Another() {'
+  NO_CANDIDATES
+
+KtSuperTypeList(142,151): 'Another()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(142,151): 'Another()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Another
+          symbol = <constructor>(): Another
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(142,149): 'Another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Another
+          symbol = <constructor>(): Another
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(142,149): 'Another'
+  NO_CANDIDATES
+
+KtUserType(142,149): 'Another'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(142,149): 'Another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Another
+          symbol = <constructor>(): Another
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(149,151): '()'
+  NO_CANDIDATES
+
+KtClassBody(152,244): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(158,242): 'override fun equals(other: Any?): Boolean {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(158,166): 'override'
+  NO_CANDIDATES
+
+KtParameterList(177,190): '(other: Any?)'
+  NO_CANDIDATES
+
+KtParameter(178,189): 'other: Any?'
+  NO_CANDIDATES
+
+KtTypeReference(185,189): 'Any?'
+  NO_CANDIDATES
+
+KtNullableType(185,189): 'Any?'
+  NO_CANDIDATES
+
+KtUserType(185,188): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(185,188): 'Any'
+  NO_CANDIDATES
+
+KtTypeReference(192,199): 'Boolean'
+  NO_CANDIDATES
+
+KtUserType(192,199): 'Boolean'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(192,199): 'Boolean'
+  NO_CANDIDATES
+
+KtBlockExpression(200,242): '{'
+  NO_CANDIDATES
+
+KtReturnExpression(210,236): 'return super.equals(other)'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(217,236): 'super.equals(other)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = super
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtSuperExpression(217,222): 'super'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(217,222): 'super'
+  NO_CANDIDATES
+
+KtCallExpression(223,236): 'equals(other)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = super
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(223,229): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = super
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        other -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(229,236): '(other)'
+  NO_CANDIDATES
+
+KtValueArgument(230,235): 'other'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(230,235): 'other'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNamedFunction(246,432): 'fun myClass(m1: MyClass, m2: MyClass) {'
+  NO_CANDIDATES
+
+KtParameterList(257,283): '(m1: MyClass, m2: MyClass)'
+  NO_CANDIDATES
+
+KtParameter(258,269): 'm1: MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(262,269): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(262,269): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(262,269): 'MyClass'
+  NO_CANDIDATES
+
+KtParameter(271,282): 'm2: MyClass'
+  NO_CANDIDATES
+
+KtTypeReference(275,282): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(275,282): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(275,282): 'MyClass'
+  NO_CANDIDATES
+
+KtBlockExpression(284,432): '{'
+  NO_CANDIDATES
+
+KtBinaryExpression(290,299): 'm1 === m2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(290,292): 'm1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m1
+          receiverType = null
+          returnType = MyClass
+          symbol = m1: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(293,296): '==='
+  NO_CANDIDATES
+
+KtNameReferenceExpression(297,299): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass
+          symbol = m2: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(304,313): 'm1 !== m2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(304,306): 'm1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m1
+          receiverType = null
+          returnType = MyClass
+          symbol = m1: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(307,310): '!=='
+  NO_CANDIDATES
+
+KtNameReferenceExpression(311,313): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass
+          symbol = m2: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(318,326): 'm1 == m2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m1
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(318,320): 'm1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m1
+          receiverType = null
+          returnType = MyClass
+          symbol = m1: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(321,323): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m1
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(324,326): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass
+          symbol = m2: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(331,339): 'm1 != m2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m1
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(331,333): 'm1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m1
+          receiverType = null
+          returnType = MyClass
+          symbol = m1: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(334,336): '!='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m1
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(337,339): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass
+          symbol = m2: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(344,357): 'm1.equals(m2)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m1
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(344,346): 'm1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m1
+          receiverType = null
+          returnType = MyClass
+          symbol = m1: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(347,357): 'equals(m2)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m1
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(347,353): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m1
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(353,357): '(m2)'
+  NO_CANDIDATES
+
+KtValueArgument(354,356): 'm2'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(354,356): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass
+          symbol = m2: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(363,372): 'm2 === m1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(363,365): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass
+          symbol = m2: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(366,369): '==='
+  NO_CANDIDATES
+
+KtNameReferenceExpression(370,372): 'm1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m1
+          receiverType = null
+          returnType = MyClass
+          symbol = m1: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(377,386): 'm2 !== m1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(377,379): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass
+          symbol = m2: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(380,383): '!=='
+  NO_CANDIDATES
+
+KtNameReferenceExpression(384,386): 'm1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m1
+          receiverType = null
+          returnType = MyClass
+          symbol = m1: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(391,399): 'm2 == m1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m2
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(391,393): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass
+          symbol = m2: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(394,396): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m2
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(397,399): 'm1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m1
+          receiverType = null
+          returnType = MyClass
+          symbol = m1: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(404,412): 'm2 != m1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m2
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(404,406): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass
+          symbol = m2: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(407,409): '!='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m2
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(410,412): 'm1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m1
+          receiverType = null
+          returnType = MyClass
+          symbol = m1: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(417,430): 'm2.equals(m1)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m2
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(417,419): 'm2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m2
+          receiverType = null
+          returnType = MyClass
+          symbol = m2: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(420,430): 'equals(m1)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m2
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(420,426): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m2
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        m1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(426,430): '(m1)'
+  NO_CANDIDATES
+
+KtValueArgument(427,429): 'm1'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(427,429): 'm1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = m1
+          receiverType = null
+          returnType = MyClass
+          symbol = m1: MyClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNamedFunction(434,999): 'fun another() {'
+  NO_CANDIDATES
+
+KtParameterList(445,447): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(448,999): '{'
+  NO_CANDIDATES
+
+KtProperty(454,477): 'val another = Another()'
+  NO_CANDIDATES
+
+KtCallExpression(468,477): 'Another()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Another
+          symbol = <constructor>(): Another
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(468,475): 'Another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Another
+          symbol = <constructor>(): Another
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(475,477): '()'
+  NO_CANDIDATES
+
+KtBinaryExpression(482,501): 'another === another'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(482,489): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(490,493): '==='
+  NO_CANDIDATES
+
+KtNameReferenceExpression(494,501): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtBinaryExpression(506,525): 'another !== another'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(506,513): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(514,517): '!=='
+  NO_CANDIDATES
+
+KtNameReferenceExpression(518,525): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtBinaryExpression(530,550): 'another == Another()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(530,537): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(538,540): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtCallExpression(541,550): 'Another()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Another
+          symbol = <constructor>(): Another
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(541,548): 'Another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Another
+          symbol = <constructor>(): Another
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(548,550): '()'
+  NO_CANDIDATES
+
+KtBinaryExpression(555,575): 'another != Another()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(555,562): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(563,565): '!='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtCallExpression(566,575): 'Another()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Another
+          symbol = <constructor>(): Another
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(566,573): 'Another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Another
+          symbol = <constructor>(): Another
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(573,575): '()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(580,605): 'another.equals(Another())'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(580,587): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtCallExpression(588,605): 'equals(Another())'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(588,594): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        Another() -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(594,605): '(Another())'
+  NO_CANDIDATES
+
+KtValueArgument(595,604): 'Another()'
+  NO_CANDIDATES
+
+KtCallExpression(595,604): 'Another()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Another
+          symbol = <constructor>(): Another
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(595,602): 'Another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Another
+          symbol = <constructor>(): Another
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(602,604): '()'
+  NO_CANDIDATES
+
+KtProperty(611,630): 'val child = Child()'
+  NO_CANDIDATES
+
+KtCallExpression(623,630): 'Child()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Child
+          symbol = <constructor>(): Child
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(623,628): 'Child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Child
+          symbol = <constructor>(): Child
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(628,630): '()'
+  NO_CANDIDATES
+
+KtProperty(635,658): 'val myClass = MyClass()'
+  NO_CANDIDATES
+
+KtCallExpression(649,658): 'MyClass()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(649,656): 'MyClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MyClass
+          symbol = <constructor>(): MyClass
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(656,658): '()'
+  NO_CANDIDATES
+
+KtBinaryExpression(663,680): 'child === another'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(663,668): 'child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = child
+          receiverType = null
+          returnType = Child
+          symbol = val child: Child
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(669,672): '==='
+  NO_CANDIDATES
+
+KtNameReferenceExpression(673,680): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtBinaryExpression(685,702): 'another !== child'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(685,692): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(693,696): '!=='
+  NO_CANDIDATES
+
+KtNameReferenceExpression(697,702): 'child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = child
+          receiverType = null
+          returnType = Child
+          symbol = val child: Child
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(708,724): 'child == myClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = child
+          isSafeNavigation = false
+          type = Child
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /Child.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(708,713): 'child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = child
+          receiverType = null
+          returnType = Child
+          symbol = val child: Child
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(714,716): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = child
+          isSafeNavigation = false
+          type = Child
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /Child.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(717,724): 'myClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myClass(m1: MyClass, m2: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m1
+              receiverType = null
+              returnType = MyClass
+              symbol = m1: MyClass
+              callableId = null,
+            KaVariableSignature:
+              name = m2
+              receiverType = null
+              returnType = MyClass
+              symbol = m2: MyClass
+              callableId = null
+          ]
+          callableId = /myClass
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(729,750): 'child.equals(myClass)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = child
+          isSafeNavigation = false
+          type = Child
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /Child.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(729,734): 'child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = child
+          receiverType = null
+          returnType = Child
+          symbol = val child: Child
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(735,750): 'equals(myClass)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = child
+          isSafeNavigation = false
+          type = Child
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /Child.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(735,741): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = child
+          isSafeNavigation = false
+          type = Child
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /Child.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(741,750): '(myClass)'
+  NO_CANDIDATES
+
+KtValueArgument(742,749): 'myClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(742,749): 'myClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myClass(m1: MyClass, m2: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m1
+              receiverType = null
+              returnType = MyClass
+              symbol = m1: MyClass
+              callableId = null,
+            KaVariableSignature:
+              name = m2
+              receiverType = null
+              returnType = MyClass
+              symbol = m2: MyClass
+              callableId = null
+          ]
+          callableId = /myClass
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtBinaryExpression(755,771): 'myClass != child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(755,762): 'myClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myClass(m1: MyClass, m2: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m1
+              receiverType = null
+              returnType = MyClass
+              symbol = m1: MyClass
+              callableId = null,
+            KaVariableSignature:
+              name = m2
+              receiverType = null
+              returnType = MyClass
+              symbol = m2: MyClass
+              callableId = null
+          ]
+          callableId = /myClass
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(763,765): '!='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(766,771): 'child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = child
+          receiverType = null
+          returnType = Child
+          symbol = val child: Child
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtPrefixExpression(776,798): '!myClass.equals(child)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass.equals(child)
+          isSafeNavigation = false
+          type = kotlin.Boolean
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+          valueParameters = []
+          callableId = kotlin/Boolean.not
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(776,777): '!'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass.equals(child)
+          isSafeNavigation = false
+          type = kotlin.Boolean
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+          valueParameters = []
+          callableId = kotlin/Boolean.not
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(777,784): 'myClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myClass(m1: MyClass, m2: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m1
+              receiverType = null
+              returnType = MyClass
+              symbol = m1: MyClass
+              callableId = null,
+            KaVariableSignature:
+              name = m2
+              receiverType = null
+              returnType = MyClass
+              symbol = m2: MyClass
+              callableId = null
+          ]
+          callableId = /myClass
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtCallExpression(785,798): 'equals(child)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(785,791): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(791,798): '(child)'
+  NO_CANDIDATES
+
+KtValueArgument(792,797): 'child'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(792,797): 'child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = child
+          receiverType = null
+          returnType = Child
+          symbol = val child: Child
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(804,820): 'another == child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(804,811): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(812,814): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(815,820): 'child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = child
+          receiverType = null
+          returnType = Child
+          symbol = val child: Child
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(825,846): 'another.equals(child)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(825,832): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtCallExpression(833,846): 'equals(child)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(833,839): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        child -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(839,846): '(child)'
+  NO_CANDIDATES
+
+KtValueArgument(840,845): 'child'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(840,845): 'child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = child
+          receiverType = null
+          returnType = Child
+          symbol = val child: Child
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(851,867): 'child == another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = child
+          isSafeNavigation = false
+          type = Child
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /Child.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(851,856): 'child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = child
+          receiverType = null
+          returnType = Child
+          symbol = val child: Child
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(857,859): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = child
+          isSafeNavigation = false
+          type = Child
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /Child.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(860,867): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(872,893): 'child.equals(another)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = child
+          isSafeNavigation = false
+          type = Child
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /Child.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(872,877): 'child'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = child
+          receiverType = null
+          returnType = Child
+          symbol = val child: Child
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(878,893): 'equals(another)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = child
+          isSafeNavigation = false
+          type = Child
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /Child.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(878,884): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = child
+          isSafeNavigation = false
+          type = Child
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /Child.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(884,893): '(another)'
+  NO_CANDIDATES
+
+KtValueArgument(885,892): 'another'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(885,892): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtBinaryExpression(899,917): 'another == myClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(899,906): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(907,909): '=='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(910,917): 'myClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myClass(m1: MyClass, m2: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m1
+              receiverType = null
+              returnType = MyClass
+              symbol = m1: MyClass
+              callableId = null,
+            KaVariableSignature:
+              name = m2
+              receiverType = null
+              returnType = MyClass
+              symbol = m2: MyClass
+              callableId = null
+          ]
+          callableId = /myClass
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(922,945): 'another.equals(myClass)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(922,929): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtCallExpression(930,945): 'equals(myClass)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(930,936): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = another
+          isSafeNavigation = false
+          type = Another
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/Any.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        myClass -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(936,945): '(myClass)'
+  NO_CANDIDATES
+
+KtValueArgument(937,944): 'myClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(937,944): 'myClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myClass(m1: MyClass, m2: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m1
+              receiverType = null
+              returnType = MyClass
+              symbol = m1: MyClass
+              callableId = null,
+            KaVariableSignature:
+              name = m2
+              receiverType = null
+              returnType = MyClass
+              symbol = m2: MyClass
+              callableId = null
+          ]
+          callableId = /myClass
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtBinaryExpression(950,968): 'myClass != another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(950,957): 'myClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myClass(m1: MyClass, m2: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m1
+              receiverType = null
+              returnType = MyClass
+              symbol = m1: MyClass
+              callableId = null,
+            KaVariableSignature:
+              name = m2
+              receiverType = null
+              returnType = MyClass
+              symbol = m2: MyClass
+              callableId = null
+          ]
+          callableId = /myClass
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtOperationReferenceExpression(958,960): '!='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(961,968): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtPrefixExpression(973,997): '!myClass.equals(another)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass.equals(another)
+          isSafeNavigation = false
+          type = kotlin.Boolean
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+          valueParameters = []
+          callableId = kotlin/Boolean.not
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(973,974): '!'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass.equals(another)
+          isSafeNavigation = false
+          type = kotlin.Boolean
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
+          valueParameters = []
+          callableId = kotlin/Boolean.not
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(974,981): 'myClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'm1'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /myClass(m1: MyClass, m2: MyClass): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = m1
+              receiverType = null
+              returnType = MyClass
+              symbol = m1: MyClass
+              callableId = null,
+            KaVariableSignature:
+              name = m2
+              receiverType = null
+              returnType = MyClass
+              symbol = m2: MyClass
+              callableId = null
+          ]
+          callableId = /myClass
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtCallExpression(982,997): 'equals(another)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(982,988): 'equals'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = myClass
+          isSafeNavigation = false
+          type = MyClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              callableId = null
+          ]
+          callableId = /MyClass.equals
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        another -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = other: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(988,997): '(another)'
+  NO_CANDIDATES
+
+KtValueArgument(989,996): 'another'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(989,996): 'another'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /another(): kotlin.Unit
+          valueParameters = []
+          callableId = /another
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false

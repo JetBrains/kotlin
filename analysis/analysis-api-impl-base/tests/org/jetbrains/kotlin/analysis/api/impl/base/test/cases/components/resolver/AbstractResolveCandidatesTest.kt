@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "candidates"
@@ -27,7 +26,7 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
         val candidatesAgain = collectCallCandidates(mainElement)
         val callInfo = mainElement.resolveToCall()
 
-        ignoreStabilityIfNeeded(testServices.moduleStructure.allDirectives) {
+        ignoreStabilityIfNeeded {
             assertStableSymbolResult(testServices, candidates, candidatesAgain)
             checkConsistencyWithResolveCall(callInfo, candidates, testServices)
         }

@@ -1,0 +1,195 @@
+KtFile: 'delegatedProperty.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(16,30): 'package myPack'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(24,30): 'myPack'
+  NO_CANDIDATES
+
+KtImportList(32,63): 'import kotlin.reflect.KProperty'
+  NO_CANDIDATES
+
+KtImportDirective(32,63): 'import kotlin.reflect.KProperty'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(39,63): 'kotlin.reflect.KProperty'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(39,53): 'kotlin.reflect'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(39,45): 'kotlin'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(46,53): 'reflect'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(54,63): 'KProperty'
+  NO_CANDIDATES
+
+KtProperty(65,87): 'var prop by Delegate()'
+  NO_CANDIDATES
+
+KtPropertyDelegate(74,87): 'by Delegate()'
+  NO_CANDIDATES
+
+KtCallExpression(77,87): 'Delegate()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = myPack.Delegate
+          symbol = <constructor>(): myPack.Delegate
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(77,85): 'Delegate'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = myPack.Delegate
+          symbol = <constructor>(): myPack.Delegate
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(85,87): '()'
+  NO_CANDIDATES
+
+KtClass(89,296): 'class Delegate {'
+  NO_CANDIDATES
+
+KtClassBody(104,296): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(110,204): 'operator fun getValue(thisRef: Any?, property: KProperty<*>): String {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(110,118): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(131,170): '(thisRef: Any?, property: KProperty<*>)'
+  NO_CANDIDATES
+
+KtParameter(132,145): 'thisRef: Any?'
+  NO_CANDIDATES
+
+KtTypeReference(141,145): 'Any?'
+  NO_CANDIDATES
+
+KtNullableType(141,145): 'Any?'
+  NO_CANDIDATES
+
+KtUserType(141,144): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(141,144): 'Any'
+  NO_CANDIDATES
+
+KtParameter(147,169): 'property: KProperty<*>'
+  NO_CANDIDATES
+
+KtTypeReference(157,169): 'KProperty<*>'
+  NO_CANDIDATES
+
+KtUserType(157,169): 'KProperty<*>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(157,166): 'KProperty'
+  NO_CANDIDATES
+
+KtTypeArgumentList(166,169): '<*>'
+  NO_CANDIDATES
+
+KtTypeProjection(167,168): '*'
+  NO_CANDIDATES
+
+KtTypeReference(172,178): 'String'
+  NO_CANDIDATES
+
+KtUserType(172,178): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(172,178): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(179,204): '{'
+  NO_CANDIDATES
+
+KtReturnExpression(189,198): 'return ""'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(196,198): '""'
+  NO_CANDIDATES
+
+KtNamedFunction(210,294): 'operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(210,218): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(231,285): '(thisRef: Any?, property: KProperty<*>, value: String)'
+  NO_CANDIDATES
+
+KtParameter(232,245): 'thisRef: Any?'
+  NO_CANDIDATES
+
+KtTypeReference(241,245): 'Any?'
+  NO_CANDIDATES
+
+KtNullableType(241,245): 'Any?'
+  NO_CANDIDATES
+
+KtUserType(241,244): 'Any'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(241,244): 'Any'
+  NO_CANDIDATES
+
+KtParameter(247,269): 'property: KProperty<*>'
+  NO_CANDIDATES
+
+KtTypeReference(257,269): 'KProperty<*>'
+  NO_CANDIDATES
+
+KtUserType(257,269): 'KProperty<*>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(257,266): 'KProperty'
+  NO_CANDIDATES
+
+KtTypeArgumentList(266,269): '<*>'
+  NO_CANDIDATES
+
+KtTypeProjection(267,268): '*'
+  NO_CANDIDATES
+
+KtParameter(271,284): 'value: String'
+  NO_CANDIDATES
+
+KtTypeReference(278,284): 'String'
+  NO_CANDIDATES
+
+KtUserType(278,284): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(278,284): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(286,294): '{'
+  NO_CANDIDATES

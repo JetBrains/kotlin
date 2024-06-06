@@ -1,0 +1,103 @@
+KtNameReferenceExpression(39,45): 'Target'
+  KtSimpleNameReference:
+    (in kotlin.annotation.Target) constructor(vararg allowedTargets: kotlin.annotation.AnnotationTarget)
+
+KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(46,62): 'AnnotationTarget'
+  KtSimpleNameReference:
+    (in kotlin.annotation) enum class AnnotationTarget
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(63,73): 'EXPRESSION'
+  KtSimpleNameReference:
+    (in kotlin.annotation.AnnotationTarget) EXPRESSION
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(76,85): 'Retention'
+  KtSimpleNameReference:
+    (in kotlin.annotation.Retention) constructor(value: kotlin.annotation.AnnotationRetention)
+
+KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(86,105): 'AnnotationRetention'
+  KtSimpleNameReference:
+    (in kotlin.annotation) enum class AnnotationRetention
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(106,112): 'SOURCE'
+  KtSimpleNameReference:
+    (in kotlin.annotation.AnnotationRetention) SOURCE
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(148,151): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(173,177): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(number: kotlin.Int)
+
+KtValueArgument(178,189): '0 + integer'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(180,181): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(182,189): 'integer'
+  KtSimpleNameReference:
+    (in ROOT) const val integer: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(193,197): 'Anno'
+  KtSimpleNameReference:
+    (in Anno) constructor(number: kotlin.Int)
+
+KtValueArgument(198,205): 'integer'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(198,205): 'integer'
+  KtSimpleNameReference:
+    (in ROOT) const val integer: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(207,214): 'usage()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(207,212): 'usage'
+  KtSimpleNameReference:
+    (in ROOT) fun usage()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(216,226): 'toString()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(216,224): 'toString'
+  KtSimpleNameReference:
+    (in kotlin.Unit) override fun toString(): kotlin.String
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

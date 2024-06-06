@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertS
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "call"
@@ -18,7 +17,7 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
         val call = mainElement.resolveToCall()
         val secondCall = mainElement.resolveToCall()
 
-        ignoreStabilityIfNeeded(testServices.moduleStructure.allDirectives) {
+        ignoreStabilityIfNeeded {
             assertStableResult(testServices, call, secondCall)
         }
 

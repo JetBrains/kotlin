@@ -1,0 +1,1658 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtNamedFunction(0,335): '// WITH_STDLIB'
+  NO_CANDIDATES
+
+KtTypeReference(71,80): 'JavaClass'
+  NO_CANDIDATES
+
+KtUserType(71,80): 'JavaClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(71,80): 'JavaClass'
+  NO_CANDIDATES
+
+KtParameterList(84,106): '(javaClass: JavaClass)'
+  NO_CANDIDATES
+
+KtParameter(85,105): 'javaClass: JavaClass'
+  NO_CANDIDATES
+
+KtTypeReference(96,105): 'JavaClass'
+  NO_CANDIDATES
+
+KtUserType(96,105): 'JavaClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(96,105): 'JavaClass'
+  NO_CANDIDATES
+
+KtBlockExpression(107,335): '{'
+  NO_CANDIDATES
+
+KtCallExpression(113,139): 'print(javaClass.something)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Any?): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = message: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Boolean was expected>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = message: kotlin.Boolean
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = message: kotlin.Boolean
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Byte was expected>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Byte): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = message: kotlin.Byte
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = message: kotlin.Byte
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Char was expected>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Char): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Char
+              symbol = message: kotlin.Char
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = message: kotlin.Char
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but CharArray was expected>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.CharArray): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.CharArray
+              symbol = message: kotlin.CharArray
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.CharArray
+          symbol = message: kotlin.CharArray
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Double was expected>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Double): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Double
+              symbol = message: kotlin.Double
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = message: kotlin.Double
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Float was expected>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Float): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Float
+              symbol = message: kotlin.Float
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = message: kotlin.Float
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = message: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Long was expected>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Long): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = message: kotlin.Long
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = message: kotlin.Long
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but Short was expected>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Short): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = message: kotlin.Short
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = message: kotlin.Short
+          callableId = null)
+      }
+    isInBestCandidates = false
+
+KtNameReferenceExpression(113,118): 'print'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Any?): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = message: kotlin.Any?
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Any?
+          symbol = message: kotlin.Any?
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = message: kotlin.Boolean
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = message: kotlin.Boolean
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Byte): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Byte
+              symbol = message: kotlin.Byte
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Byte
+          symbol = message: kotlin.Byte
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Char): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Char
+              symbol = message: kotlin.Char
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = message: kotlin.Char
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.CharArray): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.CharArray
+              symbol = message: kotlin.CharArray
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.CharArray
+          symbol = message: kotlin.CharArray
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Double): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Double
+              symbol = message: kotlin.Double
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = message: kotlin.Double
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Float): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Float
+              symbol = message: kotlin.Float
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Float
+          symbol = message: kotlin.Float
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = message: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = message: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Long): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Long
+              symbol = message: kotlin.Long
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Long
+          symbol = message: kotlin.Long
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with print>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/io/print(message: kotlin.Short): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = message
+              receiverType = null
+              returnType = kotlin.Short
+              symbol = message: kotlin.Short
+              callableId = null
+          ]
+          callableId = kotlin/io/print
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        javaClass.something -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.Short
+          symbol = message: kotlin.Short
+          callableId = null)
+      }
+    isInBestCandidates = false
+
+KtValueArgumentList(118,139): '(javaClass.something)'
+  NO_CANDIDATES
+
+KtValueArgument(119,138): 'javaClass.something'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(119,138): 'javaClass.something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = something
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
+          returnType = ERROR_TYPE
+          symbol = kotlin/invoke(<extension receiver>: kotlin.DeepRecursiveFunction<T, R>, value: T): R
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = value: T
+              callableId = null
+          ]
+          callableId = kotlin/invoke
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE),
+        R -> (ERROR_TYPE)
+      }
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(119,128): 'javaClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = null
+          returnType = JavaClass
+          symbol = javaClass: JavaClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(129,138): 'something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(144,167): 'javaClass.something = 1'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(144,163): 'javaClass.something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = something
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
+          returnType = ERROR_TYPE
+          symbol = kotlin/invoke(<extension receiver>: kotlin.DeepRecursiveFunction<T, R>, value: T): R
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = value: T
+              callableId = null
+          ]
+          callableId = kotlin/invoke
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE),
+        R -> (ERROR_TYPE)
+      }
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(144,153): 'javaClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = null
+          returnType = JavaClass
+          symbol = javaClass: JavaClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(154,163): 'something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(164,165): '='
+  NO_CANDIDATES
+
+KtConstantExpression(166,167): '1'
+  NO_CANDIDATES
+
+KtBinaryExpression(172,196): 'javaClass.something += 1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaCompoundVariableAccessCall:
+      compoundAccess = CompoundAssign:
+        kind = PLUS_ASSIGN
+        operand = 1
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = javaClass.something
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+            valueParameters = [
+              KaVariableSignature:
+                name = other
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = other: kotlin.Int
+                callableId = null
+            ]
+            callableId = kotlin/Int.plus
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(172,191): 'javaClass.something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = something
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
+          returnType = ERROR_TYPE
+          symbol = kotlin/invoke(<extension receiver>: kotlin.DeepRecursiveFunction<T, R>, value: T): R
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = value: T
+              callableId = null
+          ]
+          callableId = kotlin/invoke
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE),
+        R -> (ERROR_TYPE)
+      }
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(172,181): 'javaClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = null
+          returnType = JavaClass
+          symbol = javaClass: JavaClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(182,191): 'something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(192,194): '+='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass.something
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/Int.plus
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstantExpression(195,196): '1'
+  NO_CANDIDATES
+
+KtPostfixExpression(201,222): 'javaClass.something++'
+  KaApplicableCallCandidateInfo:
+    candidate = KaCompoundVariableAccessCall:
+      compoundAccess = IncOrDecOperation:
+        kind = INC
+        precedence = POSTFIX
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = javaClass.something
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+            valueParameters = []
+            callableId = kotlin/Int.inc
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(201,220): 'javaClass.something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = something
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
+          returnType = ERROR_TYPE
+          symbol = kotlin/invoke(<extension receiver>: kotlin.DeepRecursiveFunction<T, R>, value: T): R
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = value: T
+              callableId = null
+          ]
+          callableId = kotlin/invoke
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE),
+        R -> (ERROR_TYPE)
+      }
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(201,210): 'javaClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = null
+          returnType = JavaClass
+          symbol = javaClass: JavaClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(211,220): 'something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(220,222): '++'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass.something
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+          valueParameters = []
+          callableId = kotlin/Int.inc
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtPrefixExpression(227,248): '--javaClass.something'
+  KaApplicableCallCandidateInfo:
+    candidate = KaCompoundVariableAccessCall:
+      compoundAccess = IncOrDecOperation:
+        kind = DEC
+        precedence = PREFIX
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = javaClass.something
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+            valueParameters = []
+            callableId = kotlin/Int.dec
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(227,229): '--'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass.something
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+          valueParameters = []
+          callableId = kotlin/Int.dec
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(229,248): 'javaClass.something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = something
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
+          returnType = ERROR_TYPE
+          symbol = kotlin/invoke(<extension receiver>: kotlin.DeepRecursiveFunction<T, R>, value: T): R
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = value: T
+              callableId = null
+          ]
+          callableId = kotlin/invoke
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE),
+        R -> (ERROR_TYPE)
+      }
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(229,238): 'javaClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = null
+          returnType = JavaClass
+          symbol = javaClass: JavaClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(239,248): 'something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtPostfixExpression(254,265): 'something++'
+  KaApplicableCallCandidateInfo:
+    candidate = KaCompoundVariableAccessCall:
+      compoundAccess = IncOrDecOperation:
+        kind = INC
+        precedence = POSTFIX
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = something
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+            valueParameters = []
+            callableId = kotlin/Int.inc
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(254,263): 'something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(263,265): '++'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = something
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+          valueParameters = []
+          callableId = kotlin/Int.inc
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtPostfixExpression(270,283): '(something)++'
+  KaApplicableCallCandidateInfo:
+    candidate = KaCompoundVariableAccessCall:
+      compoundAccess = IncOrDecOperation:
+        kind = INC
+        precedence = POSTFIX
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = (something)
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+            valueParameters = []
+            callableId = kotlin/Int.inc
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtParenthesizedExpression(270,281): '(something)'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(271,280): 'something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(281,283): '++'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = (something)
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+          valueParameters = []
+          callableId = kotlin/Int.inc
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(288,303): '(something) = 1'
+  NO_CANDIDATES
+
+KtParenthesizedExpression(288,299): '(something)'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(289,298): 'something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(300,301): '='
+  NO_CANDIDATES
+
+KtConstantExpression(302,303): '1'
+  NO_CANDIDATES
+
+KtBinaryExpression(308,333): '(javaClass.something) = 1'
+  NO_CANDIDATES
+
+KtParenthesizedExpression(308,329): '(javaClass.something)'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(309,328): 'javaClass.something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = something
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
+          returnType = ERROR_TYPE
+          symbol = kotlin/invoke(<extension receiver>: kotlin.DeepRecursiveFunction<T, R>, value: T): R
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = value: T
+              callableId = null
+          ]
+          callableId = kotlin/invoke
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE),
+        R -> (ERROR_TYPE)
+      }
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtNameReferenceExpression(309,318): 'javaClass'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            location: LOCAL
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            type: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: JavaClass
+          type = JavaClass
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = JavaClass
+          returnType = java.lang.Class<JavaClass>
+          symbol = val javaClass: java.lang.Class<T>
+          callableId = kotlin/jvm/javaClass
+      simpleAccess = Read
+      typeArgumentsMapping = {
+        T -> (JavaClass)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = javaClass
+          receiverType = null
+          returnType = JavaClass
+          symbol = javaClass: JavaClass
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(319,328): 'something'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          callableId = /JavaClass.something
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(330,331): '='
+  NO_CANDIDATES
+
+KtConstantExpression(332,333): '1'
+  NO_CANDIDATES

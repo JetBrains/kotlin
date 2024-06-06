@@ -1,0 +1,352 @@
+KtFile: 'lambdaParameters.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtNamedFunction(0,166): 'fun foo(action1: Int.() -> Unit, action2: (Int) -> Unit) {'
+  NO_CANDIDATES
+
+KtParameterList(7,56): '(action1: Int.() -> Unit, action2: (Int) -> Unit)'
+  NO_CANDIDATES
+
+KtParameter(8,31): 'action1: Int.() -> Unit'
+  NO_CANDIDATES
+
+KtTypeReference(17,31): 'Int.() -> Unit'
+  NO_CANDIDATES
+
+KtFunctionType(17,31): 'Int.() -> Unit'
+  NO_CANDIDATES
+
+KtFunctionTypeReceiver(17,20): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(17,20): 'Int'
+  NO_CANDIDATES
+
+KtUserType(17,20): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(17,20): 'Int'
+  NO_CANDIDATES
+
+KtParameterList(21,23): '()'
+  NO_CANDIDATES
+
+KtTypeReference(27,31): 'Unit'
+  NO_CANDIDATES
+
+KtUserType(27,31): 'Unit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(27,31): 'Unit'
+  NO_CANDIDATES
+
+KtParameter(33,55): 'action2: (Int) -> Unit'
+  NO_CANDIDATES
+
+KtTypeReference(42,55): '(Int) -> Unit'
+  NO_CANDIDATES
+
+KtFunctionType(42,55): '(Int) -> Unit'
+  NO_CANDIDATES
+
+KtParameterList(42,47): '(Int)'
+  NO_CANDIDATES
+
+KtParameter(43,46): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(43,46): 'Int'
+  NO_CANDIDATES
+
+KtUserType(43,46): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(43,46): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(51,55): 'Unit'
+  NO_CANDIDATES
+
+KtUserType(51,55): 'Unit'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(51,55): 'Unit'
+  NO_CANDIDATES
+
+KtBlockExpression(57,166): '{'
+  NO_CANDIDATES
+
+KtProperty(63,75): 'val prop = 1'
+  NO_CANDIDATES
+
+KtConstantExpression(74,75): '1'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(80,94): 'prop.action1()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = action1
+          isSafeNavigation = false
+          type = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = prop
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = p1
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p1: P1
+              callableId = null
+          ]
+          callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(80,84): 'prop'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val prop: kotlin.Int
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(85,94): 'action1()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = action1
+          isSafeNavigation = false
+          type = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = prop
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = p1
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p1: P1
+              callableId = null
+          ]
+          callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(85,92): 'action1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = action1
+          receiverType = null
+          returnType = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action1: @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(92,94): '()'
+  NO_CANDIDATES
+
+KtCallExpression(99,112): 'action1(prop)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = action1
+          isSafeNavigation = false
+          type = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = prop
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = p1
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p1: P1
+              callableId = null
+          ]
+          callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(99,106): 'action1'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = action1
+          receiverType = null
+          returnType = @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action1: @ExtensionFunctionType kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(106,112): '(prop)'
+  NO_CANDIDATES
+
+KtValueArgument(107,111): 'prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(107,111): 'prop'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val prop: kotlin.Int
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(118,132): 'prop.action2()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(118,122): 'prop'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val prop: kotlin.Int
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(123,132): 'action2()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(123,130): 'action2'
+  NO_CANDIDATES
+
+KtValueArgumentList(130,132): '()'
+  NO_CANDIDATES
+
+KtCallExpression(151,164): 'action2(prop)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = action2
+          isSafeNavigation = false
+          type = kotlin.Function1<kotlin.Int, kotlin.Unit>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = p1
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p1: P1
+              callableId = null
+          ]
+          callableId = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        prop -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p1: P1
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(151,158): 'action2'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = action2
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action2: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(158,164): '(prop)'
+  NO_CANDIDATES
+
+KtValueArgument(159,163): 'prop'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(159,163): 'prop'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = prop
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val prop: kotlin.Int
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

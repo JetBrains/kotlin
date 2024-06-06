@@ -1,0 +1,1022 @@
+KtFile: 'constructors.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,9): 'package r'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,9): 'r'
+  NO_CANDIDATES
+
+KtImportList(9,9): ''
+  NO_CANDIDATES
+
+KtClass(11,115): 'abstract class BaseClass {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(11,19): 'abstract'
+  NO_CANDIDATES
+
+KtClassBody(36,115): '{'
+  NO_CANDIDATES
+
+KtSecondaryConstructor(42,61): 'constructor(i: Int)'
+  NO_CANDIDATES
+
+KtParameterList(53,61): '(i: Int)'
+  NO_CANDIDATES
+
+KtParameter(54,60): 'i: Int'
+  NO_CANDIDATES
+
+KtTypeReference(57,60): 'Int'
+  NO_CANDIDATES
+
+KtUserType(57,60): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(57,60): 'Int'
+  NO_CANDIDATES
+
+KtConstructorDelegationCall(61,61): ''
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = <constructor>(): kotlin.Any
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorDelegationReferenceExpression(61,61): ''
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = <constructor>(): kotlin.Any
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtSecondaryConstructor(66,88): 'constructor(s: String)'
+  NO_CANDIDATES
+
+KtParameterList(77,88): '(s: String)'
+  NO_CANDIDATES
+
+KtParameter(78,87): 's: String'
+  NO_CANDIDATES
+
+KtTypeReference(81,87): 'String'
+  NO_CANDIDATES
+
+KtUserType(81,87): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(81,87): 'String'
+  NO_CANDIDATES
+
+KtConstructorDelegationCall(88,88): ''
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = <constructor>(): kotlin.Any
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorDelegationReferenceExpression(88,88): ''
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = <constructor>(): kotlin.Any
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNamedFunction(94,113): 'fun call() {'
+  NO_CANDIDATES
+
+KtParameterList(102,104): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(105,113): '{'
+  NO_CANDIDATES
+
+KtClass(117,265): 'class Child : BaseClass {'
+  NO_CANDIDATES
+
+KtSuperTypeList(131,140): 'BaseClass'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(131,140): 'BaseClass'
+  NO_CANDIDATES
+
+KtTypeReference(131,140): 'BaseClass'
+  NO_CANDIDATES
+
+KtUserType(131,140): 'BaseClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(131,140): 'BaseClass'
+  NO_CANDIDATES
+
+KtClassBody(141,265): '{'
+  NO_CANDIDATES
+
+KtSecondaryConstructor(147,179): 'constructor(ci: Int) : super(ci)'
+  NO_CANDIDATES
+
+KtParameterList(158,167): '(ci: Int)'
+  NO_CANDIDATES
+
+KtParameter(159,166): 'ci: Int'
+  NO_CANDIDATES
+
+KtTypeReference(163,166): 'Int'
+  NO_CANDIDATES
+
+KtUserType(163,166): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(163,166): 'Int'
+  NO_CANDIDATES
+
+KtConstructorDelegationCall(170,179): 'super(ci)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(i: kotlin.Int): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        ci -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(s: kotlin.String): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        ci -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = false
+
+KtConstructorDelegationReferenceExpression(170,175): 'super'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(i: kotlin.Int): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        ci -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(s: kotlin.String): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        ci -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = false
+
+KtValueArgumentList(175,179): '(ci)'
+  NO_CANDIDATES
+
+KtValueArgument(176,178): 'ci'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(176,178): 'ci'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = ci
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = ci: kotlin.Int
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtSecondaryConstructor(184,219): 'constructor(cs: String) : super(cs)'
+  NO_CANDIDATES
+
+KtParameterList(195,207): '(cs: String)'
+  NO_CANDIDATES
+
+KtParameter(196,206): 'cs: String'
+  NO_CANDIDATES
+
+KtTypeReference(200,206): 'String'
+  NO_CANDIDATES
+
+KtUserType(200,206): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(200,206): 'String'
+  NO_CANDIDATES
+
+KtConstructorDelegationCall(210,219): 'super(cs)'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Int was expected>
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(i: kotlin.Int): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        cs -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(s: kotlin.String): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        cs -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorDelegationReferenceExpression(210,215): 'super'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(i: kotlin.Int): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        cs -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(s: kotlin.String): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        cs -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(215,219): '(cs)'
+  NO_CANDIDATES
+
+KtValueArgument(216,218): 'cs'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(216,218): 'cs'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = cs
+          receiverType = null
+          returnType = kotlin.String
+          symbol = cs: kotlin.String
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNamedFunction(225,263): 'fun foo() {'
+  NO_CANDIDATES
+
+KtParameterList(232,234): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(235,263): '{'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(245,257): 'super.call()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = super
+          isSafeNavigation = false
+          type = r.BaseClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
+          valueParameters = []
+          callableId = r/BaseClass.call
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtSuperExpression(245,250): 'super'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(245,250): 'super'
+  NO_CANDIDATES
+
+KtCallExpression(251,257): 'call()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = super
+          isSafeNavigation = false
+          type = r.BaseClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
+          valueParameters = []
+          callableId = r/BaseClass.call
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(251,255): 'call'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = super
+          isSafeNavigation = false
+          type = r.BaseClass
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
+          valueParameters = []
+          callableId = r/BaseClass.call
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(255,257): '()'
+  NO_CANDIDATES
+
+KtClass(267,347): 'class ChildWithPrimary() : BaseClass(42) {'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(289,291): '()'
+  NO_CANDIDATES
+
+KtParameterList(289,291): '()'
+  NO_CANDIDATES
+
+KtSuperTypeList(294,307): 'BaseClass(42)'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(i: kotlin.Int): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        42 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(s: kotlin.String): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        42 -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = false
+
+KtConstructorCalleeExpression(294,303): 'BaseClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(i: kotlin.Int): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        42 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(s: kotlin.String): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        42 -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = false
+
+KtTypeReference(294,303): 'BaseClass'
+  NO_CANDIDATES
+
+KtUserType(294,303): 'BaseClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(294,303): 'BaseClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(i: kotlin.Int): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        42 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.BaseClass
+          symbol = <constructor>(s: kotlin.String): r.BaseClass
+          valueParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        42 -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = false
+
+KtValueArgumentList(303,307): '(42)'
+  NO_CANDIDATES
+
+KtValueArgument(304,306): '42'
+  NO_CANDIDATES
+
+KtConstantExpression(304,306): '42'
+  NO_CANDIDATES
+
+KtClassBody(308,347): '{'
+  NO_CANDIDATES
+
+KtSecondaryConstructor(314,345): 'constructor(s: String) : this()'
+  NO_CANDIDATES
+
+KtParameterList(325,336): '(s: String)'
+  NO_CANDIDATES
+
+KtParameter(326,335): 's: String'
+  NO_CANDIDATES
+
+KtTypeReference(329,335): 'String'
+  NO_CANDIDATES
+
+KtUserType(329,335): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(329,335): 'String'
+  NO_CANDIDATES
+
+KtConstructorDelegationCall(339,345): 'this()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.ChildWithPrimary
+          symbol = <constructor>(): r.ChildWithPrimary
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'>
+    candidate = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.ChildWithPrimary
+          symbol = <constructor>(s: kotlin.String): r.ChildWithPrimary
+          valueParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtConstructorDelegationReferenceExpression(339,343): 'this'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.ChildWithPrimary
+          symbol = <constructor>(): r.ChildWithPrimary
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 's'>
+    candidate = KaDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.ChildWithPrimary
+          symbol = <constructor>(s: kotlin.String): r.ChildWithPrimary
+          valueParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+
+KtValueArgumentList(343,345): '()'
+  NO_CANDIDATES
+
+KtClass(349,384): 'open class ClassWithType<T>(i: Int)'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(349,353): 'open'
+  NO_CANDIDATES
+
+KtTypeParameterList(373,376): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(374,375): 'T'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(376,384): '(i: Int)'
+  NO_CANDIDATES
+
+KtParameterList(376,384): '(i: Int)'
+  NO_CANDIDATES
+
+KtParameter(377,383): 'i: Int'
+  NO_CANDIDATES
+
+KtTypeReference(380,383): 'Int'
+  NO_CANDIDATES
+
+KtUserType(380,383): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(380,383): 'Int'
+  NO_CANDIDATES
+
+KtClass(386,456): 'class TypedChild : ClassWithType<Int> {'
+  NO_CANDIDATES
+
+KtSuperTypeList(405,423): 'ClassWithType<Int>'
+  NO_CANDIDATES
+
+KtSuperTypeEntry(405,423): 'ClassWithType<Int>'
+  NO_CANDIDATES
+
+KtTypeReference(405,423): 'ClassWithType<Int>'
+  NO_CANDIDATES
+
+KtUserType(405,423): 'ClassWithType<Int>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(405,418): 'ClassWithType'
+  NO_CANDIDATES
+
+KtTypeArgumentList(418,423): '<Int>'
+  NO_CANDIDATES
+
+KtTypeProjection(419,422): 'Int'
+  NO_CANDIDATES
+
+KtTypeReference(419,422): 'Int'
+  NO_CANDIDATES
+
+KtUserType(419,422): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(419,422): 'Int'
+  NO_CANDIDATES
+
+KtClassBody(424,456): '{'
+  NO_CANDIDATES
+
+KtSecondaryConstructor(430,454): 'constructor() : super(1)'
+  NO_CANDIDATES
+
+KtParameterList(441,443): '()'
+  NO_CANDIDATES
+
+KtConstructorDelegationCall(446,454): 'super(1)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.ClassWithType<kotlin.Int>
+          symbol = <constructor>(i: kotlin.Int): r.ClassWithType<T>
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstructorDelegationReferenceExpression(446,451): 'super'
+  KaApplicableCallCandidateInfo:
+    candidate = KaDelegatedConstructorCall:
+      kind = SUPER_CALL
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = r.ClassWithType<kotlin.Int>
+          symbol = <constructor>(i: kotlin.Int): r.ClassWithType<T>
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(451,454): '(1)'
+  NO_CANDIDATES
+
+KtValueArgument(452,453): '1'
+  NO_CANDIDATES
+
+KtConstantExpression(452,453): '1'
+  NO_CANDIDATES

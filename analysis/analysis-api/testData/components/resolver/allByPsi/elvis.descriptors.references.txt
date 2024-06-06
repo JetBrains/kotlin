@@ -1,0 +1,99 @@
+KtNameReferenceExpression(47,50): 'Any'
+  KtSimpleNameReference:
+    (in kotlin) open class Any
+
+KtNameReferenceExpression(54,61): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(79,84): 'other'
+  KtSimpleNameReference:
+    other: kotlin.Any?
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(86,98): 'equals(this)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(86,92): 'equals'
+  KtSimpleNameReference:
+    (in kotlin.Any) open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(93,97): 'this'
+  KtSimpleNameReference:
+    (in ROOT) class MyClass
+
+KtOperationReferenceExpression(99,101): '?:'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(130,137): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) class MyClass
+
+KtNameReferenceExpression(144,151): 'MyClass'
+  KtSimpleNameReference:
+    (in ROOT) class MyClass
+
+KtNameReferenceExpression(168,169): 'm'
+  KtSimpleNameReference:
+    m: MyClass?
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(170,172): '?:'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(173,175): 'm2'
+  KtSimpleNameReference:
+    m2: MyClass?
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(176,178): '?:'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(188,189): 'f'
+  KtSimpleNameReference:
+    (in <local>: check) val f: MyClass?
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(190,192): '?:'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(193,195): 'm2'
+  KtSimpleNameReference:
+    m2: MyClass?
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(200,202): 'm2'
+  KtSimpleNameReference:
+    m2: MyClass?
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(203,205): '?:'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(206,207): 'm'
+  KtSimpleNameReference:
+    m: MyClass?
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -1,0 +1,87 @@
+KtNameReferenceExpression(8,9): 'r'
+  KtSimpleNameReference:
+    package r
+
+KtNameReferenceExpression(55,59): 'this'
+  KtSimpleNameReference:
+    (in r) class MyClass
+
+KtNameReferenceExpression(78,82): 'this'
+  KtSimpleNameReference:
+    (in r) class MyClass
+
+KtNameReferenceExpression(97,100): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(114,121): 'MyClass'
+  KtSimpleNameReference:
+    (in r) class MyClass
+
+KtCallExpression(124,133): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(124,131): 'MyClass'
+  KtSimpleNameReference:
+    (in r.MyClass) constructor()
+
+KtCallExpression(156,165): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(156,163): 'MyClass'
+  KtSimpleNameReference:
+    (in r.MyClass) constructor()
+
+KtCallExpression(186,191): 'foo()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(186,189): 'foo'
+  KtSimpleNameReference:
+    (in r) fun foo(): kotlin.Int
+
+KtNameReferenceExpression(196,199): 'foo'
+  KtSimpleNameReference:
+    (in r) val foo: r.MyClass
+
+KtCallExpression(205,216): '((foo)())()'
+  KtInvokeFunctionReference:
+    (in r.MyClass) operator fun invoke(): r.MyClass
+
+KtCallExpression(206,213): '(foo)()'
+  KtInvokeFunctionReference:
+    (in r.MyClass) operator fun invoke(): r.MyClass
+
+KtNameReferenceExpression(207,210): 'foo'
+  KtSimpleNameReference:
+    (in r) val foo: r.MyClass
+
+KtCallExpression(218,226): 'invoke()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(218,224): 'invoke'
+  KtSimpleNameReference:
+    (in r.MyClass) operator fun invoke(): r.MyClass
+
+KtNameReferenceExpression(231,234): 'foo'
+  KtSimpleNameReference:
+    (in r) val foo: r.MyClass
+
+KtCallExpression(235,243): 'invoke()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(235,241): 'invoke'
+  KtSimpleNameReference:
+    (in r.MyClass) operator fun invoke(): r.MyClass
+
+KtCallExpression(248,258): 'property()'
+  KtInvokeFunctionReference:
+    (in r.MyClass) operator fun invoke(): r.MyClass
+
+KtNameReferenceExpression(248,256): 'property'
+  KtSimpleNameReference:
+    (in r) val property: r.MyClass

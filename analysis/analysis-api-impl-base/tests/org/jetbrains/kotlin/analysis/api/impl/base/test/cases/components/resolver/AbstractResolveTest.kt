@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderFrontendIndependentKClassNameOf
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtTestModule
@@ -41,14 +42,25 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
                     omitSingleKey = false,
                     renderKey = { key, value ->
                         append(key::class.simpleName)
-                        append(key.textRange.toString())
-                        append(": '${key.text.substringBefore('\n')}'")
+                        if (key !is PsiFile) {
+                            append(key.textRange.toString())
+                        }
+
+                        append(':')
+                        val suffix = if (key is PsiFile) {
+                            key.name
+                        } else {
+                            key.text.substringBefore('\n')
+                        }
+
+                        append(" '$suffix'")
                     }
                 ) { context, byMarkerAndContext ->
                     printCollection(byMarkerAndContext, separator = "\n\n") { contextTestCase ->
                         val output = generateResolveOutput(contextTestCase, mainFile, mainModule, testServices)
-                        if (contextTestCase.element != null && contextTestCase.element != contextTestCase.context) {
-                            append(renderFrontendIndependentKClassNameOf(contextTestCase.element))
+                        val element = contextTestCase.element
+                        if (element != null && element != contextTestCase.context) {
+                            append(renderFrontendIndependentKClassNameOf(element))
                             appendLine(':')
                             withIndent {
                                 append(output)
@@ -62,6 +74,7 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = "$resolveKind.txt")
+        checkSuppressedExceptions(mainModule.testModule.directives, testServices)
     }
 
     protected fun <K, V> PrettyPrinter.printMap(
@@ -98,18 +111,10 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
         testServices: TestServices,
     ): String
 
-    class ResolveTestCaseContext<V>(
-        val element: V,
-        val context: KtElement?,
-        val marker: String?,
-    ) {
-        init {
-            if (element != null) {
-                requireNotNull(context) {
-                    "Not-null element must have a context"
-                }
-            }
-        }
+    interface ResolveTestCaseContext<V> {
+        val element: V
+        val context: KtElement?
+        val marker: String?
     }
 
     private object Directives : SimpleDirectivesContainer() {
@@ -132,21 +137,28 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
         k2Directive = Directives.IGNORE_STABILITY_K2,
     )
 
-    protected fun ignoreStabilityIfNeeded(directives: RegisteredDirectives, body: () -> Unit) {
+    private val suppressedStabilityExceptions: MutableList<Throwable> = mutableListOf()
+
+    protected fun ignoreStabilityIfNeeded(body: () -> Unit): Unit = try {
+        body()
+    } catch (e: Throwable) {
+        suppressedStabilityExceptions += e
+    }
+
+    private fun checkSuppressedExceptions(directives: RegisteredDirectives, testServices: TestServices) {
         val directive = directives.doNotCheckSymbolRestoreDirective()
         val isStabilitySuppressed = directive != null && directives[directive].let { values ->
             values.isEmpty() || values.any { it == resolveKind }
         }
 
-        try {
-            body()
-        } catch (e: Throwable) {
-            if (isStabilitySuppressed) return
-            throw e
-        }
-
         if (isStabilitySuppressed) {
+            if (suppressedStabilityExceptions.isNotEmpty()) {
+                return
+            }
+
             error("Directive '${directive.name}' is not needed")
         }
+
+        testServices.assertions.failAll(suppressedStabilityExceptions)
     }
 }
