@@ -5,34 +5,29 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.generators.addDeclarationToParent
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
-import org.jetbrains.kotlin.fir.backend.generators.isFakeOverride
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
-import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.staticScopeForBackend
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -238,58 +233,42 @@ class Fir2IrClassifierStorage(
     }
 
     private fun initializeLazyIrClassDeclarations(classId: ClassId, irClass: Fir2IrLazyClass) {
-        if (classId.packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE)) {
-            val allDeclarations = irClass.computeAllDeclarations()
-            irClass.declarationsStatic += allDeclarations - irClass.declarationsStatic.toSet()
+        if (classId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
+            irClass.computeAllDeclarations()
         } else {
-            fun shouldBuildStub(fir: FirCallableDeclaration): Boolean {
-                if (irClass.kind == ClassKind.ENUM_CLASS && fir.nameOrSpecialName in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES) {
-                    return true
-                }
-
-                if (fir.originalOrSelf().origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) {
-                    return false
-                }
-                if (fir.isHiddenToOvercomeSignatureClash == true && fir.isFinal) {
-                    return false
-                }
-
-                return fir.isFakeOverride(irClass.fir) && session.visibilityChecker.isVisibleForOverriding(
-                    irClass.fir.moduleData,
-                    irClass.fir.symbol,
-                    fir
-                )
-            }
-
-            val result = mutableListOf<IrDeclaration>()
-            val scope = irClass.fir.unsubstitutedScope(c)
             val lookupTag = irClass.fir.symbol.toLookupTag()
 
-            fun addDeclarationsFromScope(scope: FirContainingNamesAwareScope?) {
-                if (scope == null) return
-                for (name in scope.getCallableNames()) {
-                    val functions = scope.collectAllFunctions()
-                    val sam = functions.singleOrNull { it.fir.isAbstract }
-                    for (symbol in functions) {
-                        if (shouldBuildStub(symbol.fir) || symbol == sam) {
-                            @OptIn(UnsafeDuringIrConstructionAPI::class)
-                            result += declarationStorage.getIrFunctionSymbol(symbol, lookupTag).owner
-                        }
-                    }
+            val callableNames = when (irClass.kind) {
+                ClassKind.ENUM_CLASS ->
+                    Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.keys
+                ClassKind.INTERFACE -> {
+                    val functions = irClass.fir.declarations.filterIsInstance<FirSimpleFunction>()
+                    val sam = functions.singleOrNull { it.isAbstract }
+                    setOfNotNull(sam?.name)
+                }
+                else -> emptySet()
+            }
 
-                    scope.processPropertiesByName(name) { symbol ->
-                        if (symbol is FirPropertySymbol && shouldBuildStub(symbol.fir)) {
+            if (callableNames.isNotEmpty()) {
+                listOfNotNull(
+                    irClass.fir.unsubstitutedScope(c),
+                    irClass.fir.staticScopeForBackend(session, scopeSession),
+                ).forEach { scope ->
+                    for (name in callableNames) {
+                        scope.processFunctionsByName(name) { symbol ->
                             @OptIn(UnsafeDuringIrConstructionAPI::class)
-                            result += declarationStorage.getIrPropertySymbol(symbol, lookupTag).owner as IrProperty
+                            declarationStorage.getIrFunctionSymbol(symbol, lookupTag)
+                        }
+
+                        scope.processPropertiesByName(name) { property ->
+                            if (property is FirPropertySymbol) {
+                                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                                declarationStorage.getIrPropertySymbol(property, lookupTag)
+                            }
                         }
                     }
                 }
             }
-
-            addDeclarationsFromScope(scope)
-            addDeclarationsFromScope(irClass.fir.staticScopeForBackend(session, scopeSession))
-
-            irClass.declarationsStatic += result - irClass.declarationsStatic.toSet()
         }
     }
 

@@ -68,10 +68,10 @@ class Fir2IrDeclarationStorage(
     commonMemberStorage: Fir2IrCommonMemberStorage
 ) : Fir2IrComponents by c {
 
-    private val fragmentCache: ConcurrentHashMap<FqName, ExternalPackageFragments> = ConcurrentHashMap()
+    val fragmentCache: ConcurrentHashMap<FqName, ExternalPackageFragments> = ConcurrentHashMap()
     private val moduleDescriptorCache: ConcurrentHashMap<FirModuleData, FirModuleDescriptor> = ConcurrentHashMap()
 
-    private class ExternalPackageFragments(
+    class ExternalPackageFragments(
         val fragmentsForDependencies: ConcurrentHashMap<FirModuleData, IrExternalPackageFragment>,
         val builtinFragmentsForDependencies: ConcurrentHashMap<FirModuleData, IrExternalPackageFragment>,
         val fragmentForPrecompiledBinaries: IrExternalPackageFragment
