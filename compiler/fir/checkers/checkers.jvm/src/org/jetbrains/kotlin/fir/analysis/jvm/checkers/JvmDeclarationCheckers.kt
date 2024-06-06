@@ -21,6 +21,11 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirJvmRedundantRepeatableChecker,
         )
 
+    override val constructorCheckers: Set<FirConstructorChecker>
+        get() = setOf(
+            FirJavaClassInheritsKtPrivateClassDeclChecker,
+        )
+
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
             FirStrictfpApplicabilityChecker,

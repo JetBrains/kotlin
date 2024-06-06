@@ -2014,6 +2014,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
       }
 
       @Test
+      @TestMetadata("privateClass.kt")
+      public void testPrivateClass() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/privateClass.kt");
+      }
+
+      @Test
       @TestMetadata("projectionsOnNonClassTypeArguments.kt")
       public void testProjectionsOnNonClassTypeArguments() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/projectionsOnNonClassTypeArguments.kt");

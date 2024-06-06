@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -35,9 +36,11 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
+import org.jetbrains.kotlin.fir.resolve.getSuperTypes
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.DeferredCallableCopyReturnType
 import org.jetbrains.kotlin.fir.scopes.deferredCallableCopyReturnType
@@ -52,6 +55,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.lexer.KtTokens.PRIVATE_KEYWORD
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.VALUE_PARAMETER
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
@@ -85,6 +89,10 @@ class FirSignatureEnhancement(
     // While in one of the cases FirSignatureEnhancement is created just one step before annotations resolution
     private val contextQualifiers: JavaTypeQualifiersByElementType? by lazy(LazyThreadSafetyMode.NONE) {
         typeQualifierResolver.extractDefaultQualifiers(owner)
+    }
+
+    private val privateKtSuperClass: ConeKotlinType? by lazy {
+        owner.symbol.getSuperTypes(session, substituteSuperTypes = false).firstOrNull { it.toSymbol(session)?.fir?.visibility is Visibilities.Private }
     }
 
     private val enhancementsCache = session.enhancedSymbolStorage.cacheByOwner.getValue(owner.symbol, null)
@@ -225,6 +233,7 @@ class FirSignatureEnhancement(
         }
 
         val firMethod = original.fir
+        firMethod.inheritedKtPrivateCls = privateKtSuperClass
         when (firMethod) {
             is FirJavaMethod -> performBoundsResolutionForJavaMethodOrConstructorTypeParameters(
                 firMethod.typeParameters, firMethod.source, firMethod::withTypeParameterBoundsResolveLock
@@ -621,7 +630,7 @@ class FirSignatureEnhancement(
 
     private inline fun List<FirTypeParameterRef>.replaceEnhancedBounds(
         secondRoundBounds: List<MutableList<FirResolvedTypeRef>>,
-        crossinline block: (FirTypeParameter, FirResolvedTypeRef) -> FirResolvedTypeRef
+        crossinline block: (FirTypeParameter, FirResolvedTypeRef) -> FirResolvedTypeRef,
     ) {
         var currentIndex = 0
         for (typeParameter in this) {
@@ -967,7 +976,7 @@ private class EnhancementSignatureParts(
 
     override fun getDefaultNullability(
         referencedParameterBoundsNullability: NullabilityQualifierWithMigrationStatus?,
-        defaultTypeQualifiers: JavaDefaultQualifiers?
+        defaultTypeQualifiers: JavaDefaultQualifiers?,
     ): NullabilityQualifierWithMigrationStatus? {
         return referencedParameterBoundsNullability?.takeIf { it.qualifier == NullabilityQualifier.NOT_NULL }
             ?: defaultTypeQualifiers?.nullabilityQualifier

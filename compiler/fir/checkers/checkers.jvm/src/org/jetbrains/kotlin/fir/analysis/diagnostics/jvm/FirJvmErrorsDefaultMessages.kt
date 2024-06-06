@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICAB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INNER_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE
@@ -370,6 +371,13 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     "which leads to the incorrect bytecode generation and failure at runtime. So such calls are prohibited until " +
                     "corresponding bug will be fixed. See https://youtrack.jetbrains.com/issue/KT-56386 for more details",
             SYMBOL
+        )
+
+        map.put(
+            JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS,
+            "Java class ''{0}'' declaring this callable should not inherit directly or indirectly private Kotlin class ''{1}''.",
+            RENDER_TYPE,
+            RENDER_TYPE
         )
     }
 }

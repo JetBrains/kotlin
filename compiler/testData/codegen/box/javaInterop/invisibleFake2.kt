@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K1: JVM_IR
+// IGNORE_FIR_DIAGNOSTICS
 // reason: red code
 // ISSUE: KT-63242, KT-66324
 
@@ -24,4 +25,4 @@ private open class C : B() {
 class D extends C {}
 
 // FILE: box.kt
-fun box(): String = D().foo("")
+fun box(): String = <!JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS!>D()<!>.foo("")

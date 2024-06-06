@@ -335,6 +335,7 @@ enum class LanguageFeature(
     ExhaustivenessChecksOnTypeParameterBounds(KOTLIN_2_1, kind = OTHER), // KT-21908
     ProhibitSynchronizationByValueClassesAndPrimitives(KOTLIN_2_1, kind = OTHER), // KT-67791
     AllowSuperCallToJavaInterface(KOTLIN_2_1, kind = OTHER), // KT-69729
+    ProhibitJavaClassInheritingPrivateKotlinClass(KOTLIN_2_1, kind = OTHER), // KT-66328
 
     // 2.2
 

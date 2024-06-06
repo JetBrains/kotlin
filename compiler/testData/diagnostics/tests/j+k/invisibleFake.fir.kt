@@ -28,4 +28,4 @@ class D extends C {
 }
 
 // FILE: box.kt
-fun box(): String = D().foo("") // K1: D.foo, K2: B.foo
+fun box(): String = <!JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS!>D()<!>.foo("") // K1: D.foo, K2: B.foo

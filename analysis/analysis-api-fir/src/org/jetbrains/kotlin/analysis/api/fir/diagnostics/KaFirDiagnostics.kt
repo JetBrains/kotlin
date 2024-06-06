@@ -493,6 +493,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InterfaceCantCallDefaultMethodViaSuper::class
     }
 
+    interface JavaClassInheritsKtPrivateClass : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JavaClassInheritsKtPrivateClass::class
+        val javaClass: KaType
+        val privateKotlinClass: KaType
+    }
+
     interface NotASupertype : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NotASupertype::class
     }
