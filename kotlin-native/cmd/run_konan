@@ -66,7 +66,7 @@ java_opts=(-ea \
             -Xmx3G \
             -XX:TieredStopAtLevel=1 \
             -Dfile.encoding=UTF-8 \
-            -Dkonan.home=$KONAN_HOME \
+            -Dkonan.home="$KONAN_HOME" \
             ${JAVA_OPTS})
 
 # Unset some environment variables which are set by XCode and may potentially affect the tool executed.
