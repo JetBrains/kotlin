@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibil
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.enumMapOf
 import org.jetbrains.kotlin.utils.addToStdlib.enumSetOf
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
@@ -328,14 +327,12 @@ object AbstractExpectActualChecker {
             return ExpectActualCheckingCompatibility.Modality
         }
 
-        val actualizationOfPropertyByJavaField = actualDeclaration.isJavaField && expectDeclaration.canBeActualizedByJavaField
         if (!areCompatibleCallableVisibilities(
                 expectDeclaration.visibility,
                 expectModality,
                 expectContainingClass?.modality,
                 actualDeclaration.visibility,
-                languageVersionSettings,
-                actualizationByJavaField = actualizationOfPropertyByJavaField
+                languageVersionSettings
             )
         ) {
             return ExpectActualCheckingCompatibility.Visibility
@@ -387,10 +384,6 @@ object AbstractExpectActualChecker {
         }
 
         when {
-            actualizationOfPropertyByJavaField -> {
-                // no specific checks, actualization by Java field is permitted in a limited well-known number of cases
-            }
-
             expectDeclaration is FunctionSymbolMarker && actualDeclaration is FunctionSymbolMarker ->
                 getFunctionsIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
 
@@ -399,6 +392,10 @@ object AbstractExpectActualChecker {
 
             expectDeclaration is EnumEntrySymbolMarker && actualDeclaration is EnumEntrySymbolMarker -> {
                 // do nothing, entries are matched only by name
+            }
+
+            actualDeclaration.isJavaField && expectDeclaration.canBeActualizedByJavaField -> {
+                // no specific checks, actualization by Java field is permitted in a limited well-known number of cases
             }
 
             else -> error("Unsupported declarations: $expectDeclaration, $actualDeclaration")
@@ -457,17 +454,13 @@ object AbstractExpectActualChecker {
         expectModality: Modality?,
         expectContainingClassModality: Modality?,
         actualVisibility: Visibility,
-        languageVersionSettings: LanguageVersionSettings,
-        actualizationByJavaField: Boolean
+        languageVersionSettings: LanguageVersionSettings
     ): Boolean {
-        val compare = Visibilities.compare(
-            expectVisibility,
-            actualVisibility.applyIf(actualizationByJavaField) {
-                // In the case of actualization by Java field normalize the field's visibility to
-                // the closest Kotlin visibility. Example: "protected_and_package" -> "protected".
-                normalize()
-            }
-        )
+        // In the case of actualization by a Java declaration such as a field or a method normalize the Java visibility
+        // to the closest Kotlin visibility.Example: "protected_and_package" -> "protected".
+        val normalizedActualVisibility = actualVisibility.normalize()
+
+        val compare = Visibilities.compare(expectVisibility, normalizedActualVisibility)
 
         val effectiveModality =
             when (languageVersionSettings.supportsFeature(LanguageFeature.SupportEffectivelyFinalInExpectActualVisibilityCheck)) {
@@ -563,7 +556,6 @@ object AbstractExpectActualChecker {
             expectContainingClass?.modality,
             actualSetter.visibility,
             languageVersionSettings,
-            actualizationByJavaField = false
         )
     }
 

@@ -1,7 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
-// ^^^ initially muted because it fails
 // ISSUE: KT-66436
 // DUMP_IR
 

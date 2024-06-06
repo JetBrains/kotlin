@@ -6,9 +6,9 @@
 // FILE: common.kt
 package pkg
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect open class Foo {
-    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>protected fun foo()<!>
-}<!>
+expect open class Foo {
+    protected fun foo()
+}
 
 fun common(foo: Foo) {
     foo.<!INVISIBLE_REFERENCE!>foo<!>()
@@ -25,7 +25,7 @@ public class FooImpl {
 // FILE: jvm.kt
 package pkg
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> = FooImpl
+actual typealias Foo = FooImpl
 
 fun jvm(foo: Foo) {
     foo.foo()
