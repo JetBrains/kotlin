@@ -45,7 +45,7 @@ class IrActualizer(
         extraActualClassExtractor,
     )
 
-    private val classActualizationInfo = collector.collectClassActualizationInfo()
+    val classActualizationInfo: ClassActualizationInfo = collector.collectClassActualizationInfo()
 
     fun actualizeClassifiers() {
         val classSymbolRemapper = object : SymbolRemapper.Empty() {

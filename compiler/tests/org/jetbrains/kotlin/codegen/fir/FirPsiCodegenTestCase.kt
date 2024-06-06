@@ -118,7 +118,7 @@ class FirPsiMethodOrderTest : IrMethodOrderTest() {
                 }
             """,
             "\$obj$1",
-            listOf("<init>()V", "f0()V", "f4()V", "f2()V", "f1()V", "f5()V", "f3()V")
+            listOf("<init>()V", "f3()V", "f0()V", "f4()V", "f2()V", "f1()V", "f5()V")
         )
     }
 }

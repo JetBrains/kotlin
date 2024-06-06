@@ -65,6 +65,7 @@ class Fir2IrCommonMemberStorage(val mangler: FirMangler) {
      * }
      */
     val delegatedClassesInfo: MutableMap<IrClassSymbol, MutableMap<IrClassSymbol, IrFieldSymbol>> = mutableMapOf()
+    val firClassesWithInheritanceByDelegation: MutableSet<FirClass> = mutableSetOf()
 
     /**
      * Contains information about synthetic methods generated for data and value classes

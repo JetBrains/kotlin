@@ -201,6 +201,7 @@ class Fir2IrDeclarationStorage(
 
     private val fieldForDelegatedSupertypeCache: ConcurrentHashMap<FirField, IrFieldSymbol> = ConcurrentHashMap()
     private val delegatedClassesMap: MutableMap<IrClassSymbol, MutableMap<IrClassSymbol, IrFieldSymbol>> = commonMemberStorage.delegatedClassesInfo
+    private val firClassesWithInheritanceByDelegation: MutableSet<FirClass> = commonMemberStorage.firClassesWithInheritanceByDelegation
 
     private val localStorage: Fir2IrLocalCallableStorage by threadLocal { Fir2IrLocalCallableStorage() }
 
@@ -381,6 +382,7 @@ class Fir2IrDeclarationStorage(
         val containingClassLookupTag = when {
             fakeOverrideOwnerLookupTag != null -> fakeOverrideOwnerLookupTag
             callable.isSubstitutionOrIntersectionOverride -> callable.containingClassLookupTag()
+            callable.isDelegated -> callable.containingClassLookupTag()
             else -> shouldNotBeCalled()
         }
         requireNotNull(containingClassLookupTag) { "Containing class not found for ${callable.render()}" }
@@ -933,11 +935,12 @@ class Fir2IrDeclarationStorage(
         fieldForDelegatedSupertypeCache[field] = irFieldSymbol
     }
 
-    fun recordSupertypeDelegationInformation(irClass: IrClass, superType: IrType, irFieldSymbol: IrFieldSymbol) {
+    fun recordSupertypeDelegationInformation(containingFirClass: FirClass, irClass: IrClass, superType: IrType, irFieldSymbol: IrFieldSymbol) {
         val delegateMapForClass = delegatedClassesMap.getOrPut(irClass.symbol) { mutableMapOf() }
         val delegatedSuperClass = superType.classOrNull ?: error("No symbol for type $superType")
         require(delegatedSuperClass !in delegateMapForClass) { "Delegate info for supertype $superType already stored" }
         delegateMapForClass[delegatedSuperClass] = irFieldSymbol
+        firClassesWithInheritanceByDelegation += containingFirClass
     }
 
     internal fun createSupertypeDelegateIrField(field: FirField, irClass: IrClass): IrField {

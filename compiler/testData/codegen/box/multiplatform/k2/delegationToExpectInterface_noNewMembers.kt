@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-68517
 
 // MODULE: common

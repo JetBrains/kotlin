@@ -522,7 +522,7 @@ class Fir2IrConverter(
                         ?: error("Backing field not found for property ${correspondingClassProperty.returnTypeRef}")
                 }
                 val delegationTargetType = declaration.returnTypeRef.toIrType(c)
-                declarationStorage.recordSupertypeDelegationInformation(parent, delegationTargetType, irFieldSymbol)
+                declarationStorage.recordSupertypeDelegationInformation(containingClass, parent, delegationTargetType, irFieldSymbol)
 
             }
             is FirConstructor -> if (!declaration.isPrimary) {

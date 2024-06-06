@@ -212,20 +212,26 @@ private class Fir2IrPipeline(
 
         generateSyntheticBodiesOfDataValueMembers()
 
-        val fakeOverrideBuilder = createFakeOverrideBuilder()
-        buildFakeOverrides(fakeOverrideBuilder)
+        val (fakeOverrideStrategy, delegatedMembersGenerationStrategy) = buildFakeOverridesAndPlatformSpecificDeclarations(irActualizer)
 
         val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: IrExpectActualMap()
 
         val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver(expectActualMap)
         resolveFakeOverrideSymbols(fakeOverrideResolver)
+        delegatedMembersGenerationStrategy.updateMetadataSources(
+            commonMemberStorage.firClassesWithInheritanceByDelegation,
+            outputs.last().session,
+            outputs.last().scopeSession,
+            componentsStorage.declarationStorage,
+            fakeOverrideResolver
+        )
 
         evaluateConstants()
 
         val actualizationResult = irActualizer?.runChecksAndFinalize(expectActualMap)
 
         fakeOverrideResolver.cacheFakeOverridesOfAllClasses(mainIrFragment)
-        (fakeOverrideBuilder.strategy as Fir2IrFakeOverrideStrategy).clearFakeOverrideFields()
+        fakeOverrideStrategy.clearFakeOverrideFields()
 
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
@@ -262,17 +268,34 @@ private class Fir2IrPipeline(
             )
     }
 
-    private fun Fir2IrConversionResult.createFakeOverrideBuilder(): IrFakeOverrideBuilder {
+    private fun Fir2IrConversionResult.createFakeOverrideBuilder(
+        irActualizer: IrActualizer?
+    ): Pair<IrFakeOverrideBuilder, Fir2IrDelegatedMembersGenerationStrategy> {
         val session = componentsStorage.session
+        val delegatedMembersGenerationStrategy = Fir2IrDelegatedMembersGenerationStrategy(
+            symbolTable.irFactory, irBuiltIns, fir2IrExtensions, commonMemberStorage.delegatedClassesInfo,
+            irActualizer?.classActualizationInfo,
+        )
         return IrFakeOverrideBuilder(
             irTypeSystemContext,
             Fir2IrFakeOverrideStrategy(
                 Fir2IrConverter.friendModulesMap(session),
                 isGenericClashFromSameSupertypeAllowed = session.moduleData.platform.isJvm(),
                 isOverrideOfPublishedApiFromOtherModuleDisallowed = session.moduleData.platform.isJvm(),
+                delegatedMembersGenerationStrategy,
             ),
             componentsStorage.extensions.externalOverridabilityConditions
-        )
+        ) to delegatedMembersGenerationStrategy
+    }
+
+    private fun Fir2IrConversionResult.buildFakeOverridesAndPlatformSpecificDeclarations(
+        irActualizer: IrActualizer?
+    ): Pair<Fir2IrFakeOverrideStrategy, Fir2IrDelegatedMembersGenerationStrategy> {
+        val (fakeOverrideBuilder, delegatedMembersGenerationStrategy) = createFakeOverrideBuilder(irActualizer)
+        buildFakeOverrides(fakeOverrideBuilder)
+        delegatedMembersGenerationStrategy.generateDelegatedBodies()
+        val fakeOverrideStrategy = fakeOverrideBuilder.strategy as Fir2IrFakeOverrideStrategy
+        return fakeOverrideStrategy to delegatedMembersGenerationStrategy
     }
 
     private fun Fir2IrConversionResult.buildFakeOverrides(fakeOverrideBuilder: IrFakeOverrideBuilder) {

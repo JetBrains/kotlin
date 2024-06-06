@@ -1,18 +1,4 @@
 MODULE main
-	CLASS MLItr.class
-		CLASS METADATA
-			FUNCTION add(Ljava/lang/String;)V
-				Property: class.metadata.function.valueParameters
-					K1
-						(element: kotlin/String)
-					K2
-						(element: @kotlin/jvm/internal/EnhancedNullability kotlin/String)
-			FUNCTION set(Ljava/lang/String;)V
-				Property: class.metadata.function.valueParameters
-					K1
-						(element: kotlin/String)
-					K2
-						(element: @kotlin/jvm/internal/EnhancedNullability kotlin/String)
 	CLASS C.class
 		CLASS METADATA
 			K1

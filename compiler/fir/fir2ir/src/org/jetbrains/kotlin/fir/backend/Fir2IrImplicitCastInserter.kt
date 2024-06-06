@@ -399,7 +399,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
                 )
         }
 
-        internal fun implicitNotNullCast(original: IrExpression): IrTypeOperatorCall {
+        fun implicitNotNullCast(original: IrExpression): IrTypeOperatorCall {
             // Cast type massage 1. Remove @EnhancedNullability
             // Cast type massage 2. Convert it to a non-null variant (in case of @FlexibleNullability)
             val castType = original.type.removeAnnotations { annotationCall ->

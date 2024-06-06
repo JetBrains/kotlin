@@ -72,7 +72,7 @@ internal class ExpectActualCollector(
     }
 }
 
-internal data class ClassActualizationInfo(
+data class ClassActualizationInfo(
     // mapping from classId of actual class/typealias to itself/typealias expansion
     val actualClasses: Map<ClassId, IrClassSymbol>,
     // mapping from classId to actual typealias

@@ -156,9 +156,12 @@ abstract class FakeOverrideBuilderStrategy(
      */
     protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)
 
-    abstract class BindToPrivateSymbols(friendModules: Map<String, Collection<String>>) : FakeOverrideBuilderStrategy(
+    abstract class BindToPrivateSymbols(
+        friendModules: Map<String, Collection<String>>,
+        unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
+    ) : FakeOverrideBuilderStrategy(
         friendModules = friendModules,
-        unimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
+        unimplementedOverridesStrategy
     ) {
         override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
             function.acquireSymbol(IrSimpleFunctionSymbolImpl())
