@@ -164,6 +164,12 @@ sealed class JsIrBinary(
     }
 }
 
+interface WasmBinary {
+    val optimizeTaskName: String
+
+    val optimizeTask: TaskProvider<BinaryenExec>
+}
+
 open class Executable(
     compilation: KotlinJsIrCompilation,
     name: String,
@@ -196,7 +202,7 @@ open class ExecutableWasm(
     compilation,
     name,
     mode
-) {
+), WasmBinary {
     override fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
         if (compilation.isMain() && mode == KotlinJsBinaryMode.PRODUCTION) {
             syncTask.from.from(optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
@@ -206,9 +212,9 @@ open class ExecutableWasm(
         }
     }
 
-    val optimizeTaskName: String = optimizeTaskName()
+    final override val optimizeTaskName: String = optimizeTaskName()
 
-    val optimizeTask: TaskProvider<BinaryenExec> = BinaryenExec.create(compilation, optimizeTaskName) {
+    override val optimizeTask: TaskProvider<BinaryenExec> = BinaryenExec.create(compilation, optimizeTaskName) {
         val compileWasmDestDir = linkTask.map {
             it.destinationDirectory
         }
@@ -258,7 +264,7 @@ open class ExecutableWasm(
         "${linkTaskName}Optimize"
 }
 
-class Library(
+open class Library(
     compilation: KotlinJsIrCompilation,
     name: String,
     mode: KotlinJsBinaryMode,
@@ -267,5 +273,75 @@ class Library(
     name,
     mode
 )
+
+class LibraryWasm(
+    compilation: KotlinJsIrCompilation,
+    name: String,
+    mode: KotlinJsBinaryMode,
+) : Library(
+    compilation,
+    name,
+    mode
+), WasmBinary {
+    override fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
+        if (compilation.isMain() && mode == KotlinJsBinaryMode.PRODUCTION) {
+            syncTask.from.from(optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
+            syncTask.dependsOn(optimizeTask)
+        } else {
+            super.syncInputConfigure(syncTask)
+        }
+    }
+
+    final override val optimizeTaskName: String = optimizeTaskName()
+
+    override val optimizeTask: TaskProvider<BinaryenExec> = BinaryenExec.create(compilation, optimizeTaskName) {
+        val compileWasmDestDir = linkTask.map {
+            it.destinationDirectory
+        }
+
+        val compiledWasmFile = linkTask.flatMap { link ->
+            link.destinationDirectory.locationOnly.zip(link.compilerOptions.moduleName) { destDir, moduleName ->
+                destDir.file("$moduleName.wasm")
+            }
+        }
+
+        dependsOn(linkTask)
+        inputFileProperty.set(compiledWasmFile)
+
+        val outputDirectory: Provider<Directory> = target.project.layout.buildDirectory
+            .dir(COMPILE_SYNC)
+            .map { it.dir(compilation.target.targetName) }
+            .map { it.dir(compilation.name) }
+            .map { it.dir(name) }
+            .map { it.dir("optimized") }
+
+        this.outputDirectory.set(outputDirectory)
+
+        outputFileName.set(
+            compiledWasmFile.map { it.asFile.name }
+        )
+
+        doLast {
+            fs.copy {
+                it.from(compileWasmDestDir)
+                it.into(outputDirectory)
+                it.eachFile {
+                    if (it.relativePath.getFile(outputDirectory.get().asFile).exists()) {
+                        it.exclude()
+                    }
+                }
+            }
+        }
+    }.also { binaryenExec ->
+        if (compilation.isMain() && mode == KotlinJsBinaryMode.PRODUCTION) {
+            if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
+                project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(binaryenExec)
+            }
+        }
+    }
+
+    private fun optimizeTaskName(): String =
+        "${linkTaskName}Optimize"
+}
 
 internal const val COMPILE_SYNC = "compileSync"

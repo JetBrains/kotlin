@@ -9,6 +9,7 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -95,10 +96,16 @@ constructor(
                 (this as KotlinJsIrSubTarget).produceLibrary()
             }
 
+            val factory = if (target.platformType == KotlinPlatformType.wasm) {
+                ::LibraryWasm
+            } else {
+                ::Library
+            }
+
             return createBinaries(
                 compilation = compilation,
                 jsBinaryType = KotlinJsBinaryType.LIBRARY,
-                create = ::Library
+                create = factory
             )
         }
 

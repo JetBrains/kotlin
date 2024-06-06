@@ -54,6 +54,8 @@ constructor(
     KotlinJsSubTargetContainerDsl,
     KotlinWasmSubTargetContainerDsl {
 
+    private val nodeJsPlugin = NodeJsRootPlugin.apply(project.rootProject)
+
     private val propertiesProvider = PropertiesProvider(project)
 
     override val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun> by lazy {
@@ -138,7 +140,7 @@ constructor(
             .map { it.binaries }
             .get()
 
-    private val configureTestSideEffect: Unit by lazy {
+    internal val configureTestSideEffect: Unit by lazy {
         val mainCompilation = compilations.matching { it.isMain() }
 
         compilations.matching { it.isTest() }
@@ -225,8 +227,6 @@ constructor(
     private val nodejsLazyDelegate = lazy {
         if (wasmTargetType != KotlinWasmTargetType.WASI) {
             commonLazy
-        } else {
-            NodeJsRootPlugin.apply(project.rootProject)
         }
 
         project.objects.newInstance(KotlinNodeJsIr::class.java, this).also {
@@ -271,7 +271,6 @@ constructor(
         get() = d8LazyDelegate.isInitialized()
 
     private fun KotlinJsIrSubTarget.configureSubTarget() {
-        configureTestSideEffect
         configure()
     }
 

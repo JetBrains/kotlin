@@ -108,6 +108,8 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
 
     @ExperimentalDceDsl
     fun dceTask(body: Action<KotlinJsDce>)
+
+    fun useWebpack()
 }
 
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {

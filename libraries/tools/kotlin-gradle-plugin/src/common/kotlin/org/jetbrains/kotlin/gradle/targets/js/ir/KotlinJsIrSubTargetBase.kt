@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: String) :
     KotlinJsIrSubTarget(target, classifier) {
 
-    override fun configureRun(compilation: KotlinJsIrCompilation) {
+    override fun setupRun(compilation: KotlinJsIrCompilation) {
         compilation.binaries
             .withType(JsIrBinary::class.java)
             .matching { it is Executable }
@@ -33,7 +33,7 @@ abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: Str
 
     protected abstract fun locateOrRegisterRunTask(binary: JsIrBinary, name: String)
 
-    override fun configureBuild(compilation: KotlinJsIrCompilation) {
+    override fun setupBuild(compilation: KotlinJsIrCompilation) {
         compilation.binaries
             .getIrBinaries(KotlinJsBinaryMode.PRODUCTION)
             .matching { it is Executable }

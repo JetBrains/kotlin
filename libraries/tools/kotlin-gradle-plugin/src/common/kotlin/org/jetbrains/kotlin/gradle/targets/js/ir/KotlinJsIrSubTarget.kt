@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.DomainObjectSet
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
+import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
@@ -42,7 +44,10 @@ abstract class KotlinJsIrSubTarget(
     final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
         private set
 
-    protected val taskGroupName = "Kotlin $disambiguationClassifier"
+    internal val taskGroupName = "Kotlin $disambiguationClassifier"
+
+    protected val subTargetConfigurators: DomainObjectSet<SubTargetConfigurator<*, *>> =
+        project.objects.domainObjectSet<SubTargetConfigurator<*, *>>()
 
     @ExperimentalDistributionDsl
     override fun distribution(body: Action<Distribution>) {
@@ -81,7 +86,7 @@ abstract class KotlinJsIrSubTarget(
         testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
     }
 
-    protected fun disambiguateCamelCased(vararg names: String): String =
+    internal fun disambiguateCamelCased(vararg names: String): String =
         lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, *names)
 
     private fun configureTests() {
@@ -93,7 +98,7 @@ abstract class KotlinJsIrSubTarget(
         testRuns.create(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME)
     }
 
-    protected open fun configureTestRunDefaults(testRun: KotlinJsPlatformTestRun) {
+    private fun configureTestRunDefaults(testRun: KotlinJsPlatformTestRun) {
         target.compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
             .all { compilation ->
                 configureTestsRun(testRun, compilation)
@@ -175,13 +180,13 @@ abstract class KotlinJsIrSubTarget(
     }
 
     private fun configureMain(compilation: KotlinJsIrCompilation) {
-        configureRun(compilation)
-        configureBuild(compilation)
+        setupRun(compilation)
+        setupBuild(compilation)
     }
 
-    abstract fun configureRun(compilation: KotlinJsIrCompilation)
+    abstract fun setupRun(compilation: KotlinJsIrCompilation)
 
-    abstract fun configureBuild(compilation: KotlinJsIrCompilation)
+    abstract fun setupBuild(compilation: KotlinJsIrCompilation)
 
     private fun configureLibrary() {
         target.compilations.all { compilation ->
@@ -228,19 +233,19 @@ abstract class KotlinJsIrSubTarget(
             }
     }
 
-    internal inline fun <reified T : Task> registerSubTargetTask(
-        name: String,
-        args: List<Any> = emptyList(),
-        noinline body: (T) -> (Unit),
-    ): TaskProvider<T> =
-        project.registerTask(name, args) {
-            it.group = taskGroupName
-            body(it)
-        }
-
     companion object {
         const val RUN_TASK_NAME = "run"
 
         const val DISTRIBUTION_TASK_NAME = "distribution"
     }
 }
+
+internal inline fun <reified T : Task> KotlinJsIrSubTarget.registerSubTargetTask(
+    name: String,
+    args: List<Any> = emptyList(),
+    noinline body: (T) -> (Unit),
+): TaskProvider<T> =
+    project.registerTask(name, args) {
+        it.group = taskGroupName
+        body(it)
+    }
