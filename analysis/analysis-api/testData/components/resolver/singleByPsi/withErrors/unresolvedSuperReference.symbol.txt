@@ -1,0 +1,2 @@
+KtSuperTypeCallEntry(41,54): 'Unresolved(p)'
+  null

@@ -1,0 +1,2 @@
+KtCallExpression(39,55): 'uintArrayOf(42u)'
+  null

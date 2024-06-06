@@ -1,0 +1,2 @@
+KtNameReferenceExpression(202,210): 'IntArray'
+  null

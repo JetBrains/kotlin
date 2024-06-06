@@ -1,0 +1,2 @@
+KtAnnotationEntry(0,18): '@delegate:Suppress'
+  null

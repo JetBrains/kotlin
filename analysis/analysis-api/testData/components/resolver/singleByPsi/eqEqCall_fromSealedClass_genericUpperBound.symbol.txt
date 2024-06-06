@@ -1,0 +1,2 @@
+KtBinaryExpression(357,375): 'oldItem == newItem'
+  null

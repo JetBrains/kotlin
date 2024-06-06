@@ -1,0 +1,3 @@
+KDocName(47,59): 'bar.A.toName'
+  KDocReference:
+    Nothing (Unresolved reference)

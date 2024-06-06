@@ -1,0 +1,3 @@
+KDocName(85,102): 'KotlinChild.myFun'
+  KDocReference:
+    Nothing (Unresolved reference)

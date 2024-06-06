@@ -1,0 +1,7 @@
+KtNameReferenceExpression(87,88): 'a'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(82,104): 'some(a = arrayOf(A()))'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

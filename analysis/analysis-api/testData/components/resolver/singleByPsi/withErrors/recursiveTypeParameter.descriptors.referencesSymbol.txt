@@ -1,0 +1,6 @@
+KtNameReferenceExpression(96,103): 'install'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

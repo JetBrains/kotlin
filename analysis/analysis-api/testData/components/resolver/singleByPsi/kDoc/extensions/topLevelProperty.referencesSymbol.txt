@@ -1,0 +1,19 @@
+<caret_1>:
+  KDocName(66,78): 'test.extProp'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(84,91): 'extProp'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_3>:
+  KDocName(100,111): 'Foo.extProp'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_4>:
+  KDocName(117,133): 'test.Foo.extProp'
+    KDocReference:
+      Nothing (Unresolved reference)

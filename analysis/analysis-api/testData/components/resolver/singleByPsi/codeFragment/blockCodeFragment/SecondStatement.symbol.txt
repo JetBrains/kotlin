@@ -1,0 +1,2 @@
+KtNameReferenceExpression(142,145): 'bar'
+  null

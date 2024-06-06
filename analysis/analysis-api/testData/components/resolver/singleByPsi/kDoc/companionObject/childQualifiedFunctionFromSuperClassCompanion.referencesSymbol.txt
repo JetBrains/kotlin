@@ -1,0 +1,3 @@
+KDocName(79,88): 'Child.foo'
+  KDocReference:
+    Nothing (Unresolved reference)

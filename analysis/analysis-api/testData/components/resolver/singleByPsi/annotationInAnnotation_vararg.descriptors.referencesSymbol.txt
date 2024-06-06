@@ -1,0 +1,10 @@
+KtNameReferenceExpression(131,141): 'Annotation'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(131,153): 'Annotation("v1", "v2")'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)

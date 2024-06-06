@@ -1,0 +1,7 @@
+KtNameReferenceExpression(39,50): 'uintArrayOf'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(31,56): 'println(uintArrayOf(42u))'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

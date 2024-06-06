@@ -1,0 +1,3 @@
+KtPropertyDelegate(62,84): 'by Delegates.notNull()'
+  KtPropertyDelegationMethodsReference:
+    Nothing (Unresolved reference)

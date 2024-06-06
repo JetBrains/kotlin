@@ -1,0 +1,2 @@
+KtArrayAccessExpression(93,97): 'c[1]'
+  null

@@ -1,0 +1,3 @@
+KtPropertyDelegate(11,19): 'by Foo()'
+  KtPropertyDelegationMethodsReference:
+    Nothing (Unresolved reference)

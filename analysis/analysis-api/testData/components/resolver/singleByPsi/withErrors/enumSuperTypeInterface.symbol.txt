@@ -1,0 +1,2 @@
+KtSuperTypeCallEntry(15,18): 'I()'
+  null

@@ -1,0 +1,6 @@
+KtNameReferenceExpression(51,60): 'JavaClass'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

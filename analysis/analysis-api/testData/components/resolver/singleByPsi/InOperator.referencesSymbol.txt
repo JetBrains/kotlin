@@ -1,0 +1,3 @@
+KtOperationReferenceExpression(69,71): 'in'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

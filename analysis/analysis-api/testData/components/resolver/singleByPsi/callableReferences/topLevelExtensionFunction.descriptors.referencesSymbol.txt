@@ -1,0 +1,10 @@
+KtNameReferenceExpression(72,75): 'Foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(64,81): 'consume(Foo::foo)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

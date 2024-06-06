@@ -1,0 +1,29 @@
+<caret_1>:
+  KDocName(54,57): 'one'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(71,78): 'one.two'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_3>:
+  KDocName(91,94): 'Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_4>:
+  KDocName(104,115): 'one.two.Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_5>:
+  KDocName(128,131): 'one'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_6>:
+  KDocName(149,156): 'one.two'
+    KDocReference:
+      Nothing (Unresolved reference)

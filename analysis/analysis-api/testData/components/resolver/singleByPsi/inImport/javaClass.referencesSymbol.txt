@@ -1,0 +1,3 @@
+KtNameReferenceExpression(17,24): 'HashMap'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

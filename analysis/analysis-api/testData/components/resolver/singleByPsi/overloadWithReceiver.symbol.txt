@@ -1,0 +1,2 @@
+KtCallExpression(50,57): 'myRun()'
+  null

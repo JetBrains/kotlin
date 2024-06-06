@@ -1,0 +1,3 @@
+KDocName(83,90): 'Foo.foo'
+  KDocReference:
+    Nothing (Unresolved reference)

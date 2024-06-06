@@ -1,0 +1,86 @@
+<caret_1>:
+  KtNameReferenceExpression(107,116): 'something'
+    KtSimpleNameReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KtNameReferenceExpression(124,133): 'something'
+    KtSimpleNameReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+
+<caret_3>:
+  KtNameReferenceExpression(144,153): 'something'
+    KtSimpleNameReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+
+<caret_4>:
+  KtNameReferenceExpression(165,174): 'something'
+    KtSimpleNameReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+
+<caret_5>:
+  KtNameReferenceExpression(185,194): 'something'
+    KtSimpleNameReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+
+<caret_6>:
+  KtNameReferenceExpression(200,209): 'something'
+    KtSimpleNameReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+
+<caret_7>:
+  KtNameReferenceExpression(217,226): 'something'
+    KtSimpleNameReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+
+<caret_8>:
+  KtNameReferenceExpression(235,244): 'something'
+    KtSimpleNameReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)
+
+<caret_9>:
+  KtNameReferenceExpression(257,266): 'something'
+    KtSimpleNameReference:
+      Nothing (Unresolved reference)
+    
+    SyntheticPropertyAccessorReference:
+      Nothing (Unresolved reference)

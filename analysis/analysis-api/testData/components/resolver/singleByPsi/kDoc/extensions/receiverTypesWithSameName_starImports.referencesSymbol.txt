@@ -1,0 +1,49 @@
+<caret_1>:
+  KDocName(86,93): 'Foo.ext'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(99,102): 'Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_3>:
+  KDocName(115,131): 'Foo.depExtShared'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_4>:
+  KDocName(137,140): 'Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_5>:
+  KDocName(162,173): 'Foo.depExt1'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_6>:
+  KDocName(179,182): 'Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_7>:
+  KDocName(199,210): 'Foo.depExt2'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_8>:
+  KDocName(216,219): 'Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_9>:
+  KDocName(236,244): 'dep1.Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_10>:
+  KDocName(254,262): 'dep2.Foo'
+    KDocReference:
+      Nothing (Unresolved reference)

@@ -1,0 +1,2 @@
+KtCallExpression(146,166): 'test(this::uiMethod)'
+  null

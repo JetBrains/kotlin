@@ -1,0 +1,2 @@
+KtNameReferenceExpression(173,176): 'obj'
+  null

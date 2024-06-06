@@ -1,0 +1,2 @@
+KtCallExpression(49,62): 'foo label@ {}'
+  null

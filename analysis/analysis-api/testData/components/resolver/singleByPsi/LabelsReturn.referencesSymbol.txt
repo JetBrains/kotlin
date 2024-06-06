@@ -1,0 +1,3 @@
+KtLabelReferenceExpression(22,26): '@foo'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

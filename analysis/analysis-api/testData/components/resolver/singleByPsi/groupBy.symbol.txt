@@ -1,0 +1,2 @@
+KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> value }) { (idx, _) -> idx }'
+  null

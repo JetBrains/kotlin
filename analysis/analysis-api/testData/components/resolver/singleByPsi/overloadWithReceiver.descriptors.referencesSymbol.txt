@@ -1,0 +1,6 @@
+KtNameReferenceExpression(50,55): 'myRun'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -1,0 +1,44 @@
+<caret_1>:
+  KDocName(88,91): 'Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(112,121): 'Outer.Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_3>:
+  KDocName(135,149): 'test.Outer.Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_4>:
+  KDocName(170,178): 'test.Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_nested_1>:
+  KDocName(275,278): 'Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_nested_2>:
+  KDocName(307,317): 'Nested.Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_nested_3>:
+  KDocName(335,351): 'Outer.Nested.Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_nested_4>:
+  KDocName(369,390): 'test.Outer.Nested.Foo'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_nested_5>:
+  KDocName(419,427): 'test.Foo'
+    KDocReference:
+      Nothing (Unresolved reference)

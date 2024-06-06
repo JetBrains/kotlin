@@ -1,0 +1,6 @@
+KtNameReferenceExpression(92,100): 'Conflict'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

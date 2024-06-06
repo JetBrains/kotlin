@@ -1,0 +1,24 @@
+<caret_1>:
+  KDocName(167,182): 'FooAlias.fooExt'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(191,206): 'Foo.fooAliasExt'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_3>:
+  KDocName(212,232): 'FooAlias.fooAliasExt'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_4>:
+  KDocName(241,256): 'FooAlias.anyExt'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_5>:
+  KDocName(262,279): 'FooAlias.otherExt'
+    KDocReference:
+      Nothing (Unresolved reference)

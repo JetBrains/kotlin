@@ -1,0 +1,3 @@
+KtNameReferenceExpression(7,13): 'kotlin'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

@@ -1,0 +1,3 @@
+KtOperationReferenceExpression(106,108): '=='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

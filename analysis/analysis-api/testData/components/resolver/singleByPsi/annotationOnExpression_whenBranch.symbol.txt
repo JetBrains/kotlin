@@ -1,0 +1,2 @@
+KtAnnotationEntry(54,78): '@Suppress("DEPRECATION")'
+  null

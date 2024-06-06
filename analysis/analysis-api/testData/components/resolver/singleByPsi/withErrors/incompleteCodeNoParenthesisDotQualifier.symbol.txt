@@ -1,0 +1,2 @@
+KtCallExpression(36,48): 'List<String>'
+  null

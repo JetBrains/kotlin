@@ -1,0 +1,2 @@
+KtCallExpression(44,62): 'foo(localProperty)'
+  null

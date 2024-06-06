@@ -1,0 +1,7 @@
+KtCollectionLiteralExpression(91,100): '[1, 2, 3]'
+  KtCollectionLiteralReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(91,100): '[1, 2, 3]'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)

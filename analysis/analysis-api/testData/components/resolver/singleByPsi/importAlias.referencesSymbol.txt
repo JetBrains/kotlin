@@ -1,0 +1,3 @@
+KtNameReferenceExpression(99,104): 'coreR'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

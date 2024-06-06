@@ -1,0 +1,2 @@
+KtCallExpression(43,75): 'Comparator {x: Int, y: Int -> 1}'
+  null

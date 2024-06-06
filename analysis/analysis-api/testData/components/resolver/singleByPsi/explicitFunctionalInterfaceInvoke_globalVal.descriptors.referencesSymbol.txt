@@ -1,0 +1,6 @@
+KtNameReferenceExpression(94,100): 'invoke'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

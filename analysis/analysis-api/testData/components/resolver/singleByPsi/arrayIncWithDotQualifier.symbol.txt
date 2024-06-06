@@ -1,0 +1,2 @@
+KtCallExpression(105,111): 'peek()'
+  null

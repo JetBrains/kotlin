@@ -1,0 +1,6 @@
+KtNameReferenceExpression(118,120): 'AA'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -1,0 +1,3 @@
+KDocName(22,26): 'b.BB'
+  KDocReference:
+    Nothing (Unresolved reference)

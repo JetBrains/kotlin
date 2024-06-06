@@ -1,0 +1,6 @@
+KtNameReferenceExpression(108,116): 'processB'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -1,0 +1,2 @@
+KtNameReferenceExpression(123,132): 'dummyTest'
+  null

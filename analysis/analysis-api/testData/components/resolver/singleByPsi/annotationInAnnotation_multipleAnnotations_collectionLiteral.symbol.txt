@@ -1,0 +1,2 @@
+KtAnnotationEntry(121,197): '@AnnotationArray(annos = [Annotation("v1", "v2"), Annotation(["v3", "v4"])])'
+  null

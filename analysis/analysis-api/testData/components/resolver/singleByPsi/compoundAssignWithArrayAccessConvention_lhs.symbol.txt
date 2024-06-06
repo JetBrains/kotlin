@@ -1,0 +1,2 @@
+KtArrayAccessExpression(128,134): 'm["a"]'
+  null

@@ -1,0 +1,3 @@
+KtDestructuringDeclarationEntry(135,136): 'b'
+  KtDestructuringDeclarationReference:
+    Nothing (Unresolved reference)

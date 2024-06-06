@@ -1,0 +1,2 @@
+KtConstructorCalleeExpression(31,32): 'A'
+  null

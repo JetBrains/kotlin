@@ -1,0 +1,3 @@
+KtNameReferenceExpression(49,57): 'function'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

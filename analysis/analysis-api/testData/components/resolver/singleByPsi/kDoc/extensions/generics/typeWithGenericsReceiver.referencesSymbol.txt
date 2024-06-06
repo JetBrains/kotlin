@@ -1,0 +1,9 @@
+<caret_1>:
+  KDocName(121,140): 'WithGenerics.intExt'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(146,168): 'WithGenerics.stringExt'
+    KDocReference:
+      Nothing (Unresolved reference)

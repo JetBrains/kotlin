@@ -1,0 +1,2 @@
+KtArrayAccessExpression(70,77): 'list[0]'
+  null

@@ -1,0 +1,2 @@
+KtCallExpression(43,66): 'generic<Int, String>(5)'
+  null

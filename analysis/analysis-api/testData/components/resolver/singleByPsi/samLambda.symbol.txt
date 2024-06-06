@@ -1,0 +1,2 @@
+KtCallExpression(143,162): 'test { uiMethod() }'
+  null

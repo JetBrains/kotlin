@@ -1,0 +1,3 @@
+KDocName(8,45): 'kotlin.collections.AbstractCollection'
+  KDocReference:
+    Nothing (Unresolved reference)

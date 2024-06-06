@@ -1,0 +1,2 @@
+KtNameReferenceExpression(114,117): 'baz'
+  null

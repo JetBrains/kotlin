@@ -47,8 +47,9 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
                 ) { context, byMarkerAndContext ->
                     printCollection(byMarkerAndContext, separator = "\n\n") { contextTestCase ->
                         val output = generateResolveOutput(contextTestCase, mainFile, mainModule, testServices)
-                        if (contextTestCase.element != null && contextTestCase.element != contextTestCase.context) {
-                            append(renderFrontendIndependentKClassNameOf(contextTestCase.element))
+                        val element = contextTestCase.element
+                        if (element != null && element != contextTestCase.context) {
+                            append(renderFrontendIndependentKClassNameOf(element))
                             appendLine(':')
                             withIndent {
                                 append(output)
@@ -98,18 +99,10 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
         testServices: TestServices,
     ): String
 
-    class ResolveTestCaseContext<V>(
-        val element: V,
-        val context: KtElement?,
-        val marker: String?,
-    ) {
-        init {
-            if (element != null) {
-                requireNotNull(context) {
-                    "Not-null element must have a context"
-                }
-            }
-        }
+    interface ResolveTestCaseContext<V> {
+        val element: V
+        val context: KtElement?
+        val marker: String?
     }
 
     private object Directives : SimpleDirectivesContainer() {

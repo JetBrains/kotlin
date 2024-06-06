@@ -1,0 +1,3 @@
+KDocName(8,36): 'kotlin.collections.ArrayList'
+  KDocReference:
+    Nothing (Unresolved reference)

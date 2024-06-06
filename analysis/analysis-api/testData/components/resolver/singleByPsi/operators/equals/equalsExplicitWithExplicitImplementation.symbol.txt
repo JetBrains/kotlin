@@ -1,0 +1,2 @@
+KtNameReferenceExpression(119,125): 'equals'
+  null

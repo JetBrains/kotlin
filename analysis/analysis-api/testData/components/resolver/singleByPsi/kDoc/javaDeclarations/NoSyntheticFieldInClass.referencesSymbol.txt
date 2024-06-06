@@ -1,0 +1,14 @@
+<caret_1>:
+  KDocName(25,38): 'Storage.value'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(44,60): 'Storage.setValue'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_3>:
+  KDocName(66,78): 'Storage.prop'
+    KDocReference:
+      Nothing (Unresolved reference)

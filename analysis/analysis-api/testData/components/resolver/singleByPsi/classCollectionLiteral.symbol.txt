@@ -1,0 +1,2 @@
+KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
+  null

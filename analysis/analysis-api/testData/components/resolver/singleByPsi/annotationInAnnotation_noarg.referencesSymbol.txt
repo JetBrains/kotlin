@@ -1,0 +1,7 @@
+KtNameReferenceExpression(131,141): 'Annotation'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(131,143): 'Annotation()'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)

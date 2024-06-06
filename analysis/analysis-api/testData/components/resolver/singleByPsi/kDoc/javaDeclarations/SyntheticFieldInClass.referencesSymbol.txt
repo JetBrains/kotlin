@@ -1,0 +1,9 @@
+<caret_1>:
+  KDocName(25,38): 'Storage.value'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(44,60): 'Storage.getValue'
+    KDocReference:
+      Nothing (Unresolved reference)

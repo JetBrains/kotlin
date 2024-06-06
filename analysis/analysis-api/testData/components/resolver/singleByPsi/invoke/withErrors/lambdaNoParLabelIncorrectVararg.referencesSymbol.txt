@@ -1,0 +1,3 @@
+KtCallExpression(67,74): 'f f@ {}'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

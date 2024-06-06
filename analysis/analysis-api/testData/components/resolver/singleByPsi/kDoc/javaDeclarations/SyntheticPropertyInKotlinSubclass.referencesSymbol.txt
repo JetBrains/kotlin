@@ -1,0 +1,9 @@
+<caret_2>:
+  KDocName(53,57): 'prop'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_1>:
+  KDocName(63,79): 'KotlinChild.prop'
+    KDocReference:
+      Nothing (Unresolved reference)

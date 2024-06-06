@@ -1,0 +1,7 @@
+KtNameReferenceExpression(230,233): 'Bar'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(222,239): 'consume(Bar::foo)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

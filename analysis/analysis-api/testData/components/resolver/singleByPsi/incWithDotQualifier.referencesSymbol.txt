@@ -1,0 +1,3 @@
+KtNameReferenceExpression(93,97): 'peek'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

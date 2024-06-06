@@ -1,0 +1,6 @@
+KtNameReferenceExpression(69,76): 'RUNTIME'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

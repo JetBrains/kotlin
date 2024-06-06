@@ -1,0 +1,2 @@
+KtDotQualifiedExpression(68,76): 's.action'
+  null

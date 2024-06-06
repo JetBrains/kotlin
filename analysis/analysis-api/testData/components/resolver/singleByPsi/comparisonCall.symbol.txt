@@ -1,0 +1,2 @@
+KtBinaryExpression(31,36): 'i < j'
+  null

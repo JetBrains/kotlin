@@ -1,0 +1,3 @@
+KtPropertyDelegate(26,37): 'by lazy {1}'
+  KtPropertyDelegationMethodsReference:
+    Nothing (Unresolved reference)

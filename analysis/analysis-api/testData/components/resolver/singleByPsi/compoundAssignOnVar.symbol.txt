@@ -1,0 +1,2 @@
+KtBinaryExpression(31,37): 'i += 1'
+  null

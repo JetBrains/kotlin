@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
 import org.jetbrains.kotlin.analysis.api.resolution.successfulCallOrNull
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -66,7 +67,12 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
     }
 
     private fun KaSession.collectCallCandidates(element: KtElement): List<KaCallCandidateInfo> {
-        val candidates = element.collectCallCandidatesOld()
+        val candidates = if (element is KtResolvableCall) {
+            element.collectCallCandidates()
+        } else {
+            element.collectCallCandidatesOld()
+        }
+
         return candidates.sortedWith { candidate1, candidate2 ->
             compareCalls(candidate1.candidate, candidate2.candidate)
         }

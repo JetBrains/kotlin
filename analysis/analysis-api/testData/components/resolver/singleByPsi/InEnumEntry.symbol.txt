@@ -1,0 +1,2 @@
+KtNameReferenceExpression(100,109): 'TOP_LEVEL'
+  null

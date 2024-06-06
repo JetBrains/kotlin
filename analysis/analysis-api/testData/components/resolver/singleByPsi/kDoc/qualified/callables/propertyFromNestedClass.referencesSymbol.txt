@@ -1,0 +1,3 @@
+KDocName(73,87): 'Foo.Nested.foo'
+  KDocReference:
+    Nothing (Unresolved reference)

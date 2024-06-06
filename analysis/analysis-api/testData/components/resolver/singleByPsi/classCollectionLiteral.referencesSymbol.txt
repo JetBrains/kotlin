@@ -1,0 +1,7 @@
+KtCollectionLiteralExpression(206,256): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
+  KtCollectionLiteralReference:
+    Nothing (Unresolved reference)
+
+KtValueArgument(206,256): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
+  KtDefaultAnnotationArgumentReference:
+    Nothing (Unresolved reference)

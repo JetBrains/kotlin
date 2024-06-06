@@ -1,0 +1,14 @@
+<caret>:
+  KtArrayAccessExpression(62,69): 'list[0]'
+    KtArrayAccessReference:
+      Nothing (Unresolved reference)
+
+<caret_singleIfStatement>:
+  KtArrayAccessExpression(89,96): 'list[0]'
+    KtArrayAccessReference:
+      Nothing (Unresolved reference)
+
+<caret_singleWhenStatement>:
+  KtArrayAccessExpression(121,128): 'list[0]'
+    KtArrayAccessReference:
+      Nothing (Unresolved reference)

@@ -1,0 +1,3 @@
+KtNameReferenceExpression(18,28): 'Comparator'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

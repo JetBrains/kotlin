@@ -66,12 +66,19 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
     ): Collection<ResolveTestCaseContext<KtReference?>> = carets.flatMap<CaretMarker, ResolveTestCaseContext<KtReference?>> { caret ->
         val marker = caret.fullTag
         val contexts: List<ResolveTestCaseContext<KtReference?>> = findReferencesAtCaret(file, caret.offset).map { reference ->
-            ResolveTestCaseContext(element = reference, context = reference.element, marker = marker)
+            ResolveReferenceTestCaseContext(element = reference, marker = marker)
         }
 
         contexts.ifEmpty {
-            listOf(ResolveTestCaseContext<KtReference?>(element = null, context = null, marker = marker))
+            listOf(ResolveReferenceTestCaseContext(element = null, marker = marker))
         }
+    }
+
+    class ResolveReferenceTestCaseContext(
+        override val element: KtReference?,
+        override val marker: String?,
+    ) : ResolveTestCaseContext<KtReference?> {
+        override val context: KtElement? get() = element?.element
     }
 
     override fun generateResolveOutput(
@@ -83,13 +90,17 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
         val reference = context.element ?: return "no references found"
 
         return analyzeReferenceElement(reference.element, mainModule) {
-            val symbols = reference.resolveToSymbols()
-            val symbolsAgain = reference.resolveToSymbols()
+            val symbols = resolveReferenceToSymbols(reference)
+            val symbolsAgain = resolveReferenceToSymbols(reference)
             testServices.assertions.assertEquals(symbols, symbolsAgain)
 
             val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in mainModule.testModule.directives
             renderResolvedTo(symbols, renderPsiClassName, renderingOptions) { getAdditionalSymbolInfo(it) }
         }
+    }
+
+    protected open fun KaSession.resolveReferenceToSymbols(reference: KtReference): Collection<KaSymbol> {
+        return reference.resolveToSymbols()
     }
 
     protected open fun <R> analyzeReferenceElement(element: KtElement, mainModule: KtTestModule, action: KaSession.() -> R): R {

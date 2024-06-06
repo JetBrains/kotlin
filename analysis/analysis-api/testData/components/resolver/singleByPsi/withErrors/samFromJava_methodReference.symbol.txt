@@ -1,0 +1,2 @@
+KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
+  null

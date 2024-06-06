@@ -1,0 +1,2 @@
+KtCallExpression(76,88): 'javaMethod()'
+  null

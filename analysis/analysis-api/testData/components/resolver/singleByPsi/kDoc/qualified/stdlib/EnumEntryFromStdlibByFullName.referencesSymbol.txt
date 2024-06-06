@@ -1,0 +1,3 @@
+KDocName(8,47): 'kotlin.LazyThreadSafetyMode.PUBLICATION'
+  KDocReference:
+    Nothing (Unresolved reference)

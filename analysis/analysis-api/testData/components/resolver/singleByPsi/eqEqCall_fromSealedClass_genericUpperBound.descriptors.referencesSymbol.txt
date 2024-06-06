@@ -1,0 +1,6 @@
+KtNameReferenceExpression(357,364): 'oldItem'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -1,0 +1,3 @@
+KtNameReferenceExpression(132,138): 'listOf'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

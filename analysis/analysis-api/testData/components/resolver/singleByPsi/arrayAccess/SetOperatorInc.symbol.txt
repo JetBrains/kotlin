@@ -1,0 +1,2 @@
+KtArrayAccessExpression(205,209): 'a[2]'
+  null

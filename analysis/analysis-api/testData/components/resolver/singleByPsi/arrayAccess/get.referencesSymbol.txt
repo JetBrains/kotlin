@@ -1,0 +1,3 @@
+KtArrayAccessExpression(70,77): 'list[0]'
+  KtArrayAccessReference:
+    Nothing (Unresolved reference)

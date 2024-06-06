@@ -1,0 +1,2 @@
+KtNameReferenceExpression(108,115): 'makeFoo'
+  null

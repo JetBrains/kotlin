@@ -1,0 +1,3 @@
+KtNameReferenceExpression(100,109): 'asDynamic'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

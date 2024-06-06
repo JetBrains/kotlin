@@ -1,0 +1,3 @@
+KtForExpression(23,37): 'for(i in f) {}'
+  KtForLoopInReference:
+    Nothing (Unresolved reference)

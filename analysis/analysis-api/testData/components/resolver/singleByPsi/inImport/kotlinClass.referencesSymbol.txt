@@ -1,0 +1,3 @@
+KtNameReferenceExpression(41,52): 'MutableList'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

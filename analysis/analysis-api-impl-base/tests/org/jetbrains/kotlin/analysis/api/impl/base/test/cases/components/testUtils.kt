@@ -11,19 +11,25 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.KaChainedSubstitutor
 import org.jetbrains.kotlin.analysis.api.impl.base.KaMapBackedSubstitutor
+import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaSymbolResolutionErrorImpl
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaRendererKeywordFilter
 import org.jetbrains.kotlin.analysis.api.resolution.KaApplicableCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionError
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallableMemberCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundArrayAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaInapplicableCallCandidateInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionError
 import org.jetbrains.kotlin.analysis.api.resolution.calls
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
+import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionLikeSignature
@@ -119,11 +125,21 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
                     val name = property.name
 
                     @Suppress("UNCHECKED_CAST")
-                    val value = (property as KProperty1<Any, *>).get(this@with)?.let {
-                        if (className == "KaErrorCallInfo" && name == "candidateCalls") {
-                            sortedCalls(it as Collection<KaCall>)
-                        } else it
+                    val value = (property as KProperty1<Any, *>).get(this@with)?.let { value ->
+                        when {
+                            (className == KaErrorCallInfo::class.simpleName || className == KaCallResolutionError::class.simpleName) &&
+                                    name == "candidateCalls" -> {
+                                sortedCalls(value as Collection<KaCall>)
+                            }
+
+                            className == KaSymbolResolutionErrorImpl::class.simpleName && name == "candidateSymbols" -> {
+                                sortedSymbols(value as Collection<KaSymbol>)
+                            }
+
+                            else -> value
+                        }
                     }
+
                     val valueAsString = value?.let { stringRepresentation(it).indented() }
                     "$name = $valueAsString"
                 }
@@ -187,6 +203,14 @@ internal fun KaSession.prettyPrintSignature(signature: KaCallableSignature<*>): 
 
 internal fun KaSession.sortedCalls(collection: Collection<KaCall>): Collection<KaCall> = collection.sortedWith { call1, call2 ->
     compareCalls(call1, call2)
+}
+
+internal fun KaSession.sortedSymbols(collection: Collection<KaSymbol>): Collection<KaSymbol> = collection.sortedWith { symbol1, symbol2 ->
+    compareSymbols(symbol1, symbol2)
+}
+
+internal fun KaSession.compareSymbols(symbol1: KaSymbol, symbol2: KaSymbol): Int {
+    return stringRepresentation(symbol1).compareTo(stringRepresentation(symbol2))
 }
 
 internal fun KaCall.symbols(): List<KaSymbol> = when (this) {
@@ -255,6 +279,80 @@ internal fun KaSession.assertStableResult(testServices: TestServices, firstInfo:
     for ((firstCall, secondCall) in firstCalls.zip(secondCalls)) {
         assertStableResult(testServices, firstCall, secondCall)
     }
+}
+
+internal fun KaSession.assertStableResult(
+    testServices: TestServices,
+    firstAttempt: KaSymbolResolutionAttempt?,
+    secondAttempt: KaSymbolResolutionAttempt?,
+) {
+    val assertions = testServices.assertions
+    if (firstAttempt == null || secondAttempt == null) {
+        assertions.assertEquals(firstAttempt, secondAttempt)
+        return
+    }
+
+    assertions.assertEquals(firstAttempt::class, secondAttempt::class)
+    if (firstAttempt is KaSymbolResolutionError) {
+        assertStableResult(
+            testServices = testServices,
+            firstDiagnostic = firstAttempt.diagnostic,
+            secondDiagnostic = (secondAttempt as KaSymbolResolutionError).diagnostic,
+        )
+    }
+
+    val firstSymbols = sortedSymbols(firstAttempt.symbols)
+    val secondSymbols = sortedSymbols(secondAttempt.symbols)
+    assertions.assertEquals(firstSymbols.size, secondSymbols.size)
+
+    for ((firstSymbol, secondSymbol) in firstSymbols.zip(secondSymbols)) {
+        assertions.assertEquals(firstSymbol, secondSymbol)
+    }
+}
+
+internal fun KaSession.assertStableResult(
+    testServices: TestServices,
+    symbolResolutionAttempt: KaSymbolResolutionAttempt?,
+    callResolutionAttempt: KaCallResolutionAttempt?,
+) {
+    val assertions = testServices.assertions
+
+    when (callResolutionAttempt) {
+        // Symbol resolution supports more cases than call resolution, so we check some guaranties only against it
+        null -> return
+
+        is KaCompoundArrayAccessCall -> {
+            assertions.assertEquals(expected = null, actual = symbolResolutionAttempt) {
+                "Inconsistency: ${KaCompoundArrayAccessCall::class.simpleName} assumes that there is no dedicated single symbol"
+            }
+
+            return
+        }
+
+        is KaCallResolutionError -> {
+            if (symbolResolutionAttempt !is KaSymbolResolutionError) {
+                testServices.assertions.fail {
+                    "${KaSymbolResolutionError::class.simpleName} is expected, but ${symbolResolutionAttempt?.let { it::class.simpleName }} is found"
+                }
+            }
+
+            assertStableResult(
+                testServices = testServices,
+                firstDiagnostic = callResolutionAttempt.diagnostic,
+                secondDiagnostic = symbolResolutionAttempt.diagnostic,
+            )
+        }
+
+        else -> {}
+    }
+
+    assertions.assertNotNull(symbolResolutionAttempt) {
+        "Inconsistency: ${callResolutionAttempt::class.simpleName} found, but ${KaSymbolResolutionAttempt::class.simpleName} is null"
+    }
+
+    val symbols = sortedSymbols(symbolResolutionAttempt!!.symbols)
+    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.map { (it as KaCallableMemberCall<*, *>).symbol })
+    assertions.assertEquals(expected = symbolsFromCall, actual = symbols)
 }
 
 internal fun KaSession.assertStableResult(testServices: TestServices, firstCall: KaCall, secondCall: KaCall) {

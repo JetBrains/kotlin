@@ -20,7 +20,7 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
         context: ResolveTestCaseContext<KtElement>,
         mainFile: KtFile,
         mainModule: KtTestModule,
-        testServices: TestServices
+        testServices: TestServices,
     ): String = generateResolveOutput(context.element, testServices)
 
     abstract fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String
@@ -34,7 +34,7 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
         if (carets.size > 1) {
             return carets.map {
                 val element = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtElement>(mainFile, it.tag)
-                ResolveTestCaseContext(element = element, context = element, marker = it.fullTag)
+                ResolveKtElementTestCaseContext(element = element, marker = it.fullTag)
             }
         }
 
@@ -46,7 +46,14 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
             ) as KtElement
 
         val elementToResolve = expression.elementToResolve
-        return listOf(ResolveTestCaseContext(element = elementToResolve, context = elementToResolve, marker = null))
+        return listOf(ResolveKtElementTestCaseContext(element = elementToResolve, marker = null))
+    }
+
+    class ResolveKtElementTestCaseContext(
+        override val element: KtElement,
+        override val marker: String?,
+    ) : ResolveTestCaseContext<KtElement> {
+        override val context: KtElement? get() = element
     }
 
     protected val KtElement.elementToResolve: KtElement
