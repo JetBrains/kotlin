@@ -564,12 +564,12 @@ private val constEvaluationPhase = createFileLoweringPhase(
 
 internal fun PhaseEngine<NativeGenerationState>.getLoweringsUpToAndIncludingInlining(): LoweringList = listOfNotNull(
         lowerBeforeInlinePhase,
-        arrayConstructorPhase,
         lateinitPhase,
         sharedVariablesPhase,
         lowerOuterThisInInlineFunctionsPhase,
         extractLocalClassesFromInlineBodies,
         inlineCallableReferenceToLambdaPhase,
+        arrayConstructorPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
         inlinePhase,
 )

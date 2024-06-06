@@ -73,8 +73,6 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
 
         TypeOfLowering(context).lower(body, function, irFile)
 
-        ArrayConstructorLowering(context).lower(body, function)
-
         NullableFieldsForLateinitCreationLowering(context).lowerWithLocalDeclarations(function)
         NullableFieldsDeclarationLowering(context).lowerWithLocalDeclarations(function)
         LateinitUsageLowering(context).lower(body, function)
@@ -92,6 +90,7 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
         }
 
         NativeInlineCallableReferenceToLambdaPhase(generationState).lower(function)
+        ArrayConstructorLowering(context).lower(body, function)
         WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
     }
 
