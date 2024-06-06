@@ -152,7 +152,10 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
         override val hasSpecificClassifierPackageNamesComputation: Boolean get() = true
 
-        override fun getPackageNamesWithTopLevelClassifiers(): Set<String>? =
+        override fun getPackageNames(): Set<String> =
+            getPackageNamesWithTopLevelClassifiers() + getPackageNamesWithTopLevelCallables()
+
+        override fun getPackageNamesWithTopLevelClassifiers(): Set<String> =
             buildSet {
                 extensions.forEach { extension ->
                     extension.topLevelClassIdsCache.getValue().mapTo(this) { it.packageFqName.asString() }
