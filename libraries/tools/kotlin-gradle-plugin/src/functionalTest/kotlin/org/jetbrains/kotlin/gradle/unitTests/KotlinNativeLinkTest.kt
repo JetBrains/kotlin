@@ -41,7 +41,7 @@ class KotlinNativeLinkTest {
         }
 
         // 1. Configure KotlinNativeLink's apiFiles before compilation's apiConfiguration is wired. Using apiFilesConfiguration directly here because apiFiles is filtered by File.exists check
-        val apiFiles = (b.tasks.getByName("linkReleaseStaticLinuxArm64") as KotlinNativeLink).apiFilesConfiguration
+        val apiFiles = (b.tasks.getByName("linkReleaseStaticLinuxArm64") as KotlinNativeLink).apiFiles
 
         // 2. Set up the compilations
         b.evaluate()
@@ -50,7 +50,7 @@ class KotlinNativeLinkTest {
             hashSetOf(
                 a.layout.buildDirectory.file("classes/kotlin/linuxArm64/main/klib/a.klib").get().asFile
             ),
-            apiFiles.resolve(),
+            apiFiles.files,
         )
     }
 
