@@ -23,7 +23,7 @@ tasks.withType<Test>().configureEach {
     inputs.files(extension.testData).withPathSensitivity(PathSensitivity.RELATIVE)
 
     extensions.configure(TestRetryExtension::class) {
-        maxRetries = 3
+        maxRetries = if (kotlinBuildProperties.isTeamcityBuild) 3 else 0
         failOnPassedAfterRetry.set(extension.allowFlaky.convention(false).map { !it })
     }
     ignoreFailures = false
