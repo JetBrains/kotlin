@@ -38698,6 +38698,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("actualizeExpectProtectedToJavaProtected.kt")
+      public void testActualizeExpectProtectedToJavaProtected() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/actualizeExpectProtectedToJavaProtected.kt");
+      }
+
+      @Test
       @TestMetadata("aliasSuperTypeInLazy.kt")
       public void testAliasSuperTypeInLazy() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/aliasSuperTypeInLazy.kt");
