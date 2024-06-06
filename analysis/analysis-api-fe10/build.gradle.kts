@@ -12,7 +12,6 @@ dependencies {
     implementation(project(":analysis:analysis-api-impl-base"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:kt-references"))
-    implementation(project(":analysis:kt-references:kt-references-fe10"))
     implementation(project(":compiler:light-classes"))
 
     implementation(project(":compiler:backend"))
