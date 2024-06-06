@@ -13,7 +13,7 @@
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
-        serviceImplementation="org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.fir.references.KotlinFirReferenceContributor"
     />
 
     <projectService
