@@ -95,7 +95,7 @@ public final class NonExistentClassTypesConversionKt {
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
-@Anno(b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, kotlin.String.class}, d = {kotlin.Boolean.class, NoBar3.class})
+@Anno(a = null, b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, kotlin.String.class}, d = {kotlin.Boolean.class, NoBar3.class})
 /**
  * public final class Test<T#0 (* G *)> : kotlin/Any {
  *
