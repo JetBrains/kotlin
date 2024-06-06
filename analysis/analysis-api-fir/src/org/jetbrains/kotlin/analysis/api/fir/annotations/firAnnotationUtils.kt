@@ -47,13 +47,13 @@ internal fun annotationsByClassId(
     builder: KaSymbolByFirBuilder,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KaAnnotation> {
-    if (firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATION_ARGUMENTS) {
+    if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId, builder.rootSession)) {
         when (classId) {
-            StandardClassIds.Annotations.Target -> annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
+            StandardClassIds.Annotations.Target -> annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol)
                 .mapIndexedToAnnotationApplication(builder.rootSession, classId) { index, annotation ->
                     computeKotlinTargetAnnotation(annotation, builder, index)
                 }
-            JvmStandardClassIds.Annotations.Java.Target -> annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
+            JvmStandardClassIds.Annotations.Java.Target -> annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol)
                 .mapIndexedToAnnotationApplication(builder.rootSession, classId) { index, annotation ->
                     computeJavaTargetAnnotation(annotation, builder, index)
                 }
