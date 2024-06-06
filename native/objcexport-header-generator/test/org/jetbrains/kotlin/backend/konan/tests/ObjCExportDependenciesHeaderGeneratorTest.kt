@@ -68,6 +68,19 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     }
 
     /**
+     * Depends on unimplemented AA deprecation message: KT-67823
+     */
+    @Test
+    @TodoAnalysisApi
+    fun `test - serializersModule`() {
+        doTest(
+            dependenciesDir.resolve("serializersModule"), configuration = HeaderGenerator.Configuration(
+                dependencies = listOfNotNull(testLibraryKotlinxSerializationCore)
+            )
+        )
+    }
+
+    /**
      * See KT-68479
      */
     @Test
