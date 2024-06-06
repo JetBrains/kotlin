@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.toBuilder
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
 
 const val STUB_FOR_INLINING = "stub_for_inlining"
@@ -42,17 +43,16 @@ const val STUB_FOR_INLINING = "stub_for_inlining"
 abstract class InlineCallableReferenceToLambdaPhase(
     val context: CommonBackendContext,
     protected val inlineFunctionResolver: InlineFunctionResolver,
-) : FileLoweringPass, IrElementVisitor<Unit, IrDeclarationParent?> {
-    override fun lower(irFile: IrFile) = irFile.accept(this, null)
-
-    override fun visitElement(element: IrElement, data: IrDeclarationParent?) =
-        element.acceptChildren(this, data)
+) : FileLoweringPass, IrElementTransformer<IrDeclarationParent?> {
+    override fun lower(irFile: IrFile) {
+        irFile.transform(this, null)
+    }
 
     override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
         super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclarationParent?) {
-        expression.acceptChildren(this, data)
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclarationParent?): IrElement {
+        expression.transformChildren(this, data)
         val function = expression.symbol.owner
         if (inlineFunctionResolver.needsInlining(function)) {
             for (parameter in function.valueParameters) {
@@ -61,6 +61,8 @@ abstract class InlineCallableReferenceToLambdaPhase(
                 }
             }
         }
+
+        return expression
     }
 
     protected fun IrExpression.transform(scope: IrDeclarationParent?) = when {
