@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.includedForwardDeclarations
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -55,7 +56,7 @@ class NativeForwardDeclarationsSymbolProvider(
     private val includedForwardDeclarations: Set<ClassId> by lazy {
         buildSet {
             for (library in kotlinLibraries) {
-                if (!library.isCInteropLibrary()) continue
+                if (!library.isCInteropLibrary() && !library.isCommonizedCInteropLibrary()) continue
 
                 for (fqName in library.includedForwardDeclarations) {
                     val classId = ClassId.topLevel(FqName(fqName))
