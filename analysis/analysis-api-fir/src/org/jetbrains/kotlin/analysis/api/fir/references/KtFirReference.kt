@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-interface KaFirReference : KtReference, KaSymbolBasedReference {
+internal interface KaFirReference : KtReference, KaSymbolBasedReference {
     fun getResolvedToPsi(analysisSession: KaSession, referenceTargetSymbols: Collection<KaSymbol>): Collection<PsiElement> =
         with(analysisSession) {
             referenceTargetSymbols.flatMap { symbol ->
