@@ -785,6 +785,12 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
     description = "Generate main function call inside the wrapper-function"
 )
 
+val inlineCallableReferenceToLambdaPhase = makeIrModulePhase<JsIrBackendContext>(
+    ::JsInlineCallableReferenceToLambdaPhase,
+    name = "JsInlineCallableReferenceToLambdaPhase",
+    description = "Transform all callable reference (including defaults) to inline lambdas, mark inline lambdas for later passes"
+)
+
 val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>>(
     validateIrBeforeLowering,
     jsCodeOutliningPhase,
@@ -798,6 +804,7 @@ val loweringList = listOf<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleF
     localClassesInInlineFunctionsPhase,
     localClassesExtractionFromInlineFunctionsPhase,
     syntheticAccessorLoweringPhase,
+    inlineCallableReferenceToLambdaPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
     saveInlineFunctionsBeforeInlining,
     functionInliningPhase,
