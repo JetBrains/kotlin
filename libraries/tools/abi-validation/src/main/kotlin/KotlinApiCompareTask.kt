@@ -8,14 +8,11 @@ package kotlinx.validation
 import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
 import java.io.*
-import java.util.TreeMap
 import javax.inject.Inject
 import org.gradle.api.*
-import org.gradle.api.file.*
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 
-public open class KotlinApiCompareTask @Inject constructor(private val objects: ObjectFactory): DefaultTask() {
+public open class KotlinApiCompareTask @Inject constructor(): DefaultTask() {
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -41,43 +38,17 @@ public open class KotlinApiCompareTask @Inject constructor(private val objects: 
         }
         val subject = projectName
 
-        /*
-         * We use case-insensitive comparison to workaround issues with case-insensitive OSes
-         * and Gradle behaving slightly different on different platforms.
-         * We neither know original sensitivity of existing .api files, not
-         * build ones, because projectName that is part of the path can have any sensitvity.
-         * To workaround that, we replace paths we are looking for the same paths that
-         * actually exist on FS.
-         */
-        fun caseInsensitiveMap() = TreeMap<String, RelativePath> { rp, rp2 ->
-            rp.compareTo(rp2, true)
-        }
-
-        val apiBuildDirFiles = caseInsensitiveMap()
-        val expectedApiFiles = caseInsensitiveMap()
-
-        objects.fileTree().from(buildApiDir).visit { file ->
-            apiBuildDirFiles[file.name] = file.relativePath
-        }
-        objects.fileTree().from(projectApiDir).visit { file ->
-            expectedApiFiles[file.name] = file.relativePath
-        }
-
-        if (!expectedApiFiles.containsKey(projectApiFile.name)) {
+        if (!projectApiFile.exists()) {
             error("File ${projectApiFile.name} is missing from ${projectApiDir.relativeDirPath()}, please run " +
                     ":$subject:apiDump task to generate one")
         }
-        if (!apiBuildDirFiles.containsKey(generatedApiFile.name)) {
+        if (!generatedApiFile.exists()) {
             error("File ${generatedApiFile.name} is missing from dump results.")
         }
 
         // Normalize case-sensitivity
-        val expectedApiDeclaration = expectedApiFiles.getValue(projectApiFile.name)
-        val actualApiDeclaration = apiBuildDirFiles.getValue(generatedApiFile.name)
         val diffSet = mutableSetOf<String>()
-        val expectedFile = expectedApiDeclaration.getFile(projectApiDir)
-        val actualFile = actualApiDeclaration.getFile(buildApiDir)
-        val diff = compareFiles(expectedFile, actualFile)
+        val diff = compareFiles(projectApiFile, generatedApiFile)
         if (diff != null) diffSet.add(diff)
         if (diffSet.isNotEmpty()) {
             val diffText = diffSet.joinToString("\n\n")
