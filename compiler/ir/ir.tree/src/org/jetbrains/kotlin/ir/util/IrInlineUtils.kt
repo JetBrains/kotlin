@@ -49,3 +49,6 @@ fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
 
 fun IrExpression.isAdaptedFunctionReference() =
     this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+
+fun IrExpression.isLambdaBlock() =
+    this is IrBlock && this.origin == IrStatementOrigin.LAMBDA

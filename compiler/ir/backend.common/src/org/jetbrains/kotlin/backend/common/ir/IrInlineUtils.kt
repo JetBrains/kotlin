@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.getClass
@@ -181,6 +181,12 @@ fun IrInlinedFunctionBlock.putStatementsInFrontOfInlinedFunction(statements: Lis
 
 
 fun List<IrInlinedFunctionBlock>.extractDeclarationWhereGivenElementWasInlined(inlinedElement: IrElement): IrDeclaration? {
+    fun IrAttributeContainer.unwrapInlineLambdaIfAny(): IrAttributeContainer = when (this) {
+        is IrBlock -> (statements.lastOrNull() as? IrAttributeContainer)?.unwrapInlineLambdaIfAny() ?: this
+        is IrFunctionReference -> takeIf { it.origin == LoweredStatementOrigins.INLINE_LAMBDA } ?: this
+        else -> this
+    }
+
     val originalInlinedElement = ((inlinedElement as? IrAttributeContainer)?.attributeOwnerId ?: inlinedElement)
     for (block in this.filter { it.isFunctionInlining() }) {
         block.inlineCall.getAllArgumentsWithIr().forEach {
@@ -190,7 +196,7 @@ fun List<IrInlinedFunctionBlock>.extractDeclarationWhereGivenElementWasInlined(i
                 val blockWithClass = it.first.defaultValue?.expression?.attributeOwnerId as? IrBlock
                 blockWithClass?.statements?.firstOrNull() as? IrClass
             } else {
-                it.second
+                it.second?.unwrapInlineLambdaIfAny()
             }
 
             val originalActualArg = actualArg?.attributeOwnerId as? IrExpression
@@ -212,3 +218,6 @@ fun List<IrInlinedFunctionBlock>.extractDeclarationWhereGivenElementWasInlined(i
 val IrVariable.isTmpForInline: Boolean
     get() = this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER ||
             this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
+
+fun IrExpression.isInlineLambdaBlock() =
+    this is IrBlock && (this.statements.last() as? IrFunctionReference)?.origin == LoweredStatementOrigins.INLINE_LAMBDA

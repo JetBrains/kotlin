@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_ARGUMENTS
@@ -274,6 +275,10 @@ open class FunctionInlining(
                     functionArgument.isAdaptedFunctionReference() ->
                         inlineAdaptedFunctionReference(expression, functionArgument as IrBlock)
 
+                    functionArgument.isLambdaBlock() -> {
+                        inlineAdaptedFunctionReference(expression, functionArgument as IrBlock).statements.last() as IrExpression
+                    }
+
                     functionArgument is IrFunctionExpression ->
                         inlineFunctionExpression(expression, functionArgument)
 
@@ -351,10 +356,12 @@ open class FunctionInlining(
                 return inlineFunction(invokeCall, stubForInline, reference, false)
             }
 
-            fun inlineAdaptedFunctionReference(irCall: IrCall, irBlock: IrBlock): IrExpression {
+            fun inlineAdaptedFunctionReference(irCall: IrCall, irBlock: IrBlock): IrBlock {
                 val irFunction = irBlock.statements[0].let {
                     it.transformChildrenVoid(this)
                     copyIrElement.copy(it) as IrFunction
+                }.apply {
+                    origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
                 }
                 val irFunctionReference = irBlock.statements[1] as IrFunctionReference
                 val inlinedFunctionReference = inlineFunctionReference(irCall, irFunctionReference, irFunction)
@@ -407,8 +414,8 @@ open class FunctionInlining(
                     is IrConstructor -> {
                         val classTypeParametersCount = inlinedFunction.parentAsClass.typeParameters.size
                         IrConstructorCallImpl.fromSymbolOwner(
-                            irFunctionReference.startOffset,
-                            irFunctionReference.endOffset,
+                            irCall.startOffset,
+                            irCall.endOffset,
                             functionReferenceReturnType,
                             inlinedFunction.symbol,
                             classTypeParametersCount,
@@ -417,8 +424,8 @@ open class FunctionInlining(
                     }
                     is IrSimpleFunction ->
                         IrCallImpl(
-                            irFunctionReference.startOffset,
-                            irFunctionReference.endOffset,
+                            irCall.startOffset,
+                            irCall.endOffset,
                             functionReferenceReturnType,
                             inlinedFunction.symbol,
                             inlinedFunction.typeParameters.size,
@@ -479,11 +486,11 @@ open class FunctionInlining(
                         putTypeArgument(index, irFunctionReference.getTypeArgument(index))
                 }
 
-                return if (inlineFunctionResolver.getFunctionDeclaration(inlinedFunction.symbol)?.body != null) {
-                    inlineFunction(immediateCall, inlinedFunction, irFunctionReference, performRecursiveInline = true)
+                return if (inlineFunctionResolver.needsInlining(inlinedFunction)) {
+                    // `attributeOwnerId` is used to get the original reference instead of a reference on `stub_for_inlining`
+                    inlineFunction(immediateCall, inlinedFunction, irFunctionReference.attributeOwnerId, performRecursiveInline = true)
                 } else {
-                    val transformedExpression = super.visitExpression(immediateCall).transform(this@FunctionInlining, null)
-                    wrapInStubFunction(transformedExpression, irCall, irFunctionReference)
+                    super.visitExpression(immediateCall).transform(this@FunctionInlining, null)
                 }.doImplicitCastIfNeededTo(irCall.type)
             }
 
@@ -526,7 +533,9 @@ open class FunctionInlining(
                 get() = parameter.getOriginalParameter().isInlineParameter() &&
                         (argumentExpression is IrFunctionReference
                                 || argumentExpression is IrFunctionExpression
-                                || argumentExpression.isAdaptedFunctionReference())
+                                || argumentExpression.isAdaptedFunctionReference()
+                                || argumentExpression.isInlineLambdaBlock()
+                                || argumentExpression.isLambdaBlock())
 
             val isInlinablePropertyReference: Boolean
                 // must take "original" parameter because it can have generic type and so considered as no inline; see `lambdaAsGeneric.kt`
@@ -754,7 +763,7 @@ open class FunctionInlining(
                         // This first branch is required to avoid assertion in `getArgumentsWithIr`
                         arg is IrPropertyReference && arg.field != null -> evaluateReceiverForPropertyWithField(arg)?.let { container += it }
                         arg is IrCallableReference<*> -> container += evaluateArguments(arg)
-                        arg is IrBlock -> if (arg.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
+                        arg is IrBlock -> if (arg.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || arg.origin == IrStatementOrigin.LAMBDA) {
                             container += evaluateArguments(arg.statements.last() as IrFunctionReference)
                         }
                     }
