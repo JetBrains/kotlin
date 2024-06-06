@@ -165,7 +165,7 @@ public fun runSwiftExport(
 
             return when(val declaration = type.type) {
                 KotlinRuntimeModule.kotlinBase -> "Any"
-                else -> ((declaration.origin as KotlinSource).symbol as KaClassLikeSymbol).classIdIfNonLocal!!.asFqNameString()
+                else -> ((declaration.origin as KotlinSource).symbol as KaClassLikeSymbol).classId!!.asFqNameString()
             }
         }
     })

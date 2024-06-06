@@ -62,7 +62,7 @@ public class SirTypeProviderImpl(
 
         fun buildRegularType(ktType: KtType): SirType = when (ktType) {
             is KaUsualClassType -> with(sirSession) {
-                when (val classSymbol = ktType.classSymbol) {
+                when (val classSymbol = ktType.symbol) {
                     is KaSymbolWithVisibility -> {
                         if (classSymbol.sirVisibility(ktAnalysisSession) == SirVisibility.PUBLIC) {
                             SirNominalType(classSymbol.sirDeclaration() as SirNamedDeclaration)
@@ -78,7 +78,7 @@ public class SirTypeProviderImpl(
             is KaTypeParameterType,
             -> SirUnsupportedType()
             is KaErrorType -> SirErrorType(ktType.errorMessage)
-            else -> SirErrorType("Unexpected type ${ktType.asStringForDebugging()}")
+            else -> SirErrorType("Unexpected type ${ktType}")
 
         }
 
