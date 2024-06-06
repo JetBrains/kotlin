@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.backend.FirAnnotationSourceElement
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -1374,10 +1375,19 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         name: String,
     ): JCExpression? {
         if (!isValidIdentifier(name)) return null
-        if (value !is FirArrayLiteral) return null
-
-        val expr = convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments) ?: return null
-        return treeMaker.Assign(treeMaker.SimpleName(name), expr)
+        return when (value) {
+            is FirArrayLiteral -> {
+                val expr =
+                    convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments) ?: return null
+                treeMaker.Assign(treeMaker.SimpleName(name), expr)
+            }
+            is FirVarargArgumentsExpression -> {
+                val expr =
+                    convertConstantValueArgumentsFir(containingClass, constantValue, value.arguments) ?: return null
+                treeMaker.Assign(treeMaker.SimpleName(name), expr)
+            }
+            else -> null
+        }
     }
 
     private fun convertConstantValueArgumentsFir(
